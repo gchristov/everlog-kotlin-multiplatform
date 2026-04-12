@@ -128,55 +128,38 @@ class BillingManager private constructor(context: Context) : PurchasesUpdatedLis
     fun querySkuDetails(@SkuType itemType: String,
                         skuList: List<String>,
                         listener: SkuDetailsResponseListener?) {
-        if (BuildConfig.DEBUG_INAPP_BILLING) {
-            Timber.tag(TAG).i("Querying debug sku details: type=%s skuList=%s", itemType, skuList)
-            val results = ArrayList<SkuDetails>()
-            // Month
-            results.add(SkuDetails("{\"skuDetailsToken\":\"token1\",\"productId\":\"everlog_pro_sub_month\",\"type\":\"subs\",\"price\":\"£3.99\",\"price_amount_micros\":3990000,\"price_currency_code\":\"GBP\",\"subscriptionPeriod\":\"P1M\",\"freeTrialPeriod\":\"P2D\",\"title\":\"Title1\",\"description\":\"Description1\"}"))
-            // Year
-            results.add(SkuDetails("{\"skuDetailsToken\":\"token2\",\"productId\":\"everlog_pro_sub_year\",\"type\":\"subs\",\"price\":\"£35.99\",\"price_amount_micros\":35990000,\"price_currency_code\":\"GBP\",\"subscriptionPeriod\":\"P1Y\",\"freeTrialPeriod\":\"P14D\",\"title\":\"Title2\",\"description\":\"Description2\"}"))
-            listener?.onSkuDetailsResponse(BillingResult.newBuilder().setResponseCode(BillingClient.BillingResponseCode.OK).build(), results)
-        } else {
-            Timber.tag(TAG).i("Querying sku details: type=%s skuList=%s", itemType, skuList)
-            ensureValidBillingRequest(0, object : OnInAppBillingAvailabilityListener() {
-                override fun onBillingAvailable() {
-                    super.onBillingAvailable()
-                    val skuDetailsParams = SkuDetailsParams
-                            .newBuilder()
-                            .setSkusList(skuList)
-                            .setType(itemType)
-                            .build()
+        Timber.tag(TAG).i("Querying sku details: type=%s skuList=%s", itemType, skuList)
+        ensureValidBillingRequest(0, object : OnInAppBillingAvailabilityListener() {
+            override fun onBillingAvailable() {
+                super.onBillingAvailable()
+                val skuDetailsParams = SkuDetailsParams
+                    .newBuilder()
+                    .setSkusList(skuList)
+                    .setType(itemType)
+                    .build()
 //                    mBillingClient?.querySkuDetailsAsync(skuDetailsParams) { billingResult: BillingResult, skuDetailsList: List<SkuDetails>? ->
 //                        Timber.tag(TAG).i("Query SKU result: code=%s, items=%s", billingResult.responseCode, skuDetailsList)
 //                        listener?.onSkuDetailsResponse(billingResult, skuDetailsList ?: ArrayList())
 //                    }
-                }
+            }
 
-                override fun onBillingNotAvailable(code: Int) {
-                    listener?.onBillingNotAvailable(code)
-                }
-            })
-        }
+            override fun onBillingNotAvailable(code: Int) {
+                listener?.onBillingNotAvailable(code)
+            }
+        })
     }
 
     fun launchPurchaseFlow(context: Activity, skuDetails: SkuDetails) {
-        if (BuildConfig.DEBUG_INAPP_BILLING) {
-            Timber.tag(TAG).i("Accepting debug purchase: sku=%s", skuDetails)
-            val results = ArrayList<Purchase>()
-            results.add(Purchase("{\"orderId\":\"orderId\",\"purchaseTime\":123,\"purchaseToken\":\"purchaseToken\",\"purchaseState\":1,\"signature\":\"signature\",\"productId\":\"everlog_pro_sub_month\",\"acknowledged\":true,\"autoRenewing\":true}", "test"))
-            onPurchasesUpdated(BillingResult.newBuilder().setResponseCode(BillingClient.BillingResponseCode.OK).build(), results)
-        } else {
-            Timber.tag(TAG).i("Launching purchase flow: sku=%s", skuDetails)
-            ensureValidBillingRequest(0, object : OnInAppBillingAvailabilityListener() {
-                override fun onBillingAvailable() {
-                    super.onBillingAvailable()
-                    val billingFlowParams = BillingFlowParams.newBuilder()
-                            .setSkuDetails(skuDetails)
-                            .build()
-                    mBillingClient?.launchBillingFlow(context, billingFlowParams)
-                }
-            })
-        }
+        Timber.tag(TAG).i("Launching purchase flow: sku=%s", skuDetails)
+        ensureValidBillingRequest(0, object : OnInAppBillingAvailabilityListener() {
+            override fun onBillingAvailable() {
+                super.onBillingAvailable()
+                val billingFlowParams = BillingFlowParams.newBuilder()
+                    .setSkuDetails(skuDetails)
+                    .build()
+                mBillingClient?.launchBillingFlow(context, billingFlowParams)
+            }
+        })
     }
 
     // Handlers

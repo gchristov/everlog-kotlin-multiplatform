@@ -22,7 +22,6 @@ class AnalyticsManager : Analytic {
     init {
         mAnalytics = ArrayList()
         mAnalytics?.add(FirebaseAnalytic())
-        mAnalytics?.add(CustomerlyAnalytic())
     }
 
     fun initialize() {

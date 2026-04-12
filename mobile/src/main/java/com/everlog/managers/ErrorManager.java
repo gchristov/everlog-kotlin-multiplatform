@@ -25,18 +25,13 @@ public class ErrorManager {
     }
 
     public void initialize() {
-        FirebaseCrashlytics.getInstance().setCrashlyticsCollectionEnabled(!BuildConfig.DISABLE_CRASHLYTICS);
-        if (BuildConfig.DISABLE_CRASHLYTICS) {
-//            Timber.plant(new Timber.DebugTree());
-        } else {
-            // Add Crashlytics
-            Timber.plant(new CrashlyticsTree());
-            // Add Hyperlog
-            HyperLog.initialize(ELApplication.getInstance(), (int) TimeUnit.HOURS.toSeconds(24));
-            HyperLog.setLogLevel(Log.VERBOSE);
-            Timber.plant(new HyperlogTree());
-        }
-        Timber.tag(TAG).i("Crashlytics disabled: %s", BuildConfig.DISABLE_CRASHLYTICS);
+        FirebaseCrashlytics.getInstance().setCrashlyticsCollectionEnabled(true);
+        // Add Crashlytics
+        Timber.plant(new CrashlyticsTree());
+        // Add Hyperlog
+        HyperLog.initialize(ELApplication.getInstance(), (int) TimeUnit.HOURS.toSeconds(24));
+        HyperLog.setLogLevel(Log.VERBOSE);
+        Timber.plant(new HyperlogTree());
     }
 
     public void userIdentify(String userId, String email, String name) {

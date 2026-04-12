@@ -8,7 +8,6 @@ import com.everlog.managers.ErrorManager
 import com.everlog.managers.analytics.AnalyticsManager
 import com.everlog.ui.fragments.home.activity.history.HistoryHomeFragment
 import com.everlog.ui.fragments.home.activity.statistics.StatisticsHomeFragment
-import io.customerly.Customerly
 
 class AppConfig {
 
@@ -37,10 +36,8 @@ class AppConfig {
     }
 
     fun configureApp() {
-        configureBugfender()
         configureAnalyticsManager()
         configureErrorManager()
-        configureCustomerly()
     }
 
     private fun configureErrorManager() {
@@ -49,14 +46,5 @@ class AppConfig {
 
     private fun configureAnalyticsManager() {
         AnalyticsManager.manager.initialize()
-    }
-
-    private fun configureBugfender() {
-//        Bugfender.init(ELApplication.getInstance(), BuildConfig.BUGFENDER_KEY, BuildConfig.DEBUG)
-    }
-
-    private fun configureCustomerly() {
-        Customerly.configure(ELApplication.getInstance(), BuildConfig.CUSTOMERLY_KEY, ContextCompat.getColor(ELApplication.getInstance(), R.color.background_toolbar))
-        Customerly.setVerboseLogging(BuildConfig.DEBUG)
     }
 }

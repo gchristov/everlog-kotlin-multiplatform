@@ -4,11 +4,7 @@ plugins {
     alias(libs.plugins.ksp)
     alias(libs.plugins.google.services)
     alias(libs.plugins.firebase.crashlytics)
-    alias(libs.plugins.firebase.perf) apply false
-}
-
-if (!project.hasProperty("devBuild")) {
-    apply(plugin = "com.google.firebase.firebase-perf")
+    alias(libs.plugins.firebase.perf)
 }
 
 android {
@@ -66,28 +62,12 @@ android {
             applicationIdSuffix = ".dev"
             versionNameSuffix = " dev"
             isDebuggable = true
-            buildConfigField("String", "CUSTOMERLY_KEY", "\"d6a4083d\"")
         }
         getByName("release") {
             signingConfig = signingConfigs.getByName("release")
             isMinifyEnabled = true
             proguardFiles(getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro")
             isDebuggable = false
-            buildConfigField("String", "CUSTOMERLY_KEY", "\"d6a4083d\"")
-        }
-    }
-
-    flavorDimensions += "test"
-    productFlavors {
-        create("dev") {
-            buildConfigField("boolean", "DISABLE_CRASHLYTICS", "true")
-            buildConfigField("boolean", "DEBUG_INAPP_BILLING", "true")
-            dimension = "test"
-        }
-        create("staging") {
-            buildConfigField("boolean", "DISABLE_CRASHLYTICS", "false")
-            buildConfigField("boolean", "DEBUG_INAPP_BILLING", "false")
-            dimension = "test"
         }
     }
 }
@@ -190,7 +170,6 @@ dependencies {
     
     implementation(libs.rotate.layout)
 
-    implementation(libs.customerly)
     implementation(libs.shapeOfView)
     implementation(libs.ucrop)
     implementation(libs.bottomSheet)

@@ -55,7 +55,6 @@ flexbox = "3.0.0"
 dexter = "6.2.3"
 textInlineImage = "1.0.2"
 rotateLayout = "3.0.0"
-customerly = "3.1.1"
 shapeOfView = "1.4.7"
 ucrop = "2.2.8"
 bottomSheet = "1.5.0"
@@ -135,7 +134,6 @@ flexbox = { group = "com.google.android.flexbox", name = "flexbox", version.ref 
 dexter = { group = "com.karumi", name = "dexter", version.ref = "dexter" }
 textinlineimage = { group = "com.github.princ-bhardwaj", name = "TextInlineImage-Library", version.ref = "textInlineImage" }
 rotate-layout = { group = "com.github.rongi", name = "rotate-layout", version.ref = "rotateLayout" }
-customerly = { group = "io.customerly", name = "customerly-android-sdk", version.ref = "customerly" }
 shapeOfView = { group = "io.github.florent37", name = "shapeofview", version.ref = "shapeOfView" }
 ucrop = { group = "com.github.yalantis", name = "ucrop", version.ref = "ucrop" }
 bottomSheet = { group = "com.cocosw", name = "bottomsheet", version.ref = "bottomSheet" }

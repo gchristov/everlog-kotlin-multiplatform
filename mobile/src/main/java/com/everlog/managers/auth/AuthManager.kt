@@ -32,7 +32,6 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.auth.UserProfileChangeRequest
 import com.google.firebase.firestore.SetOptions
-import io.customerly.Customerly
 import timber.log.Timber
 
 object AuthManager : PreferencesManager() {
@@ -162,9 +161,7 @@ object AuthManager : PreferencesManager() {
         PlanManager.manager.clearOngoingPlan()
         mAuth?.signOut()
         mClient?.signOut()?.addOnCompleteListener {
-            Customerly.logoutUser {
-                listener.onLogout()
-            }
+            listener.onLogout()
         }
     }
 

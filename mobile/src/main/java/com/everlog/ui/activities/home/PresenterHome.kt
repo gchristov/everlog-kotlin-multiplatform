@@ -21,7 +21,6 @@ import com.everlog.ui.activities.base.BaseActivityPresenter
 import com.everlog.utils.FCMUtils
 import com.everlog.utils.Utils
 import com.imagepick.picker.dialog.ELPickerDialog
-import io.customerly.Customerly
 
 class PresenterHome : BaseActivityPresenter<MvpViewHome>() {
 
@@ -158,8 +157,6 @@ class PresenterHome : BaseActivityPresenter<MvpViewHome>() {
     private fun identifyUser() {
         AnalyticsManager.manager.userIdentify(getUserAccount()!!.id, getUserAccount()!!.email, getUserAccount()!!.displayName)
         ErrorManager.manager.userIdentify(getUserAccount()!!.id, getUserAccount()!!.email, getUserAccount()!!.displayName)
-        Customerly.registerUser(getUserAccount()!!.email!!, getUserAccount()!!.id, getUserAccount()!!.displayName)
-//        Qonversion.initialize(ELApplication.getInstance(), BuildConfig.QONVERSION_KEY, getUserAccount()!!.id!!)
     }
 
     // Setup

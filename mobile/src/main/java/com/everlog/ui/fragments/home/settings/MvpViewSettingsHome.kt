@@ -21,8 +21,6 @@ interface MvpViewSettingsHome : BaseFragmentMvpView {
 
     fun onClickLogout(): Observable<Void>
 
-    fun onClickContactUs(): Observable<Void>
-
     fun onClickReportProblem(): Observable<Void>
 
     fun onClickWeightUnit(): Observable<Void>
