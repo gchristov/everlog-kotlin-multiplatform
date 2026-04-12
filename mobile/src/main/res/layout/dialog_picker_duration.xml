@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/background_card"
+    android:minWidth="@dimen/dialog_min_width"
+    android:orientation="horizontal"
+    android:paddingTop="@dimen/activity_margin">
+
+    <com.github.stephenvinouze.materialnumberpickercore.MaterialNumberPicker
+        android:id="@+id/minutesPickerView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginLeft="-60dp"
+        app:mnpEditable="false"
+        app:mnpSeparatorColor="@color/separator"
+        app:mnpTextColor="@color/white_base"
+        app:mnpTextSize="@dimen/dialog_picker_text_size"
+        app:mnpTextStyle="bold"
+        app:mnpWrapped="true" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginLeft="-10dp"
+        android:text="min"
+        android:textColor="@color/gray_1"
+        android:textSize="14sp"/>
+
+    <com.github.stephenvinouze.materialnumberpickercore.MaterialNumberPicker
+        android:id="@+id/secondsPickerView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginLeft="50dp"
+        app:mnpEditable="false"
+        app:mnpSeparatorColor="@color/separator"
+        app:mnpTextColor="@color/white_base"
+        app:mnpTextSize="@dimen/dialog_picker_text_size"
+        app:mnpTextStyle="bold"
+        app:mnpWrapped="true" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginLeft="100dp"
+        android:text="sec"
+        android:textColor="@color/gray_1"
+        android:textSize="14sp"/>
+</FrameLayout>

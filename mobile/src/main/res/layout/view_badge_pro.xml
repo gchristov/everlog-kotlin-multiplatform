@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<TextView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/badgeText"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/ic_hexagon"
+    android:gravity="center"
+    android:text="pro"
+    android:textAllCaps="true"
+    android:textColor="@color/background_base"
+    android:textSize="8sp"
+    android:textStyle="bold" />

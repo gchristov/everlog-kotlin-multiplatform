@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="68dp"
+        android:background="@color/background_card"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:paddingTop="@dimen/activity_margin_half">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/activity_margin"
+            android:layout_marginRight="@dimen/activity_margin"
+            android:gravity="center"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:layout_width="18dp"
+                android:layout_height="18dp"
+                android:layout_marginRight="@dimen/margin_6"
+                android:paddingTop="1dp"
+                android:src="@drawable/ic_notification"
+                app:tint="@color/white_darker" />
+
+            <TextView
+                android:id="@+id/exerciseName"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="@dimen/activity_margin"
+                android:layout_weight="1"
+                android:ellipsize="middle"
+                android:singleLine="true"
+                android:textAllCaps="true"
+                android:textColor="@color/white_darker"
+                android:textSize="13sp"
+                android:textStyle="bold"
+                tools:text="Deadlift Deadlift Deadlift" />
+
+            <TextView
+                android:id="@+id/setSummary"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/gray_2"
+                android:textSize="12sp"
+                tools:text="Super set 3/4" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="horizontal"
+            android:paddingLeft="@dimen/activity_margin_half_half_half">
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_marginRight="@dimen/activity_margin_half"
+                android:gravity="center">
+
+                <ImageView
+                    android:id="@+id/reduceWeightBtn"
+                    style="@style/WorkoutNotificationButton"
+                    android:src="@drawable/ic_remove_white" />
+
+                <TextView
+                    android:id="@+id/weightField"
+                    style="@style/WorkoutNotificationInput"
+                    tools:text="30" />
+
+                <TextView
+                    android:id="@+id/weightUnit"
+                    style="@style/WorkoutNotificationExponent"
+                    tools:text="@string/kg" />
+
+                <ImageView
+                    android:id="@+id/increaseWeightBtn"
+                    style="@style/WorkoutNotificationButton"
+                    android:layout_marginLeft="-2dp"
+                    android:src="@drawable/ic_add" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/repsPanel"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:gravity="center">
+
+                <ImageView
+                    android:id="@+id/reduceRepsBtn"
+                    style="@style/WorkoutNotificationButton"
+                    android:src="@drawable/ic_remove_white" />
+
+                <TextView
+                    android:id="@+id/repsField"
+                    style="@style/WorkoutNotificationInput"
+                    tools:text="30" />
+
+                <TextView
+                    android:id="@+id/repsExponent"
+                    style="@style/WorkoutNotificationExponent"
+                    android:text="rps" />
+
+                <ImageView
+                    android:id="@+id/increaseRepsBtn"
+                    style="@style/WorkoutNotificationButton"
+                    android:layout_marginLeft="-2dp"
+                    android:src="@drawable/ic_add" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/timePanel"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:gravity="center">
+
+                <TextView
+                    android:id="@+id/timeField"
+                    style="@style/WorkoutNotificationInput"
+                    tools:text="00:40" />
+
+                <ImageView
+                    android:id="@+id/startTimerBtn"
+                    style="@style/WorkoutNotificationButton"
+                    android:scaleX="0.8"
+                    android:scaleY="0.8"
+                    android:src="@drawable/ic_timer" />
+
+                <ImageView
+                    android:id="@+id/stopTimerBtn"
+                    style="@style/WorkoutNotificationButton"
+                    android:scaleX="1"
+                    android:scaleY="1"
+                    android:src="@drawable/btn_clear"
+                    android:visibility="gone"
+                    tools:visibility="visible" />
+            </LinearLayout>
+
+            <ImageView
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1" />
+
+            <ImageView
+                android:id="@+id/nextBtn"
+                style="@style/WorkoutNotificationButton"
+                android:layout_width="wrap_content"
+                android:paddingLeft="@dimen/margin_12"
+                android:paddingRight="@dimen/margin_12"
+                android:scaleX="1"
+                android:scaleY="1"
+                android:src="@drawable/ic_check_green" />
+        </LinearLayout>
+    </LinearLayout>
+</LinearLayout>

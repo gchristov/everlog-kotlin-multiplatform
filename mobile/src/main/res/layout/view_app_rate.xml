@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:clipChildren="false"
+    android:clipToPadding="false"
+    android:gravity="center"
+    android:orientation="vertical"
+    android:paddingBottom="@dimen/card_elevation_default">
+
+    <androidx.cardview.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:cardBackgroundColor="@color/main_accent"
+        app:cardCornerRadius="@dimen/card_radius_default"
+        app:cardElevation="@dimen/card_elevation_default">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="@dimen/activity_margin">
+
+            <TextView
+                android:id="@+id/actionLbl"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/activity_margin"
+                android:gravity="center"
+                android:paddingLeft="@dimen/activity_margin"
+                android:paddingRight="@dimen/activity_margin"
+                android:text="@string/rate_enjoy_title"
+                android:textColor="@color/background_card"
+                android:textSize="17sp"/>
+
+            <LinearLayout
+                android:id="@+id/firstPrompt"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:orientation="vertical">
+
+                <com.willy.ratingbar.ScaleRatingBar
+                    android:id="@+id/starView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:srb_clearRatingEnabled="false"
+                    app:srb_clickable="true"
+                    app:srb_drawableEmpty="@drawable/ic_star_empty"
+                    app:srb_drawableFilled="@drawable/ic_star_filled"
+                    app:srb_isIndicator="false"
+                    app:srb_numStars="5"
+                    app:srb_scrollable="false"
+                    app:srb_starHeight="40dp"
+                    app:srb_starPadding="8dp"
+                    app:srb_starWidth="40dp"
+                    app:srb_stepSize="1"/>
+
+                <TextView
+                    android:id="@+id/askLaterBtn"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:paddingTop="@dimen/activity_margin"
+                    android:text="@string/rate_ask_later"
+                    android:textColor="@color/background_card"
+                    android:textSize="15sp"/>
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/secondPrompt"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:visibility="gone"
+                tools:visibility="visible">
+
+                <Button
+                    android:id="@+id/secondPromptNoBtn"
+                    style="@style/RateStyle.No"
+                    android:text="@string/rate_no"/>
+
+                <Button
+                    android:id="@+id/secondPromptYesBtn"
+                    style="@style/RateStyle.Yes"
+                    android:text="@string/rate_feedback"/>
+            </LinearLayout>
+        </LinearLayout>
+    </androidx.cardview.widget.CardView>
+</LinearLayout>

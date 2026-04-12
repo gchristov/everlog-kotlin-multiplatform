@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/action_take_new"
+        android:icon="@drawable/ic_camera"
+        android:title="@string/take_picture"
+        app:showAsAction="always" />
+    <item
+        android:id="@+id/action_choose"
+        android:icon="@drawable/ic_gallery"
+        android:title="@string/choose_picture"
+        app:showAsAction="always" />
+    <item
+        android:id="@+id/action_remove"
+        android:icon="@drawable/ic_remove"
+        android:title="@string/remove_picture"
+        app:showAsAction="always" />
+</menu>

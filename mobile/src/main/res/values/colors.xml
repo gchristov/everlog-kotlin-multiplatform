@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="main_accent">#87c252</color>
+    <color name="main_accent_darker">#72b03c</color>
+    <color name="main_accent_faded_1">#2287c252</color>
+    <color name="main_accent_faded_2">#6687c252</color>
+
+    <color name="background_base">#000000</color>
+    <color name="background_card">#151518</color>
+    <color name="background_card_lighter">@color/black_lighter</color>
+    <color name="background_toolbar">#000000</color>
+    <color name="background_blur">#70000000</color>
+
+    <color name="gray_1">#A0A0A0</color>
+    <color name="gray_2">#D0D0D0</color>
+    <color name="gray_3">#808080</color>
+    <color name="gray_4">#505050</color>
+    <color name="gray_5">#c0c0c0</color>
+
+    <color name="white_base">#fff</color>
+    <color name="white_darker">#f3f3f3</color>
+
+    <color name="black_lighter">#232728</color>
+
+    <color name="separator">@color/black_lighter</color>
+
+    <color name="pager_active">@color/main_accent</color>
+    <color name="pager_inactive">@color/gray_4</color>
+
+    <color name="image_overlay">#50000000</color>
+
+    <color name="calendar_out_of_range">#656B74</color>
+
+    <color name="pie_chart_1">#003f5c</color>
+    <color name="pie_chart_2">#005a79</color>
+    <color name="pie_chart_3">#00778f</color>
+    <color name="pie_chart_4">#00949b</color>
+    <color name="pie_chart_5">#00b19c</color>
+    <color name="pie_chart_6">#00cd93</color>
+    <color name="pie_chart_7">#65e882</color>
+    <color name="pie_chart_8">#b1ff6d</color>
+
+    <color name="remove">#FE3824</color>
+
+    <color name="konfetti_lt_yellow">#fce18a</color>
+    <color name="konfetti_lt_orange">#ff726d</color>
+    <color name="konfetti_lt_purple">#b48def</color>
+    <color name="konfetti_lt_pink">#f4306d</color>
+</resources>

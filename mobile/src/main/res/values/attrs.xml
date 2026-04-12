@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <declare-styleable name="FooterView">
+        <attr name="fvTitle" format="string"/>
+        <attr name="fvLink" format="string"/>
+    </declare-styleable>
+
+    <declare-styleable name="EmptyView">
+        <attr name="evImage" format="integer"/>
+        <attr name="evTitle" format="string"/>
+        <attr name="evSubtitle" format="string"/>
+        <attr name="evActionText" format="string"/>
+        <attr name="evActionSecondaryText" format="string"/>
+    </declare-styleable>
+
+    <declare-styleable name="SetTypeSummaryView">
+        <attr name="stsvTitle" format="string"/>
+        <attr name="stsvTitleColor" format="color"/>
+        <attr name="stsvDescription" format="string"/>
+        <attr name="stsvSeparatorVisible" format="boolean"/>
+    </declare-styleable>
+
+    <declare-styleable name="ExerciseImageView">
+        <attr name="eivSquareHeight" format="boolean"/>
+        <attr name="eivSquareWidth" format="boolean"/>
+        <attr name="eivClickable" format="boolean"/>
+        <attr name="eivShowLetter" format="boolean"/>
+    </declare-styleable>
+
+    <declare-styleable name="ProSubButton">
+        <attr name="psbBackground" format="integer"/>
+    </declare-styleable>
+
+    <declare-styleable name="ProBadge">
+        <attr name="pbTextSize" format="dimension"/>
+    </declare-styleable>
+
+    <declare-styleable name="LogoView">
+        <attr name="lvShadow" format="boolean"/>
+    </declare-styleable>
+
+    <declare-styleable name="SummaryCardStatistics">
+        <attr name="scsLayout" format="reference"/>
+    </declare-styleable>
+</resources>

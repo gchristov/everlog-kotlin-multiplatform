@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="@dimen/card_plan_width"
+    android:layout_height="@dimen/card_plan_height"
+    android:layout_marginRight="@dimen/activity_margin_actual"
+    android:background="@drawable/rounded_corners_create"
+    android:clickable="true"
+    android:foreground="?attr/selectableItemBackground"
+    android:gravity="center"
+    tools:background="@color/background_base">
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginRight="@dimen/activity_margin_half"
+        android:src="@drawable/ic_add_circle" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="sans-serif-medium"
+        android:text="@string/create_plan_title"
+        android:textAllCaps="true"
+        android:textColor="@color/main_accent"
+        android:textSize="17sp" />
+</LinearLayout>

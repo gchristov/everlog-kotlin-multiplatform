@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:background="@color/background_base">
+
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/margin_10"
+        android:layout_marginBottom="@dimen/margin_30"
+        android:paddingTop="@dimen/margin_12"
+        android:theme="@style/AppTheme.AppBarOverlay"
+        app:popupTheme="@style/AppTheme.PopupOverlay"
+        app:titleTextAppearance="@style/Toolbar.HomeTitle"
+        tools:title="Week" />
+
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:overScrollMode="never">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:clipChildren="false"
+            android:clipToPadding="false"
+            android:orientation="vertical"
+            android:paddingLeft="@dimen/activity_margin_actual"
+            android:paddingRight="@dimen/activity_margin_actual"
+            android:paddingBottom="@dimen/footer_bottom_padding_double">
+
+            <com.everlog.ui.views.apprate.AppRateView
+                android:id="@+id/appRateView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/margin_26"
+                android:visibility="gone"
+                tools:visibility="visible" />
+
+            <com.everlog.ui.views.notification.home.HomeNotificationView
+                android:id="@+id/notificationView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/margin_26"
+                android:visibility="gone"
+                tools:visibility="visible" />
+
+            <include
+                layout="@layout/include_week_statistics"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                tools:layout_marginBottom="@dimen/margin_26" />
+
+            <include
+                layout="@layout/include_week_plan"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+        </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
+</LinearLayout>

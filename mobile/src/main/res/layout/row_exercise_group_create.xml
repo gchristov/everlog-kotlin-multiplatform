@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="@dimen/activity_margin_double"
+    android:paddingLeft="@dimen/exercise_group_create_side_spacing"
+    android:paddingRight="@dimen/activity_margin"
+    tools:background="@color/background_base">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginRight="@dimen/activity_margin"
+        android:layout_toLeftOf="@id/addBtn">
+
+        <com.everlog.ui.views.viewpager.wrap.WrapContentViewPager
+            android:id="@+id/pager"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            tools:layout_height="100dp" />
+
+        <ru.tinkoff.scrollingpagerindicator.ScrollingPagerIndicator
+            android:id="@+id/indicator"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/pager"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="@dimen/margin_22"
+            app:spi_dotColor="@color/pager_inactive"
+            app:spi_dotSelectedColor="@color/pager_active"
+            app:spi_dotSelectedSize="@dimen/activity_margin_half"
+            app:spi_dotSize="@dimen/activity_margin_half"
+            app:spi_dotSpacing="@dimen/margin_12"
+            app:spi_visibleDotCount="5" />
+    </RelativeLayout>
+
+    <ImageView
+        android:id="@+id/addBtn"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_alignParentRight="true"
+        android:layout_centerVertical="true"
+        android:padding="2dp"
+        android:src="@drawable/ic_add_circle_full"
+        app:tint="@color/main_accent" />
+
+    <ImageView
+        android:id="@+id/dragIcon"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_alignParentRight="true"
+        android:layout_centerVertical="true"
+        android:scaleType="centerInside"
+        android:src="@drawable/ic_drag"
+        app:tint="@color/gray_1" />
+</RelativeLayout>

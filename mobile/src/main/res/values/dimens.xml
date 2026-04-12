@@ -1,0 +1,81 @@
+<resources>
+
+    <dimen name="activity_margin">16dp</dimen>
+    <dimen name="activity_margin_half">8dp</dimen>
+    <dimen name="activity_margin_half_half">4dp</dimen>
+    <dimen name="activity_margin_half_half_half">2dp</dimen>
+    <dimen name="activity_margin_double">32dp</dimen>
+    <dimen name="activity_margin_triple">48dp</dimen>
+    <dimen name="activity_margin_actual">26dp</dimen>
+
+    <dimen name="margin_6">6dp</dimen>
+    <dimen name="margin_10">10dp</dimen>
+    <dimen name="margin_12">12dp</dimen>
+    <dimen name="margin_14">14dp</dimen>
+    <dimen name="margin_18">18dp</dimen>
+    <dimen name="margin_20">20dp</dimen>
+    <dimen name="margin_22">22dp</dimen>
+    <dimen name="margin_24">24dp</dimen>
+    <dimen name="margin_26">26dp</dimen>
+    <dimen name="margin_30">30dp</dimen>
+
+    <item name="cover_text_shadow_d" format="integer" type="integer">2</item>
+    <item name="cover_text_shadow_radius" format="integer" type="integer">20</item>
+
+    <dimen name="content_width_tablet">400dp</dimen>
+    <dimen name="content_translation_login">-85dp</dimen>
+
+    <dimen name="toolbar_progress_height">3dp</dimen>
+
+    <dimen name="card_elevation_default">2dp</dimen>
+    <dimen name="card_radius_default">10dp</dimen>
+
+    <dimen name="footer_bottom_padding">90dp</dimen>
+    <dimen name="footer_bottom_padding_double">180dp</dimen>
+
+    <dimen name="dropdown_text_size">18sp</dimen>
+
+    <dimen name="dialog_min_width">100dp</dimen>
+    <dimen name="dialog_picker_text_size">20sp</dimen>
+
+    <dimen name="options_menu_icon_size">35dp</dimen>
+
+    <dimen name="timeline_width">2dp</dimen>
+    <dimen name="timeline_dot_size">8dp</dimen>
+
+    <dimen name="card_week_statistics_width">154dp</dimen>
+    <dimen name="card_week_statistics_height">170dp</dimen>
+    <dimen name="card_plan_width">260dp</dimen>
+    <dimen name="card_plan_height">170dp</dimen>
+    <dimen name="card_collapsing_summary_size">50dp</dimen>
+    <dimen name="card_collapsing_summary_radius">25dp</dimen>
+
+    <dimen name="exercise_categories_row_size">100dp</dimen>
+    <dimen name="exercise_categories_title_text_size">32sp</dimen>
+    <dimen name="exercise_categories_title_large_text_size">90sp</dimen>
+    <dimen name="exercise_categories_title_large_margin_top">45dp</dimen>
+
+    <dimen name="settings_card_content_margin_left">@dimen/activity_margin</dimen>
+    <dimen name="settings_category_title_margin_vertical">@dimen/activity_margin</dimen>
+    <dimen name="settings_row_padding_right">10dp</dimen>
+    <dimen name="settings_row_padding_top">@dimen/activity_margin</dimen>
+    <dimen name="settings_row_padding_bottom">@dimen/activity_margin</dimen>
+    <dimen name="settings_row_text_size">16sp</dimen>
+    <dimen name="settings_row_subtitle_text_size">13sp</dimen>
+    <dimen name="settings_item_icon_size">30dp</dimen>
+    <dimen name="settings_arrow_icon_margin_left">10dp</dimen>
+
+    <dimen name="statistics_chart_height">350dp</dimen>
+    <dimen name="statistics_section_title_text_size">15sp</dimen>
+    <dimen name="statistics_vertical_text_size">12sp</dimen>
+
+    <dimen name="share_workout_size">300dp</dimen>
+
+    <dimen name="exercise_group_create_side_spacing">@dimen/activity_margin_actual</dimen>
+    <dimen name="exercise_group_set_button_size">38dp</dimen>
+
+    <dimen name="login_slider_bottom_offset">-200dp</dimen>
+    <dimen name="login_form_margin_horizontal">60dp</dimen>
+
+    <dimen name="bottom_sheet_width">550dp</dimen>
+</resources>

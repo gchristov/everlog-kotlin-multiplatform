@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:clipChildren="false"
+    android:clipToPadding="false"
+    android:gravity="center"
+    android:orientation="vertical"
+    android:paddingLeft="@dimen/login_form_margin_horizontal"
+    android:paddingTop="@dimen/margin_24"
+    android:paddingRight="@dimen/login_form_margin_horizontal"
+    tools:background="@color/background_base">
+
+    <TextView
+        android:id="@+id/titleLbl"
+        style="@style/CoverText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:fontFamily="sans-serif-medium"
+        android:gravity="center"
+        android:textColor="@color/white_base"
+        android:textSize="24sp"
+        tools:text="@string/login_onboard_plans_title" />
+
+    <TextView
+        android:id="@+id/subtitleLbl"
+        style="@style/CoverText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/activity_margin_half_half"
+        android:gravity="center"
+        android:textColor="@color/white_darker"
+        android:fontFamily="sans-serif-medium"
+        android:textSize="15sp"
+        tools:text="@string/login_onboard_plans_subtitle" />
+
+    <ImageView
+        android:id="@+id/imageView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="@dimen/activity_margin_double"
+        tools:src="@drawable/login_page_1" />
+</LinearLayout>

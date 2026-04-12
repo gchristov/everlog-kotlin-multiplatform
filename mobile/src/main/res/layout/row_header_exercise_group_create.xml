@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:divider="@drawable/separator_line"
+    android:orientation="vertical"
+    android:paddingLeft="@dimen/exercise_group_create_side_spacing"
+    android:paddingRight="@dimen/exercise_group_create_side_spacing"
+    android:paddingBottom="@dimen/activity_margin_actual"
+    android:showDividers="middle"
+    tools:background="@color/background_base">
+
+    <LinearLayout
+        android:id="@+id/restTimeBtn"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:clickable="true"
+        android:foreground="?android:attr/selectableItemBackground"
+        android:gravity="center"
+        android:orientation="horizontal"
+        android:paddingTop="@dimen/settings_row_padding_top"
+        android:paddingBottom="@dimen/settings_row_padding_bottom"
+        tools:background="@color/background_base">
+
+        <TextView
+            style="@style/SettingsTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/exercise_sets_performed_rest_time" />
+
+        <TextView
+            android:id="@+id/restTimeLbl"
+            style="@style/SettingsValue"
+            android:layout_width="0dp"
+            android:layout_marginLeft="@dimen/activity_margin"
+            android:layout_weight="1"
+            android:gravity="right"
+            tools:text="30s" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/exerciseTimeBtn"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:clickable="true"
+        android:foreground="?android:attr/selectableItemBackground"
+        android:gravity="center"
+        android:orientation="horizontal"
+        android:paddingTop="@dimen/settings_row_padding_top"
+        android:paddingBottom="@dimen/settings_row_padding_bottom">
+
+        <TextView
+            style="@style/SettingsTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/create_routine_exercise_duration" />
+
+        <TextView
+            android:id="@+id/exerciseTimeLbl"
+            style="@style/SettingsValue"
+            android:layout_width="0dp"
+            android:layout_marginLeft="@dimen/activity_margin"
+            android:layout_weight="1"
+            android:gravity="right"
+            tools:text="30s" />
+    </LinearLayout>
+</LinearLayout>

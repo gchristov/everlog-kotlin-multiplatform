@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/notification_background"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="68dp"
+        android:background="@color/background_card"
+        android:gravity="center"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:paddingLeft="@dimen/activity_margin"
+            android:paddingRight="@dimen/activity_margin">
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="-2dp"
+                android:layout_marginRight="@dimen/activity_margin"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:orientation="horizontal">
+
+                    <ImageView
+                        android:layout_width="18dp"
+                        android:layout_height="18dp"
+                        android:layout_marginRight="@dimen/margin_6"
+                        android:paddingTop="1dp"
+                        android:src="@drawable/ic_notification"
+                        app:tint="@color/white_darker" />
+
+                    <TextView
+                        android:id="@+id/restTimeRemainingLbl"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/white_darker"
+                        android:textSize="15sp"
+                        android:textStyle="bold"
+                        tools:text="Rest  •  00:45" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/activity_margin_half_half_half"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Next:"
+                        android:textColor="@color/gray_2"
+                        android:textSize="13sp" />
+
+                    <TextView
+                        android:id="@+id/pendingExerciseField"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="@dimen/activity_margin_half"
+                        android:ellipsize="marquee"
+                        android:singleLine="true"
+                        android:textColor="@color/gray_2"
+                        android:textSize="13sp"
+                        tools:text="Dumbbell Chest Press  •  Set 1 (15 x 12kg)" />
+                </LinearLayout>
+            </LinearLayout>
+
+            <RelativeLayout
+                android:layout_width="40dp"
+                android:layout_height="40dp">
+
+                <ProgressBar
+                    android:id="@+id/setControlOuterProgress"
+                    style="?android:attr/progressBarStyleHorizontal"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@drawable/progress_bar_circle_shape_notification"
+                    android:indeterminate="false"
+                    android:max="100"
+                    android:progressDrawable="@drawable/progress_bar_circle_main_notification"
+                    tools:progress="50" />
+
+                <ImageView
+                    android:id="@+id/stopTimerBtn"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:padding="10dp"
+                    android:src="@drawable/ic_clear_white"
+                    android:tint="@color/main_accent" />
+            </RelativeLayout>
+        </LinearLayout>
+    </LinearLayout>
+</LinearLayout>

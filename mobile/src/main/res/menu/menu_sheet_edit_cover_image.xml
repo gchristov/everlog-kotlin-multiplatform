@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item
+        android:id="@+id/action_choose"
+        android:icon="@drawable/ic_gallery"
+        android:title="Change Image"
+        app:showAsAction="always"/>
+    <item
+        android:id="@+id/action_remove"
+        android:icon="@drawable/ic_remove"
+        android:title="Remove Image"
+        app:showAsAction="always"/>
+</menu>

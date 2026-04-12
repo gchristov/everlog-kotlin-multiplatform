@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:background="@color/background_base">
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/daysList"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@id/proUpgradePrompt"
+        android:clipToPadding="false"
+        android:focusable="false"
+        android:focusableInTouchMode="false"
+        android:paddingLeft="@dimen/activity_margin_actual"
+        android:paddingTop="@dimen/activity_margin"
+        android:paddingRight="@dimen/activity_margin_actual"
+        android:paddingBottom="@dimen/footer_bottom_padding"
+        tools:itemCount="1"
+        tools:listitem="@layout/row_plan_day" />
+
+    <com.everlog.ui.views.notification.warning.WarningNotificationView
+        android:id="@+id/proUpgradePrompt"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:visibility="gone"
+        tools:visibility="visible" />
+</RelativeLayout>

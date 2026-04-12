@@ -1,0 +1,243 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:background="@color/background_base">
+
+    <androidx.core.widget.NestedScrollView
+        android:id="@+id/scrollView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:clipChildren="false"
+        android:clipToPadding="false"
+        android:fillViewport="true"
+        android:visibility="gone"
+        tools:visibility="visible">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:clipChildren="false"
+            android:clipToPadding="false"
+            android:orientation="vertical"
+            android:paddingLeft="@dimen/activity_margin_actual"
+            android:paddingTop="64dp"
+            android:paddingRight="@dimen/activity_margin_actual"
+            android:paddingBottom="@dimen/footer_bottom_padding">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:clipChildren="false"
+                android:orientation="horizontal">
+
+                <com.everlog.ui.views.summarycard.SummaryCardStatistics
+                    android:id="@+id/timesPerformedSummary"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginRight="@dimen/margin_22"
+                    android:layout_weight="1" />
+
+                <com.everlog.ui.views.summarycard.SummaryCardStatistics
+                    android:id="@+id/totalWeightSummary"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/margin_22"
+                android:clipChildren="false"
+                android:orientation="horizontal">
+
+                <com.everlog.ui.views.summarycard.SummaryCardStatistics
+                    android:id="@+id/totalRepsSummary"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginRight="@dimen/margin_22"
+                    android:layout_weight="1" />
+
+                <com.everlog.ui.views.summarycard.SummaryCardStatistics
+                    android:id="@+id/maxWeightSummary"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1" />
+            </LinearLayout>
+
+            <androidx.cardview.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/statistics_chart_height"
+                android:layout_marginTop="@dimen/margin_26"
+                app:cardBackgroundColor="@color/background_card"
+                app:cardCornerRadius="@dimen/card_radius_default"
+                app:cardElevation="@dimen/card_elevation_default">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:padding="@dimen/activity_margin"
+                        android:text="@string/exercise_statistics_reps_weight"
+                        android:textColor="@color/white_base"
+                        android:textSize="@dimen/statistics_section_title_text_size"
+                        android:textStyle="bold" />
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:background="@color/separator" />
+
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent">
+
+                        <com.github.rongi.rotate_layout.layout.RotateLayout
+                            android:id="@+id/repWeightAxisLeftTitle"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_centerVertical="true"
+                            android:layout_marginLeft="@dimen/margin_12"
+                            app:angle="90">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_centerVertical="true"
+                                android:text="@string/reps"
+                                android:textAllCaps="true"
+                                android:textColor="@color/gray_2"
+                                android:textSize="@dimen/statistics_vertical_text_size" />
+                        </com.github.rongi.rotate_layout.layout.RotateLayout>
+
+                        <com.github.mikephil.charting.charts.LineChart
+                            android:id="@+id/repWeightChart"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:layout_marginLeft="@dimen/margin_10"
+                            android:layout_marginTop="@dimen/activity_margin"
+                            android:layout_marginRight="@dimen/margin_10"
+                            android:layout_marginBottom="@dimen/activity_margin"
+                            android:layout_toLeftOf="@id/repWeightAxisRightTitle"
+                            android:layout_toRightOf="@id/repWeightAxisLeftTitle" />
+
+                        <com.github.rongi.rotate_layout.layout.RotateLayout
+                            android:id="@+id/repWeightAxisRightTitle"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_alignParentRight="true"
+                            android:layout_centerVertical="true"
+                            android:layout_marginRight="@dimen/margin_12"
+                            app:angle="90">
+
+                            <TextView
+                                android:id="@+id/repWeightAxisRightTitleLbl"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_centerVertical="true"
+                                android:text="@string/weight"
+                                android:textAllCaps="true"
+                                android:textColor="@color/gray_2"
+                                android:textSize="@dimen/statistics_vertical_text_size" />
+                        </com.github.rongi.rotate_layout.layout.RotateLayout>
+                    </RelativeLayout>
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
+
+            <androidx.cardview.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/statistics_chart_height"
+                android:layout_marginTop="@dimen/margin_26"
+                app:cardBackgroundColor="@color/background_card"
+                app:cardCornerRadius="@dimen/card_radius_default"
+                app:cardElevation="@dimen/card_elevation_default">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:padding="@dimen/activity_margin"
+                        android:text="@string/exercise_statistics_1rm"
+                        android:textColor="@color/white_base"
+                        android:textSize="@dimen/statistics_section_title_text_size"
+                        android:textStyle="bold" />
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:background="@color/separator" />
+
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent">
+
+                        <com.github.rongi.rotate_layout.layout.RotateLayout
+                            android:id="@+id/ormAxisLeftTitle"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_centerVertical="true"
+                            android:layout_marginLeft="@dimen/margin_12"
+                            app:angle="90">
+
+                            <TextView
+                                android:id="@+id/ormAxisLeftTitleLbl"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_centerVertical="true"
+                                android:text="@string/weight"
+                                android:textAllCaps="true"
+                                android:textColor="@color/gray_2"
+                                android:textSize="@dimen/statistics_vertical_text_size" />
+                        </com.github.rongi.rotate_layout.layout.RotateLayout>
+
+                        <com.github.mikephil.charting.charts.LineChart
+                            android:id="@+id/ormChart"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:layout_marginLeft="@dimen/margin_10"
+                            android:layout_marginTop="@dimen/activity_margin"
+                            android:layout_marginRight="@dimen/margin_10"
+                            android:layout_marginBottom="@dimen/activity_margin"
+                            android:layout_toRightOf="@id/ormAxisLeftTitle" />
+                    </RelativeLayout>
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
+
+            <com.everlog.ui.views.FooterView
+                android:id="@+id/footerView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:fvLink="@string/exercises_footer_link"
+                app:fvTitle="@string/statistics_footer_text" />
+        </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
+
+    <include layout="@layout/shimmer_statistics_exercise" />
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="40dp"
+        android:layout_alignParentRight="true"
+        android:layout_marginRight="@dimen/activity_margin_actual"
+        android:background="@drawable/rounded_corners_card_fab">
+
+        <Spinner
+            android:id="@+id/rangeSpinner"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:entries="@array/statistics_durations_titles"
+            android:paddingLeft="@dimen/margin_12"
+            android:prompt="@array/statistics_durations_titles" />
+    </LinearLayout>
+</RelativeLayout>

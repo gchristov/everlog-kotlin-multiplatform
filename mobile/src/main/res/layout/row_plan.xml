@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="@dimen/card_plan_width"
+    android:layout_height="@dimen/card_plan_height"
+    android:layout_marginRight="@dimen/margin_26"
+    android:clickable="true"
+    android:foreground="?attr/selectableItemBackground"
+    app:cardBackgroundColor="@color/background_card"
+    app:cardCornerRadius="@dimen/card_radius_default"
+    app:cardElevation="@dimen/card_elevation_default">
+
+    <ImageView
+        android:id="@+id/imageView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@drawable/gradient_plan"
+        android:scaleType="centerCrop" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/image_overlay"
+        android:gravity="center"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/titleField"
+            style="@style/CoverText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/activity_margin"
+            android:layout_marginRight="@dimen/activity_margin"
+            android:fontFamily="sans-serif-medium"
+            android:gravity="center"
+            android:textColor="@color/white_base"
+            android:textSize="19sp"
+            tools:text="Plan Name" />
+
+        <TextView
+            android:id="@+id/subtitleField"
+            style="@style/CoverText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/white_base"
+            android:textSize="14sp"
+            tools:text="12 weeks" />
+    </LinearLayout>
+</androidx.cardview.widget.CardView>

@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/action_week"
+        android:icon="@drawable/ic_home"
+        android:title="" />
+    <item
+        android:id="@+id/action_workouts"
+        android:icon="@drawable/ic_barbell"
+        android:title="" />
+    <item
+        android:id="@+id/action_start"
+        android:icon="@drawable/ic_barbell"
+        android:title="" />
+    <item
+        android:id="@+id/action_activity"
+        android:icon="@drawable/ic_insights"
+        android:title="" />
+    <item
+        android:id="@+id/action_settings"
+        android:icon="@drawable/ic_settings"
+        android:title="" />
+</menu>

@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="wrap_content"
+    android:layout_height="match_parent"
+    android:orientation="horizontal"
+    tools:background="@color/background_base">
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/margin_6"
+        android:layout_marginRight="@dimen/activity_margin"
+        android:gravity="right"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/dayTimeline"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/gray_1"
+            android:textSize="17sp"
+            android:textStyle="bold"
+            tools:text="16" />
+
+        <TextView
+            android:id="@+id/monthTimeline"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAllCaps="true"
+            android:textColor="@color/gray_1"
+            android:textSize="10sp"
+            tools:text="Oct" />
+
+        <TextView
+            android:id="@+id/yearTimeline"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/gray_1"
+            android:textSize="10sp"
+            tools:text="2020" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_marginRight="@dimen/activity_margin"
+        android:gravity="center"
+        android:minWidth="@dimen/activity_margin_half"
+        android:orientation="vertical">
+
+        <View
+            android:id="@+id/topTimeline"
+            android:layout_width="@dimen/timeline_width"
+            android:layout_height="27dp"
+            android:background="@color/separator" />
+
+        <View
+            android:id="@+id/middleTimeline"
+            android:layout_width="@dimen/timeline_dot_size"
+            android:layout_height="@dimen/timeline_dot_size"
+            android:layout_marginTop="@dimen/activity_margin_half_half"
+            android:layout_marginBottom="@dimen/activity_margin_half_half"
+            android:background="@drawable/circle_separator" />
+
+        <View
+            android:id="@+id/bottomTimeline"
+            android:layout_width="@dimen/timeline_width"
+            android:layout_height="match_parent"
+            android:background="@color/separator" />
+    </LinearLayout>
+</LinearLayout>

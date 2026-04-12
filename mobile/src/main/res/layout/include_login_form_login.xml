@@ -1,0 +1,183 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:background="@color/background_base">
+
+    <LinearLayout
+        style="@style/LoginContentWidth"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginLeft="@dimen/login_form_margin_horizontal"
+        android:layout_marginTop="?attr/actionBarSize"
+        android:layout_marginRight="@dimen/login_form_margin_horizontal"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:paddingTop="@dimen/activity_margin_triple"
+        android:paddingBottom="@dimen/footer_bottom_padding">
+
+        <com.github.leandroborgesferreira.loadingbutton.customViews.CircularProgressButton
+            android:id="@+id/loginGoogleBtn"
+            style="@style/Button"
+            android:layout_height="42dp"
+            android:background="@color/white_base"
+            android:drawableLeft="@drawable/googleg_standard_color_18"
+            android:text="@string/login_google"
+            app:spinning_bar_color="@color/background_base"
+            app:spinning_bar_padding="8dp" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/activity_margin_double"
+            android:layout_marginBottom="@dimen/margin_20"
+            android:alpha="0.9"
+            android:gravity="center"
+            android:orientation="horizontal">
+
+            <View
+                android:layout_width="20dp"
+                android:layout_height="1dp"
+                android:background="@color/main_accent" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/activity_margin_half"
+                android:layout_marginRight="@dimen/activity_margin_half"
+                android:text="or"
+                android:textAllCaps="true"
+                android:textColor="@color/main_accent" />
+
+            <View
+                android:layout_width="20dp"
+                android:layout_height="1dp"
+                android:background="@color/main_accent" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:layout_width="52dp"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_user"
+                app:tint="@color/main_accent" />
+
+            <View
+                android:layout_width="1dp"
+                android:layout_height="match_parent"
+                android:layout_marginTop="5dp"
+                android:background="@color/main_accent" />
+
+            <EditText
+                android:id="@+id/loginEmail"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="3dp"
+                android:background="@android:color/transparent"
+                android:hint="@string/login_email"
+                android:imeOptions="actionNext"
+                android:inputType="textEmailAddress"
+                android:maxLines="1"
+                android:paddingLeft="@dimen/activity_margin"
+                android:paddingTop="@dimen/activity_margin"
+                android:paddingBottom="@dimen/activity_margin"
+                android:textColor="@color/main_accent"
+                android:textColorHint="@color/main_accent_faded_2"
+                android:textStyle="bold" />
+        </LinearLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/main_accent" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:layout_width="52dp"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_password"
+                app:tint="@color/main_accent" />
+
+            <View
+                android:layout_width="1dp"
+                android:layout_height="match_parent"
+                android:background="@color/main_accent" />
+
+            <EditText
+                android:id="@+id/loginPassword"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="3dp"
+                android:background="@android:color/transparent"
+                android:hint="@string/login_password"
+                android:imeOptions="actionDone"
+                android:inputType="textPassword"
+                android:maxLines="1"
+                android:paddingLeft="@dimen/activity_margin"
+                android:paddingTop="@dimen/activity_margin"
+                android:paddingBottom="@dimen/activity_margin"
+                android:textColor="@color/main_accent"
+                android:textColorHint="@color/main_accent_faded_2"
+                android:textStyle="bold" />
+        </LinearLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/main_accent" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="12dp"
+                android:layout_marginRight="@dimen/activity_margin"
+                android:src="@drawable/ic_password"
+                android:visibility="invisible" />
+
+            <View
+                android:layout_width="1dp"
+                android:layout_height="16dp"
+                android:background="@color/main_accent" />
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/resetPasswordBtn"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="-12dp"
+            android:clickable="true"
+            android:gravity="right"
+            android:paddingTop="@dimen/activity_margin_half"
+            android:paddingBottom="@dimen/activity_margin_half"
+            android:text="@string/login_reset_password"
+            android:textColor="@color/main_accent" />
+
+        <!-- Set background for this view because it applies resizing for the normal BG, breaking stuff elsewhere -->
+        <com.github.leandroborgesferreira.loadingbutton.customViews.CircularProgressButton
+            android:id="@+id/loginBtn"
+            style="@style/Button"
+            android:layout_height="42dp"
+            android:layout_marginTop="30dp"
+            android:background="@color/main_accent"
+            android:text="@string/login_sign_in"
+            app:spinning_bar_color="@color/background_base"
+            app:spinning_bar_padding="8dp" />
+    </LinearLayout>
+</androidx.core.widget.NestedScrollView>

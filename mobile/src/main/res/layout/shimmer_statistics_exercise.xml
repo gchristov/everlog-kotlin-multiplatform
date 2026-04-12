@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.facebook.shimmer.ShimmerFrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/shimmerView"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    app:shimmer_clip_to_children="true"
+    tools:shimmer_base_alpha="1">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:clipChildren="false"
+        android:clipToPadding="false"
+        android:orientation="vertical"
+        android:paddingLeft="@dimen/activity_margin_actual"
+        android:paddingTop="64dp"
+        android:paddingRight="@dimen/activity_margin_actual"
+        tools:background="@color/background_base">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:clipChildren="false"
+            android:orientation="horizontal">
+
+            <com.everlog.ui.views.summarycard.SummaryCardStatistics
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="@dimen/margin_26"
+                android:layout_weight="1" />
+
+            <com.everlog.ui.views.summarycard.SummaryCardStatistics
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/margin_26"
+            android:clipChildren="false"
+            android:orientation="horizontal">
+
+            <com.everlog.ui.views.summarycard.SummaryCardStatistics
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="@dimen/margin_26"
+                android:layout_weight="1" />
+
+            <com.everlog.ui.views.summarycard.SummaryCardStatistics
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1" />
+        </LinearLayout>
+
+        <androidx.cardview.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/statistics_chart_height"
+            android:layout_marginTop="@dimen/margin_26"
+            app:cardBackgroundColor="@color/background_card"
+            app:cardCornerRadius="@dimen/card_radius_default"
+            app:cardElevation="@dimen/card_elevation_default" />
+    </LinearLayout>
+</com.facebook.shimmer.ShimmerFrameLayout>

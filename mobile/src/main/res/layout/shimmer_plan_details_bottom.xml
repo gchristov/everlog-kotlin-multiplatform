@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.facebook.shimmer.ShimmerFrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/bottomShimmerContainer"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_alignParentBottom="true"
+    app:shimmer_clip_to_children="true"
+    tools:background="@color/background_base"
+    tools:shimmer_base_alpha="1">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true">
+
+        <com.github.mmin18.widget.RealtimeBlurView
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:realtimeBlurRadius="20dp"
+            app:realtimeOverlayColor="@color/background_blur" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:minHeight="80dp"
+            android:orientation="vertical"
+            android:paddingBottom="@dimen/margin_20"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <ru.tinkoff.scrollingpagerindicator.ScrollingPagerIndicator
+                android:id="@+id/indicator"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/margin_20"
+                android:visibility="gone"
+                app:spi_dotColor="@color/pager_inactive"
+                app:spi_dotSelectedColor="@color/pager_active"
+                app:spi_dotSelectedSize="@dimen/activity_margin_half"
+                app:spi_dotSize="@dimen/activity_margin_half"
+                app:spi_dotSpacing="@dimen/margin_12"
+                app:spi_visibleDotCount="7"
+                tools:visibility="visible" />
+
+            <Button
+                android:id="@+id/toggleStartBtn"
+                style="@style/Button"
+                android:layout_width="wrap_content"
+                android:layout_marginTop="@dimen/margin_20"
+                android:text="@string/plan_details_start"
+                android:visibility="gone"
+                tools:visibility="visible" />
+        </LinearLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</com.facebook.shimmer.ShimmerFrameLayout>

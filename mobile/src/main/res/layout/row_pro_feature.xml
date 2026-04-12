@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/background_base"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="0.2"
+            android:background="@color/background_card"
+            android:gravity="center"
+            android:padding="@dimen/margin_14">
+
+            <ImageView
+                android:id="@+id/freeCheck"
+                android:layout_width="26dp"
+                android:layout_height="26dp"
+                android:src="@drawable/ic_check_green"
+                android:tint="@color/white_base"/>
+
+            <TextView
+                android:id="@+id/noticeLbl"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/background_card"
+                android:gravity="center"
+                android:textColor="@color/white_base"
+                android:textSize="11sp"
+                android:visibility="gone"
+                tools:text="Test notice"/>
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/descriptionLbl"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="1dp"
+            android:layout_marginRight="1dp"
+            android:layout_weight="0.6"
+            android:background="@color/background_card"
+            android:fontFamily="sans-serif-medium"
+            android:gravity="center"
+            android:padding="@dimen/margin_12"
+            android:textColor="@color/white_base"
+            android:textSize="14sp"
+            tools:text="Some benefits go here"/>
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="0.2"
+            android:background="@color/background_card"
+            android:gravity="center"
+            android:padding="@dimen/margin_14">
+
+            <ImageView
+                android:id="@+id/proCheck"
+                android:layout_width="26dp"
+                android:layout_height="26dp"
+                android:src="@drawable/ic_check_green"
+                android:tint="@color/main_accent"/>
+        </LinearLayout>
+    </LinearLayout>
+</LinearLayout>

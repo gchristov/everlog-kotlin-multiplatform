@@ -1,0 +1,8 @@
+<b>Happy New Year</b> and welcome to our first 2021 release!
+
+We've brought you cool new updates and features which we think you'll love.
+• A polished and slick new UI
+• A streamlined calendar and log of your workout history
+• Exercise summaries, automatically shown after each workout
+
+Additionally, we improved loading times throughout the app and made a few internal tweaks.

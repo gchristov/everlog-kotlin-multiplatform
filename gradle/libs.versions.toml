@@ -1,0 +1,152 @@
+[versions]
+agp = "8.13.2"
+kotlin = "2.1.10"
+ksp = "2.1.10-1.0.30"
+googleServices = "4.4.4"
+firebaseCrashlyticsPlugin = "3.0.6"
+firebasePerfPlugin = "2.0.2"
+
+# Libraries
+junit = "4.13.2"
+androidxTestRunner = "1.7.0"
+espresso = "3.7.0"
+androidxTestExtJunit = "1.2.1"
+androidxTestRules = "1.6.1"
+hamcrest = "3.0"
+truth = "1.4.4"
+firebaseBom = "34.11.0"
+playServicesAuth = "21.5.1"
+playServicesFitness = "21.3.0"
+appcompat = "1.7.1"
+material = "1.13.0"
+constraintlayout = "2.2.1"
+cardview = "1.0.0"
+billing = "8.3.0"
+glide = "4.16.0"
+rxandroid = "1.2.1"
+rxjava = "1.3.8"
+rxbinding = "1.0.1"
+shimmer = "0.5.0"
+retrofit = "2.11.0"
+okhttp = "4.12.0"
+desugarJdkLibs = "2.1.5"
+calendarView = "1.0.4"
+commonsLang3 = "3.20.0"
+dateTimeUtils = "3.0"
+loadingButton = "2.3.0"
+mpAndroidChart = "3.1.0"
+nineOldAndroids = "2.4.0"
+roundedImageView = "2.3.0"
+threeTenAbp = "1.4.9"
+materialNumberPicker = "1.1.0"
+tapTargetView = "1.15.0"
+maskableLayout = "1.3.2"
+circularProgressView = "0.1.2"
+eventbus = "3.3.1"
+simpleRatingBar = "1.5.1"
+timber = "5.0.1"
+hyperlog = "0.0.10"
+volley = "1.2.1"
+konfetti = "1.3.2"
+collapsingToolbarSubtitle = "1.5.0"
+aspect = "1.3"
+scrollingPagerIndicator = "1.2.5"
+flexbox = "3.0.0"
+dexter = "6.2.3"
+textInlineImage = "1.0.2"
+rotateLayout = "3.0.0"
+customerly = "3.1.1"
+shapeOfView = "1.4.7"
+ucrop = "2.2.8"
+bottomSheet = "1.5.0"
+blurView = "1.2.1"
+achievementView = "0.1.3"
+textDrawable = "1.0.1"
+core-splashscreen = "1.2.0"
+
+[libraries]
+junit = { group = "junit", name = "junit", version.ref = "junit" }
+kotlin-test-junit = { group = "org.jetbrains.kotlin", name = "kotlin-test-junit", version.ref = "kotlin" }
+androidx-test-runner = { group = "androidx.test", name = "runner", version.ref = "androidxTestRunner" }
+androidx-test-ext-junit = { group = "androidx.test.ext", name = "junit", version.ref = "androidxTestExtJunit" }
+androidx-test-rules = { group = "androidx.test", name = "rules", version.ref = "androidxTestRules" }
+espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espresso" }
+hamcrest = { group = "org.hamcrest", name = "hamcrest", version.ref = "hamcrest" }
+truth = { group = "com.google.truth", name = "truth", version.ref = "truth" }
+
+firebase-bom = { group = "com.google.firebase", name = "firebase-bom", version.ref = "firebaseBom" }
+firebase-analytics = { group = "com.google.firebase", name = "firebase-analytics" }
+firebase-firestore = { group = "com.google.firebase", name = "firebase-firestore" }
+firebase-auth = { group = "com.google.firebase", name = "firebase-auth" }
+firebase-perf = { group = "com.google.firebase", name = "firebase-perf" }
+firebase-inappmessaging-display = { group = "com.google.firebase", name = "firebase-inappmessaging-display" }
+firebase-messaging = { group = "com.google.firebase", name = "firebase-messaging" }
+firebase-config = { group = "com.google.firebase", name = "firebase-config" }
+firebase-storage = { group = "com.google.firebase", name = "firebase-storage" }
+firebase-crashlytics = { group = "com.google.firebase", name = "firebase-crashlytics" }
+
+play-services-auth = { group = "com.google.android.gms", name = "play-services-auth", version.ref = "playServicesAuth" }
+play-services-fitness = { group = "com.google.android.gms", name = "play-services-fitness", version.ref = "playServicesFitness" }
+androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
+material = { group = "com.google.android.material", name = "material", version.ref = "material" }
+androidx-constraintlayout = { group = "androidx.constraintlayout", name = "constraintlayout", version.ref = "constraintlayout" }
+androidx-cardview = { group = "androidx.cardview", name = "cardview", version.ref = "cardview" }
+billing = { group = "com.android.billingclient", name = "billing", version.ref = "billing" }
+androidx-core-splashscreen = { group = "androidx.core", name = "core-splashscreen", version.ref = "core-splashscreen" }
+
+glide = { group = "com.github.bumptech.glide", name = "glide", version.ref = "glide" }
+
+rxandroid = { group = "io.reactivex", name = "rxandroid", version.ref = "rxandroid" }
+rxjava = { group = "io.reactivex", name = "rxjava", version.ref = "rxjava" }
+rxbinding = { group = "com.jakewharton.rxbinding", name = "rxbinding", version.ref = "rxbinding" }
+kotlin-stdlib = { group = "org.jetbrains.kotlin", name = "kotlin-stdlib", version.ref = "kotlin" }
+
+shimmer = { group = "com.facebook.shimmer", name = "shimmer", version.ref = "shimmer" }
+
+retrofit = { group = "com.squareup.retrofit2", name = "retrofit", version.ref = "retrofit" }
+retrofit-gson = { group = "com.squareup.retrofit2", name = "converter-gson", version.ref = "retrofit" }
+retrofit-rxjava = { group = "com.squareup.retrofit2", name = "adapter-rxjava", version.ref = "retrofit" }
+okhttp-logging = { group = "com.squareup.okhttp3", name = "logging-interceptor", version.ref = "okhttp" }
+
+desugar-jdk-libs = { group = "com.android.tools", name = "desugar_jdk_libs", version.ref = "desugarJdkLibs" }
+calendarview = { group = "com.github.kizitonwose", name = "CalendarView", version.ref = "calendarView" }
+
+commons-lang3 = { group = "org.apache.commons", name = "commons-lang3", version.ref = "commonsLang3" }
+datetimeutils = { group = "com.github.thunder413", name = "DateTimeUtils", version.ref = "dateTimeUtils" }
+loading-button = { group = "com.github.leandroborgesferreira", name = "loading-button-android", version.ref = "loadingButton" }
+mpandroidchart = { group = "com.github.PhilJay", name = "MPAndroidChart", version.ref = "mpAndroidChart" }
+nineoldandroids = { group = "com.nineoldandroids", name = "library", version.ref = "nineOldAndroids" }
+roundedimageview = { group = "com.makeramen", name = "roundedimageview", version.ref = "roundedImageView" }
+threetenabp = { group = "com.jakewharton.threetenabp", name = "threetenabp", version.ref = "threeTenAbp" }
+materialnumberpicker = { group = "com.github.StephenVinouze", name = "MaterialNumberPicker", version.ref = "materialNumberPicker" }
+taptargetview = { group = "com.getkeepsafe.taptargetview", name = "taptargetview", version.ref = "tapTargetView" }
+maskable-layout = { group = "com.github.christophesmet", name = "android_maskable_layout", version.ref = "maskableLayout" }
+circular-progress-view = { group = "com.github.VaibhavLakhera", name = "Circular-Progress-View", version.ref = "circularProgressView" }
+eventbus = { group = "org.greenrobot", name = "eventbus", version.ref = "eventbus" }
+simpleratingbar = { group = "com.github.ome450901", name = "SimpleRatingBar", version.ref = "simpleRatingBar" }
+timber = { group = "com.jakewharton.timber", name = "timber", version.ref = "timber" }
+hyperlog = { group = "com.github.hypertrack", name = "hyperlog-android", version.ref = "hyperlog" }
+volley = { group = "com.android.volley", name = "volley", version.ref = "volley" }
+konfetti = { group = "nl.dionsegijn", name = "konfetti", version.ref = "konfetti" }
+collapsingtoolbar-subtitle = { group = "com.hendraanggrian.material", name = "collapsingtoolbarlayout-subtitle", version.ref = "collapsingToolbarSubtitle" }
+aspect = { group = "com.subinkrishna", name = "aspect", version.ref = "aspect" }
+scrollingpagerindicator = { group = "ru.tinkoff.scrollingpagerindicator", name = "scrollingpagerindicator", version.ref = "scrollingPagerIndicator" }
+flexbox = { group = "com.google.android.flexbox", name = "flexbox", version.ref = "flexbox" }
+dexter = { group = "com.karumi", name = "dexter", version.ref = "dexter" }
+textinlineimage = { group = "com.github.princ-bhardwaj", name = "TextInlineImage-Library", version.ref = "textInlineImage" }
+rotate-layout = { group = "com.github.rongi", name = "rotate-layout", version.ref = "rotateLayout" }
+customerly = { group = "io.customerly", name = "customerly-android-sdk", version.ref = "customerly" }
+shapeOfView = { group = "io.github.florent37", name = "shapeofview", version.ref = "shapeOfView" }
+ucrop = { group = "com.github.yalantis", name = "ucrop", version.ref = "ucrop" }
+bottomSheet = { group = "com.cocosw", name = "bottomsheet", version.ref = "bottomSheet" }
+blurView = { group = "com.github.mmin18", name = "realtimeblurview", version.ref = "blurView" }
+achievementView = { group = "com.github.RafaelBarbosatec", name = "AchievementView", version.ref = "achievementView" }
+textDrawable = { group = "com.amulyakhare", name = "com.amulyakhare.textdrawable", version.ref = "textDrawable" }
+
+[plugins]
+android-application = { id = "com.android.application", version.ref = "agp" }
+kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
+ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
+google-services = { id = "com.google.gms.google-services", version.ref = "googleServices" }
+firebase-crashlytics = { id = "com.google.firebase.crashlytics", version.ref = "firebaseCrashlyticsPlugin" }
+firebase-perf = { id = "com.google.firebase.firebase-perf", version.ref = "firebasePerfPlugin" }

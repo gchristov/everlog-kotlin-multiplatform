@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/calendarDayContainer"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:clickable="true"
+    android:clipChildren="false"
+    android:clipToPadding="false"
+    android:foreground="?attr/selectableItemBackgroundBorderless"
+    android:padding="3dp"
+    tools:background="@color/background_base"
+    tools:layout_height="50dp"
+    tools:layout_width="50dp">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@drawable/rectangle_calendar_day"
+        android:clipChildren="false"
+        android:clipToPadding="false">
+
+        <View
+            android:id="@+id/calendarDayToday"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@drawable/circle_border_accent_thick"
+            android:scaleX="1.25"
+            android:scaleY="1.25"
+            android:visibility="gone"
+            tools:visibility="gone" />
+
+        <View
+            android:id="@+id/calendarDayEvent"
+            android:layout_width="10dp"
+            android:layout_height="10dp"
+            android:layout_margin="@dimen/margin_6"
+            android:background="@color/main_accent"
+            android:visibility="gone"
+            tools:visibility="visible" />
+
+        <View
+            android:id="@+id/calendarDaySelected"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@drawable/circle_accent"
+            android:scaleX="1.25"
+            android:scaleY="1.25"
+            android:visibility="gone"
+            tools:visibility="gone" />
+
+        <TextView
+            android:id="@+id/calendarDayMonthText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="4dp"
+            android:layout_marginTop="1dp"
+            android:textAllCaps="true"
+            android:textColor="@color/background_card"
+            android:textSize="15sp"
+            android:textStyle="bold"
+            android:visibility="gone"
+            tools:text="oct"
+            tools:visibility="gone" />
+
+        <TextView
+            android:id="@+id/calendarDayText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentBottom="true"
+            android:layout_marginRight="4dp"
+            android:layout_marginBottom="1dp"
+            android:textColor="@color/white_base"
+            android:textSize="16sp"
+            tools:text="22" />
+    </RelativeLayout>
+</LinearLayout>

@@ -1,0 +1,204 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/background_base"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:id="@+id/contactUsBtn"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="?android:attr/selectableItemBackground"
+        android:clickable="true"
+        android:gravity="center"
+        android:orientation="horizontal"
+        android:paddingLeft="@dimen/settings_card_content_margin_left"
+        android:paddingTop="@dimen/margin_12"
+        android:paddingRight="@dimen/settings_row_padding_right"
+        android:paddingBottom="@dimen/margin_12"
+        android:visibility="visible">
+
+        <ImageView
+            style="@style/SettingsIcon"
+            android:padding="2dp"
+            android:src="@drawable/ic_chat" />
+
+        <TextView
+            style="@style/SettingsTitle"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/settings_contact_us" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/reportProblemBtn"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="?android:attr/selectableItemBackground"
+        android:clickable="true"
+        android:gravity="center"
+        android:orientation="horizontal"
+        android:paddingLeft="@dimen/settings_card_content_margin_left"
+        android:paddingTop="@dimen/margin_12"
+        android:paddingRight="@dimen/settings_row_padding_right"
+        android:paddingBottom="@dimen/margin_12"
+        android:visibility="visible">
+
+        <ImageView
+            style="@style/SettingsIcon"
+            android:src="@drawable/ic_report_problem" />
+
+        <TextView
+            style="@style/SettingsTitle"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/settings_report_problem" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/playStoreBtn"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="?android:attr/selectableItemBackground"
+        android:clickable="true"
+        android:gravity="center"
+        android:orientation="horizontal"
+        android:paddingLeft="@dimen/settings_card_content_margin_left"
+        android:paddingTop="@dimen/margin_12"
+        android:paddingRight="@dimen/settings_row_padding_right"
+        android:paddingBottom="@dimen/margin_12">
+
+        <ImageView
+            style="@style/SettingsIcon"
+            android:src="@drawable/ic_star_filled" />
+
+        <TextView
+            style="@style/SettingsTitle"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/settings_play_store_prompt" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/facebookBtn"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="?android:attr/selectableItemBackground"
+        android:clickable="true"
+        android:gravity="center"
+        android:orientation="horizontal"
+        android:paddingLeft="@dimen/settings_card_content_margin_left"
+        android:paddingTop="@dimen/margin_12"
+        android:paddingRight="@dimen/settings_row_padding_right"
+        android:paddingBottom="@dimen/margin_12">
+
+        <ImageView
+            style="@style/SettingsIcon"
+            android:padding="@dimen/activity_margin_half_half"
+            android:src="@drawable/ic_facebook" />
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/settings_facebook_prompt"
+            android:textColor="@color/white_base"
+            android:textSize="@dimen/settings_row_text_size" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/twitterBtn"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="?android:attr/selectableItemBackground"
+        android:clickable="true"
+        android:gravity="center"
+        android:orientation="horizontal"
+        android:paddingLeft="@dimen/settings_card_content_margin_left"
+        android:paddingTop="@dimen/margin_12"
+        android:paddingRight="@dimen/settings_row_padding_right"
+        android:paddingBottom="@dimen/margin_12">
+
+        <ImageView
+            style="@style/SettingsIcon"
+            android:padding="@dimen/activity_margin_half_half"
+            android:src="@drawable/ic_twitter" />
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/settings_twitter_prompt"
+            android:textColor="@color/white_base"
+            android:textSize="@dimen/settings_row_text_size" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/shareBtn"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="?android:attr/selectableItemBackground"
+        android:clickable="true"
+        android:gravity="center"
+        android:orientation="horizontal"
+        android:paddingLeft="@dimen/settings_card_content_margin_left"
+        android:paddingTop="@dimen/margin_12"
+        android:paddingRight="@dimen/settings_row_padding_right"
+        android:paddingBottom="@dimen/margin_12">
+
+        <ImageView
+            style="@style/SettingsIcon"
+            android:padding="@dimen/activity_margin_half_half_half"
+            android:src="@drawable/ic_share" />
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/settings_share"
+            android:textColor="@color/white_base"
+            android:textSize="@dimen/settings_row_text_size" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/logoutBtn"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="?android:attr/selectableItemBackground"
+        android:clickable="true"
+        android:gravity="center"
+        android:orientation="horizontal"
+        android:paddingLeft="@dimen/settings_card_content_margin_left"
+        android:paddingTop="@dimen/margin_12"
+        android:paddingRight="@dimen/settings_row_padding_right"
+        android:paddingBottom="@dimen/margin_12">
+
+        <ImageView
+            style="@style/SettingsIcon"
+            android:padding="@dimen/activity_margin_half_half"
+            android:src="@drawable/ic_logout" />
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/settings_logout"
+            android:textColor="@color/white_base"
+            android:textSize="@dimen/settings_row_text_size" />
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/versionLbl"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginTop="@dimen/activity_margin_double"
+        android:textColor="@color/gray_1"
+        android:textSize="12sp"
+        tools:text="Everlog 1.0.0 (100)" />
+</LinearLayout>

@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/background_base"
+    android:orientation="vertical">
+
+    <include
+        android:id="@+id/appBar"
+        layout="@layout/toolbar_transparent" />
+
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:clipChildren="false"
+            android:clipToPadding="false"
+            android:orientation="vertical"
+            android:paddingLeft="@dimen/activity_margin_actual"
+            android:paddingTop="@dimen/activity_margin_actual"
+            android:paddingRight="@dimen/activity_margin_actual"
+            android:paddingBottom="@dimen/footer_bottom_padding">
+
+            <androidx.cardview.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/activity_margin_actual"
+                android:focusable="true"
+                android:focusableInTouchMode="true"
+                app:cardBackgroundColor="@color/background_card"
+                app:cardCornerRadius="@dimen/card_radius_default"
+                app:cardElevation="@dimen/card_elevation_default">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:padding="@dimen/activity_margin">
+
+                    <ImageView
+                        style="@style/SettingsIcon"
+                        android:layout_marginRight="@dimen/activity_margin"
+                        android:src="@drawable/ic_target" />
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:id="@+id/titleLbl"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="@string/muscle_goal_benefits"
+                            android:textColor="@color/white_base"
+                            android:textSize="16sp"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="@dimen/activity_margin_half_half"
+                            android:text="@string/muscle_goal_prompt"
+                            android:textColor="@color/gray_5"
+                            android:textSize="15sp" />
+                    </LinearLayout>
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
+
+            <androidx.cardview.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:cardBackgroundColor="@color/background_card"
+                app:cardCornerRadius="@dimen/card_radius_default"
+                app:cardElevation="@dimen/card_elevation_default">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                    <TextView
+                        style="@style/SettingsCategory"
+                        android:layout_marginTop="@dimen/settings_category_title_margin_vertical"
+                        android:layout_marginBottom="5dp"
+                        android:paddingLeft="@dimen/settings_card_content_margin_left"
+                        android:text="Your Goal" />
+
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/recyclerView"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:focusable="false"
+                        android:focusableInTouchMode="false"
+                        android:nestedScrollingEnabled="false"
+                        tools:itemCount="3"
+                        tools:listitem="@layout/row_settings_muscle_goal" />
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/activity_margin_half"
+                android:text="@string/muscle_goal_1rm"
+                android:textColor="@color/gray_3"
+                android:textSize="12sp" />
+
+            <com.everlog.ui.views.FooterView
+                android:id="@+id/footerView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:fvLink="@string/exercises_footer_link"
+                app:fvTitle="@string/muscle_goal_footer" />
+        </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
+
+    <com.everlog.ui.views.notification.warning.WarningNotificationView
+        android:id="@+id/proUpgradePrompt"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        tools:visibility="visible" />
+</LinearLayout>

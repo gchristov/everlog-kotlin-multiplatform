@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    tools:background="@color/background_base">
+
+    <TextView
+        android:id="@android:id/text1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="sans-serif-medium"
+        android:textColor="@color/white_darker"
+        android:textSize="18sp"
+        tools:background="@drawable/rounded_corners_home_tab"
+        tools:text="Title" />
+
+    <com.everlog.ui.views.badge.NewBadge
+        android:id="@+id/badge"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@android:id/text1"
+        android:layout_marginLeft="-30dp"
+        android:layout_toRightOf="@android:id/text1"
+        android:visibility="gone"
+        tools:visibility="visible" />
+</RelativeLayout>

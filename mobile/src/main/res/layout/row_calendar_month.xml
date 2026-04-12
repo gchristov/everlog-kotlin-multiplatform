@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:paddingBottom="@dimen/activity_margin_half"
+    tools:background="@color/background_base">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/margin_24"
+        android:layout_marginRight="@dimen/margin_24"
+        android:gravity="center"
+        android:minHeight="80dp"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/calendarMonthText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="@dimen/activity_margin_actual"
+            android:textColor="@color/white_darker"
+            android:textSize="20sp"
+            tools:text="November 2020" />
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="1dp"
+            android:layout_weight="1"
+            android:background="@color/separator" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/calendarDaysOfWeek"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal" />
+</LinearLayout>

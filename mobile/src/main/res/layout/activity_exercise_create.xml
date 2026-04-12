@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/background_base">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <include
+            android:id="@+id/includeToolbar"
+            layout="@layout/toolbar_transparent_save" />
+
+        <androidx.core.widget.NestedScrollView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:clipChildren="false"
+                android:clipToPadding="false"
+                android:orientation="vertical"
+                android:padding="@dimen/activity_margin_actual">
+
+                <androidx.cardview.widget.CardView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:cardBackgroundColor="@color/background_card"
+                    app:cardCornerRadius="@dimen/card_radius_default"
+                    app:cardElevation="@dimen/card_elevation_default">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical">
+
+                        <RelativeLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:clickable="true"
+                            android:foreground="?attr/selectableItemBackground">
+
+                            <com.everlog.ui.views.ExerciseImageView
+                                android:id="@+id/exerciseImg"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:background="@color/gray_4"
+                                app:eivClickable="false"
+                                app:eivShowLetter="false"
+                                app:eivSquareWidth="true" />
+
+                            <ImageView
+                                android:id="@+id/photoPrompt"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_centerInParent="true"
+                                android:scaleX="2.5"
+                                android:scaleY="2.5"
+                                android:src="@drawable/ic_add_photo"
+                                app:tint="@color/gray_1" />
+                        </RelativeLayout>
+
+                        <EditText
+                            android:id="@+id/exerciseName"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:background="@null"
+                            android:fontFamily="sans-serif-medium"
+                            android:hint="@string/create_exercise_name"
+                            android:imeOptions="actionDone"
+                            android:inputType="textCapWords|textNoSuggestions"
+                            android:maxLines="1"
+                            android:paddingLeft="@dimen/activity_margin"
+                            android:paddingTop="@dimen/margin_20"
+                            android:paddingRight="@dimen/activity_margin"
+                            android:paddingBottom="@dimen/margin_20"
+                            android:textColor="@color/white_base"
+                            android:textColorHint="@color/gray_3"
+                            android:textSize="22sp" />
+
+                        <View
+                            android:layout_width="match_parent"
+                            android:layout_height="1dp"
+                            android:background="@color/separator" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginLeft="@dimen/activity_margin"
+                            android:layout_marginTop="@dimen/activity_margin"
+                            android:fontFamily="sans-serif-medium"
+                            android:text="@string/create_exercise_category"
+                            android:textColor="@color/gray_1"
+                            android:textSize="14sp" />
+
+                        <Spinner
+                            android:id="@+id/categorySpinner"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginLeft="@dimen/activity_margin_half"
+                            android:layout_marginBottom="@dimen/activity_margin_half_half"
+                            android:entries="@array/exercise_category_titles_with_none"
+                            android:paddingTop="@dimen/activity_margin"
+                            android:paddingBottom="@dimen/activity_margin"
+                            android:prompt="@array/exercise_category_titles" />
+                    </LinearLayout>
+                </androidx.cardview.widget.CardView>
+            </LinearLayout>
+        </androidx.core.widget.NestedScrollView>
+    </LinearLayout>
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

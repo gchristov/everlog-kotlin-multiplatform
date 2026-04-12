@@ -1,0 +1,5 @@
+<b>** New - superset exercises are now completed at the same time, rather than one by one **</b>
+
+The "complete" button of each superset now marks all linked exercises for that set as complete, starting your rest timer at the appropriate time.
+
+Got further thoughts? Feel free to email us at <u>support@everlogapp.com</u>. Thanks for using Everlog!

@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    tools:background="@color/background_base">
+
+    <include
+        layout="@layout/include_timeline"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:paddingBottom="@dimen/margin_20">
+
+        <TextView
+            android:id="@+id/routineName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/activity_margin_half_half"
+            android:background="@color/background_base"
+            android:fontFamily="sans-serif-medium"
+            android:minWidth="240dp"
+            android:minHeight="20dp"
+            android:textColor="@color/white_base"
+            android:textSize="20sp"
+            tools:text="Routine Name" />
+
+        <TextView
+            android:id="@+id/exerciseSummary"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/activity_margin_half_half"
+            android:background="@color/background_base"
+            android:minWidth="100dp"
+            android:minHeight="20dp"
+            android:textColor="@color/gray_2"
+            android:textSize="15sp"
+            tools:text="123 kg • 23 reps" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recyclerView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/activity_margin"
+            android:focusable="false"
+            android:focusableInTouchMode="false"
+            android:nestedScrollingEnabled="false"
+            tools:itemCount="2"
+            tools:listitem="@layout/row_set_summary" />
+    </LinearLayout>
+</LinearLayout>

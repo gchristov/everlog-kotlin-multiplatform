@@ -1,0 +1,206 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:clipChildren="false"
+    android:orientation="vertical"
+    android:paddingLeft="@dimen/exercise_group_create_side_spacing"
+    android:paddingTop="@dimen/activity_margin"
+    android:paddingRight="@dimen/exercise_group_create_side_spacing"
+    android:paddingBottom="@dimen/activity_margin"
+    tools:background="@color/background_base">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:divider="@drawable/separator_line"
+        android:orientation="vertical"
+        android:showDividers="middle">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/activity_margin_half_half"
+            android:gravity="center"
+            android:orientation="horizontal"
+            android:paddingTop="@dimen/settings_row_padding_top"
+            android:paddingBottom="@dimen/settings_row_padding_bottom">
+
+            <com.everlog.ui.views.summarycard.SummaryCardStatistics
+                android:id="@+id/totalTimeSummary"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                app:scsLayout="@layout/view_summary_card_workout_details" />
+
+            <View
+                android:layout_width="1dp"
+                android:layout_height="34dp"
+                android:background="@drawable/separator_line" />
+
+            <com.everlog.ui.views.summarycard.SummaryCardStatistics
+                android:id="@+id/totalWeightSummary"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                app:scsLayout="@layout/view_summary_card_workout_details" />
+
+            <com.everlog.ui.views.summarycard.SummaryCardStatistics
+                android:id="@+id/exercisesSummary"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                app:scsLayout="@layout/view_summary_card_workout_details" />
+
+            <View
+                android:id="@+id/maxWeightSeparator"
+                android:layout_width="1dp"
+                android:layout_height="34dp"
+                android:background="@drawable/separator_line" />
+
+            <com.everlog.ui.views.summarycard.SummaryCardStatistics
+                android:id="@+id/maxWeightSummary"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                app:scsLayout="@layout/view_summary_card_workout_details" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/nameBtn"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:clickable="true"
+            android:foreground="?android:attr/selectableItemBackground"
+            android:gravity="center"
+            android:orientation="horizontal"
+            android:paddingTop="@dimen/settings_row_padding_top"
+            android:paddingBottom="@dimen/settings_row_padding_bottom">
+
+            <TextView
+                style="@style/SettingsTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/name" />
+
+            <TextView
+                android:id="@+id/workoutName"
+                style="@style/SettingsValue"
+                android:layout_width="0dp"
+                android:layout_marginLeft="@dimen/activity_margin"
+                android:layout_marginRight="@dimen/activity_margin_half"
+                android:layout_weight="1"
+                android:gravity="right"
+                android:text="--" />
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:scaleX="0.8"
+                android:scaleY="0.8"
+                android:src="@drawable/ic_edit_white"
+                android:tint="@color/main_accent" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/dateBtn"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:clickable="true"
+            android:foreground="?android:attr/selectableItemBackground"
+            android:gravity="center"
+            android:orientation="horizontal"
+            android:paddingTop="@dimen/settings_row_padding_top"
+            android:paddingBottom="@dimen/settings_row_padding_bottom">
+
+            <TextView
+                style="@style/SettingsTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/date" />
+
+            <TextView
+                android:id="@+id/dateLbl"
+                style="@style/SettingsValue"
+                android:layout_width="0dp"
+                android:layout_marginLeft="@dimen/activity_margin"
+                android:layout_marginRight="@dimen/activity_margin_half"
+                android:layout_weight="1"
+                android:gravity="right"
+                android:text="--" />
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:scaleX="0.8"
+                android:scaleY="0.8"
+                android:src="@drawable/ic_edit_white"
+                android:tint="@color/main_accent" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/notesBtn"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:clickable="true"
+            android:clipToPadding="false"
+            android:foreground="?android:attr/selectableItemBackground"
+            android:orientation="horizontal"
+            android:paddingTop="@dimen/settings_row_padding_top"
+            android:paddingBottom="@dimen/settings_row_padding_bottom">
+
+            <TextView
+                style="@style/SettingsTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/notes" />
+
+            <TextView
+                android:id="@+id/noteLbl"
+                style="@style/SettingsValue"
+                android:layout_width="0dp"
+                android:layout_marginLeft="@dimen/activity_margin_triple"
+                android:layout_marginRight="@dimen/activity_margin_half"
+                android:layout_weight="1"
+                android:gravity="right" />
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:scaleX="0.8"
+                android:scaleY="0.8"
+                android:src="@drawable/ic_edit_white"
+                android:tint="@color/main_accent" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/exercisesBtn"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:clickable="true"
+            android:foreground="?android:attr/selectableItemBackground"
+            android:gravity="center"
+            android:orientation="horizontal"
+            android:paddingTop="@dimen/settings_row_padding_top"
+            android:paddingBottom="@dimen/activity_margin">
+
+            <TextView
+                style="@style/SettingsTitle"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="@dimen/activity_margin_half"
+                android:layout_weight="1"
+                android:text="@string/workout_details_breakdown" />
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:scaleX="0.8"
+                android:scaleY="0.8"
+                android:src="@drawable/ic_edit_white"
+                android:tint="@color/main_accent" />
+        </LinearLayout>
+    </LinearLayout>
+</LinearLayout>

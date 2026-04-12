@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.coordinatorlayout.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/background_base">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:clipToPadding="false"
+        android:orientation="vertical"
+        android:padding="@dimen/activity_margin_double">
+
+        <ImageView
+            android:id="@+id/coverImage"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:alpha="0"
+            android:scaleType="fitCenter"
+            android:scaleX="1.15"
+            android:scaleY="1.15"
+            android:src="@drawable/congratulate"
+            tools:alpha="1"/>
+
+        <LinearLayout
+            android:id="@+id/contentPanel"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:alpha="0"
+            android:gravity="center"
+            android:orientation="vertical"
+            tools:alpha="1">
+
+            <TextView
+                android:id="@+id/titleLbl"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:textAllCaps="true"
+                android:textColor="@color/white_base"
+                android:textSize="22sp"
+                android:textStyle="bold"
+                tools:text="@string/pro_confirm_title"/>
+
+            <TextView
+                android:id="@+id/subtitleLbl"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/activity_margin"
+                android:layout_marginTop="@dimen/activity_margin"
+                android:layout_marginRight="@dimen/activity_margin"
+                android:gravity="center"
+                android:textColor="@color/gray_1"
+                android:textSize="16sp"
+                tools:text="@string/pro_confirm_subtitle"/>
+
+            <Button
+                android:id="@+id/closeBtn"
+                style="@style/Button"
+                android:layout_width="210dp"
+                android:layout_marginTop="@dimen/activity_margin_triple"
+                android:text="@string/pro_confirm_cta"/>
+        </LinearLayout>
+    </LinearLayout>
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

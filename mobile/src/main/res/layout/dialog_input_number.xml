@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/background_card"
+    android:minWidth="@dimen/dialog_min_width"
+    android:orientation="vertical"
+    android:paddingLeft="@dimen/margin_24"
+    android:paddingTop="@dimen/activity_margin_double"
+    android:paddingRight="@dimen/margin_24"
+    android:paddingBottom="@dimen/activity_margin_double">
+
+    <EditText
+        android:id="@+id/metricField"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@android:color/transparent"
+        android:gravity="center"
+        android:hint="0"
+        android:imeOptions="actionDone"
+        android:inputType="numberDecimal"
+        android:maxLength="7"
+        android:maxLines="1"
+        android:selectAllOnFocus="true"
+        android:textColor="@color/white_base"
+        android:textColorHint="@color/separator"
+        android:textSize="40sp"
+        android:textStyle="bold" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginTop="@dimen/activity_margin_half_half"
+        android:background="@color/separator" />
+</LinearLayout>

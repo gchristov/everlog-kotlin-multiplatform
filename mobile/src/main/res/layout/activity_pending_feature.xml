@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.coordinatorlayout.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/background_base">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:clipChildren="false"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:padding="@dimen/activity_margin">
+
+        <com.everlog.ui.views.EmptyView
+            android:id="@+id/emptyView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            app:evActionText="@string/pending_feature_action"
+            app:evImage="@drawable/ic_build"
+            app:evSubtitle="@string/pending_feature_subtitle"
+            app:evTitle="@string/pending_feature_title"/>
+    </LinearLayout>
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

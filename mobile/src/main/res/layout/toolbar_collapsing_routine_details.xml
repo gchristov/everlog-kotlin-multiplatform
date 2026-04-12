@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.appbar.AppBarLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/appBar"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:fitsSystemWindows="true"
+    android:focusable="true"
+    android:focusableInTouchMode="true"
+    android:theme="@style/AppTheme.AppBarOverlay">
+
+    <com.google.android.material.appbar.SubtitleCollapsingToolbarLayout
+        android:id="@+id/toolbar_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fitsSystemWindows="true"
+        app:collapsedSubtitleTextAppearance="@style/Toolbar.HomeSubtitle.Collapsed"
+        app:collapsedTitleTextAppearance="@style/Toolbar.HomeTitle.Collapsed"
+        app:expandedSubtitleTextAppearance="@style/Toolbar.HomeSubtitle.Expanded.Invisible"
+        app:expandedTitleTextAppearance="@style/Toolbar.HomeTitle.Expanded.Invisible"
+        app:layout_scrollFlags="scroll|exitUntilCollapsed|snap"
+        app:toolbarId="@+id/toolbar">
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_collapseMode="parallax"
+            tools:background="@color/background_card"
+            tools:layout_height="220dp">
+
+            <ImageView
+                android:id="@+id/coverImage"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@drawable/gradient_plan"
+                android:scaleType="centerCrop"
+                tools:src="@drawable/background_workout" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@color/image_overlay" />
+
+            <LinearLayout
+                android:id="@+id/routineInfoContainer"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:orientation="vertical"
+                android:paddingTop="@dimen/activity_margin_double"
+                android:paddingBottom="36dp">
+
+                <TextView
+                    android:id="@+id/routineName"
+                    style="@style/Toolbar.HomeTitle.Expanded"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Routine Title" />
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/margin_24"
+                    android:orientation="horizontal">
+
+                    <com.everlog.ui.views.summarycard.SummaryCardCollapsing
+                        android:id="@+id/exercisesSummary"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" />
+
+                    <com.everlog.ui.views.summarycard.SummaryCardCollapsing
+                        android:id="@+id/setsSummary"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="50dp"
+                        android:layout_marginRight="50dp"/>
+
+                    <com.everlog.ui.views.summarycard.SummaryCardCollapsing
+                        android:id="@+id/restSummary"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" />
+                </LinearLayout>
+            </LinearLayout>
+        </FrameLayout>
+
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            app:layout_collapseMode="pin"
+            app:popupTheme="@style/AppTheme.PopupOverlay" />
+    </com.google.android.material.appbar.SubtitleCollapsingToolbarLayout>
+</com.google.android.material.appbar.AppBarLayout>

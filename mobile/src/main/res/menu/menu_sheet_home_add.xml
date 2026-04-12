@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item
+        android:id="@+id/action_start_routine"
+        android:icon="@drawable/ic_routines"
+        android:title="@string/home_add_start_routine"
+        app:showAsAction="always"/>
+    <item
+        android:id="@+id/action_start_empty"
+        android:icon="@drawable/ic_barbell"
+        android:title="@string/home_add_start_empty"
+        app:showAsAction="always"/>
+    <item
+        android:id="@+id/action_create_plan"
+        android:icon="@drawable/ic_plan"
+        android:title="@string/home_add_plan"
+        app:showAsAction="always"/>
+</menu>

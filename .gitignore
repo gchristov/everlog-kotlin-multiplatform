@@ -1,0 +1,70 @@
+# --- Build Artifacts ---
+build/
+.gradle/
+.kotlin/
+bin/
+gen/
+out/
+.externalNativeBuild/
+.cxx/
+build_file_checksums.ser
+
+# --- IDE - Android Studio / IntelliJ ---
+.idea/workspace.xml
+.idea/tasks.xml
+.idea/gradle.xml
+.idea/assetWizardSettings.xml
+.idea/dictionaries
+.idea/libraries
+.idea/caches
+.idea/shelf
+.idea/navEditor.xml
+.idea/deploymentTargetSelector.xml
+.idea/deviceManager.xml
+.idea/migrations.xml
+.idea/vcs.xml
+*.iml
+*.ipr
+*.iws
+misc.xml
+assetWizardSettings.xml
+
+# --- Local Configuration ---
+local.properties
+secrets.properties
+google-services.json
+google-services-desktop.json
+
+# --- Signing & Secrets ---
+*.keystore
+*.jks
+*.p12
+*.pem
+deploy/google_play_auth.json
+
+# --- Testing & Profiling ---
+captures/
+*.hprof
+.navigation/
+
+# --- Fastlane & Ruby ---
+fastlane/report.xml
+fastlane/Preview.html
+fastlane/screenshots
+fastlane/test_output
+Gemfile.lock
+report.xml
+
+# --- System & Misc ---
+.DS_Store
+Thumbs.db
+*.log
+*.bak
+*.swp
+
+# --- App Bundles & APKs ---
+*.apk
+*.apks
+*.aab
+/.idea/androidTestResultsUserPreferences.xml
+/.idea/markdown.xml

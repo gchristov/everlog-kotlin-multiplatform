@@ -1,0 +1,1 @@
+We have fixed an issue where the app would crash if you have lots of workouts - it doesn't do that anymore. Thanks to our users for reporting so quickly!

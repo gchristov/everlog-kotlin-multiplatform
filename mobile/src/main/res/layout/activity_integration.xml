@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/background_base">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <include
+            android:id="@+id/appBar"
+            layout="@layout/toolbar_transparent" />
+
+        <androidx.core.widget.NestedScrollView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/activity_margin_triple"
+                android:layout_marginRight="@dimen/activity_margin_triple"
+                android:clipChildren="false"
+                android:clipToPadding="false"
+                android:gravity="center"
+                android:orientation="vertical"
+                android:paddingTop="@dimen/margin_20"
+                android:paddingBottom="@dimen/footer_bottom_padding">
+
+                <ImageView
+                    android:id="@+id/iconImg"
+                    android:layout_width="110dp"
+                    android:layout_height="110dp"
+                    tools:src="@drawable/ic_integration_google_fit" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/activity_margin_half"
+                    android:layout_marginBottom="@dimen/activity_margin_actual"
+                    android:text="@string/integrations_connected"
+                    android:textColor="@color/main_accent"
+                    android:textSize="20sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="1"
+                    android:textColor="@color/white_darker"
+                    android:textSize="20sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/activity_margin_half"
+                    android:gravity="center"
+                    android:text="@string/integrations_1"
+                    android:textColor="@color/gray_2"
+                    android:textSize="15sp" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/activity_margin_actual"
+                    android:text="2"
+                    android:textColor="@color/white_darker"
+                    android:textSize="20sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/activity_margin_half"
+                    android:gravity="center"
+                    android:text="@string/integrations_2"
+                    android:textColor="@color/gray_2"
+                    android:textSize="15sp" />
+
+                <Button
+                    android:id="@+id/syncBtn"
+                    style="@style/Button"
+                    android:layout_width="wrap_content"
+                    android:layout_marginTop="@dimen/activity_margin_actual"
+                    android:text="@string/integrations_sync" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/activity_margin_actual"
+                    android:text="3"
+                    android:textColor="@color/white_darker"
+                    android:textSize="20sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/activity_margin_half"
+                    android:gravity="center"
+                    android:text="@string/integrations_3"
+                    android:textColor="@color/gray_2"
+                    android:textSize="15sp" />
+
+                <Button
+                    android:id="@+id/unsyncBtn"
+                    style="@style/Button.Three"
+                    android:layout_width="wrap_content"
+                    android:layout_marginTop="@dimen/activity_margin_actual"
+                    android:text="@string/integrations_sync_delete" />
+
+                <Button
+                    android:id="@+id/disconnectBtn"
+                    style="@style/Button.Four"
+                    android:layout_marginTop="@dimen/activity_margin"
+                    android:text="@string/integrations_disconnect" />
+            </LinearLayout>
+        </androidx.core.widget.NestedScrollView>
+    </LinearLayout>
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

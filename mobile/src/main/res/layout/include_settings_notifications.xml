@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/panelNotifications"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    tools:background="@color/background_base">
+
+    <TextView
+        style="@style/SettingsCategory"
+        android:layout_marginBottom="@dimen/settings_category_title_margin_vertical"
+        android:text="@string/notifications_title" />
+
+    <androidx.cardview.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:cardBackgroundColor="@color/background_card"
+        app:cardCornerRadius="@dimen/card_radius_default"
+        app:cardElevation="@dimen/card_elevation_default">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:divider="@drawable/separator_line"
+            android:orientation="vertical"
+            android:showDividers="middle">
+
+            <RelativeLayout
+                android:id="@+id/newsletterBtn"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:foreground="?attr/selectableItemBackground"
+                android:padding="@dimen/activity_margin">
+
+                <TextView
+                    android:id="@+id/newsletterTitle"
+                    style="@style/SettingsTitle"
+                    android:layout_toLeftOf="@+id/newsletterCheckbox"
+                    android:text="@string/notifications_newsletter_title" />
+
+                <TextView
+                    android:id="@+id/newsletterSubtitle"
+                    style="@style/SettingsSubtitle"
+                    android:layout_below="@id/newsletterTitle"
+                    android:layout_alignRight="@+id/newsletterTitle"
+                    android:text="@string/notifications_newsletter_description" />
+
+                <com.everlog.ui.views.CheckBoxTriStates
+                    android:id="@+id/newsletterCheckbox"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true"
+                    android:layout_marginLeft="@dimen/activity_margin"
+                    android:buttonTint="@color/main_accent" />
+            </RelativeLayout>
+        </LinearLayout>
+    </androidx.cardview.widget.CardView>
+</LinearLayout>

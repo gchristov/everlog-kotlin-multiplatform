@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="@dimen/activity_margin_double"
+    android:paddingLeft="@dimen/exercise_group_create_side_spacing"
+    android:paddingRight="@dimen/exercise_group_create_side_spacing"
+    tools:background="@color/background_base">
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/setTypeLbl"
+        android:layout_marginTop="-18dp"
+        android:background="@drawable/rounded_corners_exercise_group_full"
+        android:focusable="false"
+        android:focusableInTouchMode="false"
+        android:nestedScrollingEnabled="false"
+        android:paddingLeft="@dimen/margin_20"
+        android:paddingTop="28dp"
+        android:paddingRight="@dimen/margin_20"
+        tools:itemCount="2"
+        tools:listitem="@layout/row_exercise_within_set_summary" />
+
+    <TextView
+        android:id="@+id/setTypeLbl"
+        android:layout_width="wrap_content"
+        android:layout_height="@dimen/options_menu_icon_size"
+        android:layout_marginLeft="@dimen/margin_14"
+        android:background="@color/background_base"
+        android:gravity="center"
+        android:paddingLeft="@dimen/activity_margin_half"
+        android:paddingRight="@dimen/activity_margin_half"
+        android:paddingBottom="2dp"
+        android:textColor="@color/gray_3"
+        android:textSize="15sp"
+        tools:text="Super Set" />
+</RelativeLayout>

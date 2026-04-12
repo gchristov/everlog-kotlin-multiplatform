@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="250dp"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="30dp"
+    android:gravity="center"
+    android:orientation="vertical"
+    tools:background="@color/background_base"
+    tools:layout_gravity="center">
+
+    <ImageView
+        android:id="@+id/emptyImage"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:layout_marginBottom="@dimen/activity_margin"
+        android:tint="@color/gray_1"
+        tools:src="@drawable/ic_barbell" />
+
+    <TextView
+        android:id="@+id/emptyTitle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:textColor="@color/white_darker"
+        android:textSize="22sp"
+        tools:text="Empty title" />
+
+    <com.android.lib.textinlineimage.TextInlineImage
+        android:id="@+id/emptySubtitle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/margin_10"
+        android:gravity="center"
+        android:textColor="@color/gray_1"
+        android:textSize="16sp"
+        app:imageAlignment="center"
+        app:imageSize="26dp"
+        tools:text="Some empty title that can go on multiple lines appears here" />
+
+    <LinearLayout
+        android:layout_width="200dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/margin_30"
+        android:orientation="vertical">
+
+        <Button
+            android:id="@+id/emptyAction"
+            style="@style/Button"
+            android:layout_width="match_parent"
+            tools:text="Action Button" />
+
+        <Button
+            android:id="@+id/emptyActionSecondary"
+            style="@style/Button.Three"
+            android:layout_width="match_parent"
+            android:layout_marginTop="@dimen/activity_margin"
+            tools:text="Secondary btn" />
+    </LinearLayout>
+</LinearLayout>

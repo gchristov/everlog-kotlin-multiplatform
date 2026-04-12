@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/background_card"
+    android:minWidth="@dimen/dialog_min_width"
+    android:orientation="horizontal"
+    android:paddingTop="@dimen/margin_20">
+
+    <com.github.stephenvinouze.materialnumberpickercore.MaterialNumberPicker
+        android:id="@+id/wholeNumberPickerView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginLeft="-60dp"
+        app:mnpEditable="false"
+        app:mnpSeparatorColor="@color/separator"
+        app:mnpTextColor="@color/white_base"
+        app:mnpTextSize="@dimen/dialog_picker_text_size"
+        app:mnpTextStyle="bold"
+        app:mnpWrapped="true" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginLeft="-4dp"
+        android:text="."
+        android:textColor="@color/gray_1"
+        android:textSize="38sp" />
+
+    <com.github.stephenvinouze.materialnumberpickercore.MaterialNumberPicker
+        android:id="@+id/decimalNumberPickerView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginLeft="50dp"
+        app:mnpEditable="false"
+        app:mnpSeparatorColor="@color/separator"
+        app:mnpTextColor="@color/white_base"
+        app:mnpTextSize="@dimen/dialog_picker_text_size"
+        app:mnpTextStyle="bold"
+        app:mnpWrapped="true" />
+
+    <TextView
+        android:id="@+id/weightUnit"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginLeft="100dp"
+        android:layout_marginTop="@dimen/margin_10"
+        android:textColor="@color/gray_1"
+        android:textSize="14sp"
+        tools:text="kg" />
+</FrameLayout>

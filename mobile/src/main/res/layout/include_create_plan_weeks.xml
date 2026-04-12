@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:background="@color/background_base">
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/weeksList"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:clipToPadding="false"
+        android:focusable="false"
+        android:focusableInTouchMode="false"
+        android:paddingLeft="@dimen/activity_margin_actual"
+        android:paddingTop="@dimen/activity_margin_actual"
+        android:paddingRight="@dimen/activity_margin_actual"
+        android:paddingBottom="@dimen/footer_bottom_padding"
+        tools:itemCount="3"
+        tools:listitem="@layout/row_plan_week" />
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/addBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center|bottom"
+        android:layout_margin="@dimen/activity_margin_actual"
+        android:src="@drawable/ic_add_gray_2" />
+</FrameLayout>

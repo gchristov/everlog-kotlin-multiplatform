@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.appbar.AppBarLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/appBar"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:fitsSystemWindows="true"
+    android:focusable="true"
+    android:focusableInTouchMode="true"
+    android:theme="@style/AppTheme.AppBarOverlay">
+
+    <com.google.android.material.appbar.SubtitleCollapsingToolbarLayout
+        android:id="@+id/toolbar_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fitsSystemWindows="true"
+        app:collapsedSubtitleTextAppearance="@style/Toolbar.HomeSubtitle.Collapsed"
+        app:collapsedTitleTextAppearance="@style/Toolbar.HomeTitle.Collapsed"
+        app:expandedSubtitleTextAppearance="@style/Toolbar.HomeSubtitle.Expanded"
+        app:expandedTitleTextAppearance="@style/Toolbar.HomeTitle.Expanded"
+        app:layout_scrollFlags="scroll|exitUntilCollapsed|snap"
+        app:toolbarId="@+id/toolbar">
+
+        <include layout="@layout/shimmer_plan_details_top" />
+
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            app:layout_collapseMode="pin"
+            app:popupTheme="@style/AppTheme.PopupOverlay" />
+    </com.google.android.material.appbar.SubtitleCollapsingToolbarLayout>
+</com.google.android.material.appbar.AppBarLayout>

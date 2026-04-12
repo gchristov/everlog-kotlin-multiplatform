@@ -1,0 +1,422 @@
+<resources>
+    <string name="facebook_app_id">393089258179851</string>
+    <string name="fb_login_protocol_scheme">fb393089258179851</string>
+
+    <string name="everlog_app_name">Everlog</string>
+
+    <string name="notification_channel_workout">my_channel_id_03</string>
+    <string name="notification_channel_normal">my_channel_id_02</string>
+
+    <plurals name="sets">
+        <item quantity="one">%1$d set</item>
+        <item quantity="other">%1$d sets</item>
+    </plurals>
+    <plurals name="exercises">
+        <item quantity="one">%1$d exercise</item>
+        <item quantity="other">%1$d exercises</item>
+    </plurals>
+    <plurals name="reps">
+        <item quantity="one">%1$d rep</item>
+        <item quantity="other">%1$d reps</item>
+    </plurals>
+    <plurals name="workouts">
+        <item quantity="one">%1$d workout</item>
+        <item quantity="other">%1$d workouts</item>
+    </plurals>
+    <plurals name="days">
+        <item quantity="one">%1$d day</item>
+        <item quantity="other">%1$d days</item>
+    </plurals>
+    <plurals name="weeks">
+        <item quantity="one">%1$d week</item>
+        <item quantity="other">%1$d weeks</item>
+    </plurals>
+    <plurals name="months">
+        <item quantity="one">%1$d month</item>
+        <item quantity="other">%1$d months</item>
+    </plurals>
+    <plurals name="years">
+        <item quantity="one">%1$d year</item>
+        <item quantity="other">%1$d years</item>
+    </plurals>
+    <string name="kg">kg</string>
+    <string name="lb">lb</string>
+    <string name="hour">h</string>
+    <string name="sets">Sets</string>
+    <string name="cancel">Cancel</string>
+    <string name="stop">Stop</string>
+    <string name="start">Start</string>
+    <string name="save">Save</string>
+    <string name="delete">Delete</string>
+    <string name="resume">Resume</string>
+    <string name="discard">Discard</string>
+    <string name="discard_title">Unsaved changes</string>
+    <string name="discard_prompt">You have unsaved changes. Are you sure you want to proceed?</string>
+    <string name="delete_title">Delete</string>
+    <string name="delete_prompt">Are you sure you want to delete this item?</string>
+    <string name="weight">Weight</string>
+    <string name="reps">Reps</string>
+    <string name="ok">OK</string>
+    <string name="disable">Disable</string>
+    <string name="edit">Edit</string>
+    <string name="processing">Processing…</string>
+    <string name="done">Done</string>
+    <string name="retry">Retry</string>
+    <string name="tap_to_setup">Tap to setup</string>
+    <string name="tap_to_setup_upgrade">Pro upgrade required</string>
+    <string name="continue_">Continue</string>
+    <string name="clear">Clear</string>
+    <string name="add">Add</string>
+    <string name="name">Name</string>
+    <string name="date">Date</string>
+    <string name="notes">Notes</string>
+    <string name="time">Time</string>
+    <string name="complete">Complete</string>
+    <string name="filter">Filter</string>
+
+    <string name="set_single">Single Set</string>
+    <string name="set_single_description">1 exercise only</string>
+    <string name="set_drop">Drop Set</string>
+    <string name="set_drop_description">1 exercise performed at a time and allow you to continue an exercise set past fatigue by using lower weight</string>
+    <string name="set_super">Super Set</string>
+    <string name="set_super_description">Any 2 exercises performed back-to-back, without rest</string>
+    <string name="set_giant">Giant Set</string>
+    <string name="set_giant_description">3 or more exercises, performed back-to-back, that target the same muscle group</string>
+    <string name="set_force">Force Set</string>
+    <string name="set_force_description">1 exercise with 10 seconds of rest between each set</string>
+    <string name="set_circuit">Circuit Set</string>
+    <string name="set_circuit_description">Move from one exercise to another without rest</string>
+    <string name="set_progressive">Progressive Set</string>
+    <string name="set_progressive_description">1 exercise performed as a pyramid that goes from high reps to low reps, takes a break, and then back up to high reps</string>
+    <string name="set_multi">Multi Set</string>
+    <string name="set_multi_description">2 or more exercises that don\'t target similar muscle groups</string>
+    <string name="set_combo">Combo Set</string>
+    <string name="set_combo_description">Contain compound exercises, which work more that one muscle group using more than one joint</string>
+    <string name="set_amrap">AMRAP Set</string>
+    <string name="set_amrap_description">Perform as many reps as possible of 1 exercise</string>
+
+    <string name="category_abs">Abs</string>
+    <string name="category_arms">Arms</string>
+    <string name="category_back">Back</string>
+    <string name="category_chest">Chest</string>
+    <string name="category_legs">Legs</string>
+    <string name="category_shoulders">Shoulders</string>
+
+    <string name="range_today">Today</string>
+    <string name="range_week">This week</string>
+    <string name="range_month">This month</string>
+    <string name="range_year">This year</string>
+    <string name="range_overall">Overall</string>
+
+    <string name="view_type_calendar">Calendar</string>
+    <string name="view_type_list">List</string>
+
+    <string name="error_play_store">Unable to find Play Store app</string>
+
+    <string name="rate_enjoy_title">How would you rate your experience with Everlog so far?</string>
+    <string name="rate_feedback_title">Would you mind letting us know where we can improve?</string>
+    <string name="rate_no">No, thanks</string>
+    <string name="rate_feedback">Ok, sure</string>
+    <string name="rate_ask_later">Ask me later</string>
+
+    <string name="pending_feature_title">Coming soon…</string>
+    <string name="pending_feature_subtitle">We are working on this feature and it will be available as an update soon!</string>
+    <string name="pending_feature_action">Got it</string>
+
+    <string name="login_get_started">Get Started</string>
+    <string name="login_existing">I have an account</string>
+    <string name="login_sign_in">Login</string>
+    <string name="login_register">Sign up</string>
+    <string name="login_full_name">Name</string>
+    <string name="login_email">Email</string>
+    <string name="login_password">Password</string>
+    <string name="login_google">Login with Google</string>
+    <string name="login_google_register">Sign up with Google</string>
+    <string name="login_onboard_plans_title">Quick 5-Min Setup</string>
+    <string name="login_onboard_plans_subtitle">Easily import your favourite workouts</string>
+    <string name="login_onboard_routine_title">Workout Builder</string>
+    <string name="login_onboard_routine_subtitle">Set rep/time targets, supersets, rest</string>
+    <string name="login_onboard_activity_title">Progress Reports</string>
+    <string name="login_onboard_activity_subtitle">View your detailed progress analysis</string>
+    <string name="login_onboard_home_plan_title">Training Splits</string>
+    <string name="login_onboard_home_plan_subtitle">Follow your day to day workout plan</string>
+    <string name="login_onboard_workout_title">Track Everything</string>
+    <string name="login_onboard_workout_subtitle">Weight, reps, time, 1RM, supersets</string>
+    <string name="login_terms_full">I accept the Terms &amp; Conditions and Privacy Policy</string>
+    <string name="login_terms">Terms &amp; Conditions</string>
+    <string name="login_terms_privacy">Privacy Policy</string>
+    <string name="login_terms_not_accepted">"Please accept our Terms &amp; Conditions and Privacy Policy"</string>
+    <string name="login_reset_password">Forgot password?</string>
+
+    <string name="reset_password">Reset Password</string>
+    <string name="reset_password_success">Thanks! We have sent instructions on how to reset your password to your email address</string>
+
+    <string name="home_add_title">Add Activity</string>
+    <string name="home_add_start_routine">Start workout from template</string>
+    <string name="home_add_start_empty">Start empty workout</string>
+    <string name="home_add_plan">Create workout plan</string>
+
+    <string name="home_week">Week</string>
+    <string name="home_week_start">Start workout</string>
+    <string name="home_week_workouts_completed">Workouts\nDone</string>
+    <string name="home_week_weight_lifted">Volume\nLifted</string>
+    <string name="home_week_weight_lifted_no_spaces">Volume Lifted</string>
+    <string name="home_week_total_time">Workout\nTime</string>
+    <string name="home_week_average_time">Avg. Session\nDuration</string>
+    <string name="home_week_empty_title">Welcome%1$s</string>
+    <string name="home_week_empty_subtitle">Tap [img src=ic_run_circle/] to start your first workout or create a plan to see your weekly dashboard</string>
+    <string name="home_week_ongoing_workout_prompt_title">Resume Workout</string>
+    <string name="home_week_ongoing_workout_prompt_subtitle">You have an ongoing workout. Would you like to resume it?</string>
+    <string name="home_week_goal_achieved">Goal\nachieved!</string>
+    <string name="home_week_goal_left">more to go!</string>
+    <string name="home_week_plan">Plan</string>
+    <string name="home_week_plan_start">Start day</string>
+    <string name="home_week_plan_skip">Skip</string>
+    <string name="home_week_plan_skip_prompt">Once a day is skipped you will not be able to go back and redo it. Are you sure you want to skip this day?</string>
+    <string name="home_week_plan_finish">Finish plan</string>
+
+    <string name="home_activity">Activity</string>
+
+    <string name="home_workouts_plans">Plans</string>
+    <string name="home_workouts_routines">Workout Templates</string>
+    <string name="home_workouts_view_exercises">View all 100+ exercises</string>
+
+    <string name="exercises_title">Exercises</string>
+    <string name="exercises_title_select">Select Exercises</string>
+    <string name="exercises_title_edit">Edit Exercises</string>
+    <string name="exercises_footer_link">Let us know</string>
+    <string name="exercises_search">Search exercises</string>
+    <string name="exercises_empty_title">No exercises</string>
+    <string name="exercises_empty_subtitle">Looks like you have no exercises created yet</string>
+    <string name="exercises_empty_action">Create exercise</string>
+    <string name="exercises_empty_search">No exercises match\n\"%1$s\"</string>
+    <string name="exercises_max_selection">You cannot add more than %1$d exercises at a time</string>
+    <string name="exercises_max_sets">You cannot add more than %1$d sets per exercise</string>
+    <string name="exercises_create_prompt">Tap to create exercise</string>
+    <string name="exercises_add">add (%1$d)</string>
+    <string name="exercises_link">superset (%1$d)</string>
+
+    <string name="exercise_info_title">Info</string>
+    <string name="exercise_info_youtube">Watch Instructions Video</string>
+    <string name="exercise_statistics_times_performed">Times Performed</string>
+    <string name="exercise_statistics_total_reps">Total Reps</string>
+    <string name="exercise_statistics_reps_weight">Reps vs. Weight</string>
+    <string name="exercise_statistics_1rm">One-Rep Max (1RM)</string>
+
+    <string name="create_exercise_title_new">New Exercise</string>
+    <string name="create_exercise_title_edit">Edit Exercise</string>
+    <string name="create_exercise_name">Name your exercise</string>
+    <string name="create_exercise_category">Muscles Trained</string>
+    <string name="create_exercise_select_category">Select Muscle Group</string>
+    <string name="create_exercise_error_no_title">Please enter a title for your exercise</string>
+    <string name="create_exercise_error_no_category">Please select a muscle group for your exercise</string>
+    <string name="create_exercise_error_no_permissions">We need your permission to access your Camera and Gallery to allow you to set exercise images.</string>
+    <string name="create_exercise_delete_prompt">Are you sure you want to delete this exercise?\n\nYour existing plans, workouts and history will not be affected.</string>
+    <string name="create_exercise_saved">Exercise saved</string>
+
+    <string name="routines_empty_title">No templates, yet</string>
+    <string name="routines_empty_subtitle">Templates are groups of exercises that can be performed multiple times</string>
+    <string name="routines_empty_action">Create template</string>
+    <string name="routines_cannot_perform_title">Missing exercises</string>
+    <string name="routines_cannot_perform_prompt">This workout cannot be performed because it does not have any exercises.</string>
+
+    <string name="create_routine_title">New Template</string>
+    <string name="create_routine_title_edit">Edit Template</string>
+    <string name="create_routine_error_no_title">Please enter a value</string>
+    <string name="create_routine_saved">Workout saved</string>
+    <string name="create_routine_edit_name_title">Edit name</string>
+    <string name="create_routine_add_exercises">Add Exercises</string>
+    <string name="create_routine_exercise_duration">Exercise Duration</string>
+
+    <string name="routine_details_empty_title">No exercises, yet</string>
+    <string name="routine_details_empty_subtitle">This template does not have any exercises</string>
+
+    <string name="routine_picker_title">Choose template</string>
+
+    <string name="perform_routine_protip">Pro tips</string>
+    <string name="perform_routine_protip_1">Stay &lt;b>hydrated&lt;/b></string>
+    <string name="perform_routine_protip_2">Use a &lt;b>towel&lt;/b></string>
+
+    <string name="select_set_type">Select Set Type</string>
+    <plurals name="select_set_type_subtitle">
+        <item quantity="one">%1$d selected exercise</item>
+        <item quantity="other">%1$d selected exercises</item>
+    </plurals>
+    <string name="select_set_type_footer">Need more set types?</string>
+    <string name="select_set_type_error_exercises">Too many or not enough selected exercises for this set type</string>
+
+    <string name="exercise_sets_required_reps">Set Reps Template</string>
+    <string name="exercise_sets_required_time_prompt">Exercise Duration Template</string>
+    <string name="exercise_sets_required_rest_time">Rest Time Template</string>
+    <string name="exercise_sets_performed_reps">Set Reps</string>
+    <string name="exercise_sets_performed_time_prompt">Exercise Duration</string>
+    <string name="exercise_sets_performed_rest_time">Rest Time</string>
+    <string name="exercise_sets_performed_weight">Set Weight</string>
+
+    <string name="history_title">History</string>
+    <string name="history_empty_prompt">Your history will appear here once you log workout sessions</string>
+    <string name="history_empty_day_prompt">No events found for this day</string>
+
+    <string name="workout_details_title">Session Summary</string>
+    <string name="workout_details_breakdown">@string/exercises_title</string>
+    <string name="workout_details_duration">Duration</string>
+    <string name="workout_details_max_weight">Max weight</string>
+    <string name="workout_details_save_success">Successfully saved to Your Workouts</string>
+    <string name="workout_details_save_title">Save Template</string>
+    <string name="workout_details_save_prompt">Would you like to save this session as a template so you can quickly perform it again next time?</string>
+    <string name="workout_details_date_future_error">You cannot set date in the future</string>
+
+    <string name="statistics_title">Statistics</string>
+    <string name="statistics_longest_session">longest session</string>
+    <string name="statistics_muscles_trained">Muscles Trained</string>
+    <string name="statistics_muscles_trained_tap_prompt">Tap for details</string>
+    <plurals name="statistics_category_exercises">
+        <item quantity="one">%1$s\n%2$d exercise</item>
+        <item quantity="other">%1$s\n%2$d exercises</item>
+    </plurals>
+    <string name="statistics_session_duration">Session Duration</string>
+    <string name="statistics_session_duration_avg">Avg. Session Duration</string>
+    <string name="statistics_minutes">Minutes</string>
+    <string name="statistics_footer_text">Need more stats?</string>
+
+    <string name="workout_stop_prompt">Stop workout?</string>
+    <string name="workout_stop_description">This workout is still in progress. Are you sure you want to stop it?</string>
+    <string name="workout_metric_prompt_missing">Please enter a value</string>
+    <string name="workout_rest_time">"Rest  •  %1$s"</string>
+    <string name="workout_empty_action">Add Exercises</string>
+    <string name="workout_empty_no_sets">No exercises, yet</string>
+    <string name="workout_empty_no_sets_subtitle">Add exercises to begin your workout</string>
+    <string name="workout_empty_done">All done?</string>
+    <string name="workout_empty_done_subtitle">Add exercises or finish the workout</string>
+    <string name="workout_exercises">Session Exercises</string>
+    <string name="workout_finish">Finish</string>
+    <string name="workout_finish_title">Finish Workout</string>
+    <string name="workout_finish_subtitle">You have incomplete sets. Would you like to finish the workout and mark them as complete?</string>
+
+    <string name="settings_title">Settings</string>
+    <string name="settings_pro_upgrade">Upgrade to pro</string>
+    <string name="settings_pro_manage">Manage subscription</string>
+    <string name="settings_pro_free_trial_today">Your free trial ends today</string>
+    <plurals name="settings_pro_free_trial">
+        <item quantity="one">Your free trial ends tomorrow</item>
+        <item quantity="other">Your free trial ends in %1$d days</item>
+    </plurals>
+    <string name="settings_contact_us">Contact Us</string>
+    <string name="settings_report_problem">Report a Problem</string>
+    <string name="settings_play_store_prompt">Review Us on Google Play</string>
+    <string name="settings_facebook_prompt">Like Us on Facebook</string>
+    <string name="settings_twitter_prompt">Follow Us on Twitter</string>
+    <string name="settings_logout">Logout</string>
+    <string name="settings_share">Share Everlog</string>
+    <string name="settings_logout_prompt">Are you sure you want to log out?</string>
+    <string name="settings_workouts">Workouts</string>
+    <string name="settings_weight_increase">Weight Increment</string>
+    <string name="settings_weight_increase_description">Used when modifying weight with +/-</string>
+    <string name="settings_weekly_goal">Weekly Workouts Goal</string>
+    <string name="settings_general">General</string>
+    <string name="settings_kilograms">Kilograms (kg)</string>
+    <string name="settings_kilograms_abbreviation">kg</string>
+    <string name="settings_pounds">Pounds (lb)</string>
+    <string name="settings_pounds_abbreviation">lb</string>
+    <string name="settings_unit_weight">Weight Unit</string>
+    <string name="settings_first_week_day">First Week Day</string>
+    <string name="settings_permission_grant">Grant permission</string>
+
+    <string name="pro_title">Everlog Pro</string>
+    <string name="pro_subtitle">Train smarter with our workout plans and muscle goals</string>
+    <string name="pro_why">Why Pro</string>
+    <string name="pro_feature_1">Unlimited history &amp; workouts</string>
+    <string name="pro_feature_2">Historic weight suggestions</string>
+    <string name="pro_feature_3">Statistics</string>
+    <string name="pro_feature_4">Workout plans</string>
+    <string name="pro_feature_5">Muscle training goals *</string>
+    <string name="pro_feature_6">Decimal weight increments</string>
+    <string name="pro_muscle_goals">* Goals give you tailored weight recommendations based on your 1RM</string>
+    <string name="pro_questions">Common Questions</string>
+    <string name="pro_question_1">Can I cancel at any time?</string>
+    <string name="pro_question_1_answer">Absolutely. Subscriptions run on a monthly or yearly basis and can be cancelled at any time from our Everlog Pro link in Settings.</string>
+    <string name="pro_question_2">Can I get a trial first?</string>
+    <string name="pro_question_2_answer">Yes, you can sign up for a 7-day free trial during which your subscription can be cancelled free of charge at any time.</string>
+    <string name="pro_question_3">What are my paying options?</string>
+    <string name="pro_question_3_answer">You can pay quickly and securely with your Google Pay account.</string>
+    <string name="pro_question_4">Can I browse existing workout plans?</string>
+    <string name="pro_question_4_answer">At the moment we only support custom workout plans so you would have to create it yourself. However, we are working towards making the plans shareable very soon.</string>
+    <string name="pro_error_purchase">Your purchase could not be completed at this time. Please try again.</string>
+    <string name="pro_error_restore">We couldn\'t find any existing membership information for your account. Would you like us to look into this for you?</string>
+    <string name="pro_restore">Restore Membership</string>
+    <string name="pro_restore_success">Your previous membership has been restored successfully!</string>
+    <string name="pro_free_trial">7-DAY FREE TRIAL</string>
+    <string name="pro_free_trial_highlight">FREE TRIAL</string>
+    <string name="pro_prompt_plan_title">Free plans are limited to %1$d day a week</string>
+    <string name="pro_prompt_plan_subtitle">Tap to upgrade and unlock unlimited plan schedules</string>
+    <string name="pro_prompt_muscle_goals_title">Training goals are locked</string>
+    <string name="pro_prompt_muscle_goals_subtitle">Tap to upgrade and unlock weight suggestions based on your One Rep Max</string>
+
+    <string name="pro_confirm_title">You are now pro</string>
+    <string name="pro_confirm_subtitle">By joining our Pro community you have come a step closer to your fitness goals!</string>
+    <string name="pro_confirm_cta">Nice!</string>
+
+    <string name="cover_picker_title">No images</string>
+    <string name="cover_picker_subtitle">We couldn\'t find any related images.</string>
+    <string name="cover_picker_edit_image_title">Edit image</string>
+
+    <string name="create_plan_title">New Plan</string>
+    <string name="create_plan_title_edit">Edit Plan</string>
+    <string name="create_plan_name">Name your plan</string>
+    <string name="create_plan_weeks">Workout Schedule</string>
+    <string name="create_plan_error_no_title">Please enter a title for your plan</string>
+    <string name="create_plan_saved">Plan saved</string>
+    <string name="create_plan_add_week_prompt">Add new week</string>
+    <string name="create_plan_cannot_be_empty_prompt">Plans must have at least one week</string>
+    <string name="create_plan_error_max_weeks">You cannot add more weeks to this plan</string>
+    <string name="create_plan_week_deleted">Week deleted</string>
+
+    <string name="plan_details_start">Start plan</string>
+    <string name="plan_details_start_no_workouts">Plan must have at least one workout to be started</string>
+    <string name="plan_details_stop">Stop plan</string>
+    <string name="plan_details_stop_prompt">Are you sure you want to stop this plan?\n\nYour history will not be affected.</string>
+    <string name="plan_details_switch">Switch plan</string>
+    <string name="plan_details_switch_prompt">Another plan already started. Are you sure you want to switch to this plan?\n\nYour history will not be affected.</string>
+    <string name="plan_details_week">Week %1$s</string>
+    <string name="plan_details_not_found">Plan not found</string>
+    <string name="plan_details_not_found_prompt">It looks like we couldn\'t find this plan.</string>
+    <string name="plan_details_not_found_prompt_current">It looks like we couldn\'t find your current plan. Would you like to stop it?</string>
+    <string name="plan_details_rest_title">Rest Day</string>
+    <string name="plan_details_rest_prompt">Make sure to take enough time to recover during your rest day.\n\nPro tip: Muscle is built while resting, not while training.</string>
+    <string name="plan_details_complete_title">Plan complete</string>
+    <string name="plan_details_complete_subtitle">Congratulations! You are now closer than ever to your fitness goals.</string>
+
+    <string name="muscle_goal_title">Muscle Training Goal</string>
+    <string name="muscle_goal_benefits">Goals</string>
+    <string name="muscle_goal_footer">Need more goals?</string>
+    <string name="muscle_goal_prompt">Training goals give you history-based weight suggestions during workouts to ensure your muscles are working in the most effective way.</string>
+    <string name="muscle_goal_1rm">Suggestions are based on your 1RM - the max weight you can lift for one repetition for an exercise, estimated from your history.</string>
+
+    <string name="integrations_title">Integrations</string>
+    <string name="integrations_disconnect_prompt">Disabling this won\'t affect your history or remove data from this destination.\n\nAre you sure you want to disable this integration?</string>
+    <string name="integrations_disconnect">Disconnect</string>
+    <string name="integrations_connected">Connected</string>
+    <string name="integrations_connected_prompt">Tap to connect</string>
+    <string name="integrations_connect_permission_needed">We need your permission to access fitness activity on this device to sync with this integration.</string>
+    <string name="integrations_1">It may take several hours for a workout to appear in this integration. To manually sync, go to Settings -> Google Account -> Sync</string>
+    <string name="integrations_2">Your existing history is not automatically synced. Request this here:</string>
+    <string name="integrations_3">Deleted workouts are not automatically removed from this integration. Request this here:</string>
+    <string name="integrations_sync">Sync my history</string>
+    <string name="integrations_sync_delete">Delete my history</string>
+
+    <string name="notifications_title">Notifications</string>
+    <string name="notifications_newsletter_title">Tips &amp; Tricks</string>
+    <string name="notifications_newsletter_description">I\'d like to receive tips and tricks, and announcements of new features</string>
+    <string name="notifications_newsletter_not_accepted">Please choose where you\'d ike to receive our newsletter</string>
+    <string name="notifications_newsletter_prompt">Hi %1$s,\n\nWe\'d love to send you our occasional newsletter with Pro-tips and tricks, and announcements of new features with your permission.\n\nInterested in getting the best out of Everlog?</string>
+    <string name="notifications_newsletter_prompt_yes">Yes, I\'d like to receive updates</string>
+    <string name="notifications_newsletter_granted">Perfect, we\'ll keep you up to date!</string>
+    <string name="notifications_newsletter_denied">No problem, you can always opt-in later in Settings</string>
+
+    <string name="error_image_intent_null">Image picker option is missing!</string>
+
+    <string name="take_picture">Take a Photo</string>
+    <string name="choose_picture">Choose from Gallery</string>
+    <string name="remove_picture">Remove Image</string>
+    <string name="select_image">Choose an image</string>
+</resources>

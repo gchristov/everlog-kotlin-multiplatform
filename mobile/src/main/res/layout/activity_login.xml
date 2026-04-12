@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/background_base">
+
+    <include
+        android:id="@+id/formIntro"
+        layout="@layout/include_login_form_intro"
+        android:visibility="visible" />
+
+    <include
+        android:id="@+id/formLogin"
+        layout="@layout/include_login_form_login"
+        android:visibility="gone" />
+
+    <include
+        android:id="@+id/formRegister"
+        layout="@layout/include_login_form_register"
+        android:visibility="gone" />
+
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="@color/background_base"
+        android:theme="@style/AppTheme.AppBarOverlay"
+        android:visibility="gone"
+        app:popupTheme="@style/AppTheme.PopupOverlay"
+        tools:title="Title"
+        tools:visibility="visible" />
+
+    <View
+        android:id="@+id/disableInput"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:clickable="true"
+        android:visibility="gone" />
+</RelativeLayout>

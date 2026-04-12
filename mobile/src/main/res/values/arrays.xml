@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string-array name="set_types">
+        <item>SINGLE</item>
+        <item>DROP</item>
+        <item>SUPER</item>
+        <item>GIANT</item>
+        <item>FORCE</item>
+        <item>CIRCUIT</item>
+        <item>PROGRESSIVE</item>
+        <!--<item>MULTI</item>-->
+        <item>COMBO</item>
+        <item>AMRAP</item>
+    </string-array>
+
+    <string-array name="set_type_titles">
+        <item>@string/set_single</item>
+        <item>@string/set_drop</item>
+        <item>@string/set_super</item>
+        <item>@string/set_giant</item>
+        <item>@string/set_force</item>
+        <item>@string/set_circuit</item>
+        <item>@string/set_progressive</item>
+        <!--<item>@string/set_multi</item>-->
+        <item>@string/set_combo</item>
+        <item>@string/set_amrap</item>
+    </string-array>
+
+    <string-array name="exercise_categories">
+        <item>ABS</item>
+        <item>ARMS</item>
+        <item>BACK</item>
+        <item>CHEST</item>
+        <item>LEGS</item>
+        <item>SHOULDERS</item>
+    </string-array>
+
+    <string-array name="exercise_category_titles">
+        <item>@string/category_abs</item>
+        <item>@string/category_arms</item>
+        <item>@string/category_back</item>
+        <item>@string/category_chest</item>
+        <item>@string/category_legs</item>
+        <item>@string/category_shoulders</item>
+    </string-array>
+
+    <string-array name="exercise_category_titles_with_none">
+        <item>@string/create_exercise_select_category</item>
+        <item>@string/category_abs</item>
+        <item>@string/category_arms</item>
+        <item>@string/category_back</item>
+        <item>@string/category_chest</item>
+        <item>@string/category_legs</item>
+        <item>@string/category_shoulders</item>
+    </string-array>
+
+    <string-array name="statistics_durations_titles">
+        <item>@string/range_today</item>
+        <item>@string/range_week</item>
+        <item>@string/range_month</item>
+        <item>@string/range_year</item>
+        <item>@string/range_overall</item>
+    </string-array>
+
+    <string-array name="history_view_type_titles">
+        <item>@string/view_type_calendar</item>
+        <item>@string/view_type_list</item>
+    </string-array>
+
+    <string-array name="units_weight">
+        <item>KILOGRAM</item>
+        <item>POUND</item>
+    </string-array>
+
+    <string-array name="units_weight_titles">
+        <item>@string/settings_kilograms</item>
+        <item>@string/settings_pounds</item>
+    </string-array>
+
+    <string-array name="units_weight_abbreviations">
+        <item>@string/settings_kilograms_abbreviation</item>
+        <item>@string/settings_pounds_abbreviation</item>
+    </string-array>
+</resources>

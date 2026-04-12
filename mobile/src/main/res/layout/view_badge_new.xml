@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<TextView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:background="@drawable/rounded_corners_btn_one"
+    android:fontFamily="sans-serif-medium"
+    android:paddingLeft="@dimen/activity_margin_half_half"
+    android:paddingRight="@dimen/activity_margin_half_half"
+    android:text="new"
+    android:textAllCaps="true"
+    android:textColor="@color/background_base"
+    android:textSize="11sp"/>

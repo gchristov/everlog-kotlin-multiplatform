@@ -1,0 +1,271 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/background_base"
+    android:focusable="true"
+    android:focusableInTouchMode="true">
+
+    <androidx.core.widget.NestedScrollView
+        android:id="@+id/scrollView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fillViewport="true">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:clipChildren="false"
+            android:clipToPadding="false"
+            android:gravity="center_horizontal"
+            android:orientation="vertical"
+            android:paddingBottom="@dimen/activity_margin_double">
+
+            <FrameLayout
+                android:id="@+id/headerView"
+                android:layout_width="match_parent"
+                android:layout_height="400dp">
+
+                <io.github.florent37.shapeofview.shapes.RoundRectView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginLeft="-30dp"
+                    android:layout_marginRight="-20dp"
+                    android:rotation="16"
+                    android:translationY="-50dp"
+                    app:shape_roundRect_bottomRightRadius="80dp">
+
+                    <ImageView
+                        android:id="@+id/backgroundView"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:scaleType="centerCrop"
+                        tools:src="@drawable/background_pro" />
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:background="@color/image_overlay" />
+
+                    <TextView
+                        android:id="@+id/freeTrialLbl"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="bottom|right"
+                        android:layout_marginRight="-85dp"
+                        android:layout_marginBottom="-53dp"
+                        android:background="@color/background_card"
+                        android:gravity="center_horizontal"
+                        android:paddingLeft="50dp"
+                        android:paddingTop="@dimen/margin_12"
+                        android:paddingRight="50dp"
+                        android:paddingBottom="100dp"
+                        android:rotation="-45"
+                        android:text="@string/pro_free_trial"
+                        android:textColor="@color/white_base"
+                        android:textSize="11sp" />
+                </io.github.florent37.shapeofview.shapes.RoundRectView>
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginBottom="@dimen/margin_20"
+                    android:gravity="center"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/pro_title"
+                        android:textColor="@color/white_base"
+                        android:textSize="30sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:layout_width="300dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/activity_margin_half"
+                        android:gravity="center"
+                        android:text="@string/pro_subtitle"
+                        android:textColor="@color/gray_2"
+                        android:textSize="16sp" />
+
+                    <com.everlog.ui.views.ProSubButton
+                        android:id="@+id/subYearBtn"
+                        android:layout_width="250dp"
+                        android:layout_height="54dp"
+                        android:layout_marginTop="38dp"
+                        app:psbBackground="@drawable/rounded_corners_btn_pro_year" />
+
+                    <com.everlog.ui.views.ProSubButton
+                        android:id="@+id/subMonthBtn"
+                        android:layout_width="250dp"
+                        android:layout_height="54dp"
+                        android:layout_marginTop="@dimen/activity_margin"
+                        app:psbBackground="@drawable/rounded_corners_btn_pro_month" />
+                </LinearLayout>
+            </FrameLayout>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/margin_24"
+                android:layout_marginBottom="@dimen/margin_24"
+                android:text="@string/pro_why"
+                android:textColor="@color/white_base"
+                android:textSize="24sp"
+                android:textStyle="bold" />
+
+            <androidx.cardview.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/activity_margin_actual"
+                android:layout_marginRight="@dimen/activity_margin_actual"
+                app:cardBackgroundColor="@color/background_base"
+                app:cardCornerRadius="@dimen/card_radius_default"
+                app:cardElevation="@dimen/card_elevation_default">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="1dp"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="match_parent"
+                            android:layout_weight="0.2"
+                            android:background="@color/background_card"
+                            android:gravity="center"
+                            android:text="free"
+                            android:textAllCaps="true"
+                            android:textColor="@color/white_base"
+                            android:textSize="16sp" />
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="match_parent"
+                            android:layout_weight="0.6"
+                            android:layout_marginLeft="1dp"
+                            android:layout_marginRight="1dp"
+                            android:background="@color/background_card"
+                            android:gravity="center"
+                            android:text="benefits"
+                            android:textAllCaps="true"
+                            android:textColor="@color/gray_1"
+                            android:textSize="16sp" />
+
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="0.2"
+                            android:background="@color/background_card"
+                            android:gravity="center"
+                            android:paddingTop="@dimen/margin_10"
+                            android:paddingBottom="@dimen/margin_10">
+
+                            <com.everlog.ui.views.badge.ProBadge
+                                android:layout_width="34dp"
+                                android:layout_height="34dp"
+                                app:pbTextSize="11sp" />
+                        </LinearLayout>
+                    </LinearLayout>
+
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/proFeaturesList"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:focusable="false"
+                        android:focusableInTouchMode="false"
+                        android:nestedScrollingEnabled="false"
+                        tools:itemCount="3"
+                        tools:listitem="@layout/row_pro_feature" />
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/activity_margin_actual"
+                android:layout_marginTop="@dimen/margin_12"
+                android:layout_marginRight="@dimen/activity_margin_actual"
+                android:text="@string/pro_muscle_goals"
+                android:textColor="@color/gray_3"
+                android:textSize="12sp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="36dp"
+                android:text="@string/pro_questions"
+                android:textColor="@color/white_base"
+                android:textSize="24sp"
+                android:textStyle="bold" />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/proQuestionsList"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/activity_margin_actual"
+                android:layout_marginTop="@dimen/margin_24"
+                android:layout_marginRight="@dimen/activity_margin_actual"
+                android:focusable="false"
+                android:focusableInTouchMode="false"
+                android:nestedScrollingEnabled="false"
+                tools:itemCount="2"
+                tools:listitem="@layout/row_pro_question" />
+
+            <TextView
+                android:id="@+id/restoreLbl"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/activity_margin"
+                android:text="@string/pro_restore"
+                android:textColor="@color/gray_1"
+                android:textSize="15sp" />
+
+            <TextView
+                android:id="@+id/termsLbl"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/activity_margin_half"
+                android:text="@string/login_terms"
+                android:textColor="@color/gray_1"
+                android:textSize="15sp" />
+
+            <TextView
+                android:id="@+id/privacyLbl"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/activity_margin_half"
+                android:text="@string/login_terms_privacy"
+                android:textColor="@color/gray_1"
+                android:textSize="15sp" />
+        </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
+
+    <View
+        android:id="@+id/shadowView"
+        android:layout_width="match_parent"
+        android:layout_height="70dp"
+        android:alpha="0"
+        android:background="@drawable/gradient_pro"
+        tools:alpha="1" />
+
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="@android:color/transparent"
+        android:theme="@style/AppTheme.AppBarOverlay"
+        app:popupTheme="@style/AppTheme.PopupOverlay"
+        tools:title="Title" />
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

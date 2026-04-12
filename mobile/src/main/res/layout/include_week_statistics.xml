@@ -1,0 +1,220 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/weekParentView"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:clipChildren="false"
+    android:clipToPadding="false"
+    android:orientation="vertical"
+    tools:background="@color/background_base">
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/weekDaysView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/margin_26"
+        android:clickable="true"
+        android:foreground="?attr/selectableItemBackground"
+        app:cardBackgroundColor="@color/background_card"
+        app:cardCornerRadius="@dimen/card_radius_default"
+        app:cardElevation="@dimen/card_elevation_default">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="-6dp"
+            android:layout_marginRight="-6dp"
+            android:orientation="horizontal"
+            android:padding="@dimen/activity_margin">
+
+            <com.everlog.ui.views.WeekDayView
+                android:id="@+id/day1View"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1" />
+
+            <com.everlog.ui.views.WeekDayView
+                android:id="@+id/day2View"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1" />
+
+            <com.everlog.ui.views.WeekDayView
+                android:id="@+id/day3View"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1" />
+
+            <com.everlog.ui.views.WeekDayView
+                android:id="@+id/day4View"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1" />
+
+            <com.everlog.ui.views.WeekDayView
+                android:id="@+id/day5View"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1" />
+
+            <com.everlog.ui.views.WeekDayView
+                android:id="@+id/day6View"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1" />
+
+            <com.everlog.ui.views.WeekDayView
+                android:id="@+id/day7View"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1" />
+        </LinearLayout>
+    </androidx.cardview.widget.CardView>
+
+    <com.everlog.ui.views.EmptyView
+        android:id="@+id/weekEmptyView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="@dimen/activity_margin_actual"
+        android:visibility="gone"
+        app:evSubtitle="@string/home_week_empty_subtitle"
+        app:evTitle="@string/home_week_empty_title"
+        tools:layout_marginBottom="@dimen/margin_26"
+        tools:visibility="visible" />
+
+    <include
+        layout="@layout/shimmer_week_statistics"
+        tools:visibility="gone" />
+
+    <LinearLayout
+        android:id="@+id/weekContentView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:clipChildren="false"
+        android:clipToPadding="false"
+        android:orientation="vertical">
+
+        <TextView
+            style="@style/SettingsCategory"
+            android:text="@string/statistics_title" />
+
+        <HorizontalScrollView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/margin_18"
+            android:clipChildren="false"
+            android:clipToPadding="false"
+            android:scrollbars="none">
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:clipChildren="false"
+                android:clipToPadding="false"
+                android:orientation="horizontal">
+
+                <androidx.cardview.widget.CardView
+                    android:id="@+id/goalSummary"
+                    android:layout_width="@dimen/card_week_statistics_width"
+                    android:layout_height="@dimen/card_week_statistics_height"
+                    android:layout_marginRight="@dimen/margin_26"
+                    android:clickable="true"
+                    android:foreground="?attr/selectableItemBackground"
+                    app:cardBackgroundColor="@color/background_card"
+                    app:cardCornerRadius="@dimen/card_radius_default"
+                    app:cardElevation="@dimen/card_elevation_default"
+                    app:contentPadding="@dimen/activity_margin">
+
+                    <com.vaibhavlakhera.circularprogressview.CircularProgressView
+                        android:id="@+id/goalProgress"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        app:animate="true"
+                        app:animateDuration="2000"
+                        app:progressColor="@color/main_accent"
+                        app:progressInterpolator="@android:anim/accelerate_decelerate_interpolator"
+                        app:progressRoundCap="true"
+                        app:progressTextEnabled="false"
+                        app:progressValue="0"
+                        app:progressWidth="8dp"
+                        app:totalColor="@color/gray_4"
+                        app:totalWidth="4dp" />
+
+                    <LinearLayout
+                        android:id="@+id/goalPendingLayout"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:gravity="center"
+                        android:orientation="vertical"
+                        android:visibility="visible">
+
+                        <TextView
+                            android:id="@+id/goalTotalLbl"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="-5dp"
+                            android:fontFamily="sans-serif-medium"
+                            android:textColor="@color/white_base"
+                            android:textSize="36sp"
+                            tools:text="3" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:gravity="center"
+                            android:text="@string/home_week_goal_left"
+                            android:textColor="@color/gray_1"
+                            android:textSize="12sp" />
+                    </LinearLayout>
+
+                    <TextView
+                        android:id="@+id/goalAchievedLayout"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:fontFamily="sans-serif-medium"
+                        android:gravity="center"
+                        android:text="@string/home_week_goal_achieved"
+                        android:textColor="@color/white_base"
+                        android:textSize="14sp"
+                        android:visibility="gone" />
+                </androidx.cardview.widget.CardView>
+
+                <com.everlog.ui.views.summarycard.SummaryCardWeek
+                    android:id="@+id/workoutsCompletedSummary"
+                    android:layout_width="@dimen/card_week_statistics_width"
+                    android:layout_height="@dimen/card_week_statistics_height"
+                    android:layout_marginRight="@dimen/margin_26"
+                    android:clickable="true"
+                    android:foreground="?attr/selectableItemBackground" />
+
+                <com.everlog.ui.views.summarycard.SummaryCardWeek
+                    android:id="@+id/totalWeightSummary"
+                    android:layout_width="@dimen/card_week_statistics_width"
+                    android:layout_height="@dimen/card_week_statistics_height"
+                    android:layout_marginRight="@dimen/margin_26"
+                    android:clickable="true"
+                    android:foreground="?attr/selectableItemBackground" />
+
+                <com.everlog.ui.views.summarycard.SummaryCardWeek
+                    android:id="@+id/totalTimeSummary"
+                    android:layout_width="@dimen/card_week_statistics_width"
+                    android:layout_height="@dimen/card_week_statistics_height"
+                    android:layout_marginRight="@dimen/margin_26"
+                    android:clickable="true"
+                    android:foreground="?attr/selectableItemBackground" />
+
+                <com.everlog.ui.views.summarycard.SummaryCardWeek
+                    android:id="@+id/averageTimeSummary"
+                    android:layout_width="@dimen/card_week_statistics_width"
+                    android:layout_height="@dimen/card_week_statistics_height"
+                    android:clickable="true"
+                    android:foreground="?attr/selectableItemBackground" />
+            </LinearLayout>
+        </HorizontalScrollView>
+    </LinearLayout>
+</LinearLayout>

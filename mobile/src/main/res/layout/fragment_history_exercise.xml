@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingLeft="@dimen/activity_margin_actual"
+    android:paddingRight="@dimen/activity_margin_actual"
+    tools:background="@color/background_base">
+
+    <com.everlog.ui.views.EmptyView
+        android:id="@+id/emptyView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:visibility="gone"
+        app:evSubtitle="@string/history_empty_prompt"
+        tools:visibility="visible" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:clipToPadding="false"
+        android:focusable="false"
+        android:focusableInTouchMode="false"
+        android:paddingBottom="@dimen/footer_bottom_padding"
+        tools:itemCount="1"
+        tools:listitem="@layout/row_history_exercise" />
+
+    <include layout="@layout/shimmer_history_exercise" />
+</FrameLayout>

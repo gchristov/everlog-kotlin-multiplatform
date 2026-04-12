@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/rl_ach"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:gravity="center"
+    android:padding="16dp">
+
+    <LinearLayout
+        android:id="@+id/ll_content_main"
+        android:layout_width="wrap_content"
+        android:layout_height="56dp"
+        android:background="@drawable/retangle_c_archiement"
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
+
+        <ImageView
+            android:id="@+id/img_left"
+            android:layout_width="56dp"
+            android:layout_height="56dp"
+            android:background="@drawable/rectangle_archiement_icon"
+            android:scaleType="center"
+            android:tint="@color/background_card"
+            tools:src="@drawable/ic_trophy"/>
+
+        <LinearLayout
+            android:id="@+id/ll_content"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:orientation="vertical"
+            android:paddingStart="12dp"
+            android:paddingLeft="12dp"
+            android:paddingEnd="12dp"
+            android:paddingRight="12dp">
+
+            <TextView
+                android:id="@+id/tv_titulo"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ellipsize="end"
+                android:maxLines="1"
+                android:textColor="@color/background_card"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                tools:text="Test title"/>
+
+            <TextView
+                android:id="@+id/tv_msg"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="-1dp"
+                android:ellipsize="end"
+                android:maxLines="1"
+                android:textColor="@color/background_card"
+                android:textSize="12sp"
+                tools:text="Subtitle"/>
+        </LinearLayout>
+    </LinearLayout>
+</RelativeLayout>

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item>
+        <shape>
+            <gradient
+                android:gradientRadius="200dp"
+                android:endColor="@color/background_card"
+                android:startColor="@color/background_card_lighter"
+                android:type="radial"/>
+        </shape>
+    </item>
+</selector>

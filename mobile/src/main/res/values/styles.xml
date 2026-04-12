@@ -1,0 +1,244 @@
+<resources>
+
+    <!-- Base application theme -->
+    <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+        <!-- Customize your theme here -->
+        <item name="colorPrimary">@color/background_toolbar</item>
+        <item name="colorPrimaryDark">@color/background_base</item>
+        <item name="colorAccent">@color/main_accent</item>
+    </style>
+    <style name="AppTheme.NoActionBar">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+    </style>
+
+    <style name="Theme.App.Starting" parent="Theme.SplashScreen">
+        <item name="windowSplashScreenBackground">@color/background_base</item>
+        <item name="windowSplashScreenAnimatedIcon">@mipmap/ic_launcher_round</item>
+        <item name="postSplashScreenTheme">@style/AppTheme.NoActionBar</item>
+    </style>
+
+    <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar"/>
+    <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light"/>
+    <style name="AppTheme.Transparent" parent="AppTheme.NoActionBar">
+        <item name="android:windowIsTranslucent">true</item>
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="android:windowContentOverlay">@null</item>
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowIsFloating">false</item>
+        <item name="android:backgroundDimEnabled">false</item>
+        <item name="android:windowTranslucentStatus">true</item>
+        <item name="android:windowTranslucentNavigation">true</item>
+    </style>
+
+    <!-- Toolbars -->
+    <style name="Toolbar.HomeTitle" parent="TextAppearance.Widget.AppCompat.Toolbar.Title">
+        <item name="android:textSize">30sp</item>
+        <item name="android:fontFamily">sans-serif-medium</item>
+        <item name="android:textColor">@color/white_base</item>
+    </style>
+    <style name="Toolbar.HomeTitle.Expanded">
+        <item name="android:shadowColor">#000</item>
+        <item name="android:shadowDx">@integer/cover_text_shadow_d</item>
+        <item name="android:shadowDy">@integer/cover_text_shadow_d</item>
+        <item name="android:shadowRadius">@integer/cover_text_shadow_radius</item>
+    </style>
+    <style name="Toolbar.HomeTitle.Expanded.Invisible">
+        <item name="android:textColor">@android:color/transparent</item>
+    </style>
+    <style name="Toolbar.HomeTitle.Collapsed" parent="TextAppearance.Widget.AppCompat.Toolbar.Title">
+        <item name="android:shadowColor">#000</item>
+        <item name="android:shadowDx">@integer/cover_text_shadow_d</item>
+        <item name="android:shadowDy">@integer/cover_text_shadow_d</item>
+        <item name="android:shadowRadius">@integer/cover_text_shadow_radius</item>
+    </style>
+    <style name="Toolbar.HomeSubtitle" parent="TextAppearance.Widget.AppCompat.Toolbar.Title">
+        <item name="android:textSize">16sp</item>
+        <item name="android:fontFamily">sans-serif</item>
+        <item name="android:textColor">@color/white_darker</item>
+    </style>
+    <style name="Toolbar.HomeSubtitle.Expanded">
+        <item name="android:shadowColor">#000</item>
+        <item name="android:shadowDx">@integer/cover_text_shadow_d</item>
+        <item name="android:shadowDy">@integer/cover_text_shadow_d</item>
+        <item name="android:shadowRadius">@integer/cover_text_shadow_radius</item>
+    </style>
+    <style name="Toolbar.HomeSubtitle.Expanded.Invisible">
+        <item name="android:textColor">@android:color/transparent</item>
+    </style>
+    <style name="Toolbar.HomeSubtitle.Collapsed">
+        <item name="android:shadowColor">#000</item>
+        <item name="android:shadowDx">@integer/cover_text_shadow_d</item>
+        <item name="android:shadowDy">@integer/cover_text_shadow_d</item>
+        <item name="android:shadowRadius">@integer/cover_text_shadow_radius</item>
+        <item name="android:textSize">12sp</item>
+    </style>
+    <style name="CoverText">
+        <item name="android:shadowColor">#000</item>
+        <item name="android:shadowDx">@integer/cover_text_shadow_d</item>
+        <item name="android:shadowDy">@integer/cover_text_shadow_d</item>
+        <item name="android:shadowRadius">@integer/cover_text_shadow_radius</item>
+    </style>
+
+    <!-- Dialog styling -->
+    <style name="CustomBottomSheetDialogTheme" parent="Theme.Design.Light.BottomSheetDialog">
+        <item name="bottomSheetStyle">@style/CustomBottomSheetStyle</item>
+    </style>
+    <style name="CustomBottomSheetStyle" parent="Widget.Design.BottomSheet.Modal">
+        <item name="android:background">@android:color/transparent</item>
+        <item name="behavior_peekHeight">250dp</item>
+    </style>
+    <style name="DarkDialogTheme" parent="Theme.AppCompat.Light.Dialog.Alert">
+        <item name="android:background">@color/background_card</item>
+        <item name="android:textColor">@color/white_base</item>
+        <item name="android:textColorPrimary">@color/gray_5</item>
+    </style>
+    <style name="DarkDialogTheme.RadioGroup" parent="DarkDialogTheme">
+        <item name="android:textColorAlertDialogListItem">@color/gray_5</item>
+        <item name="android:textColorSecondary">@color/gray_5</item>
+    </style>
+
+    <!-- Spinner styling -->
+    <style name="SpinnerItemStyle">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:maxLines">1</item>
+        <item name="android:textColor">@color/white_base</item>
+        <item name="android:textSize">@dimen/dropdown_text_size</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:paddingLeft">@dimen/activity_margin_half</item>
+        <item name="android:paddingRight">@dimen/activity_margin_half</item>
+    </style>
+
+    <!-- View width styling -->
+    <style name="LoginContentWidth">
+        <item name="android:layout_width">match_parent</item>
+    </style>
+
+    <!-- Rate view -->
+    <style name="RateStyle">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_weight">1</item>
+        <item name="android:foreground">?attr/selectableItemBackground</item>
+        <item name="android:minHeight">0dp</item>
+        <item name="android:paddingBottom">@dimen/activity_margin_half</item>
+        <item name="android:paddingTop">@dimen/activity_margin_half</item>
+        <item name="android:textAllCaps">false</item>
+        <item name="android:textSize">18sp</item>
+    </style>
+    <style name="RateStyle.No" parent="RateStyle">
+        <item name="android:background">@android:color/transparent</item>
+        <item name="android:textColor">@color/background_card</item>
+        <item name="android:alpha">0.7</item>
+    </style>
+    <style name="RateStyle.Yes" parent="RateStyle">
+        <item name="android:background">@drawable/rounded_corners_rate_yes</item>
+        <item name="android:textColor">@color/background_card</item>
+        <item name="android:layout_marginLeft">@dimen/activity_margin</item>
+    </style>
+
+    <!-- Workout Notification -->
+    <style name="WorkoutNotificationButton">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">match_parent</item>
+        <item name="android:paddingLeft">@dimen/margin_10</item>
+        <item name="android:paddingRight">@dimen/margin_10</item>
+        <item name="android:tint">@color/main_accent</item>
+    </style>
+    <style name="WorkoutNotificationExponent">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">match_parent</item>
+        <item name="android:layout_marginLeft">@dimen/activity_margin_half_half_half</item>
+        <item name="android:gravity">center</item>
+        <item name="android:paddingTop">@dimen/margin_6</item>
+        <item name="android:textColor">@color/gray_3</item>
+        <item name="android:textSize">12sp</item>
+    </style>
+    <style name="WorkoutNotificationInput">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">match_parent</item>
+        <item name="android:gravity">center</item>
+        <item name="android:maxLines">1</item>
+        <item name="android:paddingLeft">@dimen/activity_margin_half_half</item>
+        <item name="android:textColor">@color/white_base</item>
+        <item name="android:textSize">18sp</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <!-- Buttons -->
+    <style name="Button">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">40dp</item>
+        <item name="android:foreground">?attr/selectableItemBackground</item>
+        <item name="android:background">@drawable/rounded_corners_btn_one</item>
+        <item name="android:textColor">@color/background_card</item>
+        <item name="android:paddingLeft">@dimen/activity_margin_double</item>
+        <item name="android:paddingRight">@dimen/activity_margin_double</item>
+    </style>
+    <style name="Button.Two" parent="Button">
+        <item name="android:background">@drawable/rounded_corners_btn_two</item>
+        <item name="android:textColor">@color/main_accent</item>
+    </style>
+    <style name="Button.Three" parent="Button.Two">
+        <item name="android:background">@drawable/rounded_corners_btn_three</item>
+    </style>
+    <style name="Button.Four" parent="Button.Three">
+        <item name="android:background">@null</item>
+    </style>
+    <style name="ButtonOption">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:paddingBottom">1dp</item>
+        <item name="android:textColor">@color/white_darker</item>
+        <item name="android:fontFamily">sans-serif</item>
+        <item name="android:textSize">13sp</item>
+    </style>
+
+    <!-- Settings -->
+    <style name="SettingsCategory">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:fontFamily">sans-serif-medium</item>
+        <item name="android:textColor">@color/gray_1</item>
+        <item name="android:textSize">15sp</item>
+    </style>
+    <style name="SettingsCategory.Large">
+        <item name="android:textSize">18sp</item>
+    </style>
+    <style name="SettingsTitle">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textColor">@color/white_darker</item>
+        <item name="android:textSize">@dimen/settings_row_text_size</item>
+    </style>
+    <style name="SettingsSubtitle">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textColor">@color/gray_1</item>
+        <item name="android:textSize">@dimen/settings_row_subtitle_text_size</item>
+        <item name="android:layout_marginTop">@dimen/activity_margin_half_half</item>
+    </style>
+    <style name="SettingsValue">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textColor">@color/main_accent</item>
+        <item name="android:textSize">@dimen/settings_row_text_size</item>
+        <item name="android:layout_marginRight">@dimen/activity_margin_half_half_half</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+    <style name="SettingsIcon">
+        <item name="android:layout_width">@dimen/settings_item_icon_size</item>
+        <item name="android:layout_height">@dimen/settings_item_icon_size</item>
+        <item name="android:layout_marginRight">@dimen/settings_arrow_icon_margin_left</item>
+        <item name="android:tint">@color/main_accent</item>
+    </style>
+
+    <!-- BottomSheet theme. -->
+
+    <style name="BottomSheet.StyleDialog.Dark" parent="BottomSheet.Dialog">
+        <item name="android:textColorPrimary">#d0d0d0</item>
+        <item name="android:textColorSecondary">#a0a0a0</item>
+        <item name="bs_dialogBackground">@color/background_base</item>
+    </style>
+</resources>

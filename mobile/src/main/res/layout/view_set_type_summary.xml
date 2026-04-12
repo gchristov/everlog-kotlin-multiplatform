@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/background_card">
+
+    <TextView
+        android:id="@+id/setTypeLbl"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/activity_margin"
+        android:layout_marginTop="@dimen/activity_margin"
+        android:layout_marginRight="@dimen/activity_margin"
+        android:layout_toLeftOf="@+id/chevronIcon"
+        android:fontFamily="sans-serif-medium"
+        android:textColor="@color/white_base"
+        android:textSize="18sp"
+        tools:text="@string/set_single" />
+
+    <TextView
+        android:id="@+id/setDescriptionLbl"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/setTypeLbl"
+        android:layout_alignLeft="@id/setTypeLbl"
+        android:layout_alignRight="@+id/setTypeLbl"
+        android:layout_marginTop="@dimen/activity_margin_half_half"
+        android:layout_marginBottom="@dimen/activity_margin"
+        android:textColor="@color/gray_1"
+        android:textSize="14sp"
+        tools:text="@string/set_single_description" />
+
+    <ImageView
+        android:id="@+id/chevronIcon"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_centerVertical="true"
+        android:layout_marginLeft="@dimen/settings_arrow_icon_margin_left"
+        android:layout_marginRight="@dimen/activity_margin_half"
+        android:src="@drawable/ic_right"
+        app:tint="@color/gray_1" />
+
+    <View
+        android:id="@+id/separator"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_below="@id/setDescriptionLbl"
+        android:background="@color/separator" />
+</RelativeLayout>

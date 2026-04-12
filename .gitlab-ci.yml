@@ -1,0 +1,62 @@
+image: unitedclassifiedsapps/gitlab-ci-android-fastlane
+
+variables:
+  GIT_SUBMODULE_STRATEGY: recursive
+
+before_script:
+  - echo "Running using Java"
+  - java -version
+  # Check Fastlane
+  - gem cleanup
+  - gem install fastlane --version 2.141.0 --no-document
+
+  # Check Firebase
+  - apt-get update
+  - apt-get install -y sudo
+  - ls -al /bin/sh && sudo rm /bin/sh && sudo ln -s /bin/bash /bin/sh && ls -al /bin/sh
+  - curl -sL firebase.tools | bash
+
+  # Check Gradle
+  - export GRADLE_USER_HOME=$(pwd)/.gradle
+  - chmod +x ./gradlew
+
+  # Accept all licenses
+  - (echo y; echo y; echo y; echo y; echo y; echo y) | $ANDROID_HOME/tools/bin/sdkmanager --licenses
+
+cache:
+  key: ${CI_PROJECT_ID}
+  paths:
+    - .gradle/
+
+stages:
+  #  - test
+  - deployStaging
+  - deployProduction
+
+#unitTests:
+#  stage: test
+#  script:
+#    - fastlane test
+#  only:
+#    - master
+#    - develop
+
+deployStaging:
+  stage: deployStaging
+  script:
+    - fastlane deploy_firebase_app_distribution
+  only:
+    - develop
+  artifacts:
+    paths:
+      - mobile/build/outputs
+
+deployProduction:
+  stage: deployProduction
+  script:
+    - fastlane deploy_google_play_internal
+  only:
+    - master
+  artifacts:
+    paths:
+      - mobile/build/outputs/apk

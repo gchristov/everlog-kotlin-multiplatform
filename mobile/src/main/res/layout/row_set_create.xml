@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:clipChildren="false"
+    android:clipToPadding="false"
+    tools:background="@color/background_base">
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/setNumber"
+        android:layout_marginTop="-18dp"
+        android:background="@drawable/rounded_corners_exercise_group"
+        android:focusable="false"
+        android:focusableInTouchMode="false"
+        android:nestedScrollingEnabled="false"
+        android:paddingLeft="@dimen/margin_20"
+        android:paddingTop="28dp"
+        android:paddingRight="@dimen/margin_20"
+        android:paddingBottom="@dimen/margin_6"
+        tools:itemCount="1"
+        tools:listitem="@layout/row_exercise_within_set_create" />
+
+    <TextView
+        android:id="@+id/setNumber"
+        android:layout_width="wrap_content"
+        android:layout_height="@dimen/options_menu_icon_size"
+        android:layout_marginLeft="@dimen/margin_14"
+        android:background="@color/background_base"
+        android:gravity="center"
+        android:paddingLeft="@dimen/activity_margin_half"
+        android:paddingRight="@dimen/activity_margin_half"
+        android:paddingBottom="2dp"
+        android:text="Set 1"
+        android:textColor="@color/gray_3"
+        android:textSize="15sp" />
+
+    <ImageView
+        android:id="@+id/menuBtn"
+        android:layout_width="@dimen/options_menu_icon_size"
+        android:layout_height="@dimen/options_menu_icon_size"
+        android:layout_alignParentRight="true"
+        android:layout_marginRight="@dimen/margin_14"
+        android:background="@drawable/circle_border_separator"
+        android:padding="@dimen/margin_6"
+        android:src="@drawable/ic_more"
+        app:tint="@color/gray_1" />
+
+    <Button
+        android:id="@+id/completeBtn"
+        style="@style/Button"
+        android:layout_below="@id/recyclerView"
+        android:background="@drawable/rounded_corners_btn_set_complete"
+        android:text="@string/complete" />
+</RelativeLayout>

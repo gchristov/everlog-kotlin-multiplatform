@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item
+        android:id="@+id/action_share"
+        android:icon="@drawable/ic_share"
+        android:title="Share"
+        app:showAsAction="ifRoom" />
+    <item
+        android:icon="@drawable/ic_more"
+        android:title=""
+        app:showAsAction="always">
+        <menu>
+            <item
+                android:id="@+id/action_save_as_routine"
+                android:icon="@drawable/ic_routines_black"
+                android:title="@string/workout_details_save_title"
+                app:showAsAction="ifRoom"/>
+            <item
+                android:id="@+id/action_delete"
+                android:icon="@drawable/ic_delete_black"
+                android:title="Delete"
+                app:showAsAction="ifRoom"/>
+        </menu>
+    </item>
+</menu>

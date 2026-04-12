@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:clickable="true"
+    android:foreground="?attr/selectableItemBackground"
+    android:orientation="vertical"
+    tools:background="@color/background_base">
+
+    <TextView
+        android:id="@+id/sectionTitle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingLeft="@dimen/activity_margin"
+        android:paddingTop="@dimen/activity_margin_half"
+        android:paddingBottom="@dimen/activity_margin_half"
+        android:textColor="@color/gray_1"
+        android:textSize="14sp"
+        android:visibility="gone"
+        tools:text="E"
+        tools:visibility="visible" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:orientation="horizontal"
+        android:paddingLeft="@dimen/activity_margin"
+        android:paddingTop="@dimen/margin_10"
+        android:paddingRight="@dimen/activity_margin_half"
+        android:paddingBottom="@dimen/margin_10">
+
+        <com.everlog.ui.views.ExerciseImageView
+            android:id="@+id/exerciseImg"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:layout_marginRight="@dimen/margin_22" />
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:paddingTop="@dimen/margin_6"
+            android:paddingBottom="@dimen/margin_6">
+
+            <TextView
+                android:id="@+id/exerciseName"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@color/background_base"
+                android:fontFamily="sans-serif-medium"
+                android:minWidth="200dp"
+                android:textColor="@color/white_base"
+                android:textSize="20sp"
+                tools:text="Exercise Name" />
+
+            <TextView
+                android:id="@+id/categoryName"
+                android:layout_width="wrap_content"
+                android:layout_height="22dp"
+                android:layout_marginTop="@dimen/margin_6"
+                android:background="@drawable/rounded_corners_exercise_muscle_group"
+                android:gravity="center"
+                android:minWidth="30dp"
+                android:paddingLeft="@dimen/margin_6"
+                android:paddingRight="@dimen/margin_6"
+                android:textAllCaps="true"
+                android:textColor="@color/white_base"
+                android:textSize="11sp"
+                tools:text="Arms" />
+        </LinearLayout>
+
+        <CheckBox
+            android:id="@+id/selectedCheckbox"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:buttonTint="@color/main_accent"
+            android:clickable="false"
+            android:enabled="false"
+            android:visibility="gone"
+            tools:visibility="visible" />
+    </LinearLayout>
+</LinearLayout>

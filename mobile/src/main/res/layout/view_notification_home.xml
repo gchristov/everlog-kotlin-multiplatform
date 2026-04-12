@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/containerLayout"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:clickable="true"
+    android:foreground="?attr/selectableItemBackground"
+    app:cardBackgroundColor="@color/background_card"
+    app:cardCornerRadius="@dimen/card_radius_default"
+    app:cardElevation="@dimen/card_elevation_default">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:clipChildren="false"
+        android:clipToPadding="false"
+        android:orientation="horizontal"
+        android:padding="@dimen/activity_margin">
+
+        <com.christophesmet.android.views.maskableframelayout.MaskableFrameLayout
+            android:id="@+id/maskableLayout"
+            android:layout_width="52dp"
+            android:layout_height="52dp"
+            android:layout_marginRight="@dimen/activity_margin"
+            app:mask="@drawable/mask_circle"
+            app:porterduffxfermode="DST_IN">
+
+            <ImageView
+                android:id="@+id/imageView"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@drawable/circle_dark"
+                android:scaleType="centerCrop" />
+        </com.christophesmet.android.views.maskableframelayout.MaskableFrameLayout>
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="@dimen/activity_margin"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/titleLbl"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="@color/white_base"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                tools:text="Test title" />
+
+            <TextView
+                android:id="@+id/descriptionLbl"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/activity_margin_half_half"
+                android:paddingBottom="@dimen/activity_margin_half_half"
+                android:textColor="@color/white_darker"
+                android:textSize="15sp"
+                tools:text="Test description that should go on two lines if necessary" />
+
+            <TextView
+                android:id="@+id/updateLbl"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/activity_margin_half_half"
+                android:text="App update required"
+                android:textColor="@color/gray_5"
+                android:textSize="12sp" />
+        </LinearLayout>
+
+        <ImageView
+            android:id="@+id/closeBtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="-10dp"
+            android:layout_marginRight="-10dp"
+            android:clickable="true"
+            android:foreground="?attr/selectableItemBackgroundBorderless"
+            android:padding="10dp"
+            android:src="@drawable/ic_clear_white"
+            android:tint="@color/gray_1" />
+    </LinearLayout>
+</androidx.cardview.widget.CardView>

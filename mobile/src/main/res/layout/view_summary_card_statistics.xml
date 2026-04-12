@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:gravity="center"
+    android:orientation="vertical"
+    app:cardBackgroundColor="@color/background_card"
+    app:cardCornerRadius="@dimen/card_radius_default"
+    app:cardElevation="@dimen/card_elevation_default"
+    app:contentPaddingBottom="@dimen/margin_20"
+    app:contentPaddingRight="@dimen/activity_margin_half"
+    app:contentPaddingTop="@dimen/margin_14">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:orientation="vertical">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/titleLbl"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:fontFamily="sans-serif-medium"
+                android:maxLines="1"
+                android:textColor="@color/white_base"
+                android:textSize="24sp"
+                tools:text="99999" />
+
+            <TextView
+                android:id="@+id/metricLbl"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignBottom="@id/titleLbl"
+                android:layout_marginLeft="@dimen/activity_margin_half_half_half"
+                android:layout_marginBottom="@dimen/activity_margin_half_half_half"
+                android:layout_toRightOf="@+id/titleLbl"
+                android:textColor="@color/gray_5"
+                android:textSize="13sp"
+                android:visibility="gone"
+                tools:text="@string/kg"
+                tools:visibility="visible" />
+        </RelativeLayout>
+
+        <TextView
+            android:id="@+id/subtitleLbl"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="2dp"
+            android:textColor="@color/gray_5"
+            android:textSize="13sp"
+            tools:text="volume lifted" />
+    </LinearLayout>
+</androidx.cardview.widget.CardView>

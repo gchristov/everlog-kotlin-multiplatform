@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/cardContainer"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="@dimen/margin_20"
+    android:clickable="true"
+    android:foreground="?attr/selectableItemBackground"
+    app:cardBackgroundColor="@color/background_card"
+    app:cardCornerRadius="@dimen/card_radius_default"
+    app:cardElevation="@dimen/card_elevation_default"
+    app:contentPaddingBottom="2dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:clipChildren="false"
+        android:clipToPadding="false"
+        android:orientation="vertical"
+        android:paddingLeft="@dimen/activity_margin"
+        android:paddingTop="@dimen/margin_12"
+        android:paddingRight="@dimen/activity_margin"
+        android:paddingBottom="@dimen/margin_12">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/questionTitle"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:fontFamily="sans-serif-medium"
+                android:text="What's included?"
+                android:textColor="@color/white_base"
+                android:textSize="17sp"/>
+
+            <ImageView
+                android:id="@+id/collapseIndicator"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="-2dp"
+                android:layout_marginRight="-6dp"
+                android:src="@drawable/ic_keyboard_down"
+                android:tint="@color/gray_1"/>
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/questionAnswer"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/activity_margin_half_half"
+            android:layout_marginRight="@dimen/activity_margin_double"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:text="With Everlog Pro you’ll be able to set specific..."
+            android:textColor="@color/gray_2"
+            android:textSize="13sp"/>
+    </LinearLayout>
+</androidx.cardview.widget.CardView>

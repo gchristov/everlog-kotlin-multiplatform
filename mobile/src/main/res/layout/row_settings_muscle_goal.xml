@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:foreground="?attr/selectableItemBackground"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:orientation="horizontal"
+        android:paddingLeft="@dimen/activity_margin"
+        android:paddingTop="@dimen/activity_margin_half"
+        android:paddingRight="@dimen/activity_margin"
+        android:paddingBottom="@dimen/activity_margin_half"
+        tools:background="@color/background_card">
+
+        <androidx.appcompat.widget.AppCompatRadioButton
+            android:id="@+id/radioButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:clickable="false"
+            app:buttonTint="@color/main_accent" />
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/activity_margin"
+            android:layout_marginRight="@dimen/activity_margin"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:paddingBottom="@dimen/activity_margin_half_half">
+
+            <TextView
+                android:id="@+id/titleLbl"
+                style="@style/SettingsTitle"
+                tools:text="None" />
+
+            <TextView
+                android:id="@+id/subtitleLbl"
+                style="@style/SettingsSubtitle"
+                tools:text="Weight prefill disabled  •  70% 1RM" />
+        </LinearLayout>
+
+        <com.everlog.ui.views.badge.ProLockBadge
+            android:id="@+id/proBadge"
+            android:layout_width="@dimen/options_menu_icon_size"
+            android:layout_height="@dimen/options_menu_icon_size"
+            android:padding="@dimen/activity_margin_half_half_half"
+            android:visibility="gone"
+            tools:visibility="visible" />
+    </LinearLayout>
+
+    <View
+        android:layout_width="wrap_content"
+        android:layout_height="1dp"
+        android:background="@color/separator" />
+</LinearLayout>

@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    tools:background="@color/background_base">
+
+    <TextView
+        style="@style/SettingsCategory"
+        android:layout_marginBottom="@dimen/settings_category_title_margin_vertical"
+        android:text="@string/settings_workouts" />
+
+    <androidx.cardview.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:cardBackgroundColor="@color/background_card"
+        app:cardCornerRadius="@dimen/card_radius_default"
+        app:cardElevation="@dimen/card_elevation_default">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:divider="@drawable/separator_line"
+            android:orientation="vertical"
+            android:showDividers="middle">
+
+            <LinearLayout
+                android:id="@+id/weeklyGoalBtn"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="?android:attr/selectableItemBackground"
+                android:clickable="true"
+                android:gravity="center"
+                android:orientation="horizontal"
+                android:paddingLeft="@dimen/settings_card_content_margin_left"
+                android:paddingTop="@dimen/settings_row_padding_top"
+                android:paddingRight="@dimen/settings_card_content_margin_left"
+                android:paddingBottom="@dimen/settings_row_padding_bottom">
+
+                <TextView
+                    style="@style/SettingsTitle"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/settings_weekly_goal" />
+
+                <TextView
+                    android:id="@+id/weeklyGoalField"
+                    style="@style/SettingsValue"
+                    android:layout_marginLeft="@dimen/activity_margin"
+                    tools:text="3" />
+            </LinearLayout>
+
+            <RelativeLayout
+                android:id="@+id/muscleGoalBtn"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="?android:attr/selectableItemBackground"
+                android:clickable="true"
+                android:clipChildren="false"
+                android:clipToPadding="false"
+                android:padding="@dimen/activity_margin">
+
+                <TextView
+                    android:id="@+id/muscleGoalTitle"
+                    style="@style/SettingsTitle"
+                    android:layout_width="wrap_content"
+                    android:text="@string/muscle_goal_title" />
+
+                <!--<com.everlog.ui.views.badge.NewBadge-->
+                <!--android:layout_width="wrap_content"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:layout_alignTop="@+id/muscleGoalTitle"-->
+                <!--android:layout_marginLeft="2dp"-->
+                <!--android:layout_marginTop="-7dp"-->
+                <!--android:layout_toRightOf="@+id/muscleGoalTitle"/>-->
+
+                <TextView
+                    android:id="@+id/muscleGoalSubtitle"
+                    style="@style/SettingsSubtitle"
+                    android:layout_below="@id/muscleGoalTitle"
+                    android:layout_toLeftOf="@+id/muscleGoalField"
+                    tools:text="Weight suggested based on history" />
+
+                <TextView
+                    android:id="@+id/muscleGoalField"
+                    style="@style/SettingsValue"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true"
+                    android:layout_marginLeft="@dimen/activity_margin"
+                    tools:text="Historic" />
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:id="@+id/weightIncreaseBtn"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="?android:attr/selectableItemBackground"
+                android:clickable="true"
+                android:padding="@dimen/activity_margin">
+
+                <TextView
+                    android:id="@+id/weightIncreaseTitle"
+                    style="@style/SettingsTitle"
+                    android:layout_toLeftOf="@+id/weightIncreaseField"
+                    android:text="@string/settings_weight_increase" />
+
+                <TextView
+                    style="@style/SettingsSubtitle"
+                    android:layout_below="@id/weightIncreaseTitle"
+                    android:layout_alignRight="@+id/weightIncreaseTitle"
+                    android:text="@string/settings_weight_increase_description" />
+
+                <TextView
+                    android:id="@+id/weightIncreaseField"
+                    style="@style/SettingsValue"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true"
+                    android:layout_marginLeft="@dimen/activity_margin"
+                    tools:text="1 kg" />
+            </RelativeLayout>
+        </LinearLayout>
+    </androidx.cardview.widget.CardView>
+</LinearLayout>

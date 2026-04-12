@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:clipChildren="false"
+    android:clipToPadding="false"
+    android:orientation="vertical"
+    tools:background="@color/background_base">
+
+    <com.kizitonwose.calendarview.CalendarView
+        android:id="@+id/calendarView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:clipChildren="false"
+        android:clipToPadding="false"
+        android:paddingTop="64dp"
+        android:paddingBottom="@dimen/footer_bottom_padding_double"
+        app:cv_dayViewResource="@layout/row_calendar_day"
+        app:cv_monthHeaderResource="@layout/row_calendar_month"
+        app:cv_orientation="vertical" />
+
+    <FrameLayout
+        android:id="@+id/listView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:paddingLeft="@dimen/activity_margin_actual"
+        android:paddingRight="@dimen/activity_margin_actual"
+        android:visibility="gone"
+        tools:visibility="gone">
+
+        <include
+            layout="@layout/shimmer_history"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <com.everlog.ui.views.EmptyView
+                android:id="@+id/emptyView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="@dimen/activity_margin_triple"
+                android:visibility="gone"
+                app:evSubtitle="@string/history_empty_prompt"
+                tools:visibility="visible" />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recyclerView"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:clipChildren="false"
+                android:clipToPadding="false"
+                android:paddingTop="64dp"
+                android:paddingBottom="@dimen/footer_bottom_padding_double"
+                tools:itemCount="3"
+                tools:listitem="@layout/row_history" />
+        </FrameLayout>
+    </FrameLayout>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="40dp"
+        android:layout_alignParentRight="true"
+        android:layout_marginRight="@dimen/activity_margin_actual"
+        android:background="@drawable/rounded_corners_card_fab">
+
+        <Spinner
+            android:id="@+id/viewTypeSpinner"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:entries="@array/history_view_type_titles"
+            android:paddingLeft="@dimen/margin_12"
+            android:prompt="@array/history_view_type_titles" />
+    </LinearLayout>
+</RelativeLayout>

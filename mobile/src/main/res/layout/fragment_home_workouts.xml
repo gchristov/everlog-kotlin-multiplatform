@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:background="@color/background_base">
+
+    <androidx.appcompat.widget.Toolbar
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/margin_10"
+        android:layout_marginBottom="@dimen/margin_30"
+        android:paddingTop="@dimen/margin_12"
+        android:theme="@style/AppTheme.AppBarOverlay"
+        app:popupTheme="@style/AppTheme.PopupOverlay"
+        app:title="@string/settings_workouts"
+        app:titleTextAppearance="@style/Toolbar.HomeTitle" />
+
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="-4dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:clipChildren="false"
+            android:clipToPadding="false"
+            android:orientation="vertical"
+            android:paddingBottom="@dimen/footer_bottom_padding_double">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:clipChildren="false"
+                android:clipToPadding="false"
+                android:orientation="vertical">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="@dimen/activity_margin_actual"
+                    android:layout_marginTop="-4dp"
+                    android:layout_marginRight="@dimen/margin_18"
+                    android:gravity="center"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        style="@style/SettingsCategory"
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
+                        android:text="@string/home_workouts_plans" />
+
+                    <include
+                        android:id="@+id/addPlanTop"
+                        layout="@layout/view_btn_add" />
+                </LinearLayout>
+
+                <include
+                    layout="@layout/shimmer_plans"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="@dimen/activity_margin_actual"
+                    android:layout_marginTop="@dimen/margin_12"
+                    android:visibility="gone" />
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/recyclerViewPlans"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/margin_12"
+                    android:clipChildren="false"
+                    android:clipToPadding="false"
+                    android:paddingLeft="@dimen/activity_margin_actual"
+                    tools:itemCount="1"
+                    tools:listitem="@layout/row_plan" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/margin_26"
+                android:clipChildren="false"
+                android:clipToPadding="false"
+                android:orientation="vertical"
+                android:paddingLeft="@dimen/activity_margin_actual">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="-4dp"
+                    android:layout_marginRight="@dimen/activity_margin_actual"
+                    android:layout_marginBottom="@dimen/margin_12"
+                    android:gravity="center"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        style="@style/SettingsCategory"
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
+                        android:text="@string/home_workouts_routines" />
+
+                    <include
+                        android:id="@+id/addRoutineTop"
+                        layout="@layout/view_btn_add"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginRight="-8dp" />
+                </LinearLayout>
+
+                <include
+                    layout="@layout/shimmer_routines"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:visibility="gone" />
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/recyclerViewRoutines"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:nestedScrollingEnabled="false"
+                    tools:itemCount="3"
+                    tools:listitem="@layout/row_routine" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/activity_margin_actual"
+                android:layout_marginTop="@dimen/margin_30"
+                android:divider="@drawable/separator_line"
+                android:orientation="vertical"
+                android:showDividers="middle|end">
+
+                <TextView
+                    style="@style/SettingsCategory"
+                    android:layout_marginBottom="@dimen/margin_18"
+                    android:text="@string/exercises_title" />
+
+                <Button
+                    android:id="@+id/exercisesBtn"
+                    android:layout_width="match_parent"
+                    android:layout_height="60dp"
+                    android:background="@android:color/transparent"
+                    android:drawableLeft="@drawable/ic_barbell"
+                    android:drawablePadding="@dimen/activity_margin"
+                    android:foreground="?attr/selectableItemBackground"
+                    android:gravity="left|center_vertical"
+                    android:text="@string/home_workouts_view_exercises"
+                    android:textColor="@color/white_base" />
+            </LinearLayout>
+        </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
+</LinearLayout>

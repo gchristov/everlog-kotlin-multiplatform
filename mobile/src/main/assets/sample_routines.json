@@ -1,0 +1,729 @@
+{
+  "0816c754-9d6d-455a-8d40-562a0615e65f": {
+    "createdDate": 1553107099704,
+    "exerciseGroups": [
+      {
+        "uuid": "bd698ba3-f35a-4500-9cc1-f8cc20731c8a",
+        "exercises": [
+          {
+            "uuid": "0a2a3cc2-a517-4034-9064-07fca5af95c6",
+            "allowWeightInput": false,
+            "exercise": {
+              "splitSides": false,
+              "name": "Crunch",
+              "imageUrl": "https://www.gymvisual.com/844-large_default/crunch-floor.jpg",
+              "category": "ABS",
+              "uuid": "23a5f227-b7f5-42f0-adcc-1a5814dc9fc8",
+              "createdDate": 1523982940094
+            },
+            "sets": [
+              {
+                "requiredTimeInSeconds": 0,
+                "requiredReps": 20,
+                "weight": -1,
+                "reps": -1
+              }
+            ]
+          }
+        ],
+        "type": "SINGLE"
+      },
+      {
+        "type": "SINGLE",
+        "uuid": "bf3ba1f5-96cc-48d9-928e-1a6441d9f185",
+        "exercises": [
+          {
+            "sets": [
+              {
+                "requiredTimeInSeconds": 0,
+                "requiredReps": 20,
+                "weight": -1,
+                "reps": -1
+              }
+            ],
+            "uuid": "2de82c21-5ca3-40b0-aca5-d3c076cc1e8f",
+            "allowWeightInput": false,
+            "exercise": {
+              "createdDate": 1523522797903,
+              "splitSides": false,
+              "name": "Russian Twist",
+              "imageUrl": "https://www.gymvisual.com/10295-large_default/weighted-russian-twist-version-2.jpg",
+              "category": "ABS",
+              "uuid": "78402cfa-ef6a-4fc2-82e6-8aa6d008a8e4"
+            }
+          }
+        ]
+      },
+      {
+        "type": "SINGLE",
+        "uuid": "552b3573-af60-45e8-867c-c6d14aa3f963",
+        "exercises": [
+          {
+            "exercise": {
+              "splitSides": false,
+              "name": "Hip Ups",
+              "imageUrl": "http://www.iposture.com/images/pho_exercise_bridge-hip-joint.jpg",
+              "category": "ABS",
+              "uuid": "c5fb5d4e-6988-4d47-beb1-85cb844c7d30",
+              "createdDate": 1523982940094
+            },
+            "sets": [
+              {
+                "requiredTimeInSeconds": 0,
+                "requiredReps": 20,
+                "weight": -1,
+                "reps": -1
+              }
+            ],
+            "uuid": "6ebaa569-7e24-4c7b-9a89-6f7b337e5b57",
+            "allowWeightInput": false
+          }
+        ]
+      },
+      {
+        "uuid": "7541fcd3-3663-4a56-a02a-2506006ba7b9",
+        "exercises": [
+          {
+            "sets": [
+              {
+                "reps": -1,
+                "requiredTimeInSeconds": 0,
+                "requiredReps": 20,
+                "weight": -1
+              }
+            ],
+            "uuid": "e838648e-1ca2-47bf-8073-4c7f23038c22",
+            "allowWeightInput": false,
+            "exercise": {
+              "createdDate": 1523982940094,
+              "splitSides": false,
+              "name": "Spiderman Crunch",
+              "imageUrl": "https://www.gymvisual.com/2327-large_default/spider-crawl-push-up.jpg",
+              "category": "ABS",
+              "uuid": "bf22ec8c-934f-4f0c-95e2-bbc9d434c6b4"
+            }
+          }
+        ],
+        "type": "SINGLE"
+      },
+      {
+        "type": "SINGLE",
+        "uuid": "3ee7d287-0896-4765-b9ba-e184ec9e9b2a",
+        "exercises": [
+          {
+            "exercise": {
+              "imageUrl": "https://www.gymvisual.com/1992-large_default/3-4-sit-up.jpg",
+              "category": "ABS",
+              "uuid": "4a74516d-21d4-4614-8d30-a4201fbd65b5",
+              "createdDate": 1523982940094,
+              "splitSides": false,
+              "name": "One Arm Open Plank"
+            },
+            "sets": [
+              {
+                "requiredTimeInSeconds": 0,
+                "requiredReps": 10,
+                "weight": -1,
+                "reps": -1
+              }
+            ],
+            "uuid": "7f0082a0-ebec-40ba-8268-da25f8e287c7",
+            "allowWeightInput": false
+          }
+        ]
+      },
+      {
+        "uuid": "1307d4a9-6a03-4ec0-b83b-057be5d60f2d",
+        "exercises": [
+          {
+            "exercise": {
+              "createdDate": 1523982940094,
+              "splitSides": false,
+              "name": "Windshield Wiper",
+              "imageUrl": "https://www.gymvisual.com/4625-large_default/wipers-straight-leg.jpg",
+              "category": "ABS",
+              "uuid": "0acbffba-b977-449f-b37f-8bad90b952e9"
+            },
+            "sets": [
+              {
+                "requiredTimeInSeconds": 0,
+                "requiredReps": 20,
+                "weight": -1,
+                "reps": -1
+              }
+            ],
+            "uuid": "1141e51f-1494-4d77-aa68-db9f36a2c676",
+            "allowWeightInput": false
+          }
+        ],
+        "type": "SINGLE"
+      }
+    ],
+    "uuid": "0816c754-9d6d-455a-8d40-562a0615e65f",
+    "name": "10-Min Abs"
+  },
+  "7eb1dbbf-2386-4782-9b37-f7e71463beef": {
+    "name": "Chest and Triceps",
+    "createdDate": 1554380987112,
+    "exerciseGroups": [
+      {
+        "type": "SINGLE",
+        "uuid": "51e2b374-61ef-4b19-b26d-b506a6b3d23e",
+        "exercises": [
+          {
+            "sets": [
+              {
+                "requiredReps": 10,
+                "weight": -1,
+                "reps": -1,
+                "requiredTimeInSeconds": 0
+              },
+              {
+                "requiredTimeInSeconds": 0,
+                "requiredReps": 10,
+                "weight": -1,
+                "reps": -1
+              },
+              {
+                "reps": -1,
+                "requiredTimeInSeconds": 0,
+                "requiredReps": 10,
+                "weight": -1
+              },
+              {
+                "requiredTimeInSeconds": 0,
+                "requiredReps": 10,
+                "weight": -1,
+                "reps": -1
+              }
+            ],
+            "uuid": "fbe8eb34-e579-4526-a7c6-96d09703720a",
+            "allowWeightInput": true,
+            "exercise": {
+              "splitSides": false,
+              "name": "Incline Dumbbell Press",
+              "imageUrl": "https://www.gymvisual.com/962-large_default/3-4-sit-up.jpg",
+              "category": "CHEST",
+              "uuid": "b26385f3-9254-439e-b69f-f4eec8157843",
+              "createdDate": 1523117829838
+            }
+          }
+        ]
+      },
+      {
+        "type": "SINGLE",
+        "uuid": "5bd5d500-570b-4f84-a44d-456ac4824ec5",
+        "exercises": [
+          {
+            "sets": [
+              {
+                "requiredReps": 10,
+                "weight": -1,
+                "reps": -1,
+                "requiredTimeInSeconds": 0
+              },
+              {
+                "requiredTimeInSeconds": 0,
+                "requiredReps": 10,
+                "weight": -1,
+                "reps": -1
+              },
+              {
+                "reps": -1,
+                "requiredTimeInSeconds": 0,
+                "requiredReps": 10,
+                "weight": -1
+              },
+              {
+                "requiredTimeInSeconds": 0,
+                "requiredReps": 10,
+                "weight": -1,
+                "reps": -1
+              }
+            ],
+            "uuid": "6553e6ba-8abe-4749-9ca8-31038521498f",
+            "allowWeightInput": true,
+            "exercise": {
+              "createdDate": 1523466383013,
+              "splitSides": false,
+              "name": "Dumbbell Chest Press",
+              "imageUrl": "https://www.gymvisual.com/889-large_default/dumbbell-bench-press.jpg",
+              "category": "CHEST",
+              "uuid": "9f1f4bbf-e9d1-495d-b9a8-defff6597419"
+            }
+          }
+        ]
+      },
+      {
+        "uuid": "a0c49fde-de69-4692-84fd-471adb6cce96",
+        "exercises": [
+          {
+            "uuid": "b33caa7d-cb9c-4d45-ab38-8755fcd24eb6",
+            "allowWeightInput": true,
+            "exercise": {
+              "uuid": "2b2c490b-a233-47d3-bf93-c1b0667bd2f6",
+              "createdDate": 1523982940094,
+              "splitSides": false,
+              "name": "Cable Crossover",
+              "imageUrl": "https://www.gymvisual.com/5958-large_default/cable-standing-up-straight-crossovers.jpg",
+              "category": "CHEST"
+            },
+            "sets": [
+              {
+                "reps": -1,
+                "requiredTimeInSeconds": 0,
+                "requiredReps": 10,
+                "weight": -1
+              },
+              {
+                "reps": -1,
+                "requiredTimeInSeconds": 0,
+                "requiredReps": 10,
+                "weight": -1
+              },
+              {
+                "requiredReps": 10,
+                "weight": -1,
+                "reps": -1,
+                "requiredTimeInSeconds": 0
+              },
+              {
+                "requiredTimeInSeconds": 0,
+                "requiredReps": 10,
+                "weight": -1,
+                "reps": -1
+              }
+            ]
+          }
+        ],
+        "type": "SINGLE"
+      },
+      {
+        "exercises": [
+          {
+            "allowWeightInput": true,
+            "exercise": {
+              "createdDate": 1523982835029,
+              "splitSides": false,
+              "name": "Skull Crusher",
+              "imageUrl": "https://www.gymvisual.com/7440-large_default/barbell-reverse-grip-skullcrusher.jpg",
+              "category": "ARMS",
+              "uuid": "fa7ad1c9-7474-4aaf-9f88-185d3f5e4918"
+            },
+            "sets": [
+              {
+                "requiredTimeInSeconds": 0,
+                "requiredReps": 10,
+                "weight": -1,
+                "reps": -1
+              },
+              {
+                "reps": -1,
+                "requiredTimeInSeconds": 0,
+                "requiredReps": 10,
+                "weight": -1
+              },
+              {
+                "requiredTimeInSeconds": 0,
+                "requiredReps": 10,
+                "weight": -1,
+                "reps": -1
+              },
+              {
+                "requiredTimeInSeconds": 0,
+                "requiredReps": 10,
+                "weight": -1,
+                "reps": -1
+              }
+            ],
+            "uuid": "3287c712-9166-4389-b45a-c16cae6bb9de"
+          }
+        ],
+        "type": "SINGLE",
+        "uuid": "576020fb-cd85-4888-b37d-43e3ad14a91d"
+      },
+      {
+        "uuid": "835e7f1b-4b44-4a09-b41a-74fe204fe185",
+        "exercises": [
+          {
+            "exercise": {
+              "imageUrl": "https://www.gymvisual.com/7445-large_default/cable-rope-lying-on-floor-tricep-extension.jpg",
+              "category": "ARMS",
+              "uuid": "fedbe2c6-a1cb-4203-97e4-01a1f8aa6a83",
+              "createdDate": 1523117875532,
+              "splitSides": false,
+              "name": "Tricep Extension"
+            },
+            "sets": [
+              {
+                "requiredReps": 10,
+                "weight": -1,
+                "reps": -1,
+                "requiredTimeInSeconds": 0
+              },
+              {
+                "requiredTimeInSeconds": 0,
+                "requiredReps": 10,
+                "weight": -1,
+                "reps": -1
+              },
+              {
+                "requiredTimeInSeconds": 0,
+                "requiredReps": 10,
+                "weight": -1,
+                "reps": -1
+              },
+              {
+                "requiredTimeInSeconds": 0,
+                "requiredReps": 10,
+                "weight": -1,
+                "reps": -1
+              }
+            ],
+            "uuid": "3f1bb6d3-162e-457b-8871-cc9d8ed946d5",
+            "allowWeightInput": true
+          }
+        ],
+        "type": "SINGLE"
+      },
+      {
+        "type": "SINGLE",
+        "uuid": "2811f77c-8661-4b42-acc3-e4b9ace4ddda",
+        "exercises": [
+          {
+            "sets": [
+              {
+                "requiredReps": 10,
+                "weight": -1,
+                "reps": -1,
+                "requiredTimeInSeconds": 0
+              },
+              {
+                "requiredTimeInSeconds": 0,
+                "requiredReps": 10,
+                "weight": -1,
+                "reps": -1
+              },
+              {
+                "requiredTimeInSeconds": 0,
+                "requiredReps": 10,
+                "weight": -1,
+                "reps": -1
+              },
+              {
+                "requiredTimeInSeconds": 0,
+                "requiredReps": 10,
+                "weight": -1,
+                "reps": -1
+              }
+            ],
+            "uuid": "236f5bcd-7082-4349-b0da-5b435710b5fe",
+            "allowWeightInput": true,
+            "exercise": {
+              "splitSides": false,
+              "name": "Triceps Rope Pushdown",
+              "imageUrl": "https://www.gymvisual.com/622-large_default/cable-pushdown-with-rope-attachment.jpg",
+              "category": "ARMS",
+              "uuid": "c8ba67c1-298b-42aa-a481-66ae072ee857",
+              "createdDate": 1523982940094
+            }
+          }
+        ]
+      }
+    ],
+    "uuid": "7eb1dbbf-2386-4782-9b37-f7e71463beef"
+  },
+  "e779ee7c-fd35-4da1-9d80-983c0edca8b9": {
+    "exerciseGroups": [
+      {
+        "type": "SINGLE",
+        "uuid": "ebd9b914-1784-48b5-a41f-c972e39cd0d8",
+        "exercises": [
+          {
+            "exercise": {
+              "createdDate": 1524857334434,
+              "splitSides": false,
+              "name": "Sumo Squat",
+              "imageUrl": "https://www.gymvisual.com/4085-large_default/sumo-squat.jpg",
+              "category": "LEGS",
+              "uuid": "6556e3cf-1dc5-4c5a-bd97-d8e52747a590"
+            },
+            "sets": [
+              {
+                "requiredTimeInSeconds": 0,
+                "requiredReps": 8,
+                "weight": -1,
+                "reps": -1
+              },
+              {
+                "requiredTimeInSeconds": 0,
+                "requiredReps": 8,
+                "weight": -1,
+                "reps": -1
+              },
+              {
+                "requiredTimeInSeconds": 0,
+                "requiredReps": 10,
+                "weight": -1,
+                "reps": -1
+              },
+              {
+                "requiredReps": 12,
+                "weight": -1,
+                "reps": -1,
+                "requiredTimeInSeconds": 0
+              }
+            ],
+            "uuid": "06086daf-902b-4888-8649-5904c74d131d",
+            "allowWeightInput": true
+          }
+        ]
+      },
+      {
+        "type": "SUPER",
+        "uuid": "77107f50-11ac-4385-9a6a-3571c08f3000",
+        "exercises": [
+          {
+            "sets": [
+              {
+                "requiredTimeInSeconds": 0,
+                "requiredReps": 8,
+                "weight": -1,
+                "reps": -1
+              },
+              {
+                "requiredTimeInSeconds": 0,
+                "requiredReps": 10,
+                "weight": -1,
+                "reps": -1
+              },
+              {
+                "requiredReps": 12,
+                "weight": -1,
+                "reps": -1,
+                "requiredTimeInSeconds": 0
+              }
+            ],
+            "uuid": "3dff26bc-1c42-4e84-a65f-306b089e79a0",
+            "allowWeightInput": true,
+            "exercise": {
+              "createdDate": 1523982940094,
+              "splitSides": false,
+              "name": "Alternating Lunge",
+              "imageUrl": "https://www.gymvisual.com/2595-large_default/3-4-sit-up.jpg",
+              "category": "LEGS",
+              "uuid": "068a5a00-15dc-450e-a0d2-2b6e1c65c983"
+            }
+          },
+          {
+            "sets": [
+              {
+                "reps": -1,
+                "requiredTimeInSeconds": 0,
+                "requiredReps": 8,
+                "weight": -1
+              },
+              {
+                "requiredReps": 10,
+                "weight": -1,
+                "reps": -1,
+                "requiredTimeInSeconds": 0
+              },
+              {
+                "reps": -1,
+                "requiredTimeInSeconds": 0,
+                "requiredReps": 12,
+                "weight": -1
+              }
+            ],
+            "uuid": "cdb05b76-5dd3-407c-88db-4c89d17f7ca9",
+            "allowWeightInput": true,
+            "exercise": {
+              "createdDate": 1523982940094,
+              "splitSides": false,
+              "name": "Step-Up to Reverse Lunge",
+              "imageUrl": "https://i.pinimg.com/originals/82/fe/cd/82fecde6fa4d40638ce3fc4b74fb2569.jpg",
+              "category": "LEGS",
+              "uuid": "668f9521-bcab-42f8-b931-fb7b10a04b01"
+            }
+          }
+        ]
+      },
+      {
+        "uuid": "df4cb6f3-6b29-4cf9-ac99-54ee2aafbae4",
+        "exercises": [
+          {
+            "exercise": {
+              "splitSides": false,
+              "name": "Parallel Squat",
+              "imageUrl": "https://www.gymvisual.com/10574-large_default/barbell-front-squat.jpg",
+              "category": "LEGS",
+              "uuid": "1216946b-6b6e-4053-9f7b-c4c482898022",
+              "createdDate": 1523982940094
+            },
+            "sets": [
+              {
+                "reps": -1,
+                "requiredTimeInSeconds": 0,
+                "requiredReps": 8,
+                "weight": -1
+              },
+              {
+                "requiredReps": 10,
+                "weight": -1,
+                "reps": -1,
+                "requiredTimeInSeconds": 0
+              },
+              {
+                "requiredTimeInSeconds": 0,
+                "requiredReps": 12,
+                "weight": -1,
+                "reps": -1
+              }
+            ],
+            "uuid": "6b3d3408-c0b5-4a0e-a99f-bb949a804d51",
+            "allowWeightInput": true
+          },
+          {
+            "exercise": {
+              "splitSides": false,
+              "name": "Bulgarian Squat",
+              "imageUrl": "https://www.gymvisual.com/9730-large_default/dumbbell-bulgarian-split-squat-female.jpg",
+              "category": "LEGS",
+              "uuid": "c1cd66bd-db95-46b4-93cb-70944bcbee97",
+              "createdDate": 1523982940094
+            },
+            "sets": [
+              {
+                "requiredTimeInSeconds": 0,
+                "requiredReps": 8,
+                "weight": -1,
+                "reps": -1
+              },
+              {
+                "requiredTimeInSeconds": 0,
+                "requiredReps": 10,
+                "weight": -1,
+                "reps": -1
+              },
+              {
+                "requiredTimeInSeconds": 0,
+                "requiredReps": 12,
+                "weight": -1,
+                "reps": -1
+              }
+            ],
+            "uuid": "30e4adc8-5fc3-4fe3-8a4d-f62045b0e5b7",
+            "allowWeightInput": true
+          },
+          {
+            "sets": [
+              {
+                "reps": -1,
+                "requiredTimeInSeconds": 0,
+                "requiredReps": 8,
+                "weight": -1
+              },
+              {
+                "requiredReps": 10,
+                "weight": -1,
+                "reps": -1,
+                "requiredTimeInSeconds": 0
+              },
+              {
+                "requiredTimeInSeconds": 0,
+                "requiredReps": 12,
+                "weight": -1,
+                "reps": -1
+              }
+            ],
+            "uuid": "19901a28-556a-489e-b735-4f3d6f735c44",
+            "allowWeightInput": true,
+            "exercise": {
+              "uuid": "4c8d109b-c959-4214-a0de-cdadd9caeb75",
+              "createdDate": 1523982940094,
+              "splitSides": false,
+              "name": "Straight Leg Deadlift",
+              "imageUrl": "https://www.gymvisual.com/1321-large_default/3-4-sit-up.jpg",
+              "category": "LEGS"
+            }
+          }
+        ],
+        "type": "GIANT"
+      },
+      {
+        "type": "SUPER",
+        "uuid": "343809fb-ad78-404f-a749-b96dafe885bd",
+        "exercises": [
+          {
+            "exercise": {
+              "splitSides": false,
+              "name": "Single Leg Calf Raise",
+              "imageUrl": "https://www.gymvisual.com/4517-large_default/3-4-sit-up.jpg",
+              "category": "LEGS",
+              "uuid": "9e03139a-ee4d-4902-8dcf-d30c73f44a66",
+              "createdDate": 1523982940094
+            },
+            "sets": [
+              {
+                "requiredTimeInSeconds": 0,
+                "requiredReps": 8,
+                "weight": -1,
+                "reps": -1
+              },
+              {
+                "reps": -1,
+                "requiredTimeInSeconds": 0,
+                "requiredReps": 10,
+                "weight": -1
+              },
+              {
+                "reps": -1,
+                "requiredTimeInSeconds": 0,
+                "requiredReps": 12,
+                "weight": -1
+              }
+            ],
+            "uuid": "d9512184-bc87-4596-930e-b3f7ff52fd80",
+            "allowWeightInput": true
+          },
+          {
+            "allowWeightInput": true,
+            "exercise": {
+              "createdDate": 1523982940094,
+              "splitSides": false,
+              "name": "Seated Calf Raise",
+              "imageUrl": "https://www.gymvisual.com/290-large_default/barbell-seated-calf-raise.jpg",
+              "category": "LEGS",
+              "uuid": "0a5781b5-8f9b-4937-9ef5-341f0f75bbda"
+            },
+            "sets": [
+              {
+                "reps": -1,
+                "requiredTimeInSeconds": 0,
+                "requiredReps": 8,
+                "weight": -1
+              },
+              {
+                "requiredTimeInSeconds": 0,
+                "requiredReps": 10,
+                "weight": -1,
+                "reps": -1
+              },
+              {
+                "requiredReps": 12,
+                "weight": -1,
+                "reps": -1,
+                "requiredTimeInSeconds": 0
+              }
+            ],
+            "uuid": "0dfcbea8-809f-4e5d-93d5-30e7e031d142"
+          }
+        ]
+      }
+    ],
+    "uuid": "e779ee7c-fd35-4da1-9d80-983c0edca8b9",
+    "name": "Toned Legs",
+    "createdDate": 1554312851462
+  }
+}
