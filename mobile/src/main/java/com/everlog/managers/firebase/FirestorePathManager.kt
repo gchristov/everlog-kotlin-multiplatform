@@ -11,7 +11,7 @@ object FirestorePathManager {
     private val firestore: FirebaseFirestore = FirebaseFirestore.getInstance()
 
     init {
-        FirebaseFirestore.setLoggingEnabled(BuildConfig.DISABLE_CRASHLYTICS)
+        FirebaseFirestore.setLoggingEnabled(BuildConfig.DEBUG)
     }
 
     val globalExercisesCollection: CollectionReference

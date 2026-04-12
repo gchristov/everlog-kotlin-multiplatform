@@ -7,33 +7,6 @@
     android:orientation="vertical">
 
     <LinearLayout
-        android:id="@+id/contactUsBtn"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="?android:attr/selectableItemBackground"
-        android:clickable="true"
-        android:gravity="center"
-        android:orientation="horizontal"
-        android:paddingLeft="@dimen/settings_card_content_margin_left"
-        android:paddingTop="@dimen/margin_12"
-        android:paddingRight="@dimen/settings_row_padding_right"
-        android:paddingBottom="@dimen/margin_12"
-        android:visibility="visible">
-
-        <ImageView
-            style="@style/SettingsIcon"
-            android:padding="2dp"
-            android:src="@drawable/ic_chat" />
-
-        <TextView
-            style="@style/SettingsTitle"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="@string/settings_contact_us" />
-    </LinearLayout>
-
-    <LinearLayout
         android:id="@+id/reportProblemBtn"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

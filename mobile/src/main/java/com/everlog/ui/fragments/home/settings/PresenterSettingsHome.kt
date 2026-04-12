@@ -24,7 +24,6 @@ import com.google.firebase.firestore.SetOptions
 import com.hypertrack.hyperlog.HyperLog
 import com.imagepick.utils.UriUtils
 // import icepick.State
-import io.customerly.Customerly
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
 import org.threeten.bp.DayOfWeek
@@ -49,7 +48,6 @@ class PresenterSettingsHome : BaseFragmentPresenter<MvpViewSettingsHome>() {
         observeFacebookClick()
         observeTwitterClick()
         observeLogoutClick()
-        observeContactUsClick()
         observeReportProblemClick()
         observeWeightUnitClick()
         observeFirstWeekDayClick()
@@ -168,14 +166,6 @@ class PresenterSettingsHome : BaseFragmentPresenter<MvpViewSettingsHome>() {
                     if (action == DialogInterface.BUTTON_POSITIVE) {
                         logout()
                     }
-                }, { throwable -> handleError(throwable) }))
-    }
-
-    private fun observeContactUsClick() {
-        subscriptions.add(mvpView.onClickContactUs()
-                .compose(applyUISchedulers())
-                .subscribe({
-                    Customerly.openSupport(mvpView.getParentActivity()!!)
                 }, { throwable -> handleError(throwable) }))
     }
 

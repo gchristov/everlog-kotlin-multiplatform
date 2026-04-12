@@ -91,10 +91,6 @@ class SettingsHomeFragment : BaseTabFragment(), MvpViewSettingsHome {
         return RxView.clicks(binding.root.findViewById(R.id.logoutBtn))
     }
 
-    override fun onClickContactUs(): Observable<Void> {
-        return RxView.clicks(binding.root.findViewById(R.id.contactUsBtn))
-    }
-
     override fun onClickReportProblem(): Observable<Void> {
         return RxView.clicks(binding.root.findViewById(R.id.reportProblemBtn))
     }
