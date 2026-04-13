@@ -46,10 +46,10 @@ class LoginActivityTest {
         onView(withText("I have an account")).perform(click())
 
         onView(allOf(withHint("Email"), isDisplayed()))
-            .perform(typeText("email@email.com"), closeSoftKeyboard())
+            .perform(typeText(BuildConfig.E2E_TEST_USER_EMAIL), closeSoftKeyboard())
 
         onView(allOf(withHint("Password"), isDisplayed()))
-            .perform(typeText("password"), closeSoftKeyboard())
+            .perform(typeText(BuildConfig.E2E_TEST_USER_PASSWORD), closeSoftKeyboard())
 
         onView(allOf(withText("Login"), isAssignableFrom(Button::class.java))).perform(click())
 

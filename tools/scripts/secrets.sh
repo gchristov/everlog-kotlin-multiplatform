@@ -4,8 +4,8 @@ set -e
 # Should be invoked from the root of the project as all paths are relative.
 
 # App credentials (the >> is intentional to append to a file)
-#echo GUARDIAN_API_KEY="$GUARDIAN_API_KEY" >> multiplatform/common/network/secrets.properties
-#echo GUARDIAN_API_URL="$GUARDIAN_API_URL" >> multiplatform/common/network/secrets.properties
+echo E2E_TEST_USER_EMAIL="$E2E_TEST_USER_EMAIL" >> mobile/secrets.properties
+echo E2E_TEST_USER_PASSWORD="$E2E_TEST_USER_PASSWORD" >> mobile/secrets.properties
 
 # Firebase credentials
 mkdir -p mobile/src/debug
