@@ -16,6 +16,8 @@ env:
 jobs:
   unit-test:
     runs-on: ubuntu-24.04
+    permissions:
+      checks: write
     concurrency:
       group: ${{ github.ref }}-unit-test
       cancel-in-progress: true

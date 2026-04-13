@@ -16,6 +16,7 @@ runs:
         report_paths: |
           **/TEST-*.xml
         check_name: unit-test-results
+        include_passed: true
     - name: Artifacts
       uses: actions/upload-artifact@v7
       if: always() # Ensure all artifacts are collected, even after errors
