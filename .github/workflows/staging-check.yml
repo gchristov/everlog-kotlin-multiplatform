@@ -1,8 +1,10 @@
 name: staging-check
 
 on:
-  schedule:
-    - cron: '0 0 * * *'
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
 
 env:
   E2E_TEST_USER_EMAIL: ${{ secrets.E2E_TEST_USER_EMAIL }}
