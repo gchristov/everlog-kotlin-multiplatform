@@ -1,3 +1,6 @@
+import java.io.FileInputStream
+import java.util.Properties
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
@@ -62,6 +65,8 @@ android {
             applicationIdSuffix = ".dev"
             versionNameSuffix = " dev"
             isDebuggable = true
+            buildConfigField("String", "E2E_TEST_USER_EMAIL", "\"${project.envSecret("E2E_TEST_USER_EMAIL")}\"")
+            buildConfigField("String", "E2E_TEST_USER_PASSWORD", "\"${project.envSecret("E2E_TEST_USER_PASSWORD")}\"")
         }
         getByName("release") {
             signingConfig = signingConfigs.getByName("release")
@@ -176,4 +181,15 @@ dependencies {
     implementation(libs.blurView)
     implementation(libs.achievementView)
     implementation(libs.textDrawable)
+}
+
+fun Project.envSecret(key: String): String {
+    val propFile = file("./secrets.properties")
+    val properties = Properties()
+    properties.load(FileInputStream(propFile))
+    val property = properties.getProperty(key)
+    if (property.isNullOrBlank()) {
+        throw IllegalStateException("Required property is missing: property=$key")
+    }
+    return property
 }

@@ -1,0 +1,23 @@
+name: 'build-android'
+runs:
+  using: "composite"
+  steps:
+    - name: Set up Gradle
+      uses: ./.github/actions/setup-gradle
+    - name: Build Android
+      shell: bash
+      run: |
+        set -Eeuo pipefail 
+        ./gradlew :mobile:assembleDebug
+    - name: Artifacts
+      uses: actions/upload-artifact@v7
+      if: always() # Ensure all artifacts are collected, even after errors
+      with:
+        name: Android Build
+        path: |
+          **/*.apk
+          **/build
+          **/secrets.properties
+          **/google-services.json
+          **/*.keystore
+          **/*.jks

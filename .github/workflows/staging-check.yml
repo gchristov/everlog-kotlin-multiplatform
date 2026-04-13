@@ -1,0 +1,51 @@
+name: staging-check
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+env:
+  E2E_TEST_USER_EMAIL: ${{ secrets.E2E_TEST_USER_EMAIL }}
+  E2E_TEST_USER_PASSWORD: ${{ secrets.E2E_TEST_USER_PASSWORD }}
+  GOOGLE_SERVICES_DEV_JSON: ${{ secrets.GOOGLE_SERVICES_DEV_JSON }}
+  GOOGLE_SERVICES_PROD_JSON: ${{ secrets.GOOGLE_SERVICES_PROD_JSON }}
+  KEYSTORE_DEBUG_BASE64: ${{ secrets.KEYSTORE_DEBUG_BASE64 }}
+  KEYSTORE_RELEASE_BASE64: ${{ secrets.KEYSTORE_RELEASE_BASE64 }}
+
+jobs:
+  unit-test:
+    runs-on: ubuntu-24.04
+    permissions:
+      checks: write
+    concurrency:
+      group: ${{ github.ref }}-unit-test
+      cancel-in-progress: true
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+      - name: Test
+        uses: ./.github/actions/unit-test
+
+  build-android:
+    runs-on: ubuntu-24.04
+    concurrency:
+      group: ${{ github.ref }}-build-android
+      cancel-in-progress: true
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+      - name: Build Android
+        uses: ./.github/actions/build-android
+
+  test-android:
+    runs-on: ubuntu-24.04
+    concurrency:
+      group: ${{ github.ref }}-test-android
+      cancel-in-progress: true
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+      - name: Test Android
+        uses: ./.github/actions/test-android
