@@ -34,9 +34,8 @@ jobs:
             {
               "text": "🌓️️ Nightly job <${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|${{ github.job }}> ${{ job.status }}"
             }
-        env:
-          SLACK_WEBHOOK_URL: ${{ env.MONITORING_SLACK_URL }}
-          SLACK_WEBHOOK_TYPE: incoming-webhook
+          webhook: ${{ env.MONITORING_SLACK_URL }}
+          webhook-type: incoming-webhook
 
   build-android:
     runs-on: ubuntu-24.04
@@ -56,9 +55,8 @@ jobs:
             {
               "text": "🌓️️ Nightly job <${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|${{ github.job }}> ${{ job.status }}"
             }
-        env:
-          SLACK_WEBHOOK_URL: ${{ env.MONITORING_SLACK_URL }}
-          SLACK_WEBHOOK_TYPE: incoming-webhook
+          webhook: ${{ env.MONITORING_SLACK_URL }}
+          webhook-type: incoming-webhook
 
   test-android:
     runs-on: ubuntu-24.04
@@ -78,6 +76,5 @@ jobs:
             {
               "text": "🌓️️ Nightly job <${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|${{ github.job }}> ${{ job.status }}"
             }
-        env:
-          SLACK_WEBHOOK_URL: ${{ env.MONITORING_SLACK_URL }}
-          SLACK_WEBHOOK_TYPE: incoming-webhook
+          webhook: ${{ env.MONITORING_SLACK_URL }}
+          webhook-type: incoming-webhook
