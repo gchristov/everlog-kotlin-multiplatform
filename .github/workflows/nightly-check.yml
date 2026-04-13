@@ -36,7 +36,7 @@ jobs:
             }
         env:
           SLACK_WEBHOOK_URL: ${{ env.MONITORING_SLACK_URL }}
-          SLACK_WEBHOOK_TYPE: INCOMING_WEBHOOK
+          SLACK_WEBHOOK_TYPE: incoming-webhook
 
   build-android:
     runs-on: ubuntu-24.04
@@ -58,7 +58,7 @@ jobs:
             }
         env:
           SLACK_WEBHOOK_URL: ${{ env.MONITORING_SLACK_URL }}
-          SLACK_WEBHOOK_TYPE: INCOMING_WEBHOOK
+          SLACK_WEBHOOK_TYPE: incoming-webhook
 
   test-android:
     runs-on: ubuntu-24.04
@@ -80,4 +80,4 @@ jobs:
             }
         env:
           SLACK_WEBHOOK_URL: ${{ env.MONITORING_SLACK_URL }}
-          SLACK_WEBHOOK_TYPE: INCOMING_WEBHOOK
+          SLACK_WEBHOOK_TYPE: incoming-webhook
