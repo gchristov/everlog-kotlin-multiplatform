@@ -10,6 +10,10 @@ plugins {
     alias(libs.plugins.firebase.perf)
 }
 
+kotlin {
+    jvmToolchain(20)
+}
+
 android {
     namespace = "com.everlog"
     compileSdk = 36
@@ -34,13 +38,10 @@ android {
 
     compileOptions {
         isCoreLibraryDesugaringEnabled = true
-        sourceCompatibility = JavaVersion.VERSION_21
-        targetCompatibility = JavaVersion.VERSION_21
     }
 
     kotlin {
         compilerOptions {
-            jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_21)
             freeCompilerArgs.add("-Xexpect-builtin-arguments-junction")
         }
     }
