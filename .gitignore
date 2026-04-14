@@ -40,7 +40,7 @@ google-services-desktop.json
 *.jks
 *.p12
 *.pem
-deploy/google_play_auth.json
+google_play_auth.json
 
 # --- Testing & Profiling ---
 captures/

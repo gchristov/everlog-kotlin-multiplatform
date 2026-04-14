@@ -24,7 +24,7 @@ platform :android do
     firebase_app_id = options[:firebase_app_id]
     UI.user_error!("firebase_app_id is required for deploy_firebase lane") unless firebase_app_id
 
-    credentials_path = "deploy/firebase_credentials.json"
+    credentials_path = "fastlane/firebase_credentials.json"
     # Check existence relative to project root (fastlane usually runs from root or handles this)
     # UI.user_error!("Firebase credentials file not found at #{credentials_path}") unless File.exist?("../#{credentials_path}") || File.exist?(credentials_path)
 

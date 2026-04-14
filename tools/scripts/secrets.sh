@@ -14,6 +14,7 @@ mkdir -p mobile/src/release
 echo "$GOOGLE_SERVICES_PROD_JSON" > mobile/src/release/google-services.json
 
 # Keystores
-mkdir -p deploy
-echo "$KEYSTORE_DEBUG_BASE64" | base64 --decode > deploy/debug.keystore
-echo "$KEYSTORE_RELEASE_BASE64" | base64 --decode > deploy/release_key.jks
+mkdir -p mobile/src/debug
+echo "$KEYSTORE_DEBUG_BASE64" | base64 --decode > mobile/src/debug/debug.keystore
+mkdir -p mobile/src/release
+echo "$KEYSTORE_RELEASE_BASE64" | base64 --decode > mobile/src/release/release_key.jks

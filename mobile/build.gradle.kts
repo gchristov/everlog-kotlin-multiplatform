@@ -48,13 +48,13 @@ android {
 
     signingConfigs {
         getByName("debug") {
-            storeFile = file("../deploy/debug.keystore")
+            storeFile = file("src/debug/debug.keystore")
             storePassword = "android"
             keyAlias = "androiddebugkey"
             keyPassword = "android"
         }
         create("release") {
-            storeFile = file("../deploy/release_key.jks")
+            storeFile = file("src/release/release_key.jks")
             storePassword = System.getenv("KEYSTORE_PASSWORD")
             keyAlias = System.getenv("KEYSTORE_ALIAS")
             keyPassword = System.getenv("KEYSTORE_ALIAS_PASSWORD")
