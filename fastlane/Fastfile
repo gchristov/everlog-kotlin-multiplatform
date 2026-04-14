@@ -24,19 +24,17 @@ platform :android do
     firebase_app_id = options[:firebase_app_id]
     UI.user_error!("firebase_app_id is required for deploy_firebase lane") unless firebase_app_id
 
-    credentials_path = "fastlane/firebase_credentials.json"
-    # Check existence relative to project root (fastlane usually runs from root or handles this)
-    # UI.user_error!("Firebase credentials file not found at #{credentials_path}") unless File.exist?("../#{credentials_path}") || File.exist?(credentials_path)
+    credentials_path = options[:credentials_path]
+    UI.user_error!("credentials_path is required for deploy_firebase lane") unless credentials_path
 
     # 2. Upload to Firebase
-    UI.message("Skipping firebase_app_distribution for testing purposes...")
-    # firebase_app_distribution(
-    #   app: firebase_app_id,
-    #   groups: "everlog-alpha-testers",
-    #   release_notes: @change_log,
-    #   apk_path: apk_path,
-    #   service_credentials_file: credentials_path
-    # )
+    firebase_app_distribution(
+      app: firebase_app_id,
+      groups: "everlog-alpha-testers",
+      release_notes: "Test",
+      apk_path: apk_path,
+      service_credentials_file: credentials_path
+    )
   end
 
   error do |lane, exception|
