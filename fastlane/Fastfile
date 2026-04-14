@@ -27,11 +27,20 @@ platform :android do
     credentials_path = options[:credentials_path]
     UI.user_error!("credentials_path is required for deploy_firebase lane") unless credentials_path
 
-    # 2. Upload to Firebase
+    # Compute changelog
+    tag = sh("git describe --tags --abbrev=0 @^ 2>/dev/null || echo ''").strip
+    if tag.empty?
+      log_command = 'git --no-pager log --pretty=format:"%s" --reverse'
+    else
+      log_command = "git --no-pager log --pretty=format:\"%s\" #{tag}..@ --reverse"
+    end
+    changelog = sh(log_command).strip
+
+    # Upload to Firebase
     firebase_app_distribution(
       app: firebase_app_id,
       groups: "everlog-alpha-testers",
-      release_notes: "Test",
+      release_notes: changelog,
       apk_path: apk_path,
       service_credentials_file: credentials_path
     )
