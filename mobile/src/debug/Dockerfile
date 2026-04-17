@@ -20,4 +20,4 @@ COPY Gemfile .
 RUN bundle install
 
 # Default command is to execute the firebase deployment lane
-CMD ["bundle", "exec", "fastlane", "android", "deploy_firebase", "apk_path:mobile/build/outputs/apk/debug/mobile-debug.apk", "firebase_app_id:1:807594467020:android:ac26b664e229fe37", "credentials_path:mobile/src/debug/google-deployment-key.json"]
+CMD ["bundle", "exec", "fastlane", "android", "deploy_firebase", "apk_path:mobile/build/outputs/apk/debug/mobile-debug.apk", "firebase_app_id:1:807594467020:android:ac26b664e229fe37", "credentials_path:mobile/src/debug/google-deployment-key.json", "groups:everlog-staging-testers"]
