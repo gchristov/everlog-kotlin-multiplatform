@@ -38,8 +38,25 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+      - name: Build Android
+        id: version_logic
+        shell: bash
+        run: |
+          TYPE="staging"
+          if [[ "${{ github.event_name }}" == "push" && "${{ github.ref }}" == "refs/heads/master" ]]; then
+            TYPE="master"
+          fi
+          chmod +x ./version_code.sh
+          VERSION_CODE=$(./version_code.sh $TYPE)
+          echo "VERSION_CODE=$VERSION_CODE" >> $GITHUB_OUTPUT
+          echo "### Version Code: $VERSION_CODE" >> $GITHUB_STEP_SUMMARY
+        
       - name: Build Android
         uses: ./.github/actions/build-android
+        with:
+          ciVersionCode: ${{ steps.version_logic.outputs.VERSION_CODE }}
 
   test-android:
     runs-on: ubuntu-24.04

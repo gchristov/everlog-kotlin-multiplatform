@@ -1,4 +1,8 @@
 name: 'build-android'
+inputs:
+  ciVersionCode:
+    description: 'Version code to use for the build'
+    required: true
 runs:
   using: "composite"
   steps:
@@ -8,7 +12,9 @@ runs:
       shell: bash
       run: |
         set -Eeuo pipefail 
-        ./gradlew :mobile:assembleDebug
+        ./gradlew :mobile:assembleDebug ${ciVersionCode:+-PciVersionCode=$ciVersionCode}
+      env:
+        ciVersionCode: ${{ inputs.ciVersionCode }}
     - name: Artifacts
       uses: actions/upload-artifact@v7
       if: always() # Ensure all artifacts are collected, even after errors

@@ -23,8 +23,10 @@ android {
         minSdk = 23
         targetSdk = 34
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-        versionCode = 155
-        versionName = "2.8.0"
+        
+        versionCode = project.calculateVersionCode()
+        
+        versionName = "2.9.0"
         vectorDrawables {
             useSupportLibrary = true
         }
@@ -193,4 +195,15 @@ fun Project.envSecret(key: String): String {
         throw IllegalStateException("Required property is missing: property=$key")
     }
     return property
+}
+
+fun Project.calculateVersionCode(): Int {
+    val ciVersionCode = project.findProperty("ciVersionCode")?.toString()?.toIntOrNull()
+    if (ciVersionCode != null) return ciVersionCode
+
+    val versionFile = rootProject.file("versioning/version.txt")
+    if (!versionFile.exists()) {
+        throw GradleException("versioning/version.txt is missing. Required for versioning logic.")
+    }
+    return versionFile.readText().trim().toInt()
 }
