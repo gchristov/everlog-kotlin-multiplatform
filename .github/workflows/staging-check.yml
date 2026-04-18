@@ -58,6 +58,36 @@ jobs:
         with:
           ciVersionCode: ${{ steps.version_logic.outputs.VERSION_CODE }}
 
+  deploy-android-staging:
+    needs: build-android
+    if: github.event_name == 'push' && github.ref == 'refs/heads/master'
+    runs-on: ubuntu-24.04
+    concurrency:
+      group: ${{ github.ref }}-deploy-android-staging
+      cancel-in-progress: true
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '3.2'
+          bundler-cache: true
+      - name: Download Artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: Android Build
+      - name: Deploy
+        shell: bash
+        run: |
+          bundle exec fastlane android deploy_firebase \
+            apk_path:mobile/build/outputs/apk/debug/mobile-debug.apk \
+            firebase_app_id:1:807594467020:android:ac26b664e229fe37 \
+            credentials_path:google-deployment-key.json \
+            groups:everlog-pr-testers
+
   test-android:
     runs-on: ubuntu-24.04
     concurrency:
