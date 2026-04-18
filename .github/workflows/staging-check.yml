@@ -59,7 +59,7 @@ jobs:
           ciVersionCode: ${{ steps.version_logic.outputs.VERSION_CODE }}
 
   deploy-android-staging:
-    needs: build-android
+    needs: [build-android, test-android]
     runs-on: ubuntu-24.04
     concurrency:
       group: ${{ github.ref }}-deploy-android-staging
@@ -84,8 +84,8 @@ jobs:
           bundle exec fastlane android deploy_firebase \
             apk_path:mobile/build/outputs/apk/debug/mobile-debug.apk \
             firebase_app_id:1:807594467020:android:ac26b664e229fe37 \
-            credentials_path:google-deployment-key.json \
-            groups:everlog-pr-testers
+            credentials_path:mobile/src/debug/google-deployment-key.json \
+            groups:everlog-staging-testers
 
   test-android:
     runs-on: ubuntu-24.04
