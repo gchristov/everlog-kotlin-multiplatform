@@ -201,9 +201,9 @@ fun Project.calculateVersionCode(): Int {
     val ciVersionCode = project.findProperty("ciVersionCode")?.toString()?.toIntOrNull()
     if (ciVersionCode != null) return ciVersionCode
 
-    val versionFile = rootProject.file("versioning/version.txt")
+    val versionFile = rootProject.file("tools/versioning/version.txt")
     if (!versionFile.exists()) {
-        throw GradleException("versioning/version.txt is missing. Required for versioning logic.")
+        throw GradleException("tools/versioning/version.txt is missing. Required for versioning logic.")
     }
     return versionFile.readText().trim().toInt()
 }

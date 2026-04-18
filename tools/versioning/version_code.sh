@@ -27,7 +27,7 @@ case $TYPE in
 esac
 
 # 1. Read Base Version
-VERSION_FILE="versioning/version.txt"
+VERSION_FILE="tools/versioning/version.txt"
 if [[ ! -f "$VERSION_FILE" ]]; then
     echo "Error: $VERSION_FILE not found"
     exit 1

@@ -29,7 +29,7 @@ The generated version code follows a specific pattern: `MmmPTSS`
 The version code is typically generated during the CI/CD process or local builds by executing the `version_code.sh` script with the appropriate environment argument:
 
 ```bash
-./version_code.sh <staging|nightly|master> [--release]
+./tools/versioning/version_code.sh <staging|nightly|master> [--release]
 ```
 
 This system allows for a high degree of automation while maintaining a clear hierarchy and traceability for all builds across different environments.

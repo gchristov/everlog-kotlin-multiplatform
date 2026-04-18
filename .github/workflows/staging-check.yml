@@ -48,8 +48,8 @@ jobs:
           if [[ "${{ github.event_name }}" == "push" && "${{ github.ref }}" == "refs/heads/master" ]]; then
             TYPE="master"
           fi
-          chmod +x ./version_code.sh
-          VERSION_CODE=$(./version_code.sh $TYPE)
+          chmod +x ./tools/versioning/version_code.sh
+          VERSION_CODE=$(./tools/versioning/version_code.sh $TYPE)
           echo "VERSION_CODE=$VERSION_CODE" >> $GITHUB_OUTPUT
           echo "### Version Code: $VERSION_CODE" >> $GITHUB_STEP_SUMMARY
         

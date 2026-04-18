@@ -18,4 +18,4 @@ runs:
       shell: bash
       run: |
         set -Eeuo pipefail 
-        bash tools/scripts/secrets.sh
+        bash tools/secrets/secrets.sh
