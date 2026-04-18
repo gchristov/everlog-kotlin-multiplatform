@@ -25,5 +25,6 @@ runs:
           **/build
           **/secrets.properties
           **/google-services.json
+          **/google-deployment-key.json
           **/*.keystore
           **/*.jks
