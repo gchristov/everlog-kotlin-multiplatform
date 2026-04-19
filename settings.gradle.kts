@@ -1,3 +1,5 @@
+enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
+
 pluginManagement {
     repositories {
         google()
@@ -5,8 +7,20 @@ pluginManagement {
         gradlePluginPortal()
     }
 }
+
+plugins {
+    id("com.gradle.develocity") version "4.4.0"
+}
+
+develocity {
+    buildScan {
+        termsOfUseUrl.set("https://gradle.com/terms-of-service")
+        termsOfUseAgree.set("yes")
+        publishing.onlyIf { true }
+    }
+}
+
 dependencyResolutionManagement {
-    repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
     repositories {
         google()
         mavenCentral()
@@ -18,4 +32,5 @@ dependencyResolutionManagement {
 }
 
 rootProject.name = "everlog-kotlin-multiplatform"
+
 include(":mobile")
