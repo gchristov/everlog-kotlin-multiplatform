@@ -40,8 +40,8 @@ jobs:
         uses: actions/checkout@v6
         with:
           fetch-depth: 0
-      - name: Build Android
-        id: version_logic
+      - name: Compute Version
+        id: compute_version
         shell: bash
         run: |
           TYPE="staging"
@@ -61,12 +61,11 @@ jobs:
           echo "VERSION_NAME_SUFFIX=$VERSION_SUFFIX" >> $GITHUB_OUTPUT
           echo "### Version Code: $VERSION_CODE" >> $GITHUB_STEP_SUMMARY
           echo "### Version Name Suffix: $VERSION_SUFFIX" >> $GITHUB_STEP_SUMMARY
-        
       - name: Build Android
         uses: ./.github/actions/build-android
         with:
-          ciVersionCode: ${{ steps.version_logic.outputs.VERSION_CODE }}
-          ciVersionNameSuffix: ${{ steps.version_logic.outputs.VERSION_NAME_SUFFIX }}
+          ciVersionCode: ${{ steps.compute_version.outputs.VERSION_CODE }}
+          ciVersionNameSuffix: ${{ steps.compute_version.outputs.VERSION_NAME_SUFFIX }}
 
   deploy-android-staging:
     needs: [build-android]

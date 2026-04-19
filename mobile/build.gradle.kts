@@ -23,7 +23,6 @@ android {
         minSdk = 23
         targetSdk = 34
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-        
         versionCode = project.calculateVersionCode()
         versionName = project.calculateVersionName()
         vectorDrawables {
@@ -64,8 +63,7 @@ android {
 
     buildTypes {
         getByName("debug") {
-            applicationIdSuffix = ".dev"
-            versionNameSuffix = " dev"
+            applicationIdSuffix = ".staging"
             isDebuggable = true
             buildConfigField("String", "E2E_TEST_USER_EMAIL", "\"${project.envSecret("E2E_TEST_USER_EMAIL")}\"")
             buildConfigField("String", "E2E_TEST_USER_PASSWORD", "\"${project.envSecret("E2E_TEST_USER_PASSWORD")}\"")
