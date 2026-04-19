@@ -10,6 +10,10 @@ plugins {
     alias(libs.plugins.firebase.perf)
 }
 
+kotlin {
+    jvmToolchain(20)
+}
+
 android {
     namespace = "com.everlog"
     compileSdk = 36
@@ -19,8 +23,8 @@ android {
         minSdk = 23
         targetSdk = 34
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-        versionCode = 153
-        versionName = "2.8.0"
+        versionCode = project.calculateVersionCode()
+        versionName = project.calculateVersionName()
         vectorDrawables {
             useSupportLibrary = true
         }
@@ -34,26 +38,23 @@ android {
 
     compileOptions {
         isCoreLibraryDesugaringEnabled = true
-        sourceCompatibility = JavaVersion.VERSION_21
-        targetCompatibility = JavaVersion.VERSION_21
     }
 
     kotlin {
         compilerOptions {
-            jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_21)
             freeCompilerArgs.add("-Xexpect-builtin-arguments-junction")
         }
     }
 
     signingConfigs {
         getByName("debug") {
-            storeFile = file("../deploy/debug.keystore")
+            storeFile = file("src/debug/debug.keystore")
             storePassword = "android"
             keyAlias = "androiddebugkey"
             keyPassword = "android"
         }
         create("release") {
-            storeFile = file("../deploy/release_key.jks")
+            storeFile = file("src/release/release_key.jks")
             storePassword = System.getenv("KEYSTORE_PASSWORD")
             keyAlias = System.getenv("KEYSTORE_ALIAS")
             keyPassword = System.getenv("KEYSTORE_ALIAS_PASSWORD")
@@ -63,7 +64,6 @@ android {
     buildTypes {
         getByName("debug") {
             applicationIdSuffix = ".dev"
-            versionNameSuffix = " dev"
             isDebuggable = true
             buildConfigField("String", "E2E_TEST_USER_EMAIL", "\"${project.envSecret("E2E_TEST_USER_EMAIL")}\"")
             buildConfigField("String", "E2E_TEST_USER_PASSWORD", "\"${project.envSecret("E2E_TEST_USER_PASSWORD")}\"")
@@ -192,4 +192,25 @@ fun Project.envSecret(key: String): String {
         throw IllegalStateException("Required property is missing: property=$key")
     }
     return property
+}
+
+fun Project.calculateVersionName(): String {
+    val versionFile = rootProject.file("tools/versioning/version.txt")
+    if (!versionFile.exists()) {
+        throw GradleException("tools/versioning/version.txt is missing. Required for versioning logic.")
+    }
+    val baseVersion = versionFile.readText().trim()
+    val suffix = project.findProperty("ciVersionNameSuffix")?.toString()
+    return if (suffix.isNullOrBlank()) "$baseVersion-local" else "$baseVersion-$suffix"
+}
+
+fun Project.calculateVersionCode(): Int {
+    val ciVersionCode = project.findProperty("ciVersionCode")?.toString()?.toIntOrNull()
+    if (ciVersionCode != null) return ciVersionCode
+
+    val versionFile = rootProject.file("tools/versioning/version_code.txt")
+    if (!versionFile.exists()) {
+        throw GradleException("tools/versioning/version_code.txt is missing. Required for versioning logic.")
+    }
+    return versionFile.readText().trim().toInt()
 }
