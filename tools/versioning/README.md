@@ -16,9 +16,9 @@ The versioning system generates unique, incremental versioning identifiers (`ver
 
 The `versionName` is derived from `version.txt`. 
 On CI, a suffix is appended to the base version via the `ciVersionNameSuffix` project property:
-- **Pull Requests**: `2.9.0-pr-<number>-<short-sha>`
+- **Staging (PRs)**: `2.9.0-pr-<number>-<short-sha>`
 - **Master Branch**: `2.9.0-master`
-- **Nightly Builds**: `2.9.0-nightly`
+- **Nightly Builds**: `2.9.0-nightly-ddmmyyyy`
 - **Local Builds**: `2.9.0-local` (unless a suffix is manually provided via `ciVersionNameSuffix`)
 
 ## Version Code Structure

@@ -18,14 +18,14 @@ runs:
       run: |
         TYPE="${{ inputs.buildType }}"
 
-        VERSION_SUFFIX="local"
-        if [[ "$TYPE" == "nightly" ]]; then
-          VERSION_SUFFIX="nightly"
-        elif [[ "${{ github.event_name }}" == "pull_request" ]]; then
+        if [[ "$TYPE" == "staging" ]]; then
           SHORT_SHA=$(echo "${{ github.event.pull_request.head.sha }}" | cut -c1-7)
           VERSION_SUFFIX="pr-${{ github.event.pull_request.number }}-$SHORT_SHA"
-        elif [[ "$TYPE" == "master" ]] || [[ "$TYPE" == "staging" && "${{ github.event_name }}" == "push" && "${{ github.ref }}" == "refs/heads/master" ]]; then
-           VERSION_SUFFIX="master"
+        elif [[ "$TYPE" == "nightly" ]]; then
+          DATE=$(date +'%d%m%Y')
+          VERSION_SUFFIX="nightly-$DATE"
+        else
+          VERSION_SUFFIX="$TYPE"
         fi
 
         chmod +x ./tools/versioning/version_code.sh
