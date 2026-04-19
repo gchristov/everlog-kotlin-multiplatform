@@ -4,18 +4,28 @@ This directory contains the configuration and logic for the automated versioning
 
 ## Overview
 
-The versioning system generates a unique, incremental versioning identifier (e.g., `versionCode` on Android) based on a base version, the build type, and the commit history. This ensures that every build has a distinct and traceable version number across both platforms.
+The versioning system generates unique, incremental versioning identifiers (`versionCode` and `versionName`) based on base values, the build type, and the commit history. This ensures that every build has a distinct and traceable version across both platforms.
 
 ## Components
 
-- **`version.txt`**: Contains the base version code (e.g., `2090000`). This represents the major/minor versioning of the application. **This base version is automatically incremented weekly** via CI/CD tasks to ensure continuous progression.
+- **`version.txt`**: Contains the base version name (e.g., `2.9.0`). This is used as the foundation for the `versionName`.
+- **`version_code.txt`**: Contains the base version code (e.g., `2090000`). This represents the major/minor versioning of the application. **This base version is automatically incremented weekly** via CI/CD tasks to ensure continuous progression.
 - **`version_code.sh`**: The script responsible for calculating the final version code.
+
+## Version Name
+
+The `versionName` is derived from `version.txt`. 
+On CI, a suffix is appended to the base version via the `ciVersionNameSuffix` project property:
+- **Pull Requests**: `2.9.0-pr-<number>-<short-sha>`
+- **Master Branch**: `2.9.0-master`
+- **Nightly Builds**: `2.9.0-nightly`
+- **Local Builds**: `2.9.0-local` (unless a suffix is manually provided via `ciVersionNameSuffix`)
 
 ## Version Code Structure
 
 The generated version code follows a specific pattern: `MmmPTSS`
 
-- **`MmmP`**: The base version extracted from `version.txt`.
+- **`MmmP`**: The base version extracted from `version_code.txt`.
 - **`T` (Type Index)**: Represents the build environment:
   - `1`: Staging
   - `2`: Nightly
@@ -32,4 +42,7 @@ The version code is typically generated during the CI/CD process or local builds
 ./tools/versioning/version_code.sh <staging|nightly|master> [--release]
 ```
 
-This system allows for a high degree of automation while maintaining a clear hierarchy and traceability for all builds across different environments.
+When building via Gradle, the suffix can be passed as:
+```bash
+./gradlew assembleDebug -PciVersionNameSuffix=my-suffix
+```

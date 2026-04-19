@@ -201,7 +201,7 @@ fun Project.calculateVersionName(): String {
     }
     val baseVersion = versionFile.readText().trim()
     val suffix = project.findProperty("ciVersionNameSuffix")?.toString()
-    return if (suffix.isNullOrBlank()) baseVersion else "$baseVersion-$suffix"
+    return if (suffix.isNullOrBlank()) "$baseVersion-local" else "$baseVersion-$suffix"
 }
 
 fun Project.calculateVersionCode(): Int {

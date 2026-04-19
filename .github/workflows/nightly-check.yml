@@ -45,20 +45,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v6
-        with:
-          fetch-depth: 0
-      - name: Calculate Version Code
-        id: version_logic
-        shell: bash
-        run: |
-          chmod +x ./tools/versioning/version_code.sh
-          VERSION_CODE=$(./tools/versioning/version_code.sh nightly)
-          echo "VERSION_CODE=$VERSION_CODE" >> $GITHUB_OUTPUT
-          echo "### Version Code: $VERSION_CODE" >> $GITHUB_STEP_SUMMARY
       - name: Build Android
         uses: ./.github/actions/build-android
-        with:
-          ciVersionCode: ${{ steps.version_logic.outputs.VERSION_CODE }}
       - name: Slack report
         uses: slackapi/slack-github-action@v3
         if: always() # Ensure report is sent, even after errors
