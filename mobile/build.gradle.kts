@@ -63,7 +63,7 @@ android {
 
     buildTypes {
         getByName("debug") {
-            applicationIdSuffix = ".staging"
+            applicationIdSuffix = ".dev"
             isDebuggable = true
             buildConfigField("String", "E2E_TEST_USER_EMAIL", "\"${project.envSecret("E2E_TEST_USER_EMAIL")}\"")
             buildConfigField("String", "E2E_TEST_USER_PASSWORD", "\"${project.envSecret("E2E_TEST_USER_PASSWORD")}\"")
