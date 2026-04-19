@@ -16,6 +16,16 @@ fastlane_version "2.212.0"
 default_platform :android
 
 platform :android do
+  def generate_changelog
+    tag = sh("git describe --tags --abbrev=0 @^ 2>/dev/null || echo ''").strip
+    if tag.empty?
+      log_command = 'git --no-pager log --pretty=format:"%s" --no-merges --reverse'
+    else
+      log_command = "git --no-pager log --pretty=format:\"%s\" --no-merges #{tag}..@ --reverse"
+    end
+    sh(log_command).strip
+  end
+
   desc "Submit a new build to Firebase App Distribution"
   lane :deploy_firebase do |options|
     apk_path = options[:apk_path]
@@ -30,14 +40,7 @@ platform :android do
     groups = options[:groups]
     UI.user_error!("groups is required for deploy_firebase lane") unless groups
 
-    # Compute changelog
-    tag = sh("git describe --tags --abbrev=0 @^ 2>/dev/null || echo ''").strip
-    if tag.empty?
-      log_command = 'git --no-pager log --pretty=format:"%s" --reverse'
-    else
-      log_command = "git --no-pager log --pretty=format:\"%s\" #{tag}..@ --reverse"
-    end
-    changelog = sh(log_command).strip
+    changelog = generate_changelog
 
     # Upload to Firebase
     firebase_app_distribution(
