@@ -45,18 +45,28 @@ jobs:
         shell: bash
         run: |
           TYPE="staging"
-          if [[ "${{ github.event_name }}" == "push" && "${{ github.ref }}" == "refs/heads/master" ]]; then
+          VERSION_SUFFIX="local"
+          if [[ "${{ github.event_name }}" == "pull_request" ]]; then
+            TYPE="staging"
+            SHORT_SHA=$(echo "${{ github.event.pull_request.head.sha }}" | cut -c1-7)
+            VERSION_SUFFIX="pr-${{ github.event.pull_request.number }}-$SHORT_SHA"
+          elif [[ "${{ github.event_name }}" == "push" && "${{ github.ref }}" == "refs/heads/master" ]]; then
             TYPE="master"
+            VERSION_SUFFIX="master"
           fi
+          
           chmod +x ./tools/versioning/version_code.sh
           VERSION_CODE=$(./tools/versioning/version_code.sh $TYPE)
           echo "VERSION_CODE=$VERSION_CODE" >> $GITHUB_OUTPUT
+          echo "VERSION_NAME_SUFFIX=$VERSION_SUFFIX" >> $GITHUB_OUTPUT
           echo "### Version Code: $VERSION_CODE" >> $GITHUB_STEP_SUMMARY
+          echo "### Version Name Suffix: $VERSION_SUFFIX" >> $GITHUB_STEP_SUMMARY
         
       - name: Build Android
         uses: ./.github/actions/build-android
         with:
           ciVersionCode: ${{ steps.version_logic.outputs.VERSION_CODE }}
+          ciVersionNameSuffix: ${{ steps.version_logic.outputs.VERSION_NAME_SUFFIX }}
 
   deploy-android-staging:
     needs: [build-android]
@@ -85,7 +95,7 @@ jobs:
             apk_path:mobile/build/outputs/apk/debug/mobile-debug.apk \
             firebase_app_id:1:807594467020:android:ac26b664e229fe37 \
             credentials_path:mobile/src/debug/google-deployment-key.json \
-            groups:everlog-pr-testers
+            groups:everlog-staging-testers
 
   test-android:
     runs-on: ubuntu-24.04

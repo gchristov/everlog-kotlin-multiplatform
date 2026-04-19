@@ -25,8 +25,7 @@ android {
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         
         versionCode = project.calculateVersionCode()
-        
-        versionName = "2.9.0"
+        versionName = project.calculateVersionName()
         vectorDrawables {
             useSupportLibrary = true
         }
@@ -197,13 +196,23 @@ fun Project.envSecret(key: String): String {
     return property
 }
 
+fun Project.calculateVersionName(): String {
+    val versionFile = rootProject.file("tools/versioning/version.txt")
+    if (!versionFile.exists()) {
+        throw GradleException("tools/versioning/version.txt is missing. Required for versioning logic.")
+    }
+    val baseVersion = versionFile.readText().trim()
+    val suffix = project.findProperty("ciVersionNameSuffix")?.toString()
+    return if (suffix.isNullOrBlank()) baseVersion else "$baseVersion-$suffix"
+}
+
 fun Project.calculateVersionCode(): Int {
     val ciVersionCode = project.findProperty("ciVersionCode")?.toString()?.toIntOrNull()
     if (ciVersionCode != null) return ciVersionCode
 
-    val versionFile = rootProject.file("tools/versioning/version.txt")
+    val versionFile = rootProject.file("tools/versioning/version_code.txt")
     if (!versionFile.exists()) {
-        throw GradleException("tools/versioning/version.txt is missing. Required for versioning logic.")
+        throw GradleException("tools/versioning/version_code.txt is missing. Required for versioning logic.")
     }
     return versionFile.readText().trim().toInt()
 }
