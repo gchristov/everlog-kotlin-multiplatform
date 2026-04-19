@@ -1,0 +1,38 @@
+name: 'Compute app version'
+inputs:
+  buildType:
+    description: 'The build type (staging, nightly, master)'
+    required: true
+outputs:
+  versionCode:
+    description: 'Calculated version code'
+    value: ${{ steps.compute.outputs.versionCode }}
+  versionNameSuffix:
+    description: 'Calculated version name suffix'
+    value: ${{ steps.compute.outputs.versionNameSuffix }}
+runs:
+  using: "composite"
+  steps:
+    - id: compute
+      shell: bash
+      run: |
+        TYPE="${{ inputs.buildType }}"
+
+        VERSION_SUFFIX="local"
+        if [[ "$TYPE" == "nightly" ]]; then
+          VERSION_SUFFIX="nightly"
+        elif [[ "${{ github.event_name }}" == "pull_request" ]]; then
+          SHORT_SHA=$(echo "${{ github.event.pull_request.head.sha }}" | cut -c1-7)
+          VERSION_SUFFIX="pr-${{ github.event.pull_request.number }}-$SHORT_SHA"
+        elif [[ "$TYPE" == "master" ]] || [[ "$TYPE" == "staging" && "${{ github.event_name }}" == "push" && "${{ github.ref }}" == "refs/heads/master" ]]; then
+           VERSION_SUFFIX="master"
+        fi
+
+        chmod +x ./tools/versioning/version_code.sh
+        VERSION_CODE=$(./tools/versioning/version_code.sh $TYPE)
+        
+        echo "versionCode=$VERSION_CODE" >> $GITHUB_OUTPUT
+        echo "versionNameSuffix=$VERSION_SUFFIX" >> $GITHUB_OUTPUT
+        
+        echo "### Version Code: $VERSION_CODE" >> $GITHUB_STEP_SUMMARY
+        echo "### Version Name Suffix: $VERSION_SUFFIX" >> $GITHUB_STEP_SUMMARY
