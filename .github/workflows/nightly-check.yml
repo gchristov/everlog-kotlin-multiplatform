@@ -1,8 +1,10 @@
 name: nightly-check
 
 on:
-  schedule:
-    - cron: '0 0 * * *'
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
 
 env:
   E2E_TEST_USER_EMAIL: ${{ secrets.E2E_TEST_USER_EMAIL }}
@@ -10,6 +12,8 @@ env:
   MONITORING_SLACK_URL: ${{ secrets.MONITORING_SLACK_URL }}
   GOOGLE_SERVICES_DEV_JSON: ${{ secrets.GOOGLE_SERVICES_DEV_JSON }}
   GOOGLE_SERVICES_PROD_JSON: ${{ secrets.GOOGLE_SERVICES_PROD_JSON }}
+  GOOGLE_DEPLOYMENT_KEY_DEV_JSON: ${{ secrets.GOOGLE_DEPLOYMENT_KEY_DEV_JSON }}
+  GOOGLE_DEPLOYMENT_KEY_PROD_JSON: ${{ secrets.GOOGLE_DEPLOYMENT_KEY_PROD_JSON }}
   KEYSTORE_DEBUG_BASE64: ${{ secrets.KEYSTORE_DEBUG_BASE64 }}
   KEYSTORE_RELEASE_BASE64: ${{ secrets.KEYSTORE_RELEASE_BASE64 }}
 
@@ -45,8 +49,57 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v6
+        with:
+          fetch-depth: 0 # Needed to compute the app version
+      - name: Compute app version
+        id: compute_app_version
+        uses: ./.github/actions/compute-app-version
+        with:
+          buildType: 'nightly'
       - name: Build Android
         uses: ./.github/actions/build-android
+        with:
+          ciVersionCode: ${{ steps.compute_app_version.outputs.versionCode }}
+          ciVersionNameSuffix: ${{ steps.compute_app_version.outputs.versionNameSuffix }}
+      - name: Slack report
+        uses: slackapi/slack-github-action@v3
+        if: always() # Ensure report is sent, even after errors
+        with:
+          payload: |
+            {
+              "text": "🌓️️ Nightly job <${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|${{ github.job }}> ${{ job.status }}"
+            }
+          webhook: ${{ env.MONITORING_SLACK_URL }}
+          webhook-type: incoming-webhook
+
+  deploy-android-staging:
+    needs: [build-android]
+    runs-on: ubuntu-24.04
+    concurrency:
+      group: ${{ github.ref }}-deploy-android-staging
+      cancel-in-progress: true
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0 # Needed to compute the changelog
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '3.2'
+          bundler-cache: true
+      - name: Download Artifacts
+        uses: actions/download-artifact@v4.1.7
+        with:
+          name: Android Build
+      - name: Deploy
+        shell: bash
+        run: |
+          bundle exec fastlane android deploy_firebase \
+            apk_path:mobile/build/outputs/apk/debug/mobile-debug.apk \
+            firebase_app_id:1:807594467020:android:ac26b664e229fe37 \
+            credentials_path:mobile/src/debug/google-deployment-key.json \
+            groups:everlog-staging-testers
       - name: Slack report
         uses: slackapi/slack-github-action@v3
         if: always() # Ensure report is sent, even after errors

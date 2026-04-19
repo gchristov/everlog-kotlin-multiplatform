@@ -1,10 +1,8 @@
 name: staging-check
 
 on:
-  push:
-    branches: [ master ]
-  pull_request:
-    branches: [ master ]
+  schedule:
+    - cron: '0 0 * * *'
 
 env:
   E2E_TEST_USER_EMAIL: ${{ secrets.E2E_TEST_USER_EMAIL }}
@@ -39,7 +37,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v6
         with:
-          fetch-depth: 0
+          fetch-depth: 0 # Needed to compute the app version
       - name: Compute app version
         id: compute_app_version
         uses: ./.github/actions/compute-app-version
@@ -61,7 +59,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v6
         with:
-          fetch-depth: 0
+          fetch-depth: 0 # Needed to compute the changelog
       - name: Set up Ruby
         uses: ruby/setup-ruby@v1
         with:
