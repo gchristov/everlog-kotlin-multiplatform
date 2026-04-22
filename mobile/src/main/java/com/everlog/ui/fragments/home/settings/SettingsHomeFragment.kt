@@ -133,6 +133,7 @@ class SettingsHomeFragment : BaseTabFragment(), MvpViewSettingsHome {
         // First week day
         binding.root.findViewById<TextView>(R.id.firstWeekDayField).text = viewModel.firstWeekDay?.getDisplayName(TextStyle.FULL, Locale.getDefault())
         // Integrations
+        binding.root.findViewById<View>(R.id.integrationsSection).visibility = if (viewModel.integrationGoogleFitEnabled == true) View.VISIBLE else View.GONE
         ELIntegration.Type.GOOGLE_FIT.getIcon()?.let { binding.root.findViewById<ImageView>(R.id.googleFitImg).setImageResource(it) }
         binding.root.findViewById<TextView>(R.id.googleFitTitle).text = context?.let { ELIntegration.Type.GOOGLE_FIT.getTitle() }
         binding.root.findViewById<TextView>(R.id.googleFitField).text = getString(if (viewModel.integrationGoogleFitEnabled == true) R.string.integrations_connected else R.string.integrations_connected_prompt)
