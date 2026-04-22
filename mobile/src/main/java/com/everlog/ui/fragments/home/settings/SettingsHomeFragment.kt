@@ -138,7 +138,7 @@ class SettingsHomeFragment : BaseTabFragment(), MvpViewSettingsHome {
         binding.root.findViewById<TextView>(R.id.googleFitTitle).text = context?.let { ELIntegration.Type.GOOGLE_FIT.getTitle() }
         binding.root.findViewById<TextView>(R.id.googleFitField).text = getString(if (viewModel.integrationGoogleFitEnabled == true) R.string.integrations_connected else R.string.integrations_connected_prompt)
         // Notifications
-        binding.root.findViewById<CheckBoxTriStates>(R.id.newsletterCheckbox).setChecked(viewModel.notificationNewsletterEnabled ?: false)
+        binding.root.findViewById<CheckBoxTriStates>(R.id.newsletterCheckbox).setChecked(viewModel.notificationNewsletterEnabled)
     }
 
     override fun showUserInfo(user: ELUser) {
