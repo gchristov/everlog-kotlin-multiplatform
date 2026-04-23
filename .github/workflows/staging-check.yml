@@ -48,6 +48,7 @@ jobs:
       - name: Build Android
         uses: ./.github/actions/build-android
         with:
+          buildType: 'debug'
           ciVersionCode: ${{ steps.compute_app_version.outputs.versionCode }}
           ciVersionNameSuffix: ${{ steps.compute_app_version.outputs.versionNameSuffix }}
 

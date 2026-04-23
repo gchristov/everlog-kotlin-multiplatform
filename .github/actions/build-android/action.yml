@@ -6,6 +6,9 @@ inputs:
   ciVersionNameSuffix:
     description: 'Suffix to append to the version name'
     required: true
+  buildType:
+    description: 'The build type to use (debug or release)'
+    required: true
 runs:
   using: "composite"
   steps:
@@ -14,21 +17,28 @@ runs:
     - name: Build Android
       shell: bash
       run: |
-        set -Eeuo pipefail 
-        ./gradlew :mobile:assembleDebug \
+        set -Eeuo pipefail
+        if [ "${{ inputs.buildType }}" == "release" ]; then
+          TASK=":mobile:bundleRelease"
+        else
+          TASK=":mobile:assembleDebug"
+        fi
+        ./gradlew $TASK \
           ${ciVersionCode:+-PciVersionCode=$ciVersionCode} \
           ${ciVersionNameSuffix:+-PciVersionNameSuffix=$ciVersionNameSuffix}
       env:
         ciVersionCode: ${{ inputs.ciVersionCode }}
         ciVersionNameSuffix: ${{ inputs.ciVersionNameSuffix }}
     - name: Artifacts
-      uses: actions/upload-artifact@v7
+      uses: actions/upload-artifact@v4
       if: always() # Ensure all artifacts are collected, even after errors
       with:
         name: Android Build
         path: |
           **/*.apk
           **/build
+          **/*.aab
+          **/mapping.txt
           **/secrets.properties
           **/google-services.json
           **/google-deployment-key.json

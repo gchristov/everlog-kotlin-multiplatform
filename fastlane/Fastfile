@@ -52,6 +52,23 @@ platform :android do
     )
   end
 
+
+  desc "Submit a new build to Google Play Internal"
+  lane :deploy_play_internal do |options|
+    aab_path = options[:aab_path]
+    UI.user_error!("aab_path is required for deploy_play_internal lane") unless aab_path
+
+    json_key_path = options[:json_key_path]
+    UI.user_error!("json_key_path is required for deploy_play_internal lane") unless json_key_path
+
+    upload_to_play_store(
+      package_name: 'com.everlog',
+      track: 'internal',
+      json_key: json_key_path,
+      aab: aab_path
+    )
+  end
+
   error do |lane, exception|
     # Handle errors (e.g. notify Slack)
   end

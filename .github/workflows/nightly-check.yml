@@ -14,6 +14,9 @@ env:
   GOOGLE_DEPLOYMENT_KEY_PROD_JSON: ${{ secrets.GOOGLE_DEPLOYMENT_KEY_PROD_JSON }}
   KEYSTORE_DEBUG_BASE64: ${{ secrets.KEYSTORE_DEBUG_BASE64 }}
   KEYSTORE_RELEASE_BASE64: ${{ secrets.KEYSTORE_RELEASE_BASE64 }}
+  KEYSTORE_RELEASE_PASSWORD: ${{ secrets.KEYSTORE_RELEASE_PASSWORD }}
+  KEYSTORE_RELEASE_ALIAS: ${{ secrets.KEYSTORE_RELEASE_ALIAS }}
+  KEYSTORE_RELEASE_ALIAS_PASSWORD: ${{ secrets.KEYSTORE_RELEASE_ALIAS_PASSWORD }}
 
 jobs:
   unit-test:
@@ -57,6 +60,7 @@ jobs:
       - name: Build Android
         uses: ./.github/actions/build-android
         with:
+          buildType: 'debug'
           ciVersionCode: ${{ steps.compute_app_version.outputs.versionCode }}
           ciVersionNameSuffix: ${{ steps.compute_app_version.outputs.versionNameSuffix }}
       - name: Slack report

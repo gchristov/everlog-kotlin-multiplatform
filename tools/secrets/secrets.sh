@@ -24,3 +24,6 @@ mkdir -p mobile/src/debug
 echo "$KEYSTORE_DEBUG_BASE64" | base64 --decode > mobile/src/debug/debug.keystore
 mkdir -p mobile/src/release
 echo "$KEYSTORE_RELEASE_BASE64" | base64 --decode > mobile/src/release/release_key.jks
+echo KEYSTORE_RELEASE_PASSWORD="$KEYSTORE_RELEASE_PASSWORD" >> mobile/secrets.properties
+echo KEYSTORE_RELEASE_ALIAS="$KEYSTORE_RELEASE_ALIAS" >> mobile/secrets.properties
+echo KEYSTORE_RELEASE_ALIAS_PASSWORD="$KEYSTORE_RELEASE_ALIAS_PASSWORD" >> mobile/secrets.properties
