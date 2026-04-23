@@ -1,10 +1,8 @@
 name: staging-check
 
 on:
-  push:
-    branches: [ master ]
-  pull_request:
-    branches: [ master ]
+  schedule:
+    - cron: '0 0 * * *'
 
 env:
   E2E_TEST_USER_EMAIL: ${{ secrets.E2E_TEST_USER_EMAIL }}
@@ -15,6 +13,9 @@ env:
   GOOGLE_DEPLOYMENT_KEY_PROD_JSON: ${{ secrets.GOOGLE_DEPLOYMENT_KEY_PROD_JSON }}
   KEYSTORE_DEBUG_BASE64: ${{ secrets.KEYSTORE_DEBUG_BASE64 }}
   KEYSTORE_RELEASE_BASE64: ${{ secrets.KEYSTORE_RELEASE_BASE64 }}
+  KEYSTORE_RELEASE_PASSWORD: ${{ secrets.KEYSTORE_RELEASE_PASSWORD }}
+  KEYSTORE_RELEASE_ALIAS: ${{ secrets.KEYSTORE_RELEASE_ALIAS }}
+  KEYSTORE_RELEASE_ALIAS_PASSWORD: ${{ secrets.KEYSTORE_RELEASE_ALIAS_PASSWORD }}
 
 jobs:
   unit-test:
