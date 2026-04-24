@@ -62,7 +62,7 @@ jobs:
       - name: Build Android
         uses: ./.github/actions/build-android
         with:
-          buildType: 'debug'
+          buildType: 'release'
           ciVersionCode: ${{ steps.compute_app_version.outputs.versionCode }}
           ciVersionNameSuffix: ${{ steps.compute_app_version.outputs.versionNameSuffix }}
       - name: Slack report
@@ -76,11 +76,11 @@ jobs:
           webhook: ${{ env.MONITORING_SLACK_URL }}
           webhook-type: incoming-webhook
 
-  deploy-android-staging:
+  deploy-android-release:
     needs: [build-android]
     runs-on: ubuntu-24.04
     concurrency:
-      group: ${{ github.ref }}-deploy-android-staging
+      group: ${{ github.ref }}-deploy-android-release
       cancel-in-progress: true
     steps:
       - name: Checkout
@@ -92,18 +92,16 @@ jobs:
         with:
           ruby-version: '3.2'
           bundler-cache: true
-      - name: Download Artifacts
+      - name: Download artifacts
         uses: actions/download-artifact@v4.1.7
         with:
           name: Android Build
       - name: Deploy
         shell: bash
         run: |
-          bundle exec fastlane android deploy_firebase \
-            apk_path:mobile/build/outputs/apk/debug/mobile-debug.apk \
-            firebase_app_id:1:807594467020:android:ac26b664e229fe37 \
-            credentials_path:mobile/src/debug/google-deployment-key.json \
-            groups:everlog-staging-testers
+          bundle exec fastlane android deploy_play_internal \
+            aab_path:mobile/build/outputs/bundle/release/mobile-release.aab \
+            json_key_path:mobile/src/release/google-deployment-key.json
       - name: Slack report
         uses: slackapi/slack-github-action@v3
         if: always() # Ensure report is sent, even after errors
