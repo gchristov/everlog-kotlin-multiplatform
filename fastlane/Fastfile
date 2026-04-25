@@ -61,20 +61,26 @@ platform :android do
     json_key_path = options[:json_key_path]
     UI.user_error!("json_key_path is required for deploy_play_internal lane") unless json_key_path
 
-    # Write the changelog to a default file that supply will pick up for this version
+    # 1. Get the version code using your existing script
+    # Assuming 'master' type for play store releases as in your tools/versioning
+    version_code = sh("./tools/versioning/version_code.sh master --release").strip
+
+    # 2. Generate and write the version-specific changelog
     changelog_text = generate_changelog
     changelog_dir = "fastlane/metadata/android/en-US/changelogs"
     FileUtils.mkdir_p(changelog_dir)
+
+    # Writing both default and version-specific to be safe
     File.write("#{changelog_dir}/default.txt", changelog_text)
+    File.write("#{changelog_dir}/#{version_code}.txt", changelog_text)
+
+    UI.message("Uploading changelog for version #{version_code}...")
 
     upload_to_play_store(
       package_name: 'com.everlog',
       track: 'internal',
       json_key: json_key_path,
-      aab: aab_path,
-      skip_upload_metadata: true,
-      skip_upload_images: true,
-      skip_upload_screenshots: true
+      aab: aab_path
     )
   end
 
