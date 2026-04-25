@@ -1,6 +1,0 @@
-* NEW - Track individual exercise progress! *
-
-Whether you want to see your weight/rep progression or your 1RM, our new analytics tools have got you covered.
-• Each exercise has a Statistics tab showing you analytics for a selected time period
-• Data is automatically refreshed as you perform exercises
-• Our new "Today" filter allows you to see statistics for your daily sessions

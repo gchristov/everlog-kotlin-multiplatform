@@ -61,6 +61,12 @@ platform :android do
     json_key_path = options[:json_key_path]
     UI.user_error!("json_key_path is required for deploy_play_internal lane") unless json_key_path
 
+    # Write the changelog to a default file that supply will pick up for this version
+    changelog_text = generate_changelog
+    changelog_dir = "fastlane/metadata/android/en-US/changelogs"
+    FileUtils.mkdir_p(changelog_dir)
+    File.write("#{changelog_dir}/default.txt", changelog_text)
+
     upload_to_play_store(
       package_name: 'com.everlog',
       track: 'internal',
@@ -68,8 +74,7 @@ platform :android do
       aab: aab_path,
       skip_upload_metadata: true,
       skip_upload_images: true,
-      skip_upload_screenshots: true,
-      skip_upload_changelogs: true
+      skip_upload_screenshots: true
     )
   end
 
