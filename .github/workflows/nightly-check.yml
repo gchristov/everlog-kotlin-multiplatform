@@ -1,10 +1,8 @@
 name: nightly-check
 
 on:
-  push:
-    branches: [ master ]
-  pull_request:
-    branches: [ master ]
+  schedule:
+    - cron: '0 0 * * *'
 
 env:
   E2E_TEST_USER_EMAIL: ${{ secrets.E2E_TEST_USER_EMAIL }}
