@@ -5,8 +5,12 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.updatePadding
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
+import com.everlog.R
 import com.everlog.ui.dialog.DialogBuilder
 import com.everlog.ui.dialog.TaskDialog
 import com.everlog.ui.dialog.ToastBuilder
@@ -31,6 +35,16 @@ abstract class BaseFragment : Fragment(), BaseFragmentMvpView {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        val toolbar = view.findViewById<View>(R.id.toolbar)
+        if (toolbar != null) {
+            ViewCompat.setOnApplyWindowInsetsListener(toolbar) { v, insets ->
+                val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
+                v.updatePadding(top = systemBars.top)
+                insets
+            }
+        }
+
         setupPresenter()
         getPresenter<BaseFragmentMvpView>()?.onRestoreInstanceState(savedInstanceState)
         getPresenter<BaseFragmentMvpView>()?.attachView(this)

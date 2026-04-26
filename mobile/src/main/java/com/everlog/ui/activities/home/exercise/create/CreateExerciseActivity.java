@@ -18,7 +18,9 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import androidx.core.content.ContextCompat;
+import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
 import rx.Observable;
 
 import static com.everlog.constants.ELConstants.EXTRA_EXERCISE;
@@ -120,6 +122,13 @@ public class CreateExerciseActivity extends BaseActivity implements MvpViewCreat
         setSupportActionBar(binding.includeToolbar.toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setTitle("");
+
+        View appBar = (View) binding.includeToolbar.toolbar.getParent();
+        ViewCompat.setOnApplyWindowInsetsListener(appBar, (v, insets) -> {
+            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
+            v.setPadding(v.getPaddingLeft(), systemBars.top, v.getPaddingRight(), v.getPaddingBottom());
+            return insets;
+        });
     }
 
     private void setupSpinner() {
