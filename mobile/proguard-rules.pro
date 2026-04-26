@@ -104,6 +104,7 @@
 
 # Models
 -keep class com.everlog.data.model.** { *; }
+-keep class com.everlog.config.** { *; }
 
 # Ads
 -keep class com.google.android.gms.common.GooglePlayServicesUtil {*;}
