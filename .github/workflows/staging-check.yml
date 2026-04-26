@@ -40,7 +40,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v6
         with:
-          fetch-depth: 0 # Needed to compute the app version
+          fetch-depth: 0 # Do not remove. Needed to compute app version
       - name: Build Android
         id: build_android
         uses: ./.github/actions/build-android
@@ -58,7 +58,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v6
         with:
-          fetch-depth: 0 # Needed to compute the changelog
+          fetch-depth: 0 # Do not remove. Needed to compute changelog
       - name: Set up Ruby
         uses: ruby/setup-ruby@v1
         with:
