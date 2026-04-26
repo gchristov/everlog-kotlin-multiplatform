@@ -64,7 +64,7 @@ platform :android do
     version_code = options[:version_code]
     UI.user_error!("version_code is required for deploy_play_internal lane") unless version_code
 
-    changelog_text = generate_changelog
+    changelog_text = "🌓 Nightly build #{Time.now.strftime("%d.%m.%Y")}"
     metadata_base_dir = File.expand_path("metadata/android", File.dirname(__FILE__))
 
     locale = "en-US"
