@@ -67,15 +67,13 @@ platform :android do
     changelog_text = generate_changelog
     metadata_base_dir = File.expand_path("metadata/android", File.dirname(__FILE__))
 
-    # We'll try both en-US and en to be safe, as one of them MUST match the store's default
-    ["en-US", "en"].each do |locale|
-      changelog_dir = File.join(metadata_base_dir, locale, "changelogs")
-      FileUtils.mkdir_p(changelog_dir)
-      File.write(File.join(changelog_dir, "#{version_code}.txt"), changelog_text)
-      File.write(File.join(changelog_dir, "default.txt"), changelog_text)
-    end
+    locale = "en-US"
+    changelog_dir = File.join(metadata_base_dir, locale, "changelogs")
+    FileUtils.mkdir_p(changelog_dir)
+    File.write(File.join(changelog_dir, "#{version_code}.txt"), changelog_text)
+    File.write(File.join(changelog_dir, "default.txt"), changelog_text)
 
-    UI.message("Uploading changelog for version #{version_code} for en-US and en locales from #{metadata_base_dir}...")
+    UI.message("Uploading changelog for version #{version_code} for en-US locale from #{metadata_base_dir}...")
 
     upload_to_play_store(
       package_name: 'com.everlog',
