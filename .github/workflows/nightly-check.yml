@@ -51,6 +51,7 @@ jobs:
       cancel-in-progress: true
     outputs:
       versionCode: ${{ steps.build_android.outputs.versionCode }}
+      versionNameSuffix: ${{ steps.build_android.outputs.versionNameSuffix }}
     steps:
       - name: Checkout
         uses: actions/checkout@v6
@@ -97,7 +98,8 @@ jobs:
           bundle exec fastlane android deploy_play_internal \
             aab_path:mobile/build/outputs/bundle/release/mobile-release.aab \
             json_key_path:mobile/src/release/google-deployment-key.json \
-            version_code:${{ needs.build-android.outputs.versionCode }}
+            version_code:${{ needs.build-android.outputs.versionCode }} \
+            version_name_suffix:${{ needs.build-android.outputs.versionNameSuffix }}
       - name: Slack report
         uses: slackapi/slack-github-action@v3
         if: always() # Ensure report is sent, even after errors
