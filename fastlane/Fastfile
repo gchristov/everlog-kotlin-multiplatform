@@ -61,9 +61,8 @@ platform :android do
     json_key_path = options[:json_key_path]
     UI.user_error!("json_key_path is required for deploy_play_internal lane") unless json_key_path
 
-    # 1. Get the version code using your existing script
-    # Assuming 'master' type for play store releases as in your tools/versioning
-    version_code = sh("./tools/versioning/version_code.sh master --release").strip
+    version_code = options[:version_code]
+    UI.user_error!("version_code is required for deploy_play_internal lane") unless version_code
 
     # 2. Generate and write the version-specific changelog
     changelog_text = generate_changelog
@@ -80,7 +79,11 @@ platform :android do
       package_name: 'com.everlog',
       track: 'internal',
       json_key: json_key_path,
-      aab: aab_path
+      aab: aab_path,
+      skip_upload_metadata: true,
+      skip_upload_images: true,
+      skip_upload_screenshots: true,
+      skip_upload_changelogs: false
     )
   end
 

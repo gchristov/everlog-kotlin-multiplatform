@@ -86,14 +86,19 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v6
         with:
-          fetch-depth: 0 # Needed to compute the changelog
+          fetch-depth: 0 # Needed to compute the app version
+      - name: Compute app version
+        id: compute_app_version
+        uses: ./.github/actions/compute-app-version
+        with:
+          buildType: 'nightly'
       - name: Set up Ruby
         uses: ruby/setup-ruby@v1
         with:
           ruby-version: '3.2'
           bundler-cache: true
       - name: Download artifacts
-        uses: actions/download-artifact@v4.1.7
+        uses: actions/download-artifact@v8
         with:
           name: Android Build
       - name: Deploy
@@ -101,7 +106,8 @@ jobs:
         run: |
           bundle exec fastlane android deploy_play_internal \
             aab_path:mobile/build/outputs/bundle/release/mobile-release.aab \
-            json_key_path:mobile/src/release/google-deployment-key.json
+            json_key_path:mobile/src/release/google-deployment-key.json \
+            version_code:${{ steps.compute_app_version.outputs.versionCode }}
       - name: Slack report
         uses: slackapi/slack-github-action@v3
         if: always() # Ensure report is sent, even after errors
