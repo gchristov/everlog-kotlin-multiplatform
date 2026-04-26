@@ -42,7 +42,6 @@ platform :android do
 
     changelog = generate_changelog
 
-    # Upload to Firebase
     firebase_app_distribution(
       app: firebase_app_id,
       groups: groups,

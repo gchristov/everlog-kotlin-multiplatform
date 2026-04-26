@@ -41,17 +41,12 @@ jobs:
         uses: actions/checkout@v6
         with:
           fetch-depth: 0 # Needed to compute the app version
-      - name: Compute app version
-        id: compute_app_version
-        uses: ./.github/actions/compute-app-version
-        with:
-          buildType: ${{ github.event_name == 'push' && github.ref == 'refs/heads/master' && 'master' || 'staging' }}
       - name: Build Android
+        id: build_android
         uses: ./.github/actions/build-android
         with:
           buildType: 'debug'
-          ciVersionCode: ${{ steps.compute_app_version.outputs.versionCode }}
-          ciVersionNameSuffix: ${{ steps.compute_app_version.outputs.versionNameSuffix }}
+          versionBuildType: ${{ github.event_name == 'push' && github.ref == 'refs/heads/master' && 'master' || 'staging' }}
 
   deploy-android-staging:
     needs: [build-android]

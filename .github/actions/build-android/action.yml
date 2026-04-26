@@ -1,17 +1,26 @@
 name: 'build-android'
 inputs:
-  ciVersionCode:
-    description: 'Version code to use for the build'
-    required: true
-  ciVersionNameSuffix:
-    description: 'Suffix to append to the version name'
+  versionBuildType:
+    description: 'The build type for versioning (staging, nightly, master)'
     required: true
   buildType:
     description: 'The build type to use (debug or release)'
     required: true
+outputs:
+  versionCode:
+    description: 'Calculated version code'
+    value: ${{ steps.compute_app_version.outputs.versionCode }}
+  versionNameSuffix:
+    description: 'Calculated version name suffix'
+    value: ${{ steps.compute_app_version.outputs.versionNameSuffix }}
 runs:
   using: "composite"
   steps:
+    - name: Compute app version
+      id: compute_app_version
+      uses: ./.github/actions/compute-app-version
+      with:
+        buildType: ${{ inputs.versionBuildType }}
     - name: Set up Gradle
       uses: ./.github/actions/setup-gradle
     - name: Build Android
@@ -27,8 +36,8 @@ runs:
           ${ciVersionCode:+-PciVersionCode=$ciVersionCode} \
           ${ciVersionNameSuffix:+-PciVersionNameSuffix=$ciVersionNameSuffix}
       env:
-        ciVersionCode: ${{ inputs.ciVersionCode }}
-        ciVersionNameSuffix: ${{ inputs.ciVersionNameSuffix }}
+        ciVersionCode: ${{ steps.compute_app_version.outputs.versionCode }}
+        ciVersionNameSuffix: ${{ steps.compute_app_version.outputs.versionNameSuffix }}
     - name: Artifacts
       uses: actions/upload-artifact@v7
       if: always() # Ensure all artifacts are collected, even after errors
