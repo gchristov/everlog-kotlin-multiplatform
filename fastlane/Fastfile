@@ -66,7 +66,7 @@ platform :android do
     version_name_suffix = options[:version_name_suffix]
     UI.user_error!("version_name_suffix is required for deploy_play_internal lane") unless version_name_suffix
 
-    changelog_text = "🌓 Nightly build (#{version_name_suffix})"
+    changelog_text = "🌓 Nightly build #{version_name_suffix} (#{version_code})"
 
     metadata_base_dir = File.expand_path("metadata/android", File.dirname(__FILE__))
 
