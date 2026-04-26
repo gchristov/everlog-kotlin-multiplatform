@@ -5,6 +5,10 @@ import android.content.Intent
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
+import androidx.appcompat.widget.Toolbar
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.updatePadding
 import com.everlog.R
 import com.everlog.constants.ELConstants.EXTRA_EXERCISE
 import com.everlog.constants.ELConstants.EXTRA_TYPE
@@ -153,7 +157,16 @@ class ExerciseDetailsActivity : BaseActivity(), MvpViewExerciseDetails {
     }
 
     private fun setupTopBar() {
+        val appBar = binding.root.findViewById<View>(R.id.toolbar).parent as? View
         setSupportActionBar(binding.root.findViewById(R.id.toolbar))
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
+
+        appBar?.let {
+            ViewCompat.setOnApplyWindowInsetsListener(it) { v, insets ->
+                val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
+                v.updatePadding(top = systemBars.top)
+                insets
+            }
+        }
     }
 }
