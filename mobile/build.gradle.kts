@@ -21,7 +21,7 @@ android {
     defaultConfig {
         applicationId = "com.everlog"
         minSdk = 23
-        targetSdk = 34
+        targetSdk = 35
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         versionCode = project.calculateVersionCode()
         versionName = project.calculateVersionName()
@@ -55,9 +55,9 @@ android {
         }
         create("release") {
             storeFile = file("src/release/release_key.jks")
-            storePassword = System.getenv("KEYSTORE_PASSWORD")
-            keyAlias = System.getenv("KEYSTORE_ALIAS")
-            keyPassword = System.getenv("KEYSTORE_ALIAS_PASSWORD")
+            storePassword = project.envSecret("KEYSTORE_RELEASE_PASSWORD")
+            keyAlias = project.envSecret("KEYSTORE_RELEASE_ALIAS")
+            keyPassword = project.envSecret("KEYSTORE_RELEASE_ALIAS_PASSWORD")
         }
     }
 

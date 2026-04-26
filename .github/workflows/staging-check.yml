@@ -15,6 +15,9 @@ env:
   GOOGLE_DEPLOYMENT_KEY_PROD_JSON: ${{ secrets.GOOGLE_DEPLOYMENT_KEY_PROD_JSON }}
   KEYSTORE_DEBUG_BASE64: ${{ secrets.KEYSTORE_DEBUG_BASE64 }}
   KEYSTORE_RELEASE_BASE64: ${{ secrets.KEYSTORE_RELEASE_BASE64 }}
+  KEYSTORE_RELEASE_PASSWORD: ${{ secrets.KEYSTORE_RELEASE_PASSWORD }}
+  KEYSTORE_RELEASE_ALIAS: ${{ secrets.KEYSTORE_RELEASE_ALIAS }}
+  KEYSTORE_RELEASE_ALIAS_PASSWORD: ${{ secrets.KEYSTORE_RELEASE_ALIAS_PASSWORD }}
 
 jobs:
   unit-test:
@@ -39,17 +42,13 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v6
         with:
-          fetch-depth: 0 # Needed to compute the app version
-      - name: Compute app version
-        id: compute_app_version
-        uses: ./.github/actions/compute-app-version
-        with:
-          buildType: ${{ github.event_name == 'push' && github.ref == 'refs/heads/master' && 'master' || 'staging' }}
+          fetch-depth: 0 # Do not remove. Needed to compute app version
       - name: Build Android
+        id: build_android
         uses: ./.github/actions/build-android
         with:
-          ciVersionCode: ${{ steps.compute_app_version.outputs.versionCode }}
-          ciVersionNameSuffix: ${{ steps.compute_app_version.outputs.versionNameSuffix }}
+          buildType: 'debug'
+          versionBuildType: ${{ github.event_name == 'push' && github.ref == 'refs/heads/master' && 'master' || 'staging' }}
 
   deploy-android-staging:
     needs: [build-android]
@@ -61,14 +60,14 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v6
         with:
-          fetch-depth: 0 # Needed to compute the changelog
+          fetch-depth: 0 # Do not remove. Needed to compute changelog
       - name: Set up Ruby
         uses: ruby/setup-ruby@v1
         with:
           ruby-version: '3.2'
           bundler-cache: true
-      - name: Download Artifacts
-        uses: actions/download-artifact@v4.1.7
+      - name: Download artifacts
+        uses: actions/download-artifact@v8
         with:
           name: Android Build
       - name: Deploy

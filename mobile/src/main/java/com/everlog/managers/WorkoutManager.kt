@@ -53,11 +53,12 @@ class WorkoutManager : PreferencesManager() {
     }
 
     fun setOngoingTimer(active: Boolean, secondsFromNow: Int? = -1) {
-        if (active) {
-            scheduleWorkoutTimer(secondsFromNow!!)
-        } else {
-            cancelWorkoutTimer()
-        }
+        // TODO: Figure out a way to do this. Could it be done within the existing workout service directly?
+//        if (active) {
+//            scheduleWorkoutTimer(secondsFromNow!!)
+//        } else {
+//            cancelWorkoutTimer()
+//        }
     }
 
     // Workout timer

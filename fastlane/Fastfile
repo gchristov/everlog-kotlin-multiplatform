@@ -42,13 +42,45 @@ platform :android do
 
     changelog = generate_changelog
 
-    # Upload to Firebase
     firebase_app_distribution(
       app: firebase_app_id,
       groups: groups,
       release_notes: changelog,
       apk_path: apk_path,
       service_credentials_file: credentials_path
+    )
+  end
+
+
+  desc "Submit a new build to Google Play Internal"
+  lane :deploy_play_internal do |options|
+    aab_path = options[:aab_path]
+    UI.user_error!("aab_path is required for deploy_play_internal lane") unless aab_path
+
+    json_key_path = options[:json_key_path]
+    UI.user_error!("json_key_path is required for deploy_play_internal lane") unless json_key_path
+
+    version_code = options[:version_code]
+    UI.user_error!("version_code is required for deploy_play_internal lane") unless version_code
+
+    version_name_suffix = options[:version_name_suffix]
+    UI.user_error!("version_name_suffix is required for deploy_play_internal lane") unless version_name_suffix
+
+    changelog = "🌓 Nightly build #{version_name_suffix} (#{version_code})"
+
+    metadata_base_dir = File.expand_path("metadata/android", File.dirname(__FILE__))
+    locale = "en-US"
+    changelog_dir = File.join(metadata_base_dir, locale, "changelogs")
+    FileUtils.mkdir_p(changelog_dir)
+    File.write(File.join(changelog_dir, "#{version_code}.txt"), changelog)
+    File.write(File.join(changelog_dir, "default.txt"), changelog)
+
+    upload_to_play_store(
+      package_name: 'com.everlog',
+      track: 'internal',
+      json_key: json_key_path,
+      aab: aab_path,
+      metadata_path: metadata_base_dir
     )
   end
 
