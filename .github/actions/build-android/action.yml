@@ -4,7 +4,7 @@ inputs:
     description: 'The build type for versioning (staging, nightly, master)'
     required: true
   buildType:
-    description: 'The build type to use (debug or release)'
+    description: 'The build type for assembly (debug or release)'
     required: true
 outputs:
   versionCode:
