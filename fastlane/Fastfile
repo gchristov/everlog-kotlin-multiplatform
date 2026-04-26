@@ -64,26 +64,25 @@ platform :android do
     version_code = options[:version_code]
     UI.user_error!("version_code is required for deploy_play_internal lane") unless version_code
 
-    # 2. Generate and write the version-specific changelog
     changelog_text = generate_changelog
-    changelog_dir = "fastlane/metadata/android/en-US/changelogs"
-    FileUtils.mkdir_p(changelog_dir)
+    metadata_base_dir = "fastlane/metadata/android"
 
-    # Writing both default and version-specific to be safe
-    File.write("#{changelog_dir}/default.txt", changelog_text)
-    File.write("#{changelog_dir}/#{version_code}.txt", changelog_text)
+    # We'll try both en-US and en to be safe, as one of them MUST match the store's default
+    ["en-US", "en"].each do |locale|
+      changelog_dir = "#{metadata_base_dir}/#{locale}/changelogs"
+      FileUtils.mkdir_p(changelog_dir)
+      File.write("#{changelog_dir}/#{version_code}.txt", changelog_text)
+      File.write("#{changelog_dir}/default.txt", changelog_text)
+    end
 
-    UI.message("Uploading changelog for version #{version_code}...")
+    UI.message("Uploading changelog for version #{version_code} for en-US and en locales...")
 
     upload_to_play_store(
       package_name: 'com.everlog',
       track: 'internal',
       json_key: json_key_path,
       aab: aab_path,
-      skip_upload_metadata: true,
-      skip_upload_images: true,
-      skip_upload_screenshots: true,
-      skip_upload_changelogs: false
+      metadata_path: "./fastlane/metadata/android"
     )
   end
 
