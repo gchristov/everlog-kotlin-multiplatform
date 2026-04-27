@@ -9,6 +9,9 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.viewpager.widget.ViewPager
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.updatePadding
 import com.everlog.R
 import com.everlog.constants.ELConstants.EXTRA_PLAN_UUID
 import com.everlog.data.model.plan.ELPlan
@@ -40,6 +43,15 @@ class PlanDetailsActivity : BaseActivity(), MvpViewPlanDetails {
     override fun onActivityCreated() {
         setupTopBar()
         setupPager()
+        setupBottomInsets()
+    }
+
+    private fun setupBottomInsets() {
+        ViewCompat.setOnApplyWindowInsetsListener(binding.root) { _, insets ->
+            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
+            binding.root.findViewById<View>(R.id.bottomContent).updatePadding(bottom = systemBars.bottom + resources.getDimensionPixelSize(R.dimen.margin_20))
+            insets
+        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {

@@ -24,6 +24,7 @@
             app:realtimeOverlayColor="@color/background_blur" />
 
         <LinearLayout
+            android:id="@+id/bottomContent"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center"

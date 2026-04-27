@@ -3,6 +3,9 @@ package com.everlog.ui.activities.home.cover
 import android.graphics.Rect
 import android.view.View
 import androidx.appcompat.widget.Toolbar
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.updatePadding
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.everlog.R
@@ -24,6 +27,23 @@ class CoverImagePickerActivity : BaseActivity(), MvpViewCoverImagePicker {
     override fun onActivityCreated() {
         setupTopBar()
         setupListView()
+        setupInsets()
+    }
+
+    private fun setupInsets() {
+        ViewCompat.setOnApplyWindowInsetsListener(binding.root) { _, insets ->
+            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
+            
+            // Top inset for AppBar
+            val toolbar = binding.root.findViewById<Toolbar>(R.id.toolbar)
+            val appBar = toolbar.parent as? View
+            appBar?.updatePadding(top = systemBars.top)
+            
+            // Bottom inset for RecyclerView
+            binding.recyclerView.updatePadding(bottom = systemBars.bottom + ViewUtils.dpToPxFromRaw(this, R.dimen.margin_10))
+            
+            insets
+        }
     }
 
     override fun getLayoutResId(): Int {
