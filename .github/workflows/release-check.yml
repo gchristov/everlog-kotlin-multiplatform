@@ -28,7 +28,7 @@ jobs:
     permissions:
       checks: write
     concurrency:
-      group: ${{ github.ref }}-unit-test
+      group: ${{ github.workflow }}-${{ github.ref }}-unit-test
       cancel-in-progress: true
     steps:
       - name: Checkout
@@ -49,10 +49,11 @@ jobs:
   build-android:
     runs-on: ubuntu-24.04
     concurrency:
-      group: ${{ github.ref }}-build-android
+      group: ${{ github.workflow }}-${{ github.ref }}-build-android
       cancel-in-progress: true
     outputs:
       versionCode: ${{ steps.build_android.outputs.versionCode }}
+      versionNameSuffix: ${{ steps.build_android.outputs.versionNameSuffix }}
     steps:
       - name: Checkout
         uses: actions/checkout@v6
@@ -79,7 +80,7 @@ jobs:
     needs: [build-android]
     runs-on: ubuntu-24.04
     concurrency:
-      group: ${{ github.ref }}-deploy-android-release
+      group: ${{ github.workflow }}-${{ github.ref }}-deploy-android-release
       cancel-in-progress: true
     steps:
       - name: Checkout
@@ -115,7 +116,7 @@ jobs:
   test-android:
     runs-on: ubuntu-24.04
     concurrency:
-      group: ${{ github.ref }}-test-android
+      group: ${{ github.workflow }}-${{ github.ref }}-test-android
       cancel-in-progress: true
     steps:
       - name: Checkout
