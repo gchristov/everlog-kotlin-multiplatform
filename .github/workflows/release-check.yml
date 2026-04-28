@@ -1,0 +1,134 @@
+name: release-check
+
+on:
+  workflow_dispatch:
+    inputs:
+      changelog:
+        description: 'Changelog for this release'
+        required: true
+        type: string
+
+env:
+  E2E_TEST_USER_EMAIL: ${{ secrets.E2E_TEST_USER_EMAIL }}
+  E2E_TEST_USER_PASSWORD: ${{ secrets.E2E_TEST_USER_PASSWORD }}
+  MONITORING_SLACK_URL: ${{ secrets.MONITORING_SLACK_URL }}
+  GOOGLE_SERVICES_DEV_JSON: ${{ secrets.GOOGLE_SERVICES_DEV_JSON }}
+  GOOGLE_SERVICES_PROD_JSON: ${{ secrets.GOOGLE_SERVICES_PROD_JSON }}
+  GOOGLE_DEPLOYMENT_KEY_DEV_JSON: ${{ secrets.GOOGLE_DEPLOYMENT_KEY_DEV_JSON }}
+  GOOGLE_DEPLOYMENT_KEY_PROD_JSON: ${{ secrets.GOOGLE_DEPLOYMENT_KEY_PROD_JSON }}
+  KEYSTORE_DEBUG_BASE64: ${{ secrets.KEYSTORE_DEBUG_BASE64 }}
+  KEYSTORE_RELEASE_BASE64: ${{ secrets.KEYSTORE_RELEASE_BASE64 }}
+  KEYSTORE_RELEASE_PASSWORD: ${{ secrets.KEYSTORE_RELEASE_PASSWORD }}
+  KEYSTORE_RELEASE_ALIAS: ${{ secrets.KEYSTORE_RELEASE_ALIAS }}
+  KEYSTORE_RELEASE_ALIAS_PASSWORD: ${{ secrets.KEYSTORE_RELEASE_ALIAS_PASSWORD }}
+
+jobs:
+  unit-test:
+    runs-on: ubuntu-24.04
+    permissions:
+      checks: write
+    concurrency:
+      group: ${{ github.ref }}-unit-test
+      cancel-in-progress: true
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+      - name: Test
+        uses: ./.github/actions/unit-test
+      - name: Slack report
+        uses: slackapi/slack-github-action@v3
+        if: always() # Ensure report is sent, even after errors
+        with:
+          payload: |
+            {
+              "text": "🚀 Release job <${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|${{ github.job }}> ${{ job.status }}"
+            }
+          webhook: ${{ env.MONITORING_SLACK_URL }}
+          webhook-type: incoming-webhook
+
+  build-android:
+    runs-on: ubuntu-24.04
+    concurrency:
+      group: ${{ github.ref }}-build-android
+      cancel-in-progress: true
+    outputs:
+      versionCode: ${{ steps.build_android.outputs.versionCode }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0 # Do not remove. Needed to compute app version
+      - name: Build Android
+        id: build_android
+        uses: ./.github/actions/build-android
+        with:
+          buildType: 'release'
+          versionBuildType: 'release'
+      - name: Slack report
+        uses: slackapi/slack-github-action@v3
+        if: always() # Ensure report is sent, even after errors
+        with:
+          payload: |
+            {
+              "text": "🚀 Release job <${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|${{ github.job }}> ${{ job.status }}"
+            }
+          webhook: ${{ env.MONITORING_SLACK_URL }}
+          webhook-type: incoming-webhook
+
+  deploy-android-release:
+    needs: [build-android]
+    runs-on: ubuntu-24.04
+    concurrency:
+      group: ${{ github.ref }}-deploy-android-release
+      cancel-in-progress: true
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '3.2'
+          bundler-cache: true
+      - name: Download artifacts
+        uses: actions/download-artifact@v8
+        with:
+          name: Android Build
+      - name: Deploy
+        shell: bash
+        run: |
+          bundle exec fastlane android deploy_play_release \
+            aab_path:mobile/build/outputs/bundle/release/mobile-release.aab \
+            json_key_path:mobile/src/release/google-deployment-key.json \
+            version_code:${{ needs.build-android.outputs.versionCode }} \
+            changelog:"${{ github.event.inputs.changelog }}"
+      - name: Slack report
+        uses: slackapi/slack-github-action@v3
+        if: always() # Ensure report is sent, even after errors
+        with:
+          payload: |
+            {
+              "text": "🚀 Release job <${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|${{ github.job }}> ${{ job.status }}"
+            }
+          webhook: ${{ env.MONITORING_SLACK_URL }}
+          webhook-type: incoming-webhook
+
+  test-android:
+    runs-on: ubuntu-24.04
+    concurrency:
+      group: ${{ github.ref }}-test-android
+      cancel-in-progress: true
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+      - name: Test Android
+        uses: ./.github/actions/test-android
+      - name: Slack report
+        uses: slackapi/slack-github-action@v3
+        if: always() # Ensure report is sent, even after errors
+        with:
+          payload: |
+            {
+              "text": "🚀 Release job <${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|${{ github.job }}> ${{ job.status }}"
+            }
+          webhook: ${{ env.MONITORING_SLACK_URL }}
+          webhook-type: incoming-webhook
