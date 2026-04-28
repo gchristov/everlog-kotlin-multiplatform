@@ -1,8 +1,12 @@
 name: 'Compute app version'
 inputs:
-  buildType:
-    description: 'The build type (staging, nightly, master)'
+  workflowType:
+    description: 'The workflow type (staging, nightly, master)'
     required: true
+  isRelease:
+    description: 'Whether this is a release build'
+    required: false
+    default: 'false'
 outputs:
   versionCode:
     description: 'Calculated version code'
@@ -16,7 +20,7 @@ runs:
     - id: compute
       shell: bash
       run: |
-        TYPE="${{ inputs.buildType }}"
+        TYPE="${{ inputs.workflowType }}"
 
         if [[ "$TYPE" == "staging" ]]; then
           SHORT_SHA=$(echo "${{ github.event.pull_request.head.sha }}" | cut -c1-7)
@@ -24,12 +28,19 @@ runs:
         elif [[ "$TYPE" == "nightly" ]]; then
           DATE=$(date +'%d%m%Y')
           VERSION_SUFFIX="nightly-$DATE"
+        elif [[ "${{ inputs.isRelease }}" == "true" ]]; then
+          VERSION_SUFFIX=""
         else
           VERSION_SUFFIX="$TYPE"
         fi
 
+        RELEASE_FLAG=""
+        if [[ "${{ inputs.isRelease }}" == "true" ]]; then
+          RELEASE_FLAG="--release"
+        fi
+
         chmod +x ./tools/versioning/version_code.sh
-        VERSION_CODE=$(./tools/versioning/version_code.sh $TYPE)
+        VERSION_CODE=$(./tools/versioning/version_code.sh $TYPE $RELEASE_FLAG)
         
         echo "versionCode=$VERSION_CODE" >> $GITHUB_OUTPUT
         echo "versionNameSuffix=$VERSION_SUFFIX" >> $GITHUB_OUTPUT

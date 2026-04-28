@@ -1,11 +1,15 @@
 name: 'build-android'
 inputs:
-  versionBuildType:
-    description: 'The build type for versioning (staging, nightly, master)'
+  workflowType:
+    description: 'The workflow type (staging, nightly, master)'
     required: true
   buildType:
     description: 'The build type for assembly (debug or release)'
     required: true
+  isRelease:
+    description: 'Whether this is a release build'
+    required: false
+    default: 'false'
 outputs:
   versionCode:
     description: 'Calculated version code'
@@ -20,7 +24,8 @@ runs:
       id: compute_app_version
       uses: ./.github/actions/compute-app-version
       with:
-        buildType: ${{ inputs.versionBuildType }}
+        workflowType: ${{ inputs.workflowType }}
+        isRelease: ${{ inputs.isRelease }}
     - name: Set up Gradle
       uses: ./.github/actions/setup-gradle
     - name: Build Android

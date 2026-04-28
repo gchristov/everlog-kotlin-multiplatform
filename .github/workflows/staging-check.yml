@@ -48,7 +48,7 @@ jobs:
         uses: ./.github/actions/build-android
         with:
           buildType: 'debug'
-          versionBuildType: ${{ github.event_name == 'push' && github.ref == 'refs/heads/master' && 'master' || 'staging' }}
+          workflowType: ${{ github.event_name == 'push' && github.ref == 'refs/heads/master' && 'master' || 'staging' }}
 
   deploy-android-staging:
     needs: [build-android]

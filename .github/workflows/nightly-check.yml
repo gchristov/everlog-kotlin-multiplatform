@@ -60,7 +60,7 @@ jobs:
         uses: ./.github/actions/build-android
         with:
           buildType: 'release'
-          versionBuildType: 'nightly'
+          workflowType: 'nightly'
       - name: Slack report
         uses: slackapi/slack-github-action@v3
         if: always() # Ensure report is sent, even after errors
