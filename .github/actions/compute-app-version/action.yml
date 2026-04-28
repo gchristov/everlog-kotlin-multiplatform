@@ -29,7 +29,7 @@ runs:
           DATE=$(date +'%d%m%Y')
           VERSION_SUFFIX="nightly-$DATE"
         elif [[ "${{ inputs.isRelease }}" == "true" ]]; then
-          VERSION_SUFFIX=""
+          VERSION_SUFFIX="none"
         else
           VERSION_SUFFIX="$TYPE"
         fi
