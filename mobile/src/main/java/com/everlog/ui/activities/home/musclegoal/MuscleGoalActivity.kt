@@ -1,7 +1,12 @@
 package com.everlog.ui.activities.home.musclegoal
 
 import android.view.View
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.updateLayoutParams
+import androidx.core.view.updatePadding
 import androidx.recyclerview.widget.LinearLayoutManager
+import android.view.ViewGroup
 import com.everlog.R
 import com.everlog.databinding.ActivityMuscleGoalBinding
 import com.everlog.managers.analytics.AnalyticsConstants
@@ -21,6 +26,27 @@ class MuscleGoalActivity : BaseActivity(), MvpViewMuscleGoal {
     override fun onActivityCreated() {
         setupTopBar()
         setupListView()
+        setupInsets()
+    }
+
+    private fun setupInsets() {
+        ViewCompat.setOnApplyWindowInsetsListener(binding.root) { _, insets ->
+            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
+
+            // Top inset
+            val appBar = binding.appBar.root
+            appBar.updatePadding(top = systemBars.top)
+
+            // Bottom inset for proUpgradePrompt (if visible)
+            binding.proUpgradePrompt.updateLayoutParams<ViewGroup.MarginLayoutParams> {
+                bottomMargin = systemBars.bottom
+            }
+
+            // Bottom padding for content scroll
+            binding.contentLayout.updatePadding(bottom = systemBars.bottom + resources.getDimensionPixelSize(R.dimen.footer_bottom_padding))
+
+            insets
+        }
     }
 
     override fun getLayoutResId(): Int {
