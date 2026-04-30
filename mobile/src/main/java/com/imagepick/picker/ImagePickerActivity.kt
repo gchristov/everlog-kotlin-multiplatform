@@ -166,7 +166,9 @@ class ImagePickerActivity : AppCompatActivity() {
             runOnUiThread {
                 val uCropIntent = UCrop.of(localSourceUri, destinationUri)
                     .withOptions(options)
-                    .getIntent(this)
+                    .getIntent(this@ImagePickerActivity)
+
+                uCropIntent.setClass(this@ImagePickerActivity, EverlogUCropActivity::class.java)
                 cropImageLauncher.launch(uCropIntent)
             }
         }.start()

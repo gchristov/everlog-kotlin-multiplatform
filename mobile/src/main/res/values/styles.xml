@@ -31,6 +31,12 @@
         <item name="android:windowTranslucentNavigation">true</item>
     </style>
 
+    <style name="UCropTheme" parent="Theme.AppCompat.NoActionBar">
+        <item name="android:windowDrawsSystemBarBackgrounds">true</item>
+        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:navigationBarColor">@android:color/transparent</item>
+    </style>
+
     <!-- Toolbars -->
     <style name="Toolbar.HomeTitle" parent="TextAppearance.Widget.AppCompat.Toolbar.Title">
         <item name="android:textSize">30sp</item>
