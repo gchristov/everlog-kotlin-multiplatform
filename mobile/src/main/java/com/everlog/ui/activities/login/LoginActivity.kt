@@ -4,7 +4,12 @@ import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.PorterDuff
 import android.view.View
+import android.view.ViewGroup
 import androidx.core.content.ContextCompat
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.updateLayoutParams
+import androidx.core.view.updatePadding
 import com.everlog.R
 import com.everlog.application.ELApplication
 import com.everlog.databinding.ActivityLoginBinding
@@ -58,6 +63,7 @@ class LoginActivity : BaseActivity(), MvpViewLogin {
     private val mOnClickPrivacy = PublishSubject.create<Void>()
 
     override fun onActivityCreated() {
+        setupInsets()
         // APP STARTUP: Delay to not block
         Utils.runWithDelay({
             setupTopBar()
@@ -68,6 +74,30 @@ class LoginActivity : BaseActivity(), MvpViewLogin {
             setupFormNavigation()
             showForm(FormType.INTRO)
         }, 10)
+    }
+
+    private fun setupInsets() {
+        ViewCompat.setOnApplyWindowInsetsListener(binding.root) { _, insets ->
+            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
+            val toolbarHeight = resources.getDimensionPixelSize(androidx.appcompat.R.dimen.abc_action_bar_default_height_material)
+
+            // Top inset for toolbar
+            binding.toolbar.updatePadding(top = systemBars.top)
+            binding.toolbar.updateLayoutParams {
+                height = toolbarHeight + systemBars.top
+            }
+
+            // Bottom insets for form containers
+            // For Intro, we want padding to keep buttons above nav bar
+            binding.formIntro.root.updatePadding(bottom = systemBars.bottom)
+
+            // For Login and Register, we need to offset the top by the toolbar height
+            // and apply bottom padding to the scroll content
+            binding.formLogin.root.updatePadding(top = systemBars.top + toolbarHeight, bottom = systemBars.bottom)
+            binding.formRegister.root.updatePadding(top = systemBars.top + toolbarHeight, bottom = systemBars.bottom)
+
+            insets
+        }
     }
 
     override fun getAnalyticsScreenName(): String {
