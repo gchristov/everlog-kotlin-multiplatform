@@ -2,6 +2,10 @@ package com.everlog.ui.activities.home.settype
 
 import android.view.View
 import androidx.appcompat.widget.Toolbar
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.updateLayoutParams
+import androidx.core.view.updatePadding
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.everlog.R
 import com.everlog.constants.ELConstants
@@ -17,8 +21,27 @@ class SetTypePickerActivity : BaseActivity(), MvpViewSetTypePicker {
     private lateinit var binding: ActivitySetTypePickerBinding
 
     override fun onActivityCreated() {
+        setupInsets()
         setupTopBar()
         setupListView()
+    }
+
+    private fun setupInsets() {
+        ViewCompat.setOnApplyWindowInsetsListener(binding.root) { _, insets ->
+            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
+            val toolbarHeight = resources.getDimensionPixelSize(androidx.appcompat.R.dimen.abc_action_bar_default_height_material)
+
+            val appBar = binding.root.findViewById<View>(R.id.appBar)
+            appBar?.updatePadding(top = systemBars.top)
+            appBar?.updateLayoutParams {
+                height = toolbarHeight + systemBars.top
+            }
+
+            binding.recyclerView.updatePadding(
+                bottom = systemBars.bottom + resources.getDimensionPixelSize(R.dimen.activity_margin)
+            )
+            insets
+        }
     }
 
     override fun getLayoutResId(): Int {
