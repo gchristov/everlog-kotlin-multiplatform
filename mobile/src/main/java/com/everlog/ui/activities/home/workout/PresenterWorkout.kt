@@ -39,6 +39,7 @@ class PresenterWorkout : PresenterCreateExerciseGroups<MvpViewWorkout>() {
     private val SERVICE_INTERACTION_DELAY = 150
 
     private val REQUEST_CODE_POST_NOTIFICATIONS = 151
+    private val REQUEST_CODE_WORKOUT_PERMISSIONS = 152
 
     // @State
     @JvmField
@@ -86,8 +87,8 @@ class PresenterWorkout : PresenterCreateExerciseGroups<MvpViewWorkout>() {
     }
 
     internal fun onRequestPermissionsResult(requestCode: Int) {
-        if (requestCode == REQUEST_CODE_POST_NOTIFICATIONS) {
-            navigator.startWorkoutService(mWorkout)
+        if (requestCode == REQUEST_CODE_POST_NOTIFICATIONS || requestCode == REQUEST_CODE_WORKOUT_PERMISSIONS) {
+            notifyWorkoutServiceStart()
         }
     }
 
@@ -370,11 +371,21 @@ class PresenterWorkout : PresenterCreateExerciseGroups<MvpViewWorkout>() {
     // Workout service
 
     private fun notifyWorkoutServiceStart() {
+        val permissionsNeeded = mutableListOf<String>()
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             if (ContextCompat.checkSelfPermission(mvpView.context, Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
-                ActivityCompat.requestPermissions(mvpView.getActivity()!!, arrayOf(Manifest.permission.POST_NOTIFICATIONS), REQUEST_CODE_POST_NOTIFICATIONS)
-                return
+                permissionsNeeded.add(Manifest.permission.POST_NOTIFICATIONS)
             }
+        }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            if (ContextCompat.checkSelfPermission(mvpView.context, Manifest.permission.ACTIVITY_RECOGNITION) != PackageManager.PERMISSION_GRANTED) {
+                permissionsNeeded.add(Manifest.permission.ACTIVITY_RECOGNITION)
+            }
+        }
+
+        if (permissionsNeeded.isNotEmpty()) {
+            ActivityCompat.requestPermissions(mvpView.getActivity()!!, permissionsNeeded.toTypedArray(), REQUEST_CODE_WORKOUT_PERMISSIONS)
+            return
         }
         navigator.startWorkoutService(mWorkout)
     }
