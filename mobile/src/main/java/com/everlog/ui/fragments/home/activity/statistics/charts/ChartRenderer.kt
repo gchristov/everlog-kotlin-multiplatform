@@ -19,13 +19,14 @@ import com.github.mikephil.charting.components.Legend
 import com.github.mikephil.charting.components.XAxis
 import com.github.mikephil.charting.components.YAxis
 import com.github.mikephil.charting.data.*
-import com.github.mikephil.charting.formatter.IAxisValueFormatter
+import com.github.mikephil.charting.formatter.ValueFormatter
 import com.github.mikephil.charting.formatter.PercentFormatter
 import com.github.mikephil.charting.highlight.Highlight
 import com.github.mikephil.charting.interfaces.datasets.IBarDataSet
 import com.github.mikephil.charting.interfaces.datasets.ILineDataSet
 import com.github.mikephil.charting.listener.OnChartValueSelectedListener
 import com.github.mikephil.charting.utils.MPPointF
+import com.github.mikephil.charting.utils.Utils
 
 class ChartRenderer(context: Context) {
 
@@ -41,7 +42,7 @@ class ChartRenderer(context: Context) {
                        axisLeftLabelY: View? = null,
                        axisRightLabelY: View? = null,
                        granularityAxisX: Float,
-                       formatterAxisX: IAxisValueFormatter,
+                       formatterAxisX: ValueFormatter,
                        data: Array<ChartDataDescriptor<BarEntry>>) {
         setupBarChart(chart)
         chart.clear()
@@ -55,7 +56,7 @@ class ChartRenderer(context: Context) {
         data
                 .filter { it.entries.isNotEmpty() }
                 .forEachIndexed { index, chartData ->
-                    val set = BarDataSet(chartData.entries, chartData.title ?: "DataSet " + (index + 1))
+                    val set = BarDataSet(chartData.entries, chartData.title ?: "DataSet ${index + 1}")
                     set.color = ContextCompat.getColor(chart.context, chartData.colorResId)
                     set.axisDependency = chartData.axisDependency
                     if (!chart.axisRight.isEnabled) {
@@ -70,7 +71,7 @@ class ChartRenderer(context: Context) {
             // Set granularity and formatter
             val xAxis = chart.xAxis
             xAxis?.granularity = granularityAxisX
-//            xAxis?.valueFormatter = formatterAxisX
+            xAxis?.valueFormatter = formatterAxisX
             // Set data set
             val barData = BarData(dataSets)
             barData.isHighlightEnabled = false
@@ -89,7 +90,7 @@ class ChartRenderer(context: Context) {
                         axisLeftLabelY: View? = null,
                         axisRightLabelY: View? = null,
                         granularityAxisX: Float,
-                        formatterAxisX: IAxisValueFormatter,
+                        formatterAxisX: ValueFormatter,
                         data: Array<ChartDataDescriptor<Entry>>) {
         setupBarChart(chart)
         chart.clear()
@@ -105,7 +106,7 @@ class ChartRenderer(context: Context) {
                 .forEachIndexed { index, chartData ->
                     val cols = ArrayList<Int>()
                     cols.add(ContextCompat.getColor(chart.context, chartData.colorResId))
-                    val set = LineDataSet(chartData.entries, chartData.title ?: "DataSet " + (index + 1))
+                    val set = LineDataSet(chartData.entries, chartData.title ?: "DataSet ${index + 1}")
                     set.lineWidth = 1f
                     set.axisDependency = chartData.axisDependency
                     if (!chart.axisRight.isEnabled) {
@@ -120,23 +121,23 @@ class ChartRenderer(context: Context) {
                     set.setDrawCircleHole(false)
                     set.setDrawValues(false)
                     set.mode = LineDataSet.Mode.CUBIC_BEZIER // Bezier curves
-//                    set.setDrawFilled(data.size == 1)
-//                    if (set.isDrawFilledEnabled) {
-//                        if (Utils.getSDKInt() >= 18) {
-//                            // Fill drawable only supported on api level 18 and above
-//                            val drawable = ContextCompat.getDrawable(chart.context, R.drawable.chart_gradient)
-//                            set.fillDrawable = drawable
-//                        } else {
-//                            set.fillColor = ContextCompat.getColor(chart.context, R.color.main_accent)
-//                        }
-//                    }
+                    set.setDrawFilled(data.size == 1)
+                    if (set.isDrawFilledEnabled) {
+                        if (Utils.getSDKInt() >= 18) {
+                            // Fill drawable only supported on api level 18 and above
+                            val drawable = ContextCompat.getDrawable(chart.context, R.drawable.chart_gradient)
+                            set.fillDrawable = drawable
+                        } else {
+                            set.fillColor = ContextCompat.getColor(chart.context, R.color.main_accent)
+                        }
+                    }
                     dataSets.add(set)
         }
         if (dataSets.isNotEmpty()) {
             // Set granularity and formatter
             val xAxis = chart.xAxis
             xAxis?.granularity = granularityAxisX
-//            xAxis?.valueFormatter = formatterAxisX
+            xAxis?.valueFormatter = formatterAxisX
             // Set data set
             val lineData = LineData(dataSets)
             lineData.isHighlightEnabled = false

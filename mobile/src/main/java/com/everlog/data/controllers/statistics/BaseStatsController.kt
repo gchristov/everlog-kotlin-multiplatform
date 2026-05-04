@@ -10,7 +10,7 @@ import com.everlog.utils.ArrayResourceTypeUtils
 import com.github.mikephil.charting.data.BarEntry
 import com.github.mikephil.charting.data.Entry
 import com.github.mikephil.charting.data.PieEntry
-import com.github.mikephil.charting.formatter.IAxisValueFormatter
+import com.github.mikephil.charting.formatter.ValueFormatter
 import java.util.*
 import java.util.concurrent.TimeUnit
 import kotlin.math.max
@@ -23,7 +23,7 @@ abstract class BaseStatsController {
             return 1F // Because we're using days
         }
 
-        fun chartAxisFormatter(range: StatisticsHomeFragment.RangeType): IAxisValueFormatter {
+        fun chartAxisFormatter(range: StatisticsHomeFragment.RangeType): ValueFormatter {
             return when (range) {
                 StatisticsHomeFragment.RangeType.YEAR -> MonthAxisFormatter()
                 StatisticsHomeFragment.RangeType.OVERALL -> YearAxisFormatter()
