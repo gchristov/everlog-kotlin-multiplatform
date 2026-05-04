@@ -8,7 +8,9 @@ runs:
         distribution: "zulu"
         java-version: "20" # When changing the Java version make sure to also update jvmToolchain
     - name: Set up Gradle
-      uses: gradle/actions/setup-gradle@v6 # By default, cache is only saved on the 'master' branch
+      uses: gradle/actions/setup-gradle@v6 # By default, cache is only saved on the default branch
+      with:
+        workflow-job-context: ${{ github.job }}
     - name: Set up Konan
       uses: actions/cache@v5
       with:
