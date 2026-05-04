@@ -4,6 +4,10 @@ import android.content.Context
 import android.content.Intent
 import android.view.View
 import androidx.appcompat.widget.Toolbar
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.updateLayoutParams
+import androidx.core.view.updatePadding
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.everlog.R
@@ -33,9 +37,46 @@ abstract class CreateExerciseGroupsActivity : BaseActivity(), MvpViewCreateExerc
     abstract fun getExerciseGroupsPresenter(): PresenterCreateExerciseGroups<*>?
 
     override fun onActivityCreated() {
+        setupInsets()
         setupTopBar()
         setupListView()
         setupOnboarding()
+    }
+
+    protected open fun setupInsets() {
+        val topBar = findViewById<View>(R.id.topBar)
+        val recyclerView = findViewById<RecyclerView>(R.id.recyclerView)
+        val addBtnContainer = findViewById<View>(R.id.addBtnContainer)
+
+        ViewCompat.setOnApplyWindowInsetsListener(findViewById(android.R.id.content)) { _, insets ->
+            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
+            val toolbarHeight = resources.getDimensionPixelSize(androidx.appcompat.R.dimen.abc_action_bar_default_height_material)
+
+            topBar?.let {
+                val actionBar = it.findViewById<View>(R.id.actionBar)
+                actionBar?.updatePadding(top = systemBars.top)
+                actionBar?.updateLayoutParams {
+                    height = toolbarHeight + systemBars.top
+                }
+
+                val optionsToolbarContainer = it.findViewById<View>(R.id.optionsToolbarContainer)
+                optionsToolbarContainer?.updatePadding(top = systemBars.top)
+                optionsToolbarContainer?.updateLayoutParams {
+                    height = toolbarHeight + systemBars.top
+                }
+            }
+
+            recyclerView?.updatePadding(
+                bottom = systemBars.bottom + resources.getDimensionPixelSize(R.dimen.footer_bottom_padding_double)
+            )
+
+            val addBtn = addBtnContainer?.findViewById<View>(R.id.addBtn)
+            addBtn?.updateLayoutParams<android.view.ViewGroup.MarginLayoutParams> {
+                bottomMargin = systemBars.bottom + resources.getDimensionPixelSize(R.dimen.activity_margin)
+            }
+
+            insets
+        }
     }
 
     override fun <T : BaseActivityMvpView> getPresenter(): BaseActivityPresenter<T>? {

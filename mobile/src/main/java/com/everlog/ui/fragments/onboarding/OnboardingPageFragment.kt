@@ -4,6 +4,9 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.updatePadding
 import com.everlog.R
 import com.everlog.constants.ELConstants
 import com.everlog.databinding.FragmentOnboardingPageBinding
@@ -30,6 +33,15 @@ class OnboardingPageFragment(titleResId: Int,
 
     override fun onFragmentCreated() {
         loadData()
+        setupInsets()
+    }
+
+    private fun setupInsets() {
+        ViewCompat.setOnApplyWindowInsetsListener(binding.root) { _, insets ->
+            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
+            binding.root.updatePadding(top = systemBars.top + resources.getDimensionPixelSize(R.dimen.margin_24))
+            insets
+        }
     }
 
     override fun getLayoutResId(): Int {

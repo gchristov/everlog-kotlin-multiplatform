@@ -3,6 +3,10 @@ package com.everlog.ui.activities.login.resetpassword
 import android.graphics.Bitmap
 import android.view.View
 import androidx.core.content.ContextCompat
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.updateLayoutParams
+import androidx.core.view.updatePadding
 import com.everlog.R
 import com.everlog.databinding.ActivityResetPasswordBinding
 import com.everlog.managers.analytics.AnalyticsConstants
@@ -24,8 +28,33 @@ class ResetPasswordActivity : BaseActivity(), MvpViewResetPassword {
     private var mCheckBitmap: Bitmap? = null
 
     override fun onActivityCreated() {
+        setupInsets()
         setupTopBar()
         setupButtons()
+    }
+
+    private fun setupInsets() {
+        ViewCompat.setOnApplyWindowInsetsListener(binding.root) { _, insets ->
+            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
+            val toolbarHeight = resources.getDimensionPixelSize(androidx.appcompat.R.dimen.abc_action_bar_default_height_material)
+
+            binding.appBar.root.updatePadding(top = systemBars.top)
+            binding.appBar.root.updateLayoutParams {
+                height = toolbarHeight + systemBars.top
+            }
+
+            val extraPadding = resources.getDimensionPixelSize(R.dimen.activity_margin_triple)
+            binding.contentLayout.updatePadding(
+                top = systemBars.top + toolbarHeight + extraPadding,
+                bottom = systemBars.bottom
+            )
+            // Remove the static margin since we are using padding now
+            binding.contentLayout.updateLayoutParams<android.widget.FrameLayout.LayoutParams> {
+                topMargin = 0
+            }
+
+            insets
+        }
     }
 
     override fun getAnalyticsScreenName(): String {

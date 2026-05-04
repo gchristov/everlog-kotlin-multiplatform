@@ -3,6 +3,10 @@ package com.everlog.ui.activities.home.routine
 import android.view.View
 import androidx.appcompat.widget.Toolbar
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.updateLayoutParams
+import androidx.core.view.updatePadding
 import com.everlog.R
 import com.everlog.databinding.ActivityRoutinePickerBinding
 import com.everlog.managers.analytics.AnalyticsConstants
@@ -19,8 +23,31 @@ class RoutinePickerActivity : BaseActivity(), MvpViewRoutinePicker {
     private lateinit var binding: ActivityRoutinePickerBinding
 
     public override fun onActivityCreated() {
+        setupInsets()
         setupTopBar()
         setupListView()
+    }
+
+    private fun setupInsets() {
+        ViewCompat.setOnApplyWindowInsetsListener(binding.root) { _, insets ->
+            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
+            val toolbarHeight = resources.getDimensionPixelSize(androidx.appcompat.R.dimen.abc_action_bar_default_height_material)
+
+            binding.appBar.root.updatePadding(top = systemBars.top)
+            binding.appBar.root.updateLayoutParams {
+                height = toolbarHeight + systemBars.top
+            }
+
+            binding.recyclerView.updatePadding(
+                bottom = systemBars.bottom + resources.getDimensionPixelSize(R.dimen.footer_bottom_padding)
+            )
+
+            binding.addBtn.updateLayoutParams<android.widget.FrameLayout.LayoutParams> {
+                bottomMargin = systemBars.bottom + resources.getDimensionPixelSize(R.dimen.activity_margin_actual)
+            }
+
+            insets
+        }
     }
 
     public override fun getLayoutResId(): Int {
@@ -69,10 +96,10 @@ class RoutinePickerActivity : BaseActivity(), MvpViewRoutinePicker {
     }
 
     private fun setupTopBar() {
-        setSupportActionBar(binding.root.findViewById(R.id.toolbar))
+        setSupportActionBar(binding.appBar.toolbar)
         supportActionBar?.setTitle(R.string.routine_picker_title)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
-        binding.root.findViewById<Toolbar>(R.id.toolbar).setNavigationIcon(R.drawable.ic_clear_white)
+        binding.appBar.toolbar.setNavigationIcon(R.drawable.ic_clear_white)
     }
 
     private fun setupListView() {

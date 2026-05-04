@@ -3,8 +3,12 @@ package com.everlog.ui.activities.home.routine.details
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
+import android.view.ViewGroup
 import android.widget.TextView
 import androidx.appcompat.widget.Toolbar
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.updateLayoutParams
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.everlog.R
 import com.everlog.constants.ELConstants.EXTRA_ROUTINE
@@ -37,9 +41,29 @@ open class RoutineDetailsActivity : BaseActivity(), MvpViewRoutineDetails {
 
     override fun onActivityCreated() {
         mViewOnly = intent?.extras?.getBoolean(EXTRA_VIEW_ONLY) ?: false
+        setupInsets()
         setupTopBar()
         setupListView()
         setupButtons()
+    }
+
+    private fun setupInsets() {
+        ViewCompat.setOnApplyWindowInsetsListener(binding.root) { _, insets ->
+            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
+
+            binding.performBtn.updateLayoutParams<ViewGroup.MarginLayoutParams> {
+                bottomMargin = systemBars.bottom + resources.getDimensionPixelSize(R.dimen.activity_margin)
+            }
+
+            binding.recyclerView.setPadding(
+                binding.recyclerView.paddingLeft,
+                binding.recyclerView.paddingTop,
+                binding.recyclerView.paddingRight,
+                resources.getDimensionPixelSize(R.dimen.footer_bottom_padding_double) + systemBars.bottom
+            )
+
+            insets
+        }
     }
 
     override fun getAnalyticsScreenName(): String {

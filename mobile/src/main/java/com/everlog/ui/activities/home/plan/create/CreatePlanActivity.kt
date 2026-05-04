@@ -7,7 +7,13 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.widget.Toolbar
 import androidx.core.content.ContextCompat
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.updatePadding
+import androidx.core.view.updateLayoutParams
 import androidx.recyclerview.widget.LinearLayoutManager
+import android.view.ViewGroup
+import android.widget.FrameLayout
 import com.everlog.R
 import com.everlog.constants.ELConstants.EXTRA_PLAN_UUID
 import com.everlog.data.model.plan.ELPlan
@@ -36,6 +42,27 @@ class CreatePlanActivity : BaseActivity(), MvpViewCreatePlan {
     override fun onActivityCreated() {
         setupTopBar()
         setupListView()
+        setupBottomInsets()
+    }
+
+    private fun setupBottomInsets() {
+        ViewCompat.setOnApplyWindowInsetsListener(binding.root) { _, insets ->
+            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
+
+            // Weeks container: Padding for list and Margin for FAB
+            binding.weeksContainer.weeksList.updatePadding(bottom = systemBars.bottom + resources.getDimensionPixelSize(R.dimen.footer_bottom_padding))
+            binding.weeksContainer.addBtn.updateLayoutParams<ViewGroup.MarginLayoutParams> {
+                bottomMargin = systemBars.bottom + resources.getDimensionPixelSize(R.dimen.activity_margin_actual)
+            }
+
+            // Days container: Padding for list and Margin for Pro prompt
+            binding.daysContainer.daysList.updatePadding(bottom = systemBars.bottom + resources.getDimensionPixelSize(R.dimen.footer_bottom_padding))
+            binding.daysContainer.proUpgradePrompt.updateLayoutParams<ViewGroup.MarginLayoutParams> {
+                bottomMargin = systemBars.bottom
+            }
+
+            insets
+        }
     }
 
     override fun getLayoutResId(): Int {
@@ -150,10 +177,20 @@ class CreatePlanActivity : BaseActivity(), MvpViewCreatePlan {
     }
 
     private fun setupTopBar() {
-        binding.root.findViewById<Toolbar>(R.id.toolbar).setNavigationIcon(R.drawable.ic_clear_white)
-        setSupportActionBar(binding.root.findViewById(R.id.toolbar))
+        val toolbar = binding.root.findViewById<Toolbar>(R.id.toolbar)
+        toolbar.setNavigationIcon(R.drawable.ic_clear_white)
+        setSupportActionBar(toolbar)
         supportActionBar?.title = getString(if (isEditMode()) R.string.create_plan_title_edit else R.string.create_plan_title)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
+
+        val appBar = toolbar.parent as? View
+        appBar?.let {
+            ViewCompat.setOnApplyWindowInsetsListener(it) { v, insets ->
+                val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
+                v.updatePadding(top = systemBars.top)
+                insets
+            }
+        }
     }
 
     private fun setupListView() {

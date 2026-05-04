@@ -25,7 +25,7 @@ class ELNotificationManager {
             createNotificationChannel(channelOptions)
             // Then start service
             if (DeviceUtils.isAndroidU()) {
-                service.startForeground(notificationId, notification, ServiceInfo.FOREGROUND_SERVICE_TYPE_SPECIAL_USE)
+                service.startForeground(notificationId, notification, ServiceInfo.FOREGROUND_SERVICE_TYPE_HEALTH)
             } else {
                 service.startForeground(notificationId, notification)
             }

@@ -11,7 +11,9 @@
         android:layout_height="match_parent"
         android:orientation="vertical">
 
-        <include layout="@layout/toolbar_transparent" />
+        <include
+            android:id="@+id/appBar"
+            layout="@layout/toolbar_transparent" />
 
         <FrameLayout
             android:layout_width="match_parent"

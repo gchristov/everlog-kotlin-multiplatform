@@ -2,9 +2,12 @@ package com.everlog.ui.activities.base
 
 import android.content.Context
 import android.content.Intent
+import android.graphics.Color
 import android.os.Bundle
 import android.view.MenuItem
 import android.view.View
+import androidx.activity.SystemBarStyle
+import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import com.everlog.R
@@ -70,6 +73,10 @@ abstract class BaseActivity : AppCompatActivity(), BaseActivityMvpView {
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        enableEdgeToEdge(
+                statusBarStyle = SystemBarStyle.dark(Color.TRANSPARENT),
+                navigationBarStyle = SystemBarStyle.dark(Color.TRANSPARENT)
+        )
         // Do NOT use activity instance state because that messes up with the ViewPager on the home screen
         super.onCreate(null)
         if (shouldSetOrientation()) {

@@ -110,12 +110,13 @@ class ImagePickerActivity : AppCompatActivity() {
     private fun takeCameraImage() {
         val fileName = "camera_image_${System.currentTimeMillis()}.jpg"
         val file = File(cacheDir, fileName)
-        cameraImageUri = FileProvider.getUriForFile(
+        val uri = FileProvider.getUriForFile(
             this,
             "$packageName.provider",
             file
         )
-        takePictureLauncher.launch(cameraImageUri)
+        cameraImageUri = uri
+        takePictureLauncher.launch(uri)
     }
 
     private fun chooseImageFromGallery() {
@@ -165,7 +166,9 @@ class ImagePickerActivity : AppCompatActivity() {
             runOnUiThread {
                 val uCropIntent = UCrop.of(localSourceUri, destinationUri)
                     .withOptions(options)
-                    .getIntent(this)
+                    .getIntent(this@ImagePickerActivity)
+
+                uCropIntent.setClass(this@ImagePickerActivity, EverlogUCropActivity::class.java)
                 cropImageLauncher.launch(uCropIntent)
             }
         }.start()
