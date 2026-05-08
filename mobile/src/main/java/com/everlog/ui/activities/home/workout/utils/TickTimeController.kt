@@ -56,7 +56,7 @@ class TickTimeController(context: Context, callback: OnTimeTick) {
             }
         }
         mTicker = Timer(false)
-        mTicker?.scheduleAtFixedRate(timerTask, 0, 1000)
+        mTicker?.schedule(timerTask, 0, 1000)
     }
 
     private fun stopTimer() {

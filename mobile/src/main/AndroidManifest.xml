@@ -97,7 +97,6 @@
         <!--  Receivers -->
 
         <receiver android:name=".receivers.AppUsageReceiver" android:exported="false" />
-        <receiver android:name=".receivers.WorkoutTimerReceiver" android:exported="false" />
 
         <!-- Activities -->
 

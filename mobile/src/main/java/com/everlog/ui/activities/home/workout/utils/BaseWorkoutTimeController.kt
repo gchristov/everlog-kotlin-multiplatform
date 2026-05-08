@@ -9,6 +9,8 @@ import com.everlog.data.model.workout.ELWorkout
 import com.everlog.managers.WorkoutManager
 import com.everlog.ui.activities.home.workout.MvpViewWorkout
 import com.everlog.ui.views.revealcircle.WorkoutTimerView
+import com.everlog.utils.SoundUtils
+import com.everlog.utils.VibrationUtils
 import rx.Observable
 import rx.subjects.PublishSubject
 import java.util.*
@@ -51,8 +53,6 @@ abstract class BaseWorkoutTimeController(
         mTotalTimeSeconds = timeSeconds
         if (isActive()) {
             attachTimer()
-            // Schedule notification for workout timer
-            WorkoutManager.manager.setOngoingTimer(true, mTotalTimeSeconds)
             timerStarted()
         }
     }
@@ -63,9 +63,11 @@ abstract class BaseWorkoutTimeController(
         mStartedDate = 0
         mTotalTimeSeconds = 0
         mTimeStopped.onNext(null)
-        if (userCancelled) {
-            // Cancel notification for workout timer
-            WorkoutManager.manager.setOngoingTimer(false)
+        if (!userCancelled) {
+            mMvpView?.context?.let {
+                SoundUtils.playTimerSound(it)
+                VibrationUtils.vibrate(it)
+            }
         }
         timerStopped(userCancelled)
     }
@@ -91,7 +93,6 @@ abstract class BaseWorkoutTimeController(
         mTotalTimeSeconds += offset
         if (isActive()) {
             timerOffsetUpdated()
-            WorkoutManager.manager.setOngoingTimer(true, mTotalTimeSeconds)
         }
         workoutTimerTick()
     }
