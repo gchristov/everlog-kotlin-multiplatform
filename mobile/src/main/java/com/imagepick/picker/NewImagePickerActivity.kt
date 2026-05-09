@@ -37,7 +37,6 @@ class NewImagePickerActivity : AppCompatActivity() {
         } else {
             val rationale = if (options.permissionRationaleResId != 0) options.permissionRationaleResId else R.string.media_permissions_required_message
             ELNavigator(this).promptForAppSettings(rationale)
-            finish()
         }
         pendingAction = null
     }
