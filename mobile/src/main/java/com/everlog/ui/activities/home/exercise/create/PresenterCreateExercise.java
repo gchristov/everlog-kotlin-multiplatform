@@ -157,8 +157,7 @@ public class PresenterCreateExercise extends BaseActivityPresenter<MvpViewCreate
                 toEdit.getImageUrl() != null,
                 1, 1,
                 512, 512,
-                true,
-                R.string.create_exercise_error_no_permissions
+                true
         );
         subscriptions.add(getMvpView().showImagePicker(options)
                 .compose(applyUISchedulers())
@@ -167,6 +166,8 @@ public class PresenterCreateExercise extends BaseActivityPresenter<MvpViewCreate
                         handleImagePicked(((NewImagePickerResult.Success) result).getUri());
                     } else if (result instanceof NewImagePickerResult.Removed) {
                         handleImagePicked(null);
+                    } else if (result instanceof NewImagePickerResult.PermissionDenied) {
+                        navigator.promptForAppSettings(R.string.create_exercise_error_no_permissions);
                     }
                 }, this::handleError));
     }

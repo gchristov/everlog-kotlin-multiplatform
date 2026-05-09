@@ -12,5 +12,4 @@ data class NewImagePickerOptions @JvmOverloads constructor(
     val maxWidth: Int = 512,
     val maxHeight: Int = 512,
     val lockAspectRatio: Boolean = true,
-    val permissionRationaleResId: Int = 0
 ) : Parcelable

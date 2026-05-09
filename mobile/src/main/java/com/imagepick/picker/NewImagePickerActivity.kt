@@ -35,8 +35,7 @@ class NewImagePickerActivity : AppCompatActivity() {
                 else -> showPicker()
             }
         } else {
-            val rationale = if (options.permissionRationaleResId != 0) options.permissionRationaleResId else R.string.media_permissions_required_message
-            ELNavigator(this).promptForAppSettings(rationale)
+            setResultPermissionDenied()
         }
         pendingAction = null
     }
@@ -270,6 +269,14 @@ class NewImagePickerActivity : AppCompatActivity() {
             putExtra(EXTRA_RESULT, NewImagePickerResult.Cancelled)
         }
         setResult(RESULT_CANCELED, intent)
+        finish()
+    }
+
+    private fun setResultPermissionDenied() {
+        val intent = Intent().apply {
+            putExtra(EXTRA_RESULT, NewImagePickerResult.PermissionDenied)
+        }
+        setResult(RESULT_OK, intent)
         finish()
     }
 

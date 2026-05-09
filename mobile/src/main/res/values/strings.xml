@@ -419,5 +419,4 @@
     <string name="choose_picture">Choose from Gallery</string>
     <string name="remove_picture">Remove Image</string>
     <string name="select_image">Choose an image</string>
-    <string name="media_permissions_required_message">We need your permission to access your Camera and Storage to allow you to take and pick images.</string>
 </resources>

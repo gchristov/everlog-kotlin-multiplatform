@@ -13,4 +13,7 @@ sealed class NewImagePickerResult : Parcelable {
 
     @Parcelize
     object Cancelled : NewImagePickerResult()
+
+    @Parcelize
+    object PermissionDenied : NewImagePickerResult()
 }
