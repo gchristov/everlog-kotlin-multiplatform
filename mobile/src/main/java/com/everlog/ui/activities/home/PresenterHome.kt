@@ -20,7 +20,7 @@ import com.everlog.managers.billing.BillingManager
 import com.everlog.ui.activities.base.BaseActivityPresenter
 import com.everlog.utils.FCMUtils
 import com.everlog.utils.Utils
-import com.imagepick.picker.dialog.ELPickerDialog
+import com.imagepick.dialog.ELPickerDialog
 
 class PresenterHome : BaseActivityPresenter<MvpViewHome>() {
 

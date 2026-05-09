@@ -245,12 +245,11 @@
             android:theme="@style/AppTheme.NoActionBar"
             android:windowSoftInputMode="stateHidden|adjustResize"
             android:exported="false" />
-        <activity android:name="com.imagepick.picker.ImagePickerActivity" />
         <activity
-            android:name="com.imagepick.picker.NewImagePickerActivity"
+            android:name="com.imagepick.ImagePickerActivity"
             android:theme="@style/AppTheme.Transparent" />
         <activity
-            android:name="com.imagepick.picker.EverlogUCropActivity"
+            android:name="com.imagepick.EverlogUCropActivity"
             android:screenOrientation="portrait"
             android:theme="@style/UCropTheme" />
     </application>

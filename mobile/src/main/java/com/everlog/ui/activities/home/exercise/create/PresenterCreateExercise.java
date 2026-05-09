@@ -1,7 +1,6 @@
 package com.everlog.ui.activities.home.exercise.create;
 
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.net.Uri;
 
 import com.everlog.R;
@@ -17,12 +16,8 @@ import com.everlog.utils.ArrayResourceTypeUtils;
 import com.everlog.utils.Utils;
 import com.everlog.utils.input.KeyboardUtils;
 import com.google.firebase.firestore.SetOptions;
-import com.imagepick.picker.NewImagePickerOptions;
-import com.imagepick.picker.NewImagePickerResult;
-
-import org.jetbrains.annotations.Nullable;
-
-import java.util.Objects;
+import com.imagepick.ImagePickerOptions;
+import com.imagepick.ImagePickerResult;
 
 //import icepick.State;
 
@@ -152,7 +147,7 @@ public class PresenterCreateExercise extends BaseActivityPresenter<MvpViewCreate
     }
 
     private void handlePickImage() {
-        NewImagePickerOptions options = new NewImagePickerOptions(
+        ImagePickerOptions options = new ImagePickerOptions(
                 R.string.select_image,
                 toEdit.getImageUrl() != null,
                 1, 1,
@@ -162,11 +157,11 @@ public class PresenterCreateExercise extends BaseActivityPresenter<MvpViewCreate
         subscriptions.add(getMvpView().showImagePicker(options)
                 .compose(applyUISchedulers())
                 .subscribe(result -> {
-                    if (result instanceof NewImagePickerResult.Success) {
-                        handleImagePicked(((NewImagePickerResult.Success) result).getUri());
-                    } else if (result instanceof NewImagePickerResult.Removed) {
+                    if (result instanceof ImagePickerResult.Success) {
+                        handleImagePicked(((ImagePickerResult.Success) result).getUri());
+                    } else if (result instanceof ImagePickerResult.Removed) {
                         handleImagePicked(null);
-                    } else if (result instanceof NewImagePickerResult.PermissionDenied) {
+                    } else if (result instanceof ImagePickerResult.PermissionDenied) {
                         navigator.promptForAppSettings(R.string.create_exercise_error_no_permissions);
                     }
                 }, this::handleError));

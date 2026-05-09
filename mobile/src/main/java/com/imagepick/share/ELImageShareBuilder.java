@@ -1,4 +1,4 @@
-package com.imagepick.client.share;
+package com.imagepick.share;
 
 import android.graphics.Bitmap;
 

@@ -10,9 +10,9 @@ import com.everlog.data.model.exercise.ELExercise;
 import com.everlog.databinding.ActivityExerciseCreateBinding;
 import com.everlog.ui.activities.base.BaseActivity;
 import com.everlog.ui.activities.base.BaseActivityPresenter;
-import com.imagepick.picker.NewImagePickerContract;
-import com.imagepick.picker.NewImagePickerOptions;
-import com.imagepick.picker.NewImagePickerResult;
+import com.imagepick.ImagePickerContract;
+import com.imagepick.ImagePickerOptions;
+import com.imagepick.ImagePickerResult;
 import com.jakewharton.rxbinding.view.RxView;
 import com.jakewharton.rxbinding.widget.RxAdapterView;
 import com.jakewharton.rxbinding.widget.RxTextView;
@@ -35,9 +35,9 @@ public class CreateExerciseActivity extends BaseActivity implements MvpViewCreat
 
     private ActivityExerciseCreateBinding binding;
     private PresenterCreateExercise mPresenter;
-    private PublishSubject<NewImagePickerResult> imagePickerSubject;
+    private PublishSubject<ImagePickerResult> imagePickerSubject;
 
-    private final ActivityResultLauncher<NewImagePickerOptions> imagePickerLauncher = registerForActivityResult(new NewImagePickerContract(), result -> {
+    private final ActivityResultLauncher<ImagePickerOptions> imagePickerLauncher = registerForActivityResult(new ImagePickerContract(), result -> {
         if (imagePickerSubject != null) {
             imagePickerSubject.onNext(result);
         }
@@ -123,7 +123,7 @@ public class CreateExerciseActivity extends BaseActivity implements MvpViewCreat
     }
 
     @Override
-    public Observable<NewImagePickerResult> showImagePicker(NewImagePickerOptions options) {
+    public Observable<ImagePickerResult> showImagePicker(ImagePickerOptions options) {
         imagePickerSubject = PublishSubject.create();
         imagePickerLauncher.launch(options);
         return imagePickerSubject;

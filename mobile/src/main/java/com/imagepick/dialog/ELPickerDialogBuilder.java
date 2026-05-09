@@ -1,4 +1,4 @@
-package com.imagepick.picker.dialog;
+package com.imagepick.dialog;
 
 public interface ELPickerDialogBuilder {
 

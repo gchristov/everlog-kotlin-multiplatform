@@ -1,4 +1,4 @@
-package com.imagepick.picker
+package com.imagepick
 
 import android.Manifest
 import android.content.Intent
@@ -12,14 +12,13 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
 import com.everlog.R
-import com.everlog.ui.navigator.ELNavigator
-import com.imagepick.picker.dialog.ELPickerDialog
+import com.imagepick.dialog.ELPickerDialog
 import com.yalantis.ucrop.UCrop
 import java.io.File
 
-class NewImagePickerActivity : AppCompatActivity() {
+class ImagePickerActivity : AppCompatActivity() {
 
-    private lateinit var options: NewImagePickerOptions
+    private lateinit var options: ImagePickerOptions
     private var cameraImageUri: Uri? = null
     private var isHandlingAction = false
     private var pendingAction: Int? = null
@@ -81,11 +80,11 @@ class NewImagePickerActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         
         options = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            intent.getParcelableExtra(EXTRA_OPTIONS, NewImagePickerOptions::class.java)
+            intent.getParcelableExtra(EXTRA_OPTIONS, ImagePickerOptions::class.java)
         } else {
             @Suppress("DEPRECATION")
             intent.getParcelableExtra(EXTRA_OPTIONS)
-        } ?: NewImagePickerOptions()
+        } ?: ImagePickerOptions()
 
         if (savedInstanceState != null) {
             val savedAction = savedInstanceState.getInt("pendingAction", -1)
@@ -208,11 +207,11 @@ class NewImagePickerActivity : AppCompatActivity() {
 
             val uCropOptions = UCrop.Options().apply {
                 setCompressionQuality(80)
-                setToolbarColor(ContextCompat.getColor(this@NewImagePickerActivity, R.color.background_card))
-                setStatusBarColor(ContextCompat.getColor(this@NewImagePickerActivity, R.color.background_card))
-                setToolbarWidgetColor(ContextCompat.getColor(this@NewImagePickerActivity, R.color.white_base))
+                setToolbarColor(ContextCompat.getColor(this@ImagePickerActivity, R.color.background_card))
+                setStatusBarColor(ContextCompat.getColor(this@ImagePickerActivity, R.color.background_card))
+                setToolbarWidgetColor(ContextCompat.getColor(this@ImagePickerActivity, R.color.white_base))
                 setToolbarTitle(getString(R.string.select_image))
-                setActiveControlsWidgetColor(ContextCompat.getColor(this@NewImagePickerActivity, R.color.main_accent))
+                setActiveControlsWidgetColor(ContextCompat.getColor(this@ImagePickerActivity, R.color.main_accent))
                 
                 if (options.lockAspectRatio) {
                     withAspectRatio(options.aspectRatioX.toFloat(), options.aspectRatioY.toFloat())
@@ -225,9 +224,9 @@ class NewImagePickerActivity : AppCompatActivity() {
             runOnUiThread {
                 val uCropIntent = UCrop.of(localSourceUri, destinationUri)
                     .withOptions(uCropOptions)
-                    .getIntent(this@NewImagePickerActivity)
+                    .getIntent(this@ImagePickerActivity)
 
-                uCropIntent.setClass(this@NewImagePickerActivity, EverlogUCropActivity::class.java)
+                uCropIntent.setClass(this@ImagePickerActivity, EverlogUCropActivity::class.java)
                 cropImageLauncher.launch(uCropIntent)
             }
         }.start()
@@ -250,7 +249,7 @@ class NewImagePickerActivity : AppCompatActivity() {
 
     private fun setResultOk(uri: Uri) {
         val intent = Intent().apply {
-            putExtra(EXTRA_RESULT, NewImagePickerResult.Success(uri))
+            putExtra(EXTRA_RESULT, ImagePickerResult.Success(uri))
         }
         setResult(RESULT_OK, intent)
         finish()
@@ -258,7 +257,7 @@ class NewImagePickerActivity : AppCompatActivity() {
 
     private fun setResultRemoved() {
         val intent = Intent().apply {
-            putExtra(EXTRA_RESULT, NewImagePickerResult.Removed)
+            putExtra(EXTRA_RESULT, ImagePickerResult.Removed)
         }
         setResult(RESULT_OK, intent)
         finish()
@@ -266,7 +265,7 @@ class NewImagePickerActivity : AppCompatActivity() {
 
     private fun setResultCancelled() {
         val intent = Intent().apply {
-            putExtra(EXTRA_RESULT, NewImagePickerResult.Cancelled)
+            putExtra(EXTRA_RESULT, ImagePickerResult.Cancelled)
         }
         setResult(RESULT_CANCELED, intent)
         finish()
@@ -274,7 +273,7 @@ class NewImagePickerActivity : AppCompatActivity() {
 
     private fun setResultPermissionDenied() {
         val intent = Intent().apply {
-            putExtra(EXTRA_RESULT, NewImagePickerResult.PermissionDenied)
+            putExtra(EXTRA_RESULT, ImagePickerResult.PermissionDenied)
         }
         setResult(RESULT_OK, intent)
         finish()

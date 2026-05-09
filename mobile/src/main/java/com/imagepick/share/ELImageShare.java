@@ -1,4 +1,4 @@
-package com.imagepick.client.share;
+package com.imagepick.share;
 
 import android.app.Activity;
 import android.content.Context;

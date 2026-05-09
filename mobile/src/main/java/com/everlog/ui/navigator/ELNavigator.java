@@ -56,7 +56,7 @@ import com.everlog.utils.device.DeviceInfo;
 import com.everlog.utils.format.StatsFormatUtils;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
-import com.imagepick.client.share.ELImageShare;
+import com.imagepick.share.ELImageShare;
 
 import org.jetbrains.annotations.NotNull;
 
