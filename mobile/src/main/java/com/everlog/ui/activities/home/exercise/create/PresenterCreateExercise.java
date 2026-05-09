@@ -160,15 +160,15 @@ public class PresenterCreateExercise extends BaseActivityPresenter<MvpViewCreate
                 true,
                 R.string.create_exercise_error_no_permissions
         );
-        getMvpView().showImagePicker(options);
-    }
-
-    public void onImagePickerResult(NewImagePickerResult result) {
-        if (result instanceof NewImagePickerResult.Success) {
-            handleImagePicked(((NewImagePickerResult.Success) result).getUri());
-        } else if (result instanceof NewImagePickerResult.Removed) {
-            handleImagePicked(null);
-        }
+        subscriptions.add(getMvpView().showImagePicker(options)
+                .compose(applyUISchedulers())
+                .subscribe(result -> {
+                    if (result instanceof NewImagePickerResult.Success) {
+                        handleImagePicked(((NewImagePickerResult.Success) result).getUri());
+                    } else if (result instanceof NewImagePickerResult.Removed) {
+                        handleImagePicked(null);
+                    }
+                }, this::handleError));
     }
 
     private void handleImagePicked(Uri uri) {
