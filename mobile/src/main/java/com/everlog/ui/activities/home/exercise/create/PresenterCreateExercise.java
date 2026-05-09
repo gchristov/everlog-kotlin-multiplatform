@@ -17,7 +17,8 @@ import com.everlog.utils.ArrayResourceTypeUtils;
 import com.everlog.utils.Utils;
 import com.everlog.utils.input.KeyboardUtils;
 import com.google.firebase.firestore.SetOptions;
-import com.imagepick.client.ELImagePicker;
+import com.imagepick.picker.NewImagePickerOptions;
+import com.imagepick.picker.NewImagePickerResult;
 
 import org.jetbrains.annotations.Nullable;
 
@@ -35,7 +36,6 @@ public class PresenterCreateExercise extends BaseActivityPresenter<MvpViewCreate
     private ELExercise toEdit;
     private boolean mInitialDataSet = false;
     private boolean mEditMode = false;
-    private int mImagePickRequestCode;
     private Uri mPickedImageUri;
 
     @Override
@@ -55,20 +55,6 @@ public class PresenterCreateExercise extends BaseActivityPresenter<MvpViewCreate
         } else {
             return super.onBackPressedConsumed();
         }
-    }
-
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        if (requestCode == mImagePickRequestCode) {
-            if (resultCode == RESULT_OK
-                    && data != null
-                    && data.hasExtra("path")) {
-                Uri uri = Objects.requireNonNull(data).getParcelableExtra("path");
-                handleImagePicked(uri);
-            }
-            return;
-        }
-        super.onActivityResult(requestCode, resultCode, data);
     }
 
     // Observers
@@ -166,15 +152,23 @@ public class PresenterCreateExercise extends BaseActivityPresenter<MvpViewCreate
     }
 
     private void handlePickImage() {
-        mImagePickRequestCode = ELImagePicker
-                .withActivity(getMvpView().getActivity())
-                .withPermissionErrorListener(() -> {
-                    navigator.promptForAppSettings(R.string.create_exercise_error_no_permissions);
-                })
-                .withImageRemoveListener(toEdit.getImageUrl() == null ? null : () -> {
-                    handleImagePicked(null);
-                })
-                .pick();
+        NewImagePickerOptions options = new NewImagePickerOptions(
+                R.string.select_image,
+                toEdit.getImageUrl() != null,
+                1, 1,
+                512, 512,
+                true,
+                R.string.create_exercise_error_no_permissions
+        );
+        getMvpView().showImagePicker(options);
+    }
+
+    public void onImagePickerResult(NewImagePickerResult result) {
+        if (result instanceof NewImagePickerResult.Success) {
+            handleImagePicked(((NewImagePickerResult.Success) result).getUri());
+        } else if (result instanceof NewImagePickerResult.Removed) {
+            handleImagePicked(null);
+        }
     }
 
     private void handleImagePicked(Uri uri) {

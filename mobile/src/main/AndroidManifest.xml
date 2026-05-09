@@ -247,6 +247,9 @@
             android:exported="false" />
         <activity android:name="com.imagepick.picker.ImagePickerActivity" />
         <activity
+            android:name="com.imagepick.picker.NewImagePickerActivity"
+            android:theme="@style/AppTheme.Transparent" />
+        <activity
             android:name="com.imagepick.picker.EverlogUCropActivity"
             android:screenOrientation="portrait"
             android:theme="@style/UCropTheme" />

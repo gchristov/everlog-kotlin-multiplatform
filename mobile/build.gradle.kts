@@ -8,6 +8,7 @@ plugins {
     alias(libs.plugins.google.services)
     alias(libs.plugins.firebase.crashlytics)
     alias(libs.plugins.firebase.perf)
+    id("kotlin-parcelize")
 }
 
 kotlin {
