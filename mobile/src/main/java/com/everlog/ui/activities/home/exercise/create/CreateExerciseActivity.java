@@ -10,6 +10,9 @@ import com.everlog.data.model.exercise.ELExercise;
 import com.everlog.databinding.ActivityExerciseCreateBinding;
 import com.everlog.ui.activities.base.BaseActivity;
 import com.everlog.ui.activities.base.BaseActivityPresenter;
+import com.imagepick.ImagePickerContract;
+import com.imagepick.ImagePickerOptions;
+import com.imagepick.ImagePickerResult;
 import com.jakewharton.rxbinding.view.RxView;
 import com.jakewharton.rxbinding.widget.RxAdapterView;
 import com.jakewharton.rxbinding.widget.RxTextView;
@@ -17,11 +20,13 @@ import com.jakewharton.rxbinding.widget.RxTextView;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import androidx.activity.result.ActivityResultLauncher;
 import androidx.core.content.ContextCompat;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 import rx.Observable;
+import rx.subjects.PublishSubject;
 
 import static com.everlog.constants.ELConstants.EXTRA_EXERCISE;
 import static com.everlog.managers.analytics.AnalyticsConstants.SCREEN_EXERCISE_CREATE;
@@ -30,6 +35,13 @@ public class CreateExerciseActivity extends BaseActivity implements MvpViewCreat
 
     private ActivityExerciseCreateBinding binding;
     private PresenterCreateExercise mPresenter;
+    private PublishSubject<ImagePickerResult> imagePickerSubject;
+
+    private final ActivityResultLauncher<ImagePickerOptions> imagePickerLauncher = registerForActivityResult(new ImagePickerContract(), result -> {
+        if (imagePickerSubject != null) {
+            imagePickerSubject.onNext(result);
+        }
+    });
 
     @Override
     public void onActivityCreated() {
@@ -108,6 +120,13 @@ public class CreateExerciseActivity extends BaseActivity implements MvpViewCreat
     @Override
     public int getSelectedCategoryIndex() {
         return binding.categorySpinner.getSelectedItemPosition() - 1; // Account for extra None type.
+    }
+
+    @Override
+    public Observable<ImagePickerResult> showImagePicker(ImagePickerOptions options) {
+        imagePickerSubject = PublishSubject.create();
+        imagePickerLauncher.launch(options);
+        return imagePickerSubject;
     }
 
     // Setup

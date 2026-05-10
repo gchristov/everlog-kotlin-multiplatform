@@ -1,7 +1,6 @@
 package com.everlog.ui.activities.home.exercise.create;
 
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.net.Uri;
 
 import com.everlog.R;
@@ -17,11 +16,8 @@ import com.everlog.utils.ArrayResourceTypeUtils;
 import com.everlog.utils.Utils;
 import com.everlog.utils.input.KeyboardUtils;
 import com.google.firebase.firestore.SetOptions;
-import com.imagepick.client.ELImagePicker;
-
-import org.jetbrains.annotations.Nullable;
-
-import java.util.Objects;
+import com.imagepick.ImagePickerOptions;
+import com.imagepick.ImagePickerResult;
 
 //import icepick.State;
 
@@ -35,7 +31,6 @@ public class PresenterCreateExercise extends BaseActivityPresenter<MvpViewCreate
     private ELExercise toEdit;
     private boolean mInitialDataSet = false;
     private boolean mEditMode = false;
-    private int mImagePickRequestCode;
     private Uri mPickedImageUri;
 
     @Override
@@ -55,20 +50,6 @@ public class PresenterCreateExercise extends BaseActivityPresenter<MvpViewCreate
         } else {
             return super.onBackPressedConsumed();
         }
-    }
-
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        if (requestCode == mImagePickRequestCode) {
-            if (resultCode == RESULT_OK
-                    && data != null
-                    && data.hasExtra("path")) {
-                Uri uri = Objects.requireNonNull(data).getParcelableExtra("path");
-                handleImagePicked(uri);
-            }
-            return;
-        }
-        super.onActivityResult(requestCode, resultCode, data);
     }
 
     // Observers
@@ -166,15 +147,24 @@ public class PresenterCreateExercise extends BaseActivityPresenter<MvpViewCreate
     }
 
     private void handlePickImage() {
-        mImagePickRequestCode = ELImagePicker
-                .withActivity(getMvpView().getActivity())
-                .withPermissionErrorListener(() -> {
-                    navigator.promptForAppSettings(R.string.create_exercise_error_no_permissions);
-                })
-                .withImageRemoveListener(toEdit.getImageUrl() == null ? null : () -> {
-                    handleImagePicked(null);
-                })
-                .pick();
+        ImagePickerOptions options = new ImagePickerOptions(
+                R.string.select_image,
+                toEdit.getImageUrl() != null,
+                1, 1,
+                512, 512,
+                true
+        );
+        subscriptions.add(getMvpView().showImagePicker(options)
+                .compose(applyUISchedulers())
+                .subscribe(result -> {
+                    if (result instanceof ImagePickerResult.Success) {
+                        handleImagePicked(((ImagePickerResult.Success) result).getUri());
+                    } else if (result instanceof ImagePickerResult.Removed) {
+                        handleImagePicked(null);
+                    } else if (result instanceof ImagePickerResult.PermissionDenied) {
+                        navigator.promptForAppSettings(R.string.create_exercise_error_no_permissions);
+                    }
+                }, this::handleError));
     }
 
     private void handleImagePicked(Uri uri) {

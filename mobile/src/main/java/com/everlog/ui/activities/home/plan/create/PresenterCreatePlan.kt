@@ -26,7 +26,7 @@ import com.everlog.ui.adapters.plan.PlanWeekAdapter
 import com.everlog.utils.Utils
 import com.everlog.utils.input.KeyboardUtils
 import com.google.firebase.firestore.SetOptions
-import com.imagepick.picker.dialog.ELPickerDialog
+import com.imagepick.dialog.ELPickerDialog
 // import icepick.State
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode

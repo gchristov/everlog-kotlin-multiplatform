@@ -1,4 +1,4 @@
-package com.imagepick.picker.dialog;
+package com.imagepick.dialog;
 
 public interface ELPickerDialogBuilder {
 
@@ -8,10 +8,17 @@ public interface ELPickerDialogBuilder {
 
     ELPickerDialogBuilder title(int titleResId);
 
+    ELPickerDialogBuilder dismissListener(OnDismissListener dismissListener);
+
     void show();
 
     interface ActionListener {
 
         void onAction(int actionId);
+    }
+
+    interface OnDismissListener {
+
+        void onDismiss();
     }
 }

@@ -1,4 +1,4 @@
-package com.imagepick.picker
+package com.imagepick
 
 import android.os.Bundle
 import android.view.ViewGroup

@@ -1,4 +1,4 @@
-package com.imagepick.picker.dialog;
+package com.imagepick.dialog;
 
 import android.app.Activity;
 import android.view.Menu;
@@ -13,6 +13,7 @@ public class ELPickerDialog implements ELPickerDialogBuilder {
 
     private WeakReference<Activity> activity;
     private ActionListener actionListener;
+    private OnDismissListener dismissListener;
     private int layoutResId;
     private int titleResId;
 
@@ -43,6 +44,12 @@ public class ELPickerDialog implements ELPickerDialogBuilder {
     }
 
     @Override
+    public ELPickerDialogBuilder dismissListener(OnDismissListener dismissListener) {
+        this.dismissListener = dismissListener;
+        return this;
+    }
+
+    @Override
     public void show() {
         showSourcePicker();
     }
@@ -52,10 +59,16 @@ public class ELPickerDialog implements ELPickerDialogBuilder {
     private void showSourcePicker() {
         BottomSheet.Builder builder = buildImagePickerSheet();
         builder = builder.listener((dialog, which) -> {
-            if (actionListener != null) {
-                actionListener.onAction(which);
-            }
-        });
+                    if (actionListener != null) {
+                        actionListener.onAction(which);
+                    }
+                })
+                .setOnDismissListener((i) -> {
+                    if (dismissListener != null) {
+                        dismissListener.onDismiss();
+                    }
+                });
+
         MenuUtils.showMenu(activity.get(), builder);
     }
 
