@@ -57,8 +57,11 @@ class WorkoutActivity : CreateExerciseGroupsActivity(), MvpViewWorkout {
     }
 
     override fun requestPermissions(permissions: Array<String>): Observable<Boolean> {
-        requestPermissionsLauncher.launch(permissions)
-        return permissionSubject
+        return Observable.create { subscriber ->
+            val sub = permissionSubject.take(1).subscribe(subscriber)
+            subscriber.add(sub)
+            requestPermissionsLauncher.launch(permissions)
+        }
     }
 
     override fun getAnalyticsScreenName(): String {
