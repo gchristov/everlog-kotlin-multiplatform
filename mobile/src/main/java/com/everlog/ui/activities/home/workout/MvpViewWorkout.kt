@@ -37,4 +37,6 @@ interface MvpViewWorkout : MvpViewCreateExerciseGroups {
     fun onClickServiceTimerRestStop(): Observable<Void>
 
     fun onClickServiceCompleteSet(): Observable<ELWorkoutState>
+
+    fun requestPermissions(permissions: Array<String>): Observable<Boolean>
 }

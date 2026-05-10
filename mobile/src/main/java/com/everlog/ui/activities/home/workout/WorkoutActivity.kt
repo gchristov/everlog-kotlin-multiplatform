@@ -5,7 +5,7 @@ import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.view.View
-import androidx.core.app.ActivityCompat
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.recyclerview.widget.RecyclerView
 import com.everlog.R
@@ -22,10 +22,19 @@ import com.jakewharton.rxbinding.view.RxView
 import rx.Observable
 import rx.subjects.PublishSubject
 
-class WorkoutActivity : CreateExerciseGroupsActivity(), MvpViewWorkout, ActivityCompat.OnRequestPermissionsResultCallback {
+class WorkoutActivity : CreateExerciseGroupsActivity(), MvpViewWorkout {
 
     private var mPresenter: PresenterWorkout? = null
     lateinit var workoutBinding: ActivityWorkoutBinding
+
+    private val permissionSubject = PublishSubject.create<Boolean>()
+
+    private val requestPermissionsLauncher = registerForActivityResult(
+        ActivityResultContracts.RequestMultiplePermissions()
+    ) { permissions ->
+        val allGranted = permissions.entries.all { it.value }
+        permissionSubject.onNext(allGranted)
+    }
 
     private var mMuscleGoalsVisible = true
 
@@ -47,13 +56,12 @@ class WorkoutActivity : CreateExerciseGroupsActivity(), MvpViewWorkout, Activity
         setupBroadcastReceivers()
     }
 
-    override fun onRequestPermissionsResult(
-        requestCode: Int,
-        permissions: Array<out String?>,
-        grantResults: IntArray,
-        deviceId: Int
-    ) {
-        mPresenter?.onRequestPermissionsResult(requestCode)
+    override fun requestPermissions(permissions: Array<String>): Observable<Boolean> {
+        return Observable.create { subscriber ->
+            val sub = permissionSubject.take(1).subscribe(subscriber)
+            subscriber.add(sub)
+            requestPermissionsLauncher.launch(permissions)
+        }
     }
 
     override fun getAnalyticsScreenName(): String {

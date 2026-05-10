@@ -292,6 +292,7 @@
     <string name="workout_finish">Finish</string>
     <string name="workout_finish_title">Finish Workout</string>
     <string name="workout_finish_subtitle">You have incomplete sets. Would you like to finish the workout and mark them as complete?</string>
+    <string name="workout_error_no_permissions">We need permission to show notifications and track your activity to provide live workout updates and timers. Please enable these in Settings.</string>
 
     <string name="settings_title">Settings</string>
     <string name="settings_pro_upgrade">Upgrade to pro</string>
