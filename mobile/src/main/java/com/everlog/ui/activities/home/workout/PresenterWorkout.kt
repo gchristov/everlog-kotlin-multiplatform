@@ -38,9 +38,6 @@ class PresenterWorkout : PresenterCreateExerciseGroups<MvpViewWorkout>() {
 
     private val SERVICE_INTERACTION_DELAY = 150
 
-    private val REQUEST_CODE_POST_NOTIFICATIONS = 151
-    private val REQUEST_CODE_WORKOUT_PERMISSIONS = 152
-
     // @State
     @JvmField
     var mWorkout: ELWorkout? = null
@@ -84,12 +81,6 @@ class PresenterWorkout : PresenterCreateExerciseGroups<MvpViewWorkout>() {
     override fun onActivityResumed() {
         super.onActivityResumed()
         mTickTimeController?.ensureTimerWhenActivityResumed()
-    }
-
-    internal fun onRequestPermissionsResult(requestCode: Int) {
-        if (requestCode == REQUEST_CODE_POST_NOTIFICATIONS || requestCode == REQUEST_CODE_WORKOUT_PERMISSIONS) {
-            notifyWorkoutServiceStart()
-        }
     }
 
     override fun onBackPressedConsumed(): Boolean {
@@ -384,7 +375,16 @@ class PresenterWorkout : PresenterCreateExerciseGroups<MvpViewWorkout>() {
         }
 
         if (permissionsNeeded.isNotEmpty()) {
-            ActivityCompat.requestPermissions(mvpView.getActivity()!!, permissionsNeeded.toTypedArray(), REQUEST_CODE_WORKOUT_PERMISSIONS)
+            subscriptions.add(mvpView.requestPermissions(permissionsNeeded.toTypedArray())
+                .take(1)
+                .compose(applyUISchedulers())
+                .subscribe({ allGranted ->
+                    if (allGranted) {
+                        notifyWorkoutServiceStart()
+                    } else {
+                        navigator.promptForAppSettings(R.string.workout_error_no_permissions)
+                    }
+                }) { throwable: Throwable? -> handleError(throwable) })
             return
         }
         navigator.startWorkoutService(mWorkout)
