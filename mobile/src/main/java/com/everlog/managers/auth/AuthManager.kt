@@ -237,7 +237,6 @@ object AuthManager : PreferencesManager() {
                 val user = ELUser.buildUser(mAuth!!.currentUser!!)
                 val userJustRegistered = task.result?.additionalUserInfo?.isNewUser == true
                 if (userJustRegistered) {
-                    // This could happen when logging in with Google, so make sure we track it
                     AnalyticsManager.manager.userRegister(user.id, user.email, user.displayName)
                 }
                 finishLocalLogin(user, userJustRegistered)
