@@ -35,6 +35,7 @@
             android:paddingBottom="@dimen/footer_bottom_padding_double">
 
             <include
+                android:id="@+id/accountSection"
                 layout="@layout/include_settings_account"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

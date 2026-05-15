@@ -294,7 +294,8 @@ class PresenterSettingsHome : BaseFragmentPresenter<MvpViewSettingsHome>() {
     private fun checkConsent() {
         if (mConsent == null) {
             // No consent has been given yet, so ask user and block app
-            observeNewsletterConsentConfirm()
+            // TODO: Removed this to allow anonymous login
+            // observeNewsletterConsentConfirm()
         }
     }
 

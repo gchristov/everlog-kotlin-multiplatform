@@ -68,7 +68,8 @@
         android:paddingLeft="@dimen/settings_card_content_margin_left"
         android:paddingTop="@dimen/margin_12"
         android:paddingRight="@dimen/settings_row_padding_right"
-        android:paddingBottom="@dimen/margin_12">
+        android:paddingBottom="@dimen/margin_12"
+        android:visibility="gone">
 
         <ImageView
             style="@style/SettingsIcon"
@@ -95,7 +96,8 @@
         android:paddingLeft="@dimen/settings_card_content_margin_left"
         android:paddingTop="@dimen/margin_12"
         android:paddingRight="@dimen/settings_row_padding_right"
-        android:paddingBottom="@dimen/margin_12">
+        android:paddingBottom="@dimen/margin_12"
+        android:visibility="gone">
 
         <ImageView
             style="@style/SettingsIcon"

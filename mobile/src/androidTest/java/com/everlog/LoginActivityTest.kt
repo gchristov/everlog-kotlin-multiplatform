@@ -8,7 +8,6 @@ import androidx.test.espresso.action.ViewActions.closeSoftKeyboard
 import androidx.test.espresso.action.ViewActions.typeText
 import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.matcher.ViewMatchers.isAssignableFrom
-import androidx.test.espresso.matcher.ViewMatchers.isDescendantOfA
 import androidx.test.espresso.matcher.ViewMatchers.isDisplayed
 import androidx.test.espresso.matcher.ViewMatchers.withHint
 import androidx.test.espresso.matcher.ViewMatchers.withId
@@ -28,22 +27,14 @@ class LoginActivityTest {
     val activityRule = ActivityScenarioRule(LoginActivity::class.java)
 
     @Test
-    fun clickGetStarted_ShowsRegistrationForm() {
-        onView(withText("Get Started"))
-            .check(matches(isDisplayed()))
-
-        onView(withText("Get Started")).perform(click())
-
-        onView(allOf(withText("Sign up"), isDescendantOfA(withId(R.id.toolbar))))
-            .check(matches(isDisplayed()))
-
-        onView(withHint("Name"))
+    fun login_shows() {
+        onView(withText("Continue as guest"))
             .check(matches(isDisplayed()))
     }
 
     @Test
-    fun loginWithUser_ShowsHomeScreen() {
-        onView(withText("I have an account")).perform(click())
+    fun login_withUser_showsHomeScreen() {
+        onView(withId(R.id.showLoginBtn)).perform(click())
 
         onView(allOf(withHint("Email"), isDisplayed()))
             .perform(typeText(BuildConfig.E2E_TEST_USER_EMAIL), closeSoftKeyboard())
@@ -51,13 +42,13 @@ class LoginActivityTest {
         onView(allOf(withHint("Password"), isDisplayed()))
             .perform(typeText(BuildConfig.E2E_TEST_USER_PASSWORD), closeSoftKeyboard())
 
-        onView(allOf(withText("Login"), isAssignableFrom(Button::class.java))).perform(click())
+        onView(allOf(withId(R.id.loginBtn), isAssignableFrom(Button::class.java))).perform(click())
 
         waitForView(R.id.tabBar)
 
         onView(withId(R.id.tabBar))
             .check(matches(isDisplayed()))
-            
+
         onView(withId(R.id.addBtn))
             .check(matches(isDisplayed()))
     }

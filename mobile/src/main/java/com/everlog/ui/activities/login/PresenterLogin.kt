@@ -20,6 +20,7 @@ class PresenterLogin : BaseActivityPresenter<MvpViewLogin>() {
     override fun onReady() {
         observeGoogleClick()
         observeLoginClick()
+        observeGetStartedClick()
         observeRegisterClick()
         observeTermsClick()
         observePrivacyClick()
@@ -51,6 +52,14 @@ class PresenterLogin : BaseActivityPresenter<MvpViewLogin>() {
                 .compose(applyUISchedulers())
                 .subscribe({
                     handleLogin()
+                }) { throwable -> handleError(throwable) })
+    }
+
+    private fun observeGetStartedClick() {
+        subscriptions.add(mvpView.onClickGetStarted()
+                .compose(applyUISchedulers())
+                .subscribe({
+                    handleLoginAnonymous()
                 }) { throwable -> handleError(throwable) })
     }
 
@@ -135,6 +144,25 @@ class PresenterLogin : BaseActivityPresenter<MvpViewLogin>() {
         } else {
             mvpView?.showLoginError(emailError, passwordError)
         }
+    }
+
+    private fun handleLoginAnonymous() {
+        mvpView?.showGetStartedLoading(LoginActivity.LoadingState.LOADING)
+        AuthManager.loginAnonymously(object : AuthManager.OnAuthActionListener() {
+            override fun onSuccess(user: ELUser) {
+                if (isAttachedToView) {
+                    mvpView?.showGetStartedLoading(LoginActivity.LoadingState.DONE)
+                    Utils.runWithDelay({ navigator.openHome() }, DELAY_SUCCESS)
+                }
+            }
+
+            override fun onError(throwable: Throwable) {
+                if (isAttachedToView) {
+                    mvpView?.showGetStartedLoading(LoginActivity.LoadingState.DEFAULT)
+                    ToastBuilder.showToast(mvpView.context, throwable.message, true)
+                }
+            }
+        })
     }
 
     private fun handleRegister() {

@@ -102,17 +102,32 @@ object AuthManager : PreferencesManager() {
               listener: OnAuthActionListener) {
         var fEmail = email
         var fPassword = password
-        Timber.tag(TAG).i("Logging in using email")
         mAuthListener = listener
         if (isRunningInGoogleTestLab()) {
+            Timber.tag(TAG).i("Redirecting Google Test Lab anonymous login to email login")
             // Force Google Test Lab user to use pre-existing account
             fEmail = ELConstants.CLOUD_TEST_EMAIL
             fPassword = ELConstants.CLOUD_TEST_PASSWORD
             disableFeaturesForGoogleTestLab()
+        } else {
+            Timber.tag(TAG).i("Logging in using email")
         }
         mAuth
                 ?.signInWithEmailAndPassword(fEmail, fPassword)
                 ?.addOnCompleteListener(getLoginHandler())
+    }
+
+    fun loginAnonymously(listener: OnAuthActionListener) {
+        if (isRunningInGoogleTestLab()) {
+            Timber.tag(TAG).i("Redirecting Google Test Lab anonymous login to email login")
+            login(ELConstants.CLOUD_TEST_EMAIL, ELConstants.CLOUD_TEST_PASSWORD, listener)
+        } else {
+            Timber.tag(TAG).i("Logging in anonymously")
+            mAuthListener = listener
+            mAuth
+                    ?.signInAnonymously()
+                    ?.addOnCompleteListener(getLoginHandler())
+        }
     }
 
     fun loginWithGoogle(navigator: Navigator, listener: OnAuthActionListener) {
@@ -222,7 +237,6 @@ object AuthManager : PreferencesManager() {
                 val user = ELUser.buildUser(mAuth!!.currentUser!!)
                 val userJustRegistered = task.result?.additionalUserInfo?.isNewUser == true
                 if (userJustRegistered) {
-                    // This could happen when logging in with Google, so make sure we track it
                     AnalyticsManager.manager.userRegister(user.id, user.email, user.displayName)
                 }
                 finishLocalLogin(user, userJustRegistered)
