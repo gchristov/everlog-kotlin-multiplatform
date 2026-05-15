@@ -302,25 +302,25 @@
         <item quantity="one">Your free trial ends tomorrow</item>
         <item quantity="other">Your free trial ends in %1$d days</item>
     </plurals>
-    <string name="settings_contact_us">Contact Us</string>
-    <string name="settings_report_problem">Report a Problem</string>
-    <string name="settings_play_store_prompt">Review Us on Google Play</string>
-    <string name="settings_facebook_prompt">Like Us on Facebook</string>
-    <string name="settings_twitter_prompt">Follow Us on Twitter</string>
+    <string name="settings_contact_us">Contact us</string>
+    <string name="settings_report_problem">Report a problem</string>
+    <string name="settings_play_store_prompt">Review us on Google Play</string>
+    <string name="settings_facebook_prompt">Like us on Facebook</string>
+    <string name="settings_twitter_prompt">Follow us on Twitter</string>
     <string name="settings_logout">Logout</string>
     <string name="settings_share">Share Everlog</string>
     <string name="settings_logout_prompt">Are you sure you want to log out?</string>
     <string name="settings_workouts">Workouts</string>
-    <string name="settings_weight_increase">Weight Increment</string>
+    <string name="settings_weight_increase">Weight increment</string>
     <string name="settings_weight_increase_description">Used when modifying weight with +/-</string>
-    <string name="settings_weekly_goal">Weekly Workouts Goal</string>
+    <string name="settings_weekly_goal">Weekly workouts goal</string>
     <string name="settings_general">General</string>
     <string name="settings_kilograms">Kilograms (kg)</string>
     <string name="settings_kilograms_abbreviation">kg</string>
     <string name="settings_pounds">Pounds (lb)</string>
     <string name="settings_pounds_abbreviation">lb</string>
-    <string name="settings_unit_weight">Weight Unit</string>
-    <string name="settings_first_week_day">First Week Day</string>
+    <string name="settings_unit_weight">Weight unit</string>
+    <string name="settings_first_week_day">First week day</string>
     <string name="settings_permission_grant">Grant permission</string>
 
     <string name="pro_title">Everlog Pro</string>
@@ -387,7 +387,7 @@
     <string name="plan_details_complete_title">Plan complete</string>
     <string name="plan_details_complete_subtitle">Congratulations! You are now closer than ever to your fitness goals.</string>
 
-    <string name="muscle_goal_title">Muscle Training Goal</string>
+    <string name="muscle_goal_title">Muscle training goal</string>
     <string name="muscle_goal_benefits">Goals</string>
     <string name="muscle_goal_footer">Need more goals?</string>
     <string name="muscle_goal_prompt">Training goals give you history-based weight suggestions during workouts to ensure your muscles are working in the most effective way.</string>

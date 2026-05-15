@@ -140,8 +140,9 @@ class SettingsHomeFragment : BaseTabFragment(), MvpViewSettingsHome {
     }
 
     override fun showUserInfo(user: ELUser) {
-        // Hide account section for anonymous users
-        binding.root.findViewById<View>(R.id.accountSection).visibility = if (user.email.isNullOrEmpty()) View.GONE else View.VISIBLE
+        // Hide account section and logout for anonymous users
+        binding.root.findViewById<View>(R.id.accountSection).visibility = if (user.isAnonymous()) View.GONE else View.VISIBLE
+        binding.root.findViewById<View>(R.id.logoutBtn).visibility = if (user.isAnonymous()) View.GONE else View.VISIBLE
 
         // User info
         binding.root.findViewById<TextView>(R.id.userNameLbl).text = user.getFirstName()
@@ -167,7 +168,7 @@ class SettingsHomeFragment : BaseTabFragment(), MvpViewSettingsHome {
 
         // Notifications
 //        binding.root.findViewById<CheckBoxTriStates>(R.id.newsletterCheckbox).setChecked(viewModel.notificationNewsletterEnabled)
-        binding.root.findViewById<View>(R.id.panelNotifications).visibility = if (user.email.isNullOrEmpty()) View.GONE else View.VISIBLE
+        binding.root.findViewById<View>(R.id.panelNotifications).visibility = if (user.isAnonymous()) View.GONE else View.VISIBLE
     }
 
     override fun showPickerWeight(value: Float): Observable<Float> {

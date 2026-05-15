@@ -89,4 +89,8 @@ data class ELUser (
         // Todo: Edited as per #181
 //        return subscription?.proFreeTrialDaysRemaining() ?: -1
     }
+
+    fun isAnonymous(): Boolean {
+        return email.isNullOrEmpty()
+    }
 }
