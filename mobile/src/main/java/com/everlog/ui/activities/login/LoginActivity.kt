@@ -23,6 +23,7 @@ import com.everlog.ui.views.CheckBoxTriStates
 import com.everlog.ui.views.viewpager.ELFragmentPagerAdapter
 import com.everlog.utils.ActivityUtils
 import com.everlog.utils.Utils
+import com.everlog.utils.ViewUtils
 import com.everlog.utils.input.KeyboardUtils
 import com.everlog.utils.text.TextViewUtils
 import com.everlog.utils.text.TouchableSpan
@@ -140,6 +141,10 @@ class LoginActivity : BaseActivity(), MvpViewLogin {
         return RxView.clicks(binding.formLogin.loginBtn)
     }
 
+    override fun onClickGetStarted(): Observable<Void> {
+        return RxView.clicks(binding.formIntro.showRegisterBtn)
+    }
+
     override fun onClickLoginGoogle(): Observable<Void> {
         return RxView.clicks(binding.formLogin.loginGoogleBtn)
     }
@@ -210,6 +215,10 @@ class LoginActivity : BaseActivity(), MvpViewLogin {
 
     override fun showRegisterLoading(state: LoadingState) {
         setButtonLoading(binding.formRegister.registerBtn, state, R.color.main_accent, -1)
+    }
+
+    override fun showGetStartedLoading(state: LoadingState) {
+        setButtonLoading(binding.formIntro.showRegisterBtn, state, R.color.main_accent, -1)
     }
 
     override fun showLoginError(emailError: String?, passwordError: String?) {
@@ -324,11 +333,15 @@ class LoginActivity : BaseActivity(), MvpViewLogin {
     }
 
     private fun setupFormNavigation() {
-        binding.formIntro.showLoginBtn.setOnClickListener {
-            showForm(FormType.LOGIN)
-        }
-        binding.formIntro.showRegisterBtn.setOnClickListener {
-            showForm(FormType.REGISTER)
+//        binding.formIntro.showLoginBtn.setOnClickListener {
+//            showForm(FormType.LOGIN)
+//        }
+//        binding.formIntro.showRegisterBtn.setOnClickListener {
+//            showForm(FormType.REGISTER)
+//        }
+        binding.formIntro.showLoginBtn.visibility = View.GONE
+        binding.formIntro.showRegisterBtn.updateLayoutParams<ViewGroup.MarginLayoutParams> {
+            bottomMargin = ViewUtils.dpToPx(20)
         }
     }
 

@@ -7,6 +7,8 @@ interface MvpViewLogin : BaseActivityMvpView {
 
     fun onClickLogin(): Observable<Void>
 
+    fun onClickGetStarted(): Observable<Void>
+
     fun onClickLoginGoogle(): Observable<Void>
 
     fun onClickRegister(): Observable<Void>
@@ -40,6 +42,8 @@ interface MvpViewLogin : BaseActivityMvpView {
     fun showLoginLoading(state: LoginActivity.LoadingState)
 
     fun showRegisterLoading(state: LoginActivity.LoadingState)
+
+    fun showGetStartedLoading(state: LoginActivity.LoadingState)
 
     fun showLoginError(emailError: String?, passwordError: String?)
 

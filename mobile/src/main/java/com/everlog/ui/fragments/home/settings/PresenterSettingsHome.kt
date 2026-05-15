@@ -56,10 +56,10 @@ class PresenterSettingsHome : BaseFragmentPresenter<MvpViewSettingsHome>() {
         // Integrations
         observeManageIntegrationGoogleFitClick()
         // Consent
-        observeNewsletterCheckChange()
+        // observeNewsletterCheckChange()
         loadData()
         loadIntegrationsData()
-        loadConsentData()
+//        loadConsentData()
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -97,7 +97,7 @@ class PresenterSettingsHome : BaseFragmentPresenter<MvpViewSettingsHome>() {
         if (isAttachedToView) {
             mConsent = if (event.error != null) null else event.item
             if (!event.isFromCache) {
-                checkConsent()
+//                checkConsent()
             }
             loadData()
         }

@@ -34,7 +34,7 @@ class SettingsHomeFragment : BaseTabFragment(), MvpViewSettingsHome {
     private val binding get() = _binding!!
 
     override fun onFragmentCreated() {
-        setupButtons()
+//        setupButtons()
     }
 
     override fun getAnalyticsScreenName(): String {
@@ -137,11 +137,12 @@ class SettingsHomeFragment : BaseTabFragment(), MvpViewSettingsHome {
         ELIntegration.Type.GOOGLE_FIT.getIcon()?.let { binding.root.findViewById<ImageView>(R.id.googleFitImg).setImageResource(it) }
         binding.root.findViewById<TextView>(R.id.googleFitTitle).text = context?.let { ELIntegration.Type.GOOGLE_FIT.getTitle() }
         binding.root.findViewById<TextView>(R.id.googleFitField).text = getString(if (viewModel.integrationGoogleFitEnabled == true) R.string.integrations_connected else R.string.integrations_connected_prompt)
-        // Notifications
-        binding.root.findViewById<CheckBoxTriStates>(R.id.newsletterCheckbox).setChecked(viewModel.notificationNewsletterEnabled)
     }
 
     override fun showUserInfo(user: ELUser) {
+        // Hide account section for anonymous users
+        binding.root.findViewById<View>(R.id.accountSection).visibility = if (user.email.isNullOrEmpty()) View.GONE else View.VISIBLE
+
         // User info
         binding.root.findViewById<TextView>(R.id.userNameLbl).text = user.getFirstName()
         if (user.photoUrl != null) {
@@ -163,6 +164,10 @@ class SettingsHomeFragment : BaseTabFragment(), MvpViewSettingsHome {
         val trialDaysLeft = user.proFreeTrialDaysRemaining()
         binding.root.findViewById<View>(R.id.proFreeTrialSummary).visibility = if (user.isProWithinFreeTrial()) View.VISIBLE else View.GONE
         binding.root.findViewById<TextView>(R.id.proFreeTrialSummary).text = if (trialDaysLeft == 0) getString(R.string.settings_pro_free_trial_today) else resources.getQuantityString(R.plurals.settings_pro_free_trial, trialDaysLeft, trialDaysLeft)
+
+        // Notifications
+//        binding.root.findViewById<CheckBoxTriStates>(R.id.newsletterCheckbox).setChecked(viewModel.notificationNewsletterEnabled)
+        binding.root.findViewById<View>(R.id.panelNotifications).visibility = if (user.email.isNullOrEmpty()) View.GONE else View.VISIBLE
     }
 
     override fun showPickerWeight(value: Float): Observable<Float> {
