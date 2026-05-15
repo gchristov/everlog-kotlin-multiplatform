@@ -333,16 +333,12 @@ class LoginActivity : BaseActivity(), MvpViewLogin {
     }
 
     private fun setupFormNavigation() {
-//        binding.formIntro.showLoginBtn.setOnClickListener {
-//            showForm(FormType.LOGIN)
-//        }
+        binding.formIntro.showLoginBtn.setOnClickListener {
+            showForm(FormType.LOGIN)
+        }
 //        binding.formIntro.showRegisterBtn.setOnClickListener {
 //            showForm(FormType.REGISTER)
 //        }
-        binding.formIntro.showLoginBtn.visibility = View.GONE
-        binding.formIntro.showRegisterBtn.updateLayoutParams<ViewGroup.MarginLayoutParams> {
-            bottomMargin = ViewUtils.dpToPx(20)
-        }
     }
 
     private fun setupButtons() {

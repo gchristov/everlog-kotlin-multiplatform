@@ -51,15 +51,6 @@ object AuthManager : PreferencesManager() {
         return "true" == Settings.System.getString(ELApplication.getInstance().contentResolver, "firebase.test.lab")
     }
 
-    fun isRunningInTest(): Boolean {
-        return try {
-            Class.forName("androidx.test.platform.app.InstrumentationRegistry")
-            true
-        } catch (_: ClassNotFoundException) {
-            false
-        }
-    }
-
     fun initialize(listener: OnAuthActionListener) {
         when {
             isLoggedIn -> {
@@ -130,9 +121,6 @@ object AuthManager : PreferencesManager() {
         if (isRunningInGoogleTestLab()) {
             Timber.tag(TAG).i("Redirecting Google Test Lab anonymous login to email login")
             login(ELConstants.CLOUD_TEST_EMAIL, ELConstants.CLOUD_TEST_PASSWORD, listener)
-        } else if (isRunningInTest()) {
-            Timber.tag(TAG).i("Redirecting test anonymous login to test email login")
-            login(BuildConfig.E2E_TEST_USER_EMAIL, BuildConfig.E2E_TEST_USER_PASSWORD, listener)
         } else {
             Timber.tag(TAG).i("Logging in anonymously")
             mAuthListener = listener

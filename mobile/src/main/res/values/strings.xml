@@ -123,14 +123,14 @@
     <string name="pending_feature_subtitle">We are working on this feature and it will be available as an update soon!</string>
     <string name="pending_feature_action">Got it</string>
 
-    <string name="login_get_started">Get Started</string>
-    <string name="login_existing">I have an account</string>
-    <string name="login_sign_in">Login</string>
+    <string name="login_get_started">Continue as guest</string>
+    <string name="login_existing">Log in</string>
+    <string name="login_sign_in">Log in</string>
     <string name="login_register">Sign up</string>
     <string name="login_full_name">Name</string>
     <string name="login_email">Email</string>
     <string name="login_password">Password</string>
-    <string name="login_google">Login with Google</string>
+    <string name="login_google">Log in with Google</string>
     <string name="login_google_register">Sign up with Google</string>
     <string name="login_onboard_plans_title">Quick 5-Min Setup</string>
     <string name="login_onboard_plans_subtitle">Easily import your favourite workouts</string>
