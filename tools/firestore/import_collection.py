@@ -42,7 +42,7 @@ def import_collection(collection_name, input_file, credentials_path):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Import a JSON file to a Firestore collection.')
     parser.add_argument('collection', help='The name of the Firestore collection to import into')
-    parser.add_argument('--input', default='export.json', help='The input JSON file (default: export.json)')
+    parser.add_argument('--input', default='import.json', help='The input JSON file (default: import.json)')
     parser.add_argument('--credentials', default='admin-credentials-dev.json', help='Path to service account credentials (default: admin-credentials-dev.json)')
 
     args = parser.parse_args()
