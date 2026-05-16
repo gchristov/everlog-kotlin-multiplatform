@@ -14,9 +14,9 @@ def main():
     extra_args = sys.argv[3:]
 
     if command == "export":
-        script = "export_firestore.py"
+        script = "export_collection.py"
     elif command == "import":
-        script = "import_firestore.py"
+        script = "import_collection.py"
     else:
         print(f"Unknown command: {command}. Use 'export' or 'import'.")
         sys.exit(1)
