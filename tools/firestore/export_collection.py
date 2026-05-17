@@ -22,8 +22,7 @@ def export_collection(collection_name, output_file, credentials_path):
         data[doc.id] = doc.to_dict()
 
     if not data:
-        print(f"No documents found in collection '{collection_name}' or collection does not exist.")
-        return
+        print(f"No documents found in collection '{collection_name}' or collection does not exist. Creating an empty file.")
 
     with open(output_file, 'w') as f:
         json.dump(data, f, indent=4, default=str)

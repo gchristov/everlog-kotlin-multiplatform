@@ -6,11 +6,15 @@ import argparse
 
 def import_collection(collection_name, input_file, credentials_path):
     if not os.path.exists(credentials_path):
-        print(f"Error: Credentials file not found at {credentials_path}")
+        print(f"❌ Error: Credentials file not found at {credentials_path}")
         return
 
     if not os.path.exists(input_file):
-        print(f"Error: Input file not found at {input_file}")
+        print(f"⚠️ Warning: Input file '{input_file}' not found. Nothing to import.")
+        # Create an empty template if it doesn't exist, to help the user
+        with open(input_file, 'w') as f:
+            json.dump({}, f, indent=4)
+        print(f"📝 Created an empty template at '{input_file}'. Please fill it and run again.")
         return
 
     cred = credentials.Certificate(credentials_path)
