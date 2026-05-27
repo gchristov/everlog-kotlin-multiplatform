@@ -5,16 +5,23 @@ import os
 import argparse
 
 def import_collection(collection_name, input_file, credentials_path):
+    # Try to find credentials if the provided path doesn't exist
     if not os.path.exists(credentials_path):
-        print(f"❌ Error: Credentials file not found at {credentials_path}")
+        alternate_paths = [
+            os.path.join("..", credentials_path),
+            os.path.join("tools", "firebase", credentials_path)
+        ]
+        for alt in alternate_paths:
+            if os.path.exists(alt):
+                credentials_path = alt
+                break
+
+    if not os.path.exists(credentials_path):
+        print(f"❌ Error: Credentials file not found at {credentials_path}", flush=True)
         return
 
     if not os.path.exists(input_file):
-        print(f"⚠️ Warning: Input file '{input_file}' not found. Nothing to import.")
-        # Create an empty template if it doesn't exist, to help the user
-        with open(input_file, 'w') as f:
-            json.dump({}, f, indent=4)
-        print(f"📝 Created an empty template at '{input_file}'. Please fill it and run again.")
+        print(f"⚠️ Warning: Input file '{input_file}' not found. Nothing to import.", flush=True)
         return
 
     cred = credentials.Certificate(credentials_path)
@@ -25,7 +32,7 @@ def import_collection(collection_name, input_file, credentials_path):
     with open(input_file, 'r') as f:
         data = json.load(f)
 
-    print(f"Importing/Merging {len(data)} documents into collection: {collection_name}...")
+    print(f"Importing/Merging {len(data)} documents into collection: {collection_name}...", flush=True)
 
     batch = db.batch()
     count = 0
@@ -41,7 +48,7 @@ def import_collection(collection_name, input_file, credentials_path):
             batch = db.batch()
 
     batch.commit()
-    print(f"Successfully imported {count} documents.")
+    print(f"Successfully imported {count} documents.", flush=True)
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Import a JSON file to a Firestore collection.')

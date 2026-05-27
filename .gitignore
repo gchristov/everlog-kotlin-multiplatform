@@ -35,6 +35,7 @@ secrets.properties
 google-services.json
 google-services-desktop.json
 admin-credentials-dev.json
+admin-credentials-prod.json
 
 # --- Signing & Secrets ---
 *.keystore
