@@ -260,6 +260,20 @@ data class ELExerciseGroup (
         return updated
     }
 
+    fun getExerciseUuids(): Set<String> {
+        val uuids = HashSet<String>()
+        exercises.forEach {
+            it.exercise?.uuid?.let { uuid -> uuids.add(uuid) }
+        }
+        return uuids
+    }
+
+    fun resolveExercises(exerciseMap: Map<String, ELExercise>) {
+        exercises.forEach {
+            it.resolveExercise(exerciseMap)
+        }
+    }
+
 //    fun updateExercise(exercise: ELRoutineExercise, setTargetLevel: SetTargetLevel) {
 //        for (i in exercises.indices) {
 //            val groupExercise = exercises[i]

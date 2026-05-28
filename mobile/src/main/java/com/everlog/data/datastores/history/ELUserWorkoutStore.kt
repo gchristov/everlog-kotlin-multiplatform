@@ -2,6 +2,7 @@ package com.everlog.data.datastores.history
 
 import com.everlog.data.datastores.base.ELDocumentStore
 import com.everlog.data.datastores.events.document.ELDocStoreItemLoadedEvent
+import com.everlog.data.datastores.routines.ELRoutineDecorator
 import com.everlog.data.model.workout.ELWorkout
 import com.everlog.managers.firebase.FirestorePathManager
 import com.google.firebase.firestore.CollectionReference
@@ -25,6 +26,10 @@ class ELUserWorkoutStore : ELDocumentStore<ELWorkout>() {
 
     override fun getTag(): String {
         return "ELUserWorkoutStore"
+    }
+
+    override fun decorateItem(item: ELWorkout) {
+        ELRoutineDecorator().decorate(item)
     }
 
     // Events

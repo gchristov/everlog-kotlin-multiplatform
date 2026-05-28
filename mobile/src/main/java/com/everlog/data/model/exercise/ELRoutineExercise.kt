@@ -44,7 +44,13 @@ data class ELRoutineExercise(
     override fun asMap(): MutableMap<String, Any?> {
         val map: MutableMap<String, Any?> = HashMap()
         map[ELConstants.FIELD_UUID] = uuid
-        map["exercise"] = exercise?.asMap()
+        
+        // Only store the exercise UUID and name (as fallback) to keep storage slim
+        val exerciseMap: MutableMap<String, Any?> = HashMap()
+        exerciseMap[ELConstants.FIELD_UUID] = exercise?.uuid
+        exerciseMap[ELConstants.FIELD_NAME] = exercise?.name
+        map["exercise"] = exerciseMap
+        
         map["sets"] = ELFirestoreModel.asMappedList(sets)
         return map
     }
@@ -124,6 +130,15 @@ data class ELRoutineExercise(
 
     fun isLowerBody(): Boolean {
         return exercise!!.isLowerBody()
+    }
+
+    fun resolveExercise(exerciseMap: Map<String, ELExercise>) {
+        exercise?.uuid?.let { uuid ->
+            exerciseMap[uuid]?.let { resolvedExercise ->
+                // Overwrite the local instance with the latest data from the store
+                this.exercise = resolvedExercise
+            }
+        }
     }
 
     fun clearPerformedStats() {

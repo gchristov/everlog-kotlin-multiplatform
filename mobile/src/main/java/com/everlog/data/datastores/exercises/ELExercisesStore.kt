@@ -21,6 +21,7 @@ class ELExercisesStore : ELCollectionStore<ELExercise>() {
 
     private val mAllItemsReady = PublishSubject.create<List<ELExercise>>()
     private val mUserExercisesStore = ELUserExercisesStore()
+    private var mMergedItemsMap: Map<String, ELExercise> = HashMap()
 
     init {
         observeItemsLoaded()
@@ -28,6 +29,10 @@ class ELExercisesStore : ELCollectionStore<ELExercise>() {
 
     fun observeAllItemsReady(): Observable<List<ELExercise>> {
         return mAllItemsReady
+    }
+
+    fun getMergedItemsMap(): Map<String, ELExercise> {
+        return mMergedItemsMap
     }
 
     override fun destroy() {
@@ -70,6 +75,9 @@ class ELExercisesStore : ELCollectionStore<ELExercise>() {
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({ result: List<ELExercise> ->
                     Timber.tag(tag).d("Notifying merged items ready: items=%s", result.size)
+                    val map = HashMap<String, ELExercise>()
+                    result.forEach { it.uuid?.let { uuid -> map[uuid] = it } }
+                    mMergedItemsMap = map
                     mAllItemsReady.onNext(result)
                 }) { throwable: Throwable? -> mAllItemsReady.onError(throwable) }
     }

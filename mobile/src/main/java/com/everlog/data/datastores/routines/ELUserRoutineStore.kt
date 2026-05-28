@@ -27,6 +27,10 @@ class ELUserRoutineStore : ELDocumentStore<ELRoutine>() {
         return "ELUserRoutineStore"
     }
 
+    override fun decorateItem(item: ELRoutine) {
+        ELRoutineDecorator().decorate(item)
+    }
+
     // Events
 
     override fun getDocumentStoreItemLoadedEvent(item: ELRoutine?,

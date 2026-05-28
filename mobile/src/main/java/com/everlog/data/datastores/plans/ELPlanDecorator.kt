@@ -1,5 +1,6 @@
 package com.everlog.data.datastores.plans
 
+import com.everlog.data.datastores.routines.ELRoutineDecorator
 import com.everlog.data.model.ELRoutine
 import com.everlog.data.model.plan.ELPlan
 import com.everlog.managers.firebase.FirestorePathManager
@@ -27,19 +28,26 @@ class ELPlanDecorator {
 
     private fun buildResolvedRoutines(routinesToResolve: Set<String>): Map<String, ELRoutine> {
         val resolvedRoutines = HashMap<String, ELRoutine>()
+        val routineDecorator = ELRoutineDecorator()
         routinesToResolve.forEach {
             // Check local routines cache first
             val cachedRoutine = resolveRoutine(it, Source.CACHE)
             if (cachedRoutine != null) {
                 // Cache HIT - use cache and refresh
                 Timber.tag(TAG).d("Cache HIT: item=%s", it)
+                routineDecorator.decorate(cachedRoutine)
                 resolvedRoutines[it] = cachedRoutine
-                Utils.runInBackground { resolveRoutine(it, Source.DEFAULT) }
+                Utils.runInBackground { 
+                    resolveRoutine(it, Source.DEFAULT)?.let { remote ->
+                        routineDecorator.decorate(remote)
+                    }
+                }
             } else {
                 // Cache MISS - fetch and use remote
                 Timber.tag(TAG).d("Cache MISS: item=%s", it)
                 val routine = resolveRoutine(it, Source.DEFAULT)
                 if (routine != null) {
+                    routineDecorator.decorate(routine)
                     resolvedRoutines[it] = routine
                 } else {
                     Timber.tag(TAG).d("Remote item is null: item=%s", it)
