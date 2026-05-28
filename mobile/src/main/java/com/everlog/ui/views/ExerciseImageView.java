@@ -32,6 +32,7 @@ public class ExerciseImageView extends LinearLayout {
     private boolean mSquareWidth;
     private boolean mClickable;
     private boolean mShowLetter;
+    private boolean mFitCenter;
 
     public ExerciseImageView(Context context) {
         super(context);
@@ -118,9 +119,14 @@ public class ExerciseImageView extends LinearLayout {
                 mSquareWidth = typedArray.getBoolean(R.styleable.ExerciseImageView_eivSquareWidth, false);
                 mClickable = typedArray.getBoolean(R.styleable.ExerciseImageView_eivClickable, true);
                 mShowLetter = typedArray.getBoolean(R.styleable.ExerciseImageView_eivShowLetter, true);
+                mFitCenter = typedArray.getBoolean(R.styleable.ExerciseImageView_eivFitCenter, false);
             } finally {
                 typedArray.recycle();
             }
+        }
+
+        if (mFitCenter) {
+            mImageView.setScaleType(ImageView.ScaleType.FIT_CENTER);
         }
     }
 }
