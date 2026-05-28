@@ -34,7 +34,7 @@
             android:paddingTop="@dimen/margin_12"
             android:paddingRight="@dimen/settings_row_padding_right"
             android:paddingBottom="@dimen/margin_12"
-            android:visibility="visible">
+            android:visibility="gone">
 
             <ImageView
                 style="@style/SettingsIcon"
