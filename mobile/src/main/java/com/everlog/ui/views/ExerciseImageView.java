@@ -74,6 +74,7 @@ public class ExerciseImageView extends LinearLayout {
         this.mExercise = exercise;
         if (TextUtils.isEmpty(exercise.getImageUrl())) {
             mImageView.setImageDrawable(null);
+            mImageViewContainer.setBackgroundColor(Color.WHITE);
             if (!TextUtils.isEmpty(exercise.getName()) && mShowLetter) {
                 mImageView.setImageDrawable(TextDrawable.builder()
                         .beginConfig()
@@ -82,7 +83,7 @@ public class ExerciseImageView extends LinearLayout {
                         .buildRect(exercise.getFirstChar(), Color.WHITE));
             }
         } else {
-            ELGlideModule.loadImage(exercise.getImageUrl(), mImageView);
+            ELGlideModule.loadImage(exercise.getImageUrl(), mImageView, mImageViewContainer);
         }
         setVisibility(View.VISIBLE);
     }
