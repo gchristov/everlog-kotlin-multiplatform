@@ -32,6 +32,7 @@ public class ExerciseImageView extends LinearLayout {
     private boolean mSquareWidth;
     private boolean mClickable;
     private boolean mShowLetter;
+    private boolean mFitCenter;
 
     public ExerciseImageView(Context context) {
         super(context);
@@ -73,6 +74,7 @@ public class ExerciseImageView extends LinearLayout {
         this.mExercise = exercise;
         if (TextUtils.isEmpty(exercise.getImageUrl())) {
             mImageView.setImageDrawable(null);
+            mImageViewContainer.setBackgroundColor(Color.WHITE);
             if (!TextUtils.isEmpty(exercise.getName()) && mShowLetter) {
                 mImageView.setImageDrawable(TextDrawable.builder()
                         .beginConfig()
@@ -81,7 +83,7 @@ public class ExerciseImageView extends LinearLayout {
                         .buildRect(exercise.getFirstChar(), Color.WHITE));
             }
         } else {
-            ELGlideModule.loadImage(exercise.getImageUrl(), mImageView);
+            ELGlideModule.loadImage(exercise.getImageUrl(), mImageView, mImageViewContainer);
         }
         setVisibility(View.VISIBLE);
     }
@@ -118,9 +120,14 @@ public class ExerciseImageView extends LinearLayout {
                 mSquareWidth = typedArray.getBoolean(R.styleable.ExerciseImageView_eivSquareWidth, false);
                 mClickable = typedArray.getBoolean(R.styleable.ExerciseImageView_eivClickable, true);
                 mShowLetter = typedArray.getBoolean(R.styleable.ExerciseImageView_eivShowLetter, true);
+                mFitCenter = typedArray.getBoolean(R.styleable.ExerciseImageView_eivFitCenter, false);
             } finally {
                 typedArray.recycle();
             }
+        }
+
+        if (mFitCenter) {
+            mImageView.setScaleType(ImageView.ScaleType.FIT_CENTER);
         }
     }
 }

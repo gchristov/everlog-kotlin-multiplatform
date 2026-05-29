@@ -126,6 +126,15 @@ data class ELRoutineExercise(
         return exercise!!.isLowerBody()
     }
 
+    fun resolveExercise(exerciseMap: Map<String, ELExercise>) {
+        exercise?.uuid?.let { uuid ->
+            exerciseMap[uuid]?.let { resolvedExercise ->
+                // Overwrite the local instance with the latest data from the store
+                this.exercise = resolvedExercise
+            }
+        }
+    }
+
     fun clearPerformedStats() {
         sets.forEach {
             it.clearPerformedStats()

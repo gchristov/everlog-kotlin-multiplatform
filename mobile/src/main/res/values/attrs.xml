@@ -26,6 +26,7 @@
         <attr name="eivSquareWidth" format="boolean"/>
         <attr name="eivClickable" format="boolean"/>
         <attr name="eivShowLetter" format="boolean"/>
+        <attr name="eivFitCenter" format="boolean"/>
     </declare-styleable>
 
     <declare-styleable name="ProSubButton">

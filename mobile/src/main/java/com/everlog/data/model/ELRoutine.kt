@@ -123,6 +123,20 @@ data class ELRoutine(
         }
     }
 
+    fun getExerciseUuids(): Set<String> {
+        val uuids = HashSet<String>()
+        exerciseGroups.forEach {
+            uuids.addAll(it.getExerciseUuids())
+        }
+        return uuids
+    }
+
+    fun resolveExercises(exerciseMap: Map<String, ELExercise>) {
+        exerciseGroups.forEach {
+            it.resolveExercises(exerciseMap)
+        }
+    }
+
     fun convertPerformedStats() {
         exerciseGroups.forEach {
             it.convertPerformedStats()

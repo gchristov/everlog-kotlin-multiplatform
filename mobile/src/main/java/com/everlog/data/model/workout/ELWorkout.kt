@@ -111,6 +111,14 @@ data class ELWorkout(
         routine?.exerciseGroups = groups
     }
 
+    fun getExerciseUuids(): Set<String> {
+        return routine?.getExerciseUuids() ?: HashSet()
+    }
+
+    fun resolveExercises(exerciseMap: Map<String, ELExercise>) {
+        routine?.resolveExercises(exerciseMap)
+    }
+
     fun getTotalExercises(): Int {
         return routine?.getTotalExercises() ?: 0
     }

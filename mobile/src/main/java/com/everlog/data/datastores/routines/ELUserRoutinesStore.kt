@@ -25,6 +25,10 @@ class ELUserRoutinesStore : ELCollectionStore<ELRoutine>() {
         return "ELUserRoutinesStore"
     }
 
+    override fun decorateItem(item: ELRoutine) {
+        ELRoutineDecorator().decorate(item)
+    }
+
     // Events
 
     override fun getCollectionStoreItemAddedEvent(position: Int,
