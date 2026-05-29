@@ -1,13 +1,12 @@
 import os
-from PIL import Image
+from PIL import Image, ImageChops
 import argparse
 from collections import defaultdict
 
-def resize_and_optimize(source_folder, output_folder, target_width=1024, quality=75):
+def resize_and_optimize(source_folder, output_folder, target_size=1024, quality=75):
     """
-    Loops recursively through a folder of images, downscales them to mobile-friendly dimensions,
-    and converts them into optimized WebP files. All output files are placed in the root
-    of the output folder.
+    Extracts the main illustration from images, centers them on a square canvas
+    with the original background color, and saves as optimized WebP.
     """
     if not os.path.exists(source_folder):
         print(f"Error: Source folder '{source_folder}' does not exist.", flush=True)
@@ -35,7 +34,6 @@ def resize_and_optimize(source_folder, output_folder, target_width=1024, quality
     for source_path in image_files:
         # Get only the filename to flatten the output structure
         filename = os.path.basename(source_path)
-        print(f"Processing: {filename}...", flush=True)
 
         # Determine the output filename (swap extension to .webp)
         base_name = os.path.splitext(filename)[0]
@@ -47,21 +45,53 @@ def resize_and_optimize(source_folder, output_folder, target_width=1024, quality
 
         try:
             with Image.open(source_path) as img:
-                # Calculate new height maintaining aspect ratio
-                original_width, original_height = img.size
+                # Convert to RGB to handle various formats consistently
+                img = img.convert("RGB")
 
-                # Safeguard: Don't upscale if the image happens to be smaller than target_width
-                if original_width > target_width:
-                    w_percent = target_width / float(original_width)
-                    target_height = int(float(original_height) * float(w_percent))
+                # 0. Pre-crop a small border (e.g., 5px) to remove potential edge noise/borders
+                # that can interfere with background detection and illustration extraction.
+                edge_margin = 25
+                if img.width > edge_margin * 2 and img.height > edge_margin * 2:
+                    img = img.crop((edge_margin, edge_margin, img.width - edge_margin, img.height - edge_margin))
 
-                    # LANCZOS is the gold standard for high-quality downsampling
-                    img_resized = img.resize((target_width, target_height), Image.Resampling.LANCZOS)
-                else:
-                    img_resized = img
+                # 1. Detect background color (sampling corners for robustness)
+                w, h = img.size
+                corners = [img.getpixel((0, 0)), img.getpixel((w-1, 0)),
+                           img.getpixel((0, h-1)), img.getpixel((w-1, h-1))]
+                bg_color = max(set(corners), key=corners.count)
 
-                # Save as WebP with quality compression
-                img_resized.save(output_path, "WEBP", quality=quality)
+                # 2. Find the bounding box of the illustration
+                bg = Image.new("RGB", img.size, bg_color)
+                diff = ImageChops.difference(img, bg)
+
+                # Convert to grayscale and use a gentle threshold to find content
+                # Threshold of 10 avoids capturing minor JPEG noise but keeps illustration edges
+                mask = diff.convert("L").point(lambda x: 255 if x > 10 else 0)
+                bbox = mask.getbbox()
+
+                if not bbox:
+                    print(f"Skipping {filename}: No illustration detected (uniform background).", flush=True)
+                    continue
+
+                # 3. Crop tightly around the illustration
+                cropped_img = img.crop(bbox)
+
+                # 4. Calculate scaling factor (75% of the target square size)
+                max_content_size = int(target_size * 0.75)
+
+                # Resize the cropped illustration maintaining aspect ratio
+                cropped_img.thumbnail((max_content_size, max_content_size), Image.Resampling.LANCZOS)
+
+                # 5. Create a square canvas with the original background color
+                new_canvas = Image.new("RGB", (target_size, target_size), bg_color)
+
+                # 6. Center the resized illustration onto the square canvas
+                offset_x = (target_size - cropped_img.width) // 2
+                offset_y = (target_size - cropped_img.height) // 2
+                new_canvas.paste(cropped_img, (offset_x, offset_y))
+
+                # 7. Save as WebP with quality compression
+                new_canvas.save(output_path, "WEBP", quality=quality)
 
                 processed_count += 1
                 successful_outputs.add(output_path)
@@ -80,7 +110,7 @@ def resize_and_optimize(source_folder, output_folder, target_width=1024, quality
     disk_count = len(output_files_on_disk)
     print(f"Total files in output folder: {disk_count}", flush=True)
 
-    # Check for missing files (files that were successfully processed but aren't found on disk)
+    # Check for missing files
     missing_files_info = []
     for path in successful_outputs:
         if not os.path.exists(path):
@@ -93,7 +123,7 @@ def resize_and_optimize(source_folder, output_folder, target_width=1024, quality
             for src in sources:
                 print(f"    Failed from source: {src}", flush=True)
 
-    # Check for collisions (if multiple source files mapped to the same output path)
+    # Check for collisions
     collisions = {out: sources for out, sources in output_to_sources.items() if len(sources) > 1}
 
     if collisions:
@@ -106,12 +136,13 @@ def resize_and_optimize(source_folder, output_folder, target_width=1024, quality
                 print(f"    source: {src}{status}", flush=True)
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description='Resize images and convert to optimized WebP.')
+    parser = argparse.ArgumentParser(description='Extract illustration, center on square canvas, and convert to WebP.')
     parser.add_argument('--input', default='./input', help='Input directory containing images')
     parser.add_argument('--output', default='./output', help='Output directory for optimized WebP images')
-    parser.add_argument('--width', type=int, default=1024, help='Target width for resizing (default: 1024)')
+    parser.add_argument('--size', type=int, default=1024, help='Target square size (default: 1024)')
     parser.add_argument('--quality', type=int, default=75, help='WebP quality (default: 75)')
 
     args = parser.parse_args()
 
-    resize_and_optimize(args.input, args.output, target_width=args.width, quality=args.quality)
+    # Note: Using args.size for target_size
+    resize_and_optimize(args.input, args.output, target_size=args.size, quality=args.quality)
