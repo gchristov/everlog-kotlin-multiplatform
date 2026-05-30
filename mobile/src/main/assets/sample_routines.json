@@ -11,7 +11,7 @@
             "exercise": {
               "splitSides": false,
               "name": "Crunch",
-              "imageUrl": "https://www.gymvisual.com/844-large_default/crunch-floor.jpg",
+              "imageUrl": "https://storage.googleapis.com/everlog-9bddf.appspot.com/exercises/illustrations/Abdominal%20Crunches%20with%20Hold1.webp",
               "category": "ABS",
               "uuid": "23a5f227-b7f5-42f0-adcc-1a5814dc9fc8",
               "createdDate": 1523982940094
@@ -47,7 +47,7 @@
               "createdDate": 1523522797903,
               "splitSides": false,
               "name": "Russian Twist",
-              "imageUrl": "https://www.gymvisual.com/10295-large_default/weighted-russian-twist-version-2.jpg",
+              "imageUrl": "https://storage.googleapis.com/everlog-9bddf.appspot.com/exercises/illustrations/russian%20twist1.webp",
               "category": "ABS",
               "uuid": "78402cfa-ef6a-4fc2-82e6-8aa6d008a8e4"
             }
@@ -61,8 +61,8 @@
           {
             "exercise": {
               "splitSides": false,
-              "name": "Hip Ups",
-              "imageUrl": "http://www.iposture.com/images/pho_exercise_bridge-hip-joint.jpg",
+              "name": "Dragonfly",
+              "imageUrl": "https://storage.googleapis.com/everlog-9bddf.appspot.com/exercises/illustrations/Dragonfly1.webp",
               "category": "ABS",
               "uuid": "c5fb5d4e-6988-4d47-beb1-85cb844c7d30",
               "createdDate": 1523982940094
@@ -97,8 +97,8 @@
             "exercise": {
               "createdDate": 1523982940094,
               "splitSides": false,
-              "name": "Spiderman Crunch",
-              "imageUrl": "https://www.gymvisual.com/2327-large_default/spider-crawl-push-up.jpg",
+              "name": "Spider Plank",
+              "imageUrl": "https://storage.googleapis.com/everlog-9bddf.appspot.com/exercises/illustrations/spider%20plank1.webp",
               "category": "ABS",
               "uuid": "bf22ec8c-934f-4f0c-95e2-bbc9d434c6b4"
             }
@@ -112,12 +112,12 @@
         "exercises": [
           {
             "exercise": {
-              "imageUrl": "https://www.gymvisual.com/1992-large_default/3-4-sit-up.jpg",
+              "imageUrl": "https://storage.googleapis.com/everlog-9bddf.appspot.com/exercises/illustrations/plank%20reach%20through1.webp",
               "category": "ABS",
               "uuid": "4a74516d-21d4-4614-8d30-a4201fbd65b5",
               "createdDate": 1523982940094,
               "splitSides": false,
-              "name": "One Arm Open Plank"
+              "name": "Plank Reach Through"
             },
             "sets": [
               {
@@ -139,8 +139,8 @@
             "exercise": {
               "createdDate": 1523982940094,
               "splitSides": false,
-              "name": "Windshield Wiper",
-              "imageUrl": "https://www.gymvisual.com/4625-large_default/wipers-straight-leg.jpg",
+              "name": "Wind Wipers",
+              "imageUrl": "https://storage.googleapis.com/everlog-9bddf.appspot.com/exercises/illustrations/wind%20wipers1.webp",
               "category": "ABS",
               "uuid": "0acbffba-b977-449f-b37f-8bad90b952e9"
             },
@@ -201,8 +201,8 @@
             "allowWeightInput": true,
             "exercise": {
               "splitSides": false,
-              "name": "Incline Dumbbell Press",
-              "imageUrl": "https://www.gymvisual.com/962-large_default/3-4-sit-up.jpg",
+              "name": "Dumbbell Incline Press",
+              "imageUrl": "https://storage.googleapis.com/everlog-9bddf.appspot.com/exercises/illustrations/Dumbbell%20Incline%20Bench%20Press1.webp",
               "category": "CHEST",
               "uuid": "b26385f3-9254-439e-b69f-f4eec8157843",
               "createdDate": 1523117829838
@@ -247,7 +247,7 @@
               "createdDate": 1523466383013,
               "splitSides": false,
               "name": "Dumbbell Chest Press",
-              "imageUrl": "https://www.gymvisual.com/889-large_default/dumbbell-bench-press.jpg",
+              "imageUrl": "https://storage.googleapis.com/everlog-9bddf.appspot.com/exercises/illustrations/dumbbell%20chest%20press%20flat1.webp",
               "category": "CHEST",
               "uuid": "9f1f4bbf-e9d1-495d-b9a8-defff6597419"
             }
@@ -264,8 +264,8 @@
               "uuid": "2b2c490b-a233-47d3-bf93-c1b0667bd2f6",
               "createdDate": 1523982940094,
               "splitSides": false,
-              "name": "Cable Crossover",
-              "imageUrl": "https://www.gymvisual.com/5958-large_default/cable-standing-up-straight-crossovers.jpg",
+              "name": "Arm Crossover",
+              "imageUrl": "https://storage.googleapis.com/everlog-9bddf.appspot.com/exercises/illustrations/Cable%20Standing%20Up%20Straight%20Crossovers1.webp",
               "category": "CHEST"
             },
             "sets": [
@@ -306,7 +306,7 @@
               "createdDate": 1523982835029,
               "splitSides": false,
               "name": "Skull Crusher",
-              "imageUrl": "https://www.gymvisual.com/7440-large_default/barbell-reverse-grip-skullcrusher.jpg",
+              "imageUrl": "https://storage.googleapis.com/everlog-9bddf.appspot.com/exercises/illustrations/Barbell%20lying%20triceps%20skull%20crushers1.webp",
               "category": "ARMS",
               "uuid": "fa7ad1c9-7474-4aaf-9f88-185d3f5e4918"
             },
@@ -347,12 +347,12 @@
         "exercises": [
           {
             "exercise": {
-              "imageUrl": "https://www.gymvisual.com/7445-large_default/cable-rope-lying-on-floor-tricep-extension.jpg",
+              "imageUrl": "https://storage.googleapis.com/everlog-9bddf.appspot.com/exercises/illustrations/dumbbell%20overhead%20extension%20seated1.webp",
               "category": "ARMS",
               "uuid": "fedbe2c6-a1cb-4203-97e4-01a1f8aa6a83",
               "createdDate": 1523117875532,
               "splitSides": false,
-              "name": "Tricep Extension"
+              "name": "Seated Overhead Extension"
             },
             "sets": [
               {
@@ -421,8 +421,8 @@
             "allowWeightInput": true,
             "exercise": {
               "splitSides": false,
-              "name": "Triceps Rope Pushdown",
-              "imageUrl": "https://www.gymvisual.com/622-large_default/cable-pushdown-with-rope-attachment.jpg",
+              "name": "Cable Pushdown",
+              "imageUrl": "https://storage.googleapis.com/everlog-9bddf.appspot.com/exercises/illustrations/Cable%20Pushdown1.webp",
               "category": "ARMS",
               "uuid": "c8ba67c1-298b-42aa-a481-66ae072ee857",
               "createdDate": 1523982940094
@@ -444,7 +444,7 @@
               "createdDate": 1524857334434,
               "splitSides": false,
               "name": "Sumo Squat",
-              "imageUrl": "https://www.gymvisual.com/4085-large_default/sumo-squat.jpg",
+              "imageUrl": "https://storage.googleapis.com/everlog-9bddf.appspot.com/exercises/illustrations/Dumbbell%20Bar%20Grip%20Sumo%20Squat.webp",
               "category": "LEGS",
               "uuid": "6556e3cf-1dc5-4c5a-bd97-d8e52747a590"
             },
@@ -509,8 +509,8 @@
             "exercise": {
               "createdDate": 1523982940094,
               "splitSides": false,
-              "name": "Alternating Lunge",
-              "imageUrl": "https://www.gymvisual.com/2595-large_default/3-4-sit-up.jpg",
+              "name": "Forward Lunge",
+              "imageUrl": "https://storage.googleapis.com/everlog-9bddf.appspot.com/exercises/illustrations/Bodyweight%20Forward%20Lunge1.webp",
               "category": "LEGS",
               "uuid": "068a5a00-15dc-450e-a0d2-2b6e1c65c983"
             }
@@ -541,8 +541,8 @@
             "exercise": {
               "createdDate": 1523982940094,
               "splitSides": false,
-              "name": "Step-Up to Reverse Lunge",
-              "imageUrl": "https://i.pinimg.com/originals/82/fe/cd/82fecde6fa4d40638ce3fc4b74fb2569.jpg",
+              "name": "Rear Lunge from Step",
+              "imageUrl": "https://storage.googleapis.com/everlog-9bddf.appspot.com/exercises/illustrations/Dumbbell%20Rear%20Lunge%20from%20Step1.webp",
               "category": "LEGS",
               "uuid": "668f9521-bcab-42f8-b931-fb7b10a04b01"
             }
@@ -556,7 +556,7 @@
             "exercise": {
               "splitSides": false,
               "name": "Parallel Squat",
-              "imageUrl": "https://www.gymvisual.com/10574-large_default/barbell-front-squat.jpg",
+              "imageUrl": "https://storage.googleapis.com/everlog-9bddf.appspot.com/exercises/illustrations/Barbell%20full%20squat1.webp",
               "category": "LEGS",
               "uuid": "1216946b-6b6e-4053-9f7b-c4c482898022",
               "createdDate": 1523982940094
@@ -587,8 +587,8 @@
           {
             "exercise": {
               "splitSides": false,
-              "name": "Bulgarian Squat",
-              "imageUrl": "https://www.gymvisual.com/9730-large_default/dumbbell-bulgarian-split-squat-female.jpg",
+              "name": "Bulgarian Split Squat",
+              "imageUrl": "https://storage.googleapis.com/everlog-9bddf.appspot.com/exercises/illustrations/Bench%20Bulgarian%20Split%20Squats%20left%20%201.webp",
               "category": "LEGS",
               "uuid": "c1cd66bd-db95-46b4-93cb-70944bcbee97",
               "createdDate": 1523982940094
@@ -644,7 +644,7 @@
               "createdDate": 1523982940094,
               "splitSides": false,
               "name": "Straight Leg Deadlift",
-              "imageUrl": "https://www.gymvisual.com/1321-large_default/3-4-sit-up.jpg",
+              "imageUrl": "https://storage.googleapis.com/everlog-9bddf.appspot.com/exercises/illustrations/Barbell%20straight%20leg%20deadlift.webp",
               "category": "LEGS"
             }
           }
@@ -659,7 +659,7 @@
             "exercise": {
               "splitSides": false,
               "name": "Single Leg Calf Raise",
-              "imageUrl": "https://www.gymvisual.com/4517-large_default/3-4-sit-up.jpg",
+              "imageUrl": "https://storage.googleapis.com/everlog-9bddf.appspot.com/exercises/illustrations/Dumbbell%20Standing%20Single%20Leg%20Calf%20Raise1.webp",
               "category": "LEGS",
               "uuid": "9e03139a-ee4d-4902-8dcf-d30c73f44a66",
               "createdDate": 1523982940094
@@ -693,7 +693,7 @@
               "createdDate": 1523982940094,
               "splitSides": false,
               "name": "Seated Calf Raise",
-              "imageUrl": "https://www.gymvisual.com/290-large_default/barbell-seated-calf-raise.jpg",
+              "imageUrl": "https://storage.googleapis.com/everlog-9bddf.appspot.com/exercises/illustrations/Dumbbell%20Seated%20Calf%20Raise1.webp",
               "category": "LEGS",
               "uuid": "0a5781b5-8f9b-4937-9ef5-341f0f75bbda"
             },
