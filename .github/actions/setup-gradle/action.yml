@@ -14,9 +14,10 @@ runs:
     - name: Set up NDK
       shell: bash
       run: |
-        # Use the sdkmanager in the PATH which is more reliable on CI
-        echo "y" | sdkmanager --install "ndk;26.1.10909125"
-        # Export the path so Gradle can find it even if it's not in the default location
+        # Find the sdkmanager tool (it's not in the PATH by default on CI)
+        SDK_MANAGER=$(find $ANDROID_HOME/cmdline-tools -name sdkmanager | head -n 1)
+        echo "y" | $SDK_MANAGER --install "ndk;26.1.10909125"
+        # Export the path so Gradle can find it
         echo "ANDROID_NDK_HOME=$ANDROID_HOME/ndk/26.1.10909125" >> $GITHUB_ENV
     - name: Set up Konan
       uses: actions/cache@v5
