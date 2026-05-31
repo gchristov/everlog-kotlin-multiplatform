@@ -33,7 +33,7 @@ runs:
       run: |
         set -Eeuo pipefail
         if [ "${{ inputs.buildType }}" == "release" ]; then
-          TASK=":mobile:bundleRelease"
+          TASK=":mobile:bundleRelease :mobile:uploadCrashlyticsSymbolFileRelease"
         else
           TASK=":mobile:assembleDebug"
         fi
