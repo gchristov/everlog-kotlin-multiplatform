@@ -74,12 +74,6 @@ android {
             isMinifyEnabled = true
             proguardFiles(getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro")
             isDebuggable = false
-            ndk {
-                debugSymbolLevel = "FULL"
-            }
-            configure<com.google.firebase.crashlytics.buildtools.gradle.CrashlyticsExtension> {
-                nativeSymbolUploadEnabled = true
-            }
         }
     }
 }
@@ -115,7 +109,6 @@ dependencies {
     implementation(libs.firebase.config)
     implementation(libs.firebase.storage)
     implementation(libs.firebase.crashlytics)
-    implementation(libs.firebase.ndk.crashlytics)
 
     implementation(libs.play.services.auth)
     implementation(libs.play.services.fitness)

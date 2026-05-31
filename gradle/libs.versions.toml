@@ -84,7 +84,6 @@ firebase-messaging = { group = "com.google.firebase", name = "firebase-messaging
 firebase-config = { group = "com.google.firebase", name = "firebase-config" }
 firebase-storage = { group = "com.google.firebase", name = "firebase-storage" }
 firebase-crashlytics = { group = "com.google.firebase", name = "firebase-crashlytics" }
-firebase-ndk-crashlytics = { group = "com.google.firebase", name = "firebase-crashlytics-ndk" }
 
 play-services-auth = { group = "com.google.android.gms", name = "play-services-auth", version.ref = "playServicesAuth" }
 play-services-fitness = { group = "com.google.android.gms", name = "play-services-fitness", version.ref = "playServicesFitness" }
