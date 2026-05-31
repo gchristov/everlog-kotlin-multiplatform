@@ -18,6 +18,7 @@ kotlin {
 android {
     namespace = "com.everlog"
     compileSdk = 36
+    ndkVersion = "26.1.10909125" // Must match version in .github/actions/setup-gradle/action.yml
 
     defaultConfig {
         applicationId = "com.everlog"
@@ -75,7 +76,7 @@ android {
             proguardFiles(getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro")
             isDebuggable = false
             ndk {
-                debugSymbolLevel = "SYMBOL_TABLE"
+                debugSymbolLevel = "FULL"
             }
             configure<com.google.firebase.crashlytics.buildtools.gradle.CrashlyticsExtension> {
                 nativeSymbolUploadEnabled = true
@@ -115,6 +116,7 @@ dependencies {
     implementation(libs.firebase.config)
     implementation(libs.firebase.storage)
     implementation(libs.firebase.crashlytics)
+    implementation(libs.firebase.ndk.crashlytics)
 
     implementation(libs.play.services.auth)
     implementation(libs.play.services.fitness)
