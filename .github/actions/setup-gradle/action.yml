@@ -11,14 +11,6 @@ runs:
       uses: gradle/actions/setup-gradle@v6 # By default, cache is only saved on the default branch
       with:
         workflow-job-context: ${{ github.job }}
-    - name: Set up NDK
-      shell: bash
-      run: |
-        # Find the sdkmanager tool (it's not in the PATH by default on CI)
-        SDK_MANAGER=$(find $ANDROID_HOME/cmdline-tools -name sdkmanager | head -n 1)
-        echo "y" | $SDK_MANAGER --install "ndk;26.1.10909125"
-        # Export the path so Gradle can find it
-        echo "ANDROID_NDK_HOME=$ANDROID_HOME/ndk/26.1.10909125" >> $GITHUB_ENV
     - name: Set up Konan
       uses: actions/cache@v5
       with:

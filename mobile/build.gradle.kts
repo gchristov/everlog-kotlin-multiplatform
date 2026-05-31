@@ -18,9 +18,6 @@ kotlin {
 android {
     namespace = "com.everlog"
     compileSdk = 36
-    // Explicitly set the NDK version to ensure symbol extraction tools are found.
-    // Replace with your installed version if different.
-    ndkVersion = "26.1.10909125" 
 
     defaultConfig {
         applicationId = "com.everlog"
@@ -31,10 +28,6 @@ android {
         versionName = project.calculateVersionName()
         vectorDrawables {
             useSupportLibrary = true
-        }
-        ndk {
-            // This tells AGP which ABIs to pack symbols for
-            abiFilters.addAll(listOf("armeabi-v7a", "arm64-v8a", "x86", "x86_64"))
         }
     }
 
@@ -81,12 +74,9 @@ android {
             isMinifyEnabled = true
             proguardFiles(getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro")
             isDebuggable = false
-            
             ndk {
                 debugSymbolLevel = "FULL"
             }
-
-            // Enable automatic upload of native symbols to Firebase
             configure<com.google.firebase.crashlytics.buildtools.gradle.CrashlyticsExtension> {
                 nativeSymbolUploadEnabled = true
             }
@@ -107,7 +97,7 @@ dependencies {
     testImplementation(libs.junit)
     testImplementation(libs.kotlin.test.junit)
     testImplementation(libs.truth)
-    
+
     androidTestImplementation(libs.androidx.test.runner)
     androidTestImplementation(libs.androidx.test.ext.junit)
     androidTestImplementation(libs.androidx.test.rules)
@@ -126,7 +116,7 @@ dependencies {
     implementation(libs.firebase.storage)
     implementation(libs.firebase.crashlytics)
     implementation(libs.firebase.ndk.crashlytics)
-    
+
     implementation(libs.play.services.auth)
     implementation(libs.play.services.fitness)
     implementation(libs.androidx.activity)
@@ -157,16 +147,16 @@ dependencies {
 
     implementation(libs.commons.lang3)
     implementation(libs.datetimeutils)
-    
+
     implementation(libs.loading.button)
-    
+
     implementation(libs.mpandroidchart)
     implementation(libs.nineoldandroids)
     implementation(libs.roundedimageview)
     implementation(libs.threetenabp)
     implementation(libs.materialnumberpicker)
     implementation(libs.taptargetview)
-    
+
     implementation(libs.maskable.layout) {
         isTransitive = false
     }
@@ -178,20 +168,20 @@ dependencies {
         isTransitive = false
     }
     implementation(libs.timber)
-    
+
     implementation(libs.hyperlog)
     implementation(libs.volley)
-    
+
     implementation(libs.konfetti)
     implementation(libs.collapsingtoolbar.subtitle)
     implementation(libs.aspect)
     implementation(libs.scrollingpagerindicator)
-    
+
     implementation(libs.flexbox)
-    
+
     implementation(libs.dexter)
     implementation(libs.textinlineimage)
-    
+
     implementation(libs.rotate.layout)
 
     implementation(libs.shapeOfView)
