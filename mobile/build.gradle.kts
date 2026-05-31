@@ -75,7 +75,7 @@ android {
             proguardFiles(getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro")
             isDebuggable = false
             ndk {
-                debugSymbolLevel = "FULL"
+                debugSymbolLevel = "SYMBOL_TABLE"
             }
             configure<com.google.firebase.crashlytics.buildtools.gradle.CrashlyticsExtension> {
                 nativeSymbolUploadEnabled = true
@@ -97,7 +97,7 @@ dependencies {
     testImplementation(libs.junit)
     testImplementation(libs.kotlin.test.junit)
     testImplementation(libs.truth)
-    
+
     androidTestImplementation(libs.androidx.test.runner)
     androidTestImplementation(libs.androidx.test.ext.junit)
     androidTestImplementation(libs.androidx.test.rules)
@@ -115,8 +115,7 @@ dependencies {
     implementation(libs.firebase.config)
     implementation(libs.firebase.storage)
     implementation(libs.firebase.crashlytics)
-    implementation(libs.firebase.ndk.crashlytics)
-    
+
     implementation(libs.play.services.auth)
     implementation(libs.play.services.fitness)
     implementation(libs.androidx.activity)
@@ -147,16 +146,16 @@ dependencies {
 
     implementation(libs.commons.lang3)
     implementation(libs.datetimeutils)
-    
+
     implementation(libs.loading.button)
-    
+
     implementation(libs.mpandroidchart)
     implementation(libs.nineoldandroids)
     implementation(libs.roundedimageview)
     implementation(libs.threetenabp)
     implementation(libs.materialnumberpicker)
     implementation(libs.taptargetview)
-    
+
     implementation(libs.maskable.layout) {
         isTransitive = false
     }
@@ -168,20 +167,20 @@ dependencies {
         isTransitive = false
     }
     implementation(libs.timber)
-    
+
     implementation(libs.hyperlog)
     implementation(libs.volley)
-    
+
     implementation(libs.konfetti)
     implementation(libs.collapsingtoolbar.subtitle)
     implementation(libs.aspect)
     implementation(libs.scrollingpagerindicator)
-    
+
     implementation(libs.flexbox)
-    
+
     implementation(libs.dexter)
     implementation(libs.textinlineimage)
-    
+
     implementation(libs.rotate.layout)
 
     implementation(libs.shapeOfView)
