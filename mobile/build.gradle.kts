@@ -18,6 +18,9 @@ kotlin {
 android {
     namespace = "com.everlog"
     compileSdk = 36
+    // Explicitly set the NDK version to ensure symbol extraction tools are found.
+    // Replace with your installed version if different.
+    ndkVersion = "26.1.10909125" 
 
     defaultConfig {
         applicationId = "com.everlog"
@@ -28,6 +31,10 @@ android {
         versionName = project.calculateVersionName()
         vectorDrawables {
             useSupportLibrary = true
+        }
+        ndk {
+            // This tells AGP which ABIs to pack symbols for
+            abiFilters.addAll(listOf("armeabi-v7a", "arm64-v8a", "x86", "x86_64"))
         }
     }
 
@@ -74,9 +81,12 @@ android {
             isMinifyEnabled = true
             proguardFiles(getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro")
             isDebuggable = false
+            
             ndk {
                 debugSymbolLevel = "FULL"
             }
+
+            // Enable automatic upload of native symbols to Firebase
             configure<com.google.firebase.crashlytics.buildtools.gradle.CrashlyticsExtension> {
                 nativeSymbolUploadEnabled = true
             }
