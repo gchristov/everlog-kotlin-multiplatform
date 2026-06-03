@@ -4,6 +4,7 @@ import android.app.Activity
 import com.everlog.data.model.set.ELSetType
 import com.everlog.managers.preferences.SettingsManager.MuscleGoal
 import com.everlog.ui.fragments.home.activity.statistics.StatisticsHomeFragment
+import com.everlog.utils.device.DeviceUtils
 import timber.log.Timber
 import java.util.*
 
@@ -25,7 +26,8 @@ class AnalyticsManager : Analytic {
     }
 
     fun initialize() {
-        // No-op
+        // Disable analytics tracking when running under test
+        toggleAnalytics(enabled = !DeviceUtils.isRunningUnderTest())
     }
 
     override fun toggleAnalytics(enabled: Boolean) {
@@ -84,21 +86,17 @@ class AnalyticsManager : Analytic {
         }
     }
 
-    override fun userRegister(userId: String?,
-                              email: String?,
-                              displayName: String?) {
-        Timber.tag(TAG).i("User register: userId=%s, email=%s, displayName=%s", userId, email, displayName)
+    override fun userRegister(userId: String?) {
+        Timber.tag(TAG).i("User register: userId=%s", userId)
         mAnalytics?.forEach {
-            it.userRegister(userId, email, displayName)
+            it.userRegister(userId)
         }
     }
 
-    override fun userIdentify(userId: String?,
-                              email: String?,
-                              displayName: String?) {
-        Timber.tag(TAG).i("User identify: userId=%s, email=%s, displayName=%s", userId, email, displayName)
+    override fun userIdentify(userId: String?) {
+        Timber.tag(TAG).i("User identify: userId=%s", userId)
         mAnalytics?.forEach {
-            it.userIdentify(userId, email, displayName)
+            it.userIdentify(userId)
         }
     }
 

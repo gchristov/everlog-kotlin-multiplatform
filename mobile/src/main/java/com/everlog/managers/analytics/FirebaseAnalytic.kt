@@ -29,35 +29,23 @@ class FirebaseAnalytic : BaseAnalytic() {
         }
     }
 
-    override fun logUserRegister(eventName: String,
-                                 userId: String?,
-                                 email: String?,
-                                 displayName: String?) {
+    override fun logUserRegister(eventName: String, userId: String?) {
         if (!mAnalyticsEnabled) {
             return
         }
         val bundle = Bundle()
         bundle.putString(AnalyticsConstants.PROPERTY_USER_ID, userId)
-        bundle.putString(AnalyticsConstants.PROPERTY_USER_EMAIL, email)
-        bundle.putString(AnalyticsConstants.PROPERTY_USER_DISPLAY_NAME, displayName)
         mFirebaseAnalytics?.logEvent(eventName, bundle)
     }
 
-    override fun logUserIdentify(eventName: String,
-                                 userId: String?,
-                                 email: String?,
-                                 displayName: String?) {
+    override fun logUserIdentify(eventName: String, userId: String?) {
         if (!mAnalyticsEnabled) {
             return
         }
         val bundle = Bundle()
         bundle.putString(AnalyticsConstants.PROPERTY_USER_ID, userId)
-        bundle.putString(AnalyticsConstants.PROPERTY_USER_EMAIL, email)
-        bundle.putString(AnalyticsConstants.PROPERTY_USER_DISPLAY_NAME, displayName)
         mFirebaseAnalytics?.setUserId(userId)
         mFirebaseAnalytics?.setUserProperty(AnalyticsConstants.PROPERTY_USER_ID, userId)
-        mFirebaseAnalytics?.setUserProperty(AnalyticsConstants.PROPERTY_USER_EMAIL, email)
-        mFirebaseAnalytics?.setUserProperty(AnalyticsConstants.PROPERTY_USER_DISPLAY_NAME, displayName)
         mFirebaseAnalytics?.logEvent(eventName, bundle)
     }
 

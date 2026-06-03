@@ -155,8 +155,8 @@ class PresenterHome : BaseActivityPresenter<MvpViewHome>() {
     // Analytics
 
     private fun identifyUser() {
-        AnalyticsManager.manager.userIdentify(getUserAccount()!!.id, getUserAccount()!!.email, getUserAccount()!!.displayName)
-        ErrorManager.manager.userIdentify(getUserAccount()!!.id, getUserAccount()!!.email, getUserAccount()!!.displayName)
+        AnalyticsManager.manager.userIdentify(getUserAccount()!!.id)
+        ErrorManager.manager.userIdentify(getUserAccount()!!.id)
     }
 
     // Setup

@@ -18,8 +18,6 @@ object ELConstants {
     const val FIELD_NAME = "name"
     const val FIELD_UUID = "uuid"
     const val FIELD_CRASHLYTICS_USER_ID = "user_id"
-    const val FIELD_CRASHLYTICS_USER_EMAIL = "user_email"
-    const val FIELD_CRASHLYTICS_USER_NAME = "user_name"
 
     const val EXTRA_ROUTINE = "EXTRA_ROUTINE"
     const val EXTRA_WORKOUT = "EXTRA_WORKOUT"

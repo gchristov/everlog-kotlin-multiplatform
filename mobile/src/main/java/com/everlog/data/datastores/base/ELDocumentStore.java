@@ -2,8 +2,8 @@ package com.everlog.data.datastores.base;
 
 import com.everlog.data.datastores.events.document.ELDocStoreItemLoadedEvent;
 import com.everlog.data.model.ELFirestoreModel;
-import com.everlog.managers.auth.AuthManager;
 import com.everlog.utils.Utils;
+import com.everlog.utils.device.DeviceUtils;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.ListenerRegistration;
@@ -86,8 +86,8 @@ public abstract class ELDocumentStore<T extends ELFirestoreModel> {
     // CRUD
 
     public void create(T item, SetOptions options) {
-        if (AuthManager.isRunningInGoogleTestLab()) {
-            Timber.tag(getTag()).w("Ignoring CREATE operation for Google Cloud account");
+        if (DeviceUtils.isRunningUnderTest()) {
+            Timber.tag(getTag()).w("Ignoring CREATE operation for test mode");
             return;
         }
         if (options != null) {
@@ -98,8 +98,8 @@ public abstract class ELDocumentStore<T extends ELFirestoreModel> {
     }
 
     public void delete(T item) {
-        if (AuthManager.isRunningInGoogleTestLab()) {
-            Timber.tag(getTag()).w("Ignoring DELETE operation for Google Cloud account");
+        if (DeviceUtils.isRunningUnderTest()) {
+            Timber.tag(getTag()).w("Ignoring DELETE operation for test mode");
             return;
         }
         getParentCollection().document(item.documentId()).delete();

@@ -5,10 +5,12 @@ import android.content.res.Configuration;
 import android.graphics.Point;
 import android.hardware.display.DisplayManager;
 import android.os.Build;
+import android.provider.Settings;
 import android.view.Display;
 import android.view.WindowManager;
 
 import com.everlog.R;
+import com.everlog.application.ELApplication;
 
 import org.apache.commons.lang3.text.WordUtils;
 
@@ -89,5 +91,21 @@ public class DeviceUtils {
         } else {
             return WordUtils.capitalize(manufacturer.toLowerCase()) + " " + model;
         }
+    }
+
+    public static boolean isRunningUnderTest() {
+        // Check for the specific system setting injected by Firebase
+        String testLabSetting = Settings.System.getString(ELApplication.getInstance().getContentResolver(), "firebase.test.lab");
+        if ("true".equals(testLabSetting)) return true;
+
+        // Check for common emulator/test lab hardware identifiers
+        String hardware = Build.HARDWARE;
+        if (hardware.contains("goldfish") || hardware.contains("ranchu")) return true;
+
+        // Check for QEMU property
+        String qemu = System.getProperty("ro.kernel.qemu");
+        if ("1".equals(qemu)) return true;
+
+        return false;
     }
 }
