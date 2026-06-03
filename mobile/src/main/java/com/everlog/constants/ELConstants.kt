@@ -50,8 +50,8 @@ object ELConstants {
     const val BROADCAST_WORKOUT_STARTED = BuildConfig.APPLICATION_ID + ".BROADCAST_WORKOUT_STARTED"
     const val BROADCAST_REMOTE_CONFIG_REFRESHED = BuildConfig.APPLICATION_ID + ".BROADCAST_REMOTE_CONFIG_REFRESHED"
 
-    const val CLOUD_TEST_EMAIL = "hello@cloudtestlabaccounts.com"
-    const val CLOUD_TEST_PASSWORD = "KTI4We2uSTfl"
+    const val FIREBASE_TEST_LAB_EMAIL = "hello@cloudtestlabaccounts.com"
+    const val FIREBASE_TEST_LAB_PASSWORD = "KTI4We2uSTfl"
 
     const val NETWORK_TIMEOUT_INTERVAL: Long = 60 // 60 seconds
     const val NETWORK_PING_TIMEOUT_INTERVAL = 5000 // 5 seconds

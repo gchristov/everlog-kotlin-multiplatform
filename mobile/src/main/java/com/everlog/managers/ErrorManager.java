@@ -26,7 +26,7 @@ public class ErrorManager {
 
     public void initialize() {
         FirebaseCrashlytics.getInstance().setCrashlyticsCollectionEnabled(true);
-        if (DeviceUtils.isRunningUnderTest()) {
+        if (DeviceUtils.isFirebaseTestLabRun()) {
             FirebaseCrashlytics.getInstance().setCustomKey("is_running_under_test", true);
         }
         // Add Crashlytics

@@ -93,19 +93,8 @@ public class DeviceUtils {
         }
     }
 
-    public static boolean isRunningUnderTest() {
-        // Check for the specific system setting injected by Firebase
+    public static boolean isFirebaseTestLabRun() {
         String testLabSetting = Settings.System.getString(ELApplication.getInstance().getContentResolver(), "firebase.test.lab");
-        if ("true".equals(testLabSetting)) return true;
-
-        // Check for common emulator/test lab hardware identifiers
-        String hardware = Build.HARDWARE;
-        if (hardware.contains("goldfish") || hardware.contains("ranchu")) return true;
-
-        // Check for QEMU property
-        String qemu = System.getProperty("ro.kernel.qemu");
-        if ("1".equals(qemu)) return true;
-
-        return false;
+        return "true".equals(testLabSetting);
     }
 }

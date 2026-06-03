@@ -86,8 +86,8 @@ public abstract class ELDocumentStore<T extends ELFirestoreModel> {
     // CRUD
 
     public void create(T item, SetOptions options) {
-        if (DeviceUtils.isRunningUnderTest()) {
-            Timber.tag(getTag()).w("Ignoring CREATE operation for test mode");
+        if (DeviceUtils.isFirebaseTestLabRun()) {
+            Timber.tag(getTag()).w("Ignoring CREATE operation for Firebase Test Lab run");
             return;
         }
         if (options != null) {
@@ -98,8 +98,8 @@ public abstract class ELDocumentStore<T extends ELFirestoreModel> {
     }
 
     public void delete(T item) {
-        if (DeviceUtils.isRunningUnderTest()) {
-            Timber.tag(getTag()).w("Ignoring DELETE operation for test mode");
+        if (DeviceUtils.isFirebaseTestLabRun()) {
+            Timber.tag(getTag()).w("Ignoring DELETE operation for Firebase Test Lab run");
             return;
         }
         getParentCollection().document(item.documentId()).delete();

@@ -98,11 +98,11 @@ object AuthManager : PreferencesManager() {
         var fEmail = email
         var fPassword = password
         mAuthListener = listener
-        if (DeviceUtils.isRunningUnderTest()) {
-            Timber.tag(TAG).i("Redirecting Google Test Lab anonymous login to email login")
-            // Force Google Test Lab user to use pre-existing account
-            fEmail = ELConstants.CLOUD_TEST_EMAIL
-            fPassword = ELConstants.CLOUD_TEST_PASSWORD
+        if (DeviceUtils.isFirebaseTestLabRun()) {
+            Timber.tag(TAG).i("Redirecting Firebase Test Lab anonymous login to email login")
+            // Force Firebase Test Lab session to use pre-existing account
+            fEmail = ELConstants.FIREBASE_TEST_LAB_EMAIL
+            fPassword = ELConstants.FIREBASE_TEST_LAB_PASSWORD
         } else {
             Timber.tag(TAG).i("Logging in using email")
         }
@@ -112,9 +112,10 @@ object AuthManager : PreferencesManager() {
     }
 
     fun loginAnonymously(listener: OnAuthActionListener) {
-        if (DeviceUtils.isRunningUnderTest()) {
-            Timber.tag(TAG).i("Redirecting Google Test Lab anonymous login to email login")
-            login(ELConstants.CLOUD_TEST_EMAIL, ELConstants.CLOUD_TEST_PASSWORD, listener)
+        if (DeviceUtils.isFirebaseTestLabRun()) {
+            // Force Firebase Test Lab session to use pre-existing account
+            Timber.tag(TAG).i("Redirecting Firebase Test Lab anonymous login to email login")
+            login(ELConstants.FIREBASE_TEST_LAB_EMAIL, ELConstants.FIREBASE_TEST_LAB_PASSWORD, listener)
         } else {
             Timber.tag(TAG).i("Logging in anonymously")
             mAuthListener = listener
@@ -136,9 +137,10 @@ object AuthManager : PreferencesManager() {
                  newsletterAccepted: Boolean,
                  listener: OnAuthActionListener) {
         mAuthListener = listener
-        if (DeviceUtils.isRunningUnderTest()) {
-            Timber.tag(TAG).i("Redirecting Google Test Lab registration to login")
-            login(ELConstants.CLOUD_TEST_EMAIL, ELConstants.CLOUD_TEST_PASSWORD, listener)
+        if (DeviceUtils.isFirebaseTestLabRun()) {
+            // Force Firebase Test Lab session to use pre-existing account
+            Timber.tag(TAG).i("Redirecting Firebase Test Lab registration to login")
+            login(ELConstants.FIREBASE_TEST_LAB_EMAIL, ELConstants.FIREBASE_TEST_LAB_PASSWORD, listener)
         } else {
             Timber.tag(TAG).i("Registering using email")
             mAuth
@@ -183,11 +185,11 @@ object AuthManager : PreferencesManager() {
             try {
                 val account = completedTask.getResult(ApiException::class.java)
                 if (account != null && account.idToken != null) {
-                    if (DeviceUtils.isRunningUnderTest()) {
-                        Timber.tag(TAG).i("Using Google Test Lab account")
-                        // Force Google Test Lan to use pre-existing account
+                    if (DeviceUtils.isFirebaseTestLabRun()) {
+                        Timber.tag(TAG).i("Using Firebase Test Lab account")
+                        // Force Firebase Test Lab session to use pre-existing account
                         mAuth
-                                ?.signInWithEmailAndPassword(ELConstants.CLOUD_TEST_EMAIL, ELConstants.CLOUD_TEST_PASSWORD)
+                                ?.signInWithEmailAndPassword(ELConstants.FIREBASE_TEST_LAB_EMAIL, ELConstants.FIREBASE_TEST_LAB_PASSWORD)
                                 ?.addOnCompleteListener(getLoginHandler())
                     } else {
                         Timber.tag(TAG).i("Logging in with Google credential")

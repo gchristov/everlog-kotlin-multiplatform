@@ -1,6 +1,7 @@
 package com.everlog.managers.analytics
 
 import android.app.Activity
+import com.everlog.BuildConfig
 import com.everlog.data.model.set.ELSetType
 import com.everlog.managers.preferences.SettingsManager.MuscleGoal
 import com.everlog.ui.fragments.home.activity.statistics.StatisticsHomeFragment
@@ -26,8 +27,8 @@ class AnalyticsManager : Analytic {
     }
 
     fun initialize() {
-        // Disable analytics tracking when running under test
-        toggleAnalytics(enabled = !DeviceUtils.isRunningUnderTest())
+        // Only enable analytics in release builds outside of Firebase Test Lab
+        toggleAnalytics(enabled = BuildConfig.BUILD_TYPE.equals("release") && !DeviceUtils.isFirebaseTestLabRun())
     }
 
     override fun toggleAnalytics(enabled: Boolean) {
