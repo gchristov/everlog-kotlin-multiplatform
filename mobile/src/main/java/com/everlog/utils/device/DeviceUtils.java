@@ -5,10 +5,12 @@ import android.content.res.Configuration;
 import android.graphics.Point;
 import android.hardware.display.DisplayManager;
 import android.os.Build;
+import android.provider.Settings;
 import android.view.Display;
 import android.view.WindowManager;
 
 import com.everlog.R;
+import com.everlog.application.ELApplication;
 
 import org.apache.commons.lang3.text.WordUtils;
 
@@ -89,5 +91,10 @@ public class DeviceUtils {
         } else {
             return WordUtils.capitalize(manufacturer.toLowerCase()) + " " + model;
         }
+    }
+
+    public static boolean isFirebaseTestLabRun() {
+        String testLabSetting = Settings.System.getString(ELApplication.getInstance().getContentResolver(), "firebase.test.lab");
+        return "true".equals(testLabSetting);
     }
 }

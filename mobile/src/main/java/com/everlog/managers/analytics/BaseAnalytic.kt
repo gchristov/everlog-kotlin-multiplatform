@@ -14,15 +14,9 @@ abstract class BaseAnalytic : Analytic {
                                activity: Activity?,
                                screenName: String?)
 
-    abstract fun logUserRegister(eventName: String,
-                                 userId: String?,
-                                 email: String?,
-                                 displayName: String?)
+    abstract fun logUserRegister(eventName: String, userId: String?)
 
-    abstract fun logUserIdentify(eventName: String,
-                                 userId: String?,
-                                 email: String?,
-                                 displayName: String?)
+    abstract fun logUserIdentify(eventName: String, userId: String?)
 
     abstract fun logUserLogout(eventName: String)
 
@@ -88,16 +82,12 @@ abstract class BaseAnalytic : Analytic {
         logScreenName(AnalyticsConstants.EVENT_SCREEN_VIEW, activity, screenName)
     }
 
-    override fun userRegister(userId: String?,
-                              email: String?,
-                              displayName: String?) {
-        logUserRegister(AnalyticsConstants.EVENT_USER_REGISTER, userId, email, displayName)
+    override fun userRegister(userId: String?) {
+        logUserRegister(AnalyticsConstants.EVENT_USER_REGISTER, userId)
     }
 
-    override fun userIdentify(userId: String?,
-                              email: String?,
-                              displayName: String?) {
-        logUserIdentify(AnalyticsConstants.EVENT_USER_IDENTIFY, userId, email, displayName)
+    override fun userIdentify(userId: String?) {
+        logUserIdentify(AnalyticsConstants.EVENT_USER_IDENTIFY, userId)
     }
 
     override fun userLogout() {

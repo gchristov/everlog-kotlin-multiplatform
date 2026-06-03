@@ -180,10 +180,7 @@ class AnalyticsConstants {
         // Properties
 
         const val PROPERTY_USER_ID = "userId"
-        const val PROPERTY_USER_EMAIL = "email"
-        const val PROPERTY_USER_DISPLAY_NAME = "displayName"
         const val PROPERTY_TYPE = "type"
         const val PROPERTY_VALUE = "value"
-        const val PROPERTY_SCREEN_NAME = "screen_name"
     }
 }

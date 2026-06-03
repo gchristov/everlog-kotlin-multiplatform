@@ -20,13 +20,9 @@ interface Analytic {
 
     fun screenName(activity: Activity?, screenName: String?)
 
-    fun userRegister(userId: String?,
-                     email: String?,
-                     displayName: String?)
+    fun userRegister(userId: String?)
 
-    fun userIdentify(userId: String?,
-                     email: String?,
-                     displayName: String?)
+    fun userIdentify(userId: String?)
 
     fun userLogout()
 
