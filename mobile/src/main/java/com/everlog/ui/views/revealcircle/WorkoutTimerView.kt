@@ -1,11 +1,11 @@
 package com.everlog.ui.views.revealcircle
 
 import android.content.Context
-import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ProgressBar
+import android.widget.TextView
 import com.everlog.R
-import com.everlog.databinding.ViewWorkoutTimerBinding
 import com.everlog.utils.format.FormatUtils.Companion.formatDurationShort
 
 class WorkoutTimerView(context: Context,
@@ -14,12 +14,15 @@ class WorkoutTimerView(context: Context,
 
     private val TAG = "WorkoutTimerView"
 
-    private lateinit var binding: ViewWorkoutTimerBinding
-
-    override fun setupLayout(layoutId: Int) {
-        binding = ViewWorkoutTimerBinding.inflate(LayoutInflater.from(context), this, true)
-        this.tag = tag()
-    }
+    // Both view_workout_timer.xml and view_workout_timer_compact.xml share these ids,
+    // so the layout requested via the constructor's layoutId is honoured (setupLayout
+    // is not overridden here, relying on the base class's generic View.inflate).
+    private val titleLbl: TextView by lazy { findViewById(R.id.titleLbl) }
+    private val timeField: TextView by lazy { findViewById(R.id.timeField) }
+    private val progressBar: ProgressBar by lazy { findViewById(R.id.progressBar) }
+    private val cancelBtn: View by lazy { findViewById(R.id.cancelBtn) }
+    private val increaseBtn: View by lazy { findViewById(R.id.increaseBtn) }
+    private val decreaseBtn: View by lazy { findViewById(R.id.decreaseBtn) }
 
     override fun tag(): String {
         return TAG
@@ -30,24 +33,24 @@ class WorkoutTimerView(context: Context,
     }
 
     fun observeIncreaseClick(listener: OnClickListener) {
-        binding.increaseBtn.setOnClickListener(listener)
+        increaseBtn.setOnClickListener(listener)
     }
 
     fun observeDecreaseClick(listener: OnClickListener) {
-        binding.decreaseBtn.setOnClickListener(listener)
+        decreaseBtn.setOnClickListener(listener)
     }
 
     fun observeCancelClick(listener: OnClickListener) {
-        binding.cancelBtn.setOnClickListener(listener)
+        cancelBtn.setOnClickListener(listener)
     }
 
     fun updateTime(title: String,
                    timeRemainingSeconds: Int,
                    progress: Int) {
         if (timeRemainingSeconds >= 0) {
-            binding.titleLbl.text = title
-            binding.timeField.text = formatDurationShort(timeRemainingSeconds * 1000.toLong(), "mm:ss")
-            binding.progressBar.progress = progress
+            titleLbl.text = title
+            timeField.text = formatDurationShort(timeRemainingSeconds * 1000.toLong(), "mm:ss")
+            progressBar.progress = progress
         }
     }
 }

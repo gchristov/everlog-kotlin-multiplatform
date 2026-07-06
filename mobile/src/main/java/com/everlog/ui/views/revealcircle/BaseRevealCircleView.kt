@@ -32,14 +32,14 @@ abstract class BaseRevealCircleView(context: Context,
         onReady()
     }
 
-    fun show(viewGroup: ViewGroup?, revealLocation: Point) {
+    fun show(viewGroup: ViewGroup?, revealLocation: Point, index: Int = -1) {
         // Just in case remove any other timer
         val view = viewGroup?.findViewWithTag<View>(tag())
         if (view != null) {
             viewGroup.removeView(view)
         }
         mRevealPoint = revealLocation
-        viewGroup?.addView(this, mLayoutParams)
+        viewGroup?.addView(this, index, mLayoutParams)
         val cx: Int = revealLocation.x
         val cy: Int = revealLocation.y
         val radius = max(viewGroup?.width ?: 0, viewGroup?.height ?: 0)

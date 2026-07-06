@@ -13,7 +13,7 @@ import com.everlog.ui.views.revealcircle.WorkoutTimerView
 class RestTimeController(mvpView: MvpViewWorkout?,
                          workout: ELWorkout,
                          private val binding: ActivityWorkoutBinding,
-                         navigator: Navigator?) : BaseWorkoutTimeController(mvpView, workout, binding.contentPanel) {
+                         navigator: Navigator?) : BaseWorkoutTimeController(mvpView, workout, binding.footerContentContainer) {
 
     private val mNavigator = navigator
 
@@ -46,5 +46,10 @@ class RestTimeController(mvpView: MvpViewWorkout?,
 
     override fun buildTimer(context: Context): WorkoutTimerView {
         return WorkoutTimerView(context, R.layout.view_workout_timer_compact, ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT))
+    }
+
+    override fun timerViewIndex(): Int {
+        // Sit above the add exercise button in footerContentContainer
+        return 0
     }
 }

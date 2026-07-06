@@ -44,6 +44,8 @@ abstract class BaseWorkoutTimeController(
 
     abstract fun buildTimer(context: Context): WorkoutTimerView
 
+    open fun timerViewIndex(): Int = -1
+
     fun onTimeStopped(): Observable<Void> {
         return mTimeStopped
     }
@@ -112,7 +114,7 @@ abstract class BaseWorkoutTimeController(
     private fun attachTimer() {
         if (mTimerView == null) {
             mTimerView = buildTimer(mMvpView!!.context)
-            mTimerView?.show(contentPanel, Point(contentPanel.width / 2, contentPanel.height / 2))
+            mTimerView?.show(contentPanel, Point(contentPanel.width / 2, contentPanel.height / 2), timerViewIndex())
         }
         // Initial timer state
         mTimerView?.updateTime(getTimerTitle(), mTotalTimeSeconds, 100)
