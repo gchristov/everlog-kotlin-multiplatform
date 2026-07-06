@@ -1,0 +1,10 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(pulumi stack --show-urns*)",
+      "Bash(pulumi preview*)",
+      "Bash(pulumi stack ls*)",
+      "Bash(pulumi whoami*)"
+    ]
+  }
+}
