@@ -66,6 +66,10 @@ Singleton-style managers encapsulate cross-cutting concerns and are the integrat
 
 `services/workout/WorkoutService` + `WorkoutNotificationBuilder` run the active-workout foreground service/notification. `services/fcm/ELFirebaseMessagingService` handles push notifications. `receivers/` holds broadcast receivers.
 
+## Pull requests
+
+Use `PULL_REQUEST_TEMPLATE.md` for PR descriptions (`## What does this pull request change?`, `## Demo`, `## Screenshots`, `## How is this change tested?`). Irrelevant sections (e.g. Demo/Screenshots for a non-UI change) can be dropped.
+
 ## Testing reality check
 
 Test coverage is currently minimal: `mobile/src/test/java` has only the default `ExampleUnitTest`, and `mobile/src/androidTest/java` has a single instrumented E2E test (`LoginActivityTest`, which drives a real login using the `E2E_TEST_USER_EMAIL`/`PASSWORD` secrets against a real Firebase project). Don't assume there's an existing unit test suite to model new tests after — check the actual class before assuming test conventions.
