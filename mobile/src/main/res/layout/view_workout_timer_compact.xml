@@ -3,8 +3,9 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="?android:attr/actionBarSize"
-    android:background="@color/main_accent"
+    android:background="@drawable/rounded_corners_workout_timer_compact"
     android:clickable="true"
+    android:clipToOutline="true"
     android:clipChildren="false"
     android:clipToPadding="false"
     android:orientation="vertical">

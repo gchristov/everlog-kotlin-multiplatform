@@ -1,7 +1,7 @@
 package com.everlog.ui.activities.home.workout.utils
 
 import android.content.Context
-import android.view.ViewGroup
+import android.widget.LinearLayout
 import com.everlog.R
 import com.everlog.data.model.workout.ELWorkout
 import com.everlog.databinding.ActivityWorkoutBinding
@@ -45,7 +45,10 @@ class RestTimeController(mvpView: MvpViewWorkout?,
     }
 
     override fun buildTimer(context: Context): WorkoutTimerView {
-        return WorkoutTimerView(context, R.layout.view_workout_timer_compact, ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT))
+        val margin = context.resources.getDimensionPixelSize(R.dimen.activity_margin_half)
+        val layoutParams = LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT)
+        layoutParams.setMargins(margin, margin, margin, 0)
+        return WorkoutTimerView(context, R.layout.view_workout_timer_compact, layoutParams)
     }
 
     override fun timerViewIndex(): Int {
