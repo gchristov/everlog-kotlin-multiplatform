@@ -9,14 +9,13 @@ import com.everlog.R
 import com.everlog.utils.format.FormatUtils.Companion.formatDurationShort
 
 class WorkoutTimerView(context: Context,
-                       layoutId: Int? = R.layout.view_workout_timer,
-                       layoutParams: ViewGroup.LayoutParams? = ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT)) : BaseRevealCircleView(context, layoutId!!, layoutParams) {
+                       layoutId: Int,
+                       layoutParams: ViewGroup.LayoutParams) : BaseRevealCircleView(context, layoutId, layoutParams) {
 
     private val TAG = "WorkoutTimerView"
 
-    // Both view_workout_timer.xml and view_workout_timer_compact.xml share these ids,
-    // so the layout requested via the constructor's layoutId is honoured (setupLayout
-    // is not overridden here, relying on the base class's generic View.inflate).
+    // setupLayout is not overridden here, relying on the base class's generic View.inflate
+    // to honour the layoutId passed to the constructor.
     private val titleLbl: TextView by lazy { findViewById(R.id.titleLbl) }
     private val timeField: TextView by lazy { findViewById(R.id.timeField) }
     private val progressBar: ProgressBar by lazy { findViewById(R.id.progressBar) }

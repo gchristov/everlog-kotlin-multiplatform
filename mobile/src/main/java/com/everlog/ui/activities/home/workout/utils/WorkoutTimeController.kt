@@ -104,7 +104,7 @@ class WorkoutTimeController(mvpView: MvpViewWorkout?,
         val margin = context.resources.getDimensionPixelSize(R.dimen.activity_margin_half)
         val layoutParams = LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT)
         layoutParams.setMargins(margin, margin, margin, 0)
-        return WorkoutTimerView(context, R.layout.view_workout_timer_compact, layoutParams)
+        return WorkoutTimerView(context, R.layout.view_workout_timer, layoutParams)
     }
 
     override fun timerViewIndex(): Int {
