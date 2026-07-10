@@ -165,10 +165,14 @@ class ExerciseGroupCreateAdapter {
         private fun renderSets() {
             val setCount = item.getTotalSetsCount()
             mAdapter.setItems(setCount, this)
-            mAdapter.notifyDataSetChanged()
-            if (binding.pager.currentItem != mGroupPageIndex[item.uuid] ?: 0) {
-                binding.pager.setCurrentItem(mGroupPageIndex[item.uuid] ?: 0, false)
+            // Clamp the pager to a valid position for the new set count before notifying:
+            // ScrollingPagerIndicator reads the pager's current position as soon as notifyDataSetChanged
+            // fires, and crashes if it's still pointing past the new (smaller) item count.
+            val targetPage = (mGroupPageIndex[item.uuid] ?: 0).coerceIn(0, (setCount - 1).coerceAtLeast(0))
+            if (binding.pager.currentItem != targetPage) {
+                binding.pager.setCurrentItem(targetPage, false)
             }
+            mAdapter.notifyDataSetChanged()
             binding.pager.refresh()
         }
 
