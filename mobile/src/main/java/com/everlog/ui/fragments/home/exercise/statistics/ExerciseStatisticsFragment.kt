@@ -126,6 +126,8 @@ class ExerciseStatisticsFragment(exercise: ELExercise,
         binding.rangeSpinner.onItemSelectedListener = null
         binding.rangeSpinner.setSelection(StatisticsHomeFragment.RangeType.values().indexOf(rangeType))
         binding.rangeSpinner.post {
+            // The fragment's view may have been destroyed by the time this runs
+            if (_binding == null) return@post
             binding.rangeSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
                 override fun onItemSelected(parent: AdapterView<*>, view: View?, position: Int, id: Long) {
                     onRangeChanged.onNext(StatisticsHomeFragment.RangeType.values()[position])
