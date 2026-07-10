@@ -1,111 +1,107 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<io.github.florent37.shapeofview.shapes.RoundRectView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="?android:attr/actionBarSize"
     android:clickable="true"
-    tools:background="@color/background_base">
+    android:orientation="vertical"
+    app:shape_roundRect_bottomLeftRadius="@dimen/card_radius_default"
+    app:shape_roundRect_bottomRightRadius="@dimen/card_radius_default"
+    app:shape_roundRect_topLeftRadius="@dimen/card_radius_default"
+    app:shape_roundRect_topRightRadius="@dimen/card_radius_default">
 
-    <com.github.mmin18.widget.RealtimeBlurView
+    <View
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        app:realtimeBlurRadius="20dp"
-        app:realtimeOverlayColor="@color/background_blur" />
+        android:background="@color/main_accent" />
+
+    <ProgressBar
+        android:id="@+id/progressBar"
+        style="?android:attr/progressBarStyleHorizontal"
+        android:layout_width="match_parent"
+        android:layout_height="4dp"
+        android:background="@drawable/progress_bar_horizontal_inverted"
+        android:indeterminate="false"
+        android:max="100"
+        android:progressDrawable="@drawable/progress_bar_horizontal_inverted"
+        tools:progress="50" />
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:clipChildren="false"
         android:clipToPadding="false"
-        android:orientation="vertical">
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
 
+        <ImageView
+            android:id="@+id/cancelBtn"
+            android:layout_width="?android:attr/actionBarSize"
+            android:layout_height="match_parent"
+            android:foreground="?attr/selectableItemBackground"
+            android:padding="@dimen/activity_margin"
+            android:src="@drawable/ic_clear_white"
+            android:tint="@color/background_card" />
+
+        <!-- titleLbl's width is capped programmatically (see WorkoutTimerView.applyTitleMaxWidth)
+             to whatever room is left after the fixed-size siblings, so it hugs short titles
+             and only ellipsizes/marquees once it would otherwise overlap them. -->
         <TextView
             android:id="@+id/titleLbl"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/activity_margin_half"
+            android:ellipsize="marquee"
+            android:focusable="true"
+            android:focusableInTouchMode="true"
             android:fontFamily="sans-serif-medium"
-            android:gravity="center"
-            android:paddingLeft="@dimen/activity_margin_actual"
-            android:paddingRight="@dimen/activity_margin_actual"
-            android:textColor="@color/white_base"
-            android:textSize="26sp"
-            tools:text="Crunches" />
+            android:gravity="center_vertical|start"
+            android:marqueeRepeatLimit="marquee_forever"
+            android:singleLine="true"
+            android:textColor="@color/background_card"
+            android:textSize="18sp"
+            tools:text="Rest" />
 
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+        <TextView
+            android:id="@+id/separatorLbl"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="  •  "
+            android:textColor="@color/background_card"
+            android:textSize="18sp" />
 
-            <ProgressBar
-                android:id="@+id/progressBar"
-                style="?android:attr/progressBarStyleHorizontal"
-                android:layout_width="300dp"
-                android:layout_height="300dp"
-                android:layout_centerInParent="true"
-                android:background="@drawable/progress_bar_circle_shape_notification"
-                android:indeterminate="false"
-                android:max="100"
-                android:progressDrawable="@drawable/progress_bar_circle_main_notification"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                tools:progress="50" />
+        <TextView
+            android:id="@+id/timeField"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="sans-serif-medium"
+            android:textColor="@color/background_card"
+            android:textSize="18sp"
+            tools:text="60:00" />
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_margin="50dp"
-                android:gravity="center"
-                android:orientation="vertical"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent">
-
-                <TextView
-                    android:id="@+id/decreaseBtn"
-                    android:layout_width="wrap_content"
-                    android:layout_height="0dp"
-                    android:layout_weight="1"
-                    android:gravity="center"
-                    android:text="- 0:10"
-                    android:textColor="@color/main_accent"
-                    android:textSize="17sp" />
-
-                <TextView
-                    android:id="@+id/timeField"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:fontFamily="sans-serif-medium"
-                    android:textColor="@color/main_accent"
-                    android:textSize="60sp"
-                    tools:text="60:00" />
-
-                <TextView
-                    android:id="@+id/increaseBtn"
-                    android:layout_width="wrap_content"
-                    android:layout_height="0dp"
-                    android:layout_weight="1"
-                    android:gravity="center"
-                    android:text="+ 0:10"
-                    android:textColor="@color/main_accent"
-                    android:textSize="17sp" />
-            </LinearLayout>
-        </androidx.constraintlayout.widget.ConstraintLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
+        <View
+            android:layout_width="0dp"
             android:layout_height="0dp"
-            android:layout_weight="1"
-            android:gravity="center">
+            android:layout_weight="1" />
 
-            <com.google.android.material.floatingactionbutton.FloatingActionButton
-                android:id="@+id/cancelBtn"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:src="@drawable/ic_clear_white"
-                android:tint="@color/background_card" />
-        </LinearLayout>
+        <ImageView
+            android:id="@+id/decreaseBtn"
+            android:layout_width="?android:attr/actionBarSize"
+            android:layout_height="match_parent"
+            android:layout_marginRight="-6dp"
+            android:foreground="?attr/selectableItemBackground"
+            android:padding="@dimen/margin_14"
+            android:src="@drawable/ic_replay_10"
+            android:tint="@color/background_card" />
+
+        <ImageView
+            android:id="@+id/increaseBtn"
+            android:layout_width="?android:attr/actionBarSize"
+            android:layout_height="match_parent"
+            android:foreground="?attr/selectableItemBackground"
+            android:padding="@dimen/margin_14"
+            android:src="@drawable/ic_forward_10"
+            android:tint="@color/background_card" />
     </LinearLayout>
-</RelativeLayout>
+</io.github.florent37.shapeofview.shapes.RoundRectView>

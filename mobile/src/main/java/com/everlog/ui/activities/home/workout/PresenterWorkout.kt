@@ -46,8 +46,7 @@ class PresenterWorkout : PresenterCreateExerciseGroups<MvpViewWorkout>() {
 
     private var mTickTimeController: TickTimeController? = null
     private var mWorkoutSetController: WorkoutSetController? = null
-    private var mRestTimeController: RestTimeController? = null
-    private var mExerciseTimeController: ExerciseTimeController? = null
+    private var mWorkoutTimeController: WorkoutTimeController? = null
 
     override fun onReady() {
         super.onReady()
@@ -129,8 +128,7 @@ class PresenterWorkout : PresenterCreateExerciseGroups<MvpViewWorkout>() {
     }
 
     private fun observeWorkoutTimersStopped() {
-        subscriptions.add(Observable.merge(mRestTimeController?.onTimeStopped(),
-                mExerciseTimeController?.onTimeStopped())
+        subscriptions.add(mWorkoutTimeController!!.onTimeStopped()
                 .compose(applyUISchedulers())
                 .subscribe({ workoutTimeTick() })
                 { throwable: Throwable? -> handleError(throwable) })
@@ -193,7 +191,7 @@ class PresenterWorkout : PresenterCreateExerciseGroups<MvpViewWorkout>() {
     private fun observeServiceTimerRestStopClick() {
         subscriptions.add(mvpView.onClickServiceTimerRestStop()
                 .compose(applyUISchedulers())
-                .subscribe({ mRestTimeController?.stopTimer(true) })
+                .subscribe({ mWorkoutTimeController?.stopTimer(true) })
                 { throwable: Throwable? -> handleError(throwable) })
     }
 
@@ -251,10 +249,8 @@ class PresenterWorkout : PresenterCreateExerciseGroups<MvpViewWorkout>() {
     private fun workoutTimeTick() {
         if (isAttachedToView) {
             mWorkoutSetController?.workoutTimerTick()
-            if (mRestTimeController?.isActive() == true) {
-                mRestTimeController?.workoutTimerTick()
-            } else if (mExerciseTimeController?.isActive() == true) {
-                mExerciseTimeController?.workoutTimerTick()
+            if (mWorkoutTimeController?.isActive() == true) {
+                mWorkoutTimeController?.workoutTimerTick()
             }
         }
     }
@@ -262,15 +258,12 @@ class PresenterWorkout : PresenterCreateExerciseGroups<MvpViewWorkout>() {
     private fun toggleSetTimer(exercise: ELRoutineExercise,
                                set: ELSet,
                                start: Boolean) {
-        // Cancel other timers if running
-        stopTimer(mRestTimeController)
-        stopTimer(mExerciseTimeController)
-        mExerciseTimeController?.setRunningData(exercise, set)
         if (start) {
-            mExerciseTimeController?.startTimer(set.getTimeSeconds())
+            // Reuses the current view if a timer is already active instead of tearing it down
+            mWorkoutTimeController?.startExerciseTimer(exercise, set)
             workoutTimeTick()
         } else {
-            stopTimer(mExerciseTimeController)
+            stopTimer(mWorkoutTimeController)
         }
     }
 
@@ -281,8 +274,7 @@ class PresenterWorkout : PresenterCreateExerciseGroups<MvpViewWorkout>() {
     }
 
     private fun stopAllTimers() {
-        stopTimer(mRestTimeController)
-        stopTimer(mExerciseTimeController)
+        stopTimer(mWorkoutTimeController)
         mTickTimeController?.cancelTimer()
     }
 
@@ -294,7 +286,7 @@ class PresenterWorkout : PresenterCreateExerciseGroups<MvpViewWorkout>() {
     override fun setTimerChanged(exercise: ELRoutineExercise, set: ELSet) {
         super.setTimerChanged(exercise, set)
         // Update exercise timer if already running
-        if (mExerciseTimeController?.isActive() == true) {
+        if (mWorkoutTimeController?.isRunningExerciseTimer() == true) {
             toggleSetTimer(exercise, set, true)
         } else {
             mvpView?.getOnboardingController()?.checkOnboarding()
@@ -319,8 +311,8 @@ class PresenterWorkout : PresenterCreateExerciseGroups<MvpViewWorkout>() {
         val set = exercise?.sets?.get(state.setIndex)
         set?.updateStartedDate(Date().time)
         set?.updateCompletedDate(Date().time)
-        // Stop exercise timer if already running
-        stopTimer(mExerciseTimeController)
+        // Stop the timer if already running
+        stopTimer(mWorkoutTimeController)
         // Only call this is the overall set has been completed
         notifyWorkoutServiceSetUpdated()
         if (group?.setIsComplete(state.setIndex) == true) {
@@ -403,7 +395,8 @@ class PresenterWorkout : PresenterCreateExerciseGroups<MvpViewWorkout>() {
     override fun setCompleted(group: ELExerciseGroup?) {
         super.setCompleted(group)
         if (group?.hasRestTime() == true) {
-            mRestTimeController?.startTimer(group.restTimeSeconds)
+            // Reuses the current view if a timer is already active instead of tearing it down
+            mWorkoutTimeController?.startRestTimer(group.restTimeSeconds)
         }
     }
 
@@ -492,7 +485,6 @@ class PresenterWorkout : PresenterCreateExerciseGroups<MvpViewWorkout>() {
             }
         })
         mWorkoutSetController = WorkoutSetController(mWorkout!!, mvpView, mvpView.getBinding())
-        mRestTimeController = RestTimeController(mvpView, mWorkout!!, mvpView.getBinding(), navigator)
-        mExerciseTimeController = ExerciseTimeController(mvpView, mWorkout!!, mvpView.getBinding(), mAdapter, navigator)
+        mWorkoutTimeController = WorkoutTimeController(mvpView, mWorkout!!, mvpView.getBinding(), mAdapter, navigator)
     }
 }
