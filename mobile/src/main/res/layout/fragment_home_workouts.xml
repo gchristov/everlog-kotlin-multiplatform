@@ -51,7 +51,6 @@
                         style="@style/SettingsCategory"
                         android:layout_width="0dp"
                         android:layout_weight="1"
-                        android:layout_marginTop="-4dp"
                         android:text="@string/home_workouts_plans" />
 
                     <include
@@ -100,7 +99,6 @@
                         style="@style/SettingsCategory"
                         android:layout_width="0dp"
                         android:layout_weight="1"
-                        android:layout_marginTop="-4dp"
                         android:text="@string/home_workouts_routines" />
 
                     <include
