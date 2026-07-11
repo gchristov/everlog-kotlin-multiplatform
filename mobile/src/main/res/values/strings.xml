@@ -73,6 +73,7 @@
     <string name="time">Time</string>
     <string name="complete">Complete</string>
     <string name="filter">Filter</string>
+    <string name="filter_apply">Apply filters</string>
 
     <string name="set_single">Single Set</string>
     <string name="set_single_description">1 exercise only</string>
@@ -181,6 +182,8 @@
     <string name="home_workouts_plans">Plans</string>
     <string name="home_workouts_routines">Workout Templates</string>
     <string name="home_workouts_view_exercises">View all 100+ exercises</string>
+    <string name="home_workouts_new_plan">New plan</string>
+    <string name="home_workouts_new_template">New template</string>
 
     <string name="exercises_title">Exercises</string>
     <string name="exercises_title_select">Select Exercises</string>
@@ -370,6 +373,7 @@
     <string name="create_plan_error_no_title">Please enter a title for your plan</string>
     <string name="create_plan_saved">Plan saved</string>
     <string name="create_plan_add_week_prompt">Add new week</string>
+    <string name="create_plan_new_week">New week</string>
     <string name="create_plan_cannot_be_empty_prompt">Plans must have at least one week</string>
     <string name="create_plan_error_max_weeks">You cannot add more weeks to this plan</string>
     <string name="create_plan_week_deleted">Week deleted</string>
