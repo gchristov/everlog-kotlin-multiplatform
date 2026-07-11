@@ -30,4 +30,27 @@
         app:itemTextColor="@color/bottom_nav_colors"
         app:labelVisibilityMode="labeled"
         app:menu="@menu/menu_activity_home" />
+
+    <Button
+        android:id="@+id/newWorkoutBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@id/tabBar"
+        android:layout_alignParentEnd="true"
+        android:layout_marginEnd="@dimen/activity_margin"
+        android:layout_marginBottom="@dimen/activity_margin"
+        android:background="@drawable/rounded_corners_new_workout_btn"
+        android:clipToOutline="true"
+        android:drawablePadding="@dimen/activity_margin_half"
+        android:drawableStart="@drawable/ic_add"
+        android:drawableTint="@color/background_card"
+        android:foreground="?attr/selectableItemBackground"
+        android:paddingLeft="@dimen/activity_margin"
+        android:paddingTop="@dimen/activity_margin_half"
+        android:paddingRight="@dimen/activity_margin"
+        android:paddingBottom="@dimen/activity_margin_half"
+        android:text="@string/home_new_workout"
+        android:textAllCaps="false"
+        android:textColor="@color/background_card"
+        android:textSize="16sp" />
 </RelativeLayout>

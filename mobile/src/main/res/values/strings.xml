@@ -158,6 +158,7 @@
 
     <string name="home_week">Week</string>
     <string name="home_workouts">Workouts</string>
+    <string name="home_new_workout">New Workout</string>
     <string name="home_week_start">Start workout</string>
     <string name="home_week_workouts_completed">Workouts\nDone</string>
     <string name="home_week_weight_lifted">Volume\nLifted</string>

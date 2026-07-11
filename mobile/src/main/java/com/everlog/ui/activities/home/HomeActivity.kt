@@ -22,6 +22,7 @@ import com.everlog.ui.fragments.home.week.WeekHomeFragment
 import com.everlog.ui.fragments.home.workouts.WorkoutsHomeFragment
 import com.everlog.ui.views.viewpager.ELFragmentPagerAdapter
 import com.everlog.utils.Utils
+import com.jakewharton.rxbinding.view.RxView
 import rx.Observable
 import rx.subjects.PublishSubject
 
@@ -101,7 +102,7 @@ class HomeActivity : BaseActivity(), MvpViewHome {
     }
 
     override fun onClickAdd(): Observable<Void> {
-        return mOnClickAdd
+        return Observable.merge(mOnClickAdd, RxView.clicks(binding.newWorkoutBtn))
     }
 
     override fun showWeek() {
