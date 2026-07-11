@@ -3,21 +3,17 @@
     <item
         android:id="@+id/action_week"
         android:icon="@drawable/ic_home"
-        android:title="" />
+        android:title="@string/home_week" />
     <item
         android:id="@+id/action_workouts"
         android:icon="@drawable/ic_barbell"
-        android:title="" />
-    <item
-        android:id="@+id/action_start"
-        android:icon="@drawable/ic_barbell"
-        android:title="" />
+        android:title="@string/home_workouts" />
     <item
         android:id="@+id/action_activity"
         android:icon="@drawable/ic_insights"
-        android:title="" />
+        android:title="@string/home_activity" />
     <item
         android:id="@+id/action_settings"
         android:icon="@drawable/ic_settings"
-        android:title="" />
+        android:title="@string/settings_title" />
 </menu>

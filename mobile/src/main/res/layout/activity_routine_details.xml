@@ -69,7 +69,7 @@
             android:layout_width="wrap_content"
             android:layout_marginTop="@dimen/activity_margin"
             android:layout_marginBottom="@dimen/activity_margin"
-            android:text="@string/home_week_start"
+            android:text="@string/routine_details_start_workout"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"

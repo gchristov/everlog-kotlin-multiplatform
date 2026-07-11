@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle">
+
+    <solid android:color="@color/main_accent" />
+
+    <!-- Larger than any realistic half-height, so the left/right ends always render as full
+         circles regardless of the button's actual measured height (pill/stadium shape). -->
+    <corners android:radius="100dp" />
+</shape>
