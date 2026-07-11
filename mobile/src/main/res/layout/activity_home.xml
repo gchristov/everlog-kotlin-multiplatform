@@ -27,6 +27,7 @@
         android:layout_alignParentBottom="true"
         android:background="@color/background_toolbar"
         app:itemIconTint="@color/bottom_nav_colors"
-        app:labelVisibilityMode="unlabeled"
+        app:itemTextColor="@color/bottom_nav_colors"
+        app:labelVisibilityMode="labeled"
         app:menu="@menu/menu_activity_home" />
 </RelativeLayout>
