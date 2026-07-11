@@ -9,10 +9,6 @@
         android:icon="@drawable/ic_barbell"
         android:title="" />
     <item
-        android:id="@+id/action_start"
-        android:icon="@drawable/ic_barbell"
-        android:title="" />
-    <item
         android:id="@+id/action_activity"
         android:icon="@drawable/ic_insights"
         android:title="" />

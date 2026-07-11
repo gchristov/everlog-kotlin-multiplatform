@@ -2,12 +2,10 @@ package com.everlog.ui.activities.home
 
 import android.content.Intent
 import android.view.View
-import android.widget.RelativeLayout
 import androidx.core.view.ViewCompat
 import androidx.fragment.app.Fragment
 import androidx.viewpager.widget.ViewPager
 import androidx.core.view.WindowInsetsCompat
-import androidx.core.view.updateLayoutParams
 import androidx.core.view.updatePadding
 import com.everlog.R
 import com.everlog.constants.ELConstants
@@ -24,8 +22,8 @@ import com.everlog.ui.fragments.home.week.WeekHomeFragment
 import com.everlog.ui.fragments.home.workouts.WorkoutsHomeFragment
 import com.everlog.ui.views.viewpager.ELFragmentPagerAdapter
 import com.everlog.utils.Utils
-import com.jakewharton.rxbinding.view.RxView
 import rx.Observable
+import rx.subjects.PublishSubject
 
 class HomeActivity : BaseActivity(), MvpViewHome {
 
@@ -33,21 +31,17 @@ class HomeActivity : BaseActivity(), MvpViewHome {
     private lateinit var binding: ActivityHomeBinding
 
     private var mAdapter: ELFragmentPagerAdapter? = null
-    private var mIndexMapTab = mapOf(Pair(0, 0), Pair(1, 1), Pair(2, 2), Pair(3, 2), Pair(4, 3))
-    private var mIndexMapPager = mapOf(Pair(0, 0), Pair(1, 1), Pair(2, 3), Pair(3, 4))
     private var mIndexMapTabId = mapOf(Pair(0, R.id.action_week), Pair(1, R.id.action_workouts), Pair(2, R.id.action_activity), Pair(3, R.id.action_settings))
     private var mIndexMapTabIdReverse = mapOf(Pair(R.id.action_week, 0), Pair(R.id.action_workouts, 1), Pair(R.id.action_activity, 2), Pair(R.id.action_settings, 3))
+
+    private val mOnClickAdd = PublishSubject.create<Void>()
 
     override fun onActivityCreated() {
         ViewCompat.setOnApplyWindowInsetsListener(binding.root) { _, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
             binding.tabBar.updatePadding(bottom = systemBars.bottom)
-            binding.addBtn.updateLayoutParams<RelativeLayout.LayoutParams> {
-                bottomMargin = resources.getDimensionPixelSize(R.dimen.margin_18) + systemBars.bottom
-            }
             insets
         }
-        ViewCompat.setZ(binding.addBtn, binding.tabBar.z + 1)
         // APP STARTUP: Delay to not block
         Utils.runWithDelay({
             setupNavigation()
@@ -107,7 +101,7 @@ class HomeActivity : BaseActivity(), MvpViewHome {
     }
 
     override fun onClickAdd(): Observable<Void> {
-        return RxView.clicks(binding.addBtn)
+        return mOnClickAdd
     }
 
     override fun showWeek() {
@@ -130,7 +124,7 @@ class HomeActivity : BaseActivity(), MvpViewHome {
     }
 
     fun showCreateActivity() {
-        binding.addBtn.performClick()
+        mOnClickAdd.onNext(null)
     }
 
     private fun animateAppearance() {
@@ -158,7 +152,7 @@ class HomeActivity : BaseActivity(), MvpViewHome {
         // To restore any previous state in case the activity was killed
         val tabIndex = mPresenter?.getSelectedTab() ?: 0
         binding.tabBar.selectedItemId = mIndexMapTabId[tabIndex]!!
-        binding.pager.setCurrentItem(mIndexMapTab[tabIndex]!!, false)
+        binding.pager.setCurrentItem(tabIndex, false)
         binding.pager.addOnPageChangeListener(object : ViewPager.OnPageChangeListener {
 
             override fun onPageScrollStateChanged(p0: Int) {
@@ -179,11 +173,9 @@ class HomeActivity : BaseActivity(), MvpViewHome {
             }
         })
         // Link tab bar
-        binding.tabBar.setOnNavigationItemSelectedListener {
+        binding.tabBar.setOnItemSelectedListener {
             val index = mIndexMapTabIdReverse[it.itemId]
-            if (index == null) {
-                binding.addBtn.performClick()
-            } else if (binding.pager.currentItem != index) {
+            if (index != null && binding.pager.currentItem != index) {
                 binding.pager.setCurrentItem(index, true)
             }
             true
