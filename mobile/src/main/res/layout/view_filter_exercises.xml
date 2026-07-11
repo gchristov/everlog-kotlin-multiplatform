@@ -51,8 +51,7 @@
                 android:paddingBottom="@dimen/activity_margin_half"
                 android:text="@string/filter_apply"
                 android:textAllCaps="false"
-                android:textColor="@color/background_card"
-                android:textSize="16sp" />
+                android:textColor="@color/background_card" />
         </LinearLayout>
     </LinearLayout>
 </RelativeLayout>

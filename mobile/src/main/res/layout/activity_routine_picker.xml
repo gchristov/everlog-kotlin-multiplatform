@@ -67,7 +67,6 @@
                 android:text="@string/home_workouts_new_template"
                 android:textAllCaps="false"
                 android:textColor="@color/background_card"
-                android:textSize="16sp"
                 android:visibility="gone"
                 tools:visibility="visible" />
         </FrameLayout>
