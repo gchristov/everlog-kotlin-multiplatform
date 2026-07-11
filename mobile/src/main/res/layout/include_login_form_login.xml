@@ -24,6 +24,7 @@
             android:background="@drawable/rounded_corners_btn_white"
             android:drawableLeft="@drawable/googleg_standard_color_18"
             android:text="@string/login_google"
+            app:initialCornerAngle="21dp"
             app:spinning_bar_color="@color/background_base"
             app:spinning_bar_padding="8dp" />
 
@@ -175,6 +176,7 @@
             android:layout_marginTop="30dp"
             android:background="@drawable/rounded_corners_btn_one"
             android:text="@string/login_sign_in"
+            app:initialCornerAngle="21dp"
             app:spinning_bar_color="@color/background_base"
             app:spinning_bar_padding="8dp" />
     </LinearLayout>

@@ -71,6 +71,7 @@
             android:paddingLeft="0dp"
             android:paddingRight="0dp"
             android:text="@string/login_get_started"
+            app:initialCornerAngle="21dp"
             app:spinning_bar_color="@color/background_base"
             app:spinning_bar_padding="8dp" />
 
