@@ -49,7 +49,7 @@ class LoginActivityTest {
         onView(withId(R.id.tabBar))
             .check(matches(isDisplayed()))
 
-        onView(withId(R.id.addBtn))
+        onView(withId(R.id.newWorkoutBtn))
             .check(matches(isDisplayed()))
     }
 
