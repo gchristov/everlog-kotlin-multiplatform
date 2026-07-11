@@ -21,11 +21,9 @@
             android:id="@+id/loginGoogleBtn"
             style="@style/Button"
             android:layout_height="42dp"
-            android:background="@color/white_base"
+            android:background="@drawable/rounded_corners_btn_white"
             android:drawableLeft="@drawable/googleg_standard_color_18"
             android:text="@string/login_google"
-            app:finalCornerAngle="21dp"
-            app:initialCornerAngle="21dp"
             app:spinning_bar_color="@color/background_base"
             app:spinning_bar_padding="8dp" />
 
@@ -170,16 +168,13 @@
             android:text="@string/login_reset_password"
             android:textColor="@color/main_accent" />
 
-        <!-- Set background for this view because it applies resizing for the normal BG, breaking stuff elsewhere -->
         <com.github.leandroborgesferreira.loadingbutton.customViews.CircularProgressButton
             android:id="@+id/loginBtn"
             style="@style/Button"
             android:layout_height="42dp"
             android:layout_marginTop="30dp"
-            android:background="@color/main_accent"
+            android:background="@drawable/rounded_corners_btn_one"
             android:text="@string/login_sign_in"
-            app:finalCornerAngle="21dp"
-            app:initialCornerAngle="21dp"
             app:spinning_bar_color="@color/background_base"
             app:spinning_bar_padding="8dp" />
     </LinearLayout>
