@@ -12,19 +12,10 @@
     android:paddingRight="@dimen/activity_margin"
     android:paddingBottom="@dimen/activity_margin_half_half">
 
-    <ImageView
-        android:layout_width="20dp"
-        android:layout_height="20dp"
-        android:layout_marginRight="@dimen/activity_margin_half_half"
-        android:layout_marginBottom="-1dp"
-        android:src="@drawable/ic_add_circle"
-        android:tint="@color/main_accent" />
-
     <TextView
         android:id="@+id/addBtnTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/add"
-        android:textColor="@color/main_accent"
-        android:textSize="16sp" />
+        android:textColor="@color/main_accent" />
 </LinearLayout>

@@ -21,8 +21,6 @@ class WorkoutsHomeFragment : BaseTabFragment(), MvpViewWorkoutsHome {
     private val binding get() = _binding!!
 
     override fun onFragmentCreated() {
-        binding.addPlanTop.addBtnTitle.text = getString(R.string.home_workouts_new_plan)
-        binding.addRoutineTop.addBtnTitle.text = getString(R.string.home_workouts_new_template)
         setupListView()
     }
 

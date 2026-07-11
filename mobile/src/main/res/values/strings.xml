@@ -73,7 +73,7 @@
     <string name="time">Time</string>
     <string name="complete">Complete</string>
     <string name="filter">Filter</string>
-    <string name="filter_apply">Apply filters</string>
+    <string name="filter_apply">Apply</string>
 
     <string name="set_single">Single Set</string>
     <string name="set_single_description">1 exercise only</string>
@@ -182,7 +182,6 @@
     <string name="home_workouts_plans">Plans</string>
     <string name="home_workouts_routines">Workout Templates</string>
     <string name="home_workouts_view_exercises">View all 100+ exercises</string>
-    <string name="home_workouts_new_plan">New plan</string>
     <string name="home_workouts_new_template">New template</string>
 
     <string name="exercises_title">Exercises</string>
