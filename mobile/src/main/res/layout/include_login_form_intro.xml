@@ -63,12 +63,11 @@
             android:layout_height="0dp"
             android:layout_weight="1" />
 
-        <!-- Set background for this view because it applies resizing for the normal BG, breaking stuff elsewhere -->
         <com.github.leandroborgesferreira.loadingbutton.customViews.CircularProgressButton
             android:id="@+id/showRegisterBtn"
             style="@style/Button"
             android:layout_height="42dp"
-            android:background="@color/main_accent"
+            android:background="@drawable/rounded_corners_btn_one"
             android:paddingLeft="0dp"
             android:paddingRight="0dp"
             android:text="@string/login_get_started"
