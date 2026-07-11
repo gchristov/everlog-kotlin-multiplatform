@@ -148,7 +148,7 @@
     <string name="login_terms_not_accepted">"Please accept our Terms &amp; Conditions and Privacy Policy"</string>
     <string name="login_reset_password">Forgot password?</string>
 
-    <string name="reset_password">Reset Password</string>
+    <string name="reset_password">Reset password</string>
     <string name="reset_password_success">Thanks! We have sent instructions on how to reset your password to your email address</string>
 
     <string name="home_add_title">Add Activity</string>
@@ -194,8 +194,8 @@
     <string name="exercises_max_selection">You cannot add more than %1$d exercises at a time</string>
     <string name="exercises_max_sets">You cannot add more than %1$d sets per exercise</string>
     <string name="exercises_create_prompt">Tap to create exercise</string>
-    <string name="exercises_add">add (%1$d)</string>
-    <string name="exercises_link">superset (%1$d)</string>
+    <string name="exercises_add">Add (%1$d)</string>
+    <string name="exercises_link">Superset (%1$d)</string>
 
     <string name="exercise_info_title">Info</string>
     <string name="exercise_info_youtube">Watch Instructions Video</string>
@@ -285,7 +285,7 @@
     <string name="workout_stop_description">This workout is still in progress. Are you sure you want to stop it?</string>
     <string name="workout_metric_prompt_missing">Please enter a value</string>
     <string name="workout_rest_time">"Rest  •  %1$s"</string>
-    <string name="workout_empty_action">Add Exercises</string>
+    <string name="workout_empty_action">Add exercises</string>
     <string name="workout_empty_no_sets">No exercises, yet</string>
     <string name="workout_empty_no_sets_subtitle">Add exercises to begin your workout</string>
     <string name="workout_empty_done">All done?</string>

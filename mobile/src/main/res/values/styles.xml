@@ -179,6 +179,7 @@
         <item name="android:foreground">?attr/selectableItemBackground</item>
         <item name="android:background">@drawable/rounded_corners_btn_one</item>
         <item name="android:textColor">@color/background_card</item>
+        <item name="android:textAllCaps">false</item>
         <item name="android:paddingLeft">@dimen/activity_margin_double</item>
         <item name="android:paddingRight">@dimen/activity_margin_double</item>
     </style>
