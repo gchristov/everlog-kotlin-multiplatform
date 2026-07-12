@@ -28,6 +28,8 @@
             android:layout_width="wrap_content"
             android:layout_height="28dp"
             android:minWidth="0dp"
+            android:paddingTop="0dp"
+            android:paddingBottom="0dp"
             android:paddingLeft="@dimen/margin_14"
             android:paddingRight="@dimen/margin_14"
             android:text="@string/save" />
