@@ -43,8 +43,10 @@
         <Button
             android:id="@+id/addBtn"
             style="@style/Button.Three"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
+            android:layout_marginStart="@dimen/activity_margin"
             android:layout_marginTop="@dimen/activity_margin"
+            android:layout_marginEnd="@dimen/activity_margin"
             android:layout_marginBottom="@dimen/activity_margin"
             android:text="@string/workout_empty_action"
             app:layout_constraintBottom_toBottomOf="parent"

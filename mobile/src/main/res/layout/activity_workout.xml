@@ -106,7 +106,7 @@
             <Button
                 android:id="@+id/addBtn"
                 style="@style/Button.Three"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_marginTop="@dimen/activity_margin"
                 android:layout_marginBottom="@dimen/activity_margin"
                 android:layout_marginStart="@dimen/activity_margin"
