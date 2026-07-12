@@ -23,15 +23,15 @@
             android:clipChildren="false"
             android:clipToPadding="false"
             android:orientation="vertical"
-            android:paddingLeft="@dimen/activity_margin_actual"
-            android:paddingTop="@dimen/activity_margin_actual"
-            android:paddingRight="@dimen/activity_margin_actual"
+            android:paddingLeft="@dimen/activity_margin"
+            android:paddingTop="@dimen/activity_margin"
+            android:paddingRight="@dimen/activity_margin"
             android:paddingBottom="@dimen/footer_bottom_padding">
 
             <androidx.cardview.widget.CardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="@dimen/activity_margin_actual"
+                android:layout_marginBottom="@dimen/activity_margin"
                 android:focusable="true"
                 android:focusableInTouchMode="true"
                 app:cardBackgroundColor="@color/background_card"

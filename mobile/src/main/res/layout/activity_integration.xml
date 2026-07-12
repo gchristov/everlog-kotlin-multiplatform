@@ -40,7 +40,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/activity_margin_half"
-                    android:layout_marginBottom="@dimen/activity_margin_actual"
+                    android:layout_marginBottom="@dimen/activity_margin"
                     android:text="@string/integrations_connected"
                     android:textColor="@color/main_accent"
                     android:textSize="20sp"
@@ -66,7 +66,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/activity_margin_actual"
+                    android:layout_marginTop="@dimen/activity_margin"
                     android:text="2"
                     android:textColor="@color/white_darker"
                     android:textSize="20sp"
@@ -85,13 +85,13 @@
                     android:id="@+id/syncBtn"
                     style="@style/Button"
                     android:layout_width="wrap_content"
-                    android:layout_marginTop="@dimen/activity_margin_actual"
+                    android:layout_marginTop="@dimen/activity_margin"
                     android:text="@string/integrations_sync" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/activity_margin_actual"
+                    android:layout_marginTop="@dimen/activity_margin"
                     android:text="3"
                     android:textColor="@color/white_darker"
                     android:textSize="20sp"
@@ -110,7 +110,7 @@
                     android:id="@+id/unsyncBtn"
                     style="@style/Button.Three"
                     android:layout_width="wrap_content"
-                    android:layout_marginTop="@dimen/activity_margin_actual"
+                    android:layout_marginTop="@dimen/activity_margin"
                     android:text="@string/integrations_sync_delete" />
 
                 <Button

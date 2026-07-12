@@ -44,7 +44,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/topBar"
-        android:layout_marginTop="@dimen/activity_margin_actual"
+        android:layout_marginTop="@dimen/activity_margin"
         android:clickable="true"
         android:orientation="horizontal"
         android:paddingLeft="@dimen/exercise_group_create_side_spacing"

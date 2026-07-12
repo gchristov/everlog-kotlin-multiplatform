@@ -122,8 +122,8 @@
             <androidx.cardview.widget.CardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="@dimen/activity_margin_actual"
-                android:layout_marginRight="@dimen/activity_margin_actual"
+                android:layout_marginLeft="@dimen/activity_margin"
+                android:layout_marginRight="@dimen/activity_margin"
                 app:cardBackgroundColor="@color/background_base"
                 app:cardCornerRadius="@dimen/card_radius_default"
                 app:cardElevation="@dimen/card_elevation_default">
@@ -194,9 +194,9 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="@dimen/activity_margin_actual"
+                android:layout_marginLeft="@dimen/activity_margin"
                 android:layout_marginTop="@dimen/margin_12"
-                android:layout_marginRight="@dimen/activity_margin_actual"
+                android:layout_marginRight="@dimen/activity_margin"
                 android:text="@string/pro_muscle_goals"
                 android:textColor="@color/gray_3"
                 android:textSize="12sp" />
@@ -214,9 +214,9 @@
                 android:id="@+id/proQuestionsList"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="@dimen/activity_margin_actual"
+                android:layout_marginLeft="@dimen/activity_margin"
                 android:layout_marginTop="@dimen/margin_24"
-                android:layout_marginRight="@dimen/activity_margin_actual"
+                android:layout_marginRight="@dimen/activity_margin"
                 android:focusable="false"
                 android:focusableInTouchMode="false"
                 android:nestedScrollingEnabled="false"
