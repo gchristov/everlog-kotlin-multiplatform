@@ -41,7 +41,7 @@
                     android:clipToPadding="false"
                     android:focusable="false"
                     android:focusableInTouchMode="false"
-                    android:paddingTop="@dimen/activity_margin_actual"
+                    android:paddingTop="@dimen/activity_margin"
                     android:paddingBottom="@dimen/footer_bottom_padding_double"
                     tools:itemCount="1"
                     tools:listitem="@layout/row_exercise_group_create" />
@@ -66,8 +66,10 @@
         <Button
             android:id="@+id/performBtn"
             style="@style/Button"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
+            android:layout_marginStart="@dimen/activity_margin"
             android:layout_marginTop="@dimen/activity_margin"
+            android:layout_marginEnd="@dimen/activity_margin"
             android:layout_marginBottom="@dimen/activity_margin"
             android:text="@string/routine_details_start_workout"
             app:layout_constraintBottom_toBottomOf="parent"

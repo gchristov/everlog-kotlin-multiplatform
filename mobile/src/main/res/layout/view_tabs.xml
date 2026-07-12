@@ -12,7 +12,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="@dimen/activity_margin"
-        android:paddingLeft="@dimen/activity_margin_actual"
+        android:paddingLeft="@dimen/activity_margin"
         app:tabBackground="@android:color/transparent"
         app:tabGravity="start"
         app:tabIndicatorColor="@android:color/transparent"
@@ -29,6 +29,5 @@
         android:id="@+id/pager"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginTop="-4dp"
         tools:background="@color/remove" />
 </LinearLayout>

@@ -39,8 +39,8 @@
         style="@style/LoginContentWidth"
         android:layout_height="0dp"
         android:layout_gravity="center"
-        android:layout_marginLeft="@dimen/login_form_margin_horizontal"
-        android:layout_marginRight="@dimen/login_form_margin_horizontal"
+        android:layout_marginLeft="@dimen/activity_margin"
+        android:layout_marginRight="@dimen/activity_margin"
         android:layout_weight="0.45"
         android:gravity="center_horizontal"
         android:orientation="vertical">
@@ -49,7 +49,7 @@
             android:id="@+id/indicator"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/activity_margin_actual"
+            android:layout_marginTop="@dimen/activity_margin"
             android:layout_marginBottom="@dimen/activity_margin"
             app:spi_dotColor="@color/pager_inactive"
             app:spi_dotSelectedColor="@color/pager_active"
@@ -63,15 +63,15 @@
             android:layout_height="0dp"
             android:layout_weight="1" />
 
-        <!-- Set background for this view because it applies resizing for the normal BG, breaking stuff elsewhere -->
         <com.github.leandroborgesferreira.loadingbutton.customViews.CircularProgressButton
             android:id="@+id/showRegisterBtn"
             style="@style/Button"
             android:layout_height="42dp"
-            android:background="@color/main_accent"
+            android:background="@drawable/rounded_corners_btn_one"
             android:paddingLeft="0dp"
             android:paddingRight="0dp"
             android:text="@string/login_get_started"
+            app:initialCornerAngle="21dp"
             app:spinning_bar_color="@color/background_base"
             app:spinning_bar_padding="8dp" />
 

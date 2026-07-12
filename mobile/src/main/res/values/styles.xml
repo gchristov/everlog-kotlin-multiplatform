@@ -175,12 +175,15 @@
     <!-- Buttons -->
     <style name="Button">
         <item name="android:layout_width">match_parent</item>
-        <item name="android:layout_height">40dp</item>
+        <item name="android:layout_height">wrap_content</item>
         <item name="android:foreground">?attr/selectableItemBackground</item>
         <item name="android:background">@drawable/rounded_corners_btn_one</item>
         <item name="android:textColor">@color/background_card</item>
+        <item name="android:textAllCaps">false</item>
         <item name="android:paddingLeft">@dimen/activity_margin_double</item>
+        <item name="android:paddingTop">@dimen/activity_margin_half</item>
         <item name="android:paddingRight">@dimen/activity_margin_double</item>
+        <item name="android:paddingBottom">@dimen/activity_margin_half</item>
     </style>
     <style name="Button.Two" parent="Button">
         <item name="android:background">@drawable/rounded_corners_btn_two</item>

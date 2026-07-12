@@ -8,4 +8,6 @@ interface MvpViewHome : BaseActivityMvpView {
     fun onClickAdd(): Observable<Void>
 
     fun showWeek()
+
+    fun toggleStartWorkoutButton(visible: Boolean)
 }

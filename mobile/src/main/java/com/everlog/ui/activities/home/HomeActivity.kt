@@ -109,6 +109,10 @@ class HomeActivity : BaseActivity(), MvpViewHome {
         binding.pager.setCurrentItem(0, true)
     }
 
+    override fun toggleStartWorkoutButton(visible: Boolean) {
+        binding.newWorkoutBtn.visibility = if (visible) View.VISIBLE else View.GONE
+    }
+
     fun showPlans() {
         binding.pager.setCurrentItem(1, true)
     }

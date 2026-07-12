@@ -101,9 +101,10 @@ class WorkoutTimeController(mvpView: MvpViewWorkout?,
     }
 
     override fun buildTimer(context: Context): WorkoutTimerView {
-        val margin = context.resources.getDimensionPixelSize(R.dimen.activity_margin_half)
+        val horizontalMargin = context.resources.getDimensionPixelSize(R.dimen.activity_margin)
+        val topMargin = context.resources.getDimensionPixelSize(R.dimen.activity_margin_half)
         val layoutParams = LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT)
-        layoutParams.setMargins(margin, margin, margin, 0)
+        layoutParams.setMargins(horizontalMargin, topMargin, horizontalMargin, 0)
         return WorkoutTimerView(context, R.layout.view_workout_timer, layoutParams)
     }
 

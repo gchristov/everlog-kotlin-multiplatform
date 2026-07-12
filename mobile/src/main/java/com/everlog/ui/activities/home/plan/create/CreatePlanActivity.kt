@@ -52,7 +52,7 @@ class CreatePlanActivity : BaseActivity(), MvpViewCreatePlan {
             // Weeks container: Padding for list and Margin for FAB
             binding.weeksContainer.weeksList.updatePadding(bottom = systemBars.bottom + resources.getDimensionPixelSize(R.dimen.footer_bottom_padding))
             binding.weeksContainer.addBtn.updateLayoutParams<ViewGroup.MarginLayoutParams> {
-                bottomMargin = systemBars.bottom + resources.getDimensionPixelSize(R.dimen.activity_margin_actual)
+                bottomMargin = systemBars.bottom + resources.getDimensionPixelSize(R.dimen.activity_margin)
             }
 
             // Days container: Padding for list and Margin for Pro prompt

@@ -78,7 +78,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
-        android:layout_marginTop="@dimen/activity_margin_actual"
+        android:layout_marginTop="@dimen/activity_margin"
         android:visibility="gone"
         app:evSubtitle="@string/home_week_empty_subtitle"
         app:evTitle="@string/home_week_empty_title"

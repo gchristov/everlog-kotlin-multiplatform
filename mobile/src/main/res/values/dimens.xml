@@ -6,7 +6,6 @@
     <dimen name="activity_margin_half_half_half">2dp</dimen>
     <dimen name="activity_margin_double">32dp</dimen>
     <dimen name="activity_margin_triple">48dp</dimen>
-    <dimen name="activity_margin_actual">26dp</dimen>
 
     <dimen name="margin_6">6dp</dimen>
     <dimen name="margin_10">10dp</dimen>
@@ -71,7 +70,7 @@
 
     <dimen name="share_workout_size">300dp</dimen>
 
-    <dimen name="exercise_group_create_side_spacing">@dimen/activity_margin_actual</dimen>
+    <dimen name="exercise_group_create_side_spacing">@dimen/activity_margin</dimen>
     <dimen name="exercise_group_set_button_size">38dp</dimen>
 
     <dimen name="login_slider_bottom_offset">-200dp</dimen>

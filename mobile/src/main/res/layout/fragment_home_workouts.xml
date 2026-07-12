@@ -21,8 +21,7 @@
 
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_marginTop="-4dp">
+        android:layout_height="match_parent">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -42,9 +41,8 @@
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginLeft="@dimen/activity_margin_actual"
-                    android:layout_marginTop="-4dp"
-                    android:layout_marginRight="@dimen/margin_18"
+                    android:layout_marginLeft="@dimen/activity_margin"
+                    android:layout_marginRight="@dimen/activity_margin"
                     android:gravity="center"
                     android:orientation="horizontal">
 
@@ -63,7 +61,7 @@
                     layout="@layout/shimmer_plans"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginLeft="@dimen/activity_margin_actual"
+                    android:layout_marginLeft="@dimen/activity_margin"
                     android:layout_marginTop="@dimen/margin_12"
                     android:visibility="gone" />
 
@@ -74,7 +72,7 @@
                     android:layout_marginTop="@dimen/margin_12"
                     android:clipChildren="false"
                     android:clipToPadding="false"
-                    android:paddingLeft="@dimen/activity_margin_actual"
+                    android:paddingLeft="@dimen/activity_margin"
                     tools:itemCount="1"
                     tools:listitem="@layout/row_plan" />
             </LinearLayout>
@@ -86,13 +84,12 @@
                 android:clipChildren="false"
                 android:clipToPadding="false"
                 android:orientation="vertical"
-                android:paddingLeft="@dimen/activity_margin_actual">
+                android:paddingLeft="@dimen/activity_margin">
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="-4dp"
-                    android:layout_marginRight="@dimen/activity_margin_actual"
+                    android:layout_marginRight="@dimen/activity_margin"
                     android:layout_marginBottom="@dimen/margin_12"
                     android:gravity="center"
                     android:orientation="horizontal">
@@ -107,8 +104,7 @@
                         android:id="@+id/addRoutineTop"
                         layout="@layout/view_btn_add"
                         android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginRight="-8dp" />
+                        android:layout_height="wrap_content" />
                 </LinearLayout>
 
                 <include
@@ -129,7 +125,7 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="@dimen/activity_margin_actual"
+                android:layout_marginLeft="@dimen/activity_margin"
                 android:layout_marginTop="@dimen/margin_30"
                 android:divider="@drawable/separator_line"
                 android:orientation="vertical"

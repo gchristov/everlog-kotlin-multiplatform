@@ -12,7 +12,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:paddingTop="@dimen/activity_margin_actual"
+        android:paddingTop="@dimen/activity_margin"
         tools:background="@color/background_base">
 
         <include layout="@layout/row_exercise" />
