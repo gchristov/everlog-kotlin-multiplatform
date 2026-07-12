@@ -12,6 +12,7 @@ import com.everlog.data.datastores.ELDatastore
 import com.everlog.data.model.ELRoutine
 import com.everlog.data.model.workout.ELWorkout
 import com.everlog.managers.ErrorManager
+import com.everlog.managers.PlanManager
 import com.everlog.managers.RemoteConfigManager
 import com.everlog.managers.WorkoutManager
 import com.everlog.managers.analytics.AnalyticsManager
@@ -41,6 +42,7 @@ class PresenterHome : BaseActivityPresenter<MvpViewHome>() {
 
     override fun onReady() {
         observeAddClick()
+        updateStartWorkoutButtonVisibility()
         // APP STARTUP: Delay to not block
         Utils.runWithDelay({
             identifyUser()
@@ -77,6 +79,7 @@ class PresenterHome : BaseActivityPresenter<MvpViewHome>() {
 
     internal fun setSelectedTab(index: Int) {
         mSelectedTab = index
+        updateStartWorkoutButtonVisibility()
     }
 
     // Observers
@@ -107,6 +110,7 @@ class PresenterHome : BaseActivityPresenter<MvpViewHome>() {
         navigator.cancelAppUseNotification()
         refreshAppConfig()
         refreshProPurchases()
+        updateStartWorkoutButtonVisibility()
         if (WorkoutManager.manager.hasOngoingWorkout()) {
             observeDiscardOngoingWorkoutConfirm(WorkoutManager.manager.ongoingWorkout()!!)
         }
@@ -114,6 +118,11 @@ class PresenterHome : BaseActivityPresenter<MvpViewHome>() {
 
     private fun handleActivityPaused() {
         navigator.scheduleAppUseNotification()
+    }
+
+    private fun updateStartWorkoutButtonVisibility() {
+        val hideOnActivePlan = getSelectedTab() == 0 && PlanManager.manager.hasOngoingPlan()
+        mvpView?.toggleStartWorkoutButton(!hideOnActivePlan)
     }
 
     private fun handleAdd() {
