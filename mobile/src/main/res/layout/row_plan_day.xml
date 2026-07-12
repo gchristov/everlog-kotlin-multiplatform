@@ -173,6 +173,9 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
+                    android:paddingLeft="@dimen/margin_20"
+                    android:paddingRight="@dimen/margin_20"
+                    android:paddingBottom="@dimen/margin_20"
                     android:visibility="gone"
                     tools:visibility="visible">
 
@@ -181,6 +184,7 @@
                         style="@style/Button.Two"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
+                        android:layout_marginRight="@dimen/activity_margin"
                         android:layout_weight="1"
                         android:paddingLeft="0dp"
                         android:paddingRight="0dp"
