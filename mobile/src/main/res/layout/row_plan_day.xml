@@ -173,8 +173,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
-                    android:paddingLeft="@dimen/margin_20"
-                    android:paddingRight="@dimen/margin_20"
+                    android:paddingLeft="@dimen/activity_margin"
+                    android:paddingRight="@dimen/activity_margin"
                     android:paddingBottom="@dimen/margin_20"
                     android:visibility="gone"
                     tools:visibility="visible">
