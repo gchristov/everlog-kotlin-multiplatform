@@ -128,9 +128,6 @@ class PresenterHome : BaseActivityPresenter<MvpViewHome>() {
                         R.id.action_start_empty -> {
                             navigator.startWorkout(ELRoutine.buildEmptyWorkout(), false, false)
                         }
-                        R.id.action_create_plan -> {
-                            navigator.openEditPlan(null)
-                        }
                     }
                 }
                 .show()

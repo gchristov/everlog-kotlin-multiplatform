@@ -152,10 +152,9 @@
     <string name="reset_password">Reset password</string>
     <string name="reset_password_success">Thanks! We have sent instructions on how to reset your password to your email address</string>
 
-    <string name="home_add_title">Add Activity</string>
-    <string name="home_add_start_routine">Start workout from template</string>
-    <string name="home_add_start_empty">Start empty workout</string>
-    <string name="home_add_plan">Create workout plan</string>
+    <string name="home_add_title">Start workout</string>
+    <string name="home_add_start_routine">From your templates</string>
+    <string name="home_add_start_empty">Pick exercises as you go</string>
 
     <string name="home_week">Week</string>
     <string name="home_workouts">Workouts</string>

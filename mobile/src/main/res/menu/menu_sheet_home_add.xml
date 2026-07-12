@@ -12,9 +12,4 @@
         android:icon="@drawable/ic_barbell"
         android:title="@string/home_add_start_empty"
         app:showAsAction="always"/>
-    <item
-        android:id="@+id/action_create_plan"
-        android:icon="@drawable/ic_plan"
-        android:title="@string/home_add_plan"
-        app:showAsAction="always"/>
 </menu>
