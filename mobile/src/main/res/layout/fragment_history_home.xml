@@ -25,8 +25,8 @@
         android:id="@+id/listView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:paddingLeft="@dimen/activity_margin_actual"
-        android:paddingRight="@dimen/activity_margin_actual"
+        android:paddingLeft="@dimen/activity_margin"
+        android:paddingRight="@dimen/activity_margin"
         android:visibility="gone"
         tools:visibility="gone">
 
@@ -66,7 +66,7 @@
         android:layout_width="wrap_content"
         android:layout_height="40dp"
         android:layout_alignParentRight="true"
-        android:layout_marginRight="@dimen/activity_margin_actual"
+        android:layout_marginRight="@dimen/activity_margin"
         android:background="@drawable/rounded_corners_card_fab">
 
         <Spinner
