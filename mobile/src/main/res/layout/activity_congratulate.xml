@@ -61,8 +61,10 @@
             <Button
                 android:id="@+id/closeBtn"
                 style="@style/Button"
-                android:layout_width="210dp"
+                android:layout_width="match_parent"
+                android:layout_marginStart="-16dp"
                 android:layout_marginTop="@dimen/activity_margin_triple"
+                android:layout_marginEnd="-16dp"
                 android:text="@string/pro_confirm_cta"/>
         </LinearLayout>
     </LinearLayout>
