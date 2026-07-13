@@ -73,18 +73,6 @@
         </LinearLayout>
     </androidx.cardview.widget.CardView>
 
-    <com.everlog.ui.views.EmptyView
-        android:id="@+id/weekEmptyView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:layout_marginTop="@dimen/activity_margin"
-        android:visibility="gone"
-        app:evSubtitle="@string/home_week_empty_subtitle"
-        app:evTitle="@string/home_week_empty_title"
-        tools:layout_marginBottom="@dimen/margin_26"
-        tools:visibility="visible" />
-
     <include
         layout="@layout/shimmer_week_statistics"
         tools:visibility="gone" />
@@ -217,4 +205,13 @@
             </LinearLayout>
         </HorizontalScrollView>
     </LinearLayout>
+
+    <include
+        android:id="@+id/weekEmptyView"
+        layout="@layout/view_week_empty_state"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/margin_26"
+        android:visibility="gone"
+        tools:visibility="visible" />
 </LinearLayout>

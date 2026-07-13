@@ -35,6 +35,9 @@ class PresenterHome : BaseActivityPresenter<MvpViewHome>() {
     @JvmField
     var mSelectedTab: Int? = null
 
+    // Assume empty (button hidden) until the async week stats load proves otherwise, to avoid a show-then-hide flash
+    private var mWeekIsEmpty: Boolean = true
+
     override fun init() {
         super.init()
         setupBroadcastReceivers()
@@ -82,6 +85,11 @@ class PresenterHome : BaseActivityPresenter<MvpViewHome>() {
         updateStartWorkoutButtonVisibility()
     }
 
+    internal fun setWeekIsEmpty(isEmpty: Boolean) {
+        mWeekIsEmpty = isEmpty
+        updateStartWorkoutButtonVisibility()
+    }
+
     // Observers
 
     private fun observeAddClick() {
@@ -121,8 +129,9 @@ class PresenterHome : BaseActivityPresenter<MvpViewHome>() {
     }
 
     private fun updateStartWorkoutButtonVisibility() {
-        val hideOnActivePlan = getSelectedTab() == 0 && PlanManager.manager.hasOngoingPlan()
-        mvpView?.toggleStartWorkoutButton(!hideOnActivePlan)
+        val onWeekTab = getSelectedTab() == 0
+        val hide = onWeekTab && (PlanManager.manager.hasOngoingPlan() || mWeekIsEmpty)
+        mvpView?.toggleStartWorkoutButton(!hide)
     }
 
     private fun handleAdd() {

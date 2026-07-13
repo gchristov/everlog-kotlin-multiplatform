@@ -1,17 +1,15 @@
 package com.everlog.ui.fragments.home.week.views;
 
 import android.content.Context;
-import android.text.TextUtils;
 import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
 
 import com.everlog.R;
 import com.everlog.data.controllers.statistics.UserStatsController;
 import com.everlog.data.model.WeekDay;
-import com.everlog.managers.auth.LocalUserManager;
 import com.everlog.managers.preferences.SettingsManager;
 import com.everlog.ui.activities.base.BaseActivity;
-import com.everlog.ui.views.EmptyView;
 import com.everlog.ui.views.WeekDayView;
 import com.everlog.ui.views.summarycard.SummaryCardWeek;
 import com.everlog.utils.DayOfWeekExtKt;
@@ -29,7 +27,8 @@ public class StatisticsWeekView implements IWeekView {
     View mParentView;
     View mContentView;
     ShimmerFrameLayout mShimmerContainer;
-    EmptyView mEmptyView;
+    View mEmptyView;
+    Button mEmptyActionBtn;
     View mWeekDaysView;
     WeekDayView mDay1View;
     WeekDayView mDay2View;
@@ -57,6 +56,7 @@ public class StatisticsWeekView implements IWeekView {
         mContentView = view.findViewById(R.id.weekContentView);
         mShimmerContainer = view.findViewById(R.id.weekShimmerView);
         mEmptyView = view.findViewById(R.id.weekEmptyView);
+        mEmptyActionBtn = view.findViewById(R.id.weekEmptyStartBtn);
         mWeekDaysView = view.findViewById(R.id.weekDaysView);
         mDay1View = view.findViewById(R.id.day1View);
         mDay2View = view.findViewById(R.id.day2View);
@@ -73,7 +73,6 @@ public class StatisticsWeekView implements IWeekView {
         mGoalPendingLayout = view.findViewById(R.id.goalPendingLayout);
         mGoalAchievedLayout = view.findViewById(R.id.goalAchievedLayout);
         mGoalTotalLbl = view.findViewById(R.id.goalTotalLbl);
-        setupEmptyView();
         setupClicks(view);
     }
 
@@ -88,7 +87,7 @@ public class StatisticsWeekView implements IWeekView {
         View goalView = view.findViewById(R.id.goalSummary);
         if (goalView != null) goalView.setOnClickListener(v -> onClickGoal());
         
-        if (mEmptyView != null) mEmptyView.setOnClickListener(v -> onClickEmptyState());
+        if (mEmptyActionBtn != null) mEmptyActionBtn.setOnClickListener(v -> onClickEmptyState());
     }
 
     public void setListener(StatisticsWeekListener listener) {
@@ -139,6 +138,7 @@ public class StatisticsWeekView implements IWeekView {
         renderWeekView(days);
         renderWeekGoal(safeStats);
         renderSummaryViews(safeStats);
+        mContentView.setVisibility(View.VISIBLE);
         checkEmptyState(stats);
     }
 
@@ -170,9 +170,8 @@ public class StatisticsWeekView implements IWeekView {
 
     private void checkEmptyState(@Nullable UserStatsController.StatsResult stats) {
         if (stats != null) {
-            boolean show = stats.getOverallWorkoutsCompleted() <= 0;
+            boolean show = stats.getWorkoutsCompleted() <= 0;
             mEmptyView.setVisibility(show ? View.VISIBLE : View.GONE);
-            mContentView.setVisibility(show ? View.GONE : View.VISIBLE);
         }
     }
 
@@ -188,13 +187,6 @@ public class StatisticsWeekView implements IWeekView {
 
     private String getString(int stringResId) {
         return mContext.getString(stringResId);
-    }
-
-    // Setup
-
-    private void setupEmptyView() {
-        String name = LocalUserManager.getUser().getFirstName();
-        mEmptyView.setTitle(mContext.getString(R.string.home_week_empty_title, TextUtils.isEmpty(name) ? "" : String.format(", %s", name)));
     }
 
     public interface StatisticsWeekListener {

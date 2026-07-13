@@ -164,8 +164,6 @@
     <string name="home_week_weight_lifted_no_spaces">Volume Lifted</string>
     <string name="home_week_total_time">Workout\nTime</string>
     <string name="home_week_average_time">Avg. Session\nDuration</string>
-    <string name="home_week_empty_title">Welcome%1$s</string>
-    <string name="home_week_empty_subtitle">Tap [img src=ic_run_circle/] to start your first workout or create a plan to see your weekly dashboard</string>
     <string name="home_week_ongoing_workout_prompt_title">Resume Workout</string>
     <string name="home_week_ongoing_workout_prompt_subtitle">You have an ongoing workout. Would you like to resume it?</string>
     <string name="home_week_goal_achieved">Goal\nachieved!</string>

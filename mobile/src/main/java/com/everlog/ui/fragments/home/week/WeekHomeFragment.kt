@@ -104,6 +104,7 @@ class WeekHomeFragment : BaseTabFragment(), MvpViewWeekHome {
         mWeekStatistics.showWeekData(stats)
         checkAppRate()
         binding.toolbar.title = mWeekStatistics.title
+        (activity as? HomeActivity)?.setWeekEmptyState((stats?.workoutsCompleted ?: 0) <= 0)
     }
 
     override fun showWeekData(plan: ELPlan?, state: ELPlanState?) {

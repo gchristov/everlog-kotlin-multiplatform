@@ -2,6 +2,7 @@ package com.everlog.ui.activities.home
 
 import android.content.Intent
 import android.view.View
+import android.view.animation.OvershootInterpolator
 import androidx.core.view.ViewCompat
 import androidx.fragment.app.Fragment
 import androidx.viewpager.widget.ViewPager
@@ -110,7 +111,24 @@ class HomeActivity : BaseActivity(), MvpViewHome {
     }
 
     override fun toggleStartWorkoutButton(visible: Boolean) {
-        binding.newWorkoutBtn.visibility = if (visible) View.VISIBLE else View.GONE
+        val btn = binding.newWorkoutBtn
+        val isCurrentlyVisible = btn.visibility == View.VISIBLE
+        if (visible && !isCurrentlyVisible) {
+            btn.scaleX = 0f
+            btn.scaleY = 0f
+            btn.alpha = 0f
+            btn.visibility = View.VISIBLE
+            btn.animate()
+                    .scaleX(1f)
+                    .scaleY(1f)
+                    .alpha(1f)
+                    .setDuration(300)
+                    .setInterpolator(OvershootInterpolator())
+                    .start()
+        } else if (!visible) {
+            btn.animate().cancel()
+            btn.visibility = View.GONE
+        }
     }
 
     fun showPlans() {
@@ -130,6 +148,10 @@ class HomeActivity : BaseActivity(), MvpViewHome {
 
     fun showCreateActivity() {
         mOnClickAdd.onNext(null)
+    }
+
+    fun setWeekEmptyState(isEmpty: Boolean) {
+        mPresenter?.setWeekIsEmpty(isEmpty)
     }
 
     private fun animateAppearance() {

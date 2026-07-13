@@ -51,5 +51,6 @@
         android:paddingBottom="@dimen/activity_margin_half"
         android:text="@string/home_start_workout"
         android:textAllCaps="false"
-        android:textColor="@color/background_card" />
+        android:textColor="@color/background_card"
+        android:visibility="gone" />
 </RelativeLayout>
