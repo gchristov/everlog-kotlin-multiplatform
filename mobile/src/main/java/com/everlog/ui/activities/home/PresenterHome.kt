@@ -35,7 +35,8 @@ class PresenterHome : BaseActivityPresenter<MvpViewHome>() {
     @JvmField
     var mSelectedTab: Int? = null
 
-    private var mWeekIsEmpty: Boolean = false
+    // Assume empty (button hidden) until the async week stats load proves otherwise, to avoid a show-then-hide flash
+    private var mWeekIsEmpty: Boolean = true
 
     override fun init() {
         super.init()
