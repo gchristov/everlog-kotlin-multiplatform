@@ -132,6 +132,10 @@ class HomeActivity : BaseActivity(), MvpViewHome {
         mOnClickAdd.onNext(null)
     }
 
+    fun setWeekEmptyState(isEmpty: Boolean) {
+        mPresenter?.setWeekIsEmpty(isEmpty)
+    }
+
     private fun animateAppearance() {
         binding.pager.animate().setDuration(100).alpha(1f)
         binding.pager.animate().setDuration(200).translationY(0f)
