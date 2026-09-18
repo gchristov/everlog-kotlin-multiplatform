@@ -5,10 +5,8 @@ import android.view.View
 import android.view.ViewGroup
 import com.everlog.R
 import com.everlog.config.HomeNotification
-import com.everlog.data.controllers.statistics.UserStatsController
-import com.everlog.data.model.plan.ELPlan
-import com.everlog.data.model.plan.ELPlanState
 import com.everlog.databinding.FragmentHomeWeekBinding
+import com.everlog.managers.PlanManager
 import com.everlog.managers.analytics.AnalyticsConstants
 import com.everlog.ui.activities.base.BaseActivity
 import com.everlog.ui.activities.home.HomeActivity
@@ -94,24 +92,20 @@ class WeekHomeFragment : BaseTabFragment(), MvpViewWeekHome {
         return mPlanStartClick
     }
 
-    override fun toggleLoadingOverlay(show: Boolean) {
-        mWeekViews.forEach { it.toggleLoading(show, activity as BaseActivity) }
-    }
-
-    override fun showWeekData(stats: UserStatsController.StatsResult?) {
-        mWeekViews.forEach { it.toggleVisible(false) }
-        mWeekStatistics.toggleVisible(true)
-        mWeekStatistics.showWeekData(stats)
-        checkAppRate()
-        binding.toolbar.title = mWeekStatistics.title
-        (activity as? HomeActivity)?.setWeekEmptyState((stats?.workoutsCompleted ?: 0) <= 0)
-    }
-
-    override fun showWeekData(plan: ELPlan?, state: ELPlanState?) {
-        mWeekViews.forEach { it.toggleVisible(false) }
-        mWeekPlan.toggleVisible(true)
-        mWeekPlan.showWeekData(plan, state)
-        binding.toolbar.title = mWeekPlan.title
+    override fun render(state: WeekViewState) {
+        val parent = activity as? BaseActivity ?: return
+        mWeekViews.forEach { it.render(state, parent) }
+        when (state) {
+            is WeekViewState.Stats -> {
+                checkAppRate()
+                binding.toolbar.title = mWeekStatistics.title
+                (activity as? HomeActivity)?.setWeekEmptyState(state.stats.workoutsCompleted <= 0)
+            }
+            is WeekViewState.Plan -> {
+                binding.toolbar.title = mWeekPlan.title
+            }
+            is WeekViewState.Loading -> Unit
+        }
     }
 
     override fun showHomeNotification(notification: HomeNotification?) {
@@ -141,9 +135,10 @@ class WeekHomeFragment : BaseTabFragment(), MvpViewWeekHome {
     }
 
     private fun setupWeekViews() {
-        mWeekViews.forEach {
-            it.onCreateView(view)
-            it.toggleVisible(false)
+        mWeekViews.forEach { it.onCreateView(view) }
+        (activity as? BaseActivity)?.let { parent ->
+            val initialState = WeekViewState.Loading(PlanManager.manager.hasOngoingPlan())
+            mWeekViews.forEach { it.render(initialState, parent) }
         }
         mWeekStatistics.setListener(object : StatisticsWeekListener {
 

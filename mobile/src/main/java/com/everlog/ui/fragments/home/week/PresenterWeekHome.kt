@@ -51,6 +51,7 @@ class PresenterWeekHome : BaseFragmentPresenter<MvpViewWeekHome>() {
     private var mLatestPlanState: ELPlanState? = null
     private var mLatestWeekStats: UserStatsController.StatsResult? = null
     private val mHistory: MutableList<ELWorkout> = ArrayList()
+    private var mLoading = false
 
     private val mOnRefreshStats = PublishSubject.create<List<ELWorkout>>()
 
@@ -67,7 +68,6 @@ class PresenterWeekHome : BaseFragmentPresenter<MvpViewWeekHome>() {
         observeWeekStatsClick()
         observeWeekGoalClick()
         observeWeekEmptyStateClick()
-        loadPlaceholders()
         loadWeekStats()
     }
 
@@ -97,7 +97,7 @@ class PresenterWeekHome : BaseFragmentPresenter<MvpViewWeekHome>() {
     fun onHistoryLoaded(event: ELColStoreWorkoutsLoadedEvent) {
         if (isAttachedToView) {
             if (event.error != null) {
-                mvpView?.toggleLoadingOverlay(false)
+                renderReady()
             } else {
                 mHistory.clear()
                 mHistory.addAll(event.items)
@@ -132,7 +132,7 @@ class PresenterWeekHome : BaseFragmentPresenter<MvpViewWeekHome>() {
                                 }
 
                                 override fun onError(throwable: Throwable) {
-                                    mvpView?.toggleLoadingOverlay(false)
+                                    renderReady()
                                 }
                     })
                 }) { throwable: Throwable? -> handleError(throwable) })
@@ -191,13 +191,10 @@ class PresenterWeekHome : BaseFragmentPresenter<MvpViewWeekHome>() {
 
     // Loading
 
-    private fun loadPlaceholders() {
-        handleWeekStatsReady(false)
-    }
-
     private fun loadWeekStats() {
         // Load history
-        mvpView?.toggleLoadingOverlay(true)
+        mLoading = true
+        mvpView?.render(WeekViewState.Loading(PlanManager.manager.hasOngoingPlan()))
         Utils.runWithDelay({ ELDatastore.workoutsStore().getItems() }, 600)
     }
 
@@ -252,16 +249,15 @@ class PresenterWeekHome : BaseFragmentPresenter<MvpViewWeekHome>() {
         navigator.openPerformRoutineConfirmation(routine, fromPlan)
     }
 
-    private fun handleWeekStatsReady(stopLoading: Boolean) {
+    private fun renderReady() {
         if (isAttachedToView) {
-            if (stopLoading) {
-                mvpView?.toggleLoadingOverlay(false)
-            }
-            if (PlanManager.manager.hasOngoingPlan()) {
-                mvpView?.showWeekData(mLatestPlan, mLatestPlanState)
+            mLoading = false
+            val state = if (PlanManager.manager.hasOngoingPlan()) {
+                WeekViewState.Plan(mLatestPlan, mLatestPlanState)
             } else {
-                mvpView?.showWeekData(mLatestWeekStats)
+                WeekViewState.Stats(mLatestWeekStats ?: UserStatsController.StatsResult())
             }
+            mvpView?.render(state)
         }
     }
 
@@ -272,7 +268,7 @@ class PresenterWeekHome : BaseFragmentPresenter<MvpViewWeekHome>() {
     private fun handleCurrentPlanChanged() {
         mLatestPlan = PlanManager.manager.ongoingPlan()
         mLatestPlanState = PlanManager.manager.ongoingPlanState()
-        handleWeekStatsReady(true)
+        renderReady()
     }
 
     private fun checkWeekViews() {
@@ -281,11 +277,11 @@ class PresenterWeekHome : BaseFragmentPresenter<MvpViewWeekHome>() {
             mLatestPlan = null
             mLatestPlanState = null
             mLatestWeekStats = null
-            mvpView?.toggleLoadingOverlay(true)
-            handleHistoryReady(mHistory)
+            loadWeekStats()
+        } else if (!mLoading) {
+            // Nothing changed and no load is in flight, so just re-render the latest known state
+            renderReady()
         }
-        // Show whatever was the latest info
-        handleWeekStatsReady(false)
     }
 
     // Setup

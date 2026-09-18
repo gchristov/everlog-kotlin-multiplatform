@@ -14,6 +14,7 @@ import com.everlog.data.model.plan.ELPlanState;
 import com.everlog.ui.activities.base.BaseActivity;
 import com.everlog.ui.adapters.plan.PlanDayAdapter;
 import com.everlog.ui.dialog.DialogBuilder;
+import com.everlog.ui.fragments.home.week.WeekViewState;
 import com.everlog.ui.navigator.ELNavigator;
 import com.facebook.shimmer.ShimmerFrameLayout;
 
@@ -67,6 +68,11 @@ public class PlanWeekView implements IWeekView {
                 }
             });
         }
+        mFinishPlanBtn.setOnClickListener(v -> {
+            if (mListener != null) {
+                mListener.onClickStart();
+            }
+        });
         setupList();
     }
 
@@ -75,32 +81,34 @@ public class PlanWeekView implements IWeekView {
     }
 
     @Override
-    public void toggleVisible(boolean show) {
-        mPlanProgressView.setVisibility(show ? View.VISIBLE : View.GONE);
-        mParentView.setVisibility(show ? View.VISIBLE : View.GONE);
-        mFinishPlanBtn.setOnClickListener(v -> {
-            if (mListener != null) {
-                mListener.onClickStart();
-            }
-        });
-    }
-
-    @Override
-    public void toggleLoading(boolean show, BaseActivity parent) {
-        parent.toggleShimmerLayout(mShimmerContainer, show, true);
-        mContentView.setVisibility(View.GONE);
-    }
-
-    @Override
     public String getTitle() {
         return getString(R.string.home_week_plan);
     }
 
-    public void showWeekData(@Nullable ELPlan plan, @Nullable ELPlanState state) {
-        checkEmptyState(plan, state);
-        renderFinish(plan, state);
-        renderPlan(plan, state);
-        renderPlanDays(plan, state);
+    @Override
+    public void render(WeekViewState state, BaseActivity parent) {
+        boolean isPlanShape = state instanceof WeekViewState.Plan
+                || (state instanceof WeekViewState.Loading && ((WeekViewState.Loading) state).isPlan());
+        boolean loading = state instanceof WeekViewState.Loading;
+
+        mPlanProgressView.setVisibility(isPlanShape ? View.VISIBLE : View.GONE);
+        mParentView.setVisibility(isPlanShape ? View.VISIBLE : View.GONE);
+        parent.toggleShimmerLayout(mShimmerContainer, isPlanShape && loading, true);
+
+        if (!isPlanShape) {
+            return;
+        }
+
+        if (state instanceof WeekViewState.Plan) {
+            ELPlan plan = ((WeekViewState.Plan) state).getPlan();
+            ELPlanState planState = ((WeekViewState.Plan) state).getState();
+            mContentView.setVisibility(plan != null && planState != null ? View.VISIBLE : View.GONE);
+            renderFinish(plan, planState);
+            renderPlan(plan, planState);
+            renderPlanDays(plan, planState);
+        } else {
+            mContentView.setVisibility(View.GONE);
+        }
     }
 
     private void renderFinish(@Nullable ELPlan plan, @Nullable ELPlanState state) {
@@ -143,12 +151,6 @@ public class PlanWeekView implements IWeekView {
             mDataListManager.addAll(plan.getWeeks().get(week).getDays());
         }
         mAdapter.notifyDataSetChanged();
-    }
-
-    private void checkEmptyState(@Nullable ELPlan plan, @Nullable ELPlanState state) {
-        if (plan != null && state != null) {
-            mContentView.setVisibility(View.VISIBLE);
-        }
     }
 
     // Utils

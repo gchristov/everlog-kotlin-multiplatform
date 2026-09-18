@@ -10,6 +10,7 @@ import com.everlog.data.controllers.statistics.UserStatsController;
 import com.everlog.data.model.WeekDay;
 import com.everlog.managers.preferences.SettingsManager;
 import com.everlog.ui.activities.base.BaseActivity;
+import com.everlog.ui.fragments.home.week.WeekViewState;
 import com.everlog.ui.views.WeekDayView;
 import com.everlog.ui.views.summarycard.SummaryCardWeek;
 import com.everlog.utils.DayOfWeekExtKt;
@@ -19,8 +20,6 @@ import com.facebook.shimmer.ShimmerFrameLayout;
 import com.vaibhavlakhera.circularprogressview.CircularProgressView;
 
 import java.util.List;
-
-import androidx.annotation.Nullable;
 
 public class StatisticsWeekView implements IWeekView {
 
@@ -113,33 +112,35 @@ public class StatisticsWeekView implements IWeekView {
     }
 
     @Override
-    public void toggleVisible(boolean show) {
-        mWeekDaysView.setVisibility(show ? View.VISIBLE : View.GONE);
-        mParentView.setVisibility(show ? View.VISIBLE : View.GONE);
-        if (show) {
-            mEmptyView.setVisibility(View.GONE);
-        }
-    }
-
-    @Override
-    public void toggleLoading(boolean show, BaseActivity parent) {
-        parent.toggleShimmerLayout(mShimmerContainer, show, true);
-        mContentView.setVisibility(View.GONE);
-    }
-
-    @Override
     public String getTitle() {
         return getString(R.string.home_week);
     }
 
-    public void showWeekData(@Nullable UserStatsController.StatsResult stats) {
-        UserStatsController.StatsResult safeStats = stats == null ? new UserStatsController.StatsResult() : stats;
-        List<WeekDay> days = buildWeekdays(safeStats);
-        renderWeekView(days);
-        renderWeekGoal(safeStats);
-        renderSummaryViews(safeStats);
-        mContentView.setVisibility(View.VISIBLE);
-        checkEmptyState(stats);
+    @Override
+    public void render(WeekViewState state, BaseActivity parent) {
+        boolean isStatsShape = state instanceof WeekViewState.Stats
+                || (state instanceof WeekViewState.Loading && !((WeekViewState.Loading) state).isPlan());
+        boolean loading = state instanceof WeekViewState.Loading;
+
+        mParentView.setVisibility(isStatsShape ? View.VISIBLE : View.GONE);
+        parent.toggleShimmerLayout(mShimmerContainer, isStatsShape && loading, true);
+
+        if (!isStatsShape) {
+            return;
+        }
+
+        mContentView.setVisibility(loading ? View.GONE : View.VISIBLE);
+
+        if (state instanceof WeekViewState.Stats) {
+            UserStatsController.StatsResult stats = ((WeekViewState.Stats) state).getStats();
+            List<WeekDay> days = buildWeekdays(stats);
+            renderWeekView(days);
+            renderWeekGoal(stats);
+            renderSummaryViews(stats);
+            mEmptyView.setVisibility(stats.getWorkoutsCompleted() <= 0 ? View.VISIBLE : View.GONE);
+        } else {
+            mEmptyView.setVisibility(View.GONE);
+        }
     }
 
     private void renderSummaryViews(UserStatsController.StatsResult stats) {
@@ -166,13 +167,6 @@ public class StatisticsWeekView implements IWeekView {
         mGoalPendingLayout.setVisibility(left > 0 ? View.VISIBLE : View.GONE);
         mGoalAchievedLayout.setVisibility(left <= 0 ? View.VISIBLE : View.GONE);
         mGoalTotalLbl.setText(left + "");
-    }
-
-    private void checkEmptyState(@Nullable UserStatsController.StatsResult stats) {
-        if (stats != null) {
-            boolean show = stats.getWorkoutsCompleted() <= 0;
-            mEmptyView.setVisibility(show ? View.VISIBLE : View.GONE);
-        }
     }
 
     private List<WeekDay> buildWeekdays(UserStatsController.StatsResult stats) {
