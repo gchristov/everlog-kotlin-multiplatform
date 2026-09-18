@@ -99,16 +99,14 @@ public class PlanWeekView implements IWeekView {
             return;
         }
 
-        if (state instanceof WeekViewState.Plan) {
-            ELPlan plan = ((WeekViewState.Plan) state).getPlan();
-            ELPlanState planState = ((WeekViewState.Plan) state).getState();
-            mContentView.setVisibility(plan != null && planState != null ? View.VISIBLE : View.GONE);
-            renderFinish(plan, planState);
-            renderPlan(plan, planState);
-            renderPlanDays(plan, planState);
-        } else {
-            mContentView.setVisibility(View.GONE);
-        }
+        // Render with the real plan once loaded, or null (same as before it ever loaded)
+        // while loading -- keeps the labels showing their "--" placeholder under the shimmer.
+        ELPlan plan = state instanceof WeekViewState.Plan ? ((WeekViewState.Plan) state).getPlan() : null;
+        ELPlanState planState = state instanceof WeekViewState.Plan ? ((WeekViewState.Plan) state).getState() : null;
+        renderFinish(plan, planState);
+        renderPlan(plan, planState);
+        renderPlanDays(plan, planState);
+        mContentView.setVisibility(!loading && plan != null && planState != null ? View.VISIBLE : View.GONE);
     }
 
     private void renderFinish(@Nullable ELPlan plan, @Nullable ELPlanState state) {

@@ -129,18 +129,19 @@ public class StatisticsWeekView implements IWeekView {
             return;
         }
 
-        mContentView.setVisibility(loading ? View.GONE : View.VISIBLE);
+        // Render the day row/goal/summary with real stats once loaded, or a zero-value
+        // placeholder while loading -- keeps the day-of-week cells and header populated
+        // under the shimmer instead of sitting blank.
+        UserStatsController.StatsResult stats = state instanceof WeekViewState.Stats
+                ? ((WeekViewState.Stats) state).getStats()
+                : new UserStatsController.StatsResult();
+        List<WeekDay> days = buildWeekdays(stats);
+        renderWeekView(days);
+        renderWeekGoal(stats);
+        renderSummaryViews(stats);
 
-        if (state instanceof WeekViewState.Stats) {
-            UserStatsController.StatsResult stats = ((WeekViewState.Stats) state).getStats();
-            List<WeekDay> days = buildWeekdays(stats);
-            renderWeekView(days);
-            renderWeekGoal(stats);
-            renderSummaryViews(stats);
-            mEmptyView.setVisibility(stats.getWorkoutsCompleted() <= 0 ? View.VISIBLE : View.GONE);
-        } else {
-            mEmptyView.setVisibility(View.GONE);
-        }
+        mContentView.setVisibility(loading ? View.GONE : View.VISIBLE);
+        mEmptyView.setVisibility(!loading && stats.getWorkoutsCompleted() <= 0 ? View.VISIBLE : View.GONE);
     }
 
     private void renderSummaryViews(UserStatsController.StatsResult stats) {

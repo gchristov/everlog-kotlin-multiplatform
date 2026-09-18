@@ -104,7 +104,9 @@ class WeekHomeFragment : BaseTabFragment(), MvpViewWeekHome {
             is WeekViewState.Plan -> {
                 binding.toolbar.title = mWeekPlan.title
             }
-            is WeekViewState.Loading -> Unit
+            is WeekViewState.Loading -> {
+                binding.toolbar.title = if (state.isPlan) mWeekPlan.title else mWeekStatistics.title
+            }
         }
     }
 
