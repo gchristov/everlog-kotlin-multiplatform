@@ -93,7 +93,10 @@ data class ELRoutineExercise(
     }
 
     fun duplicatePreviousSet(): ELSet {
-        return duplicateSet(sets[sets.size - 1])
+        // A group's exercises can have mismatched set counts (see ELExerciseGroup.getTotalSetsCount),
+        // so this exercise may have no sets left to duplicate even though the group as a whole does.
+        val previous = sets.lastOrNull() ?: return addNewSet()
+        return duplicateSet(previous)
     }
 
     fun addNewSet(): ELSet {
