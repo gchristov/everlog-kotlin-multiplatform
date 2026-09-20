@@ -25,12 +25,12 @@ class WebViewActivity : BaseActivity(), MvpViewWeb {
         setupWebView()
     }
 
-    override fun onBackPressed() {
+    override fun handleBackPressed(): Boolean {
         if (binding.webView.canGoBack()) {
             binding.webView.goBack()
-        } else {
-            super.onBackPressed()
+            return true
         }
+        return super.handleBackPressed()
     }
 
     // Workaround appcompat-1.1.0 bug https://issuetracker.google.com/issues/141132133

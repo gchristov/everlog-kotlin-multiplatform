@@ -57,12 +57,12 @@ class HomeActivity : BaseActivity(), MvpViewHome {
         }
     }
 
-    override fun onBackPressed() {
+    override fun handleBackPressed(): Boolean {
         if (binding.pager.currentItem != 0) {
             binding.pager.setCurrentItem(0, true)
-        } else {
-            super.onBackPressed()
+            return true
         }
+        return super.handleBackPressed()
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {

@@ -66,13 +66,13 @@ class ResetPasswordActivity : BaseActivity(), MvpViewResetPassword {
         super.onDestroy()
     }
 
-    override fun onBackPressed() {
+    override fun handleBackPressed(): Boolean {
         KeyboardUtils.hideKeyboard(this)
         if (isLoading()) {
             // Wait until loading finishes
-            return
+            return true
         }
-        super.onBackPressed()
+        return super.handleBackPressed()
     }
 
     override fun getLayoutResId(): Int {
@@ -141,7 +141,7 @@ class ResetPasswordActivity : BaseActivity(), MvpViewResetPassword {
 
     private fun setupTopBar() {
         binding.appBar.toolbar.setNavigationIcon(R.drawable.ic_back)
-        binding.appBar.toolbar.setNavigationOnClickListener { onBackPressed() }
+        binding.appBar.toolbar.setNavigationOnClickListener { onBackPressedDispatcher.onBackPressed() }
         setSupportActionBar(binding.appBar.toolbar)
         supportActionBar?.setTitle(R.string.reset_password)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
