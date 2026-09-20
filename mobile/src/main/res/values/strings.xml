@@ -173,6 +173,8 @@
     <string name="home_week_plan_skip">Skip</string>
     <string name="home_week_plan_skip_prompt">Once a day is skipped you will not be able to go back and redo it. Are you sure you want to skip this day?</string>
     <string name="home_week_plan_finish">Finish plan</string>
+    <string name="home_week_empty_title">Ready to train?</string>
+    <string name="home_week_empty_subtitle">Pick a workout and go — takes 2 taps.</string>
 
     <string name="home_activity">Activity</string>
 

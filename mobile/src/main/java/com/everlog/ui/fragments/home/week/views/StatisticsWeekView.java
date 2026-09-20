@@ -2,7 +2,6 @@ package com.everlog.ui.fragments.home.week.views;
 
 import android.content.Context;
 import android.view.View;
-import android.widget.Button;
 import android.widget.TextView;
 
 import com.everlog.R;
@@ -13,12 +12,14 @@ import com.everlog.ui.activities.base.BaseActivity;
 import com.everlog.ui.fragments.home.week.WeekViewState;
 import com.everlog.ui.views.WeekDayView;
 import com.everlog.ui.views.summarycard.SummaryCardWeek;
+import com.everlog.utils.DateExtKt;
 import com.everlog.utils.DayOfWeekExtKt;
 import com.everlog.utils.ViewUtils;
 import com.everlog.utils.format.StatsFormatUtils;
 import com.facebook.shimmer.ShimmerFrameLayout;
 import com.vaibhavlakhera.circularprogressview.CircularProgressView;
 
+import java.util.Date;
 import java.util.List;
 
 public class StatisticsWeekView implements IWeekView {
@@ -27,7 +28,8 @@ public class StatisticsWeekView implements IWeekView {
     View mContentView;
     ShimmerFrameLayout mShimmerContainer;
     View mEmptyView;
-    Button mEmptyActionBtn;
+    View mEmptyActionBtn;
+    TextView mEmptyDateLbl;
     View mWeekDaysView;
     WeekDayView mDay1View;
     WeekDayView mDay2View;
@@ -56,6 +58,8 @@ public class StatisticsWeekView implements IWeekView {
         mShimmerContainer = view.findViewById(R.id.weekShimmerView);
         mEmptyView = view.findViewById(R.id.weekEmptyView);
         mEmptyActionBtn = view.findViewById(R.id.weekEmptyStartBtn);
+        mEmptyDateLbl = view.findViewById(R.id.weekEmptyDateLbl);
+        if (mEmptyDateLbl != null) mEmptyDateLbl.setText(DateExtKt.dayOfWeekFormatted(new Date()));
         mWeekDaysView = view.findViewById(R.id.weekDaysView);
         mDay1View = view.findViewById(R.id.day1View);
         mDay2View = view.findViewById(R.id.day2View);
