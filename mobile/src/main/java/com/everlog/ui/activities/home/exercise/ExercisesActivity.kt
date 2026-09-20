@@ -64,12 +64,12 @@ class ExercisesActivity : BaseSearchActivity(), MvpViewExercises {
         return binding.root.findViewById(R.id.searchToolbar)
     }
 
-    override fun onBackPressed() {
+    override fun handleBackPressed(): Boolean {
         if (mFilterView != null && mFilterView?.isAttachedToWindow == true) {
             mOnFiltersClick.onNext(null)
-        } else {
-            super.onBackPressed()
+            return true
         }
+        return super.handleBackPressed()
     }
 
     override fun getAnalyticsScreenName(): String {

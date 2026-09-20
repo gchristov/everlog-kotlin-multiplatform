@@ -35,12 +35,12 @@ abstract class BaseSearchActivity : BaseActivity() {
         setupSearchView()
     }
 
-    override fun onBackPressed() {
+    override fun handleBackPressed(): Boolean {
         if (mSearchExpanded) {
             stopSearch()
-        } else {
-            super.onBackPressed()
+            return true
         }
+        return super.handleBackPressed()
     }
 
     open fun stopSearch() {
