@@ -44,7 +44,8 @@ class PresenterHome : BaseActivityPresenter<MvpViewHome>() {
     }
 
     override fun onReady() {
-        observeAddClick()
+        observeAddClickFab()
+        observeAddClickWeekEmptyState()
         updateStartWorkoutButtonVisibility()
         // APP STARTUP: Delay to not block
         Utils.runWithDelay({
@@ -92,10 +93,20 @@ class PresenterHome : BaseActivityPresenter<MvpViewHome>() {
 
     // Observers
 
-    private fun observeAddClick() {
-        subscriptions.add(mvpView.onClickAdd()
+    private fun observeAddClickFab() {
+        subscriptions.add(mvpView.onClickAddFab()
                 .compose(applyUISchedulers())
                 .subscribe({
+                    AnalyticsManager.manager.homeAddFabTapped()
+                    handleAdd()
+                }, { throwable: Throwable? -> handleError(throwable) }))
+    }
+
+    private fun observeAddClickWeekEmptyState() {
+        subscriptions.add(mvpView.onClickAddWeekEmptyState()
+                .compose(applyUISchedulers())
+                .subscribe({
+                    AnalyticsManager.manager.homeAddWeekEmptyStateTapped()
                     handleAdd()
                 }, { throwable: Throwable? -> handleError(throwable) }))
     }

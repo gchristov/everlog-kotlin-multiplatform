@@ -102,8 +102,12 @@ class HomeActivity : BaseActivity(), MvpViewHome {
         return mPresenter as? BaseActivityPresenter<T>
     }
 
-    override fun onClickAdd(): Observable<Void> {
-        return Observable.merge(mOnClickAdd, RxView.clicks(binding.newWorkoutBtn))
+    override fun onClickAddFab(): Observable<Void> {
+        return RxView.clicks(binding.newWorkoutBtn)
+    }
+
+    override fun onClickAddWeekEmptyState(): Observable<Void> {
+        return mOnClickAdd
     }
 
     override fun showWeek() {

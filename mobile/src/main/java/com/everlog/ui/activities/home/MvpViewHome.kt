@@ -5,7 +5,9 @@ import rx.Observable
 
 interface MvpViewHome : BaseActivityMvpView {
 
-    fun onClickAdd(): Observable<Void>
+    fun onClickAddFab(): Observable<Void>
+
+    fun onClickAddWeekEmptyState(): Observable<Void>
 
     fun showWeek()
 

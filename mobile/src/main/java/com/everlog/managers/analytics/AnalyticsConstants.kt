@@ -106,6 +106,11 @@ class AnalyticsConstants {
         const val EVENT_SETTINGS_WEIGHT_UNIT_MODIFIED = "settings_weight_unit_modified"
         const val EVENT_SETTINGS_FIRST_WEEK_DAY_MODIFIED = "settings_first_week_day_modified"
 
+        // Home
+
+        const val EVENT_HOME_ADD_FAB_TAPPED = "home_add_fab_tapped"
+        const val EVENT_HOME_ADD_WEEK_EMPTY_STATE_TAPPED = "home_add_week_empty_state_tapped"
+
         // Workouts
 
         const val EVENT_WORKOUT_STARTED = "workout_started"
