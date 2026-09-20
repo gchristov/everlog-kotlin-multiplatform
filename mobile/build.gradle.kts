@@ -23,7 +23,7 @@ android {
     defaultConfig {
         applicationId = "com.everlog"
         minSdk = 23
-        targetSdk = 35
+        targetSdk = 36
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         versionCode = project.calculateVersionCode()
         versionName = project.calculateVersionName()
