@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    app:cardBackgroundColor="@color/main_accent"
+    app:cardCornerRadius="@dimen/card_radius_default"
+    app:cardElevation="@dimen/card_elevation_default">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="@dimen/activity_margin">
+
+        <TextView
+            android:id="@+id/weekEmptyDateLbl"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="sans-serif-medium"
+            android:textAllCaps="true"
+            android:textColor="@color/background_card"
+            android:textSize="12sp"
+            tools:text="Today, 9 September" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/activity_margin_half"
+            android:fontFamily="sans-serif-medium"
+            android:text="@string/home_week_empty_title"
+            android:textColor="@color/background_card"
+            android:textSize="24sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/activity_margin_half_half"
+            android:fontFamily="sans-serif"
+            android:text="@string/home_week_empty_subtitle"
+            android:textColor="@color/background_card"
+            android:textSize="15sp" />
+
+        <LinearLayout
+            android:id="@+id/weekEmptyStartBtn"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/activity_margin"
+            android:background="@drawable/rounded_corners_btn_dark"
+            android:clickable="true"
+            android:focusable="true"
+            android:foreground="?attr/selectableItemBackground"
+            android:gravity="center"
+            android:minHeight="@dimen/activity_margin_triple"
+            android:orientation="horizontal"
+            android:paddingTop="@dimen/activity_margin_half"
+            android:paddingBottom="@dimen/activity_margin_half">
+
+            <ImageView
+                android:layout_width="@dimen/margin_24"
+                android:layout_height="@dimen/margin_24"
+                android:layout_marginEnd="@dimen/activity_margin_half"
+                android:src="@drawable/ic_play_circle_accent" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/home_add_title"
+                android:textColor="@color/white_base"
+                android:textSize="14sp" />
+        </LinearLayout>
+    </LinearLayout>
+</androidx.cardview.widget.CardView>

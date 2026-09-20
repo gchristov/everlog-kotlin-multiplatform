@@ -35,13 +35,17 @@ class PresenterHome : BaseActivityPresenter<MvpViewHome>() {
     @JvmField
     var mSelectedTab: Int? = null
 
+    // Assume empty (button hidden) until the async week stats load proves otherwise, to avoid a show-then-hide flash
+    private var mWeekIsEmpty: Boolean = true
+
     override fun init() {
         super.init()
         setupBroadcastReceivers()
     }
 
     override fun onReady() {
-        observeAddClick()
+        observeAddClickFab()
+        observeAddClickWeekEmptyState()
         updateStartWorkoutButtonVisibility()
         // APP STARTUP: Delay to not block
         Utils.runWithDelay({
@@ -82,12 +86,27 @@ class PresenterHome : BaseActivityPresenter<MvpViewHome>() {
         updateStartWorkoutButtonVisibility()
     }
 
+    internal fun setWeekIsEmpty(isEmpty: Boolean) {
+        mWeekIsEmpty = isEmpty
+        updateStartWorkoutButtonVisibility()
+    }
+
     // Observers
 
-    private fun observeAddClick() {
-        subscriptions.add(mvpView.onClickAdd()
+    private fun observeAddClickFab() {
+        subscriptions.add(mvpView.onClickAddFab()
                 .compose(applyUISchedulers())
                 .subscribe({
+                    AnalyticsManager.manager.homeAddFabTapped()
+                    handleAdd()
+                }, { throwable: Throwable? -> handleError(throwable) }))
+    }
+
+    private fun observeAddClickWeekEmptyState() {
+        subscriptions.add(mvpView.onClickAddWeekEmptyState()
+                .compose(applyUISchedulers())
+                .subscribe({
+                    AnalyticsManager.manager.homeAddWeekEmptyStateTapped()
                     handleAdd()
                 }, { throwable: Throwable? -> handleError(throwable) }))
     }
@@ -121,8 +140,9 @@ class PresenterHome : BaseActivityPresenter<MvpViewHome>() {
     }
 
     private fun updateStartWorkoutButtonVisibility() {
-        val hideOnActivePlan = getSelectedTab() == 0 && PlanManager.manager.hasOngoingPlan()
-        mvpView?.toggleStartWorkoutButton(!hideOnActivePlan)
+        val onWeekTab = getSelectedTab() == 0
+        val hide = onWeekTab && (PlanManager.manager.hasOngoingPlan() || mWeekIsEmpty)
+        mvpView?.toggleStartWorkoutButton(!hide)
     }
 
     private fun handleAdd() {

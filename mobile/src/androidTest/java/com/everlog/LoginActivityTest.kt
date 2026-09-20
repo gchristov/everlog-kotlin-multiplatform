@@ -48,9 +48,6 @@ class LoginActivityTest {
 
         onView(withId(R.id.tabBar))
             .check(matches(isDisplayed()))
-
-        onView(withId(R.id.newWorkoutBtn))
-            .check(matches(isDisplayed()))
     }
 
     private fun waitForView(viewId: Int, timeoutMs: Long = 10000) {

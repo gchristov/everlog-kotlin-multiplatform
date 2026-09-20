@@ -1,35 +1,35 @@
 package com.everlog.ui.fragments.home.week.views;
 
 import android.content.Context;
-import android.text.TextUtils;
 import android.view.View;
 import android.widget.TextView;
 
 import com.everlog.R;
 import com.everlog.data.controllers.statistics.UserStatsController;
 import com.everlog.data.model.WeekDay;
-import com.everlog.managers.auth.LocalUserManager;
 import com.everlog.managers.preferences.SettingsManager;
 import com.everlog.ui.activities.base.BaseActivity;
-import com.everlog.ui.views.EmptyView;
+import com.everlog.ui.fragments.home.week.WeekViewState;
 import com.everlog.ui.views.WeekDayView;
 import com.everlog.ui.views.summarycard.SummaryCardWeek;
+import com.everlog.utils.DateExtKt;
 import com.everlog.utils.DayOfWeekExtKt;
 import com.everlog.utils.ViewUtils;
 import com.everlog.utils.format.StatsFormatUtils;
 import com.facebook.shimmer.ShimmerFrameLayout;
 import com.vaibhavlakhera.circularprogressview.CircularProgressView;
 
+import java.util.Date;
 import java.util.List;
-
-import androidx.annotation.Nullable;
 
 public class StatisticsWeekView implements IWeekView {
 
     View mParentView;
     View mContentView;
     ShimmerFrameLayout mShimmerContainer;
-    EmptyView mEmptyView;
+    View mEmptyView;
+    View mEmptyActionBtn;
+    TextView mEmptyDateLbl;
     View mWeekDaysView;
     WeekDayView mDay1View;
     WeekDayView mDay2View;
@@ -57,6 +57,9 @@ public class StatisticsWeekView implements IWeekView {
         mContentView = view.findViewById(R.id.weekContentView);
         mShimmerContainer = view.findViewById(R.id.weekShimmerView);
         mEmptyView = view.findViewById(R.id.weekEmptyView);
+        mEmptyActionBtn = view.findViewById(R.id.weekEmptyStartBtn);
+        mEmptyDateLbl = view.findViewById(R.id.weekEmptyDateLbl);
+        if (mEmptyDateLbl != null) mEmptyDateLbl.setText(DateExtKt.dayOfWeekFormatted(new Date()));
         mWeekDaysView = view.findViewById(R.id.weekDaysView);
         mDay1View = view.findViewById(R.id.day1View);
         mDay2View = view.findViewById(R.id.day2View);
@@ -73,7 +76,6 @@ public class StatisticsWeekView implements IWeekView {
         mGoalPendingLayout = view.findViewById(R.id.goalPendingLayout);
         mGoalAchievedLayout = view.findViewById(R.id.goalAchievedLayout);
         mGoalTotalLbl = view.findViewById(R.id.goalTotalLbl);
-        setupEmptyView();
         setupClicks(view);
     }
 
@@ -88,7 +90,7 @@ public class StatisticsWeekView implements IWeekView {
         View goalView = view.findViewById(R.id.goalSummary);
         if (goalView != null) goalView.setOnClickListener(v -> onClickGoal());
         
-        if (mEmptyView != null) mEmptyView.setOnClickListener(v -> onClickEmptyState());
+        if (mEmptyActionBtn != null) mEmptyActionBtn.setOnClickListener(v -> onClickEmptyState());
     }
 
     public void setListener(StatisticsWeekListener listener) {
@@ -114,32 +116,36 @@ public class StatisticsWeekView implements IWeekView {
     }
 
     @Override
-    public void toggleVisible(boolean show) {
-        mWeekDaysView.setVisibility(show ? View.VISIBLE : View.GONE);
-        mParentView.setVisibility(show ? View.VISIBLE : View.GONE);
-        if (show) {
-            mEmptyView.setVisibility(View.GONE);
-        }
-    }
-
-    @Override
-    public void toggleLoading(boolean show, BaseActivity parent) {
-        parent.toggleShimmerLayout(mShimmerContainer, show, true);
-        mContentView.setVisibility(View.GONE);
-    }
-
-    @Override
     public String getTitle() {
         return getString(R.string.home_week);
     }
 
-    public void showWeekData(@Nullable UserStatsController.StatsResult stats) {
-        UserStatsController.StatsResult safeStats = stats == null ? new UserStatsController.StatsResult() : stats;
-        List<WeekDay> days = buildWeekdays(safeStats);
+    @Override
+    public void render(WeekViewState state, BaseActivity parent) {
+        boolean isStatsShape = state instanceof WeekViewState.Stats
+                || (state instanceof WeekViewState.Loading && !((WeekViewState.Loading) state).isPlan());
+        boolean loading = state instanceof WeekViewState.Loading;
+
+        mParentView.setVisibility(isStatsShape ? View.VISIBLE : View.GONE);
+        parent.toggleShimmerLayout(mShimmerContainer, isStatsShape && loading, true);
+
+        if (!isStatsShape) {
+            return;
+        }
+
+        // Render the day row/goal/summary with real stats once loaded, or a zero-value
+        // placeholder while loading -- keeps the day-of-week cells and header populated
+        // under the shimmer instead of sitting blank.
+        UserStatsController.StatsResult stats = state instanceof WeekViewState.Stats
+                ? ((WeekViewState.Stats) state).getStats()
+                : new UserStatsController.StatsResult();
+        List<WeekDay> days = buildWeekdays(stats);
         renderWeekView(days);
-        renderWeekGoal(safeStats);
-        renderSummaryViews(safeStats);
-        checkEmptyState(stats);
+        renderWeekGoal(stats);
+        renderSummaryViews(stats);
+
+        mContentView.setVisibility(loading ? View.GONE : View.VISIBLE);
+        mEmptyView.setVisibility(!loading && stats.getWorkoutsCompleted() <= 0 ? View.VISIBLE : View.GONE);
     }
 
     private void renderSummaryViews(UserStatsController.StatsResult stats) {
@@ -168,14 +174,6 @@ public class StatisticsWeekView implements IWeekView {
         mGoalTotalLbl.setText(left + "");
     }
 
-    private void checkEmptyState(@Nullable UserStatsController.StatsResult stats) {
-        if (stats != null) {
-            boolean show = stats.getOverallWorkoutsCompleted() <= 0;
-            mEmptyView.setVisibility(show ? View.VISIBLE : View.GONE);
-            mContentView.setVisibility(show ? View.GONE : View.VISIBLE);
-        }
-    }
-
     private List<WeekDay> buildWeekdays(UserStatsController.StatsResult stats) {
         List<WeekDay> days = DayOfWeekExtKt.buildWeekDays(SettingsManager.manager.firstDayOfWeek());
         for (WeekDay weekDay : days) {
@@ -188,13 +186,6 @@ public class StatisticsWeekView implements IWeekView {
 
     private String getString(int stringResId) {
         return mContext.getString(stringResId);
-    }
-
-    // Setup
-
-    private void setupEmptyView() {
-        String name = LocalUserManager.getUser().getFirstName();
-        mEmptyView.setTitle(mContext.getString(R.string.home_week_empty_title, TextUtils.isEmpty(name) ? "" : String.format(", %s", name)));
     }
 
     public interface StatisticsWeekListener {

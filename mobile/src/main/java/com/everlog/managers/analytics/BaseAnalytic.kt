@@ -210,6 +210,14 @@ abstract class BaseAnalytic : Analytic {
         logEvent(AnalyticsConstants.EVENT_SETTINGS_FIRST_WEEK_DAY_MODIFIED, map)
     }
 
+    override fun homeAddFabTapped() {
+        logEvent(AnalyticsConstants.EVENT_HOME_ADD_FAB_TAPPED)
+    }
+
+    override fun homeAddWeekEmptyStateTapped() {
+        logEvent(AnalyticsConstants.EVENT_HOME_ADD_WEEK_EMPTY_STATE_TAPPED)
+    }
+
     override fun workoutStarted() {
         logEvent(AnalyticsConstants.EVENT_WORKOUT_STARTED)
     }

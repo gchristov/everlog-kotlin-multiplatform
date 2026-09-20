@@ -52,6 +52,9 @@ interface Analytic {
     fun settingsWeightUnitModified(value: String?)
     fun settingsFirstWeekDayModified(value: String?)
 
+    fun homeAddFabTapped()
+    fun homeAddWeekEmptyStateTapped()
+
     fun workoutStarted()
     fun workoutQuickStarted()
     fun workoutFromRoutineStarted()

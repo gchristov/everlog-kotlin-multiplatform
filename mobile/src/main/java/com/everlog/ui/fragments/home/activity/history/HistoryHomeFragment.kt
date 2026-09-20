@@ -102,6 +102,8 @@ class HistoryHomeFragment : BaseTabFragment(), MvpViewHistoryHome {
         val currMonth = if (mCalendarSetup) binding.calendarView.findFirstVisibleMonth() else null
         binding.calendarView.setup(firstMonth, lastMonth, SettingsManager.manager.firstDayOfWeek().toJava())
         binding.calendarView.post {
+            // The fragment's view may have been destroyed by the time this runs
+            if (_binding == null) return@post
             if (currMonth != null) {
                 // Apply latest position
                 binding.calendarView.scrollToMonth(YearMonth.of(currMonth.year, currMonth.month))
@@ -131,6 +133,8 @@ class HistoryHomeFragment : BaseTabFragment(), MvpViewHistoryHome {
 
     override fun scrollToDay(index: Int) {
         binding.recyclerView.post {
+            // The fragment's view may have been destroyed by the time this runs
+            if (_binding == null) return@post
             binding.recyclerView.smoothScrollToPosition(index)
         }
     }

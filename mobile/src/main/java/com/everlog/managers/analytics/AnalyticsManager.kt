@@ -262,6 +262,20 @@ class AnalyticsManager : Analytic {
         }
     }
 
+    override fun homeAddFabTapped() {
+        Timber.tag(TAG).i("Home add FAB tapped")
+        mAnalytics?.forEach {
+            it.homeAddFabTapped()
+        }
+    }
+
+    override fun homeAddWeekEmptyStateTapped() {
+        Timber.tag(TAG).i("Home add week empty state tapped")
+        mAnalytics?.forEach {
+            it.homeAddWeekEmptyStateTapped()
+        }
+    }
+
     override fun workoutStarted() {
         Timber.tag(TAG).i("Workout started")
         mAnalytics?.forEach {
