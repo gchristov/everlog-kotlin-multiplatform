@@ -7,6 +7,7 @@ import android.os.Bundle
 import android.view.MenuItem
 import android.view.View
 import androidx.activity.SystemBarStyle
+import androidx.activity.addCallback
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
@@ -79,6 +80,7 @@ abstract class BaseActivity : AppCompatActivity(), BaseActivityMvpView {
         )
         // Do NOT use activity instance state because that messes up with the ViewPager on the home screen
         super.onCreate(null)
+        setupBackHandling()
         if (shouldSetOrientation()) {
             ActivityUtils.setOrientation(this)
         }
@@ -105,9 +107,25 @@ abstract class BaseActivity : AppCompatActivity(), BaseActivityMvpView {
         super.onSaveInstanceState(outState)
     }
 
-    override fun onBackPressed() {
-        if (getPresenter<BaseActivityMvpView>()?.onBackPressedConsumed() == false) {
-            super.onBackPressed()
+    /**
+     * Called when the user navigates back. Return true if the event was consumed, otherwise the
+     * default back behaviour (finishing the screen) is applied.
+     *
+     * Override this instead of [onBackPressed], which is not called when targeting Android 16+
+     * because of predictive back.
+     */
+    protected open fun handleBackPressed(): Boolean {
+        return getPresenter<BaseActivityMvpView>()?.onBackPressedConsumed() != false
+    }
+
+    private fun setupBackHandling() {
+        onBackPressedDispatcher.addCallback(this) {
+            if (!handleBackPressed()) {
+                // Nothing consumed the event, so fall back to the default behaviour
+                isEnabled = false
+                onBackPressedDispatcher.onBackPressed()
+                isEnabled = true
+            }
         }
     }
 
@@ -135,7 +153,7 @@ abstract class BaseActivity : AppCompatActivity(), BaseActivityMvpView {
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         if (item.itemId == android.R.id.home) {
-            onBackPressed()
+            onBackPressedDispatcher.onBackPressed()
             return true
         }
         return super.onOptionsItemSelected(item)
