@@ -111,17 +111,17 @@ class LoginActivity : BaseActivity(), MvpViewLogin {
         super.onDestroy()
     }
 
-    override fun onBackPressed() {
+    override fun handleBackPressed(): Boolean {
         KeyboardUtils.hideKeyboard(this)
         if (isLoading()) {
             // Wait until loading finishes
-            return
+            return true
         }
         if (binding.formIntro.root.visibility != View.VISIBLE) {
             showForm(FormType.INTRO)
-        } else {
-            super.onBackPressed()
+            return true
         }
+        return super.handleBackPressed()
     }
 
     override fun getLayoutResId(): Int {
@@ -296,7 +296,7 @@ class LoginActivity : BaseActivity(), MvpViewLogin {
 
     private fun setupTopBar() {
         binding.toolbar.setNavigationIcon(R.drawable.ic_back)
-        binding.toolbar.setNavigationOnClickListener { onBackPressed() }
+        binding.toolbar.setNavigationOnClickListener { onBackPressedDispatcher.onBackPressed() }
     }
 
     private fun setupBackgroundImage() {
