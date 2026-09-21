@@ -21,6 +21,8 @@ android {
     ndkVersion = "26.1.10909125" // Must match version in .github/actions/setup-gradle/action.yml
 
     testOptions {
+        // Android framework classes are stubs in local unit tests and throw "not mocked" on any call.
+        // Return defaults instead, e.g. so Utils.runWithDelay's Handler/Looper doesn't fail presenter tests.
         unitTests.isReturnDefaultValues = true
     }
 

@@ -78,15 +78,17 @@ open class PresenterHomeNotification(
     }
 
     private fun appUpdateRequired(notification: HomeNotification, versionCode: Int = BuildConfig.VERSION_CODE): Boolean {
-        if (versionCode < notification.minRequiredVersion) {
-            return true
-        }
+        val belowMinVersion = versionCode < notification.minRequiredVersion
         // actionUrl takes priority over actionId, so a usable url is always a supported action.
         if (hasSupportedUrl(notification)) {
+            return belowMinVersion
+        }
+        // Maintenance notices never ask for an update, whatever the version.
+        if (notification.getAction() == HomeNotification.ActionType.MAINTENANCE) {
             return false
         }
         // An action id this app version doesn't know about was added in a newer release.
-        return !notification.actionId.isNullOrBlank() && notification.getAction() == null
+        return belowMinVersion || (!notification.actionId.isNullOrBlank() && notification.getAction() == null)
     }
 
     private fun hasSupportedUrl(notification: HomeNotification): Boolean {

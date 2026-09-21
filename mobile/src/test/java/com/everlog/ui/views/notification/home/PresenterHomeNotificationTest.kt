@@ -167,6 +167,13 @@ class PresenterHomeNotificationTest {
     }
 
     @Test
+    fun `maintenance notices are never flagged as update required`() {
+        val n = notification(actionId = "MAINTENANCE", minRequiredVersion = Int.MAX_VALUE)
+        presenter.onNotificationChanged(n)
+        assertThat(calls).containsExactly(shownWith(n, false))
+    }
+
+    @Test
     fun `a plain announcement is not flagged as update required`() {
         val n = notification()
         presenter.onNotificationChanged(n)
