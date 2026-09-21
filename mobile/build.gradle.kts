@@ -20,6 +20,10 @@ android {
     compileSdk = 36
     ndkVersion = "26.1.10909125" // Must match version in .github/actions/setup-gradle/action.yml
 
+    testOptions {
+        unitTests.isReturnDefaultValues = true
+    }
+
     defaultConfig {
         applicationId = "com.everlog"
         minSdk = 23

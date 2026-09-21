@@ -10,7 +10,9 @@ import timber.log.Timber
 import java.time.Instant
 import java.time.format.DateTimeParseException
 
-class PresenterHomeNotification : BaseViewPresenter<MvpViewHomeNotification>() {
+open class PresenterHomeNotification(
+        private val appLaunchManager: AppLaunchManager = AppLaunchManager.manager
+) : BaseViewPresenter<MvpViewHomeNotification>() {
 
     private var mNotification: HomeNotification? = null
 
@@ -32,7 +34,7 @@ class PresenterHomeNotification : BaseViewPresenter<MvpViewHomeNotification>() {
                 .compose(applyUISchedulers())
                 .subscribe({
                     AnalyticsManager.manager.notificationHomeDismissed()
-                    mNotification?.let { AppLaunchManager.manager.homeNotificationDismissed(it) }
+                    mNotification?.let { appLaunchManager.homeNotificationDismissed(it) }
                     handleHideNotification(false)
                 }) { handleError(it) })
     }
@@ -40,7 +42,7 @@ class PresenterHomeNotification : BaseViewPresenter<MvpViewHomeNotification>() {
     private fun observeActionClick() {
         subscriptions.add(mvpView.onClickAction()
                 .compose(applyUISchedulers())
-                .subscribe({ handleShowAction() }) { handleError(it) })
+                .subscribe({ onActionClicked() }) { handleError(it) })
     }
 
     // Handlers
@@ -64,7 +66,7 @@ class PresenterHomeNotification : BaseViewPresenter<MvpViewHomeNotification>() {
         if (!notification.canShow() || !isWithinSchedule(notification, Instant.now())) {
             return false
         }
-        return AppLaunchManager.manager.shouldShowHomeNotification(notification)
+        return appLaunchManager.shouldShowHomeNotification(notification)
     }
 
     private fun appUpdateRequired(notification: HomeNotification, versionCode: Int = BuildConfig.VERSION_CODE): Boolean {
@@ -95,7 +97,7 @@ class PresenterHomeNotification : BaseViewPresenter<MvpViewHomeNotification>() {
         }
     }
 
-    private fun handleShowAction() {
+    internal fun onActionClicked() {
         val notification = mNotification ?: return
         if (appUpdateRequired(notification)) {
             // Redirect user to Play Store to update app if action is not supported.
@@ -103,7 +105,7 @@ class PresenterHomeNotification : BaseViewPresenter<MvpViewHomeNotification>() {
         } else if (hasSupportedUrl(notification)) {
             navigator.openUrl(notification.actionUrl!!.trim())
             // The user acted on it (e.g. opened the survey), so don't keep showing it.
-            AppLaunchManager.manager.homeNotificationDismissed(notification)
+            appLaunchManager.homeNotificationDismissed(notification)
             handleHideNotification(true)
         } else {
             val action = notification.getAction()
