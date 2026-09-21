@@ -42,18 +42,21 @@ class PresenterHomeNotification : BaseViewPresenter<MvpViewHomeNotification>() {
 
     private fun handleShowAction() {
         val notification = mvpView?.getNotification() ?: return
-        when (val action = notification.resolveTapAction()) {
-            is HomeNotification.TapAction.OpenPlayStore -> navigator.openPlayStoreAppDetails()
-            is HomeNotification.TapAction.OpenUrl -> {
-                navigator.openUrl(action.url)
-                // The user acted on it (e.g. opened the survey), so don't keep showing it.
-                AppLaunchManager.manager.homeNotificationDismissed(notification)
-                handleHideNotification(true)
+        if (notification.appUpdateRequired()) {
+            // Redirect user to Play Store to update app if action is not supported.
+            navigator.openPlayStoreAppDetails()
+        } else if (notification.hasSupportedUrl()) {
+            navigator.openUrl(notification.actionUrl!!.trim())
+            // The user acted on it (e.g. opened the survey), so don't keep showing it.
+            AppLaunchManager.manager.homeNotificationDismissed(notification)
+            handleHideNotification(true)
+        } else {
+            val action = notification.getAction()
+            if (action == null) {
+                Timber.tag(TAG).w("Home notification tapped without an action or url, ignoring")
+            } else {
+                openScreen(action)
             }
-            is HomeNotification.TapAction.OpenScreen -> openScreen(action.type)
-            is HomeNotification.TapAction.None ->
-                Timber.tag(TAG).w("Home notification tapped without a supported action (actionId=%s, actionUrl=%s)",
-                        notification.actionId, notification.actionUrl)
         }
     }
 

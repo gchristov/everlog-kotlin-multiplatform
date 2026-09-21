@@ -4,6 +4,7 @@ import com.everlog.config.AppConfig;
 import com.everlog.config.HomeNotification;
 
 import java.time.Instant;
+import java.time.format.DateTimeParseException;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.concurrent.TimeUnit;
@@ -79,11 +80,28 @@ public class AppLaunchManager {
     // Triggers
 
     public boolean shouldShowHomeNotification(HomeNotification notification) {
-        if (notification != null && notification.isEligible(Instant.now())) {
+        if (notification != null && notification.canShow() && isWithinSchedule(notification, Instant.now())) {
             int lastHash = AppLaunchState.state.homeNotificationLastHash();
             return lastHash != notification.hashCode();
         }
         return false;
+    }
+
+    private boolean isWithinSchedule(HomeNotification notification, Instant now) {
+        try {
+            String startAt = notification.getStartAt();
+            if (startAt != null && !startAt.trim().isEmpty() && now.isBefore(Instant.parse(startAt.trim()))) {
+                return false;
+            }
+            String endAt = notification.getEndAt();
+            if (endAt != null && !endAt.trim().isEmpty() && !now.isBefore(Instant.parse(endAt.trim()))) {
+                return false;
+            }
+        } catch (DateTimeParseException e) {
+            // Unparseable schedule, so don't show rather than show forever.
+            return false;
+        }
+        return true;
     }
 
     public void homeNotificationDismissed(HomeNotification notification) {

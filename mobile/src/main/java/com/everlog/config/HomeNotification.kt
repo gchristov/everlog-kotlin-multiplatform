@@ -2,8 +2,6 @@ package com.everlog.config
 
 import com.everlog.BuildConfig
 import java.io.Serializable
-import java.time.Instant
-import java.time.format.DateTimeParseException
 
 data class HomeNotification (
 
@@ -28,34 +26,8 @@ data class HomeNotification (
         EXERCISES
     }
 
-    /** What should happen when the banner is tapped. */
-    sealed class TapAction {
-        object OpenPlayStore : TapAction()
-        data class OpenUrl(val url: String) : TapAction()
-        data class OpenScreen(val type: ActionType) : TapAction()
-        /** Nothing sensible to do, e.g. a pure announcement or an unsupported action. */
-        object None : TapAction()
-    }
-
     fun canShow(): Boolean {
         return !title.isNullOrEmpty() && !description.isNullOrEmpty()
-    }
-
-    fun isWithinSchedule(now: Instant): Boolean {
-        if (!startAt.isNullOrBlank()) {
-            val start = parseInstant(startAt) ?: return false
-            if (now.isBefore(start)) return false
-        }
-        if (!endAt.isNullOrBlank()) {
-            val end = parseInstant(endAt) ?: return false
-            if (!now.isBefore(end)) return false
-        }
-        return true
-    }
-
-    /** Everything the banner itself decides, i.e. excluding whether the user already dismissed it. */
-    fun isEligible(now: Instant = Instant.now()): Boolean {
-        return canShow() && isWithinSchedule(now)
     }
 
     fun appUpdateRequired(versionCode: Int = BuildConfig.VERSION_CODE): Boolean {
@@ -80,29 +52,8 @@ data class HomeNotification (
         }
     }
 
-    fun resolveTapAction(versionCode: Int = BuildConfig.VERSION_CODE): TapAction {
-        if (appUpdateRequired(versionCode)) {
-            return TapAction.OpenPlayStore
-        }
-        if (hasSupportedUrl()) {
-            return TapAction.OpenUrl(actionUrl!!.trim())
-        }
-        return when (val action = getAction()) {
-            null, ActionType.NONE, ActionType.MAINTENANCE -> TapAction.None
-            else -> TapAction.OpenScreen(action)
-        }
-    }
-
-    private fun hasSupportedUrl(): Boolean {
+    fun hasSupportedUrl(): Boolean {
         val url = actionUrl?.trim() ?: return false
         return url.startsWith("https://", true) || url.startsWith("http://", true)
-    }
-
-    private fun parseInstant(value: String?): Instant? {
-        return try {
-            Instant.parse(value!!.trim())
-        } catch (e: DateTimeParseException) {
-            null
-        }
     }
 }
