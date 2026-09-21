@@ -12,9 +12,17 @@ import java.time.format.DateTimeParseException
 
 class PresenterHomeNotification : BaseViewPresenter<MvpViewHomeNotification>() {
 
+    private var mNotification: HomeNotification? = null
+
     override fun onReady() {
         observeCloseClick()
         observeActionClick()
+        renderNotification()
+    }
+
+    fun onNotificationChanged(notification: HomeNotification?) {
+        mNotification = notification
+        renderNotification()
     }
 
     // Observers
@@ -24,7 +32,7 @@ class PresenterHomeNotification : BaseViewPresenter<MvpViewHomeNotification>() {
                 .compose(applyUISchedulers())
                 .subscribe({
                     AnalyticsManager.manager.notificationHomeDismissed()
-                    AppLaunchManager.manager.homeNotificationDismissed(mvpView.getNotification())
+                    mNotification?.let { AppLaunchManager.manager.homeNotificationDismissed(it) }
                     handleHideNotification(false)
                 }) { handleError(it) })
     }
@@ -43,14 +51,23 @@ class PresenterHomeNotification : BaseViewPresenter<MvpViewHomeNotification>() {
         }, if (wait) 500 else 0)
     }
 
-    fun shouldShow(notification: HomeNotification?): Boolean {
-        if (notification == null || !notification.canShow() || !isWithinSchedule(notification, Instant.now())) {
+    private fun renderNotification() {
+        val notification = mNotification
+        if (notification != null && shouldShow(notification)) {
+            mvpView?.showNotification(notification, appUpdateRequired(notification))
+        } else {
+            mvpView?.hideNotification()
+        }
+    }
+
+    private fun shouldShow(notification: HomeNotification): Boolean {
+        if (!notification.canShow() || !isWithinSchedule(notification, Instant.now())) {
             return false
         }
         return AppLaunchManager.manager.shouldShowHomeNotification(notification)
     }
 
-    fun appUpdateRequired(notification: HomeNotification, versionCode: Int = BuildConfig.VERSION_CODE): Boolean {
+    private fun appUpdateRequired(notification: HomeNotification, versionCode: Int = BuildConfig.VERSION_CODE): Boolean {
         if (versionCode < notification.minRequiredVersion) {
             return true
         }
@@ -79,7 +96,7 @@ class PresenterHomeNotification : BaseViewPresenter<MvpViewHomeNotification>() {
     }
 
     private fun handleShowAction() {
-        val notification = mvpView?.getNotification() ?: return
+        val notification = mNotification ?: return
         if (appUpdateRequired(notification)) {
             // Redirect user to Play Store to update app if action is not supported.
             navigator.openPlayStoreAppDetails()

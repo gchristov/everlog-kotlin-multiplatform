@@ -10,7 +10,7 @@ interface MvpViewHomeNotification : BaseViewMvpView {
 
     fun onClickAction(): Observable<Void>
 
-    fun getNotification(): HomeNotification?
+    fun showNotification(notification: HomeNotification, updateRequired: Boolean)
 
     fun hideNotification()
 

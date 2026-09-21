@@ -21,7 +21,6 @@ class HomeNotificationView(context: Context, attrs: AttributeSet?) : BaseView(co
     private val binding get() = _binding!!
 
     private var mPresenter: PresenterHomeNotification? = null
-    private var mNotification: HomeNotification? = null
 
     override fun setupLayout(attrs: AttributeSet?, defStyleAttr: Int) {
         _binding = ViewNotificationHomeBinding.inflate(LayoutInflater.from(context), this, true)
@@ -51,10 +50,6 @@ class HomeNotificationView(context: Context, attrs: AttributeSet?) : BaseView(co
         visibility = GONE
     }
 
-    override fun getNotification(): HomeNotification? {
-        return mNotification
-    }
-
     override fun showPlans() {
         (context as? HomeActivity)?.showPlans()
     }
@@ -63,23 +58,18 @@ class HomeNotificationView(context: Context, attrs: AttributeSet?) : BaseView(co
         (context as? HomeActivity)?.showSettings()
     }
 
+    /** Hands the latest Remote Config value to the presenter, which decides whether and what to show. */
     fun showHomeNotification(notification: HomeNotification?) {
-        mNotification = notification
-        val shouldShow = mPresenter?.shouldShow(notification) ?: false
-        visibility = if (shouldShow) VISIBLE else GONE
-        if (shouldShow) {
-            renderNotification(notification!!)
-        }
+        mPresenter?.onNotificationChanged(notification)
     }
 
-    // Render
-
-    private fun renderNotification(notification: HomeNotification) {
+    override fun showNotification(notification: HomeNotification, updateRequired: Boolean) {
+        visibility = VISIBLE
         binding.titleLbl.text = notification.title
         binding.descriptionLbl.text = notification.description
         val hasImage = !TextUtils.isEmpty(notification.imageUrl)
         binding.imageView.visibility = if (hasImage) VISIBLE else GONE
-        binding.updateLbl.visibility = if (mPresenter?.appUpdateRequired(notification) == true) VISIBLE else GONE
+        binding.updateLbl.visibility = if (updateRequired) VISIBLE else GONE
         if (hasImage) {
             ELGlideModule.loadImage(notification.imageUrl, binding.imageView)
         }
