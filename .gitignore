@@ -72,3 +72,6 @@ Thumbs.db
 *.aab
 /.idea/androidTestResultsUserPreferences.xml
 /.idea/markdown.xml
+
+# --- Tool outputs (contain user PII) ---
+tools/active_users/*.csv
