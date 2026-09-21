@@ -78,8 +78,8 @@ public class AppLaunchManager {
 
     // Triggers
 
-    public boolean shouldShowHomeNotification(HomeNotification notification, int workoutsCompleted) {
-        if (notification != null && notification.isEligible(workoutsCompleted, Instant.now())) {
+    public boolean shouldShowHomeNotification(HomeNotification notification) {
+        if (notification != null && notification.isEligible(Instant.now())) {
             int lastHash = AppLaunchState.state.homeNotificationLastHash();
             return lastHash != notification.hashCode();
         }

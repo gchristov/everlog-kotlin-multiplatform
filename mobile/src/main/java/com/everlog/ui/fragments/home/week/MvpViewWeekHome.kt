@@ -6,7 +6,7 @@ import rx.Observable
 
 interface MvpViewWeekHome : BaseFragmentMvpView {
 
-    fun showHomeNotification(notification: HomeNotification?, workoutsCompleted: Int)
+    fun showHomeNotification(notification: HomeNotification?)
 
     fun showSettings();
 

@@ -102,8 +102,6 @@ class PresenterWeekHome : BaseFragmentPresenter<MvpViewWeekHome>() {
             } else {
                 mHistory.clear()
                 mHistory.addAll(event.items)
-                // Banner eligibility can depend on the number of completed workouts.
-                renderHomeNotification()
                 handleHistoryReady(mHistory)
             }
         }
@@ -204,7 +202,7 @@ class PresenterWeekHome : BaseFragmentPresenter<MvpViewWeekHome>() {
     // Handlers
 
     private fun renderHomeNotification() {
-        mvpView?.showHomeNotification(RemoteConfigManager.manager.notificationHome(), mHistory.size)
+        mvpView?.showHomeNotification(RemoteConfigManager.manager.notificationHome())
     }
 
     private fun handleHistoryReady(history: List<ELWorkout>) {

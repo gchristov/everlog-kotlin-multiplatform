@@ -13,8 +13,6 @@ data class HomeNotification (
         var actionId: String? = null,
         var actionUrl: String? = null,
         var minRequiredVersion: Int = 0,
-        // Only show once the user has completed at least this many workouts. 0 means no requirement.
-        var minWorkoutsCompleted: Int = 0,
         // Optional ISO-8601 instants (e.g. 2026-10-01T00:00:00Z) bounding when the banner may show.
         var startAt: String? = null,
         var endAt: String? = null
@@ -55,13 +53,9 @@ data class HomeNotification (
         return true
     }
 
-    fun meetsWorkoutRequirement(workoutsCompleted: Int): Boolean {
-        return workoutsCompleted >= minWorkoutsCompleted
-    }
-
     /** Everything the banner itself decides, i.e. excluding whether the user already dismissed it. */
-    fun isEligible(workoutsCompleted: Int, now: Instant = Instant.now()): Boolean {
-        return canShow() && isWithinSchedule(now) && meetsWorkoutRequirement(workoutsCompleted)
+    fun isEligible(now: Instant = Instant.now()): Boolean {
+        return canShow() && isWithinSchedule(now)
     }
 
     fun appUpdateRequired(versionCode: Int = BuildConfig.VERSION_CODE): Boolean {

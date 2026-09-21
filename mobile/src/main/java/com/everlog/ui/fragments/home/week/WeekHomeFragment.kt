@@ -110,8 +110,8 @@ class WeekHomeFragment : BaseTabFragment(), MvpViewWeekHome {
         }
     }
 
-    override fun showHomeNotification(notification: HomeNotification?, workoutsCompleted: Int) {
-        binding.notificationView.showHomeNotification(notification, workoutsCompleted)
+    override fun showHomeNotification(notification: HomeNotification?) {
+        binding.notificationView.showHomeNotification(notification)
     }
 
     override fun showStatistics() {

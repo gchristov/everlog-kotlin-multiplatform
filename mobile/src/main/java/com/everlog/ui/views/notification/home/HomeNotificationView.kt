@@ -64,9 +64,9 @@ class HomeNotificationView(context: Context, attrs: AttributeSet?) : BaseView(co
         (context as? HomeActivity)?.showSettings()
     }
 
-    fun showHomeNotification(notification: HomeNotification?, workoutsCompleted: Int) {
+    fun showHomeNotification(notification: HomeNotification?) {
         mNotification = notification
-        val shouldShow = AppLaunchManager.manager.shouldShowHomeNotification(notification, workoutsCompleted)
+        val shouldShow = AppLaunchManager.manager.shouldShowHomeNotification(notification)
         visibility = if (shouldShow) VISIBLE else GONE
         if (shouldShow) {
             renderNotification(notification!!)
