@@ -68,6 +68,7 @@ class PresenterWeekHome : BaseFragmentPresenter<MvpViewWeekHome>() {
         observeWeekStatsClick()
         observeWeekGoalClick()
         observeWeekEmptyStateClick()
+        renderHomeNotification()
         loadWeekStats()
     }
 
@@ -101,6 +102,8 @@ class PresenterWeekHome : BaseFragmentPresenter<MvpViewWeekHome>() {
             } else {
                 mHistory.clear()
                 mHistory.addAll(event.items)
+                // Banner eligibility can depend on the number of completed workouts.
+                renderHomeNotification()
                 handleHistoryReady(mHistory)
             }
         }
@@ -108,7 +111,7 @@ class PresenterWeekHome : BaseFragmentPresenter<MvpViewWeekHome>() {
 
     override fun onRemoteConfigChanged() {
         super.onRemoteConfigChanged()
-        mvpView?.showHomeNotification(RemoteConfigManager.manager.notificationHome())
+        renderHomeNotification()
     }
 
     override fun onPreferencesChanged() {
@@ -199,6 +202,10 @@ class PresenterWeekHome : BaseFragmentPresenter<MvpViewWeekHome>() {
     }
 
     // Handlers
+
+    private fun renderHomeNotification() {
+        mvpView?.showHomeNotification(RemoteConfigManager.manager.notificationHome(), mHistory.size)
+    }
 
     private fun handleHistoryReady(history: List<ELWorkout>) {
         mOnRefreshStats.onNext(history)

@@ -5,6 +5,7 @@ import com.everlog.managers.analytics.AnalyticsManager
 import com.everlog.managers.apprate.AppLaunchManager
 import com.everlog.ui.views.base.BaseViewPresenter
 import com.everlog.utils.Utils
+import timber.log.Timber
 
 class PresenterHomeNotification : BaseViewPresenter<MvpViewHomeNotification>() {
 
@@ -40,22 +41,35 @@ class PresenterHomeNotification : BaseViewPresenter<MvpViewHomeNotification>() {
     }
 
     private fun handleShowAction() {
-        val notification = mvpView?.getNotification()
-        if (notification != null) {
-            if (notification.appUpdateRequired()) {
-                // Redirect user to Play Store to update app if action is not supported.
-                navigator.openPlayStoreAppDetails()
-            } else {
-                when (notification.getAction()) {
-                    HomeNotification.ActionType.MUSCLE_GOALS -> navigator.openMuscleGoal()
-                    HomeNotification.ActionType.PLANS -> mvpView?.showPlans()
-                    HomeNotification.ActionType.SETTINGS -> mvpView?.showSettings()
-                    HomeNotification.ActionType.EXERCISES -> navigator.openExercises()
-                    HomeNotification.ActionType.NONE -> TODO()
-                    HomeNotification.ActionType.MAINTENANCE -> TODO()
-                    null -> TODO()
-                }
+        val notification = mvpView?.getNotification() ?: return
+        when (val action = notification.resolveTapAction()) {
+            is HomeNotification.TapAction.OpenPlayStore -> navigator.openPlayStoreAppDetails()
+            is HomeNotification.TapAction.OpenUrl -> {
+                navigator.openUrl(action.url)
+                // The user acted on it (e.g. opened the survey), so don't keep showing it.
+                AppLaunchManager.manager.homeNotificationDismissed(notification)
+                handleHideNotification(true)
             }
+            is HomeNotification.TapAction.OpenScreen -> openScreen(action.type)
+            is HomeNotification.TapAction.None ->
+                Timber.tag(TAG).w("Home notification tapped without a supported action (actionId=%s, actionUrl=%s)",
+                        notification.actionId, notification.actionUrl)
         }
+    }
+
+    private fun openScreen(type: HomeNotification.ActionType) {
+        when (type) {
+            HomeNotification.ActionType.MUSCLE_GOALS -> navigator.openMuscleGoal()
+            HomeNotification.ActionType.PLANS -> mvpView?.showPlans()
+            HomeNotification.ActionType.SETTINGS -> mvpView?.showSettings()
+            HomeNotification.ActionType.EXERCISES -> navigator.openExercises()
+            HomeNotification.ActionType.NONE,
+            HomeNotification.ActionType.MAINTENANCE ->
+                Timber.tag(TAG).w("Unsupported home notification action: %s", type)
+        }
+    }
+
+    companion object {
+        private const val TAG = "PresenterHomeNotification"
     }
 }

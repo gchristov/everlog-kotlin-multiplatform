@@ -124,7 +124,11 @@ public class ELNavigator implements Navigator {
     @Override
     public void openUrl(String url) {
         Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
-        startActivity(intent);
+        try {
+            startActivity(intent);
+        } catch (ActivityNotFoundException e) {
+            Timber.tag("ELNavigator").w(e, "No activity found to open url: %s", url);
+        }
     }
 
     @Override

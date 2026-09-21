@@ -3,6 +3,7 @@ package com.everlog.managers.apprate;
 import com.everlog.config.AppConfig;
 import com.everlog.config.HomeNotification;
 
+import java.time.Instant;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.concurrent.TimeUnit;
@@ -77,8 +78,8 @@ public class AppLaunchManager {
 
     // Triggers
 
-    public boolean shouldShowHomeNotification(HomeNotification notification) {
-        if (notification != null && notification.canShow()) {
+    public boolean shouldShowHomeNotification(HomeNotification notification, int workoutsCompleted) {
+        if (notification != null && notification.isEligible(workoutsCompleted, Instant.now())) {
             int lastHash = AppLaunchState.state.homeNotificationLastHash();
             return lastHash != notification.hashCode();
         }
