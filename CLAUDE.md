@@ -66,7 +66,11 @@ Singleton-style managers encapsulate cross-cutting concerns and are the integrat
 
 `services/workout/WorkoutService` + `WorkoutNotificationBuilder` run the active-workout foreground service/notification. `services/fcm/ELFirebaseMessagingService` handles push notifications. `receivers/` holds broadcast receivers.
 
-## Pull requests
+## Branches and pull requests
+
+- Prefix branch names with the equivalent Notion ticket's ID, if available, e.g. `tas-123-something-changed` (no brackets — git doesn't allow them in branch names).
+- Prefix PR titles with the Notion ticket ID in brackets, if available, e.g. `[TAS-123] Something changed`.
+- Individual commits within a PR don't need the ticket prefix. Instead, each commit message should briefly summarise what changed in that commit, so the work can be picked back up later with quick context.
 
 Use `PULL_REQUEST_TEMPLATE.md` for PR descriptions (`## What does this pull request change?`, `## Demo`, `## Screenshots`, `## How is this change tested?`). Irrelevant sections (e.g. Demo/Screenshots for a non-UI change) can be dropped.
 
