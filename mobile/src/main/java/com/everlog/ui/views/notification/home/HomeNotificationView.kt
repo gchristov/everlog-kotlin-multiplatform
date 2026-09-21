@@ -7,7 +7,6 @@ import android.view.LayoutInflater
 import android.view.View
 import com.everlog.config.HomeNotification
 import com.everlog.databinding.ViewNotificationHomeBinding
-import com.everlog.managers.apprate.AppLaunchManager
 import com.everlog.ui.activities.home.HomeActivity
 import com.everlog.ui.views.base.BaseView
 import com.everlog.ui.views.base.BaseViewMvpView
@@ -66,7 +65,7 @@ class HomeNotificationView(context: Context, attrs: AttributeSet?) : BaseView(co
 
     fun showHomeNotification(notification: HomeNotification?) {
         mNotification = notification
-        val shouldShow = AppLaunchManager.manager.shouldShowHomeNotification(notification)
+        val shouldShow = mPresenter?.shouldShow(notification) ?: false
         visibility = if (shouldShow) VISIBLE else GONE
         if (shouldShow) {
             renderNotification(notification!!)
@@ -80,7 +79,7 @@ class HomeNotificationView(context: Context, attrs: AttributeSet?) : BaseView(co
         binding.descriptionLbl.text = notification.description
         val hasImage = !TextUtils.isEmpty(notification.imageUrl)
         binding.imageView.visibility = if (hasImage) VISIBLE else GONE
-        binding.updateLbl.visibility = if (notification.appUpdateRequired()) VISIBLE else GONE
+        binding.updateLbl.visibility = if (mPresenter?.appUpdateRequired(notification) == true) VISIBLE else GONE
         if (hasImage) {
             ELGlideModule.loadImage(notification.imageUrl, binding.imageView)
         }
