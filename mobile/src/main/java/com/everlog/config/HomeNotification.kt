@@ -62,6 +62,10 @@ data class HomeNotification (
         if (versionCode < minRequiredVersion) {
             return true
         }
+        // actionUrl takes priority over actionId, so a usable url is always a supported action.
+        if (hasSupportedUrl()) {
+            return false
+        }
         // An action id this app version doesn't know about was added in a newer release.
         return !actionId.isNullOrBlank() && getAction() == null
     }
@@ -80,9 +84,8 @@ data class HomeNotification (
         if (appUpdateRequired(versionCode)) {
             return TapAction.OpenPlayStore
         }
-        val url = actionUrl?.trim()
-        if (isSupportedUrl(url)) {
-            return TapAction.OpenUrl(url!!)
+        if (hasSupportedUrl()) {
+            return TapAction.OpenUrl(actionUrl!!.trim())
         }
         return when (val action = getAction()) {
             null, ActionType.NONE, ActionType.MAINTENANCE -> TapAction.None
@@ -90,8 +93,9 @@ data class HomeNotification (
         }
     }
 
-    private fun isSupportedUrl(url: String?): Boolean {
-        return url != null && (url.startsWith("https://", true) || url.startsWith("http://", true))
+    private fun hasSupportedUrl(): Boolean {
+        val url = actionUrl?.trim() ?: return false
+        return url.startsWith("https://", true) || url.startsWith("http://", true)
     }
 
     private fun parseInstant(value: String?): Instant? {
