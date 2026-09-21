@@ -2,6 +2,7 @@ package com.everlog.ui.views.notification.home
 
 import com.everlog.BuildConfig
 import com.everlog.config.HomeNotification
+import com.everlog.managers.analytics.Analytic
 import com.everlog.managers.analytics.AnalyticsManager
 import com.everlog.managers.apprate.AppLaunchManager
 import com.everlog.ui.views.base.BaseViewPresenter
@@ -11,10 +12,12 @@ import java.time.Instant
 import java.time.format.DateTimeParseException
 
 open class PresenterHomeNotification(
-        private val appLaunchManager: AppLaunchManager = AppLaunchManager.manager
+        private val appLaunchManager: AppLaunchManager = AppLaunchManager.manager,
+        private val analytics: Analytic = AnalyticsManager.manager
 ) : BaseViewPresenter<MvpViewHomeNotification>() {
 
     private var mNotification: HomeNotification? = null
+    private var mLastShownHash: Int? = null
 
     override fun onReady() {
         observeCloseClick()
@@ -33,7 +36,7 @@ open class PresenterHomeNotification(
         subscriptions.add(mvpView.onClickClose()
                 .compose(applyUISchedulers())
                 .subscribe({
-                    AnalyticsManager.manager.notificationHomeDismissed()
+                    analytics.notificationHomeDismissed(mNotification?.title)
                     mNotification?.let { appLaunchManager.homeNotificationDismissed(it) }
                     handleHideNotification(false)
                 }) { handleError(it) })
@@ -57,6 +60,11 @@ open class PresenterHomeNotification(
         val notification = mNotification
         if (notification != null && shouldShow(notification)) {
             mvpView?.showNotification(notification, appUpdateRequired(notification))
+            // Rendering can happen many times for the same banner, so only report each one once.
+            if (mLastShownHash != notification.hashCode()) {
+                mLastShownHash = notification.hashCode()
+                analytics.notificationHomeShown(notification.title)
+            }
         } else {
             mvpView?.hideNotification()
         }
@@ -99,6 +107,7 @@ open class PresenterHomeNotification(
 
     internal fun onActionClicked() {
         val notification = mNotification ?: return
+        analytics.notificationHomeTapped(notification.title)
         if (appUpdateRequired(notification)) {
             // Redirect user to Play Store to update app if action is not supported.
             navigator.openPlayStoreAppDetails()

@@ -50,6 +50,8 @@ class AnalyticsConstants {
 
         // Notifications
 
+        const val EVENT_NOTIFICATION_HOME_SHOWN = "notification_home_shown"
+        const val EVENT_NOTIFICATION_HOME_TAPPED = "notification_home_tapped"
         const val EVENT_NOTIFICATION_HOME_DISMISSED = "notification_home_dismissed"
 
         // Rating
@@ -187,5 +189,6 @@ class AnalyticsConstants {
         const val PROPERTY_USER_ID = "userId"
         const val PROPERTY_TYPE = "type"
         const val PROPERTY_VALUE = "value"
+        const val PROPERTY_TITLE = "title"
     }
 }

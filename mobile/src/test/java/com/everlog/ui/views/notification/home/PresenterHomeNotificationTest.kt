@@ -1,6 +1,7 @@
 package com.everlog.ui.views.notification.home
 
 import com.everlog.config.HomeNotification
+import com.everlog.managers.analytics.Analytic
 import com.everlog.managers.apprate.AppLaunchManager
 import com.everlog.ui.navigator.Navigator
 import com.google.common.truth.Truth.assertThat
@@ -34,7 +35,11 @@ class PresenterHomeNotificationTest {
         return Proxy.newProxyInstance(T::class.java.classLoader, arrayOf(T::class.java), handler) as T
     }
 
-    private inner class TestPresenter : PresenterHomeNotification(appLaunchManager) {
+    // Analytics isn't under test here (the real manager needs Firebase), so swallow the calls.
+    private inline fun <reified T> silent(): T =
+            Proxy.newProxyInstance(T::class.java.classLoader, arrayOf(T::class.java), InvocationHandler { _, _, _ -> null }) as T
+
+    private inner class TestPresenter : PresenterHomeNotification(appLaunchManager, silent<Analytic>()) {
         val view: MvpViewHomeNotification = recorder("view")
 
         init {

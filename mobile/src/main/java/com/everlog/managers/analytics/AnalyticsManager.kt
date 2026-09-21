@@ -45,10 +45,24 @@ class AnalyticsManager : Analytic {
         }
     }
 
-    override fun notificationHomeDismissed() {
-        Timber.tag(TAG).i("Notification home dismissed")
+    override fun notificationHomeShown(title: String?) {
+        Timber.tag(TAG).i("Notification home shown: title=%s", title)
         mAnalytics?.forEach {
-            it.notificationHomeDismissed()
+            it.notificationHomeShown(title)
+        }
+    }
+
+    override fun notificationHomeTapped(title: String?) {
+        Timber.tag(TAG).i("Notification home tapped: title=%s", title)
+        mAnalytics?.forEach {
+            it.notificationHomeTapped(title)
+        }
+    }
+
+    override fun notificationHomeDismissed(title: String?) {
+        Timber.tag(TAG).i("Notification home dismissed: title=%s", title)
+        mAnalytics?.forEach {
+            it.notificationHomeDismissed(title)
         }
     }
 
