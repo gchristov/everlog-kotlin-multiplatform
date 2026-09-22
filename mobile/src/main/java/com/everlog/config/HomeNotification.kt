@@ -37,18 +37,20 @@ data class HomeNotification (
     }
 
     fun appUpdateRequired(): Boolean {
-        val belowMinVersion = BuildConfig.VERSION_CODE < minRequiredVersion
-        // actionUrl takes priority over actionId, so a usable url is always a supported action.
+        // actionUrl takes priority over actionId: any current app version understands it, so it
+        // alone doesn't require an update (though minRequiredVersion still can, independently).
         if (hasSupportedUrl()) {
-            return belowMinVersion
+            return BuildConfig.VERSION_CODE < minRequiredVersion
         }
-        // Maintenance notices never ask for an update, whatever the version.
-        if (getAction() == ActionType.MAINTENANCE) {
-            return false
+        // Without a url, a valid actionId is required. A missing or unrecognised one means this
+        // banner can't do anything on this version - most likely because it's a newer release's
+        // banner (e.g. actionUrl-only) that this build doesn't have support for yet.
+        val action = getAction() ?: return true
+        return if (action == ActionType.MAINTENANCE) {
+            false
+        } else {
+            BuildConfig.VERSION_CODE < minRequiredVersion
         }
-        // An action id this app version doesn't know about was added in a newer release; a banner
-        // with no action at all is a plain announcement, not an update prompt.
-        return belowMinVersion || (!actionId.isNullOrBlank() && getAction() == null)
     }
 
     fun getAction(): ActionType? {

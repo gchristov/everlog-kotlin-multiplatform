@@ -101,8 +101,10 @@ class HomeNotificationTest {
     // appUpdateRequired
 
     @Test
-    fun `update required when app version is below minRequiredVersion`() {
-        assertThat(notification(minRequiredVersion = Int.MAX_VALUE).appUpdateRequired()).isTrue()
+    fun `update required when there is no actionId and no actionUrl`() {
+        // e.g. a user on a version before actionUrl existed, viewing a url-only banner: their
+        // build can't do anything with it, so they should be nudged to update.
+        assertThat(notification().appUpdateRequired()).isTrue()
     }
 
     @Test
@@ -111,18 +113,28 @@ class HomeNotificationTest {
     }
 
     @Test
+    fun `update required when a valid action id is below minRequiredVersion`() {
+        assertThat(notification(actionId = "PLANS", minRequiredVersion = Int.MAX_VALUE).appUpdateRequired()).isTrue()
+    }
+
+    @Test
+    fun `not update required with a valid action id and satisfied minRequiredVersion`() {
+        assertThat(notification(actionId = "PLANS", minRequiredVersion = 0).appUpdateRequired()).isFalse()
+    }
+
+    @Test
     fun `maintenance notices are never update required`() {
         assertThat(notification(actionId = "MAINTENANCE", minRequiredVersion = Int.MAX_VALUE).appUpdateRequired()).isFalse()
     }
 
     @Test
-    fun `a plain announcement is not update required`() {
-        assertThat(notification().appUpdateRequired()).isFalse()
+    fun `a url takes priority over an unknown action id`() {
+        assertThat(notification(actionId = "SOMETHING_NEW", actionUrl = "https://example.com").appUpdateRequired()).isFalse()
     }
 
     @Test
-    fun `a url takes priority over an unknown action id`() {
-        assertThat(notification(actionId = "SOMETHING_NEW", actionUrl = "https://example.com").appUpdateRequired()).isFalse()
+    fun `a url still requires an update when below minRequiredVersion`() {
+        assertThat(notification(actionUrl = "https://example.com", minRequiredVersion = Int.MAX_VALUE).appUpdateRequired()).isTrue()
     }
 
     // hasSupportedUrl
