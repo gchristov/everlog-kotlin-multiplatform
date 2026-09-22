@@ -7,6 +7,8 @@ import android.view.LayoutInflater
 import android.view.View
 import com.everlog.config.HomeNotification
 import com.everlog.databinding.ViewNotificationHomeBinding
+import com.everlog.managers.analytics.AnalyticsManager
+import com.everlog.managers.apprate.AppLaunchManager
 import com.everlog.ui.activities.home.HomeActivity
 import com.everlog.ui.views.base.BaseView
 import com.everlog.ui.views.base.BaseViewMvpView
@@ -21,6 +23,8 @@ class HomeNotificationView(context: Context, attrs: AttributeSet?) : BaseView(co
     private val binding get() = _binding!!
 
     private var mPresenter: PresenterHomeNotification? = null
+    private var mNotification: HomeNotification? = null
+    private var mLastShownId: String? = null
 
     override fun setupLayout(attrs: AttributeSet?, defStyleAttr: Int) {
         _binding = ViewNotificationHomeBinding.inflate(LayoutInflater.from(context), this, true)
@@ -50,6 +54,10 @@ class HomeNotificationView(context: Context, attrs: AttributeSet?) : BaseView(co
         visibility = GONE
     }
 
+    override fun getNotification(): HomeNotification? {
+        return mNotification
+    }
+
     override fun showPlans() {
         (context as? HomeActivity)?.showPlans()
     }
@@ -58,20 +66,32 @@ class HomeNotificationView(context: Context, attrs: AttributeSet?) : BaseView(co
         (context as? HomeActivity)?.showSettings()
     }
 
-    /** Hands the latest Remote Config value to the presenter, which decides whether and what to show. */
     fun showHomeNotification(notification: HomeNotification?) {
-        mPresenter?.onNotificationChanged(notification)
+        mNotification = notification
+        val shouldShow = AppLaunchManager.manager.shouldShowHomeNotification(notification)
+        visibility = if (shouldShow) VISIBLE else GONE
+        if (shouldShow) {
+            renderNotification(notification!!)
+        }
     }
 
-    override fun showNotification(notification: HomeNotification, updateRequired: Boolean) {
-        visibility = VISIBLE
+    // Render
+
+    private fun renderNotification(notification: HomeNotification) {
         binding.titleLbl.text = notification.title
         binding.descriptionLbl.text = notification.description
         val hasImage = !TextUtils.isEmpty(notification.imageUrl)
         binding.imageView.visibility = if (hasImage) VISIBLE else GONE
-        binding.updateLbl.visibility = if (updateRequired) VISIBLE else GONE
+        binding.updateLbl.visibility = if (notification.appUpdateRequired()) VISIBLE else GONE
         if (hasImage) {
             ELGlideModule.loadImage(notification.imageUrl, binding.imageView)
+        }
+        // Rendering can happen many times for the same banner (e.g. on every remote config
+        // refresh), so only report an impression once per distinct banner.
+        val shownId = notification.dismissalId()
+        if (mLastShownId != shownId) {
+            mLastShownId = shownId
+            AnalyticsManager.manager.notificationHomeShown(notification.title)
         }
     }
 

@@ -2,6 +2,7 @@ package com.everlog.managers.apprate;
 
 import android.content.SharedPreferences;
 
+import com.everlog.config.HomeNotification;
 import com.everlog.managers.preferences.PreferencesManager;
 
 import java.util.Date;
@@ -82,8 +83,8 @@ public class AppLaunchState extends PreferencesManager {
         return getPreference(PreferenceKeys.HOME_NOTIFICATION_LAST_DISMISSED_ID.name(), (String) null);
     }
 
-    void setHomeNotificationLastDismissedId(String id) {
-        savePreference(id, PreferenceKeys.HOME_NOTIFICATION_LAST_DISMISSED_ID.name());
+    void setHomeNotificationLastDismissedId(HomeNotification notification) {
+        savePreference(notification.dismissalId(), PreferenceKeys.HOME_NOTIFICATION_LAST_DISMISSED_ID.name());
     }
 
     // Rate

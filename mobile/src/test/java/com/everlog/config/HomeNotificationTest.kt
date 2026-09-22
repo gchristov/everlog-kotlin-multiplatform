@@ -9,6 +9,27 @@ class HomeNotificationTest {
     // RemoteConfig parses the `notification_home` string with plain Gson, so test that exact path.
     private fun parse(json: String) = Gson().fromJson(json, HomeNotification::class.java)
 
+    private fun notification(
+            id: String? = null,
+            title: String? = "Title",
+            description: String? = "Description",
+            actionId: String? = null,
+            actionUrl: String? = null,
+            minRequiredVersion: Int = 0,
+            startAt: String? = null,
+            endAt: String? = null
+    ) = HomeNotification(
+            id = id,
+            title = title,
+            description = description,
+            actionId = actionId,
+            actionUrl = actionUrl,
+            minRequiredVersion = minRequiredVersion,
+            startAt = startAt,
+            endAt = endAt)
+
+    // Parsing
+
     @Test
     fun `empty default parses to a notification with no title`() {
         assertThat(parse("{}").title).isNull()
@@ -18,6 +39,7 @@ class HomeNotificationTest {
     fun `parses the full remote config shape`() {
         val n = parse("""
             {
+              "id": "survey-oct-2026",
               "title": "Help shape Everlog",
               "description": "3 quick questions",
               "imageUrl": "https://example.com/i.png",
@@ -27,6 +49,7 @@ class HomeNotificationTest {
               "endAt": "2026-11-01T00:00:00Z"
             }
         """.trimIndent())
+        assertThat(n.id).isEqualTo("survey-oct-2026")
         assertThat(n.title).isEqualTo("Help shape Everlog")
         assertThat(n.description).isEqualTo("3 quick questions")
         assertThat(n.actionUrl).isEqualTo("https://forms.gle/abc")
@@ -49,13 +72,89 @@ class HomeNotificationTest {
         assertThat(HomeNotification(actionId = null).getAction()).isNull()
     }
 
-    // Dismissal stores hashCode(), so changing any field must re-show, and equal content must not.
+    // canShow
+
     @Test
-    fun `hash changes when any field changes`() {
-        val base = HomeNotification(title = "a", description = "b")
-        assertThat(base.copy().hashCode()).isEqualTo(base.hashCode())
-        assertThat(base.copy(actionUrl = "https://x.com").hashCode()).isNotEqualTo(base.hashCode())
-        assertThat(base.copy(endAt = "2026-11-01T00:00:00Z").hashCode()).isNotEqualTo(base.hashCode())
-        assertThat(base.copy(description = "c").hashCode()).isNotEqualTo(base.hashCode())
+    fun `cannot show without a title or description`() {
+        assertThat(notification(title = "").canShow()).isFalse()
+        assertThat(notification(description = null).canShow()).isFalse()
+    }
+
+    @Test
+    fun `cannot show before startAt or after endAt`() {
+        assertThat(notification(startAt = "2999-01-01T00:00:00Z").canShow()).isFalse()
+        assertThat(notification(endAt = "2000-01-01T00:00:00Z").canShow()).isFalse()
+        assertThat(notification(startAt = "2000-01-01T00:00:00Z", endAt = "2999-01-01T00:00:00Z").canShow()).isTrue()
+    }
+
+    @Test
+    fun `cannot show when a schedule date cannot be parsed`() {
+        assertThat(notification(startAt = "tomorrow").canShow()).isFalse()
+        assertThat(notification(endAt = "2999-13-45").canShow()).isFalse()
+    }
+
+    @Test
+    fun `blank schedule values are ignored`() {
+        assertThat(notification(startAt = " ", endAt = "").canShow()).isTrue()
+    }
+
+    // appUpdateRequired
+
+    @Test
+    fun `update required when app version is below minRequiredVersion`() {
+        assertThat(notification(minRequiredVersion = Int.MAX_VALUE).appUpdateRequired()).isTrue()
+    }
+
+    @Test
+    fun `update required for an action id this build does not know`() {
+        assertThat(notification(actionId = "SOMETHING_NEW").appUpdateRequired()).isTrue()
+    }
+
+    @Test
+    fun `maintenance notices are never update required`() {
+        assertThat(notification(actionId = "MAINTENANCE", minRequiredVersion = Int.MAX_VALUE).appUpdateRequired()).isFalse()
+    }
+
+    @Test
+    fun `a plain announcement is not update required`() {
+        assertThat(notification().appUpdateRequired()).isFalse()
+    }
+
+    @Test
+    fun `a url takes priority over an unknown action id`() {
+        assertThat(notification(actionId = "SOMETHING_NEW", actionUrl = "https://example.com").appUpdateRequired()).isFalse()
+    }
+
+    // hasSupportedUrl
+
+    @Test
+    fun `only http and https urls are supported`() {
+        assertThat(notification(actionUrl = "https://example.com").hasSupportedUrl()).isTrue()
+        assertThat(notification(actionUrl = " http://example.com ").hasSupportedUrl()).isTrue()
+        assertThat(notification(actionUrl = "javascript:alert(1)").hasSupportedUrl()).isFalse()
+        assertThat(notification(actionUrl = null).hasSupportedUrl()).isFalse()
+    }
+
+    // Dismissal identity
+
+    @Test
+    fun `dismissal id uses the explicit id when set, ignoring the rest of the content`() {
+        val a = notification(id = "banner-1", title = "A")
+        val b = notification(id = "banner-1", title = "Completely different")
+        assertThat(a.dismissalId()).isEqualTo(b.dismissalId())
+    }
+
+    @Test
+    fun `dismissal id falls back to a content hash with no explicit id`() {
+        val base = notification()
+        assertThat(base.copy().dismissalId()).isEqualTo(base.dismissalId())
+        assertThat(base.copy(description = "Different").dismissalId()).isNotEqualTo(base.dismissalId())
+    }
+
+    @Test
+    fun `changing the id changes the dismissal id even with identical content`() {
+        val a = notification(id = "banner-1")
+        val b = notification(id = "banner-2")
+        assertThat(a.dismissalId()).isNotEqualTo(b.dismissalId())
     }
 }
