@@ -70,12 +70,12 @@ data class HomeNotification (
 
     /**
      * What counts as "the same" banner for dismissal/impression tracking: the explicit [id] when
-     * set, or a hash of the whole content otherwise, so an id-less banner doesn't collide with a
-     * different one that also forgot to set one.
+     * set, or a hash of the whole content otherwise (matching how it was compared before [id]
+     * existed), so an id-less banner doesn't collide with a different one that also has none.
      */
     fun dismissalId(): String {
         val explicitId = id?.trim()
-        return if (!explicitId.isNullOrEmpty()) explicitId else "hash:${hashCode()}"
+        return if (!explicitId.isNullOrEmpty()) explicitId else hashCode().toString()
     }
 
     private fun isWithinSchedule(): Boolean {

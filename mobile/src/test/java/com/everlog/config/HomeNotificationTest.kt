@@ -164,6 +164,12 @@ class HomeNotificationTest {
     }
 
     @Test
+    fun `the content hash fallback matches hashCode, same as before id existed`() {
+        val n = notification()
+        assertThat(n.dismissalId()).isEqualTo(n.hashCode().toString())
+    }
+
+    @Test
     fun `changing the id changes the dismissal id even with identical content`() {
         val a = notification(id = "banner-1")
         val b = notification(id = "banner-2")

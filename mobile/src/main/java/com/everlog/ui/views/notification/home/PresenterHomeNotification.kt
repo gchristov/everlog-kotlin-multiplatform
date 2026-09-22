@@ -58,8 +58,12 @@ class PresenterHomeNotification : BaseViewPresenter<MvpViewHomeNotification>() {
                 HomeNotification.ActionType.PLANS -> mvpView?.showPlans()
                 HomeNotification.ActionType.SETTINGS -> mvpView?.showSettings()
                 HomeNotification.ActionType.EXERCISES -> navigator.openExercises()
-                HomeNotification.ActionType.NONE, HomeNotification.ActionType.MAINTENANCE, null ->
+                HomeNotification.ActionType.NONE, HomeNotification.ActionType.MAINTENANCE, null -> {
                     Timber.tag(TAG).w("Home notification tapped without a supported action: %s", action)
+                    // Nothing to do, so treat the tap as an acknowledgement and dismiss it.
+                    AppLaunchManager.manager.homeNotificationDismissed(notification)
+                    handleHideNotification(true)
+                }
             }
         }
     }
