@@ -13,14 +13,15 @@ import java.lang.reflect.Proxy
 class PresenterHomeNotificationTest {
 
     private val calls = mutableListOf<String>()
-    private var dismissedHash: HomeNotification? = null
-    private var alreadyDismissed = false
+    private var lastDismissedId: String? = null
 
+    // A minimal in-memory stand-in for the real, SharedPreferences-backed manager: it just
+    // remembers whatever the presenter last told it was dismissed.
     private val appLaunchManager = object : AppLaunchManager() {
-        override fun shouldShowHomeNotification(notification: HomeNotification?) = !alreadyDismissed
+        override fun lastDismissedHomeNotificationId() = lastDismissedId
 
-        override fun homeNotificationDismissed(notification: HomeNotification?) {
-            dismissedHash = notification
+        override fun homeNotificationDismissed(id: String) {
+            lastDismissedId = id
         }
     }
 
@@ -55,6 +56,7 @@ class PresenterHomeNotificationTest {
     }
 
     private fun notification(
+            id: String? = null,
             title: String? = "Title",
             description: String? = "Description",
             actionId: String? = null,
@@ -63,6 +65,7 @@ class PresenterHomeNotificationTest {
             startAt: String? = null,
             endAt: String? = null
     ) = HomeNotification(
+            id = id,
             title = title,
             description = description,
             actionId = actionId,
@@ -101,11 +104,49 @@ class PresenterHomeNotificationTest {
         assertThat(calls).containsExactly("view.hideNotification()", "view.hideNotification()").inOrder()
     }
 
+    // Dismissal identity
+
     @Test
-    fun `hides when already dismissed`() {
-        alreadyDismissed = true
-        presenter.onNotificationChanged(notification())
+    fun `hides after being dismissed`() {
+        val n = notification()
+        presenter.onNotificationChanged(n)
+        presenter.onCloseClicked()
+        calls.clear()
+        presenter.onNotificationChanged(n)
         assertThat(calls).containsExactly("view.hideNotification()")
+    }
+
+    @Test
+    fun `changing any field re-shows a banner with no explicit id`() {
+        val n = notification()
+        presenter.onNotificationChanged(n)
+        presenter.onCloseClicked()
+        calls.clear()
+        val edited = n.copy(description = "Different")
+        presenter.onNotificationChanged(edited)
+        assertThat(calls).containsExactly(shownWith(edited, false))
+    }
+
+    @Test
+    fun `an explicit id is dismissed independently of the rest of the content`() {
+        val n = notification(id = "banner-1")
+        presenter.onNotificationChanged(n)
+        presenter.onCloseClicked()
+        calls.clear()
+        // Same id, different title: a developer tweaking copy shouldn't re-show it.
+        presenter.onNotificationChanged(n.copy(title = "New title"))
+        assertThat(calls).containsExactly("view.hideNotification()")
+    }
+
+    @Test
+    fun `changing the id re-shows a dismissed banner even with identical content`() {
+        val n = notification(id = "banner-1")
+        presenter.onNotificationChanged(n)
+        presenter.onCloseClicked()
+        calls.clear()
+        val nextBanner = n.copy(id = "banner-2")
+        presenter.onNotificationChanged(nextBanner)
+        assertThat(calls).containsExactly(shownWith(nextBanner, false))
     }
 
     // Schedule
@@ -204,7 +245,9 @@ class PresenterHomeNotificationTest {
         calls.clear()
         presenter.onActionClicked()
         assertThat(calls).contains("navigator.openUrl(https://example.com/survey)")
-        assertThat(dismissedHash).isEqualTo(n)
+        calls.clear()
+        presenter.onNotificationChanged(n)
+        assertThat(calls).containsExactly("view.hideNotification()")
     }
 
     @Test

@@ -17,7 +17,7 @@ open class PresenterHomeNotification(
 ) : BaseViewPresenter<MvpViewHomeNotification>() {
 
     private var mNotification: HomeNotification? = null
-    private var mLastShownHash: Int? = null
+    private var mLastShownId: String? = null
 
     override fun onReady() {
         observeCloseClick()
@@ -35,11 +35,7 @@ open class PresenterHomeNotification(
     private fun observeCloseClick() {
         subscriptions.add(mvpView.onClickClose()
                 .compose(applyUISchedulers())
-                .subscribe({
-                    analytics.notificationHomeDismissed(mNotification?.title)
-                    mNotification?.let { appLaunchManager.homeNotificationDismissed(it) }
-                    handleHideNotification(false)
-                }) { handleError(it) })
+                .subscribe({ onCloseClicked() }) { handleError(it) })
     }
 
     private fun observeActionClick() {
@@ -61,8 +57,9 @@ open class PresenterHomeNotification(
         if (notification != null && shouldShow(notification)) {
             mvpView?.showNotification(notification, appUpdateRequired(notification))
             // Rendering can happen many times for the same banner, so only report each one once.
-            if (mLastShownHash != notification.hashCode()) {
-                mLastShownHash = notification.hashCode()
+            val identity = notificationIdentity(notification)
+            if (mLastShownId != identity) {
+                mLastShownId = identity
                 analytics.notificationHomeShown(notification.title)
             }
         } else {
@@ -74,7 +71,17 @@ open class PresenterHomeNotification(
         if (!canShow(notification) || !isWithinSchedule(notification, Instant.now())) {
             return false
         }
-        return appLaunchManager.shouldShowHomeNotification(notification)
+        return notificationIdentity(notification) != appLaunchManager.lastDismissedHomeNotificationId()
+    }
+
+    /**
+     * What counts as "the same" banner: the explicit `id` set in Remote Config when present, so a
+     * developer can force a re-show just by changing it, or a hash of the whole content otherwise,
+     * so a banner published without an id still doesn't collide with an unrelated one.
+     */
+    private fun notificationIdentity(notification: HomeNotification): String {
+        val id = notification.id?.trim()
+        return if (!id.isNullOrEmpty()) id else "hash:${notification.hashCode()}"
     }
 
     private fun canShow(notification: HomeNotification): Boolean {
@@ -111,6 +118,13 @@ open class PresenterHomeNotification(
         }
     }
 
+    internal fun onCloseClicked() {
+        val notification = mNotification ?: return
+        analytics.notificationHomeDismissed(notification.title)
+        appLaunchManager.homeNotificationDismissed(notificationIdentity(notification))
+        handleHideNotification(false)
+    }
+
     internal fun onActionClicked() {
         val notification = mNotification ?: return
         analytics.notificationHomeTapped(notification.title)
@@ -120,7 +134,7 @@ open class PresenterHomeNotification(
         } else if (hasSupportedUrl(notification)) {
             navigator.openUrl(notification.actionUrl!!.trim())
             // The user acted on it (e.g. opened the survey), so don't keep showing it.
-            appLaunchManager.homeNotificationDismissed(notification)
+            appLaunchManager.homeNotificationDismissed(notificationIdentity(notification))
             handleHideNotification(true)
         } else {
             val action = notification.getAction()

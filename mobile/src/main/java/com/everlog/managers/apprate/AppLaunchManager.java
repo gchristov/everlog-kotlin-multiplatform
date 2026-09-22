@@ -1,8 +1,6 @@
 package com.everlog.managers.apprate;
 
 import com.everlog.config.AppConfig;
-import com.everlog.config.HomeNotification;
-
 import java.util.Calendar;
 import java.util.Date;
 import java.util.concurrent.TimeUnit;
@@ -78,21 +76,16 @@ public class AppLaunchManager {
     // Triggers
 
     /**
-     * Whether this exact notification content has not already been dismissed. Deciding if a
-     * notification has enough content to show at all is the presenter's job, not this manager's.
+     * The identifier of the last home notification the user dismissed, or null if none has been
+     * dismissed yet. Deciding what counts as "the same" notification, and whether to show it, is
+     * the presenter's job; this manager only persists the value across app launches.
      */
-    public boolean shouldShowHomeNotification(HomeNotification notification) {
-        if (notification == null) {
-            return false;
-        }
-        int lastHash = AppLaunchState.state.homeNotificationLastHash();
-        return lastHash != notification.hashCode();
+    public String lastDismissedHomeNotificationId() {
+        return AppLaunchState.state.homeNotificationLastDismissedId();
     }
 
-    public void homeNotificationDismissed(HomeNotification notification) {
-        if (notification != null) {
-            AppLaunchState.state.setHomeNotificationLastHash(notification);
-        }
+    public void homeNotificationDismissed(String id) {
+        AppLaunchState.state.setHomeNotificationLastDismissedId(id);
     }
 
     public boolean shouldShowAppRating() {

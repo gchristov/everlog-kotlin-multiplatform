@@ -4,6 +4,10 @@ import java.io.Serializable
 
 data class HomeNotification (
 
+        // Optional explicit identifier for this banner, set in Firebase Remote Config. Changing it
+        // re-shows the banner to users who already dismissed the previous one; leaving it unset
+        // falls back to comparing the whole notification's content (see PresenterHomeNotification).
+        var id: String? = null,
         var title: String? = null,
         var description: String? = null,
         var imageUrl: String? = null,
