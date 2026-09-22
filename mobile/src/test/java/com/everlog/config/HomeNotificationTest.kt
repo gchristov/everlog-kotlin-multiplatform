@@ -10,8 +10,8 @@ class HomeNotificationTest {
     private fun parse(json: String) = Gson().fromJson(json, HomeNotification::class.java)
 
     @Test
-    fun `empty default cannot show`() {
-        assertThat(parse("{}").canShow()).isFalse()
+    fun `empty default parses to a notification with no title`() {
+        assertThat(parse("{}").title).isNull()
     }
 
     @Test
@@ -27,7 +27,8 @@ class HomeNotificationTest {
               "endAt": "2026-11-01T00:00:00Z"
             }
         """.trimIndent())
-        assertThat(n.canShow()).isTrue()
+        assertThat(n.title).isEqualTo("Help shape Everlog")
+        assertThat(n.description).isEqualTo("3 quick questions")
         assertThat(n.actionUrl).isEqualTo("https://forms.gle/abc")
         assertThat(n.minRequiredVersion).isEqualTo(123)
         assertThat(n.startAt).isEqualTo("2026-10-01T00:00:00Z")
@@ -37,7 +38,8 @@ class HomeNotificationTest {
     @Test
     fun `unknown fields are ignored so older configs and newer keys stay compatible`() {
         val n = parse("""{"title":"a","description":"b","somethingNew":true}""")
-        assertThat(n.canShow()).isTrue()
+        assertThat(n.title).isEqualTo("a")
+        assertThat(n.description).isEqualTo("b")
     }
 
     @Test

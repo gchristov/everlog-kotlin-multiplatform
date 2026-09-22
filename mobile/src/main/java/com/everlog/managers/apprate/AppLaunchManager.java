@@ -77,12 +77,16 @@ public class AppLaunchManager {
 
     // Triggers
 
+    /**
+     * Whether this exact notification content has not already been dismissed. Deciding if a
+     * notification has enough content to show at all is the presenter's job, not this manager's.
+     */
     public boolean shouldShowHomeNotification(HomeNotification notification) {
-        if (notification != null && notification.canShow()) {
-            int lastHash = AppLaunchState.state.homeNotificationLastHash();
-            return lastHash != notification.hashCode();
+        if (notification == null) {
+            return false;
         }
-        return false;
+        int lastHash = AppLaunchState.state.homeNotificationLastHash();
+        return lastHash != notification.hashCode();
     }
 
     public void homeNotificationDismissed(HomeNotification notification) {

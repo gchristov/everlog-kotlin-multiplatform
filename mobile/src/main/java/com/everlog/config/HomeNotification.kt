@@ -25,10 +25,6 @@ data class HomeNotification (
         EXERCISES
     }
 
-    fun canShow(): Boolean {
-        return !title.isNullOrEmpty() && !description.isNullOrEmpty()
-    }
-
     fun getAction(): ActionType? {
         return if (actionId == null) {
             null

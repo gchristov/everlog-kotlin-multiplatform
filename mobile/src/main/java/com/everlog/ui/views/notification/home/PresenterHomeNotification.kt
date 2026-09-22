@@ -71,10 +71,14 @@ open class PresenterHomeNotification(
     }
 
     private fun shouldShow(notification: HomeNotification): Boolean {
-        if (!notification.canShow() || !isWithinSchedule(notification, Instant.now())) {
+        if (!canShow(notification) || !isWithinSchedule(notification, Instant.now())) {
             return false
         }
         return appLaunchManager.shouldShowHomeNotification(notification)
+    }
+
+    private fun canShow(notification: HomeNotification): Boolean {
+        return !notification.title.isNullOrEmpty() && !notification.description.isNullOrEmpty()
     }
 
     private fun appUpdateRequired(notification: HomeNotification, versionCode: Int = BuildConfig.VERSION_CODE): Boolean {
