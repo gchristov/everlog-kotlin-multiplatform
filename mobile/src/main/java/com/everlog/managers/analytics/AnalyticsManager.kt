@@ -290,6 +290,48 @@ class AnalyticsManager : Analytic {
         }
     }
 
+    override fun appUpdatePromptShown(versionCode: Int) {
+        Timber.tag(TAG).i("App update prompt shown: versionCode=%s", versionCode)
+        mAnalytics?.forEach {
+            it.appUpdatePromptShown(versionCode)
+        }
+    }
+
+    override fun appUpdateAccepted(versionCode: Int) {
+        Timber.tag(TAG).i("App update accepted: versionCode=%s", versionCode)
+        mAnalytics?.forEach {
+            it.appUpdateAccepted(versionCode)
+        }
+    }
+
+    override fun appUpdateDeclined(versionCode: Int) {
+        Timber.tag(TAG).i("App update declined: versionCode=%s", versionCode)
+        mAnalytics?.forEach {
+            it.appUpdateDeclined(versionCode)
+        }
+    }
+
+    override fun appUpdateDownloaded() {
+        Timber.tag(TAG).i("App update downloaded")
+        mAnalytics?.forEach {
+            it.appUpdateDownloaded()
+        }
+    }
+
+    override fun appUpdateRestartTapped() {
+        Timber.tag(TAG).i("App update restart tapped")
+        mAnalytics?.forEach {
+            it.appUpdateRestartTapped()
+        }
+    }
+
+    override fun appUpdateFailed(errorCode: Int) {
+        Timber.tag(TAG).i("App update failed: errorCode=%s", errorCode)
+        mAnalytics?.forEach {
+            it.appUpdateFailed(errorCode)
+        }
+    }
+
     override fun workoutStarted() {
         Timber.tag(TAG).i("Workout started")
         mAnalytics?.forEach {

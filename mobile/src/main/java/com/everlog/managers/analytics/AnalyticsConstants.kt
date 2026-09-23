@@ -113,6 +113,15 @@ class AnalyticsConstants {
         const val EVENT_HOME_ADD_FAB_TAPPED = "home_add_fab_tapped"
         const val EVENT_HOME_ADD_WEEK_EMPTY_STATE_TAPPED = "home_add_week_empty_state_tapped"
 
+        // App update
+
+        const val EVENT_APP_UPDATE_PROMPT_SHOWN = "app_update_prompt_shown"
+        const val EVENT_APP_UPDATE_ACCEPTED = "app_update_accepted"
+        const val EVENT_APP_UPDATE_DECLINED = "app_update_declined"
+        const val EVENT_APP_UPDATE_DOWNLOADED = "app_update_downloaded"
+        const val EVENT_APP_UPDATE_RESTART_TAPPED = "app_update_restart_tapped"
+        const val EVENT_APP_UPDATE_FAILED = "app_update_failed"
+
         // Workouts
 
         const val EVENT_WORKOUT_STARTED = "workout_started"

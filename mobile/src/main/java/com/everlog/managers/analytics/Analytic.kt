@@ -57,6 +57,13 @@ interface Analytic {
     fun homeAddFabTapped()
     fun homeAddWeekEmptyStateTapped()
 
+    fun appUpdatePromptShown(versionCode: Int)
+    fun appUpdateAccepted(versionCode: Int)
+    fun appUpdateDeclined(versionCode: Int)
+    fun appUpdateDownloaded()
+    fun appUpdateRestartTapped()
+    fun appUpdateFailed(errorCode: Int)
+
     fun workoutStarted()
     fun workoutQuickStarted()
     fun workoutFromRoutineStarted()

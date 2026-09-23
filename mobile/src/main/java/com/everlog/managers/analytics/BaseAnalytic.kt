@@ -232,6 +232,36 @@ abstract class BaseAnalytic : Analytic {
         logEvent(AnalyticsConstants.EVENT_HOME_ADD_WEEK_EMPTY_STATE_TAPPED)
     }
 
+    override fun appUpdatePromptShown(versionCode: Int) {
+        logEvent(AnalyticsConstants.EVENT_APP_UPDATE_PROMPT_SHOWN, appUpdateParams(versionCode))
+    }
+
+    override fun appUpdateAccepted(versionCode: Int) {
+        logEvent(AnalyticsConstants.EVENT_APP_UPDATE_ACCEPTED, appUpdateParams(versionCode))
+    }
+
+    override fun appUpdateDeclined(versionCode: Int) {
+        logEvent(AnalyticsConstants.EVENT_APP_UPDATE_DECLINED, appUpdateParams(versionCode))
+    }
+
+    override fun appUpdateDownloaded() {
+        logEvent(AnalyticsConstants.EVENT_APP_UPDATE_DOWNLOADED)
+    }
+
+    override fun appUpdateRestartTapped() {
+        logEvent(AnalyticsConstants.EVENT_APP_UPDATE_RESTART_TAPPED)
+    }
+
+    override fun appUpdateFailed(errorCode: Int) {
+        logEvent(AnalyticsConstants.EVENT_APP_UPDATE_FAILED, appUpdateParams(errorCode))
+    }
+
+    private fun appUpdateParams(value: Int): Map<String, Any?> {
+        val map = HashMap<String, Any?>()
+        map[AnalyticsConstants.PROPERTY_VALUE] = value
+        return map
+    }
+
     override fun workoutStarted() {
         logEvent(AnalyticsConstants.EVENT_WORKOUT_STARTED)
     }
