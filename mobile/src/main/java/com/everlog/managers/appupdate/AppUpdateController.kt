@@ -45,7 +45,16 @@ class AppUpdateController(context: Context) {
     fun shouldPromptUpdate(info: AppUpdateInfo): Boolean {
         return info.updateAvailability() == UpdateAvailability.UPDATE_AVAILABLE
                 && info.isUpdateTypeAllowed(AppUpdateType.FLEXIBLE)
+                && !isUpdateInProgress(info)
                 && AppLaunchManager.manager.shouldPromptAppUpdate(info.availableVersionCode())
+    }
+
+    private fun isUpdateInProgress(info: AppUpdateInfo): Boolean {
+        // Already accepted, so the update is still reported as available while it downloads/installs
+        return when (info.installStatus()) {
+            InstallStatus.PENDING, InstallStatus.DOWNLOADING, InstallStatus.DOWNLOADED, InstallStatus.INSTALLING -> true
+            else -> false
+        }
     }
 
     fun startFlexibleUpdate(info: AppUpdateInfo, launcher: ActivityResultLauncher<IntentSenderRequest>): Boolean {
