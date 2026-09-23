@@ -173,7 +173,6 @@ class HomeActivity : BaseActivity(), MvpViewHome {
         }
         mAppUpdateSnackbar = Snackbar.make(binding.root, R.string.app_update_ready, Snackbar.LENGTH_INDEFINITE)
                 .setAction(R.string.app_update_restart) { mOnClickAppUpdateRestart.onNext(null) }
-                .setBackgroundTint(ContextCompat.getColor(this, R.color.background_card))
                 .setActionTextColor(ContextCompat.getColor(this, R.color.main_accent))
                 .setAnchorView(binding.tabBar)
                 .addCallback(object : Snackbar.Callback() {
@@ -187,7 +186,19 @@ class HomeActivity : BaseActivity(), MvpViewHome {
                         offsetStartWorkoutButtonForSnackbar(animate = true)
                     }
                 })
+        mAppUpdateSnackbar?.view?.let { styleAsCard(it) }
         mAppUpdateSnackbar?.show()
+    }
+
+    /**
+     * The AppCompat theme gives snackbars the legacy full-width style, so make it a floating card.
+     */
+    private fun styleAsCard(snackbarView: View) {
+        val margin = resources.getDimensionPixelSize(R.dimen.activity_margin)
+        snackbarView.background = ContextCompat.getDrawable(this, R.drawable.rounded_corners_snackbar)
+        snackbarView.layoutParams = (snackbarView.layoutParams as ViewGroup.MarginLayoutParams).apply {
+            setMargins(margin, margin, margin, margin)
+        }
     }
 
     /**
