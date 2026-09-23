@@ -3,6 +3,10 @@ package com.everlog.ui.activities.home
 import android.content.Intent
 import android.view.View
 import android.view.animation.OvershootInterpolator
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.IntentSenderRequest
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
 import androidx.fragment.app.Fragment
 import androidx.viewpager.widget.ViewPager
@@ -23,6 +27,7 @@ import com.everlog.ui.fragments.home.week.WeekHomeFragment
 import com.everlog.ui.fragments.home.workouts.WorkoutsHomeFragment
 import com.everlog.ui.views.viewpager.ELFragmentPagerAdapter
 import com.everlog.utils.Utils
+import com.google.android.material.snackbar.Snackbar
 import com.jakewharton.rxbinding.view.RxView
 import rx.Observable
 import rx.subjects.PublishSubject
@@ -37,6 +42,18 @@ class HomeActivity : BaseActivity(), MvpViewHome {
     private var mIndexMapTabIdReverse = mapOf(Pair(R.id.action_week, 0), Pair(R.id.action_workouts, 1), Pair(R.id.action_activity, 2), Pair(R.id.action_settings, 3))
 
     private val mOnClickAdd = PublishSubject.create<Void>()
+
+    // App update
+
+    private val mOnAppUpdateFlowResult = PublishSubject.create<Int>()
+    private val mOnClickAppUpdateRestart = PublishSubject.create<Void>()
+    private var mAppUpdateSnackbar: Snackbar? = null
+
+    private val mAppUpdateLauncher = registerForActivityResult(
+        ActivityResultContracts.StartIntentSenderForResult()
+    ) { result ->
+        mOnAppUpdateFlowResult.onNext(result.resultCode)
+    }
 
     override fun onActivityCreated() {
         ViewCompat.setOnApplyWindowInsetsListener(binding.root) { _, insets ->
@@ -133,6 +150,35 @@ class HomeActivity : BaseActivity(), MvpViewHome {
             btn.animate().cancel()
             btn.visibility = View.GONE
         }
+        // Keep the update snackbar clear of the button
+        mAppUpdateSnackbar?.takeIf { it.isShownOrQueued }?.anchorView = appUpdateSnackbarAnchor()
+    }
+
+    override fun appUpdateLauncher(): ActivityResultLauncher<IntentSenderRequest> {
+        return mAppUpdateLauncher
+    }
+
+    override fun onAppUpdateFlowResult(): Observable<Int> {
+        return mOnAppUpdateFlowResult
+    }
+
+    override fun onClickAppUpdateRestart(): Observable<Void> {
+        return mOnClickAppUpdateRestart
+    }
+
+    override fun showAppUpdateReady() {
+        if (mAppUpdateSnackbar?.isShownOrQueued == true) {
+            return
+        }
+        mAppUpdateSnackbar = Snackbar.make(binding.root, R.string.app_update_ready, Snackbar.LENGTH_INDEFINITE)
+                .setAction(R.string.app_update_restart) { mOnClickAppUpdateRestart.onNext(null) }
+                .setActionTextColor(ContextCompat.getColor(this, R.color.main_accent))
+                .setAnchorView(appUpdateSnackbarAnchor())
+        mAppUpdateSnackbar?.show()
+    }
+
+    private fun appUpdateSnackbarAnchor(): View {
+        return if (binding.newWorkoutBtn.visibility == View.VISIBLE) binding.newWorkoutBtn else binding.tabBar
     }
 
     fun showPlans() {
