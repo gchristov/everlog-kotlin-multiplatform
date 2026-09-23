@@ -126,6 +126,7 @@ dependencies {
     implementation(libs.androidx.constraintlayout)
     implementation(libs.androidx.cardview)
     implementation(libs.billing)
+    implementation(libs.play.app.update)
     implementation(libs.androidx.core.splashscreen)
 
     implementation(libs.glide)
