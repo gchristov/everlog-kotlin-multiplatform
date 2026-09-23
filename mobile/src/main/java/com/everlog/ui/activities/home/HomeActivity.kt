@@ -2,6 +2,7 @@ package com.everlog.ui.activities.home
 
 import android.content.Intent
 import android.view.View
+import android.view.ViewGroup
 import android.view.animation.OvershootInterpolator
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.IntentSenderRequest
@@ -150,8 +151,8 @@ class HomeActivity : BaseActivity(), MvpViewHome {
             btn.animate().cancel()
             btn.visibility = View.GONE
         }
-        // Keep the update snackbar clear of the button
-        mAppUpdateSnackbar?.takeIf { it.isShownOrQueued }?.anchorView = appUpdateSnackbarAnchor()
+        // Hiding cancels any running offset animation, so reapply it without animating
+        offsetStartWorkoutButtonForSnackbar(animate = false)
     }
 
     override fun appUpdateLauncher(): ActivityResultLauncher<IntentSenderRequest> {
@@ -173,12 +174,44 @@ class HomeActivity : BaseActivity(), MvpViewHome {
         mAppUpdateSnackbar = Snackbar.make(binding.root, R.string.app_update_ready, Snackbar.LENGTH_INDEFINITE)
                 .setAction(R.string.app_update_restart) { mOnClickAppUpdateRestart.onNext(null) }
                 .setActionTextColor(ContextCompat.getColor(this, R.color.main_accent))
-                .setAnchorView(appUpdateSnackbarAnchor())
+                .setAnchorView(binding.tabBar)
+                .addCallback(object : Snackbar.Callback() {
+
+                    override fun onShown(sb: Snackbar?) {
+                        offsetStartWorkoutButtonForSnackbar(animate = true)
+                    }
+
+                    override fun onDismissed(transientBottomBar: Snackbar?, event: Int) {
+                        mAppUpdateSnackbar = null
+                        offsetStartWorkoutButtonForSnackbar(animate = true)
+                    }
+                })
         mAppUpdateSnackbar?.show()
     }
 
-    private fun appUpdateSnackbarAnchor(): View {
-        return if (binding.newWorkoutBtn.visibility == View.VISIBLE) binding.newWorkoutBtn else binding.tabBar
+    /**
+     * The update snackbar sits right above the tab bar, so move the start workout button up to
+     * sit above the snackbar while it's shown, and back down once it's gone.
+     */
+    private fun offsetStartWorkoutButtonForSnackbar(animate: Boolean) {
+        val btn = binding.newWorkoutBtn
+        val snackbarView = mAppUpdateSnackbar?.takeIf { it.isShown }?.view
+        var offset = 0f
+        if (snackbarView != null) {
+            // Work out the button's resting position from the tab bar, as it may be hidden and not laid out
+            val snackbarLocation = IntArray(2)
+            val tabBarLocation = IntArray(2)
+            snackbarView.getLocationInWindow(snackbarLocation)
+            binding.tabBar.getLocationInWindow(tabBarLocation)
+            val btnRestingBottom = tabBarLocation[1] - (btn.layoutParams as ViewGroup.MarginLayoutParams).bottomMargin
+            val spacing = resources.getDimensionPixelSize(R.dimen.activity_margin_half)
+            offset = minOf(0, snackbarLocation[1] - spacing - btnRestingBottom).toFloat()
+        }
+        if (animate) {
+            btn.animate().translationY(offset).setDuration(200).start()
+        } else {
+            btn.translationY = offset
+        }
     }
 
     fun showPlans() {
