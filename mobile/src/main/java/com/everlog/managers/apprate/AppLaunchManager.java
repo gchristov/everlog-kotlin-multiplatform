@@ -79,15 +79,15 @@ public class AppLaunchManager {
 
     public boolean shouldShowHomeNotification(HomeNotification notification) {
         if (notification != null && notification.canShow()) {
-            int lastHash = AppLaunchState.state.homeNotificationLastHash();
-            return lastHash != notification.hashCode();
+            String lastDismissedId = AppLaunchState.state.homeNotificationLastDismissedId();
+            return !notification.dismissalId().equals(lastDismissedId);
         }
         return false;
     }
 
     public void homeNotificationDismissed(HomeNotification notification) {
         if (notification != null) {
-            AppLaunchState.state.setHomeNotificationLastHash(notification);
+            AppLaunchState.state.setHomeNotificationLastDismissedId(notification);
         }
     }
 

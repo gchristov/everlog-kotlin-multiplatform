@@ -18,7 +18,7 @@ public class AppLaunchState extends PreferencesManager {
 
         // Home notification
 
-        HOME_NOTIFICATION_LAST_HASH,
+        HOME_NOTIFICATION_LAST_DISMISSED_ID,
 
         // Rate
 
@@ -79,12 +79,12 @@ public class AppLaunchState extends PreferencesManager {
 
     // Home notification
 
-    int homeNotificationLastHash() {
-        return getPreference(PreferenceKeys.HOME_NOTIFICATION_LAST_HASH.name(), -1);
+    String homeNotificationLastDismissedId() {
+        return getPreference(PreferenceKeys.HOME_NOTIFICATION_LAST_DISMISSED_ID.name(), (String) null);
     }
 
-    void setHomeNotificationLastHash(HomeNotification notification) {
-        savePreference(notification.hashCode(), PreferenceKeys.HOME_NOTIFICATION_LAST_HASH.name());
+    void setHomeNotificationLastDismissedId(HomeNotification notification) {
+        savePreference(notification.dismissalId(), PreferenceKeys.HOME_NOTIFICATION_LAST_DISMISSED_ID.name());
     }
 
     // Rate

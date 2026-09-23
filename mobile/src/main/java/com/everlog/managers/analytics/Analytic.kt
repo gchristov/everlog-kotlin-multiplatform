@@ -11,7 +11,9 @@ interface Analytic {
 
     fun remoteConfigFetched()
 
-    fun notificationHomeDismissed()
+    fun notificationHomeShown(title: String?)
+    fun notificationHomeTapped(title: String?)
+    fun notificationHomeDismissed(title: String?)
 
     fun appStarRating(value: Float?)
     fun appRate()

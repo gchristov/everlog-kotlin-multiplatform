@@ -56,8 +56,22 @@ abstract class BaseAnalytic : Analytic {
         logEvent(AnalyticsConstants.EVENT_REMOTE_CONFIG_FETCHED)
     }
 
-    override fun notificationHomeDismissed() {
-        logEvent(AnalyticsConstants.EVENT_NOTIFICATION_HOME_DISMISSED)
+    override fun notificationHomeShown(title: String?) {
+        logEvent(AnalyticsConstants.EVENT_NOTIFICATION_HOME_SHOWN, notificationHomeParams(title))
+    }
+
+    override fun notificationHomeTapped(title: String?) {
+        logEvent(AnalyticsConstants.EVENT_NOTIFICATION_HOME_TAPPED, notificationHomeParams(title))
+    }
+
+    override fun notificationHomeDismissed(title: String?) {
+        logEvent(AnalyticsConstants.EVENT_NOTIFICATION_HOME_DISMISSED, notificationHomeParams(title))
+    }
+
+    private fun notificationHomeParams(title: String?): Map<String, Any?> {
+        val map = HashMap<String, Any?>()
+        map[AnalyticsConstants.PROPERTY_TITLE] = title
+        return map
     }
 
     override fun appStarRating(value: Float?) {

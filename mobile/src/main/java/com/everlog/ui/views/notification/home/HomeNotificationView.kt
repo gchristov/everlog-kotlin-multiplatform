@@ -7,6 +7,7 @@ import android.view.LayoutInflater
 import android.view.View
 import com.everlog.config.HomeNotification
 import com.everlog.databinding.ViewNotificationHomeBinding
+import com.everlog.managers.analytics.AnalyticsManager
 import com.everlog.managers.apprate.AppLaunchManager
 import com.everlog.ui.activities.home.HomeActivity
 import com.everlog.ui.views.base.BaseView
@@ -23,6 +24,7 @@ class HomeNotificationView(context: Context, attrs: AttributeSet?) : BaseView(co
 
     private var mPresenter: PresenterHomeNotification? = null
     private var mNotification: HomeNotification? = null
+    private var mLastShownId: String? = null
 
     override fun setupLayout(attrs: AttributeSet?, defStyleAttr: Int) {
         _binding = ViewNotificationHomeBinding.inflate(LayoutInflater.from(context), this, true)
@@ -83,6 +85,13 @@ class HomeNotificationView(context: Context, attrs: AttributeSet?) : BaseView(co
         binding.updateLbl.visibility = if (notification.appUpdateRequired()) VISIBLE else GONE
         if (hasImage) {
             ELGlideModule.loadImage(notification.imageUrl, binding.imageView)
+        }
+        // Rendering can happen many times for the same banner (e.g. on every remote config
+        // refresh), so only report an impression once per distinct banner.
+        val shownId = notification.dismissalId()
+        if (mLastShownId != shownId) {
+            mLastShownId = shownId
+            AnalyticsManager.manager.notificationHomeShown(notification.title)
         }
     }
 
