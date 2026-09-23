@@ -23,7 +23,12 @@ public class AppLaunchState extends PreferencesManager {
         // Rate
 
         RATE_SCHEDULED_TO_SHOW,
-        RATE_LAST_PROMPT_DATE
+        RATE_LAST_PROMPT_DATE,
+
+        // App update
+
+        APP_UPDATE_DECLINED_VERSION_CODE,
+        APP_UPDATE_DECLINED_DATE
     }
 
     public static final AppLaunchState state = new AppLaunchState();
@@ -103,5 +108,20 @@ public class AppLaunchState extends PreferencesManager {
 
     void setRateLastPromptDate(Date date) {
         savePreference(date.getTime(), PreferenceKeys.RATE_LAST_PROMPT_DATE.name());
+    }
+
+    // App update
+
+    int appUpdateDeclinedVersionCode() {
+        return getPreference(PreferenceKeys.APP_UPDATE_DECLINED_VERSION_CODE.name(), -1);
+    }
+
+    long appUpdateDeclinedDate() {
+        return getPreference(PreferenceKeys.APP_UPDATE_DECLINED_DATE.name(), -1L);
+    }
+
+    void setAppUpdateDeclined(int versionCode, Date date) {
+        savePreference(versionCode, PreferenceKeys.APP_UPDATE_DECLINED_VERSION_CODE.name());
+        savePreference(date.getTime(), PreferenceKeys.APP_UPDATE_DECLINED_DATE.name());
     }
 }
