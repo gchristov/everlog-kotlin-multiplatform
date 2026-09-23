@@ -173,6 +173,7 @@ class HomeActivity : BaseActivity(), MvpViewHome {
         }
         mAppUpdateSnackbar = Snackbar.make(binding.root, R.string.app_update_ready, Snackbar.LENGTH_INDEFINITE)
                 .setAction(R.string.app_update_restart) { mOnClickAppUpdateRestart.onNext(null) }
+                .setBackgroundTint(ContextCompat.getColor(this, R.color.background_card))
                 .setActionTextColor(ContextCompat.getColor(this, R.color.main_accent))
                 .setAnchorView(binding.tabBar)
                 .addCallback(object : Snackbar.Callback() {
