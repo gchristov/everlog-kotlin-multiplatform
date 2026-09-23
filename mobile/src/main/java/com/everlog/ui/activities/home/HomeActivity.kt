@@ -217,7 +217,7 @@ class HomeActivity : BaseActivity(), MvpViewHome {
             snackbarView.getLocationInWindow(snackbarLocation)
             binding.tabBar.getLocationInWindow(tabBarLocation)
             val btnRestingBottom = tabBarLocation[1] - (btn.layoutParams as ViewGroup.MarginLayoutParams).bottomMargin
-            val spacing = resources.getDimensionPixelSize(R.dimen.activity_margin_half)
+            val spacing = resources.getDimensionPixelSize(R.dimen.activity_margin)
             offset = minOf(0, snackbarLocation[1] - spacing - btnRestingBottom).toFloat()
         }
         if (animate) {
