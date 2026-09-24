@@ -1,11 +1,8 @@
 package com.everlog.data.controllers.workoutprefill
 
-import com.everlog.data.controllers.statistics.ExerciseStatsController
 import com.everlog.data.model.set.ELSet
-import com.everlog.data.model.workout.ELWorkout
 import com.everlog.managers.preferences.SettingsManager
 import com.everlog.managers.preferences.SettingsManager.MuscleGoal
-import com.everlog.ui.fragments.home.activity.statistics.StatisticsHomeFragment
 import com.everlog.utils.NumberUtils
 import timber.log.Timber
 import kotlin.math.ceil
@@ -16,16 +13,21 @@ class WorkoutPrefill1RMController: BaseWorkoutPrefillController() {
         return "Prefill1RMController"
     }
 
-    override fun prefill(stats: ExerciseStatsController.StatsResult, setToPrefill: ELSet, setIndex: Int) {
+    override fun prefill(source: PrefillSource, setToPrefill: ELSet, setIndex: Int) {
         // Make sure muscle goal is 1RM-based
         if (!SettingsManager.manager.muscleGoal().is1RMBased) {
             Timber.tag(tag()).d("Prefill not based on 1RM. Ignoring")
             return
         }
+        // Make sure there's a 1RM to target
+        if (source.orm <= 0) {
+            Timber.tag(tag()).d("No 1RM found. Ignoring")
+            return
+        }
         // Compute 1RM goal for all eligible sets
-        val targetWeight = calculate1RMPercentage(stats.orm, SettingsManager.manager.muscleGoal())
+        val targetWeight = calculate1RMPercentage(source.orm, SettingsManager.manager.muscleGoal())
         if (!setToPrefill.isWeightEntered()) {
-            printExerciseMessage(setIndex, String.format("1RM calculated: 1RM=%f, target=%f", stats.orm, targetWeight))
+            printExerciseMessage(setIndex, String.format("1RM calculated: 1RM=%f, target=%f", source.orm, targetWeight))
             setToPrefill.updateWeight(targetWeight)
         }
     }

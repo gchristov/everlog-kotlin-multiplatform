@@ -1,6 +1,5 @@
 package com.everlog.data.controllers.workoutprefill
 
-import com.everlog.data.controllers.statistics.ExerciseStatsController
 import com.everlog.data.model.set.ELSet
 import timber.log.Timber
 
@@ -10,13 +9,13 @@ class WorkoutPrefillHistoryController: BaseWorkoutPrefillController() {
         return "PrefillHistoryController"
     }
 
-    override fun prefill(stats: ExerciseStatsController.StatsResult, setToPrefill: ELSet, setIndex: Int) {
+    override fun prefill(source: PrefillSource, setToPrefill: ELSet, setIndex: Int) {
         // Make sure history is not empty
-        if (stats.history.isEmpty()) {
+        val historicEntry = source.lastSession
+        if (historicEntry == null) {
             Timber.tag(tag()).d("History empty. Ignoring")
             return
         }
-        val historicEntry = stats.history.first()
         // Make sure we're looking at the correct set number, i.e. set 1 will prefill only from historic set 1, not set 2
         if (setIndex < historicEntry.exercise?.sets?.size ?: 0) {
             val historicSet = historicEntry.exercise?.sets?.get(setIndex)
