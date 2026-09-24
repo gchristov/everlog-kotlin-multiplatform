@@ -222,6 +222,8 @@ class PresenterHome : BaseActivityPresenter<MvpViewHome>() {
         if (controller.startFlexibleUpdate(info, mvpView.appUpdateLauncher())) {
             mPromptedAppUpdate = info
             AnalyticsManager.manager.appUpdatePromptShown(info.availableVersionCode())
+        } else {
+            Timber.tag(TAG).w("App update flow not started: versionCode=%s", info.availableVersionCode())
         }
     }
 
