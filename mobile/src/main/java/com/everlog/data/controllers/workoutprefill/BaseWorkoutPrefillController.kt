@@ -1,19 +1,16 @@
 package com.everlog.data.controllers.workoutprefill
 
-import com.everlog.data.controllers.statistics.ExerciseStatsController
-import com.everlog.data.model.exercise.ELExercise
-import com.everlog.data.model.exercise.ELExerciseGroup
+import com.everlog.data.model.exercise.ELExerciseHistory
 import com.everlog.data.model.exercise.ELRoutineExercise
 import com.everlog.data.model.set.ELSet
 import com.everlog.data.model.workout.ELWorkout
 import timber.log.Timber
-import java.util.*
 
 abstract class BaseWorkoutPrefillController {
 
     abstract fun tag(): String
 
-    abstract fun prefill(stats: ExerciseStatsController.StatsResult,
+    abstract fun prefill(source: PrefillSource,
                          setToPrefill: ELSet,
                          setIndex: Int)
 
@@ -33,10 +30,12 @@ abstract class BaseWorkoutPrefillController {
         return String.format("weight=%.2f, reps=%d", set.getWeight(), set.getReps())
     }
 
-    class UnprefilledExercise {
-
-        var group: ELExerciseGroup? = null
-        var routineExercise: ELRoutineExercise? = null
-        var exercise: ELExercise? = null
-    }
+    /**
+     * What an exercise's sets are prefilled from.
+     *
+     * @param lastSession the most recent logged session of the exercise, if any
+     * @param orm the 1RM to target, or 0 if there's no recent set to estimate it from (see BaseStatsController.calculate1RM),
+     * in which case the last session's weights are used instead
+     */
+    class PrefillSource(val lastSession: ELExerciseHistory?, val orm: Float)
 }

@@ -11,6 +11,22 @@ public abstract class PreferencesManager {
 
     private static final String PREFERENCE_TITLE = "EverlogPreferences";
 
+    /**
+     * Supplies the backing SharedPreferences. Only swapped out by unit tests, which run without an Application.
+     */
+    public interface PreferencesProvider {
+        SharedPreferences getPreferences(String name);
+    }
+
+    private static PreferencesProvider sPreferencesProvider = null;
+
+    /**
+     * For unit tests only. Pass null to go back to the Application's SharedPreferences.
+     */
+    public static void setPreferencesProvider(PreferencesProvider provider) {
+        sPreferencesProvider = provider;
+    }
+
     protected void savePreference(boolean value, String key) {
         SharedPreferences sharedPref = getPreferences();
         SharedPreferences.Editor editor = sharedPref.edit();
@@ -91,6 +107,9 @@ public abstract class PreferencesManager {
     }
 
     protected SharedPreferences getPreferences() {
+        if (sPreferencesProvider != null) {
+            return sPreferencesProvider.getPreferences(PREFERENCE_TITLE);
+        }
         return ELApplication.getInstance().getSharedPreferences(PREFERENCE_TITLE, Context.MODE_PRIVATE);
     }
 }
