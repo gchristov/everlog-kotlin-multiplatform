@@ -11,6 +11,7 @@ The versioning system generates unique, incremental versioning identifiers (`ver
 - **`version.txt`**: Contains the base version name (e.g., `2.9.0`). This is used as the foundation for the `versionName`.
 - **`version_code.txt`**: Contains the base version code (e.g., `2090000`). This represents the major/minor versioning of the application. **This base version is automatically incremented weekly** via CI/CD tasks to ensure continuous progression.
 - **`version_code.sh`**: The script responsible for calculating the final version code.
+- **`release_notes.sh`**: Prints GitHub release notes (one bullet per commit since the previous tag, with its PR link). Used by `release-check.yml`, which tags the released commit with `version.txt` and creates the GitHub release after a successful production deploy. The version bump PR for the next release is still done by hand.
 
 ## Version Name
 

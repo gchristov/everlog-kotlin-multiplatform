@@ -108,12 +108,46 @@ jobs:
           name: Android Build
       - name: Deploy
         shell: bash
+        env:
+          CHANGELOG: ${{ github.event.inputs.changelog }}
         run: |
           bundle exec fastlane android deploy_play_release \
             aab_path:mobile/build/outputs/bundle/release/mobile-release.aab \
             json_key_path:mobile/src/release/google-deployment-key.json \
             version_code:${{ needs.build-android.outputs.versionCode }} \
-            changelog:"${{ github.event.inputs.changelog }}"
+            changelog:"$CHANGELOG"
+      - name: Slack report
+        uses: slackapi/slack-github-action@v3
+        if: always() # Ensure report is sent, even after errors
+        with:
+          payload: |
+            {
+              "text": "🚀 Release job <${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|${{ github.job }}> ${{ job.status }}"
+            }
+          webhook: ${{ env.MONITORING_SLACK_URL }}
+          webhook-type: incoming-webhook
+
+  tag-release:
+    needs: [deploy-android-release]
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0 # Do not remove. Needed to find the previous tag for the release notes
+      - name: Tag and create GitHub release
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          VERSION=$(cat tools/versioning/version.txt)
+          ./tools/versioning/release_notes.sh "${{ github.repository }}" "$GITHUB_SHA" > release_notes.md
+          gh release create "$VERSION" \
+            --target "$GITHUB_SHA" \
+            --title "$VERSION" \
+            --notes-file release_notes.md
       - name: Slack report
         uses: slackapi/slack-github-action@v3
         if: always() # Ensure report is sent, even after errors
