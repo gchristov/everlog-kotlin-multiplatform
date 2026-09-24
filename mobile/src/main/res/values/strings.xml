@@ -397,7 +397,7 @@
     <string name="muscle_goal_benefits">Goals</string>
     <string name="muscle_goal_footer">Need more goals?</string>
     <string name="muscle_goal_prompt">Training goals give you history-based weight suggestions during workouts to ensure your muscles are working in the most effective way.</string>
-    <string name="muscle_goal_1rm">Suggestions are based on your 1RM - the max weight you can lift for one repetition for an exercise, estimated from your history.</string>
+    <string name="muscle_goal_1rm">1RM goals suggest a percentage of your 1RM - the max weight you can lift for one repetition - estimated from your recent sets of up to 10 reps. If you haven\'t done an exercise in 3 months, your last session\'s weights are used instead.</string>
 
     <string name="integrations_title">Integrations</string>
     <string name="integrations_disconnect_prompt">Disabling this won\'t affect your history or remove data from this destination.\n\nAre you sure you want to disable this integration?</string>
