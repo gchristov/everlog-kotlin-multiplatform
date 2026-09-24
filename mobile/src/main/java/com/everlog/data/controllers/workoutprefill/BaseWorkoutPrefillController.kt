@@ -34,7 +34,7 @@ abstract class BaseWorkoutPrefillController {
      * What an exercise's sets are prefilled from.
      *
      * @param lastSession the most recent logged session of the exercise, if any
-     * @param orm the 1RM to target, or 0 if the exercise has never been logged with weight
+     * @param orm the 1RM to target, or 0 if there's no set to estimate it from (see BaseStatsController.calculate1RM)
      */
     class PrefillSource(val lastSession: ELExerciseHistory?, val orm: Float)
 }
