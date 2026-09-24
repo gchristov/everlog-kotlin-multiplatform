@@ -109,6 +109,18 @@ public class AppLaunchManager {
         AppLaunchState.state.setRateScheduledToShow(true);
     }
 
+    public boolean shouldPromptAppUpdate(int availableVersionCode) {
+        if (AppLaunchState.state.appUpdateDeclinedVersionCode() != availableVersionCode) {
+            // Never declined, or a newer version than the one declined is available
+            return true;
+        }
+        return calendarDaysSinceDate(AppLaunchState.state.appUpdateDeclinedDate()) >= AppConfig.configuration.getAppUpdateRepromptDelayDays();
+    }
+
+    public void appUpdateDeclined(int versionCode) {
+        AppLaunchState.state.setAppUpdateDeclined(versionCode, new Date());
+    }
+
     // Utils
 
     private long calendarDaysSinceDate(long date) {

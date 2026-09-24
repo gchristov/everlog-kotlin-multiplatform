@@ -29,6 +29,8 @@ class AppConfig {
     val rateTriggerModConsecutiveLaunchDays = 3
     val rateTriggerLastShownDelayDays = 21
 
+    val appUpdateRepromptDelayDays = 7
+
     companion object {
 
         @JvmField

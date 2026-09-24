@@ -159,6 +159,8 @@
     <string name="home_week">Week</string>
     <string name="home_workouts">Workouts</string>
     <string name="home_start_workout">Start workout</string>
+    <string name="app_update_ready">An update is ready to install</string>
+    <string name="app_update_restart">Restart</string>
     <string name="home_week_workouts_completed">Workouts\nDone</string>
     <string name="home_week_weight_lifted">Volume\nLifted</string>
     <string name="home_week_weight_lifted_no_spaces">Volume Lifted</string>

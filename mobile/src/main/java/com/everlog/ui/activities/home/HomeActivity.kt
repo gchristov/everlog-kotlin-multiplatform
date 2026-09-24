@@ -2,7 +2,13 @@ package com.everlog.ui.activities.home
 
 import android.content.Intent
 import android.view.View
+import android.view.ViewGroup
+import android.view.animation.DecelerateInterpolator
 import android.view.animation.OvershootInterpolator
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.IntentSenderRequest
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
 import androidx.fragment.app.Fragment
 import androidx.viewpager.widget.ViewPager
@@ -23,6 +29,7 @@ import com.everlog.ui.fragments.home.week.WeekHomeFragment
 import com.everlog.ui.fragments.home.workouts.WorkoutsHomeFragment
 import com.everlog.ui.views.viewpager.ELFragmentPagerAdapter
 import com.everlog.utils.Utils
+import com.google.android.material.snackbar.Snackbar
 import com.jakewharton.rxbinding.view.RxView
 import rx.Observable
 import rx.subjects.PublishSubject
@@ -37,6 +44,18 @@ class HomeActivity : BaseActivity(), MvpViewHome {
     private var mIndexMapTabIdReverse = mapOf(Pair(R.id.action_week, 0), Pair(R.id.action_workouts, 1), Pair(R.id.action_activity, 2), Pair(R.id.action_settings, 3))
 
     private val mOnClickAdd = PublishSubject.create<Void>()
+
+    // App update
+
+    private val mOnAppUpdateFlowResult = PublishSubject.create<Int>()
+    private val mOnClickAppUpdateRestart = PublishSubject.create<Void>()
+    private var mAppUpdateSnackbar: Snackbar? = null
+
+    private val mAppUpdateLauncher = registerForActivityResult(
+        ActivityResultContracts.StartIntentSenderForResult()
+    ) { result ->
+        mOnAppUpdateFlowResult.onNext(result.resultCode)
+    }
 
     override fun onActivityCreated() {
         ViewCompat.setOnApplyWindowInsetsListener(binding.root) { _, insets ->
@@ -132,6 +151,81 @@ class HomeActivity : BaseActivity(), MvpViewHome {
         } else if (!visible) {
             btn.animate().cancel()
             btn.visibility = View.GONE
+        }
+        // Hiding cancels any running offset animation, so reapply it without animating
+        offsetStartWorkoutButtonForSnackbar(animate = false)
+    }
+
+    override fun appUpdateLauncher(): ActivityResultLauncher<IntentSenderRequest> {
+        return mAppUpdateLauncher
+    }
+
+    override fun onAppUpdateFlowResult(): Observable<Int> {
+        return mOnAppUpdateFlowResult
+    }
+
+    override fun onClickAppUpdateRestart(): Observable<Void> {
+        return mOnClickAppUpdateRestart
+    }
+
+    override fun showAppUpdateReady() {
+        if (mAppUpdateSnackbar?.isShownOrQueued == true) {
+            return
+        }
+        mAppUpdateSnackbar = Snackbar.make(binding.root, R.string.app_update_ready, Snackbar.LENGTH_INDEFINITE)
+                .setAction(R.string.app_update_restart) { mOnClickAppUpdateRestart.onNext(null) }
+                .setActionTextColor(ContextCompat.getColor(this, R.color.main_accent))
+                .setAnchorView(binding.tabBar)
+                .addCallback(object : Snackbar.Callback() {
+
+                    override fun onShown(sb: Snackbar?) {
+                        offsetStartWorkoutButtonForSnackbar(animate = true)
+                    }
+
+                    override fun onDismissed(transientBottomBar: Snackbar?, event: Int) {
+                        mAppUpdateSnackbar = null
+                        offsetStartWorkoutButtonForSnackbar(animate = true)
+                    }
+                })
+        mAppUpdateSnackbar?.view?.let { styleAsCard(it) }
+        mAppUpdateSnackbar?.show()
+    }
+
+    /**
+     * The AppCompat theme gives snackbars the legacy full-width style, so make it a floating card.
+     */
+    private fun styleAsCard(snackbarView: View) {
+        val margin = resources.getDimensionPixelSize(R.dimen.activity_margin)
+        snackbarView.background = ContextCompat.getDrawable(this, R.drawable.rounded_corners_snackbar)
+        snackbarView.elevation = resources.getDimension(R.dimen.snackbar_elevation)
+        snackbarView.layoutParams = (snackbarView.layoutParams as ViewGroup.MarginLayoutParams).apply {
+            setMargins(margin, margin, margin, margin)
+        }
+    }
+
+    /**
+     * The update snackbar sits right above the tab bar, so move the start workout button up to
+     * sit above the snackbar while it's shown, and back down once it's gone.
+     */
+    private fun offsetStartWorkoutButtonForSnackbar(animate: Boolean) {
+        val btn = binding.newWorkoutBtn
+        val snackbarView = mAppUpdateSnackbar?.takeIf { it.isShown }?.view
+        var offset = 0f
+        if (snackbarView != null) {
+            // Work out the button's resting position from the tab bar, as it may be hidden and not laid out
+            val snackbarLocation = IntArray(2)
+            val tabBarLocation = IntArray(2)
+            snackbarView.getLocationInWindow(snackbarLocation)
+            binding.tabBar.getLocationInWindow(tabBarLocation)
+            val btnRestingBottom = tabBarLocation[1] - (btn.layoutParams as ViewGroup.MarginLayoutParams).bottomMargin
+            val spacing = resources.getDimensionPixelSize(R.dimen.activity_margin)
+            offset = minOf(0, snackbarLocation[1] - spacing - btnRestingBottom).toFloat()
+        }
+        if (animate) {
+            // The interpolator is shared with the show animation's overshoot, so reset it
+            btn.animate().translationY(offset).setDuration(200).setInterpolator(DecelerateInterpolator()).start()
+        } else {
+            btn.translationY = offset
         }
     }
 

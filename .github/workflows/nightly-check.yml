@@ -3,6 +3,7 @@ name: nightly-check
 on:
   schedule:
     - cron: '0 0 * * *'
+  workflow_dispatch:
 
 env:
   E2E_TEST_USER_EMAIL: ${{ secrets.E2E_TEST_USER_EMAIL }}
@@ -19,7 +20,17 @@ env:
   KEYSTORE_RELEASE_ALIAS_PASSWORD: ${{ secrets.KEYSTORE_RELEASE_ALIAS_PASSWORD }}
 
 jobs:
+  require-master:
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Only allow master
+        if: github.ref != 'refs/heads/master'
+        run: |
+          echo "::error::This workflow can only run on master (got ${{ github.ref_name }})"
+          exit 1
+
   unit-test:
+    needs: [require-master]
     runs-on: ubuntu-24.04
     permissions:
       checks: write
@@ -43,6 +54,7 @@ jobs:
           webhook-type: incoming-webhook
 
   build-android:
+    needs: [require-master]
     runs-on: ubuntu-24.04
     concurrency:
       group: ${{ github.workflow }}-${{ github.ref }}-build-android
@@ -110,6 +122,7 @@ jobs:
           webhook-type: incoming-webhook
 
   test-android:
+    needs: [require-master]
     runs-on: ubuntu-24.04
     concurrency:
       group: ${{ github.workflow }}-${{ github.ref }}-test-android
