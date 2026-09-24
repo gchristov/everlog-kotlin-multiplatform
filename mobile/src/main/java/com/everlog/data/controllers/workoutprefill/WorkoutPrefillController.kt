@@ -18,7 +18,8 @@ class WorkoutPrefillController {
 
         private const val TAG = "PrefillController"
 
-        // How far back to look for a recent 1RM before falling back to the all-time best
+        // How far back a 1RM still counts. After a longer break, the last session's weights are a
+        // safer place to restart than a percentage of an old 1RM.
         private val ORM_WINDOW_MILLIS = TimeUnit.DAYS.toMillis(90)
 
         fun prefillWorkout(workout: ELWorkout, listener: OnExercisePrefillListener) {
@@ -74,8 +75,7 @@ class WorkoutPrefillController {
                                 .filter { it.getSetsWithData().isNotEmpty() }
                                 .map { ELExerciseHistory(it, workout) }
                     }
-            val recentOrm = best1RM(sessions.filter { now - it.workout!!.completedDate <= ORM_WINDOW_MILLIS })
-            val orm = if (recentOrm > 0) recentOrm else best1RM(sessions)
+            val orm = best1RM(sessions.filter { now - it.workout!!.completedDate <= ORM_WINDOW_MILLIS })
             return BaseWorkoutPrefillController.PrefillSource(sessions.firstOrNull(), orm)
         }
 

@@ -15,6 +15,7 @@ import com.google.common.truth.Truth.assertThat
 import org.junit.After
 import org.junit.Before
 import org.junit.Test
+import java.util.concurrent.TimeUnit
 
 class WorkoutPrefillControllerTest {
 
@@ -164,14 +165,26 @@ class WorkoutPrefillControllerTest {
     }
 
     @Test
-    fun `1RM goal falls back to the all-time 1RM when there's nothing recent`() {
+    fun `1RM goal falls back to the last session's weights when there's no recent 1RM`() {
+        SettingsManager.manager.setMuscleGoal(MuscleGoal.GROWTH)
+        // Over 90 days ago, e.g. coming back from a break
         val history = listOf(
-                workout(at(2026, 3, 1), bench to listOf(loggedSet(5, 90f))),
+                workout(at(2026, 6, 1), bench to listOf(loggedSet(5, 90f), loggedSet(5, 85f))),
                 workout(at(2025, 1, 1), bench to listOf(loggedSet(5, 120f))))
+        val ongoing = workout(now, bench to listOf(plannedSet(), plannedSet()))
+
+        WorkoutPrefillController.prefill(ongoing, history, now)
+
+        assertThat(WorkoutPrefillController.buildPrefillSource(bench, history, now).orm).isEqualTo(0f)
+        assertThat(weights(ongoing, bench)).containsExactly(90f, 85f).inOrder()
+    }
+
+    @Test
+    fun `1RM counts a session exactly 90 days ago`() {
+        val history = listOf(workout(now - TimeUnit.DAYS.toMillis(90), bench to listOf(loggedSet(5, 90f))))
         val source = WorkoutPrefillController.buildPrefillSource(bench, history, now)
 
-        // 120 / (1.0278 - 0.0278 * 5)
-        assertThat(source.orm).isWithin(0.01f).of(135.01f)
+        assertThat(source.orm).isWithin(0.01f).of(101.26f)
     }
 
     @Test
