@@ -37,8 +37,8 @@ You'll also need `mobile/src/debug/google-services.json` / `mobile/src/release/g
 
 Three workflows in `.github/workflows/`, all built from shared composite actions in `.github/actions/`:
 - `staging-check.yml` — runs on push/PR to `master`: unit tests, debug build, instrumented tests, and deploys the debug APK to Firebase App Distribution (`everlog-staging-testers` group).
-- `nightly-check.yml` — cron daily: same checks plus a **release** build uploaded to the Play Store internal track, with Slack status reporting to `MONITORING_SLACK_URL`.
-- `release-check.yml` — manual (`workflow_dispatch`, requires a changelog input): full release build deployed to the Play Store production track via `fastlane android deploy_play_release`.
+- `nightly-check.yml` — cron daily (can also be run manually, but only on `master`): same checks plus a **release** build uploaded to the Play Store internal track, with Slack status reporting to `MONITORING_SLACK_URL`.
+- `release-check.yml` — manual (`workflow_dispatch`, requires a changelog input, only on `master`): full release build deployed to the Play Store production track via `fastlane android deploy_play_release`.
 
 Fastlane lanes (`fastlane/Fastfile`): `deploy_firebase`, `deploy_play_internal`, `deploy_play_release`. Changelogs are auto-generated from `git log` since the last tag.
 
@@ -60,7 +60,7 @@ Fastlane lanes (`fastlane/Fastfile`): `deploy_firebase`, `deploy_play_internal`,
 
 ### Managers layer (`managers/`)
 
-Singleton-style managers encapsulate cross-cutting concerns and are the integration point for most external services: `auth/AuthManager` + `auth/LocalUserManager` (Firebase Auth + local session), `billing/BillingManager` + `BillingBridge` (Play Billing / Pro subscriptions), `analytics/AnalyticsManager` (routes to `FirebaseAnalytic` implementations of the `Analytic` interface), `firebase/FirestorePathManager` + `FirebaseStorageManager`, `integrations/GoogleFitIntegrationManager`, `api/ApiManager` (Retrofit-based REST, e.g. cover images), `RemoteConfigManager` (Firebase Remote Config), `preferences/PreferencesManager` + `SettingsManager`. `AppConfig` (`config/AppConfig.kt`) is the single object wiring together tunable constants (rest timers, plan limits, rating-prompt thresholds) and app boot sequencing (`configureApp()` called from `ELApplication.onCreate()`).
+Singleton-style managers encapsulate cross-cutting concerns and are the integration point for most external services: `auth/AuthManager` + `auth/LocalUserManager` (Firebase Auth + local session), `billing/BillingManager` + `BillingBridge` (Play Billing / Pro subscriptions), `analytics/AnalyticsManager` (routes to `FirebaseAnalytic` implementations of the `Analytic` interface), `firebase/FirestorePathManager` + `FirebaseStorageManager`, `integrations/GoogleFitIntegrationManager`, `api/ApiManager` (Retrofit-based REST, e.g. cover images), `RemoteConfigManager` (Firebase Remote Config), `appupdate/AppUpdateController` (Play In-App Updates), `preferences/PreferencesManager` + `SettingsManager`. `AppConfig` (`config/AppConfig.kt`) is the single object wiring together tunable constants (rest timers, plan limits, rating-prompt thresholds) and app boot sequencing (`configureApp()` called from `ELApplication.onCreate()`).
 
 ### Background work
 
@@ -74,6 +74,13 @@ Singleton-style managers encapsulate cross-cutting concerns and are the integrat
 
 Use `PULL_REQUEST_TEMPLATE.md` for PR descriptions (`## What does this pull request change?`, `## Demo`, `## Screenshots`, `## How is this change tested?`). Irrelevant sections (e.g. Demo/Screenshots for a non-UI change) can be dropped.
 
-## Testing reality check
+## Testing
 
-Test coverage is currently minimal: `mobile/src/test/java` has only the default `ExampleUnitTest`, and `mobile/src/androidTest/java` has a single instrumented E2E test (`LoginActivityTest`, which drives a real login using the `E2E_TEST_USER_EMAIL`/`PASSWORD` secrets against a real Firebase project). Don't assume there's an existing unit test suite to model new tests after — check the actual class before assuming test conventions.
+Coverage is still small, so check the actual classes before assuming conventions:
+- Unit tests (`mobile/src/test/java`) are plain JVM JUnit 4 tests written in Kotlin with Truth assertions and backtick test names — see `config/HomeNotificationTest` and `data/controllers/workoutprefill/WorkoutPrefillControllerTest` as models. There's no Robolectric or mocking library.
+- Instrumented tests (`mobile/src/androidTest/java`) are a single E2E test, `LoginActivityTest`, which drives a real login using the `E2E_TEST_USER_EMAIL`/`PASSWORD` secrets against a real Firebase project.
+
+Gotchas when unit testing app code on the JVM:
+- `SettingsManager`/`PreferencesManager` read `SharedPreferences` via `ELApplication.getInstance()`, which is null in unit tests. This is hit indirectly by a lot of model code (e.g. every `ELSet.getWeight()` reads the weight unit). Call `InMemorySharedPreferences.install()` (`testutil/`) in `@Before` and `uninstall()` in `@After`, then set settings through `SettingsManager.manager`.
+- ThreeTenABP (`org.threeten.bp`) has no time-zone data outside Android, so code that uses `ZoneId.systemDefault()` (e.g. `ELWorkout.inRange()`, the `Date` extensions in `utils/DateExt.kt`) throws `ZoneRulesException`. Either keep that code out of the tested path or add `org.threeten:threetenbp` as a `testImplementation` dependency.
+- Code that reads the current time (`Date()`, `System.currentTimeMillis()`) should take `now` as a parameter so tests can pin it — see `WorkoutPrefillController.prefill`.
