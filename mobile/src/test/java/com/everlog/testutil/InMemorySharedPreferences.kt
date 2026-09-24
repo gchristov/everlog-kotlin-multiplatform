@@ -55,21 +55,21 @@ class InMemorySharedPreferences : SharedPreferences {
         private val removals = HashSet<String>()
         private var clear = false
 
-        override fun putString(key: String, value: String?) = apply { changes[key] = value }
+        override fun putString(key: String, value: String?) = also { changes[key] = value }
 
-        override fun putStringSet(key: String, values: Set<String>?) = apply { changes[key] = values }
+        override fun putStringSet(key: String, values: Set<String>?) = also { changes[key] = values }
 
-        override fun putInt(key: String, value: Int) = apply { changes[key] = value }
+        override fun putInt(key: String, value: Int) = also { changes[key] = value }
 
-        override fun putLong(key: String, value: Long) = apply { changes[key] = value }
+        override fun putLong(key: String, value: Long) = also { changes[key] = value }
 
-        override fun putFloat(key: String, value: Float) = apply { changes[key] = value }
+        override fun putFloat(key: String, value: Float) = also { changes[key] = value }
 
-        override fun putBoolean(key: String, value: Boolean) = apply { changes[key] = value }
+        override fun putBoolean(key: String, value: Boolean) = also { changes[key] = value }
 
-        override fun remove(key: String) = apply { removals.add(key) }
+        override fun remove(key: String) = also { removals.add(key) }
 
-        override fun clear() = apply { clear = true }
+        override fun clear() = also { clear = true }
 
         override fun commit(): Boolean {
             if (clear) values.clear()

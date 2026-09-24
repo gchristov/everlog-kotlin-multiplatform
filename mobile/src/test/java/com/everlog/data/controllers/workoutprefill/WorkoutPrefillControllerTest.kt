@@ -175,7 +175,7 @@ class WorkoutPrefillControllerTest {
     }
 
     @Test
-    fun `1RM goal falls back to history when no set has weight`() {
+    fun `1RM goal leaves sets empty when no set has weight`() {
         SettingsManager.manager.setMuscleGoal(MuscleGoal.GROWTH)
         val history = listOf(workout(at(2026, 9, 28), bench to listOf(ELSet(reps = 8))))
         val ongoing = workout(now, bench to listOf(plannedSet()))
