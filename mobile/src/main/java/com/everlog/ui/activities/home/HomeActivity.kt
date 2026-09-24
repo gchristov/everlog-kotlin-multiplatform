@@ -3,6 +3,7 @@ package com.everlog.ui.activities.home
 import android.content.Intent
 import android.view.View
 import android.view.ViewGroup
+import android.view.animation.DecelerateInterpolator
 import android.view.animation.OvershootInterpolator
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.IntentSenderRequest
@@ -221,7 +222,8 @@ class HomeActivity : BaseActivity(), MvpViewHome {
             offset = minOf(0, snackbarLocation[1] - spacing - btnRestingBottom).toFloat()
         }
         if (animate) {
-            btn.animate().translationY(offset).setDuration(200).start()
+            // The interpolator is shared with the show animation's overshoot, so reset it
+            btn.animate().translationY(offset).setDuration(200).setInterpolator(DecelerateInterpolator()).start()
         } else {
             btn.translationY = offset
         }
