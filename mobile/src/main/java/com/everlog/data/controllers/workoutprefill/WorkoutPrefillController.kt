@@ -20,8 +20,6 @@ class WorkoutPrefillController {
 
         // How far back to look for a recent 1RM before falling back to the all-time best
         private val ORM_WINDOW_MILLIS = TimeUnit.DAYS.toMillis(90)
-        // 1RM formulas are only reliable up to ~10 reps, beyond that they wildly overestimate
-        private const val ORM_MAX_REPS = 10
 
         fun prefillWorkout(workout: ELWorkout, listener: OnExercisePrefillListener) {
             // Fetch user history
@@ -82,13 +80,7 @@ class WorkoutPrefillController {
         }
 
         private fun best1RM(sessions: List<ELExerciseHistory>): Float {
-            return sessions.maxOfOrNull { session ->
-                // Use each session's heaviest set that has weight and few enough reps for an accurate 1RM
-                val heaviestSet = session.exercise!!.sets
-                        .filter { it.isWeightEntered() && it.getReps() in 1..ORM_MAX_REPS }
-                        .maxByOrNull { it.getWeight() }
-                if (heaviestSet != null) BaseStatsController.calculate1RM(heaviestSet) else 0f
-            } ?: 0f
+            return sessions.maxOfOrNull { BaseStatsController.calculate1RM(it.exercise!!) } ?: 0f
         }
     }
 

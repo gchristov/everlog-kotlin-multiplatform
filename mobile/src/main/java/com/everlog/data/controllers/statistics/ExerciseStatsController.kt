@@ -84,9 +84,10 @@ class ExerciseStatsController : BaseStatsController() {
                                     calculateAccumulativeValue(workout, stats.repCountsPerDay, workoutTotalReps, range)
                                     // Add weight stats
                                     calculateMaxValue(workout, stats.maxWeightsPerDay, workoutHeaviestSet.getWeight(), range)
-                                    if (workoutHeaviestSet.isWeightEntered()) {
-                                        // Add 1RM stats only if set has weight
-                                        calculateMaxValue(workout, stats.max1RMsPerDay, calculate1RM(workoutHeaviestSet), range)
+                                    val workout1RM = calculate1RM(routineExercise)
+                                    if (workout1RM > 0) {
+                                        // Add 1RM stats only if there's a set to estimate it from
+                                        calculateMaxValue(workout, stats.max1RMsPerDay, workout1RM, range)
                                     }
                                 }
                             }

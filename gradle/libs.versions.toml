@@ -40,6 +40,7 @@ mpAndroidChart = "3.1.0"
 nineOldAndroids = "2.4.0"
 roundedImageView = "2.3.0"
 threeTenAbp = "1.4.9"
+threeTenBp = "1.6.8"
 materialNumberPicker = "1.1.0"
 tapTargetView = "1.15.0"
 maskableLayout = "1.3.2"
@@ -122,6 +123,8 @@ mpandroidchart = { group = "com.github.PhilJay", name = "MPAndroidChart", versio
 nineoldandroids = { group = "com.nineoldandroids", name = "library", version.ref = "nineOldAndroids" }
 roundedimageview = { group = "com.makeramen", name = "roundedimageview", version.ref = "roundedImageView" }
 threetenabp = { group = "com.jakewharton.threetenabp", name = "threetenabp", version.ref = "threeTenAbp" }
+# Plain JVM ThreeTen with time-zone data, for unit tests (ThreeTenABP only loads it on Android)
+threetenbp = { group = "org.threeten", name = "threetenbp", version.ref = "threeTenBp" }
 materialnumberpicker = { group = "com.github.StephenVinouze", name = "MaterialNumberPicker", version.ref = "materialNumberPicker" }
 taptargetview = { group = "com.getkeepsafe.taptargetview", name = "taptargetview", version.ref = "tapTargetView" }
 maskable-layout = { group = "com.github.christophesmet", name = "android_maskable_layout", version.ref = "maskableLayout" }

@@ -1,5 +1,6 @@
 package com.everlog.data.controllers.statistics
 
+import com.everlog.data.model.exercise.ELRoutineExercise
 import com.everlog.data.model.set.ELSet
 import com.everlog.data.model.workout.ELWorkout
 import com.everlog.ui.fragments.home.activity.statistics.StatisticsHomeFragment
@@ -19,6 +20,9 @@ abstract class BaseStatsController {
 
     companion object {
 
+        // 1RM formulas are only reliable up to ~10 reps, beyond that they wildly overestimate
+        private const val ORM_MAX_REPS = 10
+
         fun chartGranularity(): Float {
             return 1F // Because we're using days
         }
@@ -31,7 +35,18 @@ abstract class BaseStatsController {
             }
         }
 
-        fun calculate1RM(maxWeightSet: ELSet?): Float {
+        /**
+         * Estimates an exercise's 1RM from its heaviest set that has weight and at most
+         * [ORM_MAX_REPS] reps. Returns 0 if there's no such set.
+         */
+        fun calculate1RM(exercise: ELRoutineExercise): Float {
+            val heaviestSet = exercise.sets
+                    .filter { it.isWeightEntered() && it.getReps() in 1..ORM_MAX_REPS }
+                    .maxByOrNull { it.getWeight() }
+            return if (heaviestSet != null) calculate1RM(heaviestSet) else 0f
+        }
+
+        private fun calculate1RM(maxWeightSet: ELSet?): Float {
             // Brzycki - https://en.wikipedia.org/wiki/One-repetition_maximum
             val w = maxWeightSet?.getWeight() ?: 0f
             val r = maxWeightSet?.getReps()?.toFloat() ?: 0f

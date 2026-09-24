@@ -77,10 +77,10 @@ Use `PULL_REQUEST_TEMPLATE.md` for PR descriptions (`## What does this pull requ
 ## Testing
 
 Coverage is still small, so check the actual classes before assuming conventions:
-- Unit tests (`mobile/src/test/java`) are plain JVM JUnit 4 tests written in Kotlin with Truth assertions and backtick test names — see `config/HomeNotificationTest` and `data/controllers/workoutprefill/WorkoutPrefillControllerTest` as models. There's no Robolectric or mocking library.
+- Unit tests (`mobile/src/test/java`) are plain JVM JUnit 4 tests written in Kotlin with Truth assertions and backtick test names — see `config/HomeNotificationTest`, `data/controllers/workoutprefill/WorkoutPrefillControllerTest` and `data/controllers/statistics/ExerciseStatsControllerTest` as models. There's no Robolectric or mocking library. Shared helpers live in `testutil/` (e.g. `WorkoutFixtures.kt` for building workouts and sets).
 - Instrumented tests (`mobile/src/androidTest/java`) are a single E2E test, `LoginActivityTest`, which drives a real login using the `E2E_TEST_USER_EMAIL`/`PASSWORD` secrets against a real Firebase project.
 
 Gotchas when unit testing app code on the JVM:
 - `SettingsManager`/`PreferencesManager` read `SharedPreferences` via `ELApplication.getInstance()`, which is null in unit tests. This is hit indirectly by a lot of model code (e.g. every `ELSet.getWeight()` reads the weight unit). Call `InMemorySharedPreferences.install()` (`testutil/`) in `@Before` and `uninstall()` in `@After`, then set settings through `SettingsManager.manager`.
-- ThreeTenABP (`org.threeten.bp`) has no time-zone data outside Android, so code that uses `ZoneId.systemDefault()` (e.g. `ELWorkout.inRange()`, the `Date` extensions in `utils/DateExt.kt`) throws `ZoneRulesException`. Either keep that code out of the tested path or add `org.threeten:threetenbp` as a `testImplementation` dependency.
+- ThreeTenABP (`org.threeten.bp`) has no time-zone data outside Android, so unit tests also depend on the plain JVM `threetenbp` (`libs.threetenbp`), which includes it. Without it, anything using `ZoneId.systemDefault()` (e.g. `ELWorkout.inRange()`, the `Date` extensions in `utils/DateExt.kt`) throws `ZoneRulesException`.
 - Code that reads the current time (`Date()`, `System.currentTimeMillis()`) should take `now` as a parameter so tests can pin it — see `WorkoutPrefillController.prefill`.
