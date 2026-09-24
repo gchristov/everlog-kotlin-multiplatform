@@ -135,8 +135,8 @@ class WorkoutPrefillControllerTest {
 
         WorkoutPrefillController.prefill(ongoing, history, now)
 
-        val historicWeight = history.first().getExerciseGroups().first().exercises.first().sets.first().getWeight()
-        assertThat(weights(ongoing, bench).single()).isWithin(0.01f).of(historicWeight)
+        // 60kg in pounds
+        assertThat(weights(ongoing, bench).single()).isWithin(0.01f).of(132.28f)
     }
 
     // 1RM
@@ -156,7 +156,6 @@ class WorkoutPrefillControllerTest {
 
     @Test
     fun `1RM goal prefers a recent 1RM over an older, higher one`() {
-        SettingsManager.manager.setMuscleGoal(MuscleGoal.GROWTH)
         val history = listOf(
                 workout(at(2026, 8, 1), bench to listOf(set(5, 90f))),
                 workout(at(2025, 1, 1), bench to listOf(set(5, 120f))))
@@ -167,7 +166,6 @@ class WorkoutPrefillControllerTest {
 
     @Test
     fun `1RM goal falls back to the all-time 1RM when there's nothing recent`() {
-        SettingsManager.manager.setMuscleGoal(MuscleGoal.GROWTH)
         val history = listOf(
                 workout(at(2026, 3, 1), bench to listOf(set(5, 90f))),
                 workout(at(2025, 1, 1), bench to listOf(set(5, 120f))))
@@ -186,6 +184,41 @@ class WorkoutPrefillControllerTest {
         WorkoutPrefillController.prefill(ongoing, history, now)
 
         assertThat(weights(ongoing, bench)).containsExactly(-1f)
+    }
+
+    @Test
+    fun `1RM target isn't bumped up by float noise`() {
+        SettingsManager.manager.setMuscleGoal(MuscleGoal.GROWTH)
+        // A single rep's 1RM is its weight, which comes out as 100.00001
+        val history = listOf(workout(at(2026, 9, 28), bench to listOf(set(1, 100f))))
+        val ongoing = workout(now, bench to listOf(emptySet()))
+
+        WorkoutPrefillController.prefill(ongoing, history, now)
+
+        assertThat(weights(ongoing, bench)).containsExactly(80f)
+    }
+
+    @Test
+    fun `1RM ignores sets with more than 10 reps`() {
+        // 20kg x 30 would give a 1RM of 103, and 80kg x 12 one of 115
+        val history = listOf(
+                workout(at(2026, 9, 28), bench to listOf(set(30, 20f))),
+                workout(at(2026, 9, 20), bench to listOf(set(12, 80f), set(5, 70f))))
+        val source = WorkoutPrefillController.buildPrefillSource(bench, history, now)
+
+        // 70 / (1.0278 - 0.0278 * 5)
+        assertThat(source.orm).isWithin(0.01f).of(78.76f)
+    }
+
+    @Test
+    fun `1RM goal falls back to history when every weighted set has more than 10 reps`() {
+        SettingsManager.manager.setMuscleGoal(MuscleGoal.GROWTH)
+        val history = listOf(workout(at(2026, 9, 28), bench to listOf(set(30, 20f))))
+        val ongoing = workout(now, bench to listOf(emptySet()))
+
+        WorkoutPrefillController.prefill(ongoing, history, now)
+
+        assertThat(weights(ongoing, bench)).containsExactly(20f)
     }
 
     // Helpers

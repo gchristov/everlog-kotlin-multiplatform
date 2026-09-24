@@ -19,13 +19,17 @@ class WorkoutPrefillController {
         private const val TAG = "PrefillController"
 
         // How far back to look for a recent 1RM before falling back to the all-time best
-        internal val ORM_WINDOW_MILLIS = TimeUnit.DAYS.toMillis(90)
+        private val ORM_WINDOW_MILLIS = TimeUnit.DAYS.toMillis(90)
+        // 1RM formulas are only reliable up to ~10 reps, beyond that they wildly overestimate
+        private const val ORM_MAX_REPS = 10
 
         fun prefillWorkout(workout: ELWorkout, listener: OnExercisePrefillListener) {
             // Fetch user history
             ELDatastore.workoutsStore().getItems(object : OnStoreItemsListener<ELWorkout> {
                 override fun onItemsLoaded(history: MutableList<ELWorkout>, fromCache: Boolean) {
-                    Observable.fromCallable { prefill(workout, history, System.currentTimeMillis()) }
+                    // Copy before leaving this thread, as the store keeps updating its list
+                    val snapshot = ArrayList(history)
+                    Observable.fromCallable { prefill(workout, snapshot, System.currentTimeMillis()) }
                             .observeOn(AndroidSchedulers.mainThread())
                             .subscribeOn(Schedulers.computation())
                             .subscribe({ listener.onSuccess() })
@@ -40,9 +44,11 @@ class WorkoutPrefillController {
 
         internal fun prefill(ongoingWorkout: ELWorkout, history: List<ELWorkout>, now: Long) {
             Timber.tag(TAG).d("Starting weight prefill")
+            // The store orders by created date, which can differ from when the workout was completed
+            val newestFirst = history.sortedByDescending { it.completedDate }
             ongoingWorkout.getExerciseGroups().forEach { group ->
                 group.exercises.forEach { routineExercise ->
-                    val source = buildPrefillSource(routineExercise.exercise!!, history, now)
+                    val source = buildPrefillSource(routineExercise.exercise!!, newestFirst, now)
                     routineExercise.sets.forEachIndexed { setIndex, setToPrefill ->
                         // 1. Prefill using 1RM
                         WorkoutPrefill1RMController().prefill(source, setToPrefill, setIndex)
@@ -57,14 +63,14 @@ class WorkoutPrefillController {
         /**
          * Looks at all of the user's history rather than a calendar range, so prefilling
          * doesn't reset when a new month starts.
+         *
+         * @param newestFirst the user's workouts, most recently completed first
          */
         internal fun buildPrefillSource(exercise: ELExercise,
-                                        history: List<ELWorkout>,
+                                        newestFirst: List<ELWorkout>,
                                         now: Long): BaseWorkoutPrefillController.PrefillSource {
-            // Sessions where the exercise was actually logged, newest first. The store orders by
-            // created date, which can differ from when the workout was completed.
-            val sessions = history
-                    .sortedByDescending { it.completedDate }
+            // Sessions where the exercise was actually logged, newest first
+            val sessions = newestFirst
                     .flatMap { workout ->
                         workout.findExercise(exercise).orEmpty()
                                 .filter { it.getSetsWithData().isNotEmpty() }
@@ -77,9 +83,11 @@ class WorkoutPrefillController {
 
         private fun best1RM(sessions: List<ELExerciseHistory>): Float {
             return sessions.maxOfOrNull { session ->
-                val heaviestSet = session.exercise!!.getBestSet(true)
-                // Only sets with weight count towards 1RM
-                if (heaviestSet.isWeightEntered()) BaseStatsController.calculate1RM(heaviestSet) else 0f
+                // Use each session's heaviest set that has weight and few enough reps for an accurate 1RM
+                val heaviestSet = session.exercise!!.sets
+                        .filter { it.isWeightEntered() && it.getReps() in 1..ORM_MAX_REPS }
+                        .maxByOrNull { it.getWeight() }
+                if (heaviestSet != null) BaseStatsController.calculate1RM(heaviestSet) else 0f
             } ?: 0f
         }
     }
