@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Expanded next set view. Wrapped in DecoratedCustomViewStyle, so the system draws the app icon,
+     name and background around it. -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/exerciseName"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="@dimen/margin_12"
+            android:layout_weight="1"
+            android:ellipsize="end"
+            android:singleLine="true"
+            android:textAppearance="@style/TextAppearance.Compat.Notification.Title"
+            tools:text="Barbell bench press" />
+
+        <TextView
+            android:id="@+id/setSummary"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:singleLine="true"
+            android:textAppearance="@style/TextAppearance.Compat.Notification"
+            tools:text="Super set 3/4" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="44dp"
+        android:layout_marginTop="@dimen/activity_margin_half_half"
+        android:orientation="horizontal">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_marginEnd="@dimen/margin_6"
+            android:gravity="center">
+
+            <ImageView
+                android:id="@+id/reduceWeightBtn"
+                android:contentDescription="@string/workout_notification_decrease_weight"
+                style="@style/WorkoutNotificationButton"
+                android:src="@drawable/ic_remove_white" />
+
+            <TextView
+                android:id="@+id/weightField"
+                style="@style/WorkoutNotificationInput"
+                tools:text="60" />
+
+            <TextView
+                android:id="@+id/weightUnit"
+                style="@style/WorkoutNotificationExponent"
+                tools:text="@string/kg" />
+
+            <ImageView
+                android:id="@+id/increaseWeightBtn"
+                android:contentDescription="@string/workout_notification_increase_weight"
+                style="@style/WorkoutNotificationButton"
+                android:src="@drawable/ic_add" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/repsPanel"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:gravity="center">
+
+            <ImageView
+                android:id="@+id/reduceRepsBtn"
+                android:contentDescription="@string/workout_notification_decrease_reps"
+                style="@style/WorkoutNotificationButton"
+                android:src="@drawable/ic_remove_white" />
+
+            <TextView
+                android:id="@+id/repsField"
+                style="@style/WorkoutNotificationInput"
+                tools:text="10" />
+
+            <TextView
+                style="@style/WorkoutNotificationExponent"
+                android:text="@string/workout_notification_reps_unit" />
+
+            <ImageView
+                android:id="@+id/increaseRepsBtn"
+                android:contentDescription="@string/workout_notification_increase_reps"
+                style="@style/WorkoutNotificationButton"
+                android:src="@drawable/ic_add" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/timePanel"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:visibility="gone"
+            tools:visibility="visible">
+
+            <TextView
+                android:id="@+id/timeField"
+                style="@style/WorkoutNotificationInput"
+                tools:text="00:40" />
+
+            <ImageView
+                android:id="@+id/startTimerBtn"
+                android:contentDescription="@string/workout_notification_start_timer"
+                style="@style/WorkoutNotificationButton"
+                android:layout_width="40dp"
+                android:src="@drawable/ic_timer" />
+
+            <ImageView
+                android:id="@+id/stopTimerBtn"
+                android:contentDescription="@string/workout_notification_stop_timer"
+                style="@style/WorkoutNotificationButton"
+                android:layout_width="40dp"
+                android:src="@drawable/ic_clear_white"
+                android:visibility="gone" />
+        </LinearLayout>
+
+        <!-- Spacer. RemoteViews doesn't support plain Views. -->
+        <ImageView
+            android:layout_width="0dp"
+            android:importantForAccessibility="no"
+            android:layout_height="match_parent"
+            android:layout_weight="1" />
+
+        <ImageView
+            android:id="@+id/nextBtn"
+            style="@style/WorkoutNotificationButton"
+            android:layout_width="48dp"
+            android:contentDescription="@string/workout_notification_complete_set"
+            android:src="@drawable/ic_check" />
+    </LinearLayout>
+</LinearLayout>

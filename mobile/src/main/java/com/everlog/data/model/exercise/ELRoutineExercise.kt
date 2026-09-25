@@ -1,6 +1,5 @@
 package com.everlog.data.model.exercise
 
-import android.content.Context
 import com.everlog.R
 import com.everlog.application.ELApplication
 import com.everlog.constants.ELConstants
@@ -8,7 +7,6 @@ import com.everlog.data.model.ELFirestoreModel
 import com.everlog.data.model.set.ELSet
 import com.everlog.managers.preferences.SettingsManager
 import com.everlog.utils.append
-import com.everlog.utils.device.DeviceUtils
 import com.everlog.utils.format.StatsFormatUtils
 import org.apache.commons.lang3.SerializationUtils
 import java.io.Serializable
@@ -111,14 +109,6 @@ data class ELRoutineExercise(
 
     fun getName(): String? {
         return exercise!!.name
-    }
-
-    fun getNotificationName(context: Context?): String? {
-        val name = exercise!!.name
-        val limit = if (DeviceUtils.isTablet(context)) name!!.length else 15
-        return if (name!!.length > limit) {
-            name.substring(0, limit) + "..."
-        } else name
     }
 
     fun getCategory(): String? {

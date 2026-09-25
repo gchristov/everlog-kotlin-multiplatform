@@ -293,6 +293,22 @@
     <string name="workout_empty_no_sets_subtitle">Add exercises to begin your workout</string>
     <string name="workout_empty_done">All done?</string>
     <string name="workout_empty_done_subtitle">Add exercises or finish the workout</string>
+    <string name="workout_notification_rest">Rest</string>
+    <string name="workout_notification_skip_rest">Skip rest</string>
+    <string name="workout_notification_up_next">"Next: %1$s  •  %2$s"</string>
+    <string name="workout_notification_complete">Workout complete</string>
+    <string name="workout_notification_reps_unit">rps</string>
+    <string name="workout_notification_complete_set">Complete set</string>
+    <string name="workout_notification_decrease_weight">Decrease weight</string>
+    <string name="workout_notification_increase_weight">Increase weight</string>
+    <string name="workout_notification_decrease_reps">Decrease reps</string>
+    <string name="workout_notification_increase_reps">Increase reps</string>
+    <string name="workout_notification_start_timer">Start timer</string>
+    <string name="workout_notification_stop_timer">Stop timer</string>
+    <plurals name="workout_notification_reps">
+        <item quantity="one">%1$d rep</item>
+        <item quantity="other">%1$d reps</item>
+    </plurals>
     <string name="workout_exercises">Session Exercises</string>
     <string name="workout_finish">Finish</string>
     <string name="workout_finish_title">Finish Workout</string>

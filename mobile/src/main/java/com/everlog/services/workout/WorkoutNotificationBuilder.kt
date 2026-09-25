@@ -2,186 +2,199 @@ package com.everlog.services.workout
 
 import android.app.Notification
 import android.app.PendingIntent
+import android.content.Context
 import android.content.Intent
 import android.view.View
 import android.widget.RemoteViews
 import androidx.core.app.NotificationCompat
+import androidx.core.content.ContextCompat
 import com.everlog.R
 import com.everlog.constants.ELConstants
+import com.everlog.data.model.workout.ELWorkout
 import com.everlog.managers.preferences.SettingsManager
+import com.everlog.services.workout.WorkoutNotificationState.Done
+import com.everlog.services.workout.WorkoutNotificationState.NextSet
+import com.everlog.services.workout.WorkoutNotificationState.NoExercises
+import com.everlog.services.workout.WorkoutNotificationState.Rest
 import com.everlog.ui.activities.home.workout.WorkoutActivity
 import com.everlog.utils.ArrayResourceTypeUtils
-import com.everlog.utils.device.DeviceUtils
 import com.everlog.utils.format.FormatUtils
-import java.util.*
 import java.util.concurrent.TimeUnit
-import kotlin.math.max
-import kotlin.random.Random
 
-class WorkoutNotificationBuilder(service: WorkoutService) {
+/**
+ * Renders a [WorkoutNotificationState] as the ongoing workout notification.
+ *
+ * The system owns the notification chrome (icon, app name, colours, expand affordance) on every
+ * Android version. Only the next set view uses a custom layout, and it's wrapped in
+ * [NotificationCompat.DecoratedCustomViewStyle] so it's decorated the same way from API 23
+ * (backported by NotificationCompat) through to API 31+ (where the system always decorates
+ * custom views). The other states use the standard template.
+ */
+class WorkoutNotificationBuilder(private val context: Context) {
 
-    private var mService: WorkoutService = service
+    companion object {
+        // Stable request codes so each update replaces the previous PendingIntents rather than
+        // creating new ones.
+        private const val REQUEST_OPEN_WORKOUT = 0
+        private val ACTION_REQUEST_CODES = listOf(
+                WorkoutService.ACTION_DECREASE_WEIGHT,
+                WorkoutService.ACTION_INCREASE_WEIGHT,
+                WorkoutService.ACTION_DECREASE_REPS,
+                WorkoutService.ACTION_INCREASE_REPS,
+                WorkoutService.ACTION_TIMER_EXERCISE_START,
+                WorkoutService.ACTION_TIMER_EXERCISE_STOP,
+                WorkoutService.ACTION_TIMER_REST_STOP,
+                WorkoutService.ACTION_NEXT)
+    }
 
-    internal fun buildNotification(channelId: String): Notification {
-        val builder = NotificationCompat.Builder(mService, channelId)
-        builder
+    fun build(channelId: String, state: WorkoutNotificationState, workout: ELWorkout?): Notification {
+        val builder = NotificationCompat.Builder(context, channelId)
+                .setSmallIcon(R.drawable.ic_notification)
+                .setColor(ContextCompat.getColor(context, R.color.main_accent))
                 .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
-                .setAutoCancel(true)
+                .setPriority(NotificationCompat.PRIORITY_HIGH)
                 .setOngoing(true)
                 .setOnlyAlertOnce(true)
-                .setDefaults(Notification.DEFAULT_ALL)
-                .setWhen(System.currentTimeMillis())
-                .setSmallIcon(R.drawable.ic_notification)
-        if (mService.mShowRestTimer) {
-            // Rest timer
-            val layout = buildNotificationRestTimerLayout()
-            builder
-                    .setCustomContentView(layout)
-                    .setCustomBigContentView(layout)
-        } else if (mService.mNextState == null || mService.mWorkout?.hasExercises() == false) {
-            // Empty workout or reached end
-            val layout = buildNotificationWorkoutEmptyLayout()
-            builder
-                    .setCustomContentView(layout)
-                    .setCustomBigContentView(layout)
-        } else {
-            // Next set to complete
-            builder
-                    .setCustomContentView(buildNotificationWorkoutLayout(R.layout.notification_workout))
-                    .setCustomBigContentView(buildNotificationWorkoutLayout(R.layout.notification_workout_big))
+                .setShowWhen(false)
+                // API 31+ can otherwise delay showing a foreground service notification by up to 10s
+                .setForegroundServiceBehavior(NotificationCompat.FOREGROUND_SERVICE_IMMEDIATE)
+                .setContentIntent(openWorkoutIntent(workout))
+        when (state) {
+            is NextSet -> renderNextSet(builder, state)
+            is Rest -> renderRest(builder, state)
+            is Done -> builder
+                    .setContentTitle(context.getString(R.string.workout_empty_done))
+                    .setContentText(context.getString(R.string.workout_empty_done_subtitle))
+            is NoExercises -> builder
+                    .setContentTitle(context.getString(R.string.workout_empty_no_sets))
+                    .setContentText(context.getString(R.string.workout_empty_no_sets_subtitle))
         }
-        if (!DeviceUtils.isAndroidO()) {
-            builder.priority = Notification.PRIORITY_HIGH
-        }
-        val notification = builder.build()
-        notification.flags = notification.flags or Notification.FLAG_FOREGROUND_SERVICE
-        return notification
+        return builder.build()
     }
 
-    private fun buildNotificationWorkoutEmptyLayout(): RemoteViews {
-        val layout = RemoteViews(packageName(), R.layout.notification_workout_empty)
-        // Clicks
-        layout.setOnClickPendingIntent(R.id.notification_background, buildOpenAppPendingIntent())
-        // State
-        if (mService.mWorkout?.hasExercises() == true) {
-            layout.setTextViewText(R.id.titleLbl, mService.getString(R.string.workout_empty_done))
-            layout.setTextViewText(R.id.subtitleLbl, mService.getString(R.string.workout_empty_done_subtitle))
-        } else {
-            layout.setTextViewText(R.id.titleLbl, mService.getString(R.string.workout_empty_no_sets))
-            layout.setTextViewText(R.id.subtitleLbl, mService.getString(R.string.workout_empty_no_sets_subtitle))
-        }
+    // Next set
+
+    private fun renderNextSet(builder: NotificationCompat.Builder, state: NextSet) {
+        // Title and text aren't shown alongside the custom views, but are still used for
+        // accessibility and by surfaces that don't render custom views (e.g. wearables).
+        builder
+                .setContentTitle(exerciseName(state))
+                .setContentText(setSummary(state))
+                .setStyle(NotificationCompat.DecoratedCustomViewStyle())
+                .setCustomContentView(buildNextSetCollapsed(state))
+                .setCustomBigContentView(buildNextSetExpanded(state))
+    }
+
+    private fun buildNextSetCollapsed(state: NextSet): RemoteViews {
+        val layout = RemoteViews(context.packageName, R.layout.notification_workout_set)
+        layout.setTextViewText(R.id.exerciseName, exerciseName(state))
+        layout.setTextViewText(R.id.setSummary, setSummary(state))
+        layout.setOnClickPendingIntent(R.id.nextBtn, actionIntent(WorkoutService.ACTION_NEXT))
         return layout
     }
 
-    private fun buildNotificationRestTimerLayout(): RemoteViews {
-        val layout = RemoteViews(packageName(), R.layout.notification_workout_rest_timer)
-        // Clicks
-        layout.setOnClickPendingIntent(R.id.notification_background, buildOpenAppPendingIntent())
-        layout.setOnClickPendingIntent(R.id.stopTimerBtn, buildActionPendingIntent(WorkoutService.ACTION_TIMER_REST_STOP))
-        // State
-        if (mService.mShowRestTimerProgress > 0) {
-            renderRestTime(layout)
-        } else {
-            layout.setTextViewText(R.id.restTimeRemainingLbl, "Rest")
-        }
-        return layout
-    }
-
-    private fun buildNotificationWorkoutLayout(layoutResId: Int): RemoteViews {
-        val layout = RemoteViews(packageName(), layoutResId)
-        // Clicks
-        layout.setOnClickPendingIntent(R.id.notification_background, buildOpenAppPendingIntent())
-        layout.setOnClickPendingIntent(R.id.reduceWeightBtn, buildActionPendingIntent(WorkoutService.ACTION_DECREASE_WEIGHT))
-        layout.setOnClickPendingIntent(R.id.increaseWeightBtn, buildActionPendingIntent(WorkoutService.ACTION_INCREASE_WEIGHT))
-        layout.setOnClickPendingIntent(R.id.reduceRepsBtn, buildActionPendingIntent(WorkoutService.ACTION_DECREASE_REPS))
-        layout.setOnClickPendingIntent(R.id.increaseRepsBtn, buildActionPendingIntent(WorkoutService.ACTION_INCREASE_REPS))
-        layout.setOnClickPendingIntent(R.id.startTimerBtn, buildActionPendingIntent(WorkoutService.ACTION_TIMER_EXERCISE_START))
-        layout.setOnClickPendingIntent(R.id.stopTimerBtn, buildActionPendingIntent(WorkoutService.ACTION_TIMER_EXERCISE_STOP))
-        layout.setOnClickPendingIntent(R.id.nextBtn, buildActionPendingIntent(WorkoutService.ACTION_NEXT))
-        // State
-        if (mService.mWorkout != null) {
-            renderExerciseNameAndSet(layout)
-            renderWeight(layout)
-            renderReps(layout)
-            renderTime(layout)
-        } else {
-            layout.setTextViewText(R.id.exerciseName, "--")
-        }
-        return layout
-    }
-
-    private fun buildOpenAppPendingIntent(): PendingIntent {
-        val intent = Intent(mService, WorkoutActivity::class.java)
-        intent.putExtra(ELConstants.EXTRA_WORKOUT, mService.mWorkout)
-        intent.action = WorkoutService.ACTION_OPEN_WORKOUT
-        return PendingIntent.getActivity(mService, Random.nextInt(), intent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_MUTABLE)
-    }
-
-    private fun buildActionPendingIntent(action: String): PendingIntent {
-        val intent = Intent(mService, WorkoutService::class.java)
-        intent.action = action
-        return PendingIntent.getService(mService, Random.nextInt(), intent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_MUTABLE)
-    }
-
-    // Render
-
-    private fun renderRestTime(layout: RemoteViews) {
-        layout.setProgressBar(R.id.setControlOuterProgress, 100, mService.mShowRestTimerProgress, false)
-        layout.setTextViewText(R.id.restTimeRemainingLbl, mService.getString(R.string.workout_rest_time, FormatUtils.formatDurationShort((mService.mShowRestTimerRemainingSeconds * 1000).toLong(), "mm:ss")))
-        layout.setTextViewText(R.id.pendingExerciseField, getPendingActivity())
-    }
-
-    private fun getPendingActivity(): String {
-        if (mService.mNextState == null) {
-            return "Workout complete"
-        }
-        val exerciseName = mService.mNextExercise?.getNotificationName(mService)
-        val type = mService.mNextExerciseGroup?.type
-        val setDescription = mService.mNextSet?.getOngoingWorkoutNotificationSummary(mService, (mService.mNextState?.setIndex ?: 0) + 1, type!!)
-        return String.format("%s  •  %s", exerciseName, setDescription)
-    }
-
-    private fun renderExerciseNameAndSet(layout: RemoteViews) {
-        // Calculations
-        var setType = ArrayResourceTypeUtils.withSetTypes().getTitle(mService.mNextExerciseGroup?.type!!, mService.mNextExerciseGroup?.type?.lowercase()?.capitalize() + " Set")
-        val completedSets = (mService.mNextState?.setIndex ?: 0) + 1
-        val totalSets = mService.mNextExerciseGroup?.getTotalSetsCount() ?: 0
-        val exerciseName = mService.mNextExercise?.getName()
-        val exercisesInGroup = mService.mNextState?.exercisesInGroup ?: 1
-        val exerciseIndex = mService.mNextState?.exerciseIndex ?: 0
-        // Set labels
-        if (exercisesInGroup > 1) {
-            layout.setTextViewText(R.id.exerciseName, String.format("%d/%d %s", exerciseIndex + 1, exercisesInGroup, exerciseName))
-        } else {
-            layout.setTextViewText(R.id.exerciseName, String.format("%s", exerciseName))
-        }
-        if (totalSets > 1) {
-            setType += String.format(" %d/%d", completedSets, totalSets)
-        }
-        layout.setTextViewText(R.id.setSummary, setType)
-    }
-
-    private fun renderWeight(layout: RemoteViews) {
-        val set = mService.mNextSet
-        layout.setTextViewText(R.id.weightField, if (set?.isWeightEntered() == false) 0.toString() else FormatUtils.formatSetWeight(set?.getWeight() ?: 0f))
+    private fun buildNextSetExpanded(state: NextSet): RemoteViews {
+        val layout = RemoteViews(context.packageName, R.layout.notification_workout_set_big)
+        layout.setTextViewText(R.id.exerciseName, exerciseName(state))
+        layout.setTextViewText(R.id.setSummary, setLabel(state))
+        // Weight
+        layout.setTextViewText(R.id.weightField, FormatUtils.formatSetWeight(state.weight))
         layout.setTextViewText(R.id.weightUnit, SettingsManager.weightUnitAbbreviation())
+        layout.setOnClickPendingIntent(R.id.reduceWeightBtn, actionIntent(WorkoutService.ACTION_DECREASE_WEIGHT))
+        layout.setOnClickPendingIntent(R.id.increaseWeightBtn, actionIntent(WorkoutService.ACTION_INCREASE_WEIGHT))
+        // Reps
+        layout.setViewVisibility(R.id.repsPanel, if (state.reps != null) View.VISIBLE else View.GONE)
+        layout.setTextViewText(R.id.repsField, (state.reps ?: 0).toString())
+        layout.setOnClickPendingIntent(R.id.reduceRepsBtn, actionIntent(WorkoutService.ACTION_DECREASE_REPS))
+        layout.setOnClickPendingIntent(R.id.increaseRepsBtn, actionIntent(WorkoutService.ACTION_INCREASE_REPS))
+        // Time
+        layout.setViewVisibility(R.id.timePanel, if (state.timeSeconds != null) View.VISIBLE else View.GONE)
+        layout.setTextViewText(R.id.timeField, formatTime(state.timeSeconds ?: 0))
+        layout.setViewVisibility(R.id.startTimerBtn, if (state.timerRunning) View.GONE else View.VISIBLE)
+        layout.setViewVisibility(R.id.stopTimerBtn, if (state.timerRunning) View.VISIBLE else View.GONE)
+        layout.setOnClickPendingIntent(R.id.startTimerBtn, actionIntent(WorkoutService.ACTION_TIMER_EXERCISE_START))
+        layout.setOnClickPendingIntent(R.id.stopTimerBtn, actionIntent(WorkoutService.ACTION_TIMER_EXERCISE_STOP))
+        // Next
+        layout.setOnClickPendingIntent(R.id.nextBtn, actionIntent(WorkoutService.ACTION_NEXT))
+        return layout
     }
 
-    private fun renderReps(layout: RemoteViews) {
-        val set = mService.mNextSet
-        layout.setViewVisibility(R.id.repsPanel, if (set?.canShowRepOptions() == true) View.VISIBLE else View.GONE)
-        layout.setTextViewText(R.id.repsField, max(0, set?.getReps() ?: 0).toString())
+    // Rest
+
+    private fun renderRest(builder: NotificationCompat.Builder, state: Rest) {
+        val title = if (state.remainingSeconds > 0) {
+            context.getString(R.string.workout_rest_time, formatTime(state.remainingSeconds))
+        } else {
+            context.getString(R.string.workout_notification_rest)
+        }
+        builder
+                .setContentTitle(title)
+                .setContentText(upNext(state))
+                .setProgress(100, state.remainingPercent, false)
+                .addAction(R.drawable.ic_clear_white,
+                        context.getString(R.string.workout_notification_skip_rest),
+                        actionIntent(WorkoutService.ACTION_TIMER_REST_STOP))
     }
 
-    private fun renderTime(layout: RemoteViews) {
-        val set = mService.mNextSet
-        layout.setViewVisibility(R.id.timePanel, if (set?.canShowTimeOptions() == true) View.VISIBLE else View.GONE)
-        layout.setViewVisibility(R.id.startTimerBtn, if (set?.remainingTimeSeconds != null) View.GONE else View.VISIBLE)
-        layout.setViewVisibility(R.id.stopTimerBtn, if (set?.remainingTimeSeconds == null) View.GONE else View.VISIBLE)
-        layout.setTextViewText(R.id.timeField, FormatUtils.formatDurationShort(TimeUnit.SECONDS.toMillis(if (set?.remainingTimeSeconds != null) set.remainingTimeSeconds?.toLong() ?: 0 else set?.getTimeSeconds()?.toLong() ?: 0), "mm:ss"))
+    private fun upNext(state: Rest): String {
+        val next = state.upNext ?: return context.getString(R.string.workout_notification_complete)
+        val setDescription = next.set.getOngoingWorkoutNotificationSummary(context, next.setNumber, next.setType)
+        return context.getString(R.string.workout_notification_up_next, next.exerciseName, setDescription)
     }
 
-    private fun packageName(): String {
-        return mService.packageName
+    // Text
+
+    private fun exerciseName(state: NextSet): String {
+        return if (state.exercisesInGroup > 1) {
+            "${state.exercisePosition}/${state.exercisesInGroup} ${state.exerciseName}"
+        } else {
+            state.exerciseName
+        }
+    }
+
+    /**
+     * E.g. "Super set 3/4"
+     */
+    private fun setLabel(state: NextSet): String {
+        val type = ArrayResourceTypeUtils.withSetTypes().getTitle(state.setType, state.setType.lowercase().replaceFirstChar { it.uppercase() } + " Set") ?: ""
+        return if (state.totalSets > 1) {
+            "$type ${state.setNumber}/${state.totalSets}"
+        } else {
+            type
+        }
+    }
+
+    /**
+     * E.g. "Super set 3/4  •  60 kg  •  10 reps"
+     */
+    private fun setSummary(state: NextSet): String {
+        val parts = mutableListOf(setLabel(state))
+        if (state.weight > 0) {
+            parts.add(FormatUtils.formatSetWeight(state.weight) + " " + SettingsManager.weightUnitAbbreviation())
+        }
+        state.reps?.let { parts.add(context.resources.getQuantityString(R.plurals.workout_notification_reps, it, it)) }
+        state.timeSeconds?.let { parts.add(formatTime(it)) }
+        return parts.joinToString("  •  ")
+    }
+
+    private fun formatTime(seconds: Int): String {
+        return FormatUtils.formatDurationShort(TimeUnit.SECONDS.toMillis(seconds.toLong()), "mm:ss")
+    }
+
+    // Intents
+
+    private fun openWorkoutIntent(workout: ELWorkout?): PendingIntent {
+        val intent = Intent(context, WorkoutActivity::class.java)
+        intent.putExtra(ELConstants.EXTRA_WORKOUT, workout)
+        intent.action = WorkoutService.ACTION_OPEN_WORKOUT
+        return PendingIntent.getActivity(context, REQUEST_OPEN_WORKOUT, intent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
+    }
+
+    private fun actionIntent(action: String): PendingIntent {
+        val intent = Intent(context, WorkoutService::class.java)
+        intent.action = action
+        // Offset from REQUEST_OPEN_WORKOUT
+        val requestCode = ACTION_REQUEST_CODES.indexOf(action) + 1
+        return PendingIntent.getService(context, requestCode, intent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
     }
 }
