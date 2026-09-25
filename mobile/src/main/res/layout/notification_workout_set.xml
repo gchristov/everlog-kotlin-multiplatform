@@ -34,12 +34,16 @@
             tools:text="Super set 3/4  •  60 kg  •  10 reps" />
     </LinearLayout>
 
+    <!-- Icon pinned to the end, matching the expanded view. The tap target stays 48dp wide. -->
     <ImageView
         android:id="@+id/nextBtn"
         style="@style/WorkoutNotificationButton"
         android:layout_width="48dp"
         android:layout_height="40dp"
+        android:layout_marginEnd="-3dp"
         android:contentDescription="@string/workout_notification_complete_set"
+        android:paddingStart="24dp"
+        android:paddingEnd="0dp"
         android:scaleType="center"
         android:src="@drawable/ic_check" />
 </LinearLayout>

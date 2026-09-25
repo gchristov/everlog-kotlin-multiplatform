@@ -45,10 +45,16 @@
             android:layout_marginEnd="@dimen/margin_6"
             android:gravity="center">
 
+            <!-- Icon pinned to the start, with the icon's own 5dp inset pulled back, so the minus
+                 lines up with the exercise name above. -->
             <ImageView
                 android:id="@+id/reduceWeightBtn"
                 android:contentDescription="@string/workout_notification_decrease_weight"
                 style="@style/WorkoutNotificationButton"
+                android:layout_marginStart="-5dp"
+                android:paddingStart="0dp"
+                android:paddingEnd="12dp"
+                android:scaleType="center"
                 android:src="@drawable/ic_remove_white" />
 
             <TextView
@@ -132,11 +138,16 @@
             android:layout_height="match_parent"
             android:layout_weight="1" />
 
+        <!-- Icon pinned to the end, with the icon's own 3dp inset pulled back, so the tick lines
+             up with the set summary above. The tap target stays 48dp wide. -->
         <ImageView
             android:id="@+id/nextBtn"
             style="@style/WorkoutNotificationButton"
             android:layout_width="48dp"
+            android:layout_marginEnd="-3dp"
             android:contentDescription="@string/workout_notification_complete_set"
+            android:paddingStart="24dp"
+            android:paddingEnd="0dp"
             android:scaleType="center"
             android:src="@drawable/ic_check" />
     </LinearLayout>
