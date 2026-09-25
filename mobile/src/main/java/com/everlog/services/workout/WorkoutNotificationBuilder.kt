@@ -143,7 +143,7 @@ class WorkoutNotificationBuilder(private val context: Context) {
 
     private fun upNext(state: Rest): String {
         val next = state.upNext ?: return context.getString(R.string.workout_notification_complete)
-        return context.getString(R.string.workout_notification_up_next, exerciseName(next), setSummary(next))
+        return context.getString(R.string.workout_notification_up_next, exerciseName(next), setSummary(next, promptIfEmpty = false))
     }
 
     // Text
@@ -157,7 +157,7 @@ class WorkoutNotificationBuilder(private val context: Context) {
     }
 
     /**
-     * E.g. "Set 2/3" or "Super Set 3/4", naming sets the same way as the workout screen.
+     * E.g. "Set 1", "Set 2/3" or "Super Set 3/4", naming sets the same way as the workout screen.
      */
     private fun setLabel(state: NextSet): String {
         val type = if (state.setType == ELSetType.SINGLE.name) {
@@ -168,22 +168,25 @@ class WorkoutNotificationBuilder(private val context: Context) {
         return if (state.totalSets > 1) {
             "$type ${state.setNumber}/${state.totalSets}"
         } else {
-            type
+            "$type ${state.setNumber}"
         }
     }
 
     /**
      * E.g. "Set 2/3 • 8 x 60 kg" or "Set 1/3 • 40 sec • 20 kg". The values use the same wording as
-     * a completed set's row in the workout screen (ELSet.getExerciseSetSummary).
+     * a completed set's row in the workout screen (ELSet.getExerciseSetSummary). A set with nothing
+     * entered yet gets a prompt to open the workout and fill it in, e.g. "Set 1 • Tap to edit".
      */
-    private fun setSummary(state: NextSet): String {
+    private fun setSummary(state: NextSet, promptIfEmpty: Boolean = true): String {
         // Show the countdown while the exercise timer runs
         val set = if (state.timerRunning && state.timeSeconds != null) {
             state.set.copy(timeSeconds = state.timeSeconds)
         } else {
             state.set
         }
-        return listOfNotNull(setLabel(state), set.getExerciseSetSummary(context, true)).joinToString(" • ")
+        val values = set.getExerciseSetSummary(context, true)
+                ?: if (promptIfEmpty) context.getString(R.string.workout_notification_tap_to_edit) else null
+        return listOfNotNull(setLabel(state), values).joinToString(" • ")
     }
 
     private fun formatTime(seconds: Int): String {

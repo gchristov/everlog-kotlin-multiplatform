@@ -150,10 +150,17 @@ class WorkoutNotificationBuilderTest {
     }
 
     @Test
-    fun next_set_omits_set_count_for_a_single_set() {
+    fun next_set_numbers_a_single_set_without_a_total() {
         val notification = build(nextSet(setNumber = 1, totalSets = 1, weight = 0f))
 
-        assertThat(text(notification)).isEqualTo("Set • 8 reps")
+        assertThat(text(notification)).isEqualTo("Set 1 • 8 reps")
+    }
+
+    @Test
+    fun next_set_without_data_prompts_to_edit() {
+        val notification = build(nextSet(setNumber = 1, totalSets = 1, weight = 0f, reps = null))
+
+        assertThat(text(notification)).isEqualTo("Set 1 • ${context.getString(R.string.workout_notification_tap_to_edit)}")
     }
 
     @Test
@@ -207,6 +214,13 @@ class WorkoutNotificationBuilderTest {
                 .isEqualTo(Notification.BigTextStyle::class.java.name)
         assertThat(notification.extras.getCharSequence(Notification.EXTRA_BIG_TEXT).toString())
                 .isEqualTo("Next: Bench press • Set 2/3 • 8 x 60 kg")
+    }
+
+    @Test
+    fun rest_does_not_prompt_to_edit_an_empty_next_set() {
+        val notification = build(Rest(remainingSeconds = 45, remainingPercent = 75, upNext = nextSet(weight = 0f, reps = null)))
+
+        assertThat(text(notification)).isEqualTo("Next: Bench press • Set 2/3")
     }
 
     @Test

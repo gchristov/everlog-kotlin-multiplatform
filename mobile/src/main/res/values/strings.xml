@@ -295,6 +295,7 @@
     <string name="workout_empty_done_subtitle">Add exercises or finish the workout</string>
     <string name="workout_notification_rest">Rest</string>
     <string name="workout_notification_set">Set</string>
+    <string name="workout_notification_tap_to_edit">Tap to edit</string>
     <string name="workout_notification_skip_rest">Skip rest</string>
     <string name="workout_notification_up_next">"Next: %1$s • %2$s"</string>
     <string name="workout_notification_complete">Workout complete</string>
