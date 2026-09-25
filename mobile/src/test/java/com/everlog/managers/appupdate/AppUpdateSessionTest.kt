@@ -97,13 +97,37 @@ class AppUpdateSessionTest {
     }
 
     @Test
-    fun `prompts again once an accepted download stops`() {
+    fun `prompts again once an accepted download fails`() {
         session.promptShown(versionCode)
         session.flowResult(Activity.RESULT_OK)
 
-        session.downloadStopped()
+        session.downloadFailed()
 
         assertThat(session.check(available())).isEqualTo(Action.PROMPT)
+    }
+
+    @Test
+    fun `cancelling an accepted download reports it to be declined`() {
+        session.promptShown(versionCode)
+        session.flowResult(Activity.RESULT_OK)
+
+        assertThat(session.downloadCancelled()).isEqualTo(versionCode)
+    }
+
+    @Test
+    fun `cancelling a download not accepted in this session reports nothing`() {
+        assertThat(session.downloadCancelled()).isNull()
+    }
+
+    @Test
+    fun `cancelling an accepted download leaves prompting to the decline cooldown`() {
+        session.promptShown(versionCode)
+        session.flowResult(Activity.RESULT_OK)
+
+        // The controller records the decline, which starts the cooldown
+        cooledDownVersionCodes += session.downloadCancelled()!!
+
+        assertThat(session.check(available())).isEqualTo(Action.NONE)
     }
 
     // Declining and failing
