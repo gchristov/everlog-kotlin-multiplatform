@@ -14,17 +14,34 @@ data class AppUsageNotification (
 
 ) : Serializable {
 
-    fun getFirstTriggerAtMillis(): Long {
+    fun getFirstTriggerAtMillis(fromMillis: Long): Long {
         val cal = Calendar.getInstance()
+        cal.timeInMillis = fromMillis
         cal[Calendar.HOUR_OF_DAY] = scheduleHourOfDay
         cal[Calendar.MINUTE] = 0
         cal[Calendar.SECOND] = 0
+        cal[Calendar.MILLISECOND] = 0
         cal.add(Calendar.DAY_OF_MONTH, scheduleIntervalDays)
         return cal.timeInMillis
     }
 
     fun getIntervalMillis(): Long {
         return TimeUnit.DAYS.toMillis(scheduleIntervalDays.toLong())
+    }
+
+    /**
+     * Whether a reminder alarm firing at [now] should actually show. The alarm itself can't be trusted:
+     * older app versions scheduled alarms that could never be cancelled, so they keep firing for users
+     * who are active. Only show if the user has been away for the full interval since [lastActiveAt],
+     * and at most once per half interval ([lastShownAt]) so a backlog of those alarms can't spam.
+     * A [lastActiveAt] of 0 means we've never recorded activity, so the reminder shows.
+     */
+    fun shouldShow(lastActiveAt: Long, lastShownAt: Long, now: Long): Boolean {
+        if (lastActiveAt > 0 && now < getFirstTriggerAtMillis(lastActiveAt)) {
+            // User was active since this reminder was scheduled
+            return false
+        }
+        return lastShownAt < lastActiveAt || now - lastShownAt >= getIntervalMillis() / 2
     }
 
     fun isValid(): Boolean {
