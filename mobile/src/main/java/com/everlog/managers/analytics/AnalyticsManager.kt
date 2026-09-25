@@ -3,6 +3,7 @@ package com.everlog.managers.analytics
 import android.app.Activity
 import com.everlog.BuildConfig
 import com.everlog.data.model.set.ELSetType
+import com.everlog.managers.appupdate.AppUpdateController
 import com.everlog.managers.preferences.SettingsManager.MuscleGoal
 import com.everlog.ui.fragments.home.activity.statistics.StatisticsHomeFragment
 import com.everlog.utils.device.DeviceUtils
@@ -325,10 +326,10 @@ class AnalyticsManager : Analytic {
         }
     }
 
-    override fun appUpdateFailed(errorCode: Int) {
-        Timber.tag(TAG).i("App update failed: errorCode=%s", errorCode)
+    override fun appUpdateFailed(failure: AppUpdateController.Failure, errorCode: Int) {
+        Timber.tag(TAG).i("App update failed: failure=%s, errorCode=%s", failure, errorCode)
         mAnalytics?.forEach {
-            it.appUpdateFailed(errorCode)
+            it.appUpdateFailed(failure, errorCode)
         }
     }
 

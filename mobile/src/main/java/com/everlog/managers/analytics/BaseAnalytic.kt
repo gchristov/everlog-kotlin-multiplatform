@@ -3,6 +3,7 @@ package com.everlog.managers.analytics
 import android.app.Activity
 import android.os.Bundle
 import com.everlog.data.model.set.ELSetType
+import com.everlog.managers.appupdate.AppUpdateController
 import com.everlog.managers.preferences.SettingsManager
 import com.everlog.ui.fragments.home.activity.statistics.StatisticsHomeFragment
 import org.json.JSONObject
@@ -252,11 +253,13 @@ abstract class BaseAnalytic : Analytic {
         logEvent(AnalyticsConstants.EVENT_APP_UPDATE_RESTART_TAPPED)
     }
 
-    override fun appUpdateFailed(errorCode: Int) {
-        logEvent(AnalyticsConstants.EVENT_APP_UPDATE_FAILED, appUpdateParams(errorCode))
+    override fun appUpdateFailed(failure: AppUpdateController.Failure, errorCode: Int) {
+        val map = appUpdateParams(errorCode)
+        map[AnalyticsConstants.PROPERTY_TYPE] = failure.name
+        logEvent(AnalyticsConstants.EVENT_APP_UPDATE_FAILED, map)
     }
 
-    private fun appUpdateParams(value: Int): Map<String, Any?> {
+    private fun appUpdateParams(value: Int): MutableMap<String, Any?> {
         val map = HashMap<String, Any?>()
         map[AnalyticsConstants.PROPERTY_VALUE] = value
         return map

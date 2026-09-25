@@ -2,6 +2,7 @@ package com.everlog.managers.analytics
 
 import android.app.Activity
 import com.everlog.data.model.set.ELSetType
+import com.everlog.managers.appupdate.AppUpdateController
 import com.everlog.managers.preferences.SettingsManager.MuscleGoal
 import com.everlog.ui.fragments.home.activity.statistics.StatisticsHomeFragment.RangeType
 
@@ -62,7 +63,7 @@ interface Analytic {
     fun appUpdateDeclined(versionCode: Int)
     fun appUpdateDownloaded()
     fun appUpdateRestartTapped()
-    fun appUpdateFailed(errorCode: Int)
+    fun appUpdateFailed(failure: AppUpdateController.Failure, errorCode: Int)
 
     fun workoutStarted()
     fun workoutQuickStarted()
