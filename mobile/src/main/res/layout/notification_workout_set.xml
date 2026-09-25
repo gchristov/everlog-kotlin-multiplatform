@@ -40,5 +40,6 @@
         android:layout_width="48dp"
         android:layout_height="40dp"
         android:contentDescription="@string/workout_notification_complete_set"
+        android:scaleType="center"
         android:src="@drawable/ic_check" />
 </LinearLayout>

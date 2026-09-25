@@ -137,6 +137,7 @@
             style="@style/WorkoutNotificationButton"
             android:layout_width="48dp"
             android:contentDescription="@string/workout_notification_complete_set"
+            android:scaleType="center"
             android:src="@drawable/ic_check" />
     </LinearLayout>
 </LinearLayout>
