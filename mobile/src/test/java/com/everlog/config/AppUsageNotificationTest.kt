@@ -93,6 +93,20 @@ class AppUsageNotificationTest {
     }
 
     @Test
+    fun `ignores a last active time in the future after the clock was corrected`() {
+        val now = at(2026, 9, 29, 10)
+
+        assertThat(notification.shouldShow(at(2026, 10, 7, 12), 0, now)).isTrue()
+    }
+
+    @Test
+    fun `ignores a last shown time in the future after the clock was corrected`() {
+        val lastActive = at(2026, 9, 25, 23, 40)
+
+        assertThat(notification.shouldShow(lastActive, at(2026, 10, 7, 10), at(2026, 9, 29, 10))).isTrue()
+    }
+
+    @Test
     fun `shows after a new absence even if the previous reminder was recent`() {
         // Reminder shown, user opened the app shortly after, then left for the full interval
         val shown = at(2026, 9, 29, 10)

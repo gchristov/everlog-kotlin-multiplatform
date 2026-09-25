@@ -34,14 +34,18 @@ data class AppUsageNotification (
      * older app versions scheduled alarms that could never be cancelled, so they keep firing for users
      * who are active. Only show if the user has been away for the full interval since [lastActiveAt],
      * and at most once per half interval ([lastShownAt]) so a backlog of those alarms can't spam.
-     * A [lastActiveAt] of 0 means we've never recorded activity, so the reminder shows.
+     * A [lastActiveAt] of 0 means we've never recorded activity, so the reminder shows. Times later
+     * than [now] (the device clock was wrong, then corrected) are treated as never recorded, otherwise
+     * they'd suppress reminders until real time catches up. The next visit or reminder overwrites them.
      */
     fun shouldShow(lastActiveAt: Long, lastShownAt: Long, now: Long): Boolean {
-        if (lastActiveAt > 0 && now < getFirstTriggerAtMillis(lastActiveAt)) {
+        val active = if (lastActiveAt > now) 0 else lastActiveAt
+        val shown = if (lastShownAt > now) 0 else lastShownAt
+        if (active > 0 && now < getFirstTriggerAtMillis(active)) {
             // User was active since this reminder was scheduled
             return false
         }
-        return lastShownAt < lastActiveAt || now - lastShownAt >= getIntervalMillis() / 2
+        return shown < active || now - shown >= getIntervalMillis() / 2
     }
 
     fun isValid(): Boolean {
