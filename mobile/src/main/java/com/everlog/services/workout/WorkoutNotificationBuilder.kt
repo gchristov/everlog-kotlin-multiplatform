@@ -157,7 +157,7 @@ class WorkoutNotificationBuilder(private val context: Context) {
     }
 
     /**
-     * E.g. "Set 1", "Set 2/3" or "Super Set 3/4", naming sets the same way as the workout screen.
+     * E.g. "Set 1/1", "Set 2/3" or "Super Set 3/4", naming sets the same way as the workout screen.
      */
     private fun setLabel(state: NextSet): String {
         val type = if (state.setType == ELSetType.SINGLE.name) {
@@ -165,17 +165,13 @@ class WorkoutNotificationBuilder(private val context: Context) {
         } else {
             ArrayResourceTypeUtils.withSetTypes().getTitle(state.setType, state.setType.lowercase().replaceFirstChar { it.uppercase() } + " Set") ?: ""
         }
-        return if (state.totalSets > 1) {
-            "$type ${state.setNumber}/${state.totalSets}"
-        } else {
-            "$type ${state.setNumber}"
-        }
+        return "$type ${state.setNumber}/${state.totalSets}"
     }
 
     /**
      * E.g. "Set 2/3 • 8 x 60 kg" or "Set 1/3 • 40 sec • 20 kg". The values use the same wording as
      * a completed set's row in the workout screen (ELSet.getExerciseSetSummary). A set with nothing
-     * entered yet gets a prompt to open the workout and fill it in, e.g. "Set 1 • Tap to edit".
+     * entered yet gets a prompt to open the workout and fill it in, e.g. "Set 1/1 • Tap to edit".
      */
     private fun setSummary(state: NextSet, promptIfEmpty: Boolean = true): String {
         // Show the countdown while the exercise timer runs

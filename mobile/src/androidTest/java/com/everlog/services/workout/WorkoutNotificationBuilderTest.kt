@@ -150,17 +150,17 @@ class WorkoutNotificationBuilderTest {
     }
 
     @Test
-    fun next_set_numbers_a_single_set_without_a_total() {
+    fun next_set_shows_the_total_for_a_single_set() {
         val notification = build(nextSet(setNumber = 1, totalSets = 1, weight = 0f))
 
-        assertThat(text(notification)).isEqualTo("Set 1 • 8 reps")
+        assertThat(text(notification)).isEqualTo("Set 1/1 • 8 reps")
     }
 
     @Test
     fun next_set_without_data_prompts_to_edit() {
         val notification = build(nextSet(setNumber = 1, totalSets = 1, weight = 0f, reps = null))
 
-        assertThat(text(notification)).isEqualTo("Set 1 • ${context.getString(R.string.workout_notification_tap_to_edit)}")
+        assertThat(text(notification)).isEqualTo("Set 1/1 • ${context.getString(R.string.workout_notification_tap_to_edit)}")
     }
 
     @Test
