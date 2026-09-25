@@ -73,11 +73,20 @@ class AppUpdateSession(private val canPromptVersion: (versionCode: Int) -> Boole
     }
 
     /**
-     * An accepted download failed or was cancelled from Play's notification, so let the next check
-     * offer the update again.
+     * An accepted download failed, so let the next check offer the update again.
      */
-    fun downloadStopped() {
+    fun downloadFailed() {
         mAcceptedVersionCode = null
+    }
+
+    /**
+     * The user cancelled an accepted download from Play's notification, which counts as declining
+     * it. Returns the cancelled version, or null if it wasn't accepted in this session.
+     */
+    fun downloadCancelled(): Int? {
+        val versionCode = mAcceptedVersionCode
+        mAcceptedVersionCode = null
+        return versionCode
     }
 
     private fun shouldPrompt(update: Update): Boolean {

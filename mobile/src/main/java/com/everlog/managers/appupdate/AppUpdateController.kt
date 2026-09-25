@@ -3,9 +3,9 @@ package com.everlog.managers.appupdate
 import android.content.Context
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.IntentSenderRequest
+import com.everlog.managers.analytics.AnalyticsManager
 import com.everlog.managers.appupdate.AppUpdateSession.Action
 import com.everlog.managers.appupdate.AppUpdateSession.Outcome
-import com.everlog.managers.analytics.AnalyticsManager
 import com.everlog.managers.apprate.AppLaunchManager
 import com.google.android.play.core.appupdate.AppUpdateInfo
 import com.google.android.play.core.appupdate.AppUpdateManager
@@ -14,6 +14,7 @@ import com.google.android.play.core.appupdate.AppUpdateOptions
 import com.google.android.play.core.install.InstallException
 import com.google.android.play.core.install.InstallStateUpdatedListener
 import com.google.android.play.core.install.model.AppUpdateType
+import com.google.android.play.core.install.model.InstallErrorCode
 import com.google.android.play.core.install.model.InstallStatus
 import timber.log.Timber
 import java.util.Date
@@ -36,6 +37,18 @@ class AppUpdateController(
         private const val TAG = "AppUpdateController"
     }
 
+    /**
+     * Which step of the flow failed, as each reports its own kind of error code.
+     */
+    enum class Failure {
+        // Play's prompt returned ActivityResult.RESULT_IN_APP_UPDATE_FAILED
+        PROMPT,
+        // An InstallErrorCode from the download
+        DOWNLOAD,
+        // An InstallErrorCode from completeUpdate()
+        INSTALL
+    }
+
     private val mAppUpdateManager: AppUpdateManager = AppUpdateManagerFactory.create(context.applicationContext)
     private val mInstallStateListener = InstallStateUpdatedListener { state ->
         when (state.installStatus()) {
@@ -44,11 +57,11 @@ class AppUpdateController(
                 onReadyToInstall()
             }
             InstallStatus.FAILED -> {
-                mSession.downloadStopped()
-                AnalyticsManager.manager.appUpdateFailed(state.installErrorCode())
+                mSession.downloadFailed()
+                AnalyticsManager.manager.appUpdateFailed(Failure.DOWNLOAD, state.installErrorCode())
             }
             InstallStatus.CANCELED -> {
-                mSession.downloadStopped()
+                mSession.downloadCancelled()?.let { declined(it) }
             }
             else -> {
                 // No-op
@@ -95,11 +108,10 @@ class AppUpdateController(
                 AnalyticsManager.manager.appUpdateAccepted(result.versionCode)
             }
             Outcome.DECLINED -> {
-                AppLaunchManager.manager.appUpdateDeclined(result.versionCode, Date())
-                AnalyticsManager.manager.appUpdateDeclined(result.versionCode)
+                declined(result.versionCode)
             }
             Outcome.FAILED -> {
-                AnalyticsManager.manager.appUpdateFailed(resultCode)
+                AnalyticsManager.manager.appUpdateFailed(Failure.PROMPT, resultCode)
             }
         }
     }
@@ -113,7 +125,8 @@ class AppUpdateController(
         mAppUpdateManager.completeUpdate()
                 .addOnFailureListener {
                     Timber.tag(TAG).w(it, "App update install failed")
-                    AnalyticsManager.manager.appUpdateFailed((it as? InstallException)?.errorCode ?: 0)
+                    val errorCode = (it as? InstallException)?.errorCode ?: InstallErrorCode.ERROR_UNKNOWN
+                    AnalyticsManager.manager.appUpdateFailed(Failure.INSTALL, errorCode)
                     if (!mReleased) {
                         onReadyToInstall()
                     }
@@ -123,6 +136,11 @@ class AppUpdateController(
     fun release() {
         mReleased = true
         mAppUpdateManager.unregisterListener(mInstallStateListener)
+    }
+
+    private fun declined(versionCode: Int) {
+        AppLaunchManager.manager.appUpdateDeclined(versionCode, Date())
+        AnalyticsManager.manager.appUpdateDeclined(versionCode)
     }
 
     private fun toUpdate(info: AppUpdateInfo): AppUpdateSession.Update {
