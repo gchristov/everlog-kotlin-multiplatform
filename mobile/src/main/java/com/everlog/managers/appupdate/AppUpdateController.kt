@@ -3,92 +3,161 @@ package com.everlog.managers.appupdate
 import android.content.Context
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.IntentSenderRequest
+import com.everlog.managers.analytics.AnalyticsManager
+import com.everlog.managers.appupdate.AppUpdateSession.Action
+import com.everlog.managers.appupdate.AppUpdateSession.Outcome
 import com.everlog.managers.apprate.AppLaunchManager
 import com.google.android.play.core.appupdate.AppUpdateInfo
 import com.google.android.play.core.appupdate.AppUpdateManager
 import com.google.android.play.core.appupdate.AppUpdateManagerFactory
 import com.google.android.play.core.appupdate.AppUpdateOptions
+import com.google.android.play.core.install.InstallException
 import com.google.android.play.core.install.InstallStateUpdatedListener
 import com.google.android.play.core.install.model.AppUpdateType
+import com.google.android.play.core.install.model.InstallErrorCode
 import com.google.android.play.core.install.model.InstallStatus
-import com.google.android.play.core.install.model.UpdateAvailability
-import rx.Emitter
-import rx.Observable
+import timber.log.Timber
+import java.util.Date
 
 /**
- * Wraps the Play In-App Updates API for the flexible update flow: Play shows its own prompt and
- * downloads the update in the background, then the app asks the user to restart to install it.
+ * Runs the Play In-App Updates flexible flow: Play shows its own prompt and downloads the update
+ * in the background, then [onReadyToInstall] asks the screen to offer a restart, which calls
+ * [completeUpdate].
  *
  * Only works for builds installed from Play; anywhere else (e.g. debug builds) no update is ever
  * reported.
  */
-class AppUpdateController(context: Context) {
+class AppUpdateController(
+    context: Context,
+    private val launcher: ActivityResultLauncher<IntentSenderRequest>,
+    private val onReadyToInstall: () -> Unit
+) {
 
-    private val mAppUpdateManager: AppUpdateManager = AppUpdateManagerFactory.create(context.applicationContext)
-    private var mInstallStateListener: InstallStateUpdatedListener? = null
-
-    fun fetchUpdateInfo(): Observable<AppUpdateInfo> {
-        return Observable.create({ emitter ->
-            mAppUpdateManager.appUpdateInfo
-                    .addOnSuccessListener { info ->
-                        emitter.onNext(info)
-                        emitter.onCompleted()
-                    }
-                    .addOnFailureListener { emitter.onError(it) }
-        }, Emitter.BackpressureMode.LATEST)
-    }
-
-    fun isUpdateDownloaded(info: AppUpdateInfo): Boolean {
-        return info.installStatus() == InstallStatus.DOWNLOADED
-    }
-
-    fun shouldPromptUpdate(info: AppUpdateInfo): Boolean {
-        return info.updateAvailability() == UpdateAvailability.UPDATE_AVAILABLE
-                && info.isUpdateTypeAllowed(AppUpdateType.FLEXIBLE)
-                && !isUpdateInProgress(info)
-                && AppLaunchManager.manager.shouldPromptAppUpdate(info.availableVersionCode())
-    }
-
-    private fun isUpdateInProgress(info: AppUpdateInfo): Boolean {
-        // Already accepted, so the update is still reported as available while it downloads/installs
-        return when (info.installStatus()) {
-            InstallStatus.PENDING, InstallStatus.DOWNLOADING, InstallStatus.DOWNLOADED, InstallStatus.INSTALLING -> true
-            else -> false
-        }
-    }
-
-    fun startFlexibleUpdate(info: AppUpdateInfo, launcher: ActivityResultLauncher<IntentSenderRequest>): Boolean {
-        return mAppUpdateManager.startUpdateFlowForResult(info, launcher, AppUpdateOptions.defaultOptions(AppUpdateType.FLEXIBLE))
-    }
-
-    fun updateDeclined(info: AppUpdateInfo) {
-        AppLaunchManager.manager.appUpdateDeclined(info.availableVersionCode())
+    companion object {
+        private const val TAG = "AppUpdateController"
     }
 
     /**
-     * Installs a downloaded update. This restarts the app.
+     * Which step of the flow failed, as each reports its own kind of error code.
      */
-    fun completeUpdate() {
-        mAppUpdateManager.completeUpdate()
+    enum class Failure {
+        // Play's prompt returned ActivityResult.RESULT_IN_APP_UPDATE_FAILED
+        PROMPT,
+        // An InstallErrorCode from the download
+        DOWNLOAD,
+        // An InstallErrorCode from completeUpdate()
+        INSTALL
     }
 
-    fun registerInstallListener(onDownloaded: () -> Unit, onFailed: (errorCode: Int) -> Unit) {
-        unregisterInstallListener()
-        val listener = InstallStateUpdatedListener { state ->
-            when (state.installStatus()) {
-                InstallStatus.DOWNLOADED -> onDownloaded()
-                InstallStatus.FAILED -> onFailed(state.installErrorCode())
-                else -> {
-                    // No-op
-                }
+    private val mAppUpdateManager: AppUpdateManager = AppUpdateManagerFactory.create(context.applicationContext)
+    private val mInstallStateListener = InstallStateUpdatedListener { state ->
+        when (state.installStatus()) {
+            InstallStatus.DOWNLOADED -> {
+                AnalyticsManager.manager.appUpdateDownloaded()
+                onReadyToInstall()
+            }
+            InstallStatus.FAILED -> {
+                mSession.downloadFailed()
+                AnalyticsManager.manager.appUpdateFailed(Failure.DOWNLOAD, state.installErrorCode())
+            }
+            InstallStatus.CANCELED -> {
+                mSession.downloadCancelled()?.let { declined(it) }
+            }
+            else -> {
+                // No-op
             }
         }
-        mAppUpdateManager.registerListener(listener)
-        mInstallStateListener = listener
+    }
+    private val mSession = AppUpdateSession { versionCode ->
+        AppLaunchManager.manager.shouldPromptAppUpdate(versionCode, Date())
+    }
+    private var mReleased = false
+
+    init {
+        mAppUpdateManager.registerListener(mInstallStateListener)
     }
 
-    fun unregisterInstallListener() {
-        mInstallStateListener?.let { mAppUpdateManager.unregisterListener(it) }
-        mInstallStateListener = null
+    /**
+     * Offers a restart for an update that's already downloaded, or prompts for a new one.
+     */
+    fun checkForUpdate() {
+        mAppUpdateManager.appUpdateInfo
+                .addOnSuccessListener { info ->
+                    if (mReleased) {
+                        return@addOnSuccessListener
+                    }
+                    when (mSession.check(toUpdate(info))) {
+                        // Downloaded while the app was in the background or on another screen
+                        Action.OFFER_RESTART -> onReadyToInstall()
+                        Action.PROMPT -> prompt(info)
+                        Action.NONE -> {
+                            // No-op
+                        }
+                    }
+                }
+                .addOnFailureListener {
+                    // Expected when not installed from Play (e.g. debug builds), so don't report it as an error
+                    Timber.tag(TAG).w("App update check failed: %s", it.message)
+                }
+    }
+
+    fun onUpdateFlowResult(resultCode: Int) {
+        val result = mSession.flowResult(resultCode) ?: return
+        when (result.outcome) {
+            Outcome.ACCEPTED -> {
+                AnalyticsManager.manager.appUpdateAccepted(result.versionCode)
+            }
+            Outcome.DECLINED -> {
+                declined(result.versionCode)
+            }
+            Outcome.FAILED -> {
+                AnalyticsManager.manager.appUpdateFailed(Failure.PROMPT, resultCode)
+            }
+        }
+    }
+
+    /**
+     * Installs a downloaded update. This restarts the app, so only a failure comes back, as
+     * another [onReadyToInstall] to retry.
+     */
+    fun completeUpdate() {
+        AnalyticsManager.manager.appUpdateRestartTapped()
+        mAppUpdateManager.completeUpdate()
+                .addOnFailureListener {
+                    Timber.tag(TAG).w(it, "App update install failed")
+                    val errorCode = (it as? InstallException)?.errorCode ?: InstallErrorCode.ERROR_UNKNOWN
+                    AnalyticsManager.manager.appUpdateFailed(Failure.INSTALL, errorCode)
+                    if (!mReleased) {
+                        onReadyToInstall()
+                    }
+                }
+    }
+
+    fun release() {
+        mReleased = true
+        mAppUpdateManager.unregisterListener(mInstallStateListener)
+    }
+
+    private fun declined(versionCode: Int) {
+        AppLaunchManager.manager.appUpdateDeclined(versionCode, Date())
+        AnalyticsManager.manager.appUpdateDeclined(versionCode)
+    }
+
+    private fun toUpdate(info: AppUpdateInfo): AppUpdateSession.Update {
+        return AppUpdateSession.Update(
+            versionCode = info.availableVersionCode(),
+            availability = info.updateAvailability(),
+            flexibleAllowed = info.isUpdateTypeAllowed(AppUpdateType.FLEXIBLE),
+            installStatus = info.installStatus()
+        )
+    }
+
+    private fun prompt(info: AppUpdateInfo) {
+        if (mAppUpdateManager.startUpdateFlowForResult(info, launcher, AppUpdateOptions.defaultOptions(AppUpdateType.FLEXIBLE))) {
+            mSession.promptShown(info.availableVersionCode())
+            AnalyticsManager.manager.appUpdatePromptShown(info.availableVersionCode())
+        } else {
+            Timber.tag(TAG).w("App update flow not started: versionCode=%s", info.availableVersionCode())
+        }
     }
 }

@@ -109,27 +109,31 @@ public class AppLaunchManager {
         AppLaunchState.state.setRateScheduledToShow(true);
     }
 
-    public boolean shouldPromptAppUpdate(int availableVersionCode) {
+    public boolean shouldPromptAppUpdate(int availableVersionCode, Date now) {
         if (AppLaunchState.state.appUpdateDeclinedVersionCode() != availableVersionCode) {
             // Never declined, or a newer version than the one declined is available
             return true;
         }
-        return calendarDaysSinceDate(AppLaunchState.state.appUpdateDeclinedDate()) >= AppConfig.configuration.getAppUpdateRepromptDelayDays();
+        return calendarDaysSinceDate(AppLaunchState.state.appUpdateDeclinedDate(), now) >= AppConfig.configuration.getAppUpdateRepromptDelayDays();
     }
 
-    public void appUpdateDeclined(int versionCode) {
-        AppLaunchState.state.setAppUpdateDeclined(versionCode, new Date());
+    public void appUpdateDeclined(int versionCode, Date now) {
+        AppLaunchState.state.setAppUpdateDeclined(versionCode, now);
     }
 
     // Utils
 
     private long calendarDaysSinceDate(long date) {
+        return calendarDaysSinceDate(date, new Date());
+    }
+
+    private long calendarDaysSinceDate(long date, Date now) {
         if (date <= 0) {
             return -1L;
         } else {
-            Date now = stripTimeComponents(new Date());
+            Date today = stripTimeComponents(now);
             Date then = stripTimeComponents(new Date(date));
-            return timeDifference(now, then, TimeUnit.DAYS);
+            return timeDifference(today, then, TimeUnit.DAYS);
         }
     }
 

@@ -1,6 +1,5 @@
 package com.everlog.ui.activities.home
 
-import android.app.Activity
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.DialogInterface
@@ -23,9 +22,7 @@ import com.everlog.managers.billing.BillingManager
 import com.everlog.ui.activities.base.BaseActivityPresenter
 import com.everlog.utils.FCMUtils
 import com.everlog.utils.Utils
-import com.google.android.play.core.appupdate.AppUpdateInfo
 import com.imagepick.dialog.ELPickerDialog
-import timber.log.Timber
 
 class PresenterHome : BaseActivityPresenter<MvpViewHome>() {
 
@@ -47,8 +44,6 @@ class PresenterHome : BaseActivityPresenter<MvpViewHome>() {
     private var mWeekIsEmpty: Boolean = true
 
     private var mAppUpdateController: AppUpdateController? = null
-    // The update currently offered in Play's prompt, to match against the flow result
-    private var mPromptedAppUpdate: AppUpdateInfo? = null
 
     override fun init() {
         super.init()
@@ -71,7 +66,7 @@ class PresenterHome : BaseActivityPresenter<MvpViewHome>() {
 
     override fun detachView() {
         LocalBroadcastManager.getInstance(mvpView.context).unregisterReceiver(mPlanStartedReceiver)
-        mAppUpdateController?.unregisterInstallListener()
+        mAppUpdateController?.release()
         mAppUpdateController = null
         ELDatastore.destroy()
         super.detachView()
@@ -132,7 +127,7 @@ class PresenterHome : BaseActivityPresenter<MvpViewHome>() {
         subscriptions.add(mvpView.onAppUpdateFlowResult()
                 .compose(applyUISchedulers())
                 .subscribe({ resultCode: Int ->
-                    handleAppUpdateFlowResult(resultCode)
+                    mAppUpdateController?.onUpdateFlowResult(resultCode)
                 }, { throwable: Throwable? -> handleError(throwable) }))
     }
 
@@ -140,7 +135,6 @@ class PresenterHome : BaseActivityPresenter<MvpViewHome>() {
         subscriptions.add(mvpView.onClickAppUpdateRestart()
                 .compose(applyUISchedulers())
                 .subscribe({
-                    AnalyticsManager.manager.appUpdateRestartTapped()
                     mAppUpdateController?.completeUpdate()
                 }, { throwable: Throwable? -> handleError(throwable) }))
     }
@@ -168,7 +162,7 @@ class PresenterHome : BaseActivityPresenter<MvpViewHome>() {
             observeDiscardOngoingWorkoutConfirm(WorkoutManager.manager.ongoingWorkout()!!)
         } else {
             // Don't prompt over the ongoing workout dialog, or offer a restart that would end the workout
-            checkForAppUpdate()
+            mAppUpdateController?.checkForUpdate()
         }
     }
 
@@ -199,52 +193,6 @@ class PresenterHome : BaseActivityPresenter<MvpViewHome>() {
                 .show()
     }
 
-    // App update
-
-    private fun checkForAppUpdate() {
-        val controller = mAppUpdateController ?: return
-        subscriptions.add(controller.fetchUpdateInfo()
-                .compose(applyUISchedulers())
-                .subscribe({ info: AppUpdateInfo ->
-                    if (controller.isUpdateDownloaded(info)) {
-                        // Downloaded while the app was in the background or on another screen
-                        mvpView?.showAppUpdateReady()
-                    } else if (mPromptedAppUpdate == null && controller.shouldPromptUpdate(info)) {
-                        promptAppUpdate(controller, info)
-                    }
-                }, { throwable: Throwable ->
-                    // Expected when not installed from Play (e.g. debug builds), so don't report it as an error
-                    Timber.tag(TAG).w("App update check failed: %s", throwable.message)
-                }))
-    }
-
-    private fun promptAppUpdate(controller: AppUpdateController, info: AppUpdateInfo) {
-        if (controller.startFlexibleUpdate(info, mvpView.appUpdateLauncher())) {
-            mPromptedAppUpdate = info
-            AnalyticsManager.manager.appUpdatePromptShown(info.availableVersionCode())
-        } else {
-            Timber.tag(TAG).w("App update flow not started: versionCode=%s", info.availableVersionCode())
-        }
-    }
-
-    private fun handleAppUpdateFlowResult(resultCode: Int) {
-        val info = mPromptedAppUpdate ?: return
-        mPromptedAppUpdate = null
-        when (resultCode) {
-            Activity.RESULT_OK -> {
-                AnalyticsManager.manager.appUpdateAccepted(info.availableVersionCode())
-            }
-            Activity.RESULT_CANCELED -> {
-                mAppUpdateController?.updateDeclined(info)
-                AnalyticsManager.manager.appUpdateDeclined(info.availableVersionCode())
-            }
-            else -> {
-                // ActivityResult.RESULT_IN_APP_UPDATE_FAILED; the next resume will offer it again
-                AnalyticsManager.manager.appUpdateFailed(resultCode)
-            }
-        }
-    }
-
     // Remote config
 
     private fun refreshAppConfig() {
@@ -271,15 +219,11 @@ class PresenterHome : BaseActivityPresenter<MvpViewHome>() {
     // Setup
 
     private fun setupAppUpdates() {
-        mAppUpdateController = AppUpdateController(mvpView.context).apply {
-            registerInstallListener(onDownloaded = {
-                AnalyticsManager.manager.appUpdateDownloaded()
-                if (!WorkoutManager.manager.hasOngoingWorkout()) {
-                    mvpView?.showAppUpdateReady()
-                }
-            }, onFailed = { errorCode ->
-                AnalyticsManager.manager.appUpdateFailed(errorCode)
-            })
+        mAppUpdateController = AppUpdateController(mvpView.context, mvpView.appUpdateLauncher()) {
+            // Don't offer a restart that would end the ongoing workout
+            if (!WorkoutManager.manager.hasOngoingWorkout()) {
+                mvpView?.showAppUpdateReady()
+            }
         }
     }
 
