@@ -52,7 +52,10 @@ class WorkoutNotificationBuilderTest {
         listOf(nextSet(), rest(), Done, NoExercises).forEach { state ->
             val notification = build(state)
 
-            assertThat(notification.channelId).isEqualTo(channelId)
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                // Channels don't exist before API 26
+                assertThat(NotificationCompat.getChannelId(notification)).isEqualTo(channelId)
+            }
             assertThat(notification.flags and Notification.FLAG_ONGOING_EVENT).isNotEqualTo(0)
             assertThat(notification.flags and Notification.FLAG_ONLY_ALERT_ONCE).isNotEqualTo(0)
             assertThat(notification.flags and Notification.FLAG_AUTO_CANCEL).isEqualTo(0)
@@ -102,39 +105,55 @@ class WorkoutNotificationBuilderTest {
         assertThat(title(notification)).isEqualTo("Bench press")
     }
 
+    // The values match a completed set's row in the workout screen (ELSet.getExerciseSetSummary)
+
     @Test
-    fun next_set_text_summarises_the_set() {
+    fun next_set_text_summarises_reps_and_weight() {
         val notification = build(nextSet())
 
-        assertThat(text(notification)).isEqualTo("${setType(R.string.set_single)} 2/3  •  60 kg  •  8 reps")
+        assertThat(text(notification)).isEqualTo("Set 2/3 • 8 x 60 kg")
+    }
+
+    @Test
+    fun next_set_text_shows_reps_without_weight() {
+        val notification = build(nextSet(weight = 0f))
+
+        assertThat(text(notification)).isEqualTo("Set 2/3 • 8 reps")
     }
 
     @Test
     fun next_set_text_uses_singular_rep() {
-        val notification = build(nextSet(reps = 1))
+        val notification = build(nextSet(weight = 0f, reps = 1))
 
-        assertThat(text(notification)).endsWith("•  1 rep")
-    }
-
-    @Test
-    fun next_set_text_omits_missing_weight() {
-        val notification = build(nextSet(weight = 0f))
-
-        assertThat(text(notification)).isEqualTo("${setType(R.string.set_single)} 2/3  •  8 reps")
+        assertThat(text(notification)).isEqualTo("Set 2/3 • 1 rep")
     }
 
     @Test
     fun next_set_text_shows_time_for_timed_sets() {
         val notification = build(nextSet(weight = 0f, reps = null, timeSeconds = 40))
 
-        assertThat(text(notification)).isEqualTo("${setType(R.string.set_single)} 2/3  •  00:40")
+        assertThat(text(notification)).isEqualTo("Set 2/3 • 40 sec")
+    }
+
+    @Test
+    fun next_set_text_shows_time_and_weight_for_weighted_timed_sets() {
+        val notification = build(nextSet(weight = 20f, reps = null, timeSeconds = 90))
+
+        assertThat(text(notification)).isEqualTo("Set 2/3 • 1 min 30 sec • 20 kg")
+    }
+
+    @Test
+    fun next_set_text_counts_down_while_the_exercise_timer_runs() {
+        val notification = build(nextSet(weight = 0f, reps = null, timeSeconds = 40, remainingSeconds = 12))
+
+        assertThat(text(notification)).isEqualTo("Set 2/3 • 12 sec")
     }
 
     @Test
     fun next_set_omits_set_count_for_a_single_set() {
         val notification = build(nextSet(setNumber = 1, totalSets = 1, weight = 0f))
 
-        assertThat(text(notification)).isEqualTo("${setType(R.string.set_single)}  •  8 reps")
+        assertThat(text(notification)).isEqualTo("Set • 8 reps")
     }
 
     @Test
@@ -142,7 +161,7 @@ class WorkoutNotificationBuilderTest {
         val notification = build(nextSet(exerciseName = "Squat", exercisePosition = 2, exercisesInGroup = 2, setType = "SUPER"))
 
         assertThat(title(notification)).isEqualTo("2/2 Squat")
-        assertThat(text(notification)).startsWith("${setType(R.string.set_super)} 2/3")
+        assertThat(text(notification)).isEqualTo("${context.getString(R.string.set_super)} 2/3 • 8 x 60 kg")
     }
 
     // Rest
@@ -152,7 +171,7 @@ class WorkoutNotificationBuilderTest {
         val notification = build(rest(remainingSeconds = 45, remainingPercent = 75))
 
         assertThat(notification.contentView).isNull()
-        assertThat(title(notification)).isEqualTo(context.getString(R.string.workout_rest_time, "00:45"))
+        assertThat(title(notification)).isEqualTo("Rest • 00:45")
         assertThat(notification.extras.getInt(NotificationCompat.EXTRA_PROGRESS_MAX)).isEqualTo(100)
         assertThat(notification.extras.getInt(NotificationCompat.EXTRA_PROGRESS)).isEqualTo(75)
     }
@@ -176,7 +195,18 @@ class WorkoutNotificationBuilderTest {
     fun rest_shows_the_next_set() {
         val notification = build(rest())
 
-        assertThat(text(notification)).startsWith("Next: Bench press  •  ")
+        assertThat(text(notification)).isEqualTo("Next: Bench press • Set 2/3 • 8 x 60 kg")
+    }
+
+    @Test
+    fun rest_shows_the_next_set_alongside_progress_when_expanded() {
+        // The expanded standard template hides the text when there's a progress bar on API 31+
+        val notification = build(rest())
+
+        assertThat(notification.extras.getString(Notification.EXTRA_TEMPLATE))
+                .isEqualTo(Notification.BigTextStyle::class.java.name)
+        assertThat(notification.extras.getCharSequence(Notification.EXTRA_BIG_TEXT).toString())
+                .isEqualTo("Next: Bench press • Set 2/3 • 8 x 60 kg")
     }
 
     @Test
@@ -214,8 +244,6 @@ class WorkoutNotificationBuilderTest {
 
     private fun text(notification: Notification) = notification.extras.getCharSequence(Notification.EXTRA_TEXT).toString()
 
-    private fun setType(titleResId: Int) = context.getString(titleResId)
-
     private fun nextSet(exerciseName: String = "Bench press",
                         exercisePosition: Int = 1,
                         exercisesInGroup: Int = 1,
@@ -224,7 +252,8 @@ class WorkoutNotificationBuilderTest {
                         totalSets: Int = 3,
                         weight: Float = 60f,
                         reps: Int? = 8,
-                        timeSeconds: Int? = null) = NextSet(
+                        timeSeconds: Int? = null,
+                        remainingSeconds: Int? = null) = NextSet(
             exerciseName = exerciseName,
             exercisePosition = exercisePosition,
             exercisesInGroup = exercisesInGroup,
@@ -233,9 +262,10 @@ class WorkoutNotificationBuilderTest {
             totalSets = totalSets,
             weight = weight,
             reps = reps,
-            timeSeconds = timeSeconds,
-            timerRunning = false,
-            set = ELSet(requiredReps = reps, reps = reps, weight = weight))
+            timeSeconds = remainingSeconds ?: timeSeconds,
+            timerRunning = remainingSeconds != null,
+            set = ELSet(requiredReps = reps, reps = reps, weight = weight, requiredTimeSeconds = timeSeconds, timeSeconds = timeSeconds)
+                    .apply { remainingTimeSeconds = remainingSeconds })
 
     private fun rest(remainingSeconds: Int = 45, remainingPercent: Int = 75) =
             Rest(remainingSeconds, remainingPercent, nextSet())

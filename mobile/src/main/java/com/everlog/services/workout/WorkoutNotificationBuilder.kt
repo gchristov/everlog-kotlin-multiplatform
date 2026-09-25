@@ -10,6 +10,7 @@ import androidx.core.app.NotificationCompat
 import androidx.core.content.ContextCompat
 import com.everlog.R
 import com.everlog.constants.ELConstants
+import com.everlog.data.model.set.ELSetType
 import com.everlog.data.model.workout.ELWorkout
 import com.everlog.managers.preferences.SettingsManager
 import com.everlog.services.workout.WorkoutNotificationState.Done
@@ -127,9 +128,13 @@ class WorkoutNotificationBuilder(private val context: Context) {
         } else {
             context.getString(R.string.workout_notification_rest)
         }
+        val upNext = upNext(state)
         builder
                 .setContentTitle(title)
-                .setContentText(upNext(state))
+                .setContentText(upNext)
+                // The expanded standard template drops the text in favour of the progress bar on
+                // API 31+. The big text template shows both.
+                .setStyle(NotificationCompat.BigTextStyle().bigText(upNext))
                 .setProgress(100, state.remainingPercent, false)
                 .addAction(R.drawable.ic_clear_white,
                         context.getString(R.string.workout_notification_skip_rest),
@@ -138,8 +143,7 @@ class WorkoutNotificationBuilder(private val context: Context) {
 
     private fun upNext(state: Rest): String {
         val next = state.upNext ?: return context.getString(R.string.workout_notification_complete)
-        val setDescription = next.set.getOngoingWorkoutNotificationSummary(context, next.setNumber, next.setType)
-        return context.getString(R.string.workout_notification_up_next, next.exerciseName, setDescription)
+        return context.getString(R.string.workout_notification_up_next, exerciseName(next), setSummary(next))
     }
 
     // Text
@@ -153,10 +157,14 @@ class WorkoutNotificationBuilder(private val context: Context) {
     }
 
     /**
-     * E.g. "Super set 3/4"
+     * E.g. "Set 2/3" or "Super Set 3/4", naming sets the same way as the workout screen.
      */
     private fun setLabel(state: NextSet): String {
-        val type = ArrayResourceTypeUtils.withSetTypes().getTitle(state.setType, state.setType.lowercase().replaceFirstChar { it.uppercase() } + " Set") ?: ""
+        val type = if (state.setType == ELSetType.SINGLE.name) {
+            context.getString(R.string.workout_notification_set)
+        } else {
+            ArrayResourceTypeUtils.withSetTypes().getTitle(state.setType, state.setType.lowercase().replaceFirstChar { it.uppercase() } + " Set") ?: ""
+        }
         return if (state.totalSets > 1) {
             "$type ${state.setNumber}/${state.totalSets}"
         } else {
@@ -165,16 +173,17 @@ class WorkoutNotificationBuilder(private val context: Context) {
     }
 
     /**
-     * E.g. "Super set 3/4  •  60 kg  •  10 reps"
+     * E.g. "Set 2/3 • 8 x 60 kg" or "Set 1/3 • 40 sec • 20 kg". The values use the same wording as
+     * a completed set's row in the workout screen (ELSet.getExerciseSetSummary).
      */
     private fun setSummary(state: NextSet): String {
-        val parts = mutableListOf(setLabel(state))
-        if (state.weight > 0) {
-            parts.add(FormatUtils.formatSetWeight(state.weight) + " " + SettingsManager.weightUnitAbbreviation())
+        // Show the countdown while the exercise timer runs
+        val set = if (state.timerRunning && state.timeSeconds != null) {
+            state.set.copy(timeSeconds = state.timeSeconds)
+        } else {
+            state.set
         }
-        state.reps?.let { parts.add(context.resources.getQuantityString(R.plurals.workout_notification_reps, it, it)) }
-        state.timeSeconds?.let { parts.add(formatTime(it)) }
-        return parts.joinToString("  •  ")
+        return listOfNotNull(setLabel(state), set.getExerciseSetSummary(context, true)).joinToString(" • ")
     }
 
     private fun formatTime(seconds: Int): String {
