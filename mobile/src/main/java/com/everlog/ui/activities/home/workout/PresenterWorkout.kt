@@ -415,6 +415,8 @@ class PresenterWorkout : PresenterCreateExerciseGroups<MvpViewWorkout>() {
         WorkoutManager.manager.clearOngoingWorkout()
         AnalyticsManager.manager.workoutCompleted()
         AppLaunchManager.manager.rateActionTrigger()
+        // Pushes back the app usage reminder, the user may not pass through the home screen for a while
+        AppLaunchManager.manager.recordActivity(Date())
         // Save workout
         val toSave = buildChangedItem()
         ELDatastore.workoutStore().create(toSave!!, SetOptions.merge())

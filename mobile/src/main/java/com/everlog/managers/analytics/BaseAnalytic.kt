@@ -75,6 +75,21 @@ abstract class BaseAnalytic : Analytic {
         return map
     }
 
+    override fun appUsageReminderShown(attempt: Int, title: String?) {
+        logEvent(AnalyticsConstants.EVENT_APP_USAGE_REMINDER_SHOWN, appUsageReminderParams(attempt, title))
+    }
+
+    override fun appUsageReminderOpened(attempt: Int, title: String?) {
+        logEvent(AnalyticsConstants.EVENT_APP_USAGE_REMINDER_OPENED, appUsageReminderParams(attempt, title))
+    }
+
+    private fun appUsageReminderParams(attempt: Int, title: String?): Map<String, Any?> {
+        val map = HashMap<String, Any?>()
+        map[AnalyticsConstants.PROPERTY_ATTEMPT] = attempt
+        map[AnalyticsConstants.PROPERTY_TITLE] = title
+        return map
+    }
+
     override fun appStarRating(value: Float?) {
         val map = HashMap<String, Any?>()
         map[AnalyticsConstants.PROPERTY_VALUE] = value

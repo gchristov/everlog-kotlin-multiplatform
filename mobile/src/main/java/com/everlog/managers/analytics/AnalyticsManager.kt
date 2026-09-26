@@ -67,6 +67,20 @@ class AnalyticsManager : Analytic {
         }
     }
 
+    override fun appUsageReminderShown(attempt: Int, title: String?) {
+        Timber.tag(TAG).i("App usage reminder shown: attempt=%s title=%s", attempt, title)
+        mAnalytics?.forEach {
+            it.appUsageReminderShown(attempt, title)
+        }
+    }
+
+    override fun appUsageReminderOpened(attempt: Int, title: String?) {
+        Timber.tag(TAG).i("App usage reminder opened: attempt=%s title=%s", attempt, title)
+        mAnalytics?.forEach {
+            it.appUsageReminderOpened(attempt, title)
+        }
+    }
+
     override fun appRate() {
         Timber.tag(TAG).i("App rated")
         mAnalytics?.forEach {

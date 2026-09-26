@@ -53,6 +53,8 @@ class AnalyticsConstants {
         const val EVENT_NOTIFICATION_HOME_SHOWN = "notification_home_shown"
         const val EVENT_NOTIFICATION_HOME_TAPPED = "notification_home_tapped"
         const val EVENT_NOTIFICATION_HOME_DISMISSED = "notification_home_dismissed"
+        const val EVENT_APP_USAGE_REMINDER_SHOWN = "app_usage_reminder_shown"
+        const val EVENT_APP_USAGE_REMINDER_OPENED = "app_usage_reminder_opened"
 
         // Rating
 
@@ -199,5 +201,6 @@ class AnalyticsConstants {
         const val PROPERTY_TYPE = "type"
         const val PROPERTY_VALUE = "value"
         const val PROPERTY_TITLE = "title"
+        const val PROPERTY_ATTEMPT = "attempt"
     }
 }
