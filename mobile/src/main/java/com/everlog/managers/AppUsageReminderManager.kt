@@ -29,6 +29,7 @@ class AppUsageReminderManager : PreferencesManager() {
     private enum class PreferenceKeys {
         APP_USAGE_LAST_SHOWN_AT,
         APP_USAGE_SHOWN_COUNT,
+        APP_USAGE_TRACKED_SINCE,
     }
 
     companion object {
@@ -126,7 +127,10 @@ class AppUsageReminderManager : PreferencesManager() {
                 return null
             }
             val reminder = schedule.nextReminder(
-                    lastActiveAt = AppLaunchManager.manager.lastActiveDate(),
+                    // Versions before this one only moved the last launch date on when the home screen was
+                    // created, not when the user came back to it, so it can be days old for someone who uses
+                    // the app daily. Don't trust it before this version started tracking.
+                    lastActiveAt = maxOf(AppLaunchManager.manager.lastActiveDate(), preferences.trackedSince(now)),
                     lastShownAt = preferences.lastShownAt(),
                     shownCount = preferences.shownCount(),
                     now = now)
@@ -172,6 +176,19 @@ class AppUsageReminderManager : PreferencesManager() {
 
     private fun shownCount(): Int {
         return getPreference(PreferenceKeys.APP_USAGE_SHOWN_COUNT.name, 0)
+    }
+
+    /**
+     * When this version first worked out a reminder, e.g. on the update broadcast. Reset if it's in the
+     * future (the clock was wrong, then corrected), otherwise it'd hold reminders back until then.
+     */
+    private fun trackedSince(now: Long): Long {
+        val since = getPreference(PreferenceKeys.APP_USAGE_TRACKED_SINCE.name, 0L)
+        if (since in 1..now) {
+            return since
+        }
+        savePreference(now, PreferenceKeys.APP_USAGE_TRACKED_SINCE.name)
+        return now
     }
 
     private fun setShown(at: Long, count: Int) {
