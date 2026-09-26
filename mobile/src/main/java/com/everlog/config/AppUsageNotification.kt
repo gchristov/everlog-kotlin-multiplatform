@@ -17,12 +17,13 @@ data class AppUsageNotification (
         var description: String? = null,
         var scheduleIntervalDays: Int = 0,
         var scheduleHourOfDay: Int = 0,
-        // Gap before each reminder, the last one repeats. Missing means every scheduleIntervalDays.
-        // Nullable entries as Gson reads a stray null in the console's JSON into the list.
+        // Gap before each reminder, the last one repeats. Missing means every scheduleIntervalDays, and so
+        // does a null or invalid entry, for that reminder only. Nullable as Gson reads a stray null in.
         var backoffIntervalsDays: List<Int?>? = null,
         // Stop after this many reminders without a visit. 0 means never stop.
         var maxReminders: Int = 0,
-        // Text for each reminder, the last one repeats. Missing fields fall back to title/description.
+        // Text for each reminder, the last one repeats. A null entry or blank field falls back to
+        // title/description, for that reminder only.
         var messages: List<Message?>? = null
 
 ) : Serializable {
@@ -83,20 +84,16 @@ data class AppUsageNotification (
             return null
         }
         val anchor = if (index == 0) active else shown
-        val message = messages?.filterNotNull()?.takeIf { it.isNotEmpty() }?.let { it[minOf(index, it.size - 1)] }
+        val message = messages.entryFor(index)
         return Reminder(
                 attempt = index + 1,
                 dueAtMillis = atHourOfDay(anchor, intervalDays(index), scheduleHourOfDay),
-                title = message?.title?.takeUnless { it.isBlank() } ?: title!!,
-                description = message?.description?.takeUnless { it.isBlank() } ?: description!!)
+                title = message?.title?.takeUnless { it.isBlank() } ?: title.orEmpty(),
+                description = message?.description?.takeUnless { it.isBlank() } ?: description.orEmpty())
     }
 
     fun intervalDays(index: Int): Int {
-        val intervals = backoffIntervalsDays?.filterNotNull()?.filter { it > 0 }
-        if (intervals.isNullOrEmpty()) {
-            return scheduleIntervalDays
-        }
-        return intervals[minOf(index, intervals.size - 1)]
+        return backoffIntervalsDays.entryFor(index)?.takeIf { it > 0 } ?: scheduleIntervalDays
     }
 
     fun isValid(): Boolean {
@@ -108,6 +105,15 @@ data class AppUsageNotification (
     }
 
     companion object {
+
+        // The entry for the reminder at [index], by position so a bad entry doesn't shift the rest.
+        // The last one repeats.
+        private fun <T> List<T?>?.entryFor(index: Int): T? {
+            if (isNullOrEmpty()) {
+                return null
+            }
+            return this[minOf(index, size - 1)]
+        }
 
         // Calendar days rather than 24h blocks so the hour stays put across daylight saving changes
         private fun atHourOfDay(fromMillis: Long, plusDays: Int, hourOfDay: Int): Long {

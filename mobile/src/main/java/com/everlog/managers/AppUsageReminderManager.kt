@@ -5,6 +5,8 @@ import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import androidx.core.app.NotificationManagerCompat
+import com.everlog.R
 import com.everlog.application.ELApplication
 import com.everlog.config.AppUsageNotification
 import com.everlog.managers.analytics.AnalyticsManager
@@ -74,6 +76,12 @@ class AppUsageReminderManager : PreferencesManager() {
         @JvmOverloads
         fun onAlarm(now: Long = System.currentTimeMillis()) {
             val reminder = nextReminder(now)
+            if (reminder?.isDue(now) == true && !notificationsEnabled()) {
+                // Don't count a reminder the user can't see. Leaving the home screen sets the alarm again.
+                Timber.tag(TAG).i("Skipped app usage reminder - notifications disabled")
+                cancelAlarm()
+                return
+            }
             if (reminder?.isDue(now) == true) {
                 ELFirebaseMessagingService.notify(NOTIFICATION_ID, reminder.title, reminder.description, Bundle().apply {
                     putInt(EXTRA_REMINDER_ATTEMPT, reminder.attempt)
@@ -126,6 +134,16 @@ class AppUsageReminderManager : PreferencesManager() {
                 Timber.tag(TAG).i("No app usage reminder - none left until the user is back")
             }
             return reminder
+        }
+
+        private fun notificationsEnabled(): Boolean {
+            val manager = NotificationManagerCompat.from(ELApplication.getInstance())
+            if (!manager.areNotificationsEnabled()) {
+                return false
+            }
+            // The user can also turn off just the channel the reminder is posted to
+            val channel = manager.getNotificationChannelCompat(ELApplication.getInstance().getString(R.string.notification_channel_normal))
+            return channel == null || channel.importance != NotificationManagerCompat.IMPORTANCE_NONE
         }
 
         private fun cancelAlarm() {
