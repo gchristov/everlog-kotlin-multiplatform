@@ -314,13 +314,14 @@ class PresenterWorkout : PresenterCreateExerciseGroups<MvpViewWorkout>() {
         val set = exercise?.sets?.get(state.setIndex)
         set?.updateStartedDate(Date().time)
         set?.updateCompletedDate(Date().time)
-        // Stop the timer if already running. WorkoutService logs the notification's actions, so
-        // the timer changes they cause aren't logged again here.
+        // Stop the timer if already running. WorkoutService logs the tap, so stopping it isn't
+        // logged again here. The rest timer that starts after the set is logged as usual, like
+        // when the set is completed in the app.
         stopTimer(mWorkoutTimeController, logAnalytics = false)
         // Only call this is the overall set has been completed
         notifyWorkoutServiceSetUpdated()
         if (group?.setIsComplete(state.setIndex) == true) {
-            setCompleted(group, logAnalytics = false)
+            setCompleted(group)
         }
         Utils.runWithDelay({
             saveOngoingWorkout()
@@ -398,14 +399,10 @@ class PresenterWorkout : PresenterCreateExerciseGroups<MvpViewWorkout>() {
     // Set changes
 
     override fun setCompleted(group: ELExerciseGroup?) {
-        setCompleted(group, logAnalytics = true)
-    }
-
-    private fun setCompleted(group: ELExerciseGroup?, logAnalytics: Boolean) {
         super.setCompleted(group)
         if (group?.hasRestTime() == true) {
             // Reuses the current view if a timer is already active instead of tearing it down
-            mWorkoutTimeController?.startRestTimer(group.restTimeSeconds, logAnalytics)
+            mWorkoutTimeController?.startRestTimer(group.restTimeSeconds)
         }
     }
 

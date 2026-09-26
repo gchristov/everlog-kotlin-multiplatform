@@ -28,11 +28,12 @@ class WorkoutTimeController(mvpView: MvpViewWorkout?,
     private var mTitle = ""
     private var mRunningSet: ELSet? = null
 
-    fun startRestTimer(timeSeconds: Int, logAnalytics: Boolean) {
+    // Always logged: the rest starts on its own after a set, wherever the set was completed
+    fun startRestTimer(timeSeconds: Int) {
         mIsRest = true
         mTitle = "Rest"
         mRunningSet = null
-        startTimer(timeSeconds, logAnalytics)
+        startTimer(timeSeconds, logAnalytics = true)
     }
 
     fun startExerciseTimer(exercise: ELRoutineExercise, set: ELSet, logAnalytics: Boolean) {
