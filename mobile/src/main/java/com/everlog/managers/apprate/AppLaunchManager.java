@@ -45,7 +45,19 @@ public class AppLaunchManager {
         }
     }
 
+    /**
+     * Records that the user is using the app, other than launching it. Moves the last launch date on so
+     * it also serves as "last active" for the app usage reminder, without counting as a launch.
+     */
+    public void recordActivity(Date now) {
+        AppLaunchState.state.setLastLaunchDate(now);
+    }
+
     // Convenience
+
+    public long lastActiveDate() {
+        return AppLaunchState.state.getLastLaunchDate();
+    }
 
     public void clearAppUserData() {
         AppLaunchState.state.clearState();

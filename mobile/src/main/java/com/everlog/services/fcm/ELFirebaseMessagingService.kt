@@ -3,6 +3,7 @@ package com.everlog.services.fcm
 import android.app.Notification
 import android.app.PendingIntent
 import android.content.Intent
+import android.os.Bundle
 import android.text.TextUtils
 import androidx.core.app.NotificationCompat
 import com.everlog.R
@@ -24,12 +25,17 @@ class ELFirebaseMessagingService : FirebaseMessagingService() {
 
     companion object {
 
+        /**
+         * [openAppExtras] are added to the intent that opens the app when the notification is tapped.
+         */
         @JvmStatic
+        @JvmOverloads
         fun notify(notificationId: Int,
                    title: String,
-                   body: String) {
+                   body: String,
+                   openAppExtras: Bundle? = null) {
             notify(notificationId,
-                    buildNotification(title, body),
+                    buildNotification(title, body, openAppExtras),
                     NotificationChannelOptions(notificationChannelId(),
                             "Notifications",
                             "Receive updates from Everlog.",
@@ -37,7 +43,7 @@ class ELFirebaseMessagingService : FirebaseMessagingService() {
                             disableSound = false))
         }
 
-        private fun buildNotification(title: String, message: String): Notification {
+        private fun buildNotification(title: String, message: String, openAppExtras: Bundle?): Notification {
             val builder = NotificationCompat.Builder(ELApplication.getInstance(), notificationChannelId())
             builder
                     .setContentTitle(title)
@@ -48,15 +54,16 @@ class ELFirebaseMessagingService : FirebaseMessagingService() {
                     .setDefaults(Notification.DEFAULT_ALL)
                     .setWhen(System.currentTimeMillis())
                     .setSmallIcon(R.drawable.ic_notification)
-                    .setContentIntent(buildOpenAppPendingIntent())
+                    .setContentIntent(buildOpenAppPendingIntent(openAppExtras))
             if (!DeviceUtils.isAndroidO()) {
                 builder.priority = Notification.PRIORITY_DEFAULT
             }
             return builder.build()
         }
 
-        private fun buildOpenAppPendingIntent(): PendingIntent {
+        private fun buildOpenAppPendingIntent(extras: Bundle?): PendingIntent {
             val intent = Intent(ELApplication.getInstance(), SplashActivity::class.java)
+            extras?.let { intent.putExtras(it) }
             return PendingIntent.getActivity(ELApplication.getInstance(), Random.nextInt(), intent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_MUTABLE)
         }
 

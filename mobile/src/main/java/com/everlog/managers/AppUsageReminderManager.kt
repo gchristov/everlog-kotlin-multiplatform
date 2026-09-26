@@ -4,66 +4,88 @@ import android.app.AlarmManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
+import android.os.Bundle
 import com.everlog.application.ELApplication
 import com.everlog.config.AppUsageNotification
+import com.everlog.managers.analytics.AnalyticsManager
+import com.everlog.managers.apprate.AppLaunchManager
 import com.everlog.managers.preferences.PreferencesManager
+import com.everlog.managers.preferences.SettingsManager
 import com.everlog.receivers.AppUsageReceiver
 import com.everlog.services.fcm.ELFirebaseMessagingService
 import timber.log.Timber
 import java.util.*
+import java.util.concurrent.TimeUnit
 
+/**
+ * Reminds the user to come back when they haven't been in the app for a while. A single alarm is set
+ * for the next reminder when they leave the home screen, and cancelled when they return. Each reminder
+ * that shows sets the alarm for the next one, further out, until [AppUsageNotification.maxReminders].
+ */
 class AppUsageReminderManager : PreferencesManager() {
 
     private enum class PreferenceKeys {
-        APP_USAGE_LAST_ACTIVE_AT,
         APP_USAGE_LAST_SHOWN_AT,
+        APP_USAGE_SHOWN_COUNT,
     }
 
     companion object {
 
         const val TAG = "AppUsageReminderManager"
+        // Set on the notification's open app intent, so the open can be attributed to the reminder
+        const val EXTRA_REMINDER_ATTEMPT = "EXTRA_APP_USAGE_REMINDER_ATTEMPT"
+        const val EXTRA_REMINDER_TITLE = "EXTRA_APP_USAGE_REMINDER_TITLE"
         private const val NOTIFICATION_ID = 0x1610
         // Must stay fixed so cancel() and re-scheduling match the pending alarm
         private const val ALARM_REQUEST_CODE = NOTIFICATION_ID
+        // Plain set() lets Android deliver up to 75% of the time until the alarm late, days for a weekly
+        // reminder. A window keeps it close to the configured hour without needing the exact alarm permission.
+        private val ALARM_WINDOW_MILLIS = TimeUnit.HOURS.toMillis(1)
 
         private val preferences = AppUsageReminderManager()
 
-        @JvmStatic
-        @JvmOverloads
-        fun showNotification(now: Long = System.currentTimeMillis()) {
-            val schedule = getSchedule()
-            if (schedule == null) {
-                Timber.tag(TAG).i("Could not show app usage notification - schedule invalid")
-                return
-            }
-            val lastActiveAt = preferences.lastActiveAt()
-            val lastShownAt = preferences.lastShownAt()
-            if (!schedule.shouldShow(lastActiveAt, lastShownAt, now)) {
-                Timber.tag(TAG).i("Skipped app usage notification: lastActive=%s lastShown=%s", Date(lastActiveAt), Date(lastShownAt))
-                return
-            }
-            ELFirebaseMessagingService.notify(NOTIFICATION_ID, schedule.title!!, schedule.description!!)
-            preferences.setLastShownAt(now)
-            Timber.tag(TAG).i("Showed app usage notification")
-        }
-
+        /**
+         * The user is leaving the home screen: record that they were active and set the alarm for the
+         * first reminder.
+         */
         @JvmStatic
         @JvmOverloads
         fun schedule(now: Long = System.currentTimeMillis()) {
-            // The user is leaving the app, so this is the latest point they were active
-            preferences.setLastActiveAt(now)
-            val schedule = getSchedule()
-            if (schedule != null) {
-                cancel()
-                val alarmManager = ELApplication.getInstance().getSystemService(Context.ALARM_SERVICE) as AlarmManager
-                alarmManager.setRepeating(AlarmManager.RTC_WAKEUP,
-                        schedule.getFirstTriggerAtMillis(now),
-                        schedule.getIntervalMillis(),
-                        buildAlarmIntent())
-                Timber.tag(TAG).i("Scheduled pending app usage notification: trigger=%s intervalDays=%s", Date(schedule.getFirstTriggerAtMillis(now)), schedule.scheduleIntervalDays)
+            AppLaunchManager.manager.recordActivity(Date(now))
+            scheduleNext(now)
+        }
+
+        /**
+         * Sets the alarm again without recording activity, e.g. after a reboot or app update, which
+         * clear or replace it.
+         */
+        @JvmStatic
+        @JvmOverloads
+        fun reschedule(now: Long = System.currentTimeMillis()) {
+            scheduleNext(now)
+        }
+
+        /**
+         * The alarm went off. It can't be trusted to mean a reminder is due: the user may have been
+         * active since it was set, and older app versions set alarms that can't be cancelled, which
+         * keep firing. So only show if one is due, then set the alarm for the next one.
+         */
+        @JvmStatic
+        @JvmOverloads
+        fun onAlarm(now: Long = System.currentTimeMillis()) {
+            val reminder = nextReminder(now)
+            if (reminder?.isDue(now) == true) {
+                ELFirebaseMessagingService.notify(NOTIFICATION_ID, reminder.title, reminder.description, Bundle().apply {
+                    putInt(EXTRA_REMINDER_ATTEMPT, reminder.attempt)
+                    putString(EXTRA_REMINDER_TITLE, reminder.title)
+                })
+                preferences.setShown(now, reminder.attempt)
+                AnalyticsManager.manager.appUsageReminderShown(reminder.attempt, reminder.title)
+                Timber.tag(TAG).i("Showed app usage reminder: attempt=%s", reminder.attempt)
             } else {
-                Timber.tag(TAG).i("Could not show app usage notification - schedule invalid")
+                Timber.tag(TAG).i("Skipped app usage reminder: due=%s", reminder?.let { Date(it.dueAtMillis) })
             }
+            scheduleNext(now)
         }
 
         @JvmStatic
@@ -71,9 +93,44 @@ class AppUsageReminderManager : PreferencesManager() {
             // Cancel notification
             ELNotificationManager.cancel(NOTIFICATION_ID)
             // Cancel future reminder
+            cancelAlarm()
+            Timber.tag(TAG).i("Cancelled app usage reminder")
+        }
+
+        private fun scheduleNext(now: Long) {
+            cancelAlarm()
+            val schedule = getSchedule() ?: return
+            val reminder = nextReminder(now) ?: return
+            val alarmAt = reminder.alarmAtMillis(now, schedule.scheduleHourOfDay)
+            val alarmManager = ELApplication.getInstance().getSystemService(Context.ALARM_SERVICE) as AlarmManager
+            alarmManager.setWindow(AlarmManager.RTC_WAKEUP, alarmAt, ALARM_WINDOW_MILLIS, buildAlarmIntent())
+            Timber.tag(TAG).i("Scheduled app usage reminder: attempt=%s trigger=%s", reminder.attempt, Date(alarmAt))
+        }
+
+        private fun nextReminder(now: Long): AppUsageNotification.Reminder? {
+            if (!SettingsManager.manager.loggedIn()) {
+                Timber.tag(TAG).i("No app usage reminder - logged out")
+                return null
+            }
+            val schedule = getSchedule()
+            if (schedule == null) {
+                Timber.tag(TAG).i("No app usage reminder - schedule invalid")
+                return null
+            }
+            val reminder = schedule.nextReminder(
+                    lastActiveAt = AppLaunchManager.manager.lastActiveDate(),
+                    lastShownAt = preferences.lastShownAt(),
+                    shownCount = preferences.shownCount(),
+                    now = now)
+            if (reminder == null) {
+                Timber.tag(TAG).i("No app usage reminder - none left until the user is back")
+            }
+            return reminder
+        }
+
+        private fun cancelAlarm() {
             val alarmManager = ELApplication.getInstance().getSystemService(Context.ALARM_SERVICE) as AlarmManager
             alarmManager.cancel(buildAlarmIntent())
-            Timber.tag(TAG).i("Cancelled pending app usage notification")
         }
 
         private fun buildAlarmIntent(): PendingIntent {
@@ -91,19 +148,16 @@ class AppUsageReminderManager : PreferencesManager() {
         }
     }
 
-    private fun lastActiveAt(): Long {
-        return getPreference(PreferenceKeys.APP_USAGE_LAST_ACTIVE_AT.name, 0L)
-    }
-
-    private fun setLastActiveAt(value: Long) {
-        savePreference(value, PreferenceKeys.APP_USAGE_LAST_ACTIVE_AT.name)
-    }
-
     private fun lastShownAt(): Long {
         return getPreference(PreferenceKeys.APP_USAGE_LAST_SHOWN_AT.name, 0L)
     }
 
-    private fun setLastShownAt(value: Long) {
-        savePreference(value, PreferenceKeys.APP_USAGE_LAST_SHOWN_AT.name)
+    private fun shownCount(): Int {
+        return getPreference(PreferenceKeys.APP_USAGE_SHOWN_COUNT.name, 0)
+    }
+
+    private fun setShown(at: Long, count: Int) {
+        savePreference(at, PreferenceKeys.APP_USAGE_LAST_SHOWN_AT.name)
+        savePreference(count, PreferenceKeys.APP_USAGE_SHOWN_COUNT.name)
     }
 }
