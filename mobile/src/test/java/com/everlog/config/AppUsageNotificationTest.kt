@@ -1,7 +1,6 @@
 package com.everlog.config
 
 import com.google.common.truth.Truth.assertThat
-import com.google.gson.Gson
 import org.junit.After
 import org.junit.Before
 import org.junit.Test
@@ -143,10 +142,31 @@ class AppUsageNotificationTest {
     }
 
     @Test
+    fun `a single reminder when the max is 1`() {
+        val lastActive = at(2026, 9, 1, 18)
+
+        val shown = remindersWhileAway(backoff.copy(maxReminders = 1), lastActive, until = at(2027, 12, 31, 0))
+
+        assertThat(shown).containsExactly(at(2026, 9, 8, 13))
+    }
+
+    @Test
     fun `ignores invalid backoff intervals`() {
-        val notification = backoff.copy(backoffIntervalsDays = listOf(0, -3))
+        val notification = backoff.copy(backoffIntervalsDays = listOf(0, -3, null))
 
         assertThat(notification.intervalDays(0)).isEqualTo(7)
+    }
+
+    @Test
+    fun `skips invalid entries between valid backoff intervals`() {
+        val notification = backoff.copy(backoffIntervalsDays = listOf(7, null, 0, 14))
+
+        assertThat(notification.intervalDays(1)).isEqualTo(14)
+    }
+
+    @Test
+    fun `an empty backoff list reminds every interval`() {
+        assertThat(backoff.copy(backoffIntervalsDays = emptyList()).intervalDays(5)).isEqualTo(7)
     }
 
     // Late alarms
@@ -180,6 +200,15 @@ class AppUsageNotificationTest {
 
         assertThat(reminder.attempt).isEqualTo(2)
         assertThat(reminder.dueAtMillis).isEqualTo(at(2026, 10, 9, 13))
+    }
+
+    @Test
+    fun `an old alarm firing the day after a reminder does not show another`() {
+        val lastActive = at(2026, 9, 1, 18)
+        val shown = at(2026, 9, 8, 13)
+        val reminder = backoff.nextReminder(lastActive, shown, 1, at(2026, 9, 9, 10))!!
+
+        assertThat(reminder.isDue(at(2026, 9, 9, 10))).isFalse()
     }
 
     @Test
@@ -253,6 +282,34 @@ class AppUsageNotificationTest {
         val lastActive = at(2026, 9, 1, 18)
 
         assertThat(backoff.nextReminder(lastActive, 0, 0, lastActive)!!.title).isEqualTo(legacy.title)
+        assertThat(backoff.copy(messages = emptyList()).nextReminder(lastActive, 0, 0, lastActive)!!.title).isEqualTo(legacy.title)
+    }
+
+    @Test
+    fun `skips null messages`() {
+        val notification = backoff.copy(messages = listOf(null, AppUsageNotification.Message("Only", "One")))
+        val lastActive = at(2026, 9, 1, 18)
+
+        assertThat(notification.nextReminder(lastActive, 0, 0, lastActive)!!.title).isEqualTo("Only")
+    }
+
+    // Validation
+
+    @Test
+    fun `backoff config is valid`() {
+        assertThat(backoff.isValid()).isTrue()
+    }
+
+    @Test
+    fun `invalid without the default text, which older app versions and fallbacks need`() {
+        assertThat(backoff.copy(title = null).isValid()).isFalse()
+        assertThat(backoff.copy(description = "").isValid()).isFalse()
+    }
+
+    @Test
+    fun `invalid without an interval or with an hour out of range`() {
+        assertThat(backoff.copy(scheduleIntervalDays = 0).isValid()).isFalse()
+        assertThat(backoff.copy(scheduleHourOfDay = 25).isValid()).isFalse()
     }
 
     // Remote Config
@@ -261,8 +318,9 @@ class AppUsageNotificationTest {
     fun `parses the original config`() {
         val json = """{"title":"T","description":"D","scheduleIntervalDays":4,"scheduleHourOfDay":10}"""
 
-        val notification = Gson().fromJson(json, AppUsageNotification::class.java)
+        val notification = RemoteConfig.parse(json, AppUsageNotification::class.java)!!
 
+        assertThat(notification.isValid()).isTrue()
         assertThat(notification.backoffIntervalsDays).isNull()
         assertThat(notification.maxReminders).isEqualTo(0)
         assertThat(notification.messages).isNull()
@@ -275,12 +333,31 @@ class AppUsageNotificationTest {
             "backoffIntervalsDays":[7,14,30],"maxReminders":6,
             "messages":[{"title":"A","description":"B"},{"description":"C"}]}"""
 
-        val notification = Gson().fromJson(json, AppUsageNotification::class.java)
+        val notification = RemoteConfig.parse(json, AppUsageNotification::class.java)!!
 
         assertThat(notification.backoffIntervalsDays).containsExactly(7, 14, 30).inOrder()
         assertThat(notification.maxReminders).isEqualTo(6)
         assertThat(notification.messages).containsExactly(
                 AppUsageNotification.Message("A", "B"),
                 AppUsageNotification.Message(null, "C")).inOrder()
+    }
+
+    @Test
+    fun `parses a stray null in the lists without crashing`() {
+        val json = """{"title":"T","description":"D","scheduleIntervalDays":7,"scheduleHourOfDay":13,
+            "backoffIntervalsDays":[7,null,30],"messages":[null,{"title":"A"}]}"""
+
+        val notification = RemoteConfig.parse(json, AppUsageNotification::class.java)!!
+        val lastActive = at(2026, 9, 1, 18)
+
+        assertThat(notification.intervalDays(1)).isEqualTo(30)
+        assertThat(notification.nextReminder(lastActive, 0, 0, lastActive)!!.title).isEqualTo("A")
+    }
+
+    @Test
+    fun `drops a malformed config instead of crashing`() {
+        val json = """{"title":"T","description":"D","scheduleIntervalDays":7,"maxReminders":"six"}"""
+
+        assertThat(RemoteConfig.parse(json, AppUsageNotification::class.java)).isNull()
     }
 }
