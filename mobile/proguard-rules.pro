@@ -28,10 +28,6 @@
   public *;
 }
 
-# MiltiViewAdapter
--dontwarn android.databinding.**
--keep class android.databinding.** { *; }
-
 # RxJava rules
 # RxAndroid will soon ship with rules so this may not be needed in the future
 # https://github.com/ReactiveX/RxAndroid/issues/219
@@ -49,14 +45,6 @@
     rx.internal.util.atomic.LinkedQueueNode consumerNode;
 }
 
-# SearchView
--keep class android.support.v7.widget.SearchView { *; }
-
-# TapTargetView
--keep class android.support.v7.widget.Toolbar { *** mMenuView; }
--keep class android.support.v7.widget.ActionMenuView { *** mPresenter; }
--keep class android.support.v7.widget.ActionMenuPresenter { *** mOverflowButton; }
-
 # Eventbus
 -keepclassmembers class ** {
     @org.greenrobot.eventbus.Subscribe <methods>;
@@ -67,15 +55,9 @@
 -keepattributes *Annotation*
 -keepattributes SourceFile,LineNumberTable
 -keep public class * extends java.lang.Exception
--keep class com.crashlytics.** { *; }
--dontwarn com.crashlytics.**
-
-# InApp Billing
--keep class * implements com.android.vending.billing.IInAppBillingService { *; }
 
 # Retrofit rules
 -dontwarn retrofit2.**
--keep class retrofit2.** { *; }
 -keepattributes Signature
 -keepattributes Exceptions
 
@@ -88,7 +70,6 @@
 -dontwarn com.squareup.okhttp.**
 -dontwarn retrofit2.Platform$Java8
 -dontwarn okhttp3.**
--keep class okhttp3.** { *;}
 
 # Serializable
 -keepnames class * implements java.io.Serializable
@@ -105,11 +86,11 @@
 # Models
 -keep class com.everlog.data.model.** { *; }
 -keep class com.everlog.config.** { *; }
+# Gson doesn't ship R8 rules until 2.11, so without this optimisation can assume the fields are never set
+-keep class com.everlog.managers.api.coverimages.response.** { *; }
 
 # Ads
 -keep class com.google.android.gms.common.GooglePlayServicesUtil {*;}
 -keep class com.google.android.gms.ads.identifier.AdvertisingIdClient {*;}
 -keep class com.google.android.gms.ads.identifier.AdvertisingIdClient$Info {*;}
 
-# Lifecycle
--keep class androidx.lifecycle.** { *; }
