@@ -1,6 +1,5 @@
 package com.everlog.managers.analytics
 
-import android.app.Activity
 import android.os.Bundle
 import com.everlog.data.model.set.ELSetType
 import com.everlog.managers.appupdate.AppUpdateController
@@ -11,9 +10,7 @@ import java.io.Serializable
 
 abstract class BaseAnalytic : Analytic {
 
-    abstract fun logScreenName(eventName: String,
-                               activity: Activity?,
-                               screenName: String?)
+    abstract fun logScreenName(eventName: String, screenName: String?)
 
     abstract fun logUserRegister(eventName: String, userId: String?)
 
@@ -108,8 +105,8 @@ abstract class BaseAnalytic : Analytic {
         logEvent(AnalyticsConstants.EVENT_APP_NOT_NOW)
     }
 
-    override fun screenName(activity: Activity?, screenName: String?) {
-        logScreenName(AnalyticsConstants.EVENT_SCREEN_VIEW, activity, screenName)
+    override fun screenName(screenName: String?) {
+        logScreenName(AnalyticsConstants.EVENT_SCREEN_VIEW, screenName)
     }
 
     override fun userRegister(userId: String?) {
@@ -338,6 +335,18 @@ abstract class BaseAnalytic : Analytic {
 
     override fun workoutServiceWorkoutCompleted() {
         logEvent(AnalyticsConstants.EVENT_WORKOUT_SERVICE_WORKOUT_COMPLETED)
+    }
+
+    override fun workoutServiceTimerStartedExercise() {
+        logEvent(AnalyticsConstants.EVENT_WORKOUT_SERVICE_TIMER_STARTED_EXERCISE)
+    }
+
+    override fun workoutServiceTimerStoppedExercise() {
+        logEvent(AnalyticsConstants.EVENT_WORKOUT_SERVICE_TIMER_STOPPED_EXERCISE)
+    }
+
+    override fun workoutServiceTimerStoppedRest() {
+        logEvent(AnalyticsConstants.EVENT_WORKOUT_SERVICE_TIMER_STOPPED_REST)
     }
 
     override fun workoutChangeMuscleGoal() {

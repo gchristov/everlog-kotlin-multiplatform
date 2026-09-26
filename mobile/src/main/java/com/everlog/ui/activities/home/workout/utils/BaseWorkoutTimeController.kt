@@ -32,9 +32,11 @@ abstract class BaseWorkoutTimeController(
 
     private val mTimeStopped = PublishSubject.create<Void>()
 
-    abstract fun timerStarted()
+    // logAnalytics: false when the change isn't a tap on the workout screen, e.g. a notification
+    // action (WorkoutService logs those) or the screen closing
+    abstract fun timerStarted(logAnalytics: Boolean)
 
-    abstract fun timerStopped(userCancelled: Boolean)
+    abstract fun timerStopped(userCancelled: Boolean, logAnalytics: Boolean)
 
     abstract fun timerOffsetUpdated()
 
@@ -50,16 +52,16 @@ abstract class BaseWorkoutTimeController(
         return mTimeStopped
     }
 
-    fun startTimer(timeSeconds: Int) {
+    fun startTimer(timeSeconds: Int, logAnalytics: Boolean) {
         mStartedDate = Date().time
         mTotalTimeSeconds = timeSeconds
         if (isActive()) {
             attachTimer()
-            timerStarted()
+            timerStarted(logAnalytics)
         }
     }
 
-    fun stopTimer(userCancelled: Boolean) {
+    fun stopTimer(userCancelled: Boolean, logAnalytics: Boolean = true) {
         mTimerView?.hide(contentPanel)
         mTimerView = null
         mStartedDate = 0
@@ -71,7 +73,7 @@ abstract class BaseWorkoutTimeController(
                 VibrationUtils.vibrate(it)
             }
         }
-        timerStopped(userCancelled)
+        timerStopped(userCancelled, logAnalytics)
     }
 
     fun isActive(): Boolean {

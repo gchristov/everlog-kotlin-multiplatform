@@ -1,6 +1,5 @@
 package com.everlog.managers.analytics
 
-import android.app.Activity
 import com.everlog.BuildConfig
 import com.everlog.data.model.set.ELSetType
 import com.everlog.managers.appupdate.AppUpdateController
@@ -109,10 +108,10 @@ class AnalyticsManager : Analytic {
         }
     }
 
-    override fun screenName(activity: Activity?, screenName: String?) {
-        Timber.tag(TAG).i("Screen name: activity=%s, screenName=%s", activity?.javaClass?.simpleName, screenName)
+    override fun screenName(screenName: String?) {
+        Timber.tag(TAG).i("Screen name: screenName=%s", screenName)
         mAnalytics?.forEach {
-            it.screenName(activity, screenName)
+            it.screenName(screenName)
         }
     }
 
@@ -449,6 +448,27 @@ class AnalyticsManager : Analytic {
         Timber.tag(TAG).i("Workout service workout completed")
         mAnalytics?.forEach {
             it.workoutServiceWorkoutCompleted()
+        }
+    }
+
+    override fun workoutServiceTimerStartedExercise() {
+        Timber.tag(TAG).i("Workout service timer started exercise")
+        mAnalytics?.forEach {
+            it.workoutServiceTimerStartedExercise()
+        }
+    }
+
+    override fun workoutServiceTimerStoppedExercise() {
+        Timber.tag(TAG).i("Workout service timer stopped exercise")
+        mAnalytics?.forEach {
+            it.workoutServiceTimerStoppedExercise()
+        }
+    }
+
+    override fun workoutServiceTimerStoppedRest() {
+        Timber.tag(TAG).i("Workout service timer stopped rest")
+        mAnalytics?.forEach {
+            it.workoutServiceTimerStoppedRest()
         }
     }
 
