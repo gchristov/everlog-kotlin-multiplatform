@@ -451,6 +451,27 @@ class AnalyticsManager : Analytic {
         }
     }
 
+    override fun workoutServiceTimerStartedExercise() {
+        Timber.tag(TAG).i("Workout service timer started exercise")
+        mAnalytics?.forEach {
+            it.workoutServiceTimerStartedExercise()
+        }
+    }
+
+    override fun workoutServiceTimerStoppedExercise() {
+        Timber.tag(TAG).i("Workout service timer stopped exercise")
+        mAnalytics?.forEach {
+            it.workoutServiceTimerStoppedExercise()
+        }
+    }
+
+    override fun workoutServiceTimerStoppedRest() {
+        Timber.tag(TAG).i("Workout service timer stopped rest")
+        mAnalytics?.forEach {
+            it.workoutServiceTimerStoppedRest()
+        }
+    }
+
     override fun workoutChangeMuscleGoal() {
         Timber.tag(TAG).i("Workout change muscle goal")
         mAnalytics?.forEach {

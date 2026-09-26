@@ -191,7 +191,8 @@ class PresenterWorkout : PresenterCreateExerciseGroups<MvpViewWorkout>() {
     private fun observeServiceTimerRestStopClick() {
         subscriptions.add(mvpView.onClickServiceTimerRestStop()
                 .compose(applyUISchedulers())
-                .subscribe({ mWorkoutTimeController?.stopTimer(true) })
+                // WorkoutService logs the notification's actions
+                .subscribe({ mWorkoutTimeController?.stopTimer(userCancelled = true, logAnalytics = false) })
                 { throwable: Throwable? -> handleError(throwable) })
     }
 
@@ -257,24 +258,26 @@ class PresenterWorkout : PresenterCreateExerciseGroups<MvpViewWorkout>() {
 
     private fun toggleSetTimer(exercise: ELRoutineExercise,
                                set: ELSet,
-                               start: Boolean) {
+                               start: Boolean,
+                               logAnalytics: Boolean = true) {
         if (start) {
             // Reuses the current view if a timer is already active instead of tearing it down
-            mWorkoutTimeController?.startExerciseTimer(exercise, set)
+            mWorkoutTimeController?.startExerciseTimer(exercise, set, logAnalytics)
             workoutTimeTick()
         } else {
-            stopTimer(mWorkoutTimeController)
+            stopTimer(mWorkoutTimeController, logAnalytics)
         }
     }
 
-    private fun stopTimer(timer: BaseWorkoutTimeController?) {
+    private fun stopTimer(timer: BaseWorkoutTimeController?, logAnalytics: Boolean = true) {
         if (timer?.isActive() == true) {
-            timer.stopTimer(true)
+            timer.stopTimer(userCancelled = true, logAnalytics = logAnalytics)
         }
     }
 
     private fun stopAllTimers() {
-        stopTimer(mWorkoutTimeController)
+        // The screen closing, not the user stopping the timer
+        stopTimer(mWorkoutTimeController, logAnalytics = false)
         mTickTimeController?.cancelTimer()
     }
 
@@ -311,12 +314,13 @@ class PresenterWorkout : PresenterCreateExerciseGroups<MvpViewWorkout>() {
         val set = exercise?.sets?.get(state.setIndex)
         set?.updateStartedDate(Date().time)
         set?.updateCompletedDate(Date().time)
-        // Stop the timer if already running
-        stopTimer(mWorkoutTimeController)
+        // Stop the timer if already running. WorkoutService logs the notification's actions, so
+        // the timer changes they cause aren't logged again here.
+        stopTimer(mWorkoutTimeController, logAnalytics = false)
         // Only call this is the overall set has been completed
         notifyWorkoutServiceSetUpdated()
         if (group?.setIsComplete(state.setIndex) == true) {
-            setCompleted(group)
+            setCompleted(group, logAnalytics = false)
         }
         Utils.runWithDelay({
             saveOngoingWorkout()
@@ -348,7 +352,8 @@ class PresenterWorkout : PresenterCreateExerciseGroups<MvpViewWorkout>() {
         val group = mWorkout?.getExerciseGroups()?.get(state.groupIndex)
         val exercise = group?.getExercisesForSetIndex(state.setIndex)?.get(state.exerciseIndex)
         val set = exercise?.sets?.get(state.setIndex)
-        toggleSetTimer(exercise!!, set!!, start)
+        // WorkoutService logs the notification's actions
+        toggleSetTimer(exercise!!, set!!, start, logAnalytics = false)
     }
 
     // Workout service
@@ -393,10 +398,14 @@ class PresenterWorkout : PresenterCreateExerciseGroups<MvpViewWorkout>() {
     // Set changes
 
     override fun setCompleted(group: ELExerciseGroup?) {
+        setCompleted(group, logAnalytics = true)
+    }
+
+    private fun setCompleted(group: ELExerciseGroup?, logAnalytics: Boolean) {
         super.setCompleted(group)
         if (group?.hasRestTime() == true) {
             // Reuses the current view if a timer is already active instead of tearing it down
-            mWorkoutTimeController?.startRestTimer(group.restTimeSeconds)
+            mWorkoutTimeController?.startRestTimer(group.restTimeSeconds, logAnalytics)
         }
     }
 

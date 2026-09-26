@@ -28,47 +28,51 @@ class WorkoutTimeController(mvpView: MvpViewWorkout?,
     private var mTitle = ""
     private var mRunningSet: ELSet? = null
 
-    fun startRestTimer(timeSeconds: Int) {
+    fun startRestTimer(timeSeconds: Int, logAnalytics: Boolean) {
         mIsRest = true
         mTitle = "Rest"
         mRunningSet = null
-        startTimer(timeSeconds)
+        startTimer(timeSeconds, logAnalytics)
     }
 
-    fun startExerciseTimer(exercise: ELRoutineExercise, set: ELSet) {
+    fun startExerciseTimer(exercise: ELRoutineExercise, set: ELSet, logAnalytics: Boolean) {
         mIsRest = false
         mTitle = exercise.getName() ?: "Exercise timer"
         mRunningSet = set
-        startTimer(set.getTimeSeconds())
+        startTimer(set.getTimeSeconds(), logAnalytics)
     }
 
     fun isRunningExerciseTimer(): Boolean {
         return isActive() && !mIsRest
     }
 
-    override fun timerStarted() {
+    override fun timerStarted(logAnalytics: Boolean) {
         if (mIsRest) {
             // Change notification to be the rest timer
             mNavigator?.notifyWorkoutServiceShowRestTimer(100, mTotalTimeSeconds)
-            AnalyticsManager.manager.workoutTimerStartedRest()
+            if (logAnalytics) {
+                AnalyticsManager.manager.workoutTimerStartedRest()
+            }
         } else {
             mRunningSet?.remainingTimeSeconds = mRunningSet?.getTimeSeconds()
-            AnalyticsManager.manager.workoutTimerStartedExercise()
+            if (logAnalytics) {
+                AnalyticsManager.manager.workoutTimerStartedExercise()
+            }
         }
     }
 
-    override fun timerStopped(userCancelled: Boolean) {
+    override fun timerStopped(userCancelled: Boolean, logAnalytics: Boolean) {
         if (mIsRest) {
             // Hide rest timer
             mNavigator?.notifyWorkoutServiceHideRestTimer(mWorkout)
-            if (userCancelled) {
+            if (userCancelled && logAnalytics) {
                 AnalyticsManager.manager.workoutTimerStoppedRest()
             }
         } else {
             mRunningSet?.remainingTimeSeconds = null
             mRunningSet = null
             mNavigator?.notifyWorkoutServiceSetUpdated(mWorkout)
-            if (userCancelled) {
+            if (userCancelled && logAnalytics) {
                 AnalyticsManager.manager.workoutTimerStoppedExercise()
             }
             Utils.runWithDelay({

@@ -337,6 +337,18 @@ abstract class BaseAnalytic : Analytic {
         logEvent(AnalyticsConstants.EVENT_WORKOUT_SERVICE_WORKOUT_COMPLETED)
     }
 
+    override fun workoutServiceTimerStartedExercise() {
+        logEvent(AnalyticsConstants.EVENT_WORKOUT_SERVICE_TIMER_STARTED_EXERCISE)
+    }
+
+    override fun workoutServiceTimerStoppedExercise() {
+        logEvent(AnalyticsConstants.EVENT_WORKOUT_SERVICE_TIMER_STOPPED_EXERCISE)
+    }
+
+    override fun workoutServiceTimerStoppedRest() {
+        logEvent(AnalyticsConstants.EVENT_WORKOUT_SERVICE_TIMER_STOPPED_REST)
+    }
+
     override fun workoutChangeMuscleGoal() {
         logEvent(AnalyticsConstants.EVENT_WORKOUT_CHANGE_MUSCLE_GOAL)
     }

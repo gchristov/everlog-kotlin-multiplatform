@@ -131,6 +131,11 @@ class WorkoutService : BaseService() {
     }
 
     private fun handleExerciseTimer(start: Boolean) {
+        if (start) {
+            AnalyticsManager.manager.workoutServiceTimerStartedExercise()
+        } else {
+            AnalyticsManager.manager.workoutServiceTimerStoppedExercise()
+        }
         val intent = Intent(if (start) BROADCAST_REQUEST_TIMER_EXERCISE_START else BROADCAST_REQUEST_TIMER_EXERCISE_STOP)
         intent.putExtra(ELConstants.EXTRA_WORKOUT_STATE, mNextState)
         LocalBroadcastManager.getInstance(this).sendBroadcast(intent)
@@ -144,6 +149,7 @@ class WorkoutService : BaseService() {
     }
 
     private fun handleStopRestTimer() {
+        AnalyticsManager.manager.workoutServiceTimerStoppedRest()
         LocalBroadcastManager.getInstance(this).sendBroadcast(Intent(BROADCAST_REQUEST_TIMER_REST_STOP))
     }
 
