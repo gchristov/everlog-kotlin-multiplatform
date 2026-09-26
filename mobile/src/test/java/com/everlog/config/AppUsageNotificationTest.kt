@@ -151,17 +151,15 @@ class AppUsageNotificationTest {
     }
 
     @Test
-    fun `ignores invalid backoff intervals`() {
-        val notification = backoff.copy(backoffIntervalsDays = listOf(0, -3, null))
+    fun `an invalid backoff interval falls back to the default interval for that reminder only`() {
+        val notification = backoff.copy(scheduleIntervalDays = 5, backoffIntervalsDays = listOf(7, null, 0, -3, 30))
 
         assertThat(notification.intervalDays(0)).isEqualTo(7)
-    }
-
-    @Test
-    fun `skips invalid entries between valid backoff intervals`() {
-        val notification = backoff.copy(backoffIntervalsDays = listOf(7, null, 0, 14))
-
-        assertThat(notification.intervalDays(1)).isEqualTo(14)
+        assertThat(notification.intervalDays(1)).isEqualTo(5)
+        assertThat(notification.intervalDays(2)).isEqualTo(5)
+        assertThat(notification.intervalDays(3)).isEqualTo(5)
+        assertThat(notification.intervalDays(4)).isEqualTo(30)
+        assertThat(notification.intervalDays(9)).isEqualTo(30)
     }
 
     @Test
@@ -251,6 +249,13 @@ class AppUsageNotificationTest {
 
     // Messages
 
+    // Reminder [attempt] (1 for the first) for a user away since 1 Sep, with the previous ones shown
+    private fun reminder(notification: AppUsageNotification, attempt: Int): AppUsageNotification.Reminder {
+        val lastActive = at(2026, 9, 1, 18)
+        val lastShown = if (attempt > 1) at(2026, 9, 8, 13) else 0
+        return notification.nextReminder(lastActive, lastShown, attempt - 1, at(2026, 9, 8, 13))!!
+    }
+
     @Test
     fun `uses the message for each reminder, the last one repeating`() {
         val notification = backoff.copy(messages = listOf(
@@ -286,11 +291,33 @@ class AppUsageNotificationTest {
     }
 
     @Test
-    fun `skips null messages`() {
-        val notification = backoff.copy(messages = listOf(null, AppUsageNotification.Message("Only", "One")))
-        val lastActive = at(2026, 9, 1, 18)
+    fun `a null message falls back to the default text for that reminder only`() {
+        val notification = backoff.copy(messages = listOf(null, AppUsageNotification.Message("Second", "Two")))
 
-        assertThat(notification.nextReminder(lastActive, 0, 0, lastActive)!!.title).isEqualTo("Only")
+        assertThat(reminder(notification, 1).title).isEqualTo(legacy.title)
+        assertThat(reminder(notification, 1).description).isEqualTo(legacy.description)
+        assertThat(reminder(notification, 2).title).isEqualTo("Second")
+    }
+
+    @Test
+    fun `a blank message in the middle falls back without shifting the later ones`() {
+        val notification = backoff.copy(messages = listOf(
+                AppUsageNotification.Message("First", "One"),
+                AppUsageNotification.Message(" ", ""),
+                AppUsageNotification.Message("Third", "Three")))
+
+        assertThat(reminder(notification, 1).title).isEqualTo("First")
+        assertThat(reminder(notification, 2).title).isEqualTo(legacy.title)
+        assertThat(reminder(notification, 2).description).isEqualTo(legacy.description)
+        assertThat(reminder(notification, 3).title).isEqualTo("Third")
+        assertThat(reminder(notification, 6).title).isEqualTo("Third")
+    }
+
+    @Test
+    fun `a null last message repeats as the default text`() {
+        val notification = backoff.copy(messages = listOf(AppUsageNotification.Message("First", "One"), null))
+
+        assertThat(reminder(notification, 5).title).isEqualTo(legacy.title)
     }
 
     // Validation
@@ -348,10 +375,12 @@ class AppUsageNotificationTest {
             "backoffIntervalsDays":[7,null,30],"messages":[null,{"title":"A"}]}"""
 
         val notification = RemoteConfig.parse(json, AppUsageNotification::class.java)!!
-        val lastActive = at(2026, 9, 1, 18)
 
-        assertThat(notification.intervalDays(1)).isEqualTo(30)
-        assertThat(notification.nextReminder(lastActive, 0, 0, lastActive)!!.title).isEqualTo("A")
+        assertThat(notification.intervalDays(1)).isEqualTo(7)
+        assertThat(notification.intervalDays(2)).isEqualTo(30)
+        assertThat(reminder(notification, 1).title).isEqualTo("T")
+        assertThat(reminder(notification, 2).title).isEqualTo("A")
+        assertThat(reminder(notification, 2).description).isEqualTo("D")
     }
 
     @Test
