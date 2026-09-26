@@ -106,6 +106,13 @@ class AppUsageNotificationTest {
     }
 
     @Test
+    fun `a negative max never stops`() {
+        val lastActive = at(2026, 9, 1, 18)
+
+        assertThat(backoff.copy(maxReminders = -1).nextReminder(lastActive, at(2027, 1, 20, 13), 50, at(2027, 1, 20, 13))?.attempt).isEqualTo(51)
+    }
+
+    @Test
     fun `no more reminders once the max is reached`() {
         val lastActive = at(2026, 9, 1, 18)
 
@@ -186,6 +193,14 @@ class AppUsageNotificationTest {
         val now = at(2026, 9, 20, 15)
 
         assertThat(backoff.nextReminder(lastActive, 0, 0, now)!!.alarmAtMillis(now, 13)).isEqualTo(at(2026, 9, 21, 13))
+    }
+
+    @Test
+    fun `an overdue reminder at exactly the configured hour is set for now`() {
+        val lastActive = at(2026, 9, 1, 18)
+        val now = at(2026, 9, 20, 13)
+
+        assertThat(backoff.nextReminder(lastActive, 0, 0, now)!!.alarmAtMillis(now, 13)).isEqualTo(now)
     }
 
     @Test
