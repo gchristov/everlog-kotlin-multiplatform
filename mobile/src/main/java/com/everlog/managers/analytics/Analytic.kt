@@ -1,6 +1,5 @@
 package com.everlog.managers.analytics
 
-import android.app.Activity
 import com.everlog.data.model.set.ELSetType
 import com.everlog.managers.appupdate.AppUpdateController
 import com.everlog.managers.preferences.SettingsManager.MuscleGoal
@@ -23,7 +22,7 @@ interface Analytic {
     fun appFeedback()
     fun appNotNow()
 
-    fun screenName(activity: Activity?, screenName: String?)
+    fun screenName(screenName: String?)
 
     fun userRegister(userId: String?)
 

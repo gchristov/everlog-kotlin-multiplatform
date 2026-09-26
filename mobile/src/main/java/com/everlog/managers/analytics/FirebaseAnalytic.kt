@@ -1,6 +1,5 @@
 package com.everlog.managers.analytics
 
-import android.app.Activity
 import android.os.Bundle
 import com.everlog.application.ELApplication.Companion.getInstance
 import com.google.firebase.analytics.FirebaseAnalytics
@@ -18,15 +17,16 @@ class FirebaseAnalytic : BaseAnalytic() {
         mFirebaseAnalytics?.setAnalyticsCollectionEnabled(enabled)
     }
 
-    override fun logScreenName(eventName: String,
-                               activity: Activity?,
-                               screenName: String?) {
+    override fun logScreenName(eventName: String, screenName: String?) {
         if (!mAnalyticsEnabled) {
             return
         }
-        if (activity != null) {
-            mFirebaseAnalytics?.setCurrentScreen(activity, screenName, screenName)
-        }
+        // Replaces the deprecated setCurrentScreen(). Firebase ignores screen views while the app
+        // is in the background, so events from there (e.g. the workout notification) have none.
+        val bundle = Bundle()
+        bundle.putString(FirebaseAnalytics.Param.SCREEN_NAME, screenName)
+        bundle.putString(FirebaseAnalytics.Param.SCREEN_CLASS, screenName)
+        mFirebaseAnalytics?.logEvent(eventName, bundle)
     }
 
     override fun logUserRegister(eventName: String, userId: String?) {

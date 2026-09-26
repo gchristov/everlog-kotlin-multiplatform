@@ -11,6 +11,6 @@ abstract class BaseTabFragment : BaseFragment() {
 
     override fun onResume() {
         super.onResume()
-        AnalyticsManager.manager.screenName(getParentActivity(), getAnalyticsScreenName())
+        AnalyticsManager.manager.screenName(getAnalyticsScreenName())
     }
 }

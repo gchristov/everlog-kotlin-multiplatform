@@ -147,7 +147,7 @@ abstract class BaseActivity : AppCompatActivity(), BaseActivityMvpView {
 
     override fun onResume() {
         super.onResume()
-        AnalyticsManager.manager.screenName(this, getAnalyticsScreenName())
+        AnalyticsManager.manager.screenName(getAnalyticsScreenName())
         getPresenter<BaseActivityMvpView>()?.onActivityResumed()
     }
 
