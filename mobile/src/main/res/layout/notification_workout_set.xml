@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Collapsed next set view. Wrapped in DecoratedCustomViewStyle, so the system draws the app icon,
+     name and background around it. Keep it to a single row: API 31+ gives collapsed custom content
+     roughly 48dp of height. -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:gravity="center_vertical"
+    android:orientation="horizontal">
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/exerciseName"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:singleLine="true"
+            android:textAppearance="@style/TextAppearance.Compat.Notification.Title"
+            tools:text="Barbell bench press" />
+
+        <TextView
+            android:id="@+id/setSummary"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:singleLine="true"
+            android:textAppearance="@style/TextAppearance.Compat.Notification"
+            tools:text="Super set 3/4  •  60 kg  •  10 reps" />
+    </LinearLayout>
+
+    <!-- Icon pinned to the end, matching the expanded view. The tap target stays 48dp wide. -->
+    <ImageView
+        android:id="@+id/nextBtn"
+        style="@style/WorkoutNotificationButton"
+        android:layout_width="48dp"
+        android:layout_height="40dp"
+        android:layout_marginEnd="-3dp"
+        android:contentDescription="@string/workout_notification_complete_set"
+        android:paddingStart="24dp"
+        android:paddingEnd="0dp"
+        android:scaleType="center"
+        android:src="@drawable/ic_check" />
+</LinearLayout>

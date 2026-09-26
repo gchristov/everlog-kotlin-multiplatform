@@ -1,5 +1,6 @@
 package com.everlog.services.workout
 
+import android.app.Notification
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
@@ -8,9 +9,6 @@ import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.everlog.BuildConfig
 import com.everlog.R
 import com.everlog.constants.ELConstants
-import com.everlog.data.model.exercise.ELExerciseGroup
-import com.everlog.data.model.exercise.ELRoutineExercise
-import com.everlog.data.model.set.ELSet
 import com.everlog.data.model.workout.ELWorkout
 import com.everlog.data.model.workout.ELWorkoutState
 import com.everlog.managers.ELNotificationManager
@@ -24,15 +22,9 @@ class WorkoutService : BaseService() {
 
     // State
 
-    internal var mWorkout: ELWorkout? = null
-    internal var mNextState: ELWorkoutState? = null
-    internal var mNextExerciseGroup: ELExerciseGroup? = null
-    internal var mNextExercise: ELRoutineExercise? = null
-    internal var mNextSet: ELSet? = null
-
-    internal var mShowRestTimer = false
-    internal var mShowRestTimerProgress: Int = 0
-    internal var mShowRestTimerRemainingSeconds: Int = 0
+    private var mWorkout: ELWorkout? = null
+    private var mNextState: ELWorkoutState? = null
+    private var mRestTimer: WorkoutNotificationState.RestTimer? = null
 
     private var mReceiver: BroadcastReceiver? = null
 
@@ -104,7 +96,7 @@ class WorkoutService : BaseService() {
         setupWorkoutState(intent)
         ELNotificationManager.startForeground(this,
                 NOTIFICATION_ID,
-                WorkoutNotificationBuilder(this).buildNotification(notificationChannelId()),
+                buildNotification(),
                 notificationChannelOptions())
     }
 
@@ -157,8 +149,13 @@ class WorkoutService : BaseService() {
 
     private fun refreshNotification() {
         ELNotificationManager.notify(NOTIFICATION_ID,
-                WorkoutNotificationBuilder(this).buildNotification(notificationChannelId()),
+                buildNotification(),
                 notificationChannelOptions())
+    }
+
+    private fun buildNotification(): Notification {
+        val state = WorkoutNotificationState.from(mWorkout, mRestTimer)
+        return WorkoutNotificationBuilder(this).build(notificationChannelId(), state, mWorkout)
     }
 
     // Notification channel
@@ -195,23 +192,14 @@ class WorkoutService : BaseService() {
 
     private fun setupWorkoutState(intent: Intent?) {
         if (intent?.hasExtra(ELConstants.EXTRA_REST_TIMER_PROGRESS) == true) {
-            mShowRestTimer = true
-            mShowRestTimerProgress = intent.getIntExtra(ELConstants.EXTRA_REST_TIMER_PROGRESS, 100)
-            mShowRestTimerRemainingSeconds = intent.getIntExtra(ELConstants.EXTRA_REST_TIMER_REMAINING_SECONDS, 0)
+            // Rest timer updates don't carry the workout, so keep the last one we were sent.
+            mRestTimer = WorkoutNotificationState.RestTimer(
+                    remainingSeconds = intent.getIntExtra(ELConstants.EXTRA_REST_TIMER_REMAINING_SECONDS, 0),
+                    remainingPercent = intent.getIntExtra(ELConstants.EXTRA_REST_TIMER_PROGRESS, 100))
         } else {
-            mShowRestTimer = false
+            mRestTimer = null
             mWorkout = intent?.getSerializableExtra(ELConstants.EXTRA_WORKOUT) as? ELWorkout
             mNextState = mWorkout?.getNextIncompleteState()
-            if (mNextState != null) {
-                mNextExerciseGroup = mWorkout?.getExerciseGroups()?.get(mNextState?.groupIndex ?: 0)
-                val exercises = mNextExerciseGroup?.getExercisesForSetIndex(mNextState?.setIndex ?: 0)
-                mNextExercise = exercises?.get(mNextState?.exerciseIndex ?: 0)
-                mNextSet = mNextExercise?.sets?.get(mNextState?.setIndex ?: 0)
-            } else {
-                mNextExerciseGroup = null
-                mNextExercise = null
-                mNextSet = null
-            }
         }
     }
 }

@@ -144,30 +144,27 @@
         <item name="android:layout_marginLeft">@dimen/activity_margin</item>
     </style>
 
-    <!-- Workout Notification -->
+    <!-- Workout notification. Text uses the notification text appearances so it follows the system
+         notification theme (light/dark) on every Android version. -->
     <style name="WorkoutNotificationButton">
-        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_width">36dp</item>
         <item name="android:layout_height">match_parent</item>
-        <item name="android:paddingLeft">@dimen/margin_10</item>
-        <item name="android:paddingRight">@dimen/margin_10</item>
+        <item name="android:paddingLeft">@dimen/margin_6</item>
+        <item name="android:paddingRight">@dimen/margin_6</item>
         <item name="android:tint">@color/main_accent</item>
     </style>
-    <style name="WorkoutNotificationExponent">
+    <style name="WorkoutNotificationExponent" parent="TextAppearance.Compat.Notification.Info">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">match_parent</item>
-        <item name="android:layout_marginLeft">@dimen/activity_margin_half_half_half</item>
+        <item name="android:layout_marginLeft">2dp</item>
         <item name="android:gravity">center</item>
         <item name="android:paddingTop">@dimen/margin_6</item>
-        <item name="android:textColor">@color/gray_3</item>
-        <item name="android:textSize">12sp</item>
     </style>
-    <style name="WorkoutNotificationInput">
+    <style name="WorkoutNotificationInput" parent="TextAppearance.Compat.Notification.Title">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">match_parent</item>
         <item name="android:gravity">center</item>
         <item name="android:maxLines">1</item>
-        <item name="android:paddingLeft">@dimen/activity_margin_half_half</item>
-        <item name="android:textColor">@color/white_base</item>
         <item name="android:textSize">18sp</item>
         <item name="android:textStyle">bold</item>
     </style>

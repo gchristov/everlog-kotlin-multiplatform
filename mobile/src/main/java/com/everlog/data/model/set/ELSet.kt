@@ -1,11 +1,9 @@
 package com.everlog.data.model.set
 
 import android.content.Context
-import android.text.TextUtils
 import com.everlog.R
 import com.everlog.data.model.ELFirestoreModel
 import com.everlog.managers.preferences.SettingsManager
-import com.everlog.utils.ArrayResourceTypeUtils
 import com.everlog.utils.UnitUtils.Companion.kgToLb
 import com.everlog.utils.UnitUtils.Companion.lbToKg
 import com.everlog.utils.format.FormatUtils
@@ -329,21 +327,6 @@ data class ELSet (
     }
 
     // Summary
-
-    fun getOngoingWorkoutNotificationSummary(context: Context?,
-                                             setNumber: Int,
-                                             setType: String): String {
-        val type = ArrayResourceTypeUtils.withSetTypes().getTitle(setType, setType.lowercase().capitalize() + " Set")
-        val builder = StringBuilder()
-        builder.append("$type $setNumber")
-        val setSummary = getExerciseSetSummary(context, true)
-        if (!TextUtils.isEmpty(setSummary)) {
-            builder.append(" (")
-            builder.append(setSummary)
-            builder.append(")")
-        }
-        return builder.toString()
-    }
 
     fun getWorkoutDetailsSummary(context: Context?): String? {
         if (isWithoutData()) {
