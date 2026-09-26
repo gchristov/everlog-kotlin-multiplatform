@@ -2,6 +2,7 @@ package com.everlog.config
 
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig
 import com.google.gson.Gson
+import timber.log.Timber
 import java.io.Serializable
 
 data class RemoteConfig (
@@ -22,7 +23,23 @@ data class RemoteConfig (
 
     private fun <T> getObjectFromRemoteConfig(key: String,
                                               clazz: Class<T>,
-                                              config: FirebaseRemoteConfig): T {
-        return Gson().fromJson(config.getString(key), clazz)
+                                              config: FirebaseRemoteConfig): T? {
+        return parse(config.getString(key), clazz)
+    }
+
+    companion object {
+
+        /**
+         * A typo in the Remote Config console (e.g. a string where a number is expected) is dropped
+         * instead of crashing the fetch callback.
+         */
+        fun <T> parse(json: String, clazz: Class<T>): T? {
+            return try {
+                Gson().fromJson(json, clazz)
+            } catch (e: Exception) {
+                Timber.tag("RemoteConfig").e(e, "Invalid remote config: %s", json)
+                null
+            }
+        }
     }
 }

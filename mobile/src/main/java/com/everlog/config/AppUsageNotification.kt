@@ -1,6 +1,5 @@
 package com.everlog.config
 
-import android.text.TextUtils
 import java.io.Serializable
 import java.util.*
 
@@ -19,11 +18,12 @@ data class AppUsageNotification (
         var scheduleIntervalDays: Int = 0,
         var scheduleHourOfDay: Int = 0,
         // Gap before each reminder, the last one repeats. Missing means every scheduleIntervalDays.
-        var backoffIntervalsDays: List<Int>? = null,
+        // Nullable entries as Gson reads a stray null in the console's JSON into the list.
+        var backoffIntervalsDays: List<Int?>? = null,
         // Stop after this many reminders without a visit. 0 means never stop.
         var maxReminders: Int = 0,
         // Text for each reminder, the last one repeats. Missing fields fall back to title/description.
-        var messages: List<Message>? = null
+        var messages: List<Message?>? = null
 
 ) : Serializable {
 
@@ -83,7 +83,7 @@ data class AppUsageNotification (
             return null
         }
         val anchor = if (index == 0) active else shown
-        val message = messages?.takeIf { it.isNotEmpty() }?.let { it[minOf(index, it.size - 1)] }
+        val message = messages?.filterNotNull()?.takeIf { it.isNotEmpty() }?.let { it[minOf(index, it.size - 1)] }
         return Reminder(
                 attempt = index + 1,
                 dueAtMillis = atHourOfDay(anchor, intervalDays(index), scheduleHourOfDay),
@@ -92,7 +92,7 @@ data class AppUsageNotification (
     }
 
     fun intervalDays(index: Int): Int {
-        val intervals = backoffIntervalsDays?.filter { it > 0 }
+        val intervals = backoffIntervalsDays?.filterNotNull()?.filter { it > 0 }
         if (intervals.isNullOrEmpty()) {
             return scheduleIntervalDays
         }
@@ -100,8 +100,8 @@ data class AppUsageNotification (
     }
 
     fun isValid(): Boolean {
-        return (!TextUtils.isEmpty(title)
-                && !TextUtils.isEmpty(description)
+        return (!title.isNullOrEmpty()
+                && !description.isNullOrEmpty()
                 && scheduleIntervalDays > 0
                 && scheduleHourOfDay >= 0
                 && scheduleHourOfDay <= 24)
