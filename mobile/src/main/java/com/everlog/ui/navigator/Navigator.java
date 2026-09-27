@@ -7,6 +7,7 @@ import com.everlog.data.model.ELRoutine;
 import com.everlog.data.model.exercise.ELExercise;
 import com.everlog.data.model.plan.ELPlan;
 import com.everlog.data.model.workout.ELWorkout;
+import com.everlog.managers.apprate.RatePromptTrigger;
 import com.everlog.ui.activities.home.congratulate.CongratulateActivity;
 import com.everlog.ui.activities.home.exercise.details.ExerciseDetailsActivity;
 import com.everlog.ui.activities.home.exercisegroup.DefaultCreateExerciseGroupsActivity;
@@ -81,6 +82,11 @@ public interface Navigator {
     void notifyWorkoutServiceHideRestTimer(ELWorkout workout);
 
     void openPlayStoreAppDetails();
+
+    /**
+     * Asks Play for a rating, {@code delayMillis} from now, if the trigger qualifies and the user is due one.
+     */
+    void requestRatePrompt(RatePromptTrigger trigger, long delayMillis);
 
     void openSetTypePicker(int selectedExercisesCount);
 

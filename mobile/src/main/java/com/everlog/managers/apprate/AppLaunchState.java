@@ -10,11 +10,7 @@ import java.util.Date;
 public class AppLaunchState extends PreferencesManager {
 
     private enum PreferenceKeys {
-        FIRST_LAUNCH_DATE,
         LAST_LAUNCH_DATE,
-        DAYS_SINCE_LAST_LAUNCH,
-        LAUNCH_COUNT,
-        CONSECUTIVE_DAYS_LAUNCH_COUNT,
 
         // Home notification
 
@@ -22,8 +18,9 @@ public class AppLaunchState extends PreferencesManager {
 
         // Rate
 
-        RATE_SCHEDULED_TO_SHOW,
-        RATE_LAST_PROMPT_DATE,
+        RATE_PROMPT_ACTIONS_SINCE_LAST,
+        RATE_PROMPT_COUNT,
+        RATE_PROMPT_LAST_DATE,
 
         // App update
 
@@ -42,44 +39,12 @@ public class AppLaunchState extends PreferencesManager {
         editor.apply();
     }
 
-    int getConsecutiveDaysLaunchCount() {
-        return getPreference(PreferenceKeys.CONSECUTIVE_DAYS_LAUNCH_COUNT.name(), 1);
-    }
-
-    void setConsecutiveDaysLaunchCount(int count) {
-        savePreference(count, PreferenceKeys.CONSECUTIVE_DAYS_LAUNCH_COUNT.name());
-    }
-
-    int getLaunchCount() {
-        return getPreference(PreferenceKeys.LAUNCH_COUNT.name(), 0);
-    }
-
-    void setLaunchCount(int count) {
-        savePreference(count, PreferenceKeys.LAUNCH_COUNT.name());
-    }
-
-    long getDaysSinceLastLaunch() {
-        return getPreference(PreferenceKeys.DAYS_SINCE_LAST_LAUNCH.name(), 0L);
-    }
-
-    void setDaysSinceLastLaunch(long days) {
-        savePreference(days, PreferenceKeys.DAYS_SINCE_LAST_LAUNCH.name());
-    }
-
     long getLastLaunchDate() {
         return getPreference(PreferenceKeys.LAST_LAUNCH_DATE.name(), -1L);
     }
 
     void setLastLaunchDate(Date date) {
         savePreference(date.getTime(), PreferenceKeys.LAST_LAUNCH_DATE.name());
-    }
-
-    long getFirstLaunchDate() {
-        return getPreference(PreferenceKeys.FIRST_LAUNCH_DATE.name(), -1L);
-    }
-
-    void setFirstLaunchDate(Date date) {
-        savePreference(date.getTime(), PreferenceKeys.FIRST_LAUNCH_DATE.name());
     }
 
     // Home notification
@@ -94,20 +59,26 @@ public class AppLaunchState extends PreferencesManager {
 
     // Rate
 
-    boolean rateScheduledToShow() {
-        return getPreference(PreferenceKeys.RATE_SCHEDULED_TO_SHOW.name(), false);
+    int ratePromptActionsSinceLast() {
+        return getPreference(PreferenceKeys.RATE_PROMPT_ACTIONS_SINCE_LAST.name(), 0);
     }
 
-    void setRateScheduledToShow(boolean value) {
-        savePreference(value, PreferenceKeys.RATE_SCHEDULED_TO_SHOW.name());
+    void setRatePromptActionsSinceLast(int count) {
+        savePreference(count, PreferenceKeys.RATE_PROMPT_ACTIONS_SINCE_LAST.name());
     }
 
-    long rateLastPromptDate() {
-        return getPreference(PreferenceKeys.RATE_LAST_PROMPT_DATE.name(), -1L);
+    int ratePromptCount() {
+        return getPreference(PreferenceKeys.RATE_PROMPT_COUNT.name(), 0);
     }
 
-    void setRateLastPromptDate(Date date) {
-        savePreference(date.getTime(), PreferenceKeys.RATE_LAST_PROMPT_DATE.name());
+    long ratePromptLastDate() {
+        return getPreference(PreferenceKeys.RATE_PROMPT_LAST_DATE.name(), -1L);
+    }
+
+    void setRatePromptLaunched(int count, long date) {
+        savePreference(count, PreferenceKeys.RATE_PROMPT_COUNT.name());
+        savePreference(date, PreferenceKeys.RATE_PROMPT_LAST_DATE.name());
+        savePreference(0, PreferenceKeys.RATE_PROMPT_ACTIONS_SINCE_LAST.name());
     }
 
     // App update

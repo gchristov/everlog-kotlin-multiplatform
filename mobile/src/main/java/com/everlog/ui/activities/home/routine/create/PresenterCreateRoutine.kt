@@ -12,7 +12,6 @@ import com.everlog.data.model.ELRoutine.Companion.buildNewRoutine
 import com.everlog.data.model.exercise.ELExerciseGroup
 import com.everlog.managers.PlanManager
 import com.everlog.managers.analytics.AnalyticsManager
-import com.everlog.managers.apprate.AppLaunchManager
 import com.everlog.ui.activities.home.exercisegroup.PresenterCreateExerciseGroups
 import com.everlog.ui.adapters.routine.RoutineCreateHeaderAdapter
 import com.google.firebase.firestore.SetOptions
@@ -107,7 +106,6 @@ class PresenterCreateRoutine : PresenterCreateExerciseGroups<MvpViewCreateRoutin
                     PlanManager.manager.updateRoutineForPlan(mvpView.context, toSave!!)
                 } else {
                     AnalyticsManager.manager.routineCreated()
-                    AppLaunchManager.manager.rateActionTrigger()
                     if (mvpView?.shouldOpenDetailsOnSuccess() == true) {
                         navigator.openRoutineDetails(toSave, false)
                     }

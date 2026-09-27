@@ -21,7 +21,6 @@ import com.everlog.data.model.workout.ELWorkout
 import com.everlog.managers.PlanManager
 import com.everlog.managers.RemoteConfigManager
 import com.everlog.managers.analytics.AnalyticsManager
-import com.everlog.managers.apprate.AppLaunchManager
 import com.everlog.ui.activities.home.congratulate.CongratulateActivity
 import com.everlog.ui.fragments.base.BaseFragmentPresenter
 import com.everlog.ui.fragments.home.activity.statistics.StatisticsHomeFragment
@@ -245,7 +244,6 @@ class PresenterWeekHome : BaseFragmentPresenter<MvpViewWeekHome>() {
                 PlanManager.manager.clearOngoingPlan()
                 navigator.openCongratulate(CongratulateActivity.Type.PLAN_FINISH)
                 AnalyticsManager.manager.planCompleted()
-                AppLaunchManager.manager.rateActionTrigger()
             }
         }
     }

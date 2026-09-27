@@ -24,6 +24,8 @@ import com.everlog.data.model.plan.ELPlan;
 import com.everlog.data.model.workout.ELWorkout;
 import com.everlog.managers.AppUsageReminderManager;
 import com.everlog.managers.analytics.AnalyticsManager;
+import com.everlog.managers.apprate.RatePromptController;
+import com.everlog.managers.apprate.RatePromptTrigger;
 import com.everlog.managers.auth.LocalUserManager;
 import com.everlog.managers.preferences.SettingsManager;
 import com.everlog.services.workout.WorkoutService;
@@ -285,6 +287,13 @@ public class ELNavigator implements Navigator {
             startActivity(myAppLinkToMarket);
         } catch (ActivityNotFoundException e) {
             ToastBuilder.showToast(mContext, R.string.error_play_store);
+        }
+    }
+
+    @Override
+    public void requestRatePrompt(RatePromptTrigger trigger, long delayMillis) {
+        if (mContext instanceof AppCompatActivity) {
+            new RatePromptController((AppCompatActivity) mContext).request(trigger, delayMillis);
         }
     }
 

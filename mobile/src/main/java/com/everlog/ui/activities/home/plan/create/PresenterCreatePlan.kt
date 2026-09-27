@@ -19,7 +19,6 @@ import com.everlog.data.model.plan.ELPlanDay
 import com.everlog.data.model.plan.ELPlanWeek
 import com.everlog.managers.PlanManager
 import com.everlog.managers.analytics.AnalyticsManager
-import com.everlog.managers.apprate.AppLaunchManager
 import com.everlog.ui.activities.base.BaseActivityPresenter
 import com.everlog.ui.adapters.plan.PlanDayAdapter
 import com.everlog.ui.adapters.plan.PlanWeekAdapter
@@ -280,7 +279,6 @@ class PresenterCreatePlan : BaseActivityPresenter<MvpViewCreatePlan>() {
                 AnalyticsManager.manager.planModified()
             } else {
                 AnalyticsManager.manager.planCreated()
-                AppLaunchManager.manager.rateActionTrigger()
                 navigator.openPlanDetails(toEdit)
             }
         }

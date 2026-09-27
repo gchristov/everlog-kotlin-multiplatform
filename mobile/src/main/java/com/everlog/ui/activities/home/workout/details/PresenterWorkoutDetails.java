@@ -17,6 +17,7 @@ import com.everlog.data.model.exercise.ELExerciseGroup;
 import com.everlog.data.model.workout.ELWorkout;
 import com.everlog.managers.PlanManager;
 import com.everlog.managers.analytics.AnalyticsManager;
+import com.everlog.managers.apprate.RatePromptTrigger;
 import com.everlog.managers.preferences.SettingsManager;
 import com.everlog.ui.activities.base.BaseActivityPresenter;
 import com.everlog.ui.activities.home.exercisegroup.DefaultCreateExerciseGroupsActivity;
@@ -40,6 +41,9 @@ import static android.app.Activity.RESULT_OK;
 import static com.everlog.constants.ELConstants.EXTRA_EXERCISE_GROUPS;
 
 public class PresenterWorkoutDetails extends BaseActivityPresenter<MvpViewWorkoutDetails> {
+
+    // Lets the congrats banner play before Play's rating dialog covers the screen
+    private static final long RATE_PROMPT_DELAY_MILLIS = 3000;
 
     private ELWorkout toEdit;
     private boolean mLoadedItemOnce;
@@ -135,7 +139,7 @@ public class PresenterWorkoutDetails extends BaseActivityPresenter<MvpViewWorkou
     }
 
     private void observeSaveAsRoutineConfirm() {
-        subscriptions.add(getMvpView().showPrompt(R.string.workout_details_save_title, R.string.workout_details_save_prompt, R.string.workout_details_save_title, R.string.rate_no)
+        subscriptions.add(getMvpView().showPrompt(R.string.workout_details_save_title, R.string.workout_details_save_prompt, R.string.workout_details_save_title, R.string.no_thanks)
                 .compose(applyUISchedulers())
                 .subscribe(action -> {
                     if (action == DialogInterface.BUTTON_POSITIVE) {
@@ -285,6 +289,7 @@ public class PresenterWorkoutDetails extends BaseActivityPresenter<MvpViewWorkou
                             } else {
                                 getMvpView().showWorkoutCompleteCongrats();
                             }
+                            navigator.requestRatePrompt(new RatePromptTrigger.WorkoutCompleted(toEdit), RATE_PROMPT_DELAY_MILLIS);
                         }
                     }
 

@@ -34,14 +34,6 @@
             android:paddingRight="@dimen/activity_margin"
             android:paddingBottom="@dimen/footer_bottom_padding_double">
 
-            <com.everlog.ui.views.apprate.AppRateView
-                android:id="@+id/appRateView"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="@dimen/margin_26"
-                android:visibility="gone"
-                tools:visibility="visible" />
-
             <com.everlog.ui.views.notification.home.HomeNotificationView
                 android:id="@+id/notificationView"
                 android:layout_width="match_parent"

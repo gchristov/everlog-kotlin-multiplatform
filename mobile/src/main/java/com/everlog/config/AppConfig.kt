@@ -25,9 +25,12 @@ class AppConfig {
     val maxExerciseSelection = 10
     val maxExerciseSets = 14
 
-    val rateTriggerModLaunchNumber = 20
-    val rateTriggerModConsecutiveLaunchDays = 3
-    val rateTriggerLastShownDelayDays = 21
+    // Qualifying actions needed before each rating prompt, from any trigger. Its size caps the prompts.
+    val ratePromptActionGoals = listOf(3, 3, 4)
+    // Play doesn't publish its quota. Asking more often likely gets silently skipped, wasting a prompt.
+    val ratePromptCooldownDays = 30
+    // Shorter workouts are likely tests or accidental saves
+    val ratePromptMinWorkoutMinutes = 5
 
     val appUpdateRepromptDelayDays = 7
 

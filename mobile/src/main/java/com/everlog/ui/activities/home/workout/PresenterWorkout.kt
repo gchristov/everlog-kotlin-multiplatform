@@ -420,7 +420,6 @@ class PresenterWorkout : PresenterCreateExerciseGroups<MvpViewWorkout>() {
     private fun saveWorkout() {
         WorkoutManager.manager.clearOngoingWorkout()
         AnalyticsManager.manager.workoutCompleted()
-        AppLaunchManager.manager.rateActionTrigger()
         // Pushes back the app usage reminder, the user may not pass through the home screen for a while
         AppLaunchManager.manager.recordActivity(Date())
         // Save workout

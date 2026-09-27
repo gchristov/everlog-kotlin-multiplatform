@@ -114,11 +114,7 @@
 
     <string name="error_play_store">Unable to find Play Store app</string>
 
-    <string name="rate_enjoy_title">How would you rate your experience with Everlog so far?</string>
-    <string name="rate_feedback_title">Would you mind letting us know where we can improve?</string>
-    <string name="rate_no">No, thanks</string>
-    <string name="rate_feedback">Ok, sure</string>
-    <string name="rate_ask_later">Ask me later</string>
+    <string name="no_thanks">No, thanks</string>
 
     <string name="pending_feature_title">Coming soon…</string>
     <string name="pending_feature_subtitle">We are working on this feature and it will be available as an update soon!</string>
