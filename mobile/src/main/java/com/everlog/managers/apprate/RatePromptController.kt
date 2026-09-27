@@ -3,8 +3,10 @@ package com.everlog.managers.apprate
 import android.os.Handler
 import android.os.Looper
 import android.os.SystemClock
+import androidx.annotation.VisibleForTesting
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
 import com.everlog.BuildConfig
 import com.everlog.managers.analytics.AnalyticsManager
 import com.everlog.ui.dialog.ToastBuilder
@@ -21,6 +23,9 @@ import timber.log.Timber
  * Play decides whether the dialog actually appears and never says what the user did, so a prompt counts
  * as soon as it's launched. It only appears for builds installed from Play; debug builds use
  * [FakeReviewManager], which shows nothing, and a toast instead.
+ *
+ * If the screen goes away or gets covered before the dialog launches, nothing is shown and no prompt
+ * is used up. The goal stays met, so the next qualifying action prompts.
  */
 class RatePromptController @JvmOverloads constructor(
     private val activity: AppCompatActivity,
@@ -30,12 +35,28 @@ class RatePromptController @JvmOverloads constructor(
     companion object {
         private const val TAG = "RatePromptController"
 
-        // Process-wide, so two triggers at the same moment can't both launch the flow
-        private var inFlight = false
+        // Process-wide, so two triggers at the same moment can't both launch the flow. Holds the
+        // controller running the flow, so one that's finished can't release a newer one's.
+        private var inFlight: RatePromptController? = null
 
         private fun createReviewManager(activity: AppCompatActivity): ReviewManager {
             val context = activity.applicationContext
             return if (BuildConfig.DEBUG) FakeReviewManager(context) else ReviewManagerFactory.create(context)
+        }
+
+        /**
+         * Whether the screen is still showing and nothing covers it, like a dialog or share sheet.
+         */
+        @VisibleForTesting
+        internal fun canLaunch(state: Lifecycle.State, isFinishing: Boolean, hasWindowFocus: Boolean): Boolean {
+            return state.isAtLeast(Lifecycle.State.RESUMED) && !isFinishing && hasWindowFocus
+        }
+    }
+
+    private val handler = Handler(Looper.getMainLooper())
+    private val lifecycleObserver = LifecycleEventObserver { _, event ->
+        if (event == Lifecycle.Event.ON_DESTROY) {
+            release()
         }
     }
 
@@ -46,26 +67,36 @@ class RatePromptController @JvmOverloads constructor(
         if (!trigger.isEligible()) {
             return
         }
-        if (!RatePromptManager.manager.recordAction(System.currentTimeMillis()) || inFlight) {
+        // Counts even if the screen is already gone, as the user still did the thing
+        val due = RatePromptManager.manager.recordAction(trigger.actionId, System.currentTimeMillis())
+        if (!due || inFlight != null || activity.lifecycle.currentState == Lifecycle.State.DESTROYED) {
             return
         }
-        inFlight = true
+        inFlight = this
+        activity.lifecycle.addObserver(lifecycleObserver)
         val launchAt = SystemClock.uptimeMillis() + delayMillis
         // Fetched during the delay, as it can take a moment
         reviewManager.requestReviewFlow().addOnCompleteListener { task ->
+            if (inFlight !== this) {
+                // Screen was destroyed while fetching
+                return@addOnCompleteListener
+            }
             if (task.isSuccessful) {
-                Handler(Looper.getMainLooper()).postAtTime({ launch(trigger, task.result) }, launchAt)
+                handler.postAtTime({ launch(trigger, task.result) }, launchAt)
             } else {
                 Timber.tag(TAG).w(task.exception, "Review flow request failed: source=%s", trigger.source)
-                inFlight = false
+                release()
             }
         }
     }
 
     private fun launch(trigger: RatePromptTrigger, reviewInfo: ReviewInfo) {
-        if (!activity.lifecycle.currentState.isAtLeast(Lifecycle.State.RESUMED)) {
-            // User left the screen. The goal is still met, so the next qualifying action prompts.
-            inFlight = false
+        if (inFlight !== this) {
+            return
+        }
+        if (!canLaunch(activity.lifecycle.currentState, activity.isFinishing, activity.hasWindowFocus())) {
+            Timber.tag(TAG).i("Screen left or covered, not launching: source=%s", trigger.source)
+            release()
             return
         }
         val promptNumber = RatePromptManager.manager.promptLaunched(System.currentTimeMillis())
@@ -74,7 +105,15 @@ class RatePromptController @JvmOverloads constructor(
             ToastBuilder.showToast(activity, "Rating prompt $promptNumber launched (${trigger.source})")
         }
         reviewManager.launchReviewFlow(activity, reviewInfo).addOnCompleteListener {
-            inFlight = false
+            release()
+        }
+    }
+
+    private fun release() {
+        handler.removeCallbacksAndMessages(null)
+        activity.lifecycle.removeObserver(lifecycleObserver)
+        if (inFlight === this) {
+            inFlight = null
         }
     }
 }

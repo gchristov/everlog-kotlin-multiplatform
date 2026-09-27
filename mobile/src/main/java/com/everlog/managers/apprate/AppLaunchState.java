@@ -19,6 +19,7 @@ public class AppLaunchState extends PreferencesManager {
         // Rate
 
         RATE_PROMPT_ACTIONS_SINCE_LAST,
+        RATE_PROMPT_LAST_ACTION_ID,
         RATE_PROMPT_COUNT,
         RATE_PROMPT_LAST_DATE,
 
@@ -63,8 +64,13 @@ public class AppLaunchState extends PreferencesManager {
         return getPreference(PreferenceKeys.RATE_PROMPT_ACTIONS_SINCE_LAST.name(), 0);
     }
 
-    void setRatePromptActionsSinceLast(int count) {
-        savePreference(count, PreferenceKeys.RATE_PROMPT_ACTIONS_SINCE_LAST.name());
+    String ratePromptLastActionId() {
+        return getPreference(PreferenceKeys.RATE_PROMPT_LAST_ACTION_ID.name(), (String) null);
+    }
+
+    void setRatePromptActionRecorded(int actionsSinceLast, String actionId) {
+        savePreference(actionsSinceLast, PreferenceKeys.RATE_PROMPT_ACTIONS_SINCE_LAST.name());
+        savePreference(actionId, PreferenceKeys.RATE_PROMPT_LAST_ACTION_ID.name());
     }
 
     int ratePromptCount() {

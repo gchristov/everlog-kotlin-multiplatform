@@ -19,6 +19,12 @@ sealed class RatePromptTrigger {
      */
     abstract val source: String
 
+    /**
+     * Identifies this particular action, so it only counts once if it's reported again, e.g. when the
+     * screen is recreated.
+     */
+    abstract val actionId: String
+
     abstract fun isEligible(): Boolean
 
     /**
@@ -27,6 +33,8 @@ sealed class RatePromptTrigger {
     class WorkoutCompleted(private val workout: ELWorkout) : RatePromptTrigger() {
 
         override val source = "workout_completed"
+
+        override val actionId = "$source:${workout.uuid ?: workout.completedDate}"
 
         override fun isEligible(): Boolean {
             return workout.getDurationMillis() >= TimeUnit.MINUTES.toMillis(AppConfig.configuration.ratePromptMinWorkoutMinutes.toLong())

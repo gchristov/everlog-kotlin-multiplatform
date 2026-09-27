@@ -10,6 +10,9 @@ import org.junit.Test
 class RatePromptManagerTest {
 
     private val manager = RatePromptManager(RatePromptPacing(actionGoals = listOf(3, 3, 4), cooldownMillis = 30L * 24 * 60 * 60 * 1000))
+    private var nextActionId = 0
+
+    private fun recordAction(now: Long) = manager.recordAction("action-${nextActionId++}", now)
 
     @Before
     fun setUp() {
@@ -25,9 +28,9 @@ class RatePromptManagerTest {
     fun `is due on the third action`() {
         val now = at(2026, 9, 1)
 
-        assertThat(manager.recordAction(now)).isFalse()
-        assertThat(manager.recordAction(now)).isFalse()
-        assertThat(manager.recordAction(now)).isTrue()
+        assertThat(recordAction(now)).isFalse()
+        assertThat(recordAction(now)).isFalse()
+        assertThat(recordAction(now)).isTrue()
     }
 
     @Test
@@ -40,39 +43,60 @@ class RatePromptManagerTest {
 
     @Test
     fun `launching a prompt restarts the count towards the next one`() {
-        repeat(3) { manager.recordAction(at(2026, 9, 1)) }
+        repeat(3) { recordAction(at(2026, 9, 1)) }
         manager.promptLaunched(at(2026, 9, 1))
 
-        repeat(2) { manager.recordAction(at(2026, 10, 5)) }
+        repeat(2) { recordAction(at(2026, 10, 5)) }
         assertThat(manager.isDue(at(2026, 10, 5))).isFalse()
-        assertThat(manager.recordAction(at(2026, 10, 5))).isTrue()
+        assertThat(recordAction(at(2026, 10, 5))).isTrue()
     }
 
     @Test
     fun `actions within the cooldown still count once it's over`() {
-        repeat(3) { manager.recordAction(at(2026, 9, 1)) }
+        repeat(3) { recordAction(at(2026, 9, 1)) }
         manager.promptLaunched(at(2026, 9, 1))
 
-        repeat(5) { manager.recordAction(at(2026, 9, 10)) }
+        repeat(5) { recordAction(at(2026, 9, 10)) }
         assertThat(manager.isDue(at(2026, 9, 10))).isFalse()
         assertThat(manager.isDue(at(2026, 10, 1))).isTrue()
     }
 
     @Test
     fun `stays due when a prompt couldn't be launched`() {
-        repeat(3) { manager.recordAction(at(2026, 9, 1)) }
+        repeat(3) { recordAction(at(2026, 9, 1)) }
 
         // e.g. the user left the screen before the dialog launched
-        assertThat(manager.recordAction(at(2026, 9, 2))).isTrue()
+        assertThat(recordAction(at(2026, 9, 2))).isTrue()
     }
 
     @Test
     fun `logging out starts again from the first prompt`() {
-        repeat(3) { manager.recordAction(at(2026, 9, 1)) }
+        repeat(3) { recordAction(at(2026, 9, 1)) }
         manager.promptLaunched(at(2026, 9, 1))
 
         AppLaunchManager.manager.clearAppUserData()
 
         assertThat(manager.promptLaunched(at(2026, 9, 1))).isEqualTo(1)
+    }
+
+    @Test
+    fun `the same action only counts once`() {
+        val now = at(2026, 9, 1)
+
+        // e.g. workout details recreated on rotation, reporting the same workout again
+        repeat(3) { assertThat(manager.recordAction("workout_completed:abc", now)).isFalse() }
+
+        assertThat(recordAction(now)).isFalse()
+        assertThat(recordAction(now)).isTrue()
+    }
+
+    @Test
+    fun `a repeated action is still due, so a recreated screen can prompt`() {
+        val now = at(2026, 9, 1)
+        recordAction(now)
+        recordAction(now)
+        manager.recordAction("workout_completed:abc", now)
+
+        assertThat(manager.recordAction("workout_completed:abc", now)).isTrue()
     }
 }

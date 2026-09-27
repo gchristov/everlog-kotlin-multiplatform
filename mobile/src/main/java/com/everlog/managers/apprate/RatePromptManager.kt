@@ -13,10 +13,13 @@ class RatePromptManager(private val pacing: RatePromptPacing = RatePromptPacing(
     }
 
     /**
-     * Counts a qualifying action towards the next prompt, and returns whether the prompt is now due.
+     * Counts a qualifying action towards the next prompt, and returns whether the prompt is now due. An
+     * action reported again with the same [actionId] (see [RatePromptTrigger.actionId]) isn't counted twice.
      */
-    fun recordAction(now: Long): Boolean {
-        AppLaunchState.state.setRatePromptActionsSinceLast(AppLaunchState.state.ratePromptActionsSinceLast() + 1)
+    fun recordAction(actionId: String, now: Long): Boolean {
+        if (actionId != AppLaunchState.state.ratePromptLastActionId()) {
+            AppLaunchState.state.setRatePromptActionRecorded(AppLaunchState.state.ratePromptActionsSinceLast() + 1, actionId)
+        }
         return isDue(now)
     }
 
