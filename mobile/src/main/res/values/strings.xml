@@ -129,7 +129,7 @@
     <string name="login_full_name">Name</string>
     <string name="login_email">Email</string>
     <string name="login_password">Password</string>
-    <string name="login_google">Log in with Google</string>
+    <string name="login_google">Continue with Google</string>
     <string name="login_google_register">Sign up with Google</string>
     <string name="login_terms_full">I accept the Terms &amp; Conditions and Privacy Policy</string>
     <string name="login_terms">Terms &amp; Conditions</string>
