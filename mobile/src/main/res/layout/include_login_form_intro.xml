@@ -1,87 +1,90 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
+    android:clipToPadding="false"
     tools:background="@color/background_base">
 
-    <io.github.florent37.shapeofview.shapes.ArcView
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_gravity="center_horizontal|center"
-        android:layout_weight="1"
-        app:shape_arc_height="40dp"
-        app:shape_arc_position="bottom">
-
-        <ImageView
-            android:id="@+id/backgroundView"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_marginBottom="@dimen/login_slider_bottom_offset"
-            android:scaleType="centerCrop"
-            tools:src="@drawable/background_login" />
-
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="#1Affffff" />
-
-        <androidx.viewpager.widget.ViewPager
-            android:id="@+id/pager"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_marginBottom="@dimen/login_slider_bottom_offset" />
-    </io.github.florent37.shapeofview.shapes.ArcView>
-
     <LinearLayout
-        style="@style/LoginContentWidth"
-        android:layout_height="0dp"
-        android:layout_gravity="center"
+        android:id="@+id/brand"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
         android:layout_marginLeft="@dimen/activity_margin"
         android:layout_marginRight="@dimen/activity_margin"
-        android:layout_weight="0.45"
         android:gravity="center_horizontal"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        app:layout_constraintBottom_toTopOf="@id/showRegisterBtn"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.45">
 
-        <ru.tinkoff.scrollingpagerindicator.ScrollingPagerIndicator
-            android:id="@+id/indicator"
+        <ImageView
+            android:layout_width="96dp"
+            android:layout_height="96dp"
+            android:importantForAccessibility="no"
+            android:src="@drawable/ic_login_logo" />
+
+        <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/activity_margin"
-            android:layout_marginBottom="@dimen/activity_margin"
-            app:spi_dotColor="@color/pager_inactive"
-            app:spi_dotSelectedColor="@color/pager_active"
-            app:spi_dotSelectedSize="@dimen/activity_margin_half"
-            app:spi_dotSize="@dimen/activity_margin_half"
-            app:spi_dotSpacing="@dimen/margin_12"
-            app:spi_visibleDotCount="5" />
+            android:layout_marginTop="@dimen/margin_20"
+            android:text="@string/login_title"
+            android:textColor="@color/white_base"
+            android:textSize="40sp"
+            android:textStyle="bold" />
 
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1" />
-
-        <com.github.leandroborgesferreira.loadingbutton.customViews.CircularProgressButton
-            android:id="@+id/showRegisterBtn"
-            style="@style/Button"
-            android:layout_height="42dp"
-            android:background="@drawable/rounded_corners_btn_one"
-            android:paddingLeft="0dp"
-            android:paddingRight="0dp"
-            android:text="@string/login_get_started"
-            app:initialCornerAngle="21dp"
-            app:spinning_bar_color="@color/background_base"
-            app:spinning_bar_padding="8dp" />
-
-        <Button
-            android:id="@+id/showLoginBtn"
-            style="@style/Button.Four"
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/activity_margin_half"
-            android:layout_marginBottom="@dimen/margin_20"
-            android:paddingLeft="0dp"
-            android:paddingRight="0dp"
-            android:text="@string/login_existing" />
+            android:gravity="center"
+            android:text="@string/login_tagline"
+            android:textColor="@color/white_base"
+            android:textSize="20sp"
+            android:textStyle="bold" />
     </LinearLayout>
-</LinearLayout>
+
+    <com.github.leandroborgesferreira.loadingbutton.customViews.CircularProgressButton
+        android:id="@+id/showRegisterBtn"
+        style="@style/Button"
+        android:layout_width="0dp"
+        android:layout_height="56dp"
+        android:layout_marginLeft="@dimen/activity_margin"
+        android:layout_marginRight="@dimen/activity_margin"
+        android:layout_marginBottom="@dimen/margin_20"
+        android:background="@drawable/rounded_corners_btn_one"
+        android:elevation="12dp"
+        android:outlineAmbientShadowColor="@color/main_accent"
+        android:outlineSpotShadowColor="@color/main_accent"
+        android:paddingLeft="0dp"
+        android:paddingRight="0dp"
+        android:stateListAnimator="@null"
+        android:text="@string/login_get_started"
+        android:textSize="16sp"
+        app:initialCornerAngle="28dp"
+        app:layout_constraintBottom_toTopOf="@id/showLoginBtn"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:spinning_bar_color="@color/background_base"
+        app:spinning_bar_padding="8dp"
+        tools:targetApi="p" />
+
+    <Button
+        android:id="@+id/showLoginBtn"
+        style="@style/Button.Three"
+        android:layout_width="0dp"
+        android:layout_height="56dp"
+        android:layout_marginLeft="@dimen/activity_margin"
+        android:layout_marginRight="@dimen/activity_margin"
+        android:layout_marginBottom="@dimen/activity_margin_double"
+        android:paddingLeft="0dp"
+        android:paddingRight="0dp"
+        android:text="@string/login_existing"
+        android:textSize="16sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+</androidx.constraintlayout.widget.ConstraintLayout>

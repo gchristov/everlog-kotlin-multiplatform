@@ -17,11 +17,7 @@ import com.everlog.managers.analytics.AnalyticsConstants
 import com.everlog.ui.activities.base.BaseActivity
 import com.everlog.ui.activities.base.BaseActivityMvpView
 import com.everlog.ui.activities.base.BaseActivityPresenter
-import com.everlog.ui.fragments.base.BaseFragment
-import com.everlog.ui.fragments.onboarding.OnboardingPageFragment
 import com.everlog.ui.views.CheckBoxTriStates
-import com.everlog.ui.views.viewpager.ELFragmentPagerAdapter
-import com.everlog.utils.ActivityUtils
 import com.everlog.utils.Utils
 import com.everlog.utils.ViewUtils
 import com.everlog.utils.input.KeyboardUtils
@@ -68,9 +64,7 @@ class LoginActivity : BaseActivity(), MvpViewLogin {
         // APP STARTUP: Delay to not block
         Utils.runWithDelay({
             setupTopBar()
-            setupBackgroundImage()
             setupUnderlineTexts()
-            setupPager()
             setupButtons()
             setupFormNavigation()
             showForm(FormType.INTRO)
@@ -299,10 +293,6 @@ class LoginActivity : BaseActivity(), MvpViewLogin {
         binding.toolbar.setNavigationOnClickListener { onBackPressedDispatcher.onBackPressed() }
     }
 
-    private fun setupBackgroundImage() {
-        ActivityUtils.setupBackgroundImage(this, R.drawable.background_login, R.id.backgroundView)
-    }
-
     private fun setupUnderlineTexts() {
         // Terms and privacy
         val termsSpan = object : TouchableSpan(binding.formRegister.termsLbl.currentTextColor) {
@@ -316,20 +306,6 @@ class LoginActivity : BaseActivity(), MvpViewLogin {
             }
         }
         TextViewUtils.addClickableSpans(binding.formRegister.termsLbl, arrayOf(termsSpan, privacySpan), getString(R.string.login_terms_full), arrayOf(getString(R.string.login_terms), getString(R.string.login_terms_privacy)))
-    }
-
-    private fun setupPager() {
-        val fragments = ArrayList<BaseFragment>()
-        fragments.add(OnboardingPageFragment(R.string.login_onboard_workout_title, R.string.login_onboard_workout_subtitle, R.drawable.background_onboard_login_workout))
-        fragments.add(OnboardingPageFragment(R.string.login_onboard_activity_title, R.string.login_onboard_activity_subtitle, R.drawable.background_onboard_login_activity))
-        fragments.add(OnboardingPageFragment(R.string.login_onboard_routine_title, R.string.login_onboard_routine_subtitle, R.drawable.background_onboard_login_routine))
-        fragments.add(OnboardingPageFragment(R.string.login_onboard_plans_title, R.string.login_onboard_plans_subtitle, R.drawable.background_onboard_login_plans))
-        fragments.add(OnboardingPageFragment(R.string.login_onboard_home_plan_title, R.string.login_onboard_home_plan_subtitle, R.drawable.background_onboard_login_home_plan))
-        val adapter = ELFragmentPagerAdapter(supportFragmentManager)
-        binding.formIntro.pager.offscreenPageLimit = fragments.size
-        binding.formIntro.pager.adapter = adapter
-        adapter.setItems(fragments)
-        binding.formIntro.indicator.attachToPager(binding.formIntro.pager)
     }
 
     private fun setupFormNavigation() {

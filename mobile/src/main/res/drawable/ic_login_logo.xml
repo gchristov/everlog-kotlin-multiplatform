@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- The launcher icon as a rounded tile. The foreground is drawn at 1.5x the tile size (108dp / 72dp)
+     so the tile shows the same 72dp safe zone a launcher mask does. -->
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item>
+        <shape android:shape="rectangle">
+            <solid android:color="@color/ic_launcher_background" />
+            <corners android:radius="22dp" />
+            <size
+                android:width="96dp"
+                android:height="96dp" />
+        </shape>
+    </item>
+
+    <item
+        android:bottom="-24dp"
+        android:drawable="@mipmap/ic_launcher_foreground"
+        android:left="-24dp"
+        android:right="-24dp"
+        android:top="-24dp" />
+</layer-list>

@@ -22,7 +22,6 @@
     <item name="cover_text_shadow_radius" format="integer" type="integer">20</item>
 
     <dimen name="content_width_tablet">400dp</dimen>
-    <dimen name="content_translation_login">-85dp</dimen>
 
     <dimen name="toolbar_progress_height">3dp</dimen>
 
@@ -74,8 +73,6 @@
     <dimen name="exercise_group_create_side_spacing">@dimen/activity_margin</dimen>
     <dimen name="exercise_group_set_button_size">38dp</dimen>
 
-    <dimen name="login_slider_bottom_offset">-200dp</dimen>
-    <dimen name="login_form_margin_horizontal">60dp</dimen>
 
     <dimen name="bottom_sheet_width">550dp</dimen>
 </resources>

@@ -122,6 +122,8 @@
 
     <string name="login_get_started">Continue as guest</string>
     <string name="login_existing">Log in</string>
+    <string name="login_title" translatable="false">Everlog</string>
+    <string name="login_tagline">Your workouts. Simply tracked.</string>
     <string name="login_sign_in">Log in</string>
     <string name="login_register">Sign up</string>
     <string name="login_full_name">Name</string>
@@ -129,16 +131,6 @@
     <string name="login_password">Password</string>
     <string name="login_google">Log in with Google</string>
     <string name="login_google_register">Sign up with Google</string>
-    <string name="login_onboard_plans_title">Quick 5-Min Setup</string>
-    <string name="login_onboard_plans_subtitle">Easily import your favourite workouts</string>
-    <string name="login_onboard_routine_title">Workout Builder</string>
-    <string name="login_onboard_routine_subtitle">Set rep/time targets, supersets, rest</string>
-    <string name="login_onboard_activity_title">Progress Reports</string>
-    <string name="login_onboard_activity_subtitle">View your detailed progress analysis</string>
-    <string name="login_onboard_home_plan_title">Training Splits</string>
-    <string name="login_onboard_home_plan_subtitle">Follow your day to day workout plan</string>
-    <string name="login_onboard_workout_title">Track Everything</string>
-    <string name="login_onboard_workout_subtitle">Weight, reps, time, 1RM, supersets</string>
     <string name="login_terms_full">I accept the Terms &amp; Conditions and Privacy Policy</string>
     <string name="login_terms">Terms &amp; Conditions</string>
     <string name="login_terms_privacy">Privacy Policy</string>
