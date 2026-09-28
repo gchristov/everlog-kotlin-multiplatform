@@ -87,22 +87,12 @@ abstract class BaseAnalytic : Analytic {
         return map
     }
 
-    override fun appStarRating(value: Float?) {
+    override fun ratePromptTriggered(source: String, promptNumber: Int) {
         val map = HashMap<String, Any?>()
-        map[AnalyticsConstants.PROPERTY_VALUE] = value
-        logEvent(AnalyticsConstants.EVENT_APP_STAR_RATING, map)
-    }
-
-    override fun appRate() {
-        logEvent(AnalyticsConstants.EVENT_APP_RATE)
-    }
-
-    override fun appFeedback() {
-        logEvent(AnalyticsConstants.EVENT_APP_FEEDBACK)
-    }
-
-    override fun appNotNow() {
-        logEvent(AnalyticsConstants.EVENT_APP_NOT_NOW)
+        map[AnalyticsConstants.PROPERTY_SOURCE] = source
+        // Firebase only takes String, Long and Double values
+        map[AnalyticsConstants.PROPERTY_PROMPT_NUMBER] = promptNumber.toLong()
+        logEvent(AnalyticsConstants.EVENT_APP_RATE_PROMPT_TRIGGERED, map)
     }
 
     override fun screenName(screenName: String?) {

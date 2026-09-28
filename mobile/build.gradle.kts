@@ -129,6 +129,7 @@ dependencies {
     implementation(libs.androidx.cardview)
     implementation(libs.billing)
     implementation(libs.play.app.update)
+    implementation(libs.play.review)
     implementation(libs.androidx.core.splashscreen)
 
     implementation(libs.glide)
@@ -168,9 +169,6 @@ dependencies {
         isTransitive = false
     }
     implementation(libs.eventbus)
-    implementation(libs.simpleratingbar) {
-        isTransitive = false
-    }
     implementation(libs.timber)
 
     implementation(libs.hyperlog)

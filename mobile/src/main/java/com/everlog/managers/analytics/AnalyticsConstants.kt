@@ -58,10 +58,7 @@ class AnalyticsConstants {
 
         // Rating
 
-        const val EVENT_APP_RATE = "app_rate"
-        const val EVENT_APP_STAR_RATING = "app_star_rating"
-        const val EVENT_APP_FEEDBACK = "app_feedback"
-        const val EVENT_APP_NOT_NOW = "app_not_now"
+        const val EVENT_APP_RATE_PROMPT_TRIGGERED = "app_rate_prompt_triggered"
 
         // Login
 
@@ -205,5 +202,7 @@ class AnalyticsConstants {
         const val PROPERTY_VALUE = "value"
         const val PROPERTY_TITLE = "title"
         const val PROPERTY_ATTEMPT = "attempt"
+        const val PROPERTY_SOURCE = "source"
+        const val PROPERTY_PROMPT_NUMBER = "prompt_number"
     }
 }

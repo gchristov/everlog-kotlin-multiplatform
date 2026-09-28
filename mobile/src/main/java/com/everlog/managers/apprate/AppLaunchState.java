@@ -22,8 +22,10 @@ public class AppLaunchState extends PreferencesManager {
 
         // Rate
 
-        RATE_SCHEDULED_TO_SHOW,
-        RATE_LAST_PROMPT_DATE,
+        RATE_PROMPT_ACTIONS_SINCE_LAST,
+        RATE_PROMPT_LAST_ACTION_ID,
+        RATE_PROMPT_COUNT,
+        RATE_PROMPT_LAST_DATE,
 
         // App update
 
@@ -94,20 +96,31 @@ public class AppLaunchState extends PreferencesManager {
 
     // Rate
 
-    boolean rateScheduledToShow() {
-        return getPreference(PreferenceKeys.RATE_SCHEDULED_TO_SHOW.name(), false);
+    int ratePromptActionsSinceLast() {
+        return getPreference(PreferenceKeys.RATE_PROMPT_ACTIONS_SINCE_LAST.name(), 0);
     }
 
-    void setRateScheduledToShow(boolean value) {
-        savePreference(value, PreferenceKeys.RATE_SCHEDULED_TO_SHOW.name());
+    String ratePromptLastActionId() {
+        return getPreference(PreferenceKeys.RATE_PROMPT_LAST_ACTION_ID.name(), (String) null);
     }
 
-    long rateLastPromptDate() {
-        return getPreference(PreferenceKeys.RATE_LAST_PROMPT_DATE.name(), -1L);
+    void setRatePromptActionRecorded(int actionsSinceLast, String actionId) {
+        savePreference(actionsSinceLast, PreferenceKeys.RATE_PROMPT_ACTIONS_SINCE_LAST.name());
+        savePreference(actionId, PreferenceKeys.RATE_PROMPT_LAST_ACTION_ID.name());
     }
 
-    void setRateLastPromptDate(Date date) {
-        savePreference(date.getTime(), PreferenceKeys.RATE_LAST_PROMPT_DATE.name());
+    int ratePromptCount() {
+        return getPreference(PreferenceKeys.RATE_PROMPT_COUNT.name(), 0);
+    }
+
+    long ratePromptLastDate() {
+        return getPreference(PreferenceKeys.RATE_PROMPT_LAST_DATE.name(), -1L);
+    }
+
+    void setRatePromptLaunched(int count, long date) {
+        savePreference(count, PreferenceKeys.RATE_PROMPT_COUNT.name());
+        savePreference(date, PreferenceKeys.RATE_PROMPT_LAST_DATE.name());
+        savePreference(0, PreferenceKeys.RATE_PROMPT_ACTIONS_SINCE_LAST.name());
     }
 
     // App update

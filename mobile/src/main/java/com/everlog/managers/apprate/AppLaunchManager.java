@@ -29,19 +29,12 @@ public class AppLaunchManager {
         AppLaunchState.state.setLaunchCount(launchCount + 1);
 
         // Update consecutive launch count
-        long daysSinceLastLaunch = daysSinceLastLaunch();
+        long daysSinceLastLaunch = AppLaunchState.state.getDaysSinceLastLaunch();
         if (daysSinceLastLaunch == 1) {
             int consecutiveLaunchCount = AppLaunchState.state.getConsecutiveDaysLaunchCount();
             AppLaunchState.state.setConsecutiveDaysLaunchCount(consecutiveLaunchCount + 1);
         } else if (daysSinceLastLaunch > 1) {
             AppLaunchState.state.setConsecutiveDaysLaunchCount(1);
-        }
-
-        // Check rate triggers
-        if (numberOfAppLaunches() % AppConfig.configuration.getRateTriggerModLaunchNumber() == 0 // App launched every X times
-                || numberOfConsecutiveAppLaunchDays() % AppConfig.configuration.getRateTriggerModConsecutiveLaunchDays() == 0) // App launched every X consecutive days
-        {
-            rateActionTrigger();
         }
     }
 
@@ -63,30 +56,6 @@ public class AppLaunchManager {
         AppLaunchState.state.clearState();
     }
 
-    public boolean appLaunchedOnce() {
-        return numberOfAppLaunches() > 0;
-    }
-
-    public long daysSinceFirstLaunch() {
-        return calendarDaysSinceDate(AppLaunchState.state.getFirstLaunchDate());
-    }
-
-    public long daysSinceLastLaunch() {
-        return AppLaunchState.state.getDaysSinceLastLaunch();
-    }
-
-    public int numberOfAppLaunches() {
-        return AppLaunchState.state.getLaunchCount();
-    }
-
-    public int numberOfConsecutiveAppLaunchDays() {
-        return AppLaunchState.state.getConsecutiveDaysLaunchCount();
-    }
-
-    private long daysSinceLastRatePrompt() {
-        return calendarDaysSinceDate(AppLaunchState.state.rateLastPromptDate());
-    }
-
     // Triggers
 
     public boolean shouldShowHomeNotification(HomeNotification notification) {
@@ -101,24 +70,6 @@ public class AppLaunchManager {
         if (notification != null) {
             AppLaunchState.state.setHomeNotificationLastDismissedId(notification);
         }
-    }
-
-    public boolean shouldShowAppRating() {
-        if (AppLaunchState.state.rateScheduledToShow()) {
-            // Ensure dialog is not shown less than X days since the last time it was visible, unless it was never shown
-            return AppLaunchState.state.rateLastPromptDate() < 0
-                    || daysSinceLastRatePrompt() >= AppConfig.configuration.getRateTriggerLastShownDelayDays();
-        }
-        return false;
-    }
-
-    public void rateDialogDismissed() {
-        AppLaunchState.state.setRateLastPromptDate(new Date());
-        AppLaunchState.state.setRateScheduledToShow(false);
-    }
-
-    public void rateActionTrigger() {
-        AppLaunchState.state.setRateScheduledToShow(true);
     }
 
     public boolean shouldPromptAppUpdate(int availableVersionCode, Date now) {

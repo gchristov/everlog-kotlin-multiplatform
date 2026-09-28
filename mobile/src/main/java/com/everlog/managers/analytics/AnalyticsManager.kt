@@ -80,31 +80,10 @@ class AnalyticsManager : Analytic {
         }
     }
 
-    override fun appRate() {
-        Timber.tag(TAG).i("App rated")
+    override fun ratePromptTriggered(source: String, promptNumber: Int) {
+        Timber.tag(TAG).i("Rate prompt triggered: source=%s promptNumber=%s", source, promptNumber)
         mAnalytics?.forEach {
-            it.appRate()
-        }
-    }
-
-    override fun appStarRating(value: Float?) {
-        Timber.tag(TAG).i("App star rating: value=%f", value)
-        mAnalytics?.forEach {
-            it.appStarRating(value)
-        }
-    }
-
-    override fun appFeedback() {
-        Timber.tag(TAG).i("App feedback")
-        mAnalytics?.forEach {
-            it.appFeedback()
-        }
-    }
-
-    override fun appNotNow() {
-        Timber.tag(TAG).i("App not now")
-        mAnalytics?.forEach {
-            it.appNotNow()
+            it.ratePromptTriggered(source, promptNumber)
         }
     }
 

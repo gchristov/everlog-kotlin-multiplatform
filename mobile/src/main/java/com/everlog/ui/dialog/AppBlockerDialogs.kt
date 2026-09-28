@@ -28,7 +28,7 @@ internal class AppBlockerDialogs {
                     title = context.getString(R.string.notifications_newsletter_title)
                     message = context.getString(R.string.notifications_newsletter_prompt, LocalUserManager.getUser()!!.getFirstName())
                     yes = context.getString(R.string.notifications_newsletter_prompt_yes)
-                    no = context.getString(R.string.rate_no)
+                    no = context.getString(R.string.no_thanks)
                 }
             }
             val data = DialogBuilder.buildPrompt(context, title, message, yes, no)

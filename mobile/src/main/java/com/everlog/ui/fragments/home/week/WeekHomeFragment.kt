@@ -39,7 +39,6 @@ class WeekHomeFragment : BaseTabFragment(), MvpViewWeekHome {
 
     override fun onFragmentCreated() {
         setupWeekViews()
-        checkAppRate()
     }
 
     override fun getAnalyticsScreenName(): String {
@@ -97,7 +96,6 @@ class WeekHomeFragment : BaseTabFragment(), MvpViewWeekHome {
         mWeekViews.forEach { it.render(state, parent) }
         when (state) {
             is WeekViewState.Stats -> {
-                checkAppRate()
                 binding.toolbar.title = mWeekStatistics.title
                 (activity as? HomeActivity)?.setWeekEmptyState(state.stats.workoutsCompleted <= 0)
             }
@@ -124,10 +122,6 @@ class WeekHomeFragment : BaseTabFragment(), MvpViewWeekHome {
 
     override fun showCreateActivity() {
         (activity as? HomeActivity)?.showCreateActivity()
-    }
-
-    private fun checkAppRate() {
-        binding.appRateView.checkAppRate()
     }
 
     // Setup

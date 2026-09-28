@@ -17,10 +17,7 @@ interface Analytic {
     fun appUsageReminderShown(attempt: Int, title: String?)
     fun appUsageReminderOpened(attempt: Int, title: String?)
 
-    fun appStarRating(value: Float?)
-    fun appRate()
-    fun appFeedback()
-    fun appNotNow()
+    fun ratePromptTriggered(source: String, promptNumber: Int)
 
     fun screenName(screenName: String?)
 
