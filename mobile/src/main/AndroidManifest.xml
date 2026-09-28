@@ -64,9 +64,6 @@
         <!-- Metadata -->
 
         <meta-data
-            android:name="com.facebook.sdk.ApplicationId"
-            android:value="@string/facebook_app_id" />
-        <meta-data
             android:name="com.crashlytics.ApiKey"
             android:value="5f6bf21b84b954c321ec92a47d2c8a47f29da3be" />
         <meta-data

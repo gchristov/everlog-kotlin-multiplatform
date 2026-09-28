@@ -1,7 +1,4 @@
 <resources>
-    <string name="facebook_app_id">393089258179851</string>
-    <string name="fb_login_protocol_scheme">fb393089258179851</string>
-
     <string name="everlog_app_name">Everlog</string>
 
     <string name="notification_channel_workout">my_channel_id_03</string>
