@@ -90,7 +90,8 @@ abstract class BaseAnalytic : Analytic {
     override fun ratePromptTriggered(source: String, promptNumber: Int) {
         val map = HashMap<String, Any?>()
         map[AnalyticsConstants.PROPERTY_SOURCE] = source
-        map[AnalyticsConstants.PROPERTY_PROMPT_NUMBER] = promptNumber
+        // Firebase only takes String, Long and Double values
+        map[AnalyticsConstants.PROPERTY_PROMPT_NUMBER] = promptNumber.toLong()
         logEvent(AnalyticsConstants.EVENT_APP_RATE_PROMPT_TRIGGERED, map)
     }
 

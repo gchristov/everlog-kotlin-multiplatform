@@ -84,7 +84,8 @@ class RatePromptController @JvmOverloads constructor(
             if (task.isSuccessful) {
                 handler.postAtTime({ launch(trigger, task.result) }, launchAt)
             } else {
-                Timber.tag(TAG).w(task.exception, "Review flow request failed: source=%s", trigger.source)
+                // Expected without Play (e.g. not installed from Play), so a log rather than a non-fatal
+                Timber.tag(TAG).w("Review flow request failed: source=%s error=%s", trigger.source, task.exception)
                 release()
             }
         }
