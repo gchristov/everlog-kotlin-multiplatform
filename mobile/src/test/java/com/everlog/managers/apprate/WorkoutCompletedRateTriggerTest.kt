@@ -5,7 +5,7 @@ import com.google.common.truth.Truth.assertThat
 import org.junit.Test
 import java.util.concurrent.TimeUnit
 
-class WorkoutCompletedTriggerTest {
+class WorkoutCompletedRateTriggerTest {
 
     private fun workoutLasting(minutes: Long, seconds: Long = 0, uuid: String = "abc"): ELWorkout {
         val createdDate = 1_000_000L
