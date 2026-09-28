@@ -7,7 +7,6 @@ import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
 import android.view.Window;
 import android.view.WindowManager.LayoutParams;
 import android.widget.ImageView;
@@ -29,15 +28,6 @@ public class ActivityUtils {
                                             int backgroundResId) {
         if (activity.findViewById(backgroundResId) != null) {
             ImageView background = activity.findViewById(backgroundResId);
-            ELGlideModule.loadImage(imageResId, background);
-        }
-    }
-
-    public static void setupBackgroundImage(View view,
-                                            int imageResId,
-                                            int backgroundResId) {
-        if (view.findViewById(backgroundResId) != null) {
-            ImageView background = view.findViewById(backgroundResId);
             ELGlideModule.loadImage(imageResId, background);
         }
     }
