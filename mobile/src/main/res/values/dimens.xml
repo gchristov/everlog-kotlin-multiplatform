@@ -73,6 +73,5 @@
     <dimen name="exercise_group_create_side_spacing">@dimen/activity_margin</dimen>
     <dimen name="exercise_group_set_button_size">38dp</dimen>
 
-
     <dimen name="bottom_sheet_width">550dp</dimen>
 </resources>
