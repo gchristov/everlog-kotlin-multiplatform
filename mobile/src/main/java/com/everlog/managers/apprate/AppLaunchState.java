@@ -10,7 +10,11 @@ import java.util.Date;
 public class AppLaunchState extends PreferencesManager {
 
     private enum PreferenceKeys {
+        FIRST_LAUNCH_DATE,
         LAST_LAUNCH_DATE,
+        DAYS_SINCE_LAST_LAUNCH,
+        LAUNCH_COUNT,
+        CONSECUTIVE_DAYS_LAUNCH_COUNT,
 
         // Home notification
 
@@ -40,12 +44,44 @@ public class AppLaunchState extends PreferencesManager {
         editor.apply();
     }
 
+    int getConsecutiveDaysLaunchCount() {
+        return getPreference(PreferenceKeys.CONSECUTIVE_DAYS_LAUNCH_COUNT.name(), 1);
+    }
+
+    void setConsecutiveDaysLaunchCount(int count) {
+        savePreference(count, PreferenceKeys.CONSECUTIVE_DAYS_LAUNCH_COUNT.name());
+    }
+
+    int getLaunchCount() {
+        return getPreference(PreferenceKeys.LAUNCH_COUNT.name(), 0);
+    }
+
+    void setLaunchCount(int count) {
+        savePreference(count, PreferenceKeys.LAUNCH_COUNT.name());
+    }
+
+    long getDaysSinceLastLaunch() {
+        return getPreference(PreferenceKeys.DAYS_SINCE_LAST_LAUNCH.name(), 0L);
+    }
+
+    void setDaysSinceLastLaunch(long days) {
+        savePreference(days, PreferenceKeys.DAYS_SINCE_LAST_LAUNCH.name());
+    }
+
     long getLastLaunchDate() {
         return getPreference(PreferenceKeys.LAST_LAUNCH_DATE.name(), -1L);
     }
 
     void setLastLaunchDate(Date date) {
         savePreference(date.getTime(), PreferenceKeys.LAST_LAUNCH_DATE.name());
+    }
+
+    long getFirstLaunchDate() {
+        return getPreference(PreferenceKeys.FIRST_LAUNCH_DATE.name(), -1L);
+    }
+
+    void setFirstLaunchDate(Date date) {
+        savePreference(date.getTime(), PreferenceKeys.FIRST_LAUNCH_DATE.name());
     }
 
     // Home notification

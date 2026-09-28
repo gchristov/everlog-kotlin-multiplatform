@@ -295,7 +295,7 @@ public class ELNavigator implements Navigator {
         if (mContext instanceof AppCompatActivity) {
             new RatePromptController((AppCompatActivity) mContext).request(trigger, delayMillis);
         } else {
-            Timber.tag(TAG).w("Can't show rating prompt without an activity: source=%s", trigger.getSource());
+            Timber.tag(TAG).e(new IllegalStateException("Can't show rating prompt without an activity: source=" + trigger.getSource()));
         }
     }
 

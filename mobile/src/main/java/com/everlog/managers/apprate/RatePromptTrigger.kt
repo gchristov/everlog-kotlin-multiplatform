@@ -34,7 +34,7 @@ sealed class RatePromptTrigger {
 
         override val source = "workout_completed"
 
-        override val actionId = "$source:${workout.uuid ?: workout.completedDate}"
+        override val actionId = "$source:${workout.uuid}"
 
         override fun isEligible(): Boolean {
             return workout.getDurationMillis() >= TimeUnit.MINUTES.toMillis(AppConfig.configuration.ratePromptMinWorkoutMinutes.toLong())

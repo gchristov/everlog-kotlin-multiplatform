@@ -12,7 +12,30 @@ public class AppLaunchManager {
     public static final AppLaunchManager manager = new AppLaunchManager();
 
     public void launchApp() {
-        AppLaunchState.state.setLastLaunchDate(new Date());
+        long firstLaunchDate = AppLaunchState.state.getFirstLaunchDate();
+        Date now = new Date();
+        if (firstLaunchDate < 0) {
+            // App has not been launched yet
+            AppLaunchState.state.setFirstLaunchDate(now);
+        } else {
+            // App has been launched before, calculate how many calendar days have passed, ignoring time
+            long daysSinceLastLaunch = calendarDaysSinceDate(AppLaunchState.state.getLastLaunchDate());
+            AppLaunchState.state.setDaysSinceLastLaunch(daysSinceLastLaunch);
+        }
+        AppLaunchState.state.setLastLaunchDate(now);
+
+        // Update app launch count
+        int launchCount = AppLaunchState.state.getLaunchCount();
+        AppLaunchState.state.setLaunchCount(launchCount + 1);
+
+        // Update consecutive launch count
+        long daysSinceLastLaunch = AppLaunchState.state.getDaysSinceLastLaunch();
+        if (daysSinceLastLaunch == 1) {
+            int consecutiveLaunchCount = AppLaunchState.state.getConsecutiveDaysLaunchCount();
+            AppLaunchState.state.setConsecutiveDaysLaunchCount(consecutiveLaunchCount + 1);
+        } else if (daysSinceLastLaunch > 1) {
+            AppLaunchState.state.setConsecutiveDaysLaunchCount(1);
+        }
     }
 
     /**
@@ -62,6 +85,10 @@ public class AppLaunchManager {
     }
 
     // Utils
+
+    private long calendarDaysSinceDate(long date) {
+        return calendarDaysSinceDate(date, new Date());
+    }
 
     private long calendarDaysSinceDate(long date, Date now) {
         if (date <= 0) {

@@ -5,9 +5,9 @@ import com.google.common.truth.Truth.assertThat
 import org.junit.Test
 import java.util.concurrent.TimeUnit
 
-class RatePromptTriggerTest {
+class WorkoutCompletedTriggerTest {
 
-    private fun workoutLasting(minutes: Long, seconds: Long = 0, uuid: String? = "abc"): ELWorkout {
+    private fun workoutLasting(minutes: Long, seconds: Long = 0, uuid: String = "abc"): ELWorkout {
         val createdDate = 1_000_000L
         return ELWorkout(uuid = uuid, createdDate = createdDate, completedDate = createdDate + TimeUnit.MINUTES.toMillis(minutes) + TimeUnit.SECONDS.toMillis(seconds))
     }
@@ -38,11 +38,5 @@ class RatePromptTriggerTest {
             .isEqualTo(RatePromptTrigger.WorkoutCompleted(workoutLasting(minutes = 5, uuid = "abc")).actionId)
         assertThat(RatePromptTrigger.WorkoutCompleted(workoutLasting(minutes = 5, uuid = "abc")).actionId)
             .isNotEqualTo(RatePromptTrigger.WorkoutCompleted(workoutLasting(minutes = 5, uuid = "def")).actionId)
-    }
-
-    @Test
-    fun `identifies a workout without an id by its completed date`() {
-        assertThat(RatePromptTrigger.WorkoutCompleted(workoutLasting(minutes = 5, uuid = null)).actionId)
-            .isNotEqualTo(RatePromptTrigger.WorkoutCompleted(workoutLasting(minutes = 6, uuid = null)).actionId)
     }
 }
