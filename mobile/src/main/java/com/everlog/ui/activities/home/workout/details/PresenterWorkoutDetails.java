@@ -42,8 +42,9 @@ import static com.everlog.constants.ELConstants.EXTRA_EXERCISE_GROUPS;
 
 public class PresenterWorkoutDetails extends BaseActivityPresenter<MvpViewWorkoutDetails> {
 
-    // Lets the congrats banner play before Play's rating dialog covers the screen
-    private static final long RATE_PROMPT_DELAY_MILLIS = 3000;
+    // From the workout loading. Lets the congrats banner, shown about 0.5s in, play before Play's rating
+    // dialog covers the screen.
+    private static final long RATE_PROMPT_DELAY_MILLIS = 3500;
 
     private ELWorkout toEdit;
     private boolean mLoadedItemOnce;
@@ -110,6 +111,7 @@ public class PresenterWorkoutDetails extends BaseActivityPresenter<MvpViewWorkou
                         Utils.runWithDelay(() -> {
                             handleCheckWeeklyGoalComplete();
                         }, 500);
+                        navigator.requestRatePrompt(new RatePromptTrigger.WorkoutCompleted(toEdit), RATE_PROMPT_DELAY_MILLIS);
                     }
                 }
                 mLoadedItemOnce = true;
@@ -289,7 +291,6 @@ public class PresenterWorkoutDetails extends BaseActivityPresenter<MvpViewWorkou
                             } else {
                                 getMvpView().showWorkoutCompleteCongrats();
                             }
-                            navigator.requestRatePrompt(new RatePromptTrigger.WorkoutCompleted(toEdit), RATE_PROMPT_DELAY_MILLIS);
                         }
                     }
 
