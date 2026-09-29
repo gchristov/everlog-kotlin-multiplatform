@@ -97,6 +97,40 @@ class WorkoutNotificationStateTest {
     }
 
     @Test
+    fun `next set follows the most recently completed set`() {
+        // Set 1 was skipped and set 2 completed, so set 3 is next rather than set 1
+        val workout = workout(0, bench to listOf(plannedSet(), completedSet(), plannedSet()))
+
+        val state = WorkoutNotificationState.from(workout, null) as NextSet
+
+        assertThat(state.setNumber).isEqualTo(3)
+    }
+
+    @Test
+    fun `rest shows the set after the one just completed up next`() {
+        val workout = workout(0,
+                bench to listOf(completedSet(completedDate = 1L), plannedSet()),
+                squat to listOf(plannedSet(), completedSet(completedDate = 2L), plannedSet()))
+
+        val state = WorkoutNotificationState.from(workout, RestTimer(remainingSeconds = 45, remainingPercent = 100)) as Rest
+
+        assertThat(state.upNext?.exerciseName).isEqualTo("Squat")
+        assertThat(state.upNext?.setNumber).isEqualTo(3)
+    }
+
+    @Test
+    fun `next set wraps round to skipped sets once the later ones are complete`() {
+        val workout = workout(0,
+                bench to listOf(plannedSet(), completedSet(completedDate = 1L)),
+                squat to listOf(completedSet(completedDate = 2L)))
+
+        val state = WorkoutNotificationState.from(workout, null) as NextSet
+
+        assertThat(state.exerciseName).isEqualTo("Bench press")
+        assertThat(state.setNumber).isEqualTo(1)
+    }
+
+    @Test
     fun `rep based set hides time`() {
         val workout = workout(0, bench to listOf(ELSet(requiredReps = 8, reps = 8)))
 
@@ -149,5 +183,5 @@ class WorkoutNotificationStateTest {
         assertThat(state.totalSets).isEqualTo(2)
     }
 
-    private fun completedSet() = ELSet(requiredReps = 8, reps = 8, weight = 60f, completedDate = 1L)
+    private fun completedSet(completedDate: Long = 1L) = ELSet(requiredReps = 8, reps = 8, weight = 60f, completedDate = completedDate)
 }
