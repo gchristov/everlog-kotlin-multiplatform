@@ -25,16 +25,30 @@ class WorkoutPrefillController {
         // safer place to restart than a percentage of an old 1RM.
         private val ORM_WINDOW_MILLIS = TimeUnit.DAYS.toMillis(90)
 
-        fun prefillExercises(exercises: List<ELRoutineExercise>, listener: OnExercisePrefillListener) {
+        /**
+         * Loads the user's history, then fills the empty values of the given exercises' sets on the main thread.
+         *
+         * @param fill false to only load what the exercises would be prefilled from, e.g. when resuming a
+         * workout whose sets were already prefilled and may have been cleared by the user since
+         */
+        fun prefillExercises(exercises: List<ELRoutineExercise>, fill: Boolean, listener: OnExercisePrefillListener) {
+            // Read before leaving the main thread, the workout screen keeps changing the exercises
+            val toLoad = exercises.mapNotNull { it.exercise }
             // Fetch user history
             ELDatastore.workoutsStore().getItems(object : OnStoreItemsListener<ELWorkout> {
                 override fun onItemsLoaded(history: MutableList<ELWorkout>, fromCache: Boolean) {
                     // Copy before leaving this thread, as the store keeps updating its list
                     val snapshot = ArrayList(history)
-                    Observable.fromCallable { prefill(exercises, snapshot, System.currentTimeMillis()) }
+                    Observable.fromCallable { buildPrefillSources(toLoad, snapshot, System.currentTimeMillis()) }
                             .observeOn(AndroidSchedulers.mainThread())
                             .subscribeOn(Schedulers.computation())
-                            .subscribe({ sources -> listener.onSuccess(sources) })
+                            .subscribe({ sources ->
+                                // Sets are only changed on the main thread, where the user edits them too
+                                if (fill) {
+                                    applyPrefill(exercises, sources)
+                                }
+                                listener.onSuccess(sources)
+                            })
                             { throwable: Throwable -> listener.onError(throwable) }
                 }
 
@@ -50,20 +64,33 @@ class WorkoutPrefillController {
          * @return what each exercise was prefilled from, by exercise uuid, so sets added later can use it
          */
         internal fun prefill(exercises: List<ELRoutineExercise>, history: List<ELWorkout>, now: Long): Map<String, PrefillSource> {
-            Timber.tag(TAG).d("Starting set prefill")
+            val sources = buildPrefillSources(exercises.mapNotNull { it.exercise }, history, now)
+            applyPrefill(exercises, sources)
+            return sources
+        }
+
+        /**
+         * @return what each exercise would be prefilled from, by exercise uuid
+         */
+        internal fun buildPrefillSources(exercises: List<ELExercise>, history: List<ELWorkout>, now: Long): Map<String, PrefillSource> {
             // The store orders by created date, which can differ from when the workout was completed
             val newestFirst = history.sortedByDescending { it.completedDate }
             val sources = HashMap<String, PrefillSource>()
+            exercises.forEach { exercise ->
+                exercise.uuid?.let { sources[it] = buildPrefillSource(exercise, newestFirst, now) }
+            }
+            return sources
+        }
+
+        internal fun applyPrefill(exercises: List<ELRoutineExercise>, sources: Map<String, PrefillSource>) {
+            Timber.tag(TAG).d("Starting set prefill")
             exercises.forEach { routineExercise ->
-                val exercise = routineExercise.exercise!!
-                val source = buildPrefillSource(exercise, newestFirst, now)
-                exercise.uuid?.let { sources[it] = source }
+                val source = sources[routineExercise.exercise?.uuid] ?: return@forEach
                 routineExercise.sets.forEachIndexed { setIndex, setToPrefill ->
                     prefillSet(source, setToPrefill, setIndex)
                 }
             }
             Timber.tag(TAG).d("Finished set prefill")
-            return sources
         }
 
         /**

@@ -305,7 +305,7 @@ class PresenterWorkout : PresenterCreateExerciseGroups<MvpViewWorkout>() {
     override fun handleExerciseGroupsSelected(groups: List<ELExerciseGroup>) {
         super.handleExerciseGroupsSelected(groups)
         // Only the new exercises, so values cleared in the others aren't filled again
-        prefillExercises(groups.flatMap { it.exercises })
+        prefillExercises(groups.flatMap { it.exercises }, fill = true)
     }
 
     override fun handleEditExerciseEvent(exercise: ELExercise) {
@@ -451,9 +451,9 @@ class PresenterWorkout : PresenterCreateExerciseGroups<MvpViewWorkout>() {
 
     // Workout prefilling
 
-    private fun prefillExercises(exercises: List<ELRoutineExercise>) {
+    private fun prefillExercises(exercises: List<ELRoutineExercise>, fill: Boolean) {
         if (exercises.isNotEmpty() && SettingsManager.manager.muscleGoal().canPrefill()) {
-            WorkoutPrefillController.prefillExercises(exercises, object : WorkoutPrefillController.OnExercisePrefillListener {
+            WorkoutPrefillController.prefillExercises(exercises, fill, object : WorkoutPrefillController.OnExercisePrefillListener {
 
                 override fun onSuccess(sources: Map<String, PrefillSource>) {
                     if (isAttachedToView) {
@@ -492,15 +492,16 @@ class PresenterWorkout : PresenterCreateExerciseGroups<MvpViewWorkout>() {
     // Setup
 
     private fun setupState() {
-        var shouldPrefill = false
         if (mWorkout == null) {
-            shouldPrefill = true
             mWorkout = mvpView.getWorkout()
-            // Make sure we prefill with our required values
-            mWorkout?.prefillRequiredMetrics()
-        }
-        if (shouldPrefill) {
-            prefillExercises(mWorkout?.getExerciseGroups().orEmpty().flatMap { it.exercises })
+            // A resumed workout was already prefilled when it started, and the user may have cleared values since
+            val resumed = mWorkout?.let { WorkoutManager.manager.isOngoingWorkout(it) } == true
+            if (!resumed) {
+                // Make sure we prefill with our required values
+                mWorkout?.prefillRequiredMetrics()
+            }
+            // Still load what each exercise is prefilled from, for sets added later
+            prefillExercises(mWorkout?.getExerciseGroups().orEmpty().flatMap { it.exercises }, fill = !resumed)
         }
     }
 

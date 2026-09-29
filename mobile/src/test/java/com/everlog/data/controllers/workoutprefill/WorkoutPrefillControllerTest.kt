@@ -364,6 +364,41 @@ class WorkoutPrefillControllerTest {
         assertThat(sources.getValue("squat").lastSession).isNull()
     }
 
+    @Test
+    fun `building the sources doesn't change the sets`() {
+        // As when resuming a workout, where the user may have cleared prefilled values
+        val history = listOf(workout(at(2026, 9, 28), bench to listOf(loggedSet(10, 60f))))
+        val ongoing = workout(now, bench to listOf(ELSet()))
+
+        val sources = WorkoutPrefillController.buildPrefillSources(listOf(bench), history, now)
+
+        assertThat(sources.getValue("bench").lastSession).isNotNull()
+        assertThat(reps(ongoing, bench)).containsExactly(-1)
+        assertThat(weights(ongoing, bench)).containsExactly(-1f)
+    }
+
+    @Test
+    fun `applying fills sets added after the sources were built`() {
+        val history = listOf(workout(at(2026, 9, 28), bench to listOf(loggedSet(10, 60f), loggedSet(8, 65f))))
+        val ongoing = workout(now, bench to listOf(ELSet()))
+        val sources = WorkoutPrefillController.buildPrefillSources(listOf(bench), history, now)
+        // The user added a set while history was loading
+        ongoing.findExercise(bench)!!.single().sets.add(ELSet())
+
+        WorkoutPrefillController.applyPrefill(ongoing.findExercise(bench)!!, sources)
+
+        assertThat(reps(ongoing, bench)).containsExactly(10, 8).inOrder()
+    }
+
+    @Test
+    fun `applying skips exercises without a source`() {
+        val ongoing = workout(now, bench to listOf(ELSet()))
+
+        WorkoutPrefillController.applyPrefill(ongoing.findExercise(bench)!!, emptyMap())
+
+        assertThat(reps(ongoing, bench)).containsExactly(-1)
+    }
+
     // Added sets
 
     @Test
