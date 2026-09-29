@@ -10,6 +10,7 @@ import androidx.core.content.ContextCompat
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.everlog.R
 import com.everlog.constants.ELConstants
+import com.everlog.data.controllers.workoutprefill.BaseWorkoutPrefillController.PrefillSource
 import com.everlog.data.controllers.workoutprefill.WorkoutPrefillController
 import com.everlog.data.datastores.ELDatastore
 import com.everlog.data.model.exercise.ELExercise
@@ -47,6 +48,9 @@ class PresenterWorkout : PresenterCreateExerciseGroups<MvpViewWorkout>() {
     private var mTickTimeController: TickTimeController? = null
     private var mWorkoutSetController: WorkoutSetController? = null
     private var mWorkoutTimeController: WorkoutTimeController? = null
+
+    // What each exercise was prefilled from, by exercise uuid, for sets added later
+    private val mPrefillSources = HashMap<String, PrefillSource>()
 
     override fun onReady() {
         super.onReady()
@@ -300,7 +304,8 @@ class PresenterWorkout : PresenterCreateExerciseGroups<MvpViewWorkout>() {
 
     override fun handleExerciseGroupsSelected(groups: List<ELExerciseGroup>) {
         super.handleExerciseGroupsSelected(groups)
-        prefillWorkout()
+        // Only the new exercises, so values cleared in the others aren't filled again
+        prefillExercises(groups.flatMap { it.exercises })
     }
 
     override fun handleEditExerciseEvent(exercise: ELExercise) {
@@ -406,6 +411,18 @@ class PresenterWorkout : PresenterCreateExerciseGroups<MvpViewWorkout>() {
         }
     }
 
+    override fun setAdded(group: ELExerciseGroup) {
+        super.setAdded(group)
+        if (!SettingsManager.manager.muscleGoal().canPrefill()) {
+            return
+        }
+        group.exercises.forEach { exercise ->
+            val source = mPrefillSources[exercise.exercise?.uuid] ?: return@forEach
+            val setIndex = exercise.sets.lastIndex
+            WorkoutPrefillController.prefillAddedSet(source, exercise.sets[setIndex], setIndex)
+        }
+    }
+
     // Save
 
     override fun performSave(exerciseGroups: ArrayList<ELExerciseGroup>) {
@@ -434,14 +451,17 @@ class PresenterWorkout : PresenterCreateExerciseGroups<MvpViewWorkout>() {
 
     // Workout prefilling
 
-    private fun prefillWorkout() {
-        if (mWorkout?.hasExercises() == true && SettingsManager.manager.muscleGoal().canPrefill()) {
-            WorkoutPrefillController.prefillWorkout(mWorkout!!, object : WorkoutPrefillController.OnExercisePrefillListener {
+    private fun prefillExercises(exercises: List<ELRoutineExercise>) {
+        if (exercises.isNotEmpty() && SettingsManager.manager.muscleGoal().canPrefill()) {
+            WorkoutPrefillController.prefillExercises(exercises, object : WorkoutPrefillController.OnExercisePrefillListener {
 
-                override fun onSuccess() {
+                override fun onSuccess(sources: Map<String, PrefillSource>) {
                     if (isAttachedToView) {
+                        mPrefillSources.putAll(sources)
                         mAdapter.notifyDataSetChanged()
                         notifyWorkoutServiceSetUpdated()
+                        // So the prefilled values survive the app being killed
+                        saveOngoingWorkout()
                     }
                 }
 
@@ -472,15 +492,15 @@ class PresenterWorkout : PresenterCreateExerciseGroups<MvpViewWorkout>() {
     // Setup
 
     private fun setupState() {
-        var shouldPrefillWeight = false
+        var shouldPrefill = false
         if (mWorkout == null) {
-            shouldPrefillWeight = true
+            shouldPrefill = true
             mWorkout = mvpView.getWorkout()
             // Make sure we prefill with our required values
             mWorkout?.prefillRequiredMetrics()
         }
-        if (shouldPrefillWeight) {
-            prefillWorkout()
+        if (shouldPrefill) {
+            prefillExercises(mWorkout?.getExerciseGroups().orEmpty().flatMap { it.exercises })
         }
     }
 

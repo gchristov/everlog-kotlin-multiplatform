@@ -133,6 +133,7 @@ class ExerciseGroupCreateAdapter {
                 return
             }
             item.setAdd()
+            builder.listener?.onSetAdded(item)
             render()
             scrollTo(mAdapter.count - 1) // Scroll to last item
             builder.saveWorkout()
@@ -715,5 +716,6 @@ class ExerciseGroupCreateAdapter {
         fun onStartTimer(exercise: ELRoutineExercise, set: ELSet)
         fun onTimeChanged(exercise: ELRoutineExercise, set: ELSet)
         fun onSetCompleted(group: ELExerciseGroup)
+        fun onSetAdded(group: ELExerciseGroup)
     }
 }

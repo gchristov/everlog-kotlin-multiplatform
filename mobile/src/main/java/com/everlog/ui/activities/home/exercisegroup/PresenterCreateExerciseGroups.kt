@@ -419,6 +419,10 @@ abstract class PresenterCreateExerciseGroups<T : MvpViewCreateExerciseGroups> : 
         // No-op
     }
 
+    internal open fun setAdded(group: ELExerciseGroup) {
+        // No-op
+    }
+
     // Setup
 
     private fun setupState() {
@@ -482,6 +486,10 @@ abstract class PresenterCreateExerciseGroups<T : MvpViewCreateExerciseGroups> : 
 
                     override fun onSetCompleted(group: ELExerciseGroup) {
                         setCompleted(group)
+                    }
+
+                    override fun onSetAdded(group: ELExerciseGroup) {
+                        setAdded(group)
                     }
                 })))
     }

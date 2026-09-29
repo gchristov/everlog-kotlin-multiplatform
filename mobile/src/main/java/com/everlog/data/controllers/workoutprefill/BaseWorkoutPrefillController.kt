@@ -27,7 +27,7 @@ abstract class BaseWorkoutPrefillController {
     }
 
     internal fun buildSetInfo(set: ELSet): String {
-        return String.format("weight=%.2f, reps=%d", set.getWeight(), set.getReps())
+        return String.format("weight=%.2f, reps=%d, time=%d", set.getWeight(), set.getReps(), set.getTimeSeconds())
     }
 
     /**
