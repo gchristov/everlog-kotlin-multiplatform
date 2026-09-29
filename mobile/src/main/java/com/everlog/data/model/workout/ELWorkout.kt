@@ -8,6 +8,7 @@ import com.everlog.data.model.ELRoutine
 import com.everlog.data.model.exercise.ELExercise
 import com.everlog.data.model.exercise.ELExerciseGroup
 import com.everlog.data.model.exercise.ELRoutineExercise
+import com.everlog.data.model.set.ELSet
 import com.everlog.managers.preferences.SettingsManager
 import com.everlog.ui.fragments.home.activity.statistics.StatisticsHomeFragment
 import com.everlog.utils.*
@@ -278,25 +279,37 @@ data class ELWorkout(
         }
     }
 
+    /**
+     * The next set to perform: the first incomplete one after the most recently completed set, so
+     * it follows along when sets are done out of order. Wraps round to earlier skipped sets once
+     * the later ones are complete.
+     */
     fun getNextIncompleteState(allowSkip: Boolean? = true): ELWorkoutState? {
-        if (hasExercises()) {
-            // Start from beginning
-            getExerciseGroups().forEachIndexed { groupIndex, group ->
-                val sets = group.getTotalSetsCount()
-                for (setIndex in 0 until sets) {
-                    val exercisesForSetIndex = group.getExercisesForSetIndex(setIndex)
-                    exercisesForSetIndex.forEachIndexed { exerciseIndex, exercise ->
-                        if (!exercise.sets[setIndex].isComplete()
-                                || (exercise.sets[setIndex].isWithoutData() && allowSkip == false)) {
-                            val state = ELWorkoutState()
-                            state.groupIndex = groupIndex
-                            state.setIndex = setIndex
-                            state.exerciseIndex = exerciseIndex
-                            state.exercisesInGroup = exercisesForSetIndex.size
-                            return state
-                        }
-                    }
+        val positions = ArrayList<Pair<ELWorkoutState, ELSet>>()
+        getExerciseGroups().forEachIndexed { groupIndex, group ->
+            for (setIndex in 0 until group.getTotalSetsCount()) {
+                val exercisesForSetIndex = group.getExercisesForSetIndex(setIndex)
+                exercisesForSetIndex.forEachIndexed { exerciseIndex, exercise ->
+                    val state = ELWorkoutState()
+                    state.groupIndex = groupIndex
+                    state.setIndex = setIndex
+                    state.exerciseIndex = exerciseIndex
+                    state.exercisesInGroup = exercisesForSetIndex.size
+                    positions.add(state to exercise.sets[setIndex])
                 }
+            }
+        }
+        // Sets completed together (e.g. a super set) share a time, so take the last one
+        var lastCompleted = -1
+        positions.forEachIndexed { index, (_, set) ->
+            if (set.isComplete() && (lastCompleted < 0 || set.getCompletedDate() >= positions[lastCompleted].second.getCompletedDate())) {
+                lastCompleted = index
+            }
+        }
+        for (offset in 1..positions.size) {
+            val (state, set) = positions[(lastCompleted + offset) % positions.size]
+            if (!set.isComplete() || (set.isWithoutData() && allowSkip == false)) {
+                return state
             }
         }
         return null
