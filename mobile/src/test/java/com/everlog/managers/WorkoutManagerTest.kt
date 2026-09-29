@@ -40,6 +40,17 @@ class WorkoutManagerTest {
     }
 
     @Test
+    fun `a finished or stopped workout isn't the ongoing one`() {
+        val workout = ELWorkout(uuid = "ongoing")
+        WorkoutManager.manager.setOngoingWorkout(workout)
+
+        // As done by finishing or stopping the workout
+        WorkoutManager.manager.clearOngoingWorkout()
+
+        assertThat(WorkoutManager.manager.isOngoingWorkout(workout)).isFalse()
+    }
+
+    @Test
     fun `a workout without a uuid is never the ongoing one`() {
         WorkoutManager.manager.setOngoingWorkout(ELWorkout())
 

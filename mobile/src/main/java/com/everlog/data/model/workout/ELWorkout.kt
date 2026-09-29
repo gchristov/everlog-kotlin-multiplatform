@@ -328,6 +328,19 @@ data class ELWorkout(
                     if (!set.isTimeEntered() && set.isRequiredTimeEntered()) {
                         set.updateTimeSeconds(set.getRequiredTimeSeconds())
                     }
+                }
+            }
+        }
+        clearRemainingTimes()
+    }
+
+    /**
+     * Clears the countdowns of set timers, which don't survive the workout screen closing.
+     */
+    fun clearRemainingTimes() {
+        getExerciseGroups().forEach { group ->
+            group.exercises.forEach { exercise ->
+                exercise.sets.forEach { set ->
                     // Clear this as we want it to be empty every time
                     set.remainingTimeSeconds = null
                 }

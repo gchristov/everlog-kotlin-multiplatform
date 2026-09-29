@@ -460,8 +460,11 @@ class PresenterWorkout : PresenterCreateExerciseGroups<MvpViewWorkout>() {
                         mPrefillSources.putAll(sources)
                         mAdapter.notifyDataSetChanged()
                         notifyWorkoutServiceSetUpdated()
-                        // So the prefilled values survive the app being killed
-                        saveOngoingWorkout()
+                        // So the prefilled values survive the app being killed, unless the workout was
+                        // finished or stopped while history was loading
+                        if (fill && WorkoutManager.manager.isOngoingWorkout(mWorkout!!)) {
+                            saveOngoingWorkout()
+                        }
                     }
                 }
 
@@ -496,7 +499,9 @@ class PresenterWorkout : PresenterCreateExerciseGroups<MvpViewWorkout>() {
             mWorkout = mvpView.getWorkout()
             // A resumed workout was already prefilled when it started, and the user may have cleared values since
             val resumed = mWorkout?.let { WorkoutManager.manager.isOngoingWorkout(it) } == true
-            if (!resumed) {
+            if (resumed) {
+                mWorkout?.clearRemainingTimes()
+            } else {
                 // Make sure we prefill with our required values
                 mWorkout?.prefillRequiredMetrics()
             }
