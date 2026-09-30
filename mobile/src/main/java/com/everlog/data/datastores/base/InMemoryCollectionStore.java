@@ -1,5 +1,6 @@
 package com.everlog.data.datastores.base;
 
+import com.everlog.data.datastores.events.BaseEvent;
 import com.everlog.utils.Utils;
 
 import org.greenrobot.eventbus.EventBus;
@@ -16,24 +17,30 @@ import androidx.annotation.Nullable;
  */
 public class InMemoryCollectionStore<T> implements CollectionStore<T> {
 
+    /**
+     * Builds the event posted when the items are loaded, the same one the Firestore store posts.
+     */
+    public interface LoadedEventFactory<T> {
+
+        BaseEvent create(@Nullable List<T> items, @Nullable Throwable error, boolean fromCache);
+    }
+
     private final String mCollection;
-    private final ELCollectionStore<T> mFirestoreStore;
+    private final LoadedEventFactory<T> mLoadedEvent;
     private final Comparator<T> mOrder;
     private final ItemDecorator<T> mDecorator;
 
     private InMemoryDatabase.Listener mListener;
 
     /**
-     * @param firestoreStore the Firestore store for the same items, for its events and decoration
      * @param order the Firestore query's ordering
      */
-    public InMemoryCollectionStore(String collection, ELCollectionStore<T> firestoreStore, Comparator<T> order) {
-        this(collection, firestoreStore, order, firestoreStore::decorateItem);
-    }
-
-    public InMemoryCollectionStore(String collection, ELCollectionStore<T> firestoreStore, Comparator<T> order, ItemDecorator<T> decorator) {
+    public InMemoryCollectionStore(String collection,
+                                   LoadedEventFactory<T> loadedEvent,
+                                   Comparator<T> order,
+                                   ItemDecorator<T> decorator) {
         mCollection = collection;
-        mFirestoreStore = firestoreStore;
+        mLoadedEvent = loadedEvent;
         mOrder = order;
         mDecorator = decorator;
     }
@@ -67,7 +74,7 @@ public class InMemoryCollectionStore<T> implements CollectionStore<T> {
                 mDecorator.decorate(item);
             }
             Utils.runInForeground(() -> {
-                EventBus.getDefault().post(mFirestoreStore.getCollectionStoreItemLoadedEvent(items, null, false));
+                EventBus.getDefault().post(mLoadedEvent.create(items, null, false));
                 if (listener != null) {
                     listener.onItemsLoaded(items, false);
                 }

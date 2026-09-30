@@ -1,5 +1,6 @@
 package com.everlog.data.datastores.base;
 
+import com.everlog.data.datastores.events.BaseEvent;
 import com.everlog.data.model.ELFirestoreModel;
 import com.everlog.utils.Utils;
 import com.google.firebase.firestore.SetOptions;
@@ -14,22 +15,28 @@ import androidx.annotation.Nullable;
  */
 public class InMemoryDocumentStore<T extends ELFirestoreModel> implements DocumentStore<T> {
 
+    /**
+     * Builds the event posted when an item is loaded, the same one the Firestore store posts.
+     */
+    public interface LoadedEventFactory<T> {
+
+        BaseEvent create(@Nullable T item, boolean hasPendingWrites, boolean fromCache, @Nullable Throwable error);
+    }
+
     private final String mCollection;
-    private final ELDocumentStore<T> mFirestoreStore;
+    private final Class<T> mType;
+    private final LoadedEventFactory<T> mLoadedEvent;
     private final ItemDecorator<T> mDecorator;
 
     private InMemoryDatabase.Listener mListener;
 
-    /**
-     * @param firestoreStore the Firestore store for the same items, for its events and decoration
-     */
-    public InMemoryDocumentStore(String collection, ELDocumentStore<T> firestoreStore) {
-        this(collection, firestoreStore, firestoreStore::decorateItem);
-    }
-
-    public InMemoryDocumentStore(String collection, ELDocumentStore<T> firestoreStore, ItemDecorator<T> decorator) {
+    public InMemoryDocumentStore(String collection,
+                                 Class<T> type,
+                                 LoadedEventFactory<T> loadedEvent,
+                                 ItemDecorator<T> decorator) {
         mCollection = collection;
-        mFirestoreStore = firestoreStore;
+        mType = type;
+        mLoadedEvent = loadedEvent;
         mDecorator = decorator;
     }
 
@@ -71,20 +78,19 @@ public class InMemoryDocumentStore<T extends ELFirestoreModel> implements Docume
 
     private void load(String itemId, @Nullable OnStoreItemListener<T> listener) {
         Utils.runInBackground(() -> {
-            T item = mFirestoreStore.getType().cast(InMemoryDatabase.get(mCollection, itemId));
+            T item = mType.cast(InMemoryDatabase.get(mCollection, itemId));
             if (item != null) {
                 mDecorator.decorate(item);
-                mFirestoreStore.itemReady(item);
             }
             Utils.runInForeground(() -> {
                 if (item != null) {
-                    EventBus.getDefault().post(mFirestoreStore.getDocumentStoreItemLoadedEvent(item, false, false, null));
+                    EventBus.getDefault().post(mLoadedEvent.create(item, false, false, null));
                     if (listener != null) {
                         listener.onItemLoaded(item, false);
                     }
                 } else {
-                    Throwable error = new ELDocumentStore.ItemNotFoundError(mFirestoreStore.getType());
-                    EventBus.getDefault().post(mFirestoreStore.getDocumentStoreItemLoadedEvent(null, false, false, error));
+                    Throwable error = new ELDocumentStore.ItemNotFoundError(mType);
+                    EventBus.getDefault().post(mLoadedEvent.create(null, false, false, error));
                     if (listener != null) {
                         listener.onItemLoadingError(error);
                     }
