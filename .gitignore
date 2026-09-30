@@ -76,6 +76,8 @@ Thumbs.db
 
 # --- Tool inputs and outputs (Firestore exports and BigQuery results contain user PII) ---
 tools/bigquery/*.csv
+# BigQuery service account keys, whatever they're called
+tools/bigquery/*.json
 tools/firebase/firestore/*.json
 tools/firebase/storage/*/
 tools/image_resize/input/
