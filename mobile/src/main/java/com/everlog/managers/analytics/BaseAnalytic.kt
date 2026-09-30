@@ -13,8 +13,6 @@ abstract class BaseAnalytic : Analytic {
 
     abstract fun logScreenName(eventName: String, screenName: String?)
 
-    abstract fun logUserRegister(eventName: String, userId: String?, method: String)
-
     abstract fun logUserIdentify(eventName: String, userId: String?)
 
     abstract fun logUserLogout(eventName: String)
@@ -111,7 +109,10 @@ abstract class BaseAnalytic : Analytic {
     }
 
     override fun userRegister(userId: String?, method: String) {
-        logUserRegister(AnalyticsConstants.EVENT_USER_REGISTER, userId, method)
+        val map = HashMap<String, Any?>()
+        map[AnalyticsConstants.PROPERTY_USER_ID] = userId
+        map[AnalyticsConstants.PROPERTY_METHOD] = method
+        logEvent(AnalyticsConstants.EVENT_USER_REGISTER, map)
     }
 
     override fun userLogin(userId: String?, method: String) {
