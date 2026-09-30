@@ -2,7 +2,6 @@ package com.everlog.data.datastores.history
 
 import com.everlog.data.datastores.base.InMemoryCollectionStore
 import com.everlog.data.datastores.events.collection.ELColStoreItemsLoadedEvent
-import com.everlog.data.datastores.history.ELUserWorkoutsStore.ELColStoreWorkoutsLoadedEvent
 import com.everlog.data.datastores.routines.ELRoutineDecorator
 import com.everlog.data.model.workout.ELWorkout
 

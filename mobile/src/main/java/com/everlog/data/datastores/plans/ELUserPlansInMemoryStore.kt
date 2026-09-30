@@ -2,7 +2,6 @@ package com.everlog.data.datastores.plans
 
 import com.everlog.data.datastores.base.InMemoryCollectionStore
 import com.everlog.data.datastores.events.collection.ELColStoreItemsLoadedEvent
-import com.everlog.data.datastores.plans.ELUserPlansStore.ELColStorePlansLoadedEvent
 import com.everlog.data.model.plan.ELPlan
 
 /**

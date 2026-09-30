@@ -12,7 +12,7 @@ import com.everlog.constants.ELActivityRequestCodes.REQUEST_PICK_COVER_IMAGE
 import com.everlog.constants.ELConstants
 import com.everlog.constants.ELConstants.EXTRA_ROUTINE
 import com.everlog.data.datastores.ELDatastore
-import com.everlog.data.datastores.plans.ELUserPlanStore
+import com.everlog.data.datastores.plans.ELDocStorePlanLoadedEvent
 import com.everlog.data.model.ELRoutine
 import com.everlog.data.model.plan.ELPlan
 import com.everlog.data.model.plan.ELPlanDay
@@ -114,7 +114,7 @@ class PresenterCreatePlan : BaseActivityPresenter<MvpViewCreatePlan>() {
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
-    fun onPlanLoaded(event: ELUserPlanStore.ELDocStorePlanLoadedEvent) {
+    fun onPlanLoaded(event: ELDocStorePlanLoadedEvent) {
         if (isAttachedToView) {
             mvpView?.toggleLoadingOverlay(false)
             if (event.error != null) {

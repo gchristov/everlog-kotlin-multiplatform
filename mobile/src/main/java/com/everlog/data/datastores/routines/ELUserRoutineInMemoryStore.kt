@@ -2,7 +2,6 @@ package com.everlog.data.datastores.routines
 
 import com.everlog.data.datastores.base.InMemoryDocumentStore
 import com.everlog.data.datastores.events.document.ELDocStoreItemLoadedEvent
-import com.everlog.data.datastores.routines.ELUserRoutineStore.ELDocStoreRoutineLoadedEvent
 import com.everlog.data.model.ELRoutine
 
 /**

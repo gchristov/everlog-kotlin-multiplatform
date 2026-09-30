@@ -39,9 +39,4 @@ class ELUserPlanStore : ELDocumentStore<ELPlan>() {
                                                  error: Throwable?): ELDocStoreItemLoadedEvent<ELPlan?> {
         return ELDocStorePlanLoadedEvent(item, hasPendingWrites, fromCache, error)
     }
-
-    class ELDocStorePlanLoadedEvent internal constructor(item: ELPlan?,
-                                                         hasPendingWrites: Boolean,
-                                                         fromCache: Boolean,
-                                                         error: Throwable?) : ELDocStoreItemLoadedEvent<ELPlan?>(item, hasPendingWrites, fromCache, error)
 }

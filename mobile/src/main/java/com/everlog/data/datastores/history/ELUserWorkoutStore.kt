@@ -40,9 +40,4 @@ class ELUserWorkoutStore : ELDocumentStore<ELWorkout>() {
                                                  error: Throwable?): ELDocStoreItemLoadedEvent<ELWorkout?> {
         return ELDocStoreWorkoutLoadedEvent(item, hasPendingWrites, fromCache, error)
     }
-
-    class ELDocStoreWorkoutLoadedEvent internal constructor(item: ELWorkout?,
-                                                            hasPendingWrites: Boolean,
-                                                            fromCache: Boolean,
-                                                            error: Throwable?) : ELDocStoreItemLoadedEvent<ELWorkout?>(item, hasPendingWrites, fromCache, error)
 }

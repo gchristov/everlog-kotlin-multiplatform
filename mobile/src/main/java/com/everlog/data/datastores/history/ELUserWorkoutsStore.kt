@@ -59,24 +59,4 @@ class ELUserWorkoutsStore : ELCollectionStore<ELWorkout>() {
                                                    fromCache: Boolean): ELColStoreItemsLoadedEvent<ELWorkout> {
         return ELColStoreWorkoutsLoadedEvent(items, error, fromCache)
     }
-
-    class ELColStoreWorkoutAddedEvent internal constructor(position: Int,
-                                                           item: ELWorkout,
-                                                           hasPendingWrites: Boolean,
-                                                           fromCache: Boolean) : ELColStoreItemAddedEvent<ELWorkout>(position, item, hasPendingWrites, fromCache)
-
-    class ELColStoreWorkoutModifiedEvent internal constructor(oldPosition: Int,
-                                                              newPosition: Int,
-                                                              item: ELWorkout,
-                                                              hasPendingWrites: Boolean,
-                                                              fromCache: Boolean) : ELColStoreItemModifiedEvent<ELWorkout>(oldPosition, newPosition, item, hasPendingWrites, fromCache)
-
-    class ELColStoreWorkoutRemovedEvent internal constructor(position: Int,
-                                                             item: ELWorkout,
-                                                             hasPendingWrites: Boolean,
-                                                             fromCache: Boolean) : ELColStoreItemRemovedEvent<ELWorkout>(position, item, hasPendingWrites, fromCache)
-
-    class ELColStoreWorkoutsLoadedEvent internal constructor(items: List<ELWorkout>?,
-                                                             error: Throwable?,
-                                                             fromCache: Boolean) : ELColStoreItemsLoadedEvent<ELWorkout>(items, error, fromCache)
 }

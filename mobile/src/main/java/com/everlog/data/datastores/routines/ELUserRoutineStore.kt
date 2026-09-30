@@ -39,9 +39,4 @@ class ELUserRoutineStore : ELDocumentStore<ELRoutine>() {
                                                  error: Throwable?): ELDocStoreItemLoadedEvent<ELRoutine?> {
         return ELDocStoreRoutineLoadedEvent(item, hasPendingWrites, fromCache, error)
     }
-
-    class ELDocStoreRoutineLoadedEvent internal constructor(item: ELRoutine?,
-                                                            hasPendingWrites: Boolean,
-                                                            fromCache: Boolean,
-                                                            error: Throwable?) : ELDocStoreItemLoadedEvent<ELRoutine?>(item, hasPendingWrites, fromCache, error)
 }

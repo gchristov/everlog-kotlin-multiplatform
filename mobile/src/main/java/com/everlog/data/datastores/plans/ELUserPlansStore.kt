@@ -60,24 +60,4 @@ class ELUserPlansStore : ELCollectionStore<ELPlan>() {
                                                    fromCache: Boolean): ELColStoreItemsLoadedEvent<ELPlan> {
         return ELColStorePlansLoadedEvent(items, error, fromCache)
     }
-
-    class ELColStorePlanAddedEvent internal constructor(position: Int,
-                                                        item: ELPlan,
-                                                        hasPendingWrites: Boolean,
-                                                        fromCache: Boolean) : ELColStoreItemAddedEvent<ELPlan>(position, item, hasPendingWrites, fromCache)
-
-    class ELColStorePlanModifiedEvent internal constructor(oldPosition: Int,
-                                                           newPosition: Int,
-                                                           item: ELPlan,
-                                                           hasPendingWrites: Boolean,
-                                                           fromCache: Boolean) : ELColStoreItemModifiedEvent<ELPlan>(oldPosition, newPosition, item, hasPendingWrites, fromCache)
-
-    class ELColStorePlanRemovedEvent internal constructor(position: Int,
-                                                          item: ELPlan,
-                                                          hasPendingWrites: Boolean,
-                                                          fromCache: Boolean) : ELColStoreItemRemovedEvent<ELPlan>(position, item, hasPendingWrites, fromCache)
-
-    class ELColStorePlansLoadedEvent internal constructor(items: List<ELPlan>?,
-                                                          error: Throwable?,
-                                                          fromCache: Boolean) : ELColStoreItemsLoadedEvent<ELPlan>(items, error, fromCache)
 }
