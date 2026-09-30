@@ -74,5 +74,8 @@ Thumbs.db
 /.idea/androidTestResultsUserPreferences.xml
 /.idea/markdown.xml
 
-# --- Tool outputs (contain user PII) ---
-tools/active_users/*.csv
+# --- Tool inputs and outputs (Firestore exports contain user PII) ---
+tools/firebase/firestore/*.json
+tools/firebase/storage/*/
+tools/image_resize/input/
+tools/image_resize/output/
