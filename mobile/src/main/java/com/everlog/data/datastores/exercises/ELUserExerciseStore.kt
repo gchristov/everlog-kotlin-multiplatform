@@ -27,10 +27,6 @@ class ELUserExerciseStore : ELDocumentStore<ELExercise>() {
         return "ELUserExerciseStore"
     }
 
-    override fun keepsTestLabWritesInMemory(): Boolean {
-        return true
-    }
-
     // Events
 
     override fun getDocumentStoreItemLoadedEvent(item: ELExercise?,
