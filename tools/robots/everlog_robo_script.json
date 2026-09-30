@@ -1,0 +1,850 @@
+[
+  {
+    "eventType": "WAIT_FOR_ELEMENT",
+    "delayTime": 15000,
+    "elementDescriptors": [
+      {
+        "resourceId": "com.everlog:id/showRegisterBtn"
+      }
+    ]
+  },
+  {
+    "eventType": "VIEW_CLICKED",
+    "elementDescriptors": [
+      {
+        "resourceId": "com.everlog:id/showRegisterBtn",
+        "text": "Continue as guest"
+      }
+    ]
+  },
+  {
+    "eventType": "WAIT_FOR_ELEMENT",
+    "delayTime": 20000,
+    "elementDescriptors": [
+      {
+        "resourceId": "com.everlog:id/action_workouts"
+      }
+    ]
+  },
+  {
+    "eventType": "VIEW_CLICKED",
+    "elementDescriptors": [
+      {
+        "resourceId": "com.everlog:id/action_workouts"
+      }
+    ]
+  },
+  {
+    "eventType": "WAIT_FOR_ELEMENT",
+    "delayTime": 5000,
+    "elementDescriptors": [
+      {
+        "text": "NEW TEMPLATE"
+      }
+    ]
+  },
+  {
+    "eventType": "VIEW_CLICKED",
+    "elementDescriptors": [
+      {
+        "text": "NEW TEMPLATE"
+      }
+    ]
+  },
+  {
+    "eventType": "WAIT_FOR_ELEMENT",
+    "delayTime": 5000,
+    "elementDescriptors": [
+      {
+        "resourceId": "com.everlog:id/addBtn",
+        "text": "Add exercises"
+      }
+    ]
+  },
+  {
+    "eventType": "VIEW_CLICKED",
+    "elementDescriptors": [
+      {
+        "resourceId": "com.everlog:id/addBtn",
+        "text": "Add exercises"
+      }
+    ]
+  },
+  {
+    "eventType": "WAIT_FOR_ELEMENT",
+    "delayTime": 10000,
+    "elementDescriptors": [
+      {
+        "resourceId": "com.everlog:id/exerciseName",
+        "text": "Air Twisting Crunch"
+      }
+    ]
+  },
+  {
+    "eventType": "VIEW_CLICKED",
+    "elementDescriptors": [
+      {
+        "resourceId": "com.everlog:id/exerciseName",
+        "text": "Air Twisting Crunch"
+      }
+    ],
+    "canScrollTo": true
+  },
+  {
+    "eventType": "VIEW_CLICKED",
+    "elementDescriptors": [
+      {
+        "resourceId": "com.everlog:id/exerciseName",
+        "text": "Alternating Hammer Curls"
+      }
+    ],
+    "canScrollTo": true
+  },
+  {
+    "eventType": "VIEW_CLICKED",
+    "elementDescriptors": [
+      {
+        "resourceId": "com.everlog:id/exerciseName",
+        "text": "Alternating Shoulder Press"
+      }
+    ],
+    "canScrollTo": true
+  },
+  {
+    "eventType": "VIEW_CLICKED",
+    "elementDescriptors": [
+      {
+        "resourceId": "com.everlog:id/addBtn",
+        "text": "Add (3)"
+      }
+    ]
+  },
+  {
+    "eventType": "WAIT_FOR_ELEMENT",
+    "delayTime": 5000,
+    "elementDescriptors": [
+      {
+        "resourceId": "com.everlog:id/repsMenu"
+      }
+    ]
+  },
+  {
+    "eventType": "VIEW_CLICKED",
+    "elementDescriptors": [
+      {
+        "resourceId": "com.everlog:id/repsMenu"
+      }
+    ],
+    "canScrollTo": true
+  },
+  {
+    "eventType": "WAIT_FOR_ELEMENT",
+    "delayTime": 5000,
+    "elementDescriptors": [
+      {
+        "resourceId": "com.everlog:id/metricField"
+      }
+    ]
+  },
+  {
+    "eventType": "VIEW_TEXT_CHANGED",
+    "replacementText": "12",
+    "elementDescriptors": [
+      {
+        "resourceId": "com.everlog:id/metricField"
+      }
+    ]
+  },
+  {
+    "eventType": "VIEW_CLICKED",
+    "elementDescriptors": [
+      {
+        "resourceId": "android:id/button1",
+        "text": "SAVE"
+      }
+    ]
+  },
+  {
+    "eventType": "VIEW_CLICKED",
+    "elementDescriptors": [
+      {
+        "resourceId": "com.everlog:id/repsMenu"
+      }
+    ],
+    "canScrollTo": true
+  },
+  {
+    "eventType": "WAIT_FOR_ELEMENT",
+    "delayTime": 5000,
+    "elementDescriptors": [
+      {
+        "resourceId": "com.everlog:id/metricField"
+      }
+    ]
+  },
+  {
+    "eventType": "VIEW_TEXT_CHANGED",
+    "replacementText": "12",
+    "elementDescriptors": [
+      {
+        "resourceId": "com.everlog:id/metricField"
+      }
+    ]
+  },
+  {
+    "eventType": "VIEW_CLICKED",
+    "elementDescriptors": [
+      {
+        "resourceId": "android:id/button1",
+        "text": "SAVE"
+      }
+    ]
+  },
+  {
+    "eventType": "VIEW_CLICKED",
+    "elementDescriptors": [
+      {
+        "resourceId": "com.everlog:id/repsMenu"
+      }
+    ],
+    "canScrollTo": true
+  },
+  {
+    "eventType": "WAIT_FOR_ELEMENT",
+    "delayTime": 5000,
+    "elementDescriptors": [
+      {
+        "resourceId": "com.everlog:id/metricField"
+      }
+    ]
+  },
+  {
+    "eventType": "VIEW_TEXT_CHANGED",
+    "replacementText": "12",
+    "elementDescriptors": [
+      {
+        "resourceId": "com.everlog:id/metricField"
+      }
+    ]
+  },
+  {
+    "eventType": "VIEW_CLICKED",
+    "elementDescriptors": [
+      {
+        "resourceId": "android:id/button1",
+        "text": "SAVE"
+      }
+    ]
+  },
+  {
+    "eventType": "VIEW_CLICKED",
+    "elementDescriptors": [
+      {
+        "resourceId": "com.everlog:id/saveBtn",
+        "text": "Save"
+      }
+    ]
+  },
+  {
+    "eventType": "WAIT_FOR_ELEMENT",
+    "delayTime": 10000,
+    "elementDescriptors": [
+      {
+        "resourceId": "com.everlog:id/performBtn"
+      }
+    ]
+  },
+  {
+    "eventType": "VIEW_CLICKED",
+    "elementDescriptors": [
+      {
+        "contentDescription": "Navigate up"
+      }
+    ]
+  },
+  {
+    "eventType": "WAIT_FOR_ELEMENT",
+    "delayTime": 10000,
+    "elementDescriptors": [
+      {
+        "text": "NEW PLAN"
+      }
+    ]
+  },
+  {
+    "eventType": "VIEW_CLICKED",
+    "elementDescriptors": [
+      {
+        "text": "NEW PLAN"
+      }
+    ]
+  },
+  {
+    "eventType": "WAIT_FOR_ELEMENT",
+    "delayTime": 5000,
+    "elementDescriptors": [
+      {
+        "resourceId": "com.everlog:id/nameField"
+      }
+    ]
+  },
+  {
+    "eventType": "VIEW_TEXT_CHANGED",
+    "replacementText": "Robo Plan",
+    "elementDescriptors": [
+      {
+        "resourceId": "com.everlog:id/nameField"
+      }
+    ]
+  },
+  {
+    "eventType": "VIEW_CLICKED",
+    "elementDescriptors": [
+      {
+        "resourceId": "com.everlog:id/weeksBtn"
+      }
+    ]
+  },
+  {
+    "eventType": "WAIT_FOR_ELEMENT",
+    "delayTime": 5000,
+    "elementDescriptors": [
+      {
+        "resourceId": "com.everlog:id/dayFieldIncomplete",
+        "text": "Day 1"
+      }
+    ]
+  },
+  {
+    "eventType": "VIEW_CLICKED",
+    "elementDescriptors": [
+      {
+        "resourceId": "com.everlog:id/dayFieldIncomplete",
+        "text": "Day 1"
+      }
+    ]
+  },
+  {
+    "eventType": "VIEW_CLICKED",
+    "elementDescriptors": [
+      {
+        "resourceId": "com.everlog:id/title",
+        "text": "Choose template"
+      }
+    ]
+  },
+  {
+    "eventType": "WAIT_FOR_ELEMENT",
+    "delayTime": 10000,
+    "elementDescriptors": [
+      {
+        "resourceId": "com.everlog:id/routineName",
+        "text": "My Template"
+      }
+    ]
+  },
+  {
+    "eventType": "VIEW_CLICKED",
+    "elementDescriptors": [
+      {
+        "resourceId": "com.everlog:id/routineName",
+        "text": "My Template"
+      }
+    ]
+  },
+  {
+    "eventType": "WAIT_FOR_ELEMENT",
+    "delayTime": 5000,
+    "elementDescriptors": [
+      {
+        "resourceId": "com.everlog:id/dayFieldIncomplete",
+        "text": "Day 2"
+      }
+    ]
+  },
+  {
+    "eventType": "VIEW_CLICKED",
+    "elementDescriptors": [
+      {
+        "resourceId": "com.everlog:id/dayFieldIncomplete",
+        "text": "Day 2"
+      }
+    ],
+    "canScrollTo": true
+  },
+  {
+    "eventType": "VIEW_CLICKED",
+    "elementDescriptors": [
+      {
+        "resourceId": "com.everlog:id/title",
+        "text": "Rest Day"
+      }
+    ]
+  },
+  {
+    "eventType": "VIEW_CLICKED",
+    "elementDescriptors": [
+      {
+        "resourceId": "com.everlog:id/dayFieldIncomplete",
+        "text": "Day 3"
+      }
+    ],
+    "canScrollTo": true
+  },
+  {
+    "eventType": "VIEW_CLICKED",
+    "elementDescriptors": [
+      {
+        "resourceId": "com.everlog:id/title",
+        "text": "Rest Day"
+      }
+    ]
+  },
+  {
+    "eventType": "VIEW_CLICKED",
+    "elementDescriptors": [
+      {
+        "resourceId": "com.everlog:id/dayFieldIncomplete",
+        "text": "Day 4"
+      }
+    ],
+    "canScrollTo": true
+  },
+  {
+    "eventType": "VIEW_CLICKED",
+    "elementDescriptors": [
+      {
+        "resourceId": "com.everlog:id/title",
+        "text": "Rest Day"
+      }
+    ]
+  },
+  {
+    "eventType": "VIEW_CLICKED",
+    "elementDescriptors": [
+      {
+        "resourceId": "com.everlog:id/dayFieldIncomplete",
+        "text": "Day 5"
+      }
+    ],
+    "canScrollTo": true
+  },
+  {
+    "eventType": "VIEW_CLICKED",
+    "elementDescriptors": [
+      {
+        "resourceId": "com.everlog:id/title",
+        "text": "Rest Day"
+      }
+    ]
+  },
+  {
+    "eventType": "VIEW_CLICKED",
+    "elementDescriptors": [
+      {
+        "resourceId": "com.everlog:id/dayFieldIncomplete",
+        "text": "Day 6"
+      }
+    ],
+    "canScrollTo": true
+  },
+  {
+    "eventType": "VIEW_CLICKED",
+    "elementDescriptors": [
+      {
+        "resourceId": "com.everlog:id/title",
+        "text": "Rest Day"
+      }
+    ]
+  },
+  {
+    "eventType": "VIEW_CLICKED",
+    "elementDescriptors": [
+      {
+        "resourceId": "com.everlog:id/dayFieldIncomplete",
+        "text": "Day 7"
+      }
+    ],
+    "canScrollTo": true
+  },
+  {
+    "eventType": "VIEW_CLICKED",
+    "elementDescriptors": [
+      {
+        "resourceId": "com.everlog:id/title",
+        "text": "Rest Day"
+      }
+    ]
+  },
+  {
+    "eventType": "VIEW_CLICKED",
+    "elementDescriptors": [
+      {
+        "resourceId": "com.everlog:id/saveBtn",
+        "text": "Done"
+      }
+    ]
+  },
+  {
+    "eventType": "VIEW_CLICKED",
+    "elementDescriptors": [
+      {
+        "resourceId": "com.everlog:id/saveBtn",
+        "text": "Done"
+      }
+    ]
+  },
+  {
+    "eventType": "VIEW_CLICKED",
+    "elementDescriptors": [
+      {
+        "resourceId": "com.everlog:id/saveBtn",
+        "text": "Save"
+      }
+    ]
+  },
+  {
+    "eventType": "WAIT_FOR_ELEMENT",
+    "delayTime": 10000,
+    "elementDescriptors": [
+      {
+        "resourceId": "com.everlog:id/action_edit"
+      }
+    ]
+  },
+  {
+    "eventType": "VIEW_CLICKED",
+    "elementDescriptors": [
+      {
+        "contentDescription": "Navigate up"
+      }
+    ]
+  },
+  {
+    "eventType": "WAIT_FOR_ELEMENT",
+    "delayTime": 10000,
+    "elementDescriptors": [
+      {
+        "resourceId": "com.everlog:id/routineName",
+        "text": "My Template"
+      }
+    ]
+  },
+  {
+    "eventType": "VIEW_CLICKED",
+    "elementDescriptors": [
+      {
+        "resourceId": "com.everlog:id/routineName",
+        "text": "My Template"
+      }
+    ]
+  },
+  {
+    "eventType": "WAIT_FOR_ELEMENT",
+    "delayTime": 10000,
+    "elementDescriptors": [
+      {
+        "resourceId": "com.everlog:id/performBtn"
+      }
+    ]
+  },
+  {
+    "eventType": "VIEW_CLICKED",
+    "elementDescriptors": [
+      {
+        "resourceId": "com.everlog:id/performBtn",
+        "text": "Start workout"
+      }
+    ]
+  },
+  {
+    "eventType": "WAIT",
+    "delayTime": 2000
+  },
+  {
+    "eventType": "VIEW_CLICKED",
+    "elementDescriptors": [
+      {
+        "resourceId": "com.android.permissioncontroller:id/permission_allow_button"
+      }
+    ],
+    "optional": true
+  },
+  {
+    "eventType": "WAIT",
+    "delayTime": 2000
+  },
+  {
+    "eventType": "VIEW_CLICKED",
+    "elementDescriptors": [
+      {
+        "resourceId": "com.android.permissioncontroller:id/permission_allow_button"
+      }
+    ],
+    "optional": true
+  },
+  {
+    "eventType": "WAIT_FOR_ELEMENT",
+    "delayTime": 10000,
+    "elementDescriptors": [
+      {
+        "resourceId": "com.everlog:id/completeBtn"
+      }
+    ]
+  },
+  {
+    "eventType": "VIEW_CLICKED",
+    "elementDescriptors": [
+      {
+        "resourceId": "com.everlog:id/completeBtn",
+        "text": "Complete Set 1"
+      }
+    ],
+    "canScrollTo": true
+  },
+  {
+    "eventType": "VIEW_CLICKED",
+    "elementDescriptors": [
+      {
+        "resourceId": "com.everlog:id/completeBtn",
+        "text": "Complete Set 1"
+      }
+    ],
+    "canScrollTo": true
+  },
+  {
+    "eventType": "VIEW_CLICKED",
+    "elementDescriptors": [
+      {
+        "resourceId": "com.everlog:id/completeBtn",
+        "text": "Complete Set 1"
+      }
+    ],
+    "canScrollTo": true
+  },
+  {
+    "eventType": "WAIT",
+    "delayTime": 8000
+  },
+  {
+    "eventType": "VIEW_CLICKED",
+    "elementDescriptors": [
+      {
+        "resourceId": "com.everlog:id/saveBtn",
+        "text": "Finish"
+      }
+    ]
+  },
+  {
+    "eventType": "WAIT_FOR_ELEMENT",
+    "delayTime": 10000,
+    "elementDescriptors": [
+      {
+        "contentDescription": "Navigate up"
+      }
+    ]
+  },
+  {
+    "eventType": "VIEW_CLICKED",
+    "elementDescriptors": [
+      {
+        "contentDescription": "Navigate up"
+      }
+    ]
+  },
+  {
+    "eventType": "WAIT_FOR_ELEMENT",
+    "delayTime": 10000,
+    "elementDescriptors": [
+      {
+        "resourceId": "com.everlog:id/action_workouts"
+      }
+    ]
+  },
+  {
+    "eventType": "VIEW_CLICKED",
+    "elementDescriptors": [
+      {
+        "resourceId": "com.everlog:id/action_workouts"
+      }
+    ]
+  },
+  {
+    "eventType": "VIEW_CLICKED",
+    "elementDescriptors": [
+      {
+        "resourceId": "com.everlog:id/newWorkoutBtn",
+        "text": "Start workout"
+      }
+    ]
+  },
+  {
+    "eventType": "WAIT_FOR_ELEMENT",
+    "delayTime": 5000,
+    "elementDescriptors": [
+      {
+        "resourceId": "com.everlog:id/bs_list_title",
+        "text": "Pick exercises as you go"
+      }
+    ]
+  },
+  {
+    "eventType": "VIEW_CLICKED",
+    "elementDescriptors": [
+      {
+        "resourceId": "com.everlog:id/bs_list_title",
+        "text": "Pick exercises as you go"
+      }
+    ]
+  },
+  {
+    "eventType": "WAIT_FOR_ELEMENT",
+    "delayTime": 10000,
+    "elementDescriptors": [
+      {
+        "resourceId": "com.everlog:id/emptyAction",
+        "text": "Add exercises"
+      }
+    ]
+  },
+  {
+    "eventType": "VIEW_CLICKED",
+    "elementDescriptors": [
+      {
+        "resourceId": "com.everlog:id/emptyAction",
+        "text": "Add exercises"
+      }
+    ]
+  },
+  {
+    "eventType": "WAIT_FOR_ELEMENT",
+    "delayTime": 10000,
+    "elementDescriptors": [
+      {
+        "resourceId": "com.everlog:id/exerciseName",
+        "text": "Air Twisting Crunch"
+      }
+    ]
+  },
+  {
+    "eventType": "VIEW_CLICKED",
+    "elementDescriptors": [
+      {
+        "resourceId": "com.everlog:id/exerciseName",
+        "text": "Air Twisting Crunch"
+      }
+    ]
+  },
+  {
+    "eventType": "VIEW_CLICKED",
+    "elementDescriptors": [
+      {
+        "resourceId": "com.everlog:id/addBtn",
+        "text": "Add (1)"
+      }
+    ]
+  },
+  {
+    "eventType": "WAIT_FOR_ELEMENT",
+    "delayTime": 5000,
+    "elementDescriptors": [
+      {
+        "resourceId": "com.everlog:id/repsMenu"
+      }
+    ]
+  },
+  {
+    "eventType": "VIEW_CLICKED",
+    "elementDescriptors": [
+      {
+        "resourceId": "com.everlog:id/repsMenu"
+      }
+    ],
+    "canScrollTo": true
+  },
+  {
+    "eventType": "WAIT_FOR_ELEMENT",
+    "delayTime": 5000,
+    "elementDescriptors": [
+      {
+        "resourceId": "com.everlog:id/metricField"
+      }
+    ]
+  },
+  {
+    "eventType": "VIEW_TEXT_CHANGED",
+    "replacementText": "10",
+    "elementDescriptors": [
+      {
+        "resourceId": "com.everlog:id/metricField"
+      }
+    ]
+  },
+  {
+    "eventType": "VIEW_CLICKED",
+    "elementDescriptors": [
+      {
+        "resourceId": "android:id/button1",
+        "text": "SAVE"
+      }
+    ]
+  },
+  {
+    "eventType": "VIEW_CLICKED",
+    "elementDescriptors": [
+      {
+        "resourceId": "com.everlog:id/completeBtn",
+        "text": "Complete Set 1"
+      }
+    ]
+  },
+  {
+    "eventType": "WAIT",
+    "delayTime": 8000
+  },
+  {
+    "eventType": "VIEW_CLICKED",
+    "elementDescriptors": [
+      {
+        "resourceId": "com.everlog:id/saveBtn",
+        "text": "Finish"
+      }
+    ]
+  },
+  {
+    "eventType": "WAIT_FOR_ELEMENT",
+    "delayTime": 10000,
+    "elementDescriptors": [
+      {
+        "contentDescription": "Navigate up"
+      }
+    ]
+  },
+  {
+    "eventType": "VIEW_CLICKED",
+    "elementDescriptors": [
+      {
+        "contentDescription": "Navigate up"
+      }
+    ]
+  },
+  {
+    "eventType": "VIEW_CLICKED",
+    "elementDescriptors": [
+      {
+        "resourceId": "android:id/button2",
+        "text": "NO, THANKS"
+      }
+    ],
+    "optional": true
+  },
+  {
+    "eventType": "WAIT_FOR_ELEMENT",
+    "delayTime": 10000,
+    "elementDescriptors": [
+      {
+        "resourceId": "com.everlog:id/action_workouts"
+      }
+    ]
+  }
+]
