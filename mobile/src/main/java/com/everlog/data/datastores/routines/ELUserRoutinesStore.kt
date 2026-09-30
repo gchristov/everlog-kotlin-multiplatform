@@ -25,6 +25,14 @@ class ELUserRoutinesStore : ELCollectionStore<ELRoutine>() {
         return "ELUserRoutinesStore"
     }
 
+    override fun getTestLabCollectionPath(): String {
+        return FirestorePathManager.routinesCollection.path
+    }
+
+    override fun getTestLabOrder(): Comparator<ELRoutine> {
+        return compareBy(nullsFirst()) { it.name }
+    }
+
     override fun decorateItem(item: ELRoutine) {
         ELRoutineDecorator().decorate(item)
     }

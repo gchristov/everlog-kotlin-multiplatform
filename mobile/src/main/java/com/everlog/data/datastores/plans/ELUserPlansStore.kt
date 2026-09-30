@@ -27,6 +27,14 @@ class ELUserPlansStore : ELCollectionStore<ELPlan>() {
         return "ELUserPlansStore"
     }
 
+    override fun getTestLabCollectionPath(): String {
+        return FirestorePathManager.plansCollection.path
+    }
+
+    override fun getTestLabOrder(): Comparator<ELPlan> {
+        return compareBy(nullsFirst()) { it.name }
+    }
+
     override fun decorateItem(item: ELPlan) {
         ELPlanDecorator().decoratePlan(item)
     }
