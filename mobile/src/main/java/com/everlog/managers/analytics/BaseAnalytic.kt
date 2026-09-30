@@ -5,6 +5,7 @@ import com.everlog.data.model.set.ELSetType
 import com.everlog.managers.appupdate.AppUpdateController
 import com.everlog.managers.preferences.SettingsManager
 import com.everlog.ui.fragments.home.activity.statistics.StatisticsHomeFragment
+import com.everlog.utils.device.DeviceUtils
 import org.json.JSONObject
 import java.io.Serializable
 
@@ -23,6 +24,16 @@ abstract class BaseAnalytic : Analytic {
     abstract fun logEvent(name: String, data: Map<String, Any?>)
 
     internal var mAnalyticsEnabled = true
+
+    // Test Lab can set its flag after the app process has started (seen on Play pre-launch
+    // devices), so AnalyticsManager.initialize() alone misses those runs. Check again before
+    // logging and turn analytics off for the rest of the run.
+    protected fun canLog(): Boolean {
+        if (mAnalyticsEnabled && DeviceUtils.isFirebaseTestLabRun()) {
+            toggleAnalytics(false)
+        }
+        return mAnalyticsEnabled
+    }
 
     protected fun buildBundleFromMap(map: Map<String, *>): Bundle {
         val bundle = Bundle()
