@@ -47,6 +47,8 @@ def run(args):
     print(f"Query will scan {scanned / GB:.3f} GB (limit {args.max_gb} GB).", file=sys.stderr)
     if args.dry_run:
         return
+    if scanned > args.max_gb * GB:
+        raise SystemExit(f"Error: Query would scan more than {args.max_gb} GB. Narrow it down, or raise the limit with --max-gb.")
 
     job_config = bigquery.QueryJobConfig(maximum_bytes_billed=int(args.max_gb * GB))
     rows = list(client.query(sql, job_config=job_config).result())
