@@ -1,43 +1,38 @@
 package com.everlog.data.datastores.base;
 
-import com.everlog.data.datastores.events.BaseEvent;
+import com.everlog.data.datastores.events.document.ELDocStoreItemLoadedEvent;
 import com.everlog.data.model.ELFirestoreModel;
 import com.everlog.utils.Utils;
 import com.google.firebase.firestore.SetOptions;
 
 import org.greenrobot.eventbus.EventBus;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 /**
  * Keeps items in {@link InMemoryDatabase} instead of Firestore, used during Firebase Test Lab runs
- * so robots don't create data. Posts the same events as the Firestore store it stands in for.
+ * so robots don't create data. Subclasses post the same events as the Firestore store they stand
+ * in for.
  */
-public class InMemoryDocumentStore<T extends ELFirestoreModel> implements DocumentStore<T> {
-
-    /**
-     * Builds the event posted when an item is loaded, the same one the Firestore store posts.
-     */
-    public interface LoadedEventFactory<T> {
-
-        BaseEvent create(@Nullable T item, boolean hasPendingWrites, boolean fromCache, @Nullable Throwable error);
-    }
-
-    private final String mCollection;
-    private final Class<T> mType;
-    private final LoadedEventFactory<T> mLoadedEvent;
-    private final ItemDecorator<T> mDecorator;
+public abstract class InMemoryDocumentStore<T extends ELFirestoreModel> implements DocumentStore<T> {
 
     private InMemoryDatabase.Listener mListener;
 
-    public InMemoryDocumentStore(String collection,
-                                 Class<T> type,
-                                 LoadedEventFactory<T> loadedEvent,
-                                 ItemDecorator<T> decorator) {
-        mCollection = collection;
-        mType = type;
-        mLoadedEvent = loadedEvent;
-        mDecorator = decorator;
+    protected abstract ELDocStoreItemLoadedEvent<T> getDocumentStoreItemLoadedEvent(@Nullable T item,
+                                                                                    boolean hasPendingWrites,
+                                                                                    boolean fromCache,
+                                                                                    @Nullable Throwable error);
+
+    protected abstract Class<T> getType();
+
+    /**
+     * The {@link InMemoryDatabase} collection the items are kept in.
+     */
+    protected abstract @NonNull String getCollection();
+
+    protected void decorateItem(T item) {
+        // No-op
     }
 
     @Override
@@ -50,18 +45,18 @@ public class InMemoryDocumentStore<T extends ELFirestoreModel> implements Docume
         // Like the Firestore store, keep sending updates for the last item loaded
         removeListener();
         mListener = () -> load(itemId, null);
-        InMemoryDatabase.addListener(mCollection, mListener);
+        InMemoryDatabase.addListener(getCollection(), mListener);
         load(itemId, listener);
     }
 
     @Override
     public void create(T item, SetOptions options) {
-        InMemoryDatabase.put(mCollection, item.documentId(), item);
+        InMemoryDatabase.put(getCollection(), item.documentId(), item);
     }
 
     @Override
     public void delete(T item) {
-        InMemoryDatabase.delete(mCollection, item.documentId());
+        InMemoryDatabase.delete(getCollection(), item.documentId());
     }
 
     @Override
@@ -78,19 +73,19 @@ public class InMemoryDocumentStore<T extends ELFirestoreModel> implements Docume
 
     private void load(String itemId, @Nullable OnStoreItemListener<T> listener) {
         Utils.runInBackground(() -> {
-            T item = mType.cast(InMemoryDatabase.get(mCollection, itemId));
+            T item = getType().cast(InMemoryDatabase.get(getCollection(), itemId));
             if (item != null) {
-                mDecorator.decorate(item);
+                decorateItem(item);
             }
             Utils.runInForeground(() -> {
                 if (item != null) {
-                    EventBus.getDefault().post(mLoadedEvent.create(item, false, false, null));
+                    EventBus.getDefault().post(getDocumentStoreItemLoadedEvent(item, false, false, null));
                     if (listener != null) {
                         listener.onItemLoaded(item, false);
                     }
                 } else {
-                    Throwable error = new ELDocumentStore.ItemNotFoundError(mType);
-                    EventBus.getDefault().post(mLoadedEvent.create(null, false, false, error));
+                    Throwable error = new ELDocumentStore.ItemNotFoundError(getType());
+                    EventBus.getDefault().post(getDocumentStoreItemLoadedEvent(null, false, false, error));
                     if (listener != null) {
                         listener.onItemLoadingError(error);
                     }

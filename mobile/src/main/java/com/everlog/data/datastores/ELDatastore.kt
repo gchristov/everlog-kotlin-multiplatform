@@ -2,24 +2,20 @@ package com.everlog.data.datastores
 
 import com.everlog.data.datastores.base.CollectionStore
 import com.everlog.data.datastores.base.DocumentStore
-import com.everlog.data.datastores.base.InMemoryCollectionStore
-import com.everlog.data.datastores.base.InMemoryDatabase
-import com.everlog.data.datastores.base.InMemoryDocumentStore
 import com.everlog.data.datastores.exercises.ELExercisesStore
 import com.everlog.data.datastores.exercises.ELUserExerciseStore
+import com.everlog.data.datastores.history.ELUserWorkoutInMemoryStore
 import com.everlog.data.datastores.history.ELUserWorkoutStore
-import com.everlog.data.datastores.history.ELUserWorkoutStore.ELDocStoreWorkoutLoadedEvent
+import com.everlog.data.datastores.history.ELUserWorkoutsInMemoryStore
 import com.everlog.data.datastores.history.ELUserWorkoutsStore
-import com.everlog.data.datastores.history.ELUserWorkoutsStore.ELColStoreWorkoutsLoadedEvent
+import com.everlog.data.datastores.plans.ELUserPlanInMemoryStore
 import com.everlog.data.datastores.plans.ELUserPlanStore
-import com.everlog.data.datastores.plans.ELUserPlanStore.ELDocStorePlanLoadedEvent
+import com.everlog.data.datastores.plans.ELUserPlansInMemoryStore
 import com.everlog.data.datastores.plans.ELUserPlansStore
-import com.everlog.data.datastores.plans.ELUserPlansStore.ELColStorePlansLoadedEvent
-import com.everlog.data.datastores.routines.ELRoutineDecorator
+import com.everlog.data.datastores.routines.ELUserRoutineInMemoryStore
 import com.everlog.data.datastores.routines.ELUserRoutineStore
-import com.everlog.data.datastores.routines.ELUserRoutineStore.ELDocStoreRoutineLoadedEvent
+import com.everlog.data.datastores.routines.ELUserRoutinesInMemoryStore
 import com.everlog.data.datastores.routines.ELUserRoutinesStore
-import com.everlog.data.datastores.routines.ELUserRoutinesStore.ELColStoreRoutinesLoadedEvent
 import com.everlog.data.model.ELRoutine
 import com.everlog.data.model.plan.ELPlan
 import com.everlog.data.model.workout.ELWorkout
@@ -28,11 +24,6 @@ import com.everlog.utils.device.DeviceUtils
 class ELDatastore {
 
     companion object {
-
-        // Firebase Test Lab runs keep these in memory, so robots don't create data
-        private const val ROUTINES = "routines"
-        private const val PLANS = "plans"
-        private const val WORKOUTS = "workouts"
 
         private var mWorkoutsStore: CollectionStore<ELWorkout>? = null
         private var mWorkoutStore: DocumentStore<ELWorkout>? = null
@@ -51,11 +42,7 @@ class ELDatastore {
         @Synchronized
         fun workoutsStore(): CollectionStore<ELWorkout> {
             if (mWorkoutsStore == null) {
-                mWorkoutsStore = if (inMemory()) {
-                    InMemoryCollectionStore<ELWorkout>(WORKOUTS, ::ELColStoreWorkoutsLoadedEvent, compareByDescending { it.createdDate }, ::decorateWorkout)
-                } else {
-                    ELUserWorkoutsStore()
-                }
+                mWorkoutsStore = if (inMemory()) ELUserWorkoutsInMemoryStore() else ELUserWorkoutsStore()
             }
             return mWorkoutsStore!!
         }
@@ -64,11 +51,7 @@ class ELDatastore {
         @Synchronized
         fun workoutStore(): DocumentStore<ELWorkout> {
             if (mWorkoutStore == null) {
-                mWorkoutStore = if (inMemory()) {
-                    InMemoryDocumentStore(WORKOUTS, ELWorkout::class.java, ::ELDocStoreWorkoutLoadedEvent, ::decorateWorkout)
-                } else {
-                    ELUserWorkoutStore()
-                }
+                mWorkoutStore = if (inMemory()) ELUserWorkoutInMemoryStore() else ELUserWorkoutStore()
             }
             return mWorkoutStore!!
         }
@@ -77,11 +60,7 @@ class ELDatastore {
         @Synchronized
         fun routinesStore(): CollectionStore<ELRoutine> {
             if (mRoutinesStore == null) {
-                mRoutinesStore = if (inMemory()) {
-                    InMemoryCollectionStore<ELRoutine>(ROUTINES, ::ELColStoreRoutinesLoadedEvent, compareBy(nullsFirst()) { it.name }, ::decorateRoutine)
-                } else {
-                    ELUserRoutinesStore()
-                }
+                mRoutinesStore = if (inMemory()) ELUserRoutinesInMemoryStore() else ELUserRoutinesStore()
             }
             return mRoutinesStore!!
         }
@@ -90,11 +69,7 @@ class ELDatastore {
         @Synchronized
         fun routineStore(): DocumentStore<ELRoutine> {
             if (mRoutineStore == null) {
-                mRoutineStore = if (inMemory()) {
-                    InMemoryDocumentStore(ROUTINES, ELRoutine::class.java, ::ELDocStoreRoutineLoadedEvent, ::decorateRoutine)
-                } else {
-                    ELUserRoutineStore()
-                }
+                mRoutineStore = if (inMemory()) ELUserRoutineInMemoryStore() else ELUserRoutineStore()
             }
             return mRoutineStore!!
         }
@@ -130,11 +105,7 @@ class ELDatastore {
         @Synchronized
         fun plansStore(): CollectionStore<ELPlan> {
             if (mPlansStore == null) {
-                mPlansStore = if (inMemory()) {
-                    InMemoryCollectionStore<ELPlan>(PLANS, ::ELColStorePlansLoadedEvent, compareBy(nullsFirst()) { it.name }, ::decoratePlan)
-                } else {
-                    ELUserPlansStore()
-                }
+                mPlansStore = if (inMemory()) ELUserPlansInMemoryStore() else ELUserPlansStore()
             }
             return mPlansStore!!
         }
@@ -143,11 +114,7 @@ class ELDatastore {
         @Synchronized
         fun planStore(): DocumentStore<ELPlan> {
             if (mPlanStore == null) {
-                mPlanStore = if (inMemory()) {
-                    InMemoryDocumentStore(PLANS, ELPlan::class.java, ::ELDocStorePlanLoadedEvent, ::decoratePlan)
-                } else {
-                    ELUserPlanStore()
-                }
+                mPlanStore = if (inMemory()) ELUserPlanInMemoryStore() else ELUserPlanStore()
             }
             return mPlanStore!!
         }
@@ -179,32 +146,9 @@ class ELDatastore {
             return mDeviceStore!!
         }
 
+        // Firebase Test Lab runs keep routines, plans and workouts in memory, so robots don't create data
         private fun inMemory(): Boolean {
             return DeviceUtils.isFirebaseTestLabRun()
-        }
-
-        // The in-memory stores decorate items the same way as the Firestore ones
-
-        private fun decorateRoutine(routine: ELRoutine) {
-            ELRoutineDecorator().decorate(routine)
-        }
-
-        private fun decorateWorkout(workout: ELWorkout) {
-            ELRoutineDecorator().decorate(workout)
-        }
-
-        // ELPlanDecorator looks routines up in Firestore, so resolve them from memory instead
-        private fun decoratePlan(plan: ELPlan) {
-            val routineDecorator = ELRoutineDecorator()
-            val routines = plan.getRoutinesToResolve().mapNotNull { uuid ->
-                (InMemoryDatabase.get(ROUTINES, uuid) as? ELRoutine)?.let { routine ->
-                    routineDecorator.decorate(routine)
-                    uuid to routine
-                }
-            }.toMap()
-            if (routines.isNotEmpty()) {
-                plan.resolveRoutines(routines)
-            }
         }
 
         @JvmStatic

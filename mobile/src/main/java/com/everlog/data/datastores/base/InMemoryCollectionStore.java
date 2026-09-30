@@ -1,6 +1,6 @@
 package com.everlog.data.datastores.base;
 
-import com.everlog.data.datastores.events.BaseEvent;
+import com.everlog.data.datastores.events.collection.ELColStoreItemsLoadedEvent;
 import com.everlog.utils.Utils;
 
 import org.greenrobot.eventbus.EventBus;
@@ -8,41 +8,34 @@ import org.greenrobot.eventbus.EventBus;
 import java.util.Comparator;
 import java.util.List;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 /**
  * Lists the items in one {@link InMemoryDatabase} collection, used during Firebase Test Lab runs
- * so robots don't create data. Posts the same events as the Firestore store it stands in for, and
- * posts them again whenever the collection changes.
+ * so robots don't create data. Subclasses post the same events as the Firestore store they stand
+ * in for, and they're posted again whenever the collection changes.
  */
-public class InMemoryCollectionStore<T> implements CollectionStore<T> {
-
-    /**
-     * Builds the event posted when the items are loaded, the same one the Firestore store posts.
-     */
-    public interface LoadedEventFactory<T> {
-
-        BaseEvent create(@Nullable List<T> items, @Nullable Throwable error, boolean fromCache);
-    }
-
-    private final String mCollection;
-    private final LoadedEventFactory<T> mLoadedEvent;
-    private final Comparator<T> mOrder;
-    private final ItemDecorator<T> mDecorator;
+public abstract class InMemoryCollectionStore<T> implements CollectionStore<T> {
 
     private InMemoryDatabase.Listener mListener;
 
+    protected abstract ELColStoreItemsLoadedEvent<T> getCollectionStoreItemLoadedEvent(@Nullable List<T> items,
+                                                                                       @Nullable Throwable error,
+                                                                                       boolean fromCache);
+
     /**
-     * @param order the Firestore query's ordering
+     * The {@link InMemoryDatabase} collection the items are kept in.
      */
-    public InMemoryCollectionStore(String collection,
-                                   LoadedEventFactory<T> loadedEvent,
-                                   Comparator<T> order,
-                                   ItemDecorator<T> decorator) {
-        mCollection = collection;
-        mLoadedEvent = loadedEvent;
-        mOrder = order;
-        mDecorator = decorator;
+    protected abstract @NonNull String getCollection();
+
+    /**
+     * The same ordering as the Firestore store's query.
+     */
+    protected abstract @NonNull Comparator<T> getOrder();
+
+    protected void decorateItem(T item) {
+        // No-op
     }
 
     @Override
@@ -54,7 +47,7 @@ public class InMemoryCollectionStore<T> implements CollectionStore<T> {
     public void getItems(@Nullable OnStoreItemsListener<T> listener) {
         if (mListener == null) {
             mListener = () -> load(null);
-            InMemoryDatabase.addListener(mCollection, mListener);
+            InMemoryDatabase.addListener(getCollection(), mListener);
         }
         load(listener);
     }
@@ -69,12 +62,12 @@ public class InMemoryCollectionStore<T> implements CollectionStore<T> {
 
     private void load(@Nullable OnStoreItemsListener<T> listener) {
         Utils.runInBackground(() -> {
-            List<T> items = InMemoryDatabase.items(mCollection, mOrder);
+            List<T> items = InMemoryDatabase.items(getCollection(), getOrder());
             for (T item : items) {
-                mDecorator.decorate(item);
+                decorateItem(item);
             }
             Utils.runInForeground(() -> {
-                EventBus.getDefault().post(mLoadedEvent.create(items, null, false));
+                EventBus.getDefault().post(getCollectionStoreItemLoadedEvent(items, null, false));
                 if (listener != null) {
                     listener.onItemsLoaded(items, false);
                 }
