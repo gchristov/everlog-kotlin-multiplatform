@@ -21,7 +21,9 @@ interface Analytic {
 
     fun screenName(screenName: String?)
 
-    fun userRegister(userId: String?)
+    fun userRegister(userId: String?, method: String)
+
+    fun userLogin(userId: String?, method: String)
 
     fun userIdentify(userId: String?)
 
@@ -63,9 +65,7 @@ interface Analytic {
     fun appUpdateRestartTapped()
     fun appUpdateFailed(failure: AppUpdateController.Failure, errorCode: Int)
 
-    fun workoutStarted()
-    fun workoutQuickStarted()
-    fun workoutFromRoutineStarted()
+    fun workoutStarted(source: String)
     fun workoutStopped()
     fun workoutCompleted()
     fun workoutNextExercise()

@@ -18,7 +18,7 @@ class FirebaseAnalytic : BaseAnalytic() {
     }
 
     override fun logScreenName(eventName: String, screenName: String?) {
-        if (!mAnalyticsEnabled) {
+        if (!canLog()) {
             return
         }
         // Replaces the deprecated setCurrentScreen(). Firebase ignores screen views while the app
@@ -29,17 +29,8 @@ class FirebaseAnalytic : BaseAnalytic() {
         mFirebaseAnalytics?.logEvent(eventName, bundle)
     }
 
-    override fun logUserRegister(eventName: String, userId: String?) {
-        if (!mAnalyticsEnabled) {
-            return
-        }
-        val bundle = Bundle()
-        bundle.putString(AnalyticsConstants.PROPERTY_USER_ID, userId)
-        mFirebaseAnalytics?.logEvent(eventName, bundle)
-    }
-
     override fun logUserIdentify(eventName: String, userId: String?) {
-        if (!mAnalyticsEnabled) {
+        if (!canLog()) {
             return
         }
         val bundle = Bundle()
@@ -50,21 +41,21 @@ class FirebaseAnalytic : BaseAnalytic() {
     }
 
     override fun logUserLogout(eventName: String) {
-        if (!mAnalyticsEnabled) {
+        if (!canLog()) {
             return
         }
         mFirebaseAnalytics?.logEvent(eventName, Bundle())
     }
 
     override fun logEvent(name: String) {
-        if (!mAnalyticsEnabled) {
+        if (!canLog()) {
             return
         }
         mFirebaseAnalytics?.logEvent(name, Bundle())
     }
 
     override fun logEvent(name: String, data: Map<String, Any?>) {
-        if (!mAnalyticsEnabled) {
+        if (!canLog()) {
             return
         }
         mFirebaseAnalytics?.logEvent(name, buildBundleFromMap(data))

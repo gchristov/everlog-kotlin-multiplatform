@@ -26,7 +26,7 @@ import androidx.annotation.Nullable;
 import rx.subjects.PublishSubject;
 import timber.log.Timber;
 
-public abstract class ELCollectionStore<T> {
+public abstract class ELCollectionStore<T> implements CollectionStore<T> {
 
     private final List<T> mItems = Collections.synchronizedList(new ArrayList<>());
 

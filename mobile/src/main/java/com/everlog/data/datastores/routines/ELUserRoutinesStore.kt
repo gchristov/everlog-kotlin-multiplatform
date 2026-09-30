@@ -58,24 +58,4 @@ class ELUserRoutinesStore : ELCollectionStore<ELRoutine>() {
                                                    fromCache: Boolean): ELColStoreItemsLoadedEvent<ELRoutine> {
         return ELColStoreRoutinesLoadedEvent(items, error, fromCache)
     }
-
-    class ELColStoreRoutineAddedEvent internal constructor(position: Int,
-                                                           item: ELRoutine,
-                                                           hasPendingWrites: Boolean,
-                                                           fromCache: Boolean) : ELColStoreItemAddedEvent<ELRoutine>(position, item, hasPendingWrites, fromCache)
-
-    class ELColStoreRoutineModifiedEvent internal constructor(oldPosition: Int,
-                                                              newPosition: Int,
-                                                              item: ELRoutine,
-                                                              hasPendingWrites: Boolean,
-                                                              fromCache: Boolean) : ELColStoreItemModifiedEvent<ELRoutine>(oldPosition, newPosition, item, hasPendingWrites, fromCache)
-
-    class ELColStoreRoutineRemovedEvent internal constructor(position: Int,
-                                                             item: ELRoutine,
-                                                             hasPendingWrites: Boolean,
-                                                             fromCache: Boolean) : ELColStoreItemRemovedEvent<ELRoutine>(position, item, hasPendingWrites, fromCache)
-
-    class ELColStoreRoutinesLoadedEvent internal constructor(items: List<ELRoutine>?,
-                                                             error: Throwable?,
-                                                             fromCache: Boolean) : ELColStoreItemsLoadedEvent<ELRoutine>(items, error, fromCache)
 }

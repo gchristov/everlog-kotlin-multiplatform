@@ -9,7 +9,7 @@ import com.everlog.R
 import com.everlog.constants.ELActivityRequestCodes
 import com.everlog.constants.ELConstants
 import com.everlog.data.datastores.ELDatastore
-import com.everlog.data.datastores.routines.ELUserRoutinesStore.ELColStoreRoutinesLoadedEvent
+import com.everlog.data.datastores.routines.ELColStoreRoutinesLoadedEvent
 import com.everlog.data.model.ELRoutine
 import com.everlog.ui.activities.base.BaseActivityPresenter
 import com.everlog.ui.activities.home.routine.create.CreateRoutineActivity

@@ -14,6 +14,7 @@ import com.everlog.data.model.ELConsent.Companion.newConsent
 import com.everlog.data.model.ELUser
 import com.everlog.utils.device.DeviceUtils
 import com.everlog.managers.PlanManager
+import com.everlog.managers.analytics.AnalyticsConstants
 import com.everlog.managers.analytics.AnalyticsManager
 import com.everlog.managers.apprate.AppLaunchManager
 import com.everlog.managers.auth.samples.CreateSampleRoutinesAsyncTask
@@ -108,7 +109,7 @@ object AuthManager : PreferencesManager() {
         }
         mAuth
                 ?.signInWithEmailAndPassword(fEmail, fPassword)
-                ?.addOnCompleteListener(getLoginHandler())
+                ?.addOnCompleteListener(getLoginHandler(AnalyticsConstants.LOGIN_METHOD_EMAIL))
     }
 
     fun loginAnonymously(listener: OnAuthActionListener) {
@@ -121,7 +122,7 @@ object AuthManager : PreferencesManager() {
             mAuthListener = listener
             mAuth
                     ?.signInAnonymously()
-                    ?.addOnCompleteListener(getLoginHandler())
+                    ?.addOnCompleteListener(getLoginHandler(AnalyticsConstants.LOGIN_METHOD_GUEST))
         }
     }
 
@@ -190,13 +191,13 @@ object AuthManager : PreferencesManager() {
                         // Force Firebase Test Lab session to use pre-existing account
                         mAuth
                                 ?.signInWithEmailAndPassword(ELConstants.FIREBASE_TEST_LAB_EMAIL, ELConstants.FIREBASE_TEST_LAB_PASSWORD)
-                                ?.addOnCompleteListener(getLoginHandler())
+                                ?.addOnCompleteListener(getLoginHandler(AnalyticsConstants.LOGIN_METHOD_EMAIL))
                     } else {
                         Timber.tag(TAG).i("Logging in with Google credential")
                         val credential = GoogleAuthProvider.getCredential(account.idToken, null)
                         mAuth
                                 ?.signInWithCredential(credential)
-                                ?.addOnCompleteListener(getLoginHandler())
+                                ?.addOnCompleteListener(getLoginHandler(AnalyticsConstants.LOGIN_METHOD_GOOGLE))
                     }
                 } else {
                     Timber.tag(TAG).i("Invalid Google account")
@@ -225,14 +226,16 @@ object AuthManager : PreferencesManager() {
         }
     }
 
-    private fun getLoginHandler(): OnCompleteListener<AuthResult> {
+    private fun getLoginHandler(method: String): OnCompleteListener<AuthResult> {
         return OnCompleteListener { task ->
             if (task.isSuccessful && mAuth?.currentUser != null) {
                 Timber.tag(TAG).i("Login handler success")
                 val user = ELUser.buildUser(mAuth!!.currentUser!!)
                 val userJustRegistered = task.result?.additionalUserInfo?.isNewUser == true
                 if (userJustRegistered) {
-                    AnalyticsManager.manager.userRegister(user.id)
+                    AnalyticsManager.manager.userRegister(user.id, method)
+                } else {
+                    AnalyticsManager.manager.userLogin(user.id, method)
                 }
                 finishLocalLogin(user, userJustRegistered)
             } else {
@@ -254,7 +257,7 @@ object AuthManager : PreferencesManager() {
                     // Update user profile
                     mAuth?.currentUser?.updateProfile(changeRequest)?.addOnCompleteListener {
                         val user = ELUser.buildUser(mAuth!!.currentUser!!)
-                        AnalyticsManager.manager.userRegister(user.id)
+                        AnalyticsManager.manager.userRegister(user.id, AnalyticsConstants.LOGIN_METHOD_EMAIL)
                         // Update newsletter consent
                         val consent = newConsent(user.id, newsletterAccepted)
                         ELDatastore.consentStore().create(consent, SetOptions.merge())

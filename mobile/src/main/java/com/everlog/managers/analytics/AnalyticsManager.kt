@@ -27,7 +27,8 @@ class AnalyticsManager : Analytic {
     }
 
     fun initialize() {
-        // Only enable analytics in release builds outside of Firebase Test Lab
+        // Only enable analytics in release builds outside of Firebase Test Lab. Collection is off
+        // in the manifest, so nothing is sent before this runs.
         toggleAnalytics(enabled = BuildConfig.BUILD_TYPE.equals("release") && !DeviceUtils.isFirebaseTestLabRun())
     }
 
@@ -94,10 +95,17 @@ class AnalyticsManager : Analytic {
         }
     }
 
-    override fun userRegister(userId: String?) {
-        Timber.tag(TAG).i("User register: userId=%s", userId)
+    override fun userRegister(userId: String?, method: String) {
+        Timber.tag(TAG).i("User register: userId=%s, method=%s", userId, method)
         mAnalytics?.forEach {
-            it.userRegister(userId)
+            it.userRegister(userId, method)
+        }
+    }
+
+    override fun userLogin(userId: String?, method: String) {
+        Timber.tag(TAG).i("User login: userId=%s, method=%s", userId, method)
+        mAnalytics?.forEach {
+            it.userLogin(userId, method)
         }
     }
 
@@ -325,24 +333,10 @@ class AnalyticsManager : Analytic {
         }
     }
 
-    override fun workoutStarted() {
-        Timber.tag(TAG).i("Workout started")
+    override fun workoutStarted(source: String) {
+        Timber.tag(TAG).i("Workout started: source=%s", source)
         mAnalytics?.forEach {
-            it.workoutStarted()
-        }
-    }
-
-    override fun workoutQuickStarted() {
-        Timber.tag(TAG).i("Workout quick started")
-        mAnalytics?.forEach {
-            it.workoutQuickStarted()
-        }
-    }
-
-    override fun workoutFromRoutineStarted() {
-        Timber.tag(TAG).i("Workout from routine started")
-        mAnalytics?.forEach {
-            it.workoutFromRoutineStarted()
+            it.workoutStarted(source)
         }
     }
 

@@ -5,8 +5,8 @@ WORKDIR /app
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
-COPY . .
+COPY bq_query.py .
 
 ENV PYTHONUNBUFFERED=1
 
-ENTRYPOINT ["python", "active_users.py"]
+ENTRYPOINT ["python", "/app/bq_query.py"]

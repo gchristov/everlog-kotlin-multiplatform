@@ -63,6 +63,7 @@ class AnalyticsConstants {
         // Login
 
         const val EVENT_USER_REGISTER = "user_registered"
+        const val EVENT_USER_LOGIN = "user_logged_in"
         const val EVENT_USER_IDENTIFY = "user_identify"
         const val EVENT_USER_LOGOUT = "user_logout"
 
@@ -124,8 +125,6 @@ class AnalyticsConstants {
         // Workouts
 
         const val EVENT_WORKOUT_STARTED = "workout_started"
-        const val EVENT_WORKOUT_QUICK_STARTED = "workout_quick_started"
-        const val EVENT_WORKOUT_FROM_ROUTINE_STARTED = "workout_from_routine_started"
         const val EVENT_WORKOUT_STOPPED = "workout_stopped"
         const val EVENT_WORKOUT_COMPLETED = "workout_completed"
         const val EVENT_WORKOUT_NEXT_EXERCISE = "workout_next_exercise"
@@ -204,5 +203,16 @@ class AnalyticsConstants {
         const val PROPERTY_ATTEMPT = "attempt"
         const val PROPERTY_SOURCE = "source"
         const val PROPERTY_PROMPT_NUMBER = "prompt_number"
+        const val PROPERTY_METHOD = "method"
+
+        // Values
+
+        const val LOGIN_METHOD_GUEST = "guest"
+        const val LOGIN_METHOD_EMAIL = "email"
+        const val LOGIN_METHOD_GOOGLE = "google"
+
+        const val WORKOUT_SOURCE_QUICK = "quick"
+        const val WORKOUT_SOURCE_PLAN = "plan"
+        const val WORKOUT_SOURCE_ROUTINE = "routine"
     }
 }

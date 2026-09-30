@@ -1,63 +1,75 @@
 package com.everlog.data.datastores
 
+import com.everlog.data.datastores.base.CollectionStore
+import com.everlog.data.datastores.base.DocumentStore
 import com.everlog.data.datastores.exercises.ELExercisesStore
 import com.everlog.data.datastores.exercises.ELUserExerciseStore
+import com.everlog.data.datastores.history.ELUserWorkoutInMemoryStore
 import com.everlog.data.datastores.history.ELUserWorkoutStore
+import com.everlog.data.datastores.history.ELUserWorkoutsInMemoryStore
 import com.everlog.data.datastores.history.ELUserWorkoutsStore
+import com.everlog.data.datastores.plans.ELUserPlanInMemoryStore
 import com.everlog.data.datastores.plans.ELUserPlanStore
+import com.everlog.data.datastores.plans.ELUserPlansInMemoryStore
 import com.everlog.data.datastores.plans.ELUserPlansStore
+import com.everlog.data.datastores.routines.ELUserRoutineInMemoryStore
 import com.everlog.data.datastores.routines.ELUserRoutineStore
+import com.everlog.data.datastores.routines.ELUserRoutinesInMemoryStore
 import com.everlog.data.datastores.routines.ELUserRoutinesStore
+import com.everlog.data.model.ELRoutine
+import com.everlog.data.model.plan.ELPlan
+import com.everlog.data.model.workout.ELWorkout
+import com.everlog.utils.device.DeviceUtils
 
 class ELDatastore {
 
     companion object {
 
-        private var mWorkoutsStore: ELUserWorkoutsStore? = null
-        private var mWorkoutStore: ELUserWorkoutStore? = null
-        private var mRoutinesStore: ELUserRoutinesStore? = null
-        private var mRoutineStore: ELUserRoutineStore? = null
+        private var mWorkoutsStore: CollectionStore<ELWorkout>? = null
+        private var mWorkoutStore: DocumentStore<ELWorkout>? = null
+        private var mRoutinesStore: CollectionStore<ELRoutine>? = null
+        private var mRoutineStore: DocumentStore<ELRoutine>? = null
         private var mExercisesStore: ELExercisesStore? = null
         private var mExerciseStore: ELUserExerciseStore? = null
         private var mUserStore: ELUserStore? = null
-        private var mPlansStore: ELUserPlansStore? = null
-        private var mPlanStore: ELUserPlanStore? = null
+        private var mPlansStore: CollectionStore<ELPlan>? = null
+        private var mPlanStore: DocumentStore<ELPlan>? = null
         private var mIntegrationStore: ELUserIntegrationStore? = null
         private var mConsentStore: ELUserConsentStore? = null
         private var mDeviceStore: ELUserDeviceStore? = null
 
         @JvmStatic
         @Synchronized
-        fun workoutsStore(): ELUserWorkoutsStore {
+        fun workoutsStore(): CollectionStore<ELWorkout> {
             if (mWorkoutsStore == null) {
-                mWorkoutsStore = ELUserWorkoutsStore()
+                mWorkoutsStore = if (inMemory()) ELUserWorkoutsInMemoryStore() else ELUserWorkoutsStore()
             }
             return mWorkoutsStore!!
         }
 
         @JvmStatic
         @Synchronized
-        fun workoutStore(): ELUserWorkoutStore {
+        fun workoutStore(): DocumentStore<ELWorkout> {
             if (mWorkoutStore == null) {
-                mWorkoutStore = ELUserWorkoutStore()
+                mWorkoutStore = if (inMemory()) ELUserWorkoutInMemoryStore() else ELUserWorkoutStore()
             }
             return mWorkoutStore!!
         }
 
         @JvmStatic
         @Synchronized
-        fun routinesStore(): ELUserRoutinesStore {
+        fun routinesStore(): CollectionStore<ELRoutine> {
             if (mRoutinesStore == null) {
-                mRoutinesStore = ELUserRoutinesStore()
+                mRoutinesStore = if (inMemory()) ELUserRoutinesInMemoryStore() else ELUserRoutinesStore()
             }
             return mRoutinesStore!!
         }
 
         @JvmStatic
         @Synchronized
-        fun routineStore(): ELUserRoutineStore {
+        fun routineStore(): DocumentStore<ELRoutine> {
             if (mRoutineStore == null) {
-                mRoutineStore = ELUserRoutineStore()
+                mRoutineStore = if (inMemory()) ELUserRoutineInMemoryStore() else ELUserRoutineStore()
             }
             return mRoutineStore!!
         }
@@ -91,18 +103,18 @@ class ELDatastore {
 
         @JvmStatic
         @Synchronized
-        fun plansStore(): ELUserPlansStore {
+        fun plansStore(): CollectionStore<ELPlan> {
             if (mPlansStore == null) {
-                mPlansStore = ELUserPlansStore()
+                mPlansStore = if (inMemory()) ELUserPlansInMemoryStore() else ELUserPlansStore()
             }
             return mPlansStore!!
         }
 
         @JvmStatic
         @Synchronized
-        fun planStore(): ELUserPlanStore {
+        fun planStore(): DocumentStore<ELPlan> {
             if (mPlanStore == null) {
-                mPlanStore = ELUserPlanStore()
+                mPlanStore = if (inMemory()) ELUserPlanInMemoryStore() else ELUserPlanStore()
             }
             return mPlanStore!!
         }
@@ -132,6 +144,11 @@ class ELDatastore {
                 mDeviceStore = ELUserDeviceStore()
             }
             return mDeviceStore!!
+        }
+
+        // Firebase Test Lab runs keep routines, plans and workouts in memory, so robots don't create data
+        private fun inMemory(): Boolean {
+            return DeviceUtils.isFirebaseTestLabRun()
         }
 
         @JvmStatic

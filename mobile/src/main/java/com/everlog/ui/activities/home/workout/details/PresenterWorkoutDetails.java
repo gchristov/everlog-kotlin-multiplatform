@@ -11,7 +11,7 @@ import com.everlog.constants.ELActivityRequestCodes;
 import com.everlog.data.controllers.statistics.UserStatsController;
 import com.everlog.data.datastores.ELDatastore;
 import com.everlog.data.datastores.base.OnStoreItemsListener;
-import com.everlog.data.datastores.history.ELUserWorkoutStore;
+import com.everlog.data.datastores.history.ELDocStoreWorkoutLoadedEvent;
 import com.everlog.data.model.ELRoutine;
 import com.everlog.data.model.exercise.ELExerciseGroup;
 import com.everlog.data.model.workout.ELWorkout;
@@ -99,7 +99,7 @@ public class PresenterWorkoutDetails extends BaseActivityPresenter<MvpViewWorkou
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onWorkoutLoaded(ELUserWorkoutStore.ELDocStoreWorkoutLoadedEvent event) {
+    public void onWorkoutLoaded(ELDocStoreWorkoutLoadedEvent event) {
         if (isAttachedToView()) {
             if (event.getError() != null) {
                 handleError(event.getError());

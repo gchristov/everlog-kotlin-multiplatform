@@ -26,9 +26,7 @@ public class ErrorManager {
 
     public void initialize() {
         FirebaseCrashlytics.getInstance().setCrashlyticsCollectionEnabled(true);
-        if (DeviceUtils.isFirebaseTestLabRun()) {
-            FirebaseCrashlytics.getInstance().setCustomKey("is_firebase_test_lab_run", true);
-        }
+        tagFirebaseTestLabRun();
         // Add Crashlytics
         Timber.plant(new CrashlyticsTree());
         // Add Hyperlog
@@ -41,5 +39,14 @@ public class ErrorManager {
         // Crashlytics
         FirebaseCrashlytics.getInstance().setUserId(userId);
         FirebaseCrashlytics.getInstance().setCustomKey(ELConstants.FIELD_CRASHLYTICS_USER_ID, userId);
+        // Test Lab can set its flag after the app process has started (seen on Play pre-launch
+        // devices), so check again once the user is known
+        tagFirebaseTestLabRun();
+    }
+
+    private void tagFirebaseTestLabRun() {
+        if (DeviceUtils.isFirebaseTestLabRun()) {
+            FirebaseCrashlytics.getInstance().setCustomKey("is_firebase_test_lab_run", true);
+        }
     }
 }

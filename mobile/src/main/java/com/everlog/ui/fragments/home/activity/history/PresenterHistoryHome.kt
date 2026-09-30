@@ -4,7 +4,7 @@ import com.ahamed.multiviewadapter.DataListManager
 import com.ahamed.multiviewadapter.RecyclerAdapter
 import com.everlog.R
 import com.everlog.data.datastores.ELDatastore
-import com.everlog.data.datastores.history.ELUserWorkoutsStore
+import com.everlog.data.datastores.history.ELColStoreWorkoutsLoadedEvent
 import com.everlog.data.model.util.HistoryCalendarContainer
 import com.everlog.data.model.workout.ELWorkout
 import com.everlog.ui.adapters.history.BaseTimelineViewHolder
@@ -53,7 +53,7 @@ class PresenterHistoryHome : BaseFragmentPresenter<MvpViewHistoryHome>() {
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
-    fun onHistoryLoaded(event: ELUserWorkoutsStore.ELColStoreWorkoutsLoadedEvent) {
+    fun onHistoryLoaded(event: ELColStoreWorkoutsLoadedEvent) {
         if (isAttachedToView) {
             if (event.error != null) {
                 mvpView?.toggleLoadingOverlay(false)

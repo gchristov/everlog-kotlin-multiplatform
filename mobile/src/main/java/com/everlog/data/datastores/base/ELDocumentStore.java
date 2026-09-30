@@ -25,7 +25,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import timber.log.Timber;
 
-public abstract class ELDocumentStore<T extends ELFirestoreModel> {
+public abstract class ELDocumentStore<T extends ELFirestoreModel> implements DocumentStore<T> {
 
     // Callbacks
 
