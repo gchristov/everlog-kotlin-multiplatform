@@ -18,6 +18,10 @@ import androidx.annotation.Nullable;
 public abstract class InMemoryDocumentStore<T extends ELFirestoreModel> implements DocumentStore<T> {
 
     private InMemoryDatabase.Listener mListener;
+    private volatile String mItemId;
+
+    // Loads run one at a time and post in that order, so an older item can't replace a newer one
+    private final Object mLoadLock = new Object();
 
     protected abstract ELDocStoreItemLoadedEvent<T> getDocumentStoreItemLoadedEvent(@Nullable T item,
                                                                                     boolean hasPendingWrites,
@@ -44,6 +48,7 @@ public abstract class InMemoryDocumentStore<T extends ELFirestoreModel> implemen
     public void getItem(String itemId, @Nullable OnStoreItemListener<T> listener) {
         // Like the Firestore store, keep sending updates for the last item loaded
         removeListener();
+        mItemId = itemId;
         mListener = () -> load(itemId, null);
         InMemoryDatabase.addListener(getCollection(), mListener);
         load(itemId, listener);
@@ -62,6 +67,7 @@ public abstract class InMemoryDocumentStore<T extends ELFirestoreModel> implemen
     @Override
     public void destroy() {
         removeListener();
+        mItemId = null;
     }
 
     private void removeListener() {
@@ -73,24 +79,32 @@ public abstract class InMemoryDocumentStore<T extends ELFirestoreModel> implemen
 
     private void load(String itemId, @Nullable OnStoreItemListener<T> listener) {
         Utils.runInBackground(() -> {
-            T item = getType().cast(InMemoryDatabase.get(getCollection(), itemId));
-            if (item != null) {
-                decorateItem(item);
-            }
-            Utils.runInForeground(() -> {
+            synchronized (mLoadLock) {
+                T item = getType().cast(InMemoryDatabase.get(getCollection(), itemId));
                 if (item != null) {
-                    EventBus.getDefault().post(getDocumentStoreItemLoadedEvent(item, false, false, null));
-                    if (listener != null) {
-                        listener.onItemLoaded(item, false);
-                    }
-                } else {
-                    Throwable error = new ELDocumentStore.ItemNotFoundError(getType());
-                    EventBus.getDefault().post(getDocumentStoreItemLoadedEvent(null, false, false, error));
-                    if (listener != null) {
-                        listener.onItemLoadingError(error);
-                    }
+                    decorateItem(item);
                 }
-            });
+                Utils.runInForeground(() -> {
+                    // Only the item being watched sends events, like the Firestore store
+                    boolean watched = itemId != null && itemId.equals(mItemId);
+                    if (item != null) {
+                        if (watched) {
+                            EventBus.getDefault().post(getDocumentStoreItemLoadedEvent(item, false, false, null));
+                        }
+                        if (listener != null) {
+                            listener.onItemLoaded(item, false);
+                        }
+                    } else {
+                        Throwable error = new ELDocumentStore.ItemNotFoundError(getType());
+                        if (watched) {
+                            EventBus.getDefault().post(getDocumentStoreItemLoadedEvent(null, false, false, error));
+                        }
+                        if (listener != null) {
+                            listener.onItemLoadingError(error);
+                        }
+                    }
+                });
+            }
         });
     }
 }

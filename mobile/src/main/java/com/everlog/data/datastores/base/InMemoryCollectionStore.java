@@ -20,6 +20,9 @@ public abstract class InMemoryCollectionStore<T> implements CollectionStore<T> {
 
     private InMemoryDatabase.Listener mListener;
 
+    // Loads run one at a time and post in that order, so an older list can't replace a newer one
+    private final Object mLoadLock = new Object();
+
     protected abstract ELColStoreItemsLoadedEvent<T> getCollectionStoreItemLoadedEvent(@Nullable List<T> items,
                                                                                        @Nullable Throwable error,
                                                                                        boolean fromCache);
@@ -62,16 +65,18 @@ public abstract class InMemoryCollectionStore<T> implements CollectionStore<T> {
 
     private void load(@Nullable OnStoreItemsListener<T> listener) {
         Utils.runInBackground(() -> {
-            List<T> items = InMemoryDatabase.items(getCollection(), getOrder());
-            for (T item : items) {
-                decorateItem(item);
-            }
-            Utils.runInForeground(() -> {
-                EventBus.getDefault().post(getCollectionStoreItemLoadedEvent(items, null, false));
-                if (listener != null) {
-                    listener.onItemsLoaded(items, false);
+            synchronized (mLoadLock) {
+                List<T> items = InMemoryDatabase.items(getCollection(), getOrder());
+                for (T item : items) {
+                    decorateItem(item);
                 }
-            });
+                Utils.runInForeground(() -> {
+                    EventBus.getDefault().post(getCollectionStoreItemLoadedEvent(items, null, false));
+                    if (listener != null) {
+                        listener.onItemsLoaded(items, false);
+                    }
+                });
+            }
         });
     }
 }

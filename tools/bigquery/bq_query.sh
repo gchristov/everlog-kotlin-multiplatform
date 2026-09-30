@@ -4,6 +4,7 @@ set -e
 # Usage: ./bq_query.sh <credentials_file> [query.sql | -] [--query SQL] [--dry-run] [--csv] [--output file.csv] [--max-gb N]
 # Example: ./bq_query.sh bigquery-credentials-prod.json query.sql
 #          echo "SELECT 1" | ./bq_query.sh bigquery-credentials-prod.json
+# Save results under tools/bigquery/ (e.g. --output tools/bigquery/result.csv), where CSVs are gitignored.
 
 CREDENTIALS=$1
 

@@ -13,15 +13,18 @@ import com.everlog.data.model.plan.ELPlan
 class ELPlanInMemoryDecorator {
 
     fun decoratePlan(plan: ELPlan) {
+        val routineUuids = plan.getRoutinesToResolve()
+        if (routineUuids.isEmpty()) {
+            return
+        }
         val routineDecorator = ELRoutineDecorator()
-        val routines = plan.getRoutinesToResolve().mapNotNull { uuid ->
+        val routines = routineUuids.mapNotNull { uuid ->
             (InMemoryDatabase.get(ELUserRoutinesInMemoryStore.COLLECTION, uuid) as? ELRoutine)?.let { routine ->
                 routineDecorator.decorate(routine)
                 uuid to routine
             }
         }.toMap()
-        if (routines.isNotEmpty()) {
-            plan.resolveRoutines(routines)
-        }
+        // Like ELPlanDecorator, resolve even when routines are missing, which resets their days
+        plan.resolveRoutines(routines)
     }
 }
