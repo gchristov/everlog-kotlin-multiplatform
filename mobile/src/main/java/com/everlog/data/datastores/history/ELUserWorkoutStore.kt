@@ -28,6 +28,10 @@ class ELUserWorkoutStore : ELDocumentStore<ELWorkout>() {
         return "ELUserWorkoutStore"
     }
 
+    override fun keepsTestLabWritesInMemory(): Boolean {
+        return true
+    }
+
     override fun decorateItem(item: ELWorkout) {
         ELRoutineDecorator().decorate(item)
     }

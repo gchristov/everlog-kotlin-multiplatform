@@ -49,6 +49,9 @@ public abstract class ELCollectionStore<T> {
     // Firebase Test Lab
 
     private TestLabStore.Listener mTestLabListener;
+    // Decided when the snapshot listener is added and kept until destroy(), so that a Test Lab
+    // flag set after loading doesn't switch lists halfway
+    private @Nullable String mTestLabPath;
 
     // Snapshots
 
@@ -111,6 +114,7 @@ public abstract class ELCollectionStore<T> {
         Timber.tag(getTag()).d("Destroying");
         removeSnapshotListener();
         removeTestLabListener();
+        mTestLabPath = null;
         mSnapshotAdded = false;
         mCacheLoadedOnce = false;
         mItemsLoadedOnce = false;
@@ -181,13 +185,12 @@ public abstract class ELCollectionStore<T> {
         mTestLabListener = null;
     }
 
-    private @Nullable String testLabCollectionPath() {
-        return DeviceUtils.isFirebaseTestLabRun() ? getTestLabCollectionPath() : null;
-    }
-
     private void listenToTestLabStore() {
         removeTestLabListener();
-        String path = testLabCollectionPath();
+        if (!mSnapshotAdded && !mCacheLoadedOnce) {
+            mTestLabPath = DeviceUtils.isFirebaseTestLabRun() ? getTestLabCollectionPath() : null;
+        }
+        String path = mTestLabPath;
         if (path == null) {
             return;
         }
@@ -278,7 +281,7 @@ public abstract class ELCollectionStore<T> {
     private void parseSnapshot(QuerySnapshot snapshot, boolean fromCache) {
         Timber.tag(getTag()).d("Parsing snapshot: changes=%s fromCache=%s", snapshot.getDocumentChanges().size(), fromCache);
         // Firestore's positions don't account for in-memory writes, so only the full list is sent
-        boolean testLab = testLabCollectionPath() != null;
+        boolean testLab = mTestLabPath != null;
         List<T> items = testLab ? mServerItems : mItems;
         boolean notifyChanges = mItemsLoadedOnce && !testLab;
         for (DocumentChange documentChange : snapshot.getDocumentChanges()) {
@@ -325,7 +328,7 @@ public abstract class ELCollectionStore<T> {
     }
 
     private void publishItems() {
-        String path = testLabCollectionPath();
+        String path = mTestLabPath;
         if (path == null) {
             // mItems is already up to date
             return;
