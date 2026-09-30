@@ -25,7 +25,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import timber.log.Timber;
 
-public abstract class ELDocumentStore<T extends ELFirestoreModel> {
+public abstract class ELDocumentStore<T extends ELFirestoreModel> implements DocumentStore<T> {
 
     // Callbacks
 
@@ -34,10 +34,6 @@ public abstract class ELDocumentStore<T extends ELFirestoreModel> {
     // Firebase
 
     private ListenerRegistration mRegistration;
-
-    // Firebase Test Lab
-
-    private TestLabStore.Listener mTestLabListener;
 
     // Snapshots
 
@@ -57,25 +53,10 @@ public abstract class ELDocumentStore<T extends ELFirestoreModel> {
 
     protected abstract String getTag();
 
-    /**
-     * Whether writes during Firebase Test Lab runs are kept in memory and read back, so what a
-     * robot creates shows up in the app. Only for stores that always write whole items: a partial
-     * merge write (e.g. a user without its subscription) would replace the whole item in memory.
-     * Otherwise, writes are skipped.
-     */
-    protected boolean keepsTestLabWritesInMemory() {
-        return false;
-    }
-
-    private boolean isTestLabMemoryRun() {
-        return keepsTestLabWritesInMemory() && DeviceUtils.isFirebaseTestLabRun();
-    }
-
     public void destroy() {
         Timber.tag(getTag()).d("Destroying");
         mOneTimeListeners.clear();
         removeSnapshotListener();
-        removeTestLabListener();
         releaseLoadMutex();
     }
 
@@ -96,19 +77,6 @@ public abstract class ELDocumentStore<T extends ELFirestoreModel> {
             Timber.tag(getTag()).d("Acquired lock");
 
             safelyAdd(mOneTimeListeners, listener);
-            if (isTestLabMemoryRun()) {
-                listenToTestLabStore(itemId);
-                if (TestLabStore.get(getParentCollection().getPath(), itemId) != null) {
-                    // Written during this run, so it may not be in Firestore at all
-                    removeSnapshotListener();
-                    Utils.runInBackground(() -> {
-                        synchronized (mParseMutex) {
-                            parseTestLabItem(itemId);
-                        }
-                    });
-                    return;
-                }
-            }
             addSnapshotListener(itemId);
         } catch (InterruptedException e) {
             notifyError(false, e);
@@ -119,12 +87,7 @@ public abstract class ELDocumentStore<T extends ELFirestoreModel> {
 
     public void create(T item, SetOptions options) {
         if (DeviceUtils.isFirebaseTestLabRun()) {
-            if (keepsTestLabWritesInMemory()) {
-                Timber.tag(getTag()).w("Keeping CREATE operation in memory for Firebase Test Lab run");
-                TestLabStore.put(getParentCollection().getPath(), item.documentId(), item);
-            } else {
-                Timber.tag(getTag()).w("Ignoring CREATE operation for Firebase Test Lab run");
-            }
+            Timber.tag(getTag()).w("Ignoring CREATE operation for Firebase Test Lab run");
             return;
         }
         if (options != null) {
@@ -136,12 +99,7 @@ public abstract class ELDocumentStore<T extends ELFirestoreModel> {
 
     public void delete(T item) {
         if (DeviceUtils.isFirebaseTestLabRun()) {
-            if (keepsTestLabWritesInMemory()) {
-                Timber.tag(getTag()).w("Keeping DELETE operation in memory for Firebase Test Lab run");
-                TestLabStore.delete(getParentCollection().getPath(), item.documentId());
-            } else {
-                Timber.tag(getTag()).w("Ignoring DELETE operation for Firebase Test Lab run");
-            }
+            Timber.tag(getTag()).w("Ignoring DELETE operation for Firebase Test Lab run");
             return;
         }
         getParentCollection().document(item.documentId()).delete();
@@ -154,26 +112,6 @@ public abstract class ELDocumentStore<T extends ELFirestoreModel> {
             mRegistration.remove();
         }
         mRegistration = null;
-    }
-
-    private void removeTestLabListener() {
-        if (mTestLabListener != null) {
-            TestLabStore.removeListener(mTestLabListener);
-        }
-        mTestLabListener = null;
-    }
-
-    private void listenToTestLabStore(String itemId) {
-        removeTestLabListener();
-        String path = getParentCollection().getPath();
-        mTestLabListener = () -> Utils.runInBackground(() -> {
-            synchronized (mParseMutex) {
-                if (TestLabStore.get(path, itemId) != null) {
-                    parseTestLabItem(itemId);
-                }
-            }
-        });
-        TestLabStore.addListener(path, mTestLabListener);
     }
 
     private void addSnapshotListener(String itemId) {
@@ -237,12 +175,6 @@ public abstract class ELDocumentStore<T extends ELFirestoreModel> {
         try {
             // We are expecting a single result here, so only fetch the first in the list
             DocumentSnapshot document = snapshot.getDocuments().size() > 0 ? snapshot.getDocuments().get(0) : null;
-            if (document != null && isTestLabMemoryRun()
-                    && TestLabStore.get(getParentCollection().getPath(), document.getId()) != null) {
-                // Changed during this run, so the in-memory version wins
-                parseTestLabItem(document.getId());
-                return;
-            }
             if (document == null || !document.exists()) {
                 if (!fromCache) {
                     // Only notify of errors if load is not from cache
@@ -257,23 +189,6 @@ public abstract class ELDocumentStore<T extends ELFirestoreModel> {
             }
         } catch (Exception e) {
             notifyError(fromCache, e);
-        }
-    }
-
-    @SuppressWarnings("unchecked")
-    private void parseTestLabItem(String itemId) {
-        TestLabStore.Entry entry = TestLabStore.get(getParentCollection().getPath(), itemId);
-        if (entry instanceof TestLabStore.Entry.Present) {
-            try {
-                T item = (T) ((TestLabStore.Entry.Present) entry).getItem();
-                decorateItem(item);
-                itemReady(item);
-                notifySnapshotReady(item, true, false);
-            } catch (Exception e) {
-                notifyError(false, e);
-            }
-        } else {
-            notifyError(false, new ItemNotFoundError(getType()));
         }
     }
 

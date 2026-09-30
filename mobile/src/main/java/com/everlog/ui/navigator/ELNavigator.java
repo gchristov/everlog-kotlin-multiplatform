@@ -198,7 +198,7 @@ public class ELNavigator implements Navigator {
     public void startWorkout(ELRoutine routine,
                              boolean fromRoutine,
                              boolean fromPlan) {
-        AnalyticsManager.manager.workoutStarted(getWorkoutSource(routine, fromRoutine, fromPlan));
+        AnalyticsManager.manager.workoutStarted(getWorkoutSource(fromRoutine, fromPlan));
         // Build workout from routine.
         ELWorkout workout = ELWorkout.getWorkoutFromRoutine(routine, fromRoutine);
         // Start workout.
@@ -513,15 +513,13 @@ public class ELNavigator implements Navigator {
 
     // Utils
 
-    private String getWorkoutSource(ELRoutine routine, boolean fromRoutine, boolean fromPlan) {
+    private String getWorkoutSource(boolean fromRoutine, boolean fromPlan) {
         if (fromPlan) {
             return AnalyticsConstants.WORKOUT_SOURCE_PLAN;
-        } else if (!fromRoutine) {
-            return AnalyticsConstants.WORKOUT_SOURCE_QUICK;
-        } else if (routine.isSample()) {
-            return AnalyticsConstants.WORKOUT_SOURCE_SAMPLE_ROUTINE;
+        } else if (fromRoutine) {
+            return AnalyticsConstants.WORKOUT_SOURCE_ROUTINE;
         }
-        return AnalyticsConstants.WORKOUT_SOURCE_ROUTINE;
+        return AnalyticsConstants.WORKOUT_SOURCE_QUICK;
     }
 
     private void sendBroadcast(Intent i) {

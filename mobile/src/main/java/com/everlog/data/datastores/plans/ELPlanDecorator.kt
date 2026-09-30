@@ -1,12 +1,10 @@
 package com.everlog.data.datastores.plans
 
-import com.everlog.data.datastores.base.TestLabStore
 import com.everlog.data.datastores.routines.ELRoutineDecorator
 import com.everlog.data.model.ELRoutine
 import com.everlog.data.model.plan.ELPlan
 import com.everlog.managers.firebase.FirestorePathManager
 import com.everlog.utils.Utils
-import com.everlog.utils.device.DeviceUtils
 import com.google.android.gms.tasks.Tasks
 import com.google.firebase.firestore.FieldPath
 import com.google.firebase.firestore.Source
@@ -60,14 +58,6 @@ class ELPlanDecorator {
     }
 
     private fun resolveRoutine(uuid: String, source: Source): ELRoutine? {
-        if (DeviceUtils.isFirebaseTestLabRun()) {
-            // Routines written during a Test Lab run are only in memory
-            when (val entry = TestLabStore.get(FirestorePathManager.routinesCollection.path, uuid)) {
-                is TestLabStore.Entry.Present -> return entry.item as ELRoutine
-                is TestLabStore.Entry.Deleted -> return null
-                null -> {}
-            }
-        }
         return try {
             val snapshot = Tasks.await(FirestorePathManager.routinesCollection.whereEqualTo(FieldPath.documentId(), uuid).get(source))
             if (snapshot.documents.isNotEmpty()) {

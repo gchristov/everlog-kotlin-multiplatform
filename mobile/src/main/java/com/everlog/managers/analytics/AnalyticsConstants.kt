@@ -214,6 +214,5 @@ class AnalyticsConstants {
         const val WORKOUT_SOURCE_QUICK = "quick"
         const val WORKOUT_SOURCE_PLAN = "plan"
         const val WORKOUT_SOURCE_ROUTINE = "routine"
-        const val WORKOUT_SOURCE_SAMPLE_ROUTINE = "sample_routine"
     }
 }

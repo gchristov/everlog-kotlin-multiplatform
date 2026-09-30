@@ -26,14 +26,6 @@ class ELUserWorkoutsStore : ELCollectionStore<ELWorkout>() {
         return "ELUserWorkoutsStore"
     }
 
-    override fun getTestLabCollectionPath(): String {
-        return FirestorePathManager.workoutsCollection.path
-    }
-
-    override fun getTestLabOrder(): Comparator<ELWorkout> {
-        return compareByDescending { it.createdDate }
-    }
-
     override fun decorateItem(item: ELWorkout) {
         ELRoutineDecorator().decorate(item)
     }

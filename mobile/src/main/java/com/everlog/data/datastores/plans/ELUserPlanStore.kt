@@ -27,10 +27,6 @@ class ELUserPlanStore : ELDocumentStore<ELPlan>() {
         return "ELUserPlanStore"
     }
 
-    override fun keepsTestLabWritesInMemory(): Boolean {
-        return true
-    }
-
     override fun decorateItem(item: ELPlan) {
         ELPlanDecorator().decoratePlan(item)
     }

@@ -5,7 +5,6 @@ import com.everlog.data.datastores.events.collection.ELColStoreItemModifiedEvent
 import com.everlog.data.datastores.events.collection.ELColStoreItemRemovedEvent;
 import com.everlog.data.datastores.events.collection.ELColStoreItemsLoadedEvent;
 import com.everlog.utils.Utils;
-import com.everlog.utils.device.DeviceUtils;
 import com.google.firebase.firestore.DocumentChange;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.ListenerRegistration;
@@ -19,10 +18,7 @@ import org.greenrobot.eventbus.EventBus;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Comparator;
-import java.util.IdentityHashMap;
 import java.util.List;
-import java.util.Set;
 import java.util.concurrent.Semaphore;
 
 import androidx.annotation.NonNull;
@@ -30,12 +26,9 @@ import androidx.annotation.Nullable;
 import rx.subjects.PublishSubject;
 import timber.log.Timber;
 
-public abstract class ELCollectionStore<T> {
+public abstract class ELCollectionStore<T> implements CollectionStore<T> {
 
     private final List<T> mItems = Collections.synchronizedList(new ArrayList<>());
-    // What Firestore returned during Firebase Test Lab runs, where mItems also has what the run
-    // wrote in memory. Unused otherwise.
-    private final List<T> mServerItems = Collections.synchronizedList(new ArrayList<>());
 
     // Callbacks
 
@@ -45,13 +38,6 @@ public abstract class ELCollectionStore<T> {
     // Firebase
 
     private ListenerRegistration mRegistration;
-
-    // Firebase Test Lab
-
-    private TestLabStore.Listener mTestLabListener;
-    // Decided when the snapshot listener is added and kept until destroy(), so that a Test Lab
-    // flag set after loading doesn't switch lists halfway
-    private @Nullable String mTestLabPath;
 
     // Snapshots
 
@@ -90,22 +76,6 @@ public abstract class ELCollectionStore<T> {
 
     protected abstract String getTag();
 
-    /**
-     * The collection the query reads, so that what a Firebase Test Lab run writes to it in memory
-     * shows up in this store. Null leaves out in-memory writes.
-     */
-    protected @Nullable String getTestLabCollectionPath() {
-        return null;
-    }
-
-    /**
-     * How the query orders items, for placing in-memory writes during Firebase Test Lab runs. Null
-     * adds them at the end.
-     */
-    protected @Nullable Comparator<T> getTestLabOrder() {
-        return null;
-    }
-
     public PublishSubject<List<T>> onItemsLoadedSubscription() {
         return mItemsLoadedObservable;
     }
@@ -113,13 +83,10 @@ public abstract class ELCollectionStore<T> {
     public void destroy() {
         Timber.tag(getTag()).d("Destroying");
         removeSnapshotListener();
-        removeTestLabListener();
-        mTestLabPath = null;
         mSnapshotAdded = false;
         mCacheLoadedOnce = false;
         mItemsLoadedOnce = false;
         mItems.clear();
-        mServerItems.clear();
         mOneTimeListeners.clear();
         releaseLoadMutex();
     }
@@ -178,44 +145,15 @@ public abstract class ELCollectionStore<T> {
         mRegistration = null;
     }
 
-    private void removeTestLabListener() {
-        if (mTestLabListener != null) {
-            TestLabStore.removeListener(mTestLabListener);
-        }
-        mTestLabListener = null;
-    }
-
-    private void listenToTestLabStore() {
-        removeTestLabListener();
-        if (!mSnapshotAdded && !mCacheLoadedOnce) {
-            mTestLabPath = DeviceUtils.isFirebaseTestLabRun() ? getTestLabCollectionPath() : null;
-        }
-        String path = mTestLabPath;
-        if (path == null) {
-            return;
-        }
-        mTestLabListener = () -> Utils.runInBackground(() -> {
-            synchronized (mParseMutex) {
-                if (mItemsLoadedOnce) {
-                    publishItems();
-                    notifyItemsChanged();
-                }
-            }
-        });
-        TestLabStore.addListener(path, mTestLabListener);
-    }
-
     private void addSnapshotListener() {
         Timber.tag(getTag()).d("Adding snapshot listener");
         removeSnapshotListener();
-        listenToTestLabStore();
         Query query = getQuery();
         // Try resolving the required data from cache first
         query.get(Source.CACHE).addOnCompleteListener(result -> {
             if (!mCacheLoadedOnce) {
                 Timber.tag(getTag()).d("Cleared items because cache wasn't loaded once");
                 mItems.clear();
-                mServerItems.clear();
             }
             mCacheLoadedOnce = true;
             // Wait until cache is parsed first
@@ -230,7 +168,6 @@ public abstract class ELCollectionStore<T> {
                                     Timber.tag(getTag()).d("Cleared items because snapshot wasn't loaded once");
                                     mSnapshotAdded = true;
                                     mItems.clear();
-                                    mServerItems.clear();
                                 }
                                 Timber.tag(getTag()).d("Received items from snapshot: items=%s fromCache=%s", snapshot.getDocuments().size(), false);
                                 enqueueSnapshot(snapshot, false, null);
@@ -268,7 +205,6 @@ public abstract class ELCollectionStore<T> {
             // Parse snapshots one by one in a queue
             synchronized (mParseMutex) {
                 parseSnapshot(snapshot, fromCache);
-                publishItems();
                 mItemsLoadedOnce = true;
                 notifySnapshotReady(fromCache);
                 if (cacheListener != null) {
@@ -280,10 +216,6 @@ public abstract class ELCollectionStore<T> {
 
     private void parseSnapshot(QuerySnapshot snapshot, boolean fromCache) {
         Timber.tag(getTag()).d("Parsing snapshot: changes=%s fromCache=%s", snapshot.getDocumentChanges().size(), fromCache);
-        // Firestore's positions don't account for in-memory writes, so only the full list is sent
-        boolean testLab = mTestLabPath != null;
-        List<T> items = testLab ? mServerItems : mItems;
-        boolean notifyChanges = mItemsLoadedOnce && !testLab;
         for (DocumentChange documentChange : snapshot.getDocumentChanges()) {
             DocumentSnapshot document = documentChange.getDocument();
             if (document.exists()) {
@@ -297,23 +229,23 @@ public abstract class ELCollectionStore<T> {
                     decorateItem(parsedItem);
                     switch (documentChange.getType()) {
                         case ADDED: {
-                            items.add(newIndex, parsedItem);
-                            if (notifyChanges) {
+                            mItems.add(newIndex, parsedItem);
+                            if (mItemsLoadedOnce) {
                                 notifyItemAdded(newIndex, parsedItem, hasPendingWrites, fromCache);
                             }
                             break;
                         }
                         case MODIFIED: {
-                            items.remove(oldIndex);
-                            items.add(newIndex, parsedItem);
-                            if (notifyChanges) {
+                            mItems.remove(oldIndex);
+                            mItems.add(newIndex, parsedItem);
+                            if (mItemsLoadedOnce) {
                                 notifyItemModified(oldIndex, newIndex, parsedItem, hasPendingWrites, fromCache);
                             }
                             break;
                         }
                         case REMOVED: {
-                            items.remove(oldIndex);
-                            if (notifyChanges) {
+                            mItems.remove(oldIndex);
+                            if (mItemsLoadedOnce) {
                                 notifyItemRemoved(oldIndex, parsedItem, hasPendingWrites, fromCache);
                             }
                             break;
@@ -324,31 +256,6 @@ public abstract class ELCollectionStore<T> {
                     Timber.tag(getTag()).e(ex);
                 }
             }
-        }
-    }
-
-    private void publishItems() {
-        String path = mTestLabPath;
-        if (path == null) {
-            // mItems is already up to date
-            return;
-        }
-        List<T> serverItems;
-        synchronized (mServerItems) {
-            serverItems = new ArrayList<>(mServerItems);
-        }
-        Set<T> decorated = Collections.newSetFromMap(new IdentityHashMap<>());
-        decorated.addAll(serverItems);
-        List<T> merged = TestLabStore.merge(path, serverItems, getTestLabOrder());
-        for (T item : merged) {
-            if (!decorated.contains(item)) {
-                // In-memory copies aren't decorated yet
-                decorateItem(item);
-            }
-        }
-        synchronized (mItems) {
-            mItems.clear();
-            mItems.addAll(merged);
         }
     }
 
@@ -387,13 +294,6 @@ public abstract class ELCollectionStore<T> {
             if (!fromCache) {
                 releaseLoadMutex();
             }
-        });
-    }
-
-    private void notifyItemsChanged() {
-        Utils.runInForeground(() -> {
-            sendItemsLoadedEvent(false);
-            mItemsLoadedObservable.onNext(new ArrayList<>(mItems));
         });
     }
 

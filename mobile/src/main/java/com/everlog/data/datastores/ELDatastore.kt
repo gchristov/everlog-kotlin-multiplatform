@@ -1,5 +1,10 @@
 package com.everlog.data.datastores
 
+import com.everlog.data.datastores.base.CollectionStore
+import com.everlog.data.datastores.base.DocumentStore
+import com.everlog.data.datastores.base.InMemoryCollectionStore
+import com.everlog.data.datastores.base.InMemoryDatabase
+import com.everlog.data.datastores.base.InMemoryDocumentStore
 import com.everlog.data.datastores.exercises.ELExercisesStore
 import com.everlog.data.datastores.exercises.ELUserExerciseStore
 import com.everlog.data.datastores.history.ELUserWorkoutStore
@@ -7,57 +12,67 @@ import com.everlog.data.datastores.history.ELUserWorkoutsStore
 import com.everlog.data.datastores.plans.ELUserPlanStore
 import com.everlog.data.datastores.plans.ELUserPlansStore
 import com.everlog.data.datastores.routines.ELUserRoutineStore
+import com.everlog.data.datastores.routines.ELRoutineDecorator
 import com.everlog.data.datastores.routines.ELUserRoutinesStore
+import com.everlog.data.model.ELRoutine
+import com.everlog.data.model.plan.ELPlan
+import com.everlog.data.model.workout.ELWorkout
+import com.everlog.utils.device.DeviceUtils
 
 class ELDatastore {
 
     companion object {
 
-        private var mWorkoutsStore: ELUserWorkoutsStore? = null
-        private var mWorkoutStore: ELUserWorkoutStore? = null
-        private var mRoutinesStore: ELUserRoutinesStore? = null
-        private var mRoutineStore: ELUserRoutineStore? = null
+        // Firebase Test Lab runs keep these in memory, so robots don't create data
+        private const val ROUTINES = "routines"
+        private const val PLANS = "plans"
+        private const val WORKOUTS = "workouts"
+
+        private var mWorkoutsStore: CollectionStore<ELWorkout>? = null
+        private var mWorkoutStore: DocumentStore<ELWorkout>? = null
+        private var mRoutinesStore: CollectionStore<ELRoutine>? = null
+        private var mRoutineStore: DocumentStore<ELRoutine>? = null
         private var mExercisesStore: ELExercisesStore? = null
         private var mExerciseStore: ELUserExerciseStore? = null
         private var mUserStore: ELUserStore? = null
-        private var mPlansStore: ELUserPlansStore? = null
-        private var mPlanStore: ELUserPlanStore? = null
+        private var mPlansStore: CollectionStore<ELPlan>? = null
+        private var mPlanStore: DocumentStore<ELPlan>? = null
         private var mIntegrationStore: ELUserIntegrationStore? = null
         private var mConsentStore: ELUserConsentStore? = null
         private var mDeviceStore: ELUserDeviceStore? = null
 
         @JvmStatic
         @Synchronized
-        fun workoutsStore(): ELUserWorkoutsStore {
+        fun workoutsStore(): CollectionStore<ELWorkout> {
             if (mWorkoutsStore == null) {
-                mWorkoutsStore = ELUserWorkoutsStore()
+                mWorkoutsStore = if (inMemory()) InMemoryCollectionStore(WORKOUTS, ELUserWorkoutsStore(), compareByDescending { it.createdDate }) else ELUserWorkoutsStore()
             }
             return mWorkoutsStore!!
         }
 
         @JvmStatic
         @Synchronized
-        fun workoutStore(): ELUserWorkoutStore {
+        fun workoutStore(): DocumentStore<ELWorkout> {
             if (mWorkoutStore == null) {
-                mWorkoutStore = ELUserWorkoutStore()
+                mWorkoutStore = if (inMemory()) InMemoryDocumentStore(WORKOUTS, ELUserWorkoutStore()) else ELUserWorkoutStore()
             }
             return mWorkoutStore!!
         }
 
         @JvmStatic
         @Synchronized
-        fun routinesStore(): ELUserRoutinesStore {
+        fun routinesStore(): CollectionStore<ELRoutine> {
             if (mRoutinesStore == null) {
-                mRoutinesStore = ELUserRoutinesStore()
+                mRoutinesStore = if (inMemory()) InMemoryCollectionStore(ROUTINES, ELUserRoutinesStore(), compareBy(nullsFirst()) { it.name }) else ELUserRoutinesStore()
             }
             return mRoutinesStore!!
         }
 
         @JvmStatic
         @Synchronized
-        fun routineStore(): ELUserRoutineStore {
+        fun routineStore(): DocumentStore<ELRoutine> {
             if (mRoutineStore == null) {
-                mRoutineStore = ELUserRoutineStore()
+                mRoutineStore = if (inMemory()) InMemoryDocumentStore(ROUTINES, ELUserRoutineStore()) else ELUserRoutineStore()
             }
             return mRoutineStore!!
         }
@@ -91,18 +106,18 @@ class ELDatastore {
 
         @JvmStatic
         @Synchronized
-        fun plansStore(): ELUserPlansStore {
+        fun plansStore(): CollectionStore<ELPlan> {
             if (mPlansStore == null) {
-                mPlansStore = ELUserPlansStore()
+                mPlansStore = if (inMemory()) InMemoryCollectionStore(PLANS, ELUserPlansStore(), compareBy(nullsFirst()) { it.name }, ::decorateInMemoryPlan) else ELUserPlansStore()
             }
             return mPlansStore!!
         }
 
         @JvmStatic
         @Synchronized
-        fun planStore(): ELUserPlanStore {
+        fun planStore(): DocumentStore<ELPlan> {
             if (mPlanStore == null) {
-                mPlanStore = ELUserPlanStore()
+                mPlanStore = if (inMemory()) InMemoryDocumentStore(PLANS, ELUserPlanStore(), ::decorateInMemoryPlan) else ELUserPlanStore()
             }
             return mPlanStore!!
         }
@@ -132,6 +147,24 @@ class ELDatastore {
                 mDeviceStore = ELUserDeviceStore()
             }
             return mDeviceStore!!
+        }
+
+        private fun inMemory(): Boolean {
+            return DeviceUtils.isFirebaseTestLabRun()
+        }
+
+        // ELPlanDecorator looks routines up in Firestore, so resolve them from memory instead
+        private fun decorateInMemoryPlan(plan: ELPlan) {
+            val routineDecorator = ELRoutineDecorator()
+            val routines = plan.getRoutinesToResolve().mapNotNull { uuid ->
+                (InMemoryDatabase.get(ROUTINES, uuid) as? ELRoutine)?.let { routine ->
+                    routineDecorator.decorate(routine)
+                    uuid to routine
+                }
+            }.toMap()
+            if (routines.isNotEmpty()) {
+                plan.resolveRoutines(routines)
+            }
         }
 
         @JvmStatic
