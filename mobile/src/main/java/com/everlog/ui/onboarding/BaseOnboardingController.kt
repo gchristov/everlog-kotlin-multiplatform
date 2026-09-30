@@ -6,6 +6,7 @@ import android.graphics.Rect
 import android.view.View
 import com.everlog.R
 import com.everlog.utils.Utils
+import com.everlog.utils.device.DeviceUtils
 import com.everlog.utils.ViewUtils
 import com.getkeepsafe.taptargetview.TapTarget
 import com.getkeepsafe.taptargetview.TapTargetSequence
@@ -31,6 +32,10 @@ abstract class BaseOnboardingController<T : Activity> constructor(context: T) {
     }
 
     fun checkOnboarding() {
+        // Tips overlay the screen outside the view hierarchy, which blocks Robo scripts
+        if (DeviceUtils.isFirebaseTestLabRun()) {
+            return
+        }
         Utils.runWithDelay({
             if (Utils.isValidContext(mActivity?.get())) {
                 doCheckOnboarding()
