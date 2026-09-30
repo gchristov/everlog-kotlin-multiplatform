@@ -17,12 +17,20 @@ class WorkoutPrefillHistoryController: BaseWorkoutPrefillController() {
             return
         }
         // Make sure we're looking at the correct set number, i.e. set 1 will prefill only from historic set 1, not set 2
-        if (setIndex < historicEntry.exercise?.sets?.size ?: 0) {
-            val historicSet = historicEntry.exercise?.sets?.get(setIndex)
-            if (!setToPrefill.isWeightEntered() && historicSet?.isWeightEntered() == true) {
-                // Prefill weight if current set doesn't have weight AND historic set has
-                printExerciseMessage(historicEntry.workout!!, historicEntry.exercise!!, setIndex, String.format("Found historic weight value: %s", buildSetInfo(historicSet)))
-                setToPrefill.updateWeight(historicSet.getWeight())
+        val historicSet = historicEntry.exercise?.sets?.getOrNull(setIndex) ?: return
+        if (!setToPrefill.isWeightEntered() && historicSet.isWeightEntered()) {
+            // Prefill weight if current set doesn't have weight AND historic set has
+            printExerciseMessage(historicEntry.workout!!, historicEntry.exercise!!, setIndex, String.format("Found historic weight value: %s", buildSetInfo(historicSet)))
+            setToPrefill.updateWeight(historicSet.getWeight())
+        }
+        // Reps and time replace each other, so only fill a set that has neither, including as a template target
+        if (setToPrefill.isWithoutData() && !setToPrefill.isRequiredRepsEntered() && !setToPrefill.isRequiredTimeEntered()) {
+            if (historicSet.isRepsEntered()) {
+                printExerciseMessage(historicEntry.workout!!, historicEntry.exercise!!, setIndex, String.format("Found historic reps value: %s", buildSetInfo(historicSet)))
+                setToPrefill.updateReps(historicSet.getReps())
+            } else if (historicSet.isTimeEntered()) {
+                printExerciseMessage(historicEntry.workout!!, historicEntry.exercise!!, setIndex, String.format("Found historic time value: %s", buildSetInfo(historicSet)))
+                setToPrefill.updateTimeSeconds(historicSet.getTimeSeconds())
             }
         }
     }

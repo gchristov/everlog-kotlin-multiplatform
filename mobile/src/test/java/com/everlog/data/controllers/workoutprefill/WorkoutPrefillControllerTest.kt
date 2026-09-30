@@ -21,6 +21,7 @@ class WorkoutPrefillControllerTest {
 
     private val bench = ELExercise(uuid = "bench", name = "Bench press")
     private val squat = ELExercise(uuid = "squat", name = "Squat")
+    private val plank = ELExercise(uuid = "plank", name = "Plank")
 
     // The first day of a month, which is when prefilling used to reset (TAS-409)
     private val now = at(2026, 10, 1)
@@ -44,7 +45,7 @@ class WorkoutPrefillControllerTest {
         val history = listOf(workout(at(2026, 9, 29), bench to listOf(loggedSet(8, 60f), loggedSet(8, 62.5f))))
         val ongoing = workout(now, bench to listOf(plannedSet(), plannedSet()))
 
-        WorkoutPrefillController.prefill(ongoing, history, now)
+        prefill(ongoing, history)
 
         assertThat(weights(ongoing, bench)).containsExactly(60f, 62.5f).inOrder()
     }
@@ -54,7 +55,7 @@ class WorkoutPrefillControllerTest {
         val history = listOf(workout(at(2026, 3, 14), bench to listOf(loggedSet(8, 60f))))
         val ongoing = workout(now, bench to listOf(plannedSet()))
 
-        WorkoutPrefillController.prefill(ongoing, history, now)
+        prefill(ongoing, history)
 
         assertThat(weights(ongoing, bench)).containsExactly(60f)
     }
@@ -68,7 +69,7 @@ class WorkoutPrefillControllerTest {
                 workout(at(2026, 9, 20), bench to listOf(loggedSet(8, 60f))))
         val ongoing = workout(now, bench to listOf(plannedSet()))
 
-        WorkoutPrefillController.prefill(ongoing, history, now)
+        prefill(ongoing, history)
 
         assertThat(weights(ongoing, bench)).containsExactly(65f)
     }
@@ -80,7 +81,7 @@ class WorkoutPrefillControllerTest {
                 workout(at(2026, 9, 20), bench to listOf(loggedSet(8, 60f))))
         val ongoing = workout(now, bench to listOf(plannedSet()))
 
-        WorkoutPrefillController.prefill(ongoing, history, now)
+        prefill(ongoing, history)
 
         assertThat(weights(ongoing, bench)).containsExactly(60f)
     }
@@ -90,7 +91,7 @@ class WorkoutPrefillControllerTest {
         val history = listOf(workout(at(2026, 9, 28), bench to listOf(loggedSet(8, 60f), loggedSet(6, 70f))))
         val ongoing = workout(now, bench to listOf(plannedSet(), plannedSet(), plannedSet()))
 
-        WorkoutPrefillController.prefill(ongoing, history, now)
+        prefill(ongoing, history)
 
         assertThat(weights(ongoing, bench)).containsExactly(60f, 70f, -1f).inOrder()
     }
@@ -102,7 +103,7 @@ class WorkoutPrefillControllerTest {
                 workout(at(2026, 9, 20), bench to listOf(loggedSet(8, 60f))))
         val ongoing = workout(now, bench to listOf(plannedSet()), squat to listOf(plannedSet()))
 
-        WorkoutPrefillController.prefill(ongoing, history, now)
+        prefill(ongoing, history)
 
         assertThat(weights(ongoing, bench)).containsExactly(60f)
         assertThat(weights(ongoing, squat)).containsExactly(100f)
@@ -113,7 +114,7 @@ class WorkoutPrefillControllerTest {
         val history = listOf(workout(at(2026, 9, 28), bench to listOf(loggedSet(8, 60f))))
         val ongoing = workout(now, bench to listOf(loggedSet(8, 40f)))
 
-        WorkoutPrefillController.prefill(ongoing, history, now)
+        prefill(ongoing, history)
 
         assertThat(weights(ongoing, bench)).containsExactly(40f)
     }
@@ -122,7 +123,7 @@ class WorkoutPrefillControllerTest {
     fun `leaves sets empty when the exercise has no history`() {
         val ongoing = workout(now, bench to listOf(plannedSet()))
 
-        WorkoutPrefillController.prefill(ongoing, emptyList(), now)
+        prefill(ongoing, emptyList())
 
         assertThat(weights(ongoing, bench)).containsExactly(-1f)
     }
@@ -133,7 +134,7 @@ class WorkoutPrefillControllerTest {
         val history = listOf(workout(at(2026, 9, 28), bench to listOf(loggedSet(8, 60f))))
         val ongoing = workout(now, bench to listOf(plannedSet()))
 
-        WorkoutPrefillController.prefill(ongoing, history, now)
+        prefill(ongoing, history)
 
         // 60kg in pounds
         assertThat(weights(ongoing, bench).single()).isWithin(0.01f).of(132.28f)
@@ -148,7 +149,7 @@ class WorkoutPrefillControllerTest {
         val history = listOf(workout(at(2026, 9, 29), bench to listOf(loggedSet(5, 90f))))
         val ongoing = workout(now, bench to listOf(plannedSet(), plannedSet()))
 
-        WorkoutPrefillController.prefill(ongoing, history, now)
+        prefill(ongoing, history)
 
         // 80% of 101.26 = 81.01, rounded up
         assertThat(weights(ongoing, bench)).containsExactly(82f, 82f)
@@ -173,7 +174,7 @@ class WorkoutPrefillControllerTest {
                 workout(at(2025, 1, 1), bench to listOf(loggedSet(5, 120f))))
         val ongoing = workout(now, bench to listOf(plannedSet(), plannedSet()))
 
-        WorkoutPrefillController.prefill(ongoing, history, now)
+        prefill(ongoing, history)
 
         assertThat(WorkoutPrefillController.buildPrefillSource(bench, history, now).orm).isEqualTo(0f)
         assertThat(weights(ongoing, bench)).containsExactly(90f, 85f).inOrder()
@@ -193,7 +194,7 @@ class WorkoutPrefillControllerTest {
         val history = listOf(workout(at(2026, 9, 28), bench to listOf(ELSet(reps = 8))))
         val ongoing = workout(now, bench to listOf(plannedSet()))
 
-        WorkoutPrefillController.prefill(ongoing, history, now)
+        prefill(ongoing, history)
 
         assertThat(weights(ongoing, bench)).containsExactly(-1f)
     }
@@ -205,7 +206,7 @@ class WorkoutPrefillControllerTest {
         val history = listOf(workout(at(2026, 9, 28), bench to listOf(loggedSet(1, 100f))))
         val ongoing = workout(now, bench to listOf(plannedSet()))
 
-        WorkoutPrefillController.prefill(ongoing, history, now)
+        prefill(ongoing, history)
 
         assertThat(weights(ongoing, bench)).containsExactly(80f)
     }
@@ -228,14 +229,271 @@ class WorkoutPrefillControllerTest {
         val history = listOf(workout(at(2026, 9, 28), bench to listOf(loggedSet(30, 20f))))
         val ongoing = workout(now, bench to listOf(plannedSet()))
 
-        WorkoutPrefillController.prefill(ongoing, history, now)
+        prefill(ongoing, history)
 
         assertThat(weights(ongoing, bench)).containsExactly(20f)
     }
 
+    // Reps and time
+
+    @Test
+    fun `history prefills reps by set position and leaves extra sets empty`() {
+        val history = listOf(workout(at(2026, 9, 28), bench to listOf(loggedSet(10, 60f), loggedSet(8, 65f))))
+        val ongoing = workout(now, bench to listOf(ELSet(), ELSet(), ELSet()))
+
+        prefill(ongoing, history)
+
+        assertThat(reps(ongoing, bench)).containsExactly(10, 8, -1).inOrder()
+    }
+
+    @Test
+    fun `does not overwrite reps that are already entered`() {
+        val history = listOf(workout(at(2026, 9, 28), bench to listOf(loggedSet(10, 60f))))
+        val ongoing = workout(now, bench to listOf(ELSet(reps = 12)))
+
+        prefill(ongoing, history)
+
+        assertThat(reps(ongoing, bench)).containsExactly(12)
+    }
+
+    @Test
+    fun `keeps a template's reps and still prefills the weight`() {
+        val history = listOf(workout(at(2026, 9, 28), bench to listOf(loggedSet(10, 60f))))
+        // As started from a template, see ELWorkout.prefillRequiredMetrics
+        val ongoing = workout(now, bench to listOf(ELSet(requiredReps = 5, reps = 5)))
+
+        prefill(ongoing, history)
+
+        assertThat(reps(ongoing, bench)).containsExactly(5)
+        assertThat(weights(ongoing, bench)).containsExactly(60f)
+    }
+
+    @Test
+    fun `history prefills time for timed sets by set position`() {
+        val history = listOf(workout(at(2026, 9, 28), plank to listOf(ELSet(timeSeconds = 45), ELSet(timeSeconds = 30))))
+        val ongoing = workout(now, plank to listOf(ELSet(), ELSet()))
+
+        prefill(ongoing, history)
+
+        assertThat(times(ongoing, plank)).containsExactly(45, 30).inOrder()
+        assertThat(reps(ongoing, plank)).containsExactly(-1, -1)
+    }
+
+    @Test
+    fun `does not give reps to a timed set`() {
+        val history = listOf(workout(at(2026, 9, 28), bench to listOf(loggedSet(10, 60f))))
+        val ongoing = workout(now, bench to listOf(ELSet(timeSeconds = 30)))
+
+        prefill(ongoing, history)
+
+        assertThat(times(ongoing, bench)).containsExactly(30)
+        assertThat(reps(ongoing, bench)).containsExactly(-1)
+    }
+
+    @Test
+    fun `does not give a time to a set with reps`() {
+        val history = listOf(workout(at(2026, 9, 28), plank to listOf(ELSet(timeSeconds = 45))))
+        val ongoing = workout(now, plank to listOf(ELSet(reps = 10)))
+
+        prefill(ongoing, history)
+
+        assertThat(reps(ongoing, plank)).containsExactly(10)
+        assertThat(times(ongoing, plank)).containsExactly(0)
+    }
+
+    @Test
+    fun `does not replace a template's time target with reps`() {
+        val history = listOf(workout(at(2026, 9, 28), plank to listOf(loggedSet(10, 20f))))
+        val ongoing = workout(now, plank to listOf(ELSet(requiredTimeSeconds = 60)))
+
+        prefill(ongoing, history)
+
+        val set = sets(ongoing, plank).single()
+        assertThat(set.getRequiredTimeSeconds()).isEqualTo(60)
+        assertThat(set.getReps()).isEqualTo(-1)
+    }
+
+    @Test
+    fun `leaves reps empty when the historic set only has a weight`() {
+        val history = listOf(workout(at(2026, 9, 28), bench to listOf(loggedSet(10, 60f), ELSet(weight = 65f))))
+        val ongoing = workout(now, bench to listOf(ELSet(), ELSet()))
+
+        prefill(ongoing, history)
+
+        assertThat(reps(ongoing, bench)).containsExactly(10, -1).inOrder()
+        assertThat(weights(ongoing, bench)).containsExactly(60f, 65f).inOrder()
+    }
+
+    @Test
+    fun `1RM goal takes the weight from the 1RM and the reps from the last session`() {
+        SettingsManager.manager.setMuscleGoal(MuscleGoal.GROWTH)
+        val history = listOf(workout(at(2026, 9, 29), bench to listOf(loggedSet(5, 90f))))
+        val ongoing = workout(now, bench to listOf(ELSet()))
+
+        prefill(ongoing, history)
+
+        assertThat(weights(ongoing, bench)).containsExactly(82f)
+        assertThat(reps(ongoing, bench)).containsExactly(5)
+    }
+
+    // Targeted prefill
+
+    @Test
+    fun `only prefills the exercises passed in`() {
+        val history = listOf(workout(at(2026, 9, 28), bench to listOf(loggedSet(10, 60f)), squat to listOf(loggedSet(5, 100f))))
+        // The user cleared bench, then added squat
+        val ongoing = workout(now, bench to listOf(ELSet()), squat to listOf(ELSet()))
+
+        WorkoutPrefillController.prefill(ongoing.findExercise(squat)!!, history, now)
+
+        assertThat(reps(ongoing, bench)).containsExactly(-1)
+        assertThat(weights(ongoing, bench)).containsExactly(-1f)
+        assertThat(reps(ongoing, squat)).containsExactly(5)
+        assertThat(weights(ongoing, squat)).containsExactly(100f)
+    }
+
+    @Test
+    fun `returns what each exercise was prefilled from`() {
+        val history = listOf(workout(at(2026, 9, 28), bench to listOf(loggedSet(10, 60f))))
+        val ongoing = workout(now, bench to listOf(ELSet()), squat to listOf(ELSet()))
+
+        val sources = prefill(ongoing, history)
+
+        assertThat(sources.keys).containsExactly("bench", "squat")
+        assertThat(sources.getValue("bench").lastSession).isNotNull()
+        assertThat(sources.getValue("squat").lastSession).isNull()
+    }
+
+    @Test
+    fun `building the sources doesn't change the sets`() {
+        // As when resuming a workout, where the user may have cleared prefilled values
+        val history = listOf(workout(at(2026, 9, 28), bench to listOf(loggedSet(10, 60f))))
+        val ongoing = workout(now, bench to listOf(ELSet()))
+
+        val sources = WorkoutPrefillController.buildPrefillSources(listOf(bench), history, now)
+
+        assertThat(sources.getValue("bench").lastSession).isNotNull()
+        assertThat(reps(ongoing, bench)).containsExactly(-1)
+        assertThat(weights(ongoing, bench)).containsExactly(-1f)
+    }
+
+    @Test
+    fun `applying fills sets added after the sources were built`() {
+        val history = listOf(workout(at(2026, 9, 28), bench to listOf(loggedSet(10, 60f), loggedSet(8, 65f))))
+        val ongoing = workout(now, bench to listOf(ELSet()))
+        val sources = WorkoutPrefillController.buildPrefillSources(listOf(bench), history, now)
+        // The user added a set while history was loading
+        ongoing.findExercise(bench)!!.single().sets.add(ELSet())
+
+        WorkoutPrefillController.applyPrefill(ongoing.findExercise(bench)!!, sources)
+
+        assertThat(reps(ongoing, bench)).containsExactly(10, 8).inOrder()
+    }
+
+    @Test
+    fun `applying skips exercises without a source`() {
+        val ongoing = workout(now, bench to listOf(ELSet()))
+
+        WorkoutPrefillController.applyPrefill(ongoing.findExercise(bench)!!, emptyMap())
+
+        assertThat(reps(ongoing, bench)).containsExactly(-1)
+    }
+
+    // Added sets
+
+    @Test
+    fun `an added set takes the same set of the last session instead of the copied one`() {
+        val history = listOf(workout(at(2026, 9, 28), bench to listOf(loggedSet(10, 60f), loggedSet(8, 65f))))
+        val source = WorkoutPrefillController.buildPrefillSource(bench, history, now)
+        // A copy of set 1, as made by ELExerciseGroup.setAdd
+        val added = loggedSet(10, 60f)
+
+        assertThat(WorkoutPrefillController.prefillAddedSet(source, added, 1)).isTrue()
+
+        assertThat(added.getReps()).isEqualTo(8)
+        assertThat(added.getWeight()).isEqualTo(65f)
+    }
+
+    @Test
+    fun `an added set past the last session keeps the copied values`() {
+        val history = listOf(workout(at(2026, 9, 28), bench to listOf(loggedSet(10, 60f))))
+        val source = WorkoutPrefillController.buildPrefillSource(bench, history, now)
+        val added = loggedSet(12, 50f)
+
+        assertThat(WorkoutPrefillController.prefillAddedSet(source, added, 1)).isFalse()
+
+        assertThat(added.getReps()).isEqualTo(12)
+        assertThat(added.getWeight()).isEqualTo(50f)
+    }
+
+    @Test
+    fun `an added set keeps the copied values when the last session skipped that set`() {
+        val history = listOf(workout(at(2026, 9, 28), bench to listOf(loggedSet(10, 60f), ELSet(weight = 65f))))
+        val source = WorkoutPrefillController.buildPrefillSource(bench, history, now)
+        val added = loggedSet(10, 60f)
+
+        assertThat(WorkoutPrefillController.prefillAddedSet(source, added, 1)).isFalse()
+
+        assertThat(added.getReps()).isEqualTo(10)
+    }
+
+    @Test
+    fun `an added set can switch from reps to time`() {
+        val history = listOf(workout(at(2026, 9, 28), plank to listOf(ELSet(reps = 10), ELSet(timeSeconds = 45))))
+        val source = WorkoutPrefillController.buildPrefillSource(plank, history, now)
+        val added = ELSet(reps = 10)
+
+        WorkoutPrefillController.prefillAddedSet(source, added, 1)
+
+        assertThat(added.getTimeSeconds()).isEqualTo(45)
+        assertThat(added.getReps()).isEqualTo(-1)
+    }
+
+    @Test
+    fun `an added set drops the template target copied from the previous set`() {
+        val history = listOf(workout(at(2026, 9, 28), bench to listOf(loggedSet(10, 60f), loggedSet(8, 65f))))
+        val source = WorkoutPrefillController.buildPrefillSource(bench, history, now)
+        val added = ELSet(requiredReps = 10, reps = 10)
+
+        WorkoutPrefillController.prefillAddedSet(source, added, 1)
+
+        assertThat(added.isRequiredRepsEntered()).isFalse()
+        assertThat(added.getReps()).isEqualTo(8)
+    }
+
+    @Test
+    fun `an added set with a 1RM goal targets the 1RM`() {
+        SettingsManager.manager.setMuscleGoal(MuscleGoal.GROWTH)
+        val history = listOf(workout(at(2026, 9, 29), bench to listOf(loggedSet(5, 90f), loggedSet(5, 85f))))
+        val source = WorkoutPrefillController.buildPrefillSource(bench, history, now)
+        // Copied from set 1 after the user lowered its weight
+        val added = loggedSet(6, 70f)
+
+        WorkoutPrefillController.prefillAddedSet(source, added, 1)
+
+        assertThat(added.getWeight()).isEqualTo(82f)
+        assertThat(added.getReps()).isEqualTo(5)
+    }
+
     // Helpers
 
+    private fun prefill(workout: ELWorkout, history: List<ELWorkout>): Map<String, BaseWorkoutPrefillController.PrefillSource> {
+        return WorkoutPrefillController.prefill(workout.getExerciseGroups().flatMap { it.exercises }, history, now)
+    }
+
+    private fun sets(workout: ELWorkout, exercise: ELExercise): List<ELSet> {
+        return workout.findExercise(exercise)!!.single().sets
+    }
+
     private fun weights(workout: ELWorkout, exercise: ELExercise): List<Float> {
-        return workout.findExercise(exercise)!!.single().sets.map { it.getWeight() }
+        return sets(workout, exercise).map { it.getWeight() }
+    }
+
+    private fun reps(workout: ELWorkout, exercise: ELExercise): List<Int> {
+        return sets(workout, exercise).map { it.getReps() }
+    }
+
+    private fun times(workout: ELWorkout, exercise: ELExercise): List<Int> {
+        return sets(workout, exercise).map { it.getTimeSeconds() }
     }
 }

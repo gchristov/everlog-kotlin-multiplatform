@@ -1,6 +1,5 @@
 package com.everlog.managers
 
-import android.text.TextUtils
 import com.everlog.data.model.workout.ELWorkout
 import com.everlog.managers.preferences.PreferencesManager
 import com.google.gson.Gson
@@ -31,10 +30,17 @@ class WorkoutManager : PreferencesManager() {
 
     fun ongoingWorkout(): ELWorkout? {
         val json = getPreference(PreferenceKeys.ONGOING_WORKOUT.name, "")
-        if (!TextUtils.isEmpty(json)) {
+        if (!json.isNullOrEmpty()) {
             return Gson().fromJson(json, ELWorkout::class.java)
         }
         return null
+    }
+
+    /**
+     * @return true if the given workout is the saved ongoing one, e.g. when it's being resumed
+     */
+    fun isOngoingWorkout(workout: ELWorkout): Boolean {
+        return workout.uuid != null && ongoingWorkout()?.uuid == workout.uuid
     }
 
     fun setOngoingWorkout(workout: ELWorkout) {
