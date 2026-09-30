@@ -13,7 +13,7 @@ import com.everlog.constants.ELConstants
 import com.everlog.data.controllers.statistics.UserStatsController
 import com.everlog.data.controllers.statistics.UserStatsController.OnCompleteListener
 import com.everlog.data.datastores.ELDatastore
-import com.everlog.data.datastores.history.ELUserWorkoutsStore.ELColStoreWorkoutsLoadedEvent
+import com.everlog.data.datastores.history.ELColStoreWorkoutsLoadedEvent
 import com.everlog.data.model.ELRoutine
 import com.everlog.data.model.plan.ELPlan
 import com.everlog.data.model.plan.ELPlanState

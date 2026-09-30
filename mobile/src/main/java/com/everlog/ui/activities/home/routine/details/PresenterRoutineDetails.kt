@@ -5,7 +5,7 @@ import com.ahamed.multiviewadapter.DataListManager
 import com.ahamed.multiviewadapter.RecyclerAdapter
 import com.everlog.R
 import com.everlog.data.datastores.ELDatastore
-import com.everlog.data.datastores.routines.ELUserRoutineStore
+import com.everlog.data.datastores.routines.ELDocStoreRoutineLoadedEvent
 import com.everlog.data.model.ELRoutine
 import com.everlog.managers.PlanManager
 import com.everlog.managers.analytics.AnalyticsManager
@@ -47,7 +47,7 @@ open class PresenterRoutineDetails<T : MvpViewRoutineDetails> : BaseActivityPres
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
-    fun onRoutineLoaded(event: ELUserRoutineStore.ELDocStoreRoutineLoadedEvent) {
+    fun onRoutineLoaded(event: ELDocStoreRoutineLoadedEvent) {
         if (isAttachedToView) {
             if (event.error != null) {
                 handleError(event.error)

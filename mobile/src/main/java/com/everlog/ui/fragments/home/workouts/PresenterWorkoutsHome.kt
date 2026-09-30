@@ -4,8 +4,8 @@ import com.ahamed.multiviewadapter.DataListManager
 import com.ahamed.multiviewadapter.RecyclerAdapter
 import com.everlog.R
 import com.everlog.data.datastores.ELDatastore
-import com.everlog.data.datastores.plans.ELUserPlansStore
-import com.everlog.data.datastores.routines.ELUserRoutinesStore.ELColStoreRoutinesLoadedEvent
+import com.everlog.data.datastores.plans.ELColStorePlansLoadedEvent
+import com.everlog.data.datastores.routines.ELColStoreRoutinesLoadedEvent
 import com.everlog.data.model.plan.ELPlan
 import com.everlog.data.model.util.Creator
 import com.everlog.ui.activities.home.routine.create.CreateRoutineActivity
@@ -46,7 +46,7 @@ class PresenterWorkoutsHome : BaseFragmentPresenter<MvpViewWorkoutsHome>() {
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
-    fun onPlansLoaded(event: ELUserPlansStore.ELColStorePlansLoadedEvent) {
+    fun onPlansLoaded(event: ELColStorePlansLoadedEvent) {
         if (isAttachedToView) {
             if (event.error != null) {
                 mvpView?.toggleLoadingOverlayPlans(false)

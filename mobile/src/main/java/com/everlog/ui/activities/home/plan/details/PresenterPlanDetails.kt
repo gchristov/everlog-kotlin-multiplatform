@@ -7,7 +7,7 @@ import com.everlog.R
 import com.everlog.constants.ELConstants
 import com.everlog.data.datastores.ELDatastore
 import com.everlog.data.datastores.base.ELDocumentStore
-import com.everlog.data.datastores.plans.ELUserPlanStore
+import com.everlog.data.datastores.plans.ELDocStorePlanLoadedEvent
 import com.everlog.data.model.plan.ELPlan
 import com.everlog.managers.PlanManager
 import com.everlog.managers.analytics.AnalyticsManager
@@ -47,7 +47,7 @@ class PresenterPlanDetails : BaseActivityPresenter<MvpViewPlanDetails>() {
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
-    fun onPlanLoaded(event: ELUserPlanStore.ELDocStorePlanLoadedEvent) {
+    fun onPlanLoaded(event: ELDocStorePlanLoadedEvent) {
         if (isAttachedToView) {
             mvpView?.toggleLoadingOverlay(false)
             if (event.error != null) {

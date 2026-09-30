@@ -3,7 +3,7 @@ package com.everlog.ui.fragments.home.activity.statistics
 import com.everlog.config.AppConfig
 import com.everlog.data.controllers.statistics.UserStatsController
 import com.everlog.data.datastores.ELDatastore
-import com.everlog.data.datastores.history.ELUserWorkoutsStore
+import com.everlog.data.datastores.history.ELColStoreWorkoutsLoadedEvent
 import com.everlog.data.model.workout.ELWorkout
 import com.everlog.managers.analytics.AnalyticsManager
 import com.everlog.ui.fragments.base.BaseFragmentPresenter
@@ -25,7 +25,7 @@ class PresenterStatisticsHome : BaseFragmentPresenter<MvpViewStatisticsHome>() {
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
-    fun onHistoryLoaded(event: ELUserWorkoutsStore.ELColStoreWorkoutsLoadedEvent) {
+    fun onHistoryLoaded(event: ELColStoreWorkoutsLoadedEvent) {
         if (isAttachedToView) {
             if (event.error != null) {
                 mvpView.toggleLoadingOverlay(false)

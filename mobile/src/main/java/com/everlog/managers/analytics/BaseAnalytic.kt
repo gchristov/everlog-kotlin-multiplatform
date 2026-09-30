@@ -5,14 +5,13 @@ import com.everlog.data.model.set.ELSetType
 import com.everlog.managers.appupdate.AppUpdateController
 import com.everlog.managers.preferences.SettingsManager
 import com.everlog.ui.fragments.home.activity.statistics.StatisticsHomeFragment
+import com.everlog.utils.device.DeviceUtils
 import org.json.JSONObject
 import java.io.Serializable
 
 abstract class BaseAnalytic : Analytic {
 
     abstract fun logScreenName(eventName: String, screenName: String?)
-
-    abstract fun logUserRegister(eventName: String, userId: String?)
 
     abstract fun logUserIdentify(eventName: String, userId: String?)
 
@@ -23,6 +22,16 @@ abstract class BaseAnalytic : Analytic {
     abstract fun logEvent(name: String, data: Map<String, Any?>)
 
     internal var mAnalyticsEnabled = true
+
+    // Test Lab can set its flag after the app process has started (seen on Play pre-launch
+    // devices), so AnalyticsManager.initialize() alone misses those runs. Check again before
+    // logging and turn analytics off for the rest of the run.
+    protected fun canLog(): Boolean {
+        if (mAnalyticsEnabled && DeviceUtils.isFirebaseTestLabRun()) {
+            toggleAnalytics(false)
+        }
+        return mAnalyticsEnabled
+    }
 
     protected fun buildBundleFromMap(map: Map<String, *>): Bundle {
         val bundle = Bundle()
@@ -99,8 +108,17 @@ abstract class BaseAnalytic : Analytic {
         logScreenName(AnalyticsConstants.EVENT_SCREEN_VIEW, screenName)
     }
 
-    override fun userRegister(userId: String?) {
-        logUserRegister(AnalyticsConstants.EVENT_USER_REGISTER, userId)
+    override fun userRegister(userId: String?, method: String) {
+        val map = HashMap<String, Any?>()
+        map[AnalyticsConstants.PROPERTY_USER_ID] = userId
+        map[AnalyticsConstants.PROPERTY_METHOD] = method
+        logEvent(AnalyticsConstants.EVENT_USER_REGISTER, map)
+    }
+
+    override fun userLogin(userId: String?, method: String) {
+        val map = HashMap<String, Any?>()
+        map[AnalyticsConstants.PROPERTY_METHOD] = method
+        logEvent(AnalyticsConstants.EVENT_USER_LOGIN, map)
     }
 
     override fun userIdentify(userId: String?) {
@@ -267,16 +285,10 @@ abstract class BaseAnalytic : Analytic {
         return map
     }
 
-    override fun workoutStarted() {
-        logEvent(AnalyticsConstants.EVENT_WORKOUT_STARTED)
-    }
-
-    override fun workoutQuickStarted() {
-        logEvent(AnalyticsConstants.EVENT_WORKOUT_QUICK_STARTED)
-    }
-
-    override fun workoutFromRoutineStarted() {
-        logEvent(AnalyticsConstants.EVENT_WORKOUT_FROM_ROUTINE_STARTED)
+    override fun workoutStarted(source: String) {
+        val map = HashMap<String, Any?>()
+        map[AnalyticsConstants.PROPERTY_SOURCE] = source
+        logEvent(AnalyticsConstants.EVENT_WORKOUT_STARTED, map)
     }
 
     override fun workoutStopped() {

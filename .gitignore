@@ -36,6 +36,7 @@ google-services.json
 google-services-desktop.json
 admin-credentials-dev.json
 admin-credentials-prod.json
+bigquery-credentials-prod.json
 
 # --- Signing & Secrets ---
 *.keystore
@@ -73,5 +74,11 @@ Thumbs.db
 /.idea/androidTestResultsUserPreferences.xml
 /.idea/markdown.xml
 
-# --- Tool outputs (contain user PII) ---
-tools/active_users/*.csv
+# --- Tool inputs and outputs (Firestore exports and BigQuery results contain user PII) ---
+tools/bigquery/*.csv
+# BigQuery service account keys, whatever they're called
+tools/bigquery/*.json
+tools/firebase/firestore/*.json
+tools/firebase/storage/*/
+tools/image_resize/input/
+tools/image_resize/output/

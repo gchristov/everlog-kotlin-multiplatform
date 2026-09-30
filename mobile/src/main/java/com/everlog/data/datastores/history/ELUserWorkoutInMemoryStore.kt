@@ -1,38 +1,26 @@
 package com.everlog.data.datastores.history
 
-import com.everlog.data.datastores.base.ELDocumentStore
+import com.everlog.data.datastores.base.InMemoryDocumentStore
 import com.everlog.data.datastores.events.document.ELDocStoreItemLoadedEvent
 import com.everlog.data.datastores.routines.ELRoutineDecorator
 import com.everlog.data.model.workout.ELWorkout
-import com.everlog.managers.firebase.FirestorePathManager
-import com.google.firebase.firestore.CollectionReference
-import com.google.firebase.firestore.FieldPath
-import com.google.firebase.firestore.Query
 
-class ELUserWorkoutStore : ELDocumentStore<ELWorkout>() {
+/**
+ * [ELUserWorkoutStore] for Firebase Test Lab runs, kept in memory.
+ */
+class ELUserWorkoutInMemoryStore : InMemoryDocumentStore<ELWorkout>() {
 
     override fun getType(): Class<ELWorkout> {
         return ELWorkout::class.java
     }
 
-    override fun getQuery(itemId: String): Query {
-        return parentCollection
-                .whereEqualTo(FieldPath.documentId(), itemId)
-    }
-
-    override fun getParentCollection(): CollectionReference {
-        return FirestorePathManager.workoutsCollection
-    }
-
-    override fun getTag(): String {
-        return "ELUserWorkoutStore"
+    override fun getCollection(): String {
+        return ELUserWorkoutsInMemoryStore.COLLECTION
     }
 
     override fun decorateItem(item: ELWorkout) {
         ELRoutineDecorator().decorate(item)
     }
-
-    // Events
 
     override fun getDocumentStoreItemLoadedEvent(item: ELWorkout?,
                                                  hasPendingWrites: Boolean,
