@@ -78,6 +78,11 @@
         <meta-data
             android:name="firebase_crashlytics_collection_enabled"
             android:value="false" />
+        <!-- Off until AnalyticsManager.initialize() turns it on, so automatic events like
+         first_open aren't sent from debug builds or Test Lab runs -->
+        <meta-data
+            android:name="firebase_analytics_collection_enabled"
+            android:value="false" />
 
         <!-- Services -->
 
