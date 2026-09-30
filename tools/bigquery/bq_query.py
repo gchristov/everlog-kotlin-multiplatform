@@ -51,11 +51,11 @@ def run(args):
         raise SystemExit(f"Error: Query would scan more than {args.max_gb} GB. Narrow it down, or raise the limit with --max-gb.")
 
     job_config = bigquery.QueryJobConfig(maximum_bytes_billed=int(args.max_gb * GB))
-    rows = list(client.query(sql, job_config=job_config).result())
+    result = client.query(sql, job_config=job_config).result()
+    fields = [field.name for field in result.schema]
+    rows = list(result)
     if not rows:
         print("No rows.", file=sys.stderr)
-        return
-    fields = list(rows[0].keys())
 
     if args.output:
         with open(args.output, 'w', newline='') as f:
@@ -69,7 +69,7 @@ def run(args):
         writer.writerow(fields)
         for row in rows:
             writer.writerow([format_value(row[name]) for name in fields])
-    elif not args.output:
+    elif not args.output and rows:
         print_table(fields, rows[:args.limit], args.max_width)
         if len(rows) > args.limit:
             print(f"... {len(rows) - args.limit} more rows (use --output or --csv for all)", file=sys.stderr)

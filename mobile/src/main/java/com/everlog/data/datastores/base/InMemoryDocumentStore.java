@@ -49,9 +49,11 @@ public abstract class InMemoryDocumentStore<T extends ELFirestoreModel> implemen
         // Like the Firestore store, keep sending updates for the last item loaded
         removeListener();
         mItemId = itemId;
-        mListener = () -> load(itemId, null);
+        // Reloads after a save report pending writes, as Firestore does for local writes, which
+        // screens rely on to show updates after their first load
+        mListener = () -> load(itemId, null, true);
         InMemoryDatabase.addListener(getCollection(), mListener);
-        load(itemId, listener);
+        load(itemId, listener, false);
     }
 
     @Override
@@ -77,7 +79,7 @@ public abstract class InMemoryDocumentStore<T extends ELFirestoreModel> implemen
         mListener = null;
     }
 
-    private void load(String itemId, @Nullable OnStoreItemListener<T> listener) {
+    private void load(String itemId, @Nullable OnStoreItemListener<T> listener, boolean hasPendingWrites) {
         Utils.runInBackground(() -> {
             synchronized (mLoadLock) {
                 T item = getType().cast(InMemoryDatabase.get(getCollection(), itemId));
@@ -89,7 +91,7 @@ public abstract class InMemoryDocumentStore<T extends ELFirestoreModel> implemen
                     boolean watched = itemId != null && itemId.equals(mItemId);
                     if (item != null) {
                         if (watched) {
-                            EventBus.getDefault().post(getDocumentStoreItemLoadedEvent(item, false, false, null));
+                            EventBus.getDefault().post(getDocumentStoreItemLoadedEvent(item, hasPendingWrites, false, null));
                         }
                         if (listener != null) {
                             listener.onItemLoaded(item, false);
