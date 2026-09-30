@@ -13,7 +13,7 @@ abstract class BaseAnalytic : Analytic {
 
     abstract fun logScreenName(eventName: String, screenName: String?)
 
-    abstract fun logUserRegister(eventName: String, userId: String?)
+    abstract fun logUserRegister(eventName: String, userId: String?, method: String)
 
     abstract fun logUserIdentify(eventName: String, userId: String?)
 
@@ -110,8 +110,14 @@ abstract class BaseAnalytic : Analytic {
         logScreenName(AnalyticsConstants.EVENT_SCREEN_VIEW, screenName)
     }
 
-    override fun userRegister(userId: String?) {
-        logUserRegister(AnalyticsConstants.EVENT_USER_REGISTER, userId)
+    override fun userRegister(userId: String?, method: String) {
+        logUserRegister(AnalyticsConstants.EVENT_USER_REGISTER, userId, method)
+    }
+
+    override fun userLogin(userId: String?, method: String) {
+        val map = HashMap<String, Any?>()
+        map[AnalyticsConstants.PROPERTY_METHOD] = method
+        logEvent(AnalyticsConstants.EVENT_USER_LOGIN, map)
     }
 
     override fun userIdentify(userId: String?) {
@@ -278,16 +284,10 @@ abstract class BaseAnalytic : Analytic {
         return map
     }
 
-    override fun workoutStarted() {
-        logEvent(AnalyticsConstants.EVENT_WORKOUT_STARTED)
-    }
-
-    override fun workoutQuickStarted() {
-        logEvent(AnalyticsConstants.EVENT_WORKOUT_QUICK_STARTED)
-    }
-
-    override fun workoutFromRoutineStarted() {
-        logEvent(AnalyticsConstants.EVENT_WORKOUT_FROM_ROUTINE_STARTED)
+    override fun workoutStarted(source: String) {
+        val map = HashMap<String, Any?>()
+        map[AnalyticsConstants.PROPERTY_SOURCE] = source
+        logEvent(AnalyticsConstants.EVENT_WORKOUT_STARTED, map)
     }
 
     override fun workoutStopped() {

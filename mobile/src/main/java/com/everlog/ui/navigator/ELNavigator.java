@@ -23,6 +23,7 @@ import com.everlog.data.model.exercise.ELExercise;
 import com.everlog.data.model.plan.ELPlan;
 import com.everlog.data.model.workout.ELWorkout;
 import com.everlog.managers.AppUsageReminderManager;
+import com.everlog.managers.analytics.AnalyticsConstants;
 import com.everlog.managers.analytics.AnalyticsManager;
 import com.everlog.managers.apprate.RatePromptController;
 import com.everlog.managers.apprate.RatePromptTrigger;
@@ -197,12 +198,7 @@ public class ELNavigator implements Navigator {
     public void startWorkout(ELRoutine routine,
                              boolean fromRoutine,
                              boolean fromPlan) {
-        AnalyticsManager.manager.workoutStarted();
-        if (fromRoutine) {
-            AnalyticsManager.manager.workoutFromRoutineStarted();
-        } else {
-            AnalyticsManager.manager.workoutQuickStarted();
-        }
+        AnalyticsManager.manager.workoutStarted(getWorkoutSource(routine, fromRoutine, fromPlan));
         // Build workout from routine.
         ELWorkout workout = ELWorkout.getWorkoutFromRoutine(routine, fromRoutine);
         // Start workout.
@@ -516,6 +512,17 @@ public class ELNavigator implements Navigator {
     }
 
     // Utils
+
+    private String getWorkoutSource(ELRoutine routine, boolean fromRoutine, boolean fromPlan) {
+        if (fromPlan) {
+            return AnalyticsConstants.WORKOUT_SOURCE_PLAN;
+        } else if (!fromRoutine) {
+            return AnalyticsConstants.WORKOUT_SOURCE_QUICK;
+        } else if (routine.isSample()) {
+            return AnalyticsConstants.WORKOUT_SOURCE_SAMPLE_ROUTINE;
+        }
+        return AnalyticsConstants.WORKOUT_SOURCE_ROUTINE;
+    }
 
     private void sendBroadcast(Intent i) {
         if (mContext != null) {

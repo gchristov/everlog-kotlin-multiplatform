@@ -21,6 +21,13 @@ data class ELRoutine(
 
     companion object {
 
+        // The routines in assets/sample_routines.json, created for every new account
+        private val SAMPLE_ROUTINE_UUIDS = setOf(
+                "0816c754-9d6d-455a-8d40-562a0615e65f",
+                "7eb1dbbf-2386-4782-9b37-f7e71463beef",
+                "e779ee7c-fd35-4da1-9d80-983c0edca8b9"
+        )
+
         @JvmStatic
         fun buildEmptyWorkout(): ELRoutine {
             val routine = ELRoutine()
@@ -42,6 +49,10 @@ data class ELRoutine(
 
     override fun documentId(): String {
         return uuid!!
+    }
+
+    fun isSample(): Boolean {
+        return uuid in SAMPLE_ROUTINE_UUIDS
     }
 
     override fun asMap(): MutableMap<String, Any?> {

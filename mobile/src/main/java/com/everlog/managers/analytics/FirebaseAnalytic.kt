@@ -29,12 +29,13 @@ class FirebaseAnalytic : BaseAnalytic() {
         mFirebaseAnalytics?.logEvent(eventName, bundle)
     }
 
-    override fun logUserRegister(eventName: String, userId: String?) {
+    override fun logUserRegister(eventName: String, userId: String?, method: String) {
         if (!canLog()) {
             return
         }
         val bundle = Bundle()
         bundle.putString(AnalyticsConstants.PROPERTY_USER_ID, userId)
+        bundle.putString(AnalyticsConstants.PROPERTY_METHOD, method)
         mFirebaseAnalytics?.logEvent(eventName, bundle)
     }
 
