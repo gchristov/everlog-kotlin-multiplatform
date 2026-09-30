@@ -40,7 +40,14 @@ class WorkoutManager : PreferencesManager() {
      * @return true if the given workout is the saved ongoing one, e.g. when it's being resumed
      */
     fun isOngoingWorkout(workout: ELWorkout): Boolean {
-        return workout.uuid != null && ongoingWorkout()?.uuid == workout.uuid
+        return savedCopyOf(workout) != null
+    }
+
+    /**
+     * @return the saved copy of the given workout if it's the ongoing one, with everything done since it started
+     */
+    fun savedCopyOf(workout: ELWorkout): ELWorkout? {
+        return ongoingWorkout()?.takeIf { workout.uuid != null && it.uuid == workout.uuid }
     }
 
     fun setOngoingWorkout(workout: ELWorkout) {
