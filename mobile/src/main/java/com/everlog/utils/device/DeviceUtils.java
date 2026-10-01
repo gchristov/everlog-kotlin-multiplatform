@@ -11,6 +11,7 @@ import android.view.WindowManager;
 
 import com.everlog.R;
 import com.everlog.application.ELApplication;
+import com.everlog.managers.auth.AuthManager;
 
 import org.apache.commons.lang3.text.WordUtils;
 
@@ -93,7 +94,13 @@ public class DeviceUtils {
         }
     }
 
+    // On Play pre-launch devices the Test Lab flag can read false even after the run was logged in
+    // to the Test Lab account (see AuthManager), so the account identifies those runs too
     public static boolean isFirebaseTestLabRun() {
+        return isFirebaseTestLabFlagSet() || AuthManager.INSTANCE.isFirebaseTestLabAccount();
+    }
+
+    private static boolean isFirebaseTestLabFlagSet() {
         String testLabSetting = Settings.System.getString(ELApplication.getInstance().getContentResolver(), "firebase.test.lab");
         return "true".equals(testLabSetting);
     }

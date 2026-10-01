@@ -66,6 +66,10 @@ open class RoutineDetailsActivity : BaseActivity(), MvpViewRoutineDetails {
         }
     }
 
+    override fun getRequiredExtras(): List<String> {
+        return listOf(EXTRA_ROUTINE)
+    }
+
     override fun getAnalyticsScreenName(): String {
         return AnalyticsConstants.SCREEN_ROUTINE_DETAILS
     }

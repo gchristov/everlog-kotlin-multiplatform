@@ -41,6 +41,10 @@ class WebViewActivity : BaseActivity(), MvpViewWeb {
         super.applyOverrideConfiguration(overrideConfiguration)
     }
 
+    override fun getRequiredExtras(): List<String> {
+        return listOf(ELConstants.EXTRA_WEB_URL, ELConstants.EXTRA_WEB_TITLE)
+    }
+
     override fun getAnalyticsScreenName(): String {
         return AnalyticsConstants.SCREEN_WEB_VIEW
     }

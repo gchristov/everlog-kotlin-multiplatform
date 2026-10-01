@@ -48,6 +48,10 @@ class IntegrationActivity : BaseActivity(), MvpViewIntegration {
         return binding.root
     }
 
+    override fun getRequiredExtras(): List<String> {
+        return listOf(ELConstants.EXTRA_INTEGRATION)
+    }
+
     override fun getAnalyticsScreenName(): String {
         return AnalyticsConstants.SCREEN_INTEGRATION
     }

@@ -104,6 +104,10 @@ class HomeActivity : BaseActivity(), MvpViewHome {
         }
     }
 
+    override fun requiresUser(): Boolean {
+        return true
+    }
+
     override fun getAnalyticsScreenName(): String {
         return AnalyticsConstants.SCREEN_HOME
     }

@@ -64,6 +64,10 @@ class WorkoutActivity : CreateExerciseGroupsActivity(), MvpViewWorkout {
         }
     }
 
+    override fun getRequiredExtras(): List<String> {
+        return listOf(ELConstants.EXTRA_WORKOUT)
+    }
+
     override fun getAnalyticsScreenName(): String {
         return AnalyticsConstants.SCREEN_WORKOUT
     }

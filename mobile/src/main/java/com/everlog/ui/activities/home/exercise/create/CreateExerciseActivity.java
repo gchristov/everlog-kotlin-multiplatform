@@ -49,6 +49,11 @@ public class CreateExerciseActivity extends BaseActivity implements MvpViewCreat
         setupSpinner();
     }
 
+    @Override
+    public boolean requiresUser() {
+        return true;
+    }
+
     @NotNull
     @Override
     public String getAnalyticsScreenName() {

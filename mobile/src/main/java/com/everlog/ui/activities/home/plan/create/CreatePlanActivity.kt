@@ -74,6 +74,10 @@ class CreatePlanActivity : BaseActivity(), MvpViewCreatePlan {
         return binding.root
     }
 
+    override fun requiresUser(): Boolean {
+        return true
+    }
+
     override fun getAnalyticsScreenName(): String {
         return AnalyticsConstants.SCREEN_PLAN_CREATE
     }

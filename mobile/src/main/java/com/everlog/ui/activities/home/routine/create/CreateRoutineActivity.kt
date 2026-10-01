@@ -35,6 +35,10 @@ class CreateRoutineActivity : CreateExerciseGroupsActivity(), MvpViewCreateRouti
         }
     }
 
+    override fun requiresUser(): Boolean {
+        return true
+    }
+
     public override fun getAnalyticsScreenName(): String {
         return AnalyticsConstants.SCREEN_ROUTINE_CREATE
     }
