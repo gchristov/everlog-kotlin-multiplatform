@@ -5,6 +5,7 @@ import android.content.DialogInterface
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
+import android.os.Bundle
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
@@ -84,6 +85,16 @@ class PresenterWorkout : PresenterCreateExerciseGroups<MvpViewWorkout>() {
     override fun onActivityResumed() {
         super.onActivityResumed()
         mTickTimeController?.ensureTimerWhenActivityResumed()
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        // The screen may be rebuilt from the saved workout, so include changes that aren't saved straight
+        // away, e.g. the exercise order
+        if (mWorkout?.let { WorkoutManager.manager.isOngoingWorkout(it) } == true) {
+            mWorkout?.setExerciseGroups(mSelectedGroups)
+            saveOngoingWorkout()
+        }
     }
 
     override fun onBackPressedConsumed(): Boolean {
@@ -496,9 +507,13 @@ class PresenterWorkout : PresenterCreateExerciseGroups<MvpViewWorkout>() {
 
     private fun setupState() {
         if (mWorkout == null) {
-            mWorkout = mvpView.getWorkout()
+            val launched = mvpView.getWorkout()
+            // The launch intent only has the workout as it was when it started. When Android rebuilds this
+            // screen after the app was killed in the background, continue from the saved copy instead
+            val saved = launched?.let { WorkoutManager.manager.savedCopyOf(it) }
+            mWorkout = saved ?: launched
             // A resumed workout was already prefilled when it started, and the user may have cleared values since
-            val resumed = mWorkout?.let { WorkoutManager.manager.isOngoingWorkout(it) } == true
+            val resumed = saved != null
             if (resumed) {
                 mWorkout?.clearRemainingTimes()
             } else {

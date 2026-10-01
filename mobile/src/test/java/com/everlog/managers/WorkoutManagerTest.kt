@@ -1,5 +1,6 @@
 package com.everlog.managers
 
+import com.everlog.data.model.ELRoutine
 import com.everlog.data.model.workout.ELWorkout
 import com.everlog.testutil.InMemorySharedPreferences
 import com.google.common.truth.Truth.assertThat
@@ -48,6 +49,23 @@ class WorkoutManagerTest {
         WorkoutManager.manager.clearOngoingWorkout()
 
         assertThat(WorkoutManager.manager.isOngoingWorkout(workout)).isFalse()
+    }
+
+    @Test
+    fun `the saved copy has what was done since the workout started`() {
+        // As when Android rebuilds the workout screen from its launch intent after the app was killed
+        val launched = ELWorkout(uuid = "ongoing", routine = ELRoutine())
+        val saved = ELWorkout(uuid = "ongoing", routine = ELRoutine(name = "Push day"))
+        WorkoutManager.manager.setOngoingWorkout(saved)
+
+        assertThat(WorkoutManager.manager.savedCopyOf(launched)?.routine?.name).isEqualTo("Push day")
+    }
+
+    @Test
+    fun `a new workout has no saved copy while another one is saved`() {
+        WorkoutManager.manager.setOngoingWorkout(ELWorkout(uuid = "ongoing"))
+
+        assertThat(WorkoutManager.manager.savedCopyOf(ELWorkout(uuid = "new"))).isNull()
     }
 
     @Test
