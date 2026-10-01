@@ -16,7 +16,9 @@ import com.google.android.material.appbar.AppBarLayout;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Collections;
 import java.util.Date;
+import java.util.List;
 import java.util.Random;
 
 import androidx.appcompat.widget.Toolbar;
@@ -49,6 +51,12 @@ public class WorkoutDetailsActivity extends BaseActivity implements MvpViewWorko
     public void onActivityCreated() {
         setupTopBar();
         setupListView();
+    }
+
+    @NotNull
+    @Override
+    public List<String> getRequiredExtras() {
+        return Collections.singletonList(EXTRA_WORKOUT);
     }
 
     @NotNull

@@ -69,6 +69,10 @@ class ExerciseDetailsActivity : BaseActivity(), MvpViewExerciseDetails {
         setupTopBar()
     }
 
+    override fun getRequiredExtras(): List<String> {
+        return listOf(EXTRA_EXERCISE, EXTRA_TYPE)
+    }
+
     override fun getAnalyticsScreenName(): String {
         return AnalyticsConstants.SCREEN_EXERCISE_DETAILS
     }

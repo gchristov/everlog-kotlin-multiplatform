@@ -142,6 +142,10 @@ class PlanDetailsActivity : BaseActivity(), MvpViewPlanDetails {
         mPresenter = PresenterPlanDetails()
     }
 
+    override fun getRequiredExtras(): List<String> {
+        return listOf(EXTRA_PLAN_UUID)
+    }
+
     override fun getAnalyticsScreenName(): String {
         return AnalyticsConstants.SCREEN_PLAN_DETAILS
     }

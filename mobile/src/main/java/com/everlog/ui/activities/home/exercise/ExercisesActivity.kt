@@ -72,6 +72,10 @@ class ExercisesActivity : BaseSearchActivity(), MvpViewExercises {
         return super.handleBackPressed()
     }
 
+    override fun requiresUser(): Boolean {
+        return true
+    }
+
     override fun getAnalyticsScreenName(): String {
         return if (isSelectionMode()) AnalyticsConstants.SCREEN_EXERCISE_PICKER else AnalyticsConstants.SCREEN_EXERCISES
     }

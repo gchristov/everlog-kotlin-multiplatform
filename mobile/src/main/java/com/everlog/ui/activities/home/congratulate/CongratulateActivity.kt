@@ -57,6 +57,10 @@ class CongratulateActivity : BaseActivity(), MvpViewCongratulate {
         return binding.root
     }
 
+    override fun getRequiredExtras(): List<String> {
+        return listOf(ELConstants.EXTRA_TYPE)
+    }
+
     override fun getAnalyticsScreenName(): String {
         return AnalyticsConstants.SCREEN_CONGRATULATE
     }
