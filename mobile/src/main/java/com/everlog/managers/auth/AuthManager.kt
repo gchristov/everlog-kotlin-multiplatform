@@ -93,6 +93,10 @@ object AuthManager : PreferencesManager() {
     val isLoggedIn: Boolean
         get() = SettingsManager.manager.loggedIn() && mAuth?.currentUser != null
 
+    // Test Lab runs are redirected to this account on login
+    val isFirebaseTestLabAccount: Boolean
+        get() = mAuth?.currentUser?.email == ELConstants.FIREBASE_TEST_LAB_EMAIL
+
     fun login(email: String,
               password: String,
               listener: OnAuthActionListener) {

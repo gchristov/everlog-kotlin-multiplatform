@@ -27,9 +27,11 @@ class AnalyticsManager : Analytic {
     }
 
     fun initialize() {
-        // Only enable analytics in release builds outside of Firebase Test Lab. Collection is off
-        // in the manifest, so nothing is sent before this runs.
-        toggleAnalytics(enabled = BuildConfig.BUILD_TYPE.equals("release") && !DeviceUtils.isFirebaseTestLabRun())
+        // Only enable analytics in release builds, except nightlies, outside of Firebase Test Lab.
+        // Collection is off in the manifest, so nothing is sent before this runs.
+        toggleAnalytics(enabled = BuildConfig.BUILD_TYPE.equals("release")
+                && !BuildConfig.VERSION_NAME.contains("-nightly")
+                && !DeviceUtils.isFirebaseTestLabRun())
     }
 
     override fun toggleAnalytics(enabled: Boolean) {
