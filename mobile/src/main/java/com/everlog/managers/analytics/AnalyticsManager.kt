@@ -230,6 +230,13 @@ class AnalyticsManager : Analytic {
         }
     }
 
+    override fun setCompleted(source: String, type: ELSetType?, timed: Boolean) {
+        Timber.tag(TAG).i("Set completed: source=%s type=%s timed=%s", source, type?.name, timed)
+        mAnalytics?.forEach {
+            it.setCompleted(source, type, timed)
+        }
+    }
+
     override fun statisticsRangeModified(rangeType: StatisticsHomeFragment.RangeType) {
         Timber.tag(TAG).i("Statistics range modified: type=%s", rangeType)
         mAnalytics?.forEach {

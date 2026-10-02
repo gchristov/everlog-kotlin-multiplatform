@@ -29,6 +29,7 @@ import com.everlog.data.model.set.ELSetType
 import com.everlog.databinding.RowExerciseGroupCreateBinding
 import com.everlog.databinding.RowExerciseWithinSetCreateBinding
 import com.everlog.databinding.RowSetCreateBinding
+import com.everlog.managers.analytics.AnalyticsConstants
 import com.everlog.managers.analytics.AnalyticsManager
 import com.everlog.managers.preferences.SettingsManager
 import com.everlog.ui.activities.home.exercise.details.ExerciseDetailsActivity
@@ -330,6 +331,10 @@ class ExerciseGroupCreateAdapter {
             } else {
                 // Complete set
                 groupVH.item.setComplete(set)
+                groupVH.item.getExercisesForSetIndex(set).forEach {
+                    AnalyticsManager.manager.setCompleted(AnalyticsConstants.SET_COMPLETED_SOURCE_SCREEN,
+                            groupVH.item.getSetType(), it.sets[set].isTimeBased())
+                }
                 groupVH.scrollTo(set + 1, 0)
                 builder.listener?.onSetCompleted(groupVH.item)
                 // Wait until scroll

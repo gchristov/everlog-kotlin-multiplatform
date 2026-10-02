@@ -22,6 +22,7 @@ import com.everlog.data.model.workout.ELWorkout
 import com.everlog.data.model.workout.ELWorkoutState
 import com.everlog.managers.PlanManager
 import com.everlog.managers.WorkoutManager
+import com.everlog.managers.analytics.AnalyticsConstants
 import com.everlog.managers.analytics.AnalyticsManager
 import com.everlog.managers.apprate.AppLaunchManager
 import com.everlog.managers.preferences.SettingsManager
@@ -330,6 +331,10 @@ class PresenterWorkout : PresenterCreateExerciseGroups<MvpViewWorkout>() {
         val set = exercise?.sets?.get(state.setIndex)
         set?.updateStartedDate(Date().time)
         set?.updateCompletedDate(Date().time)
+        if (set != null) {
+            AnalyticsManager.manager.setCompleted(AnalyticsConstants.SET_COMPLETED_SOURCE_NOTIFICATION,
+                    group.getSetType(), set.isTimeBased())
+        }
         // Stop the timer if already running. WorkoutService logs the tap, so stopping it isn't
         // logged again here. The rest timer that starts after the set is logged as usual, like
         // when the set is completed in the app.

@@ -45,6 +45,7 @@ interface Analytic {
     fun setModified()
     fun setAdded()
     fun setDeleted()
+    fun setCompleted(source: String, type: ELSetType?, timed: Boolean)
 
     fun statisticsRangeModified(rangeType: RangeType)
 
