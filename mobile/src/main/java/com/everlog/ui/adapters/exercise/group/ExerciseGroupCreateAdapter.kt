@@ -334,10 +334,9 @@ class ExerciseGroupCreateAdapter {
             } else {
                 // Complete set
                 groupVH.item.setComplete(set)
-                groupVH.item.getExercisesForSetIndex(set).forEach {
-                    AnalyticsManager.manager.setCompleted(AnalyticsConstants.SET_COMPLETED_SOURCE_SCREEN,
-                            groupVH.item.getSetType(), it.sets[set].isTimeBased())
-                }
+                // Once per set, for all of a super set's exercises
+                AnalyticsManager.manager.setCompleted(AnalyticsConstants.SET_COMPLETED_SOURCE_SCREEN,
+                        groupVH.item.getSetType(), groupVH.item.setIsTimeBased(set))
                 groupVH.scrollTo(set + 1, 0)
                 builder.listener?.onSetCompleted(groupVH.item)
                 // Wait until scroll

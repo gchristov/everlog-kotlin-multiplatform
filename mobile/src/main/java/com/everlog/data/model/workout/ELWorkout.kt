@@ -129,11 +129,12 @@ data class ELWorkout(
     }
 
     /**
-     * Sets marked complete so far. Each exercise in a super set counts separately.
+     * Sets ticked so far. A super set's round counts once, like on the workout screen, as soon as any of its
+     * exercises is ticked.
      */
     fun getCompletedSetsCount(): Int {
         return getExerciseGroups().sumOf { group ->
-            group.exercises.sumOf { exercise -> exercise.sets.count { it.isComplete() } }
+            (0 until group.getTotalSetsCount()).count { group.setIsStarted(it) }
         }
     }
 

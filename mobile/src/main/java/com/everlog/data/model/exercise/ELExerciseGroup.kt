@@ -118,6 +118,20 @@ data class ELExerciseGroup (
         return true
     }
 
+    /**
+     * True if any exercise's set at this index is ticked, i.e. part of a super set's round.
+     */
+    fun setIsStarted(setIndex: Int): Boolean {
+        return getExercisesForSetIndex(setIndex).any { it.sets[setIndex].isComplete() }
+    }
+
+    /**
+     * True if any exercise's set at this index is timed.
+     */
+    fun setIsTimeBased(setIndex: Int): Boolean {
+        return getExercisesForSetIndex(setIndex).any { it.sets[setIndex].isTimeBased() }
+    }
+
     fun setComplete(setIndex: Int) {
         getExercisesForSetIndex(setIndex).forEach {
             val set = it.sets[setIndex]
