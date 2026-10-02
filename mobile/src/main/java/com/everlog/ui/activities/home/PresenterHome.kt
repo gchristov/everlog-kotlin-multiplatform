@@ -46,6 +46,9 @@ class PresenterHome : BaseActivityPresenter<MvpViewHome>() {
 
     private var mAppUpdateController: AppUpdateController? = null
 
+    // The prompt to resume or discard an ongoing workout, shown on resume, so it isn't shown twice
+    private var mOngoingWorkoutPromptShowing = false
+
     override fun init() {
         super.init()
         setupBroadcastReceivers()
@@ -141,6 +144,11 @@ class PresenterHome : BaseActivityPresenter<MvpViewHome>() {
     }
 
     private fun observeDiscardOngoingWorkoutConfirm(workout: ELWorkout) {
+        if (mOngoingWorkoutPromptShowing) {
+            // Still open from before the app went to the background
+            return
+        }
+        mOngoingWorkoutPromptShowing = true
         val setsCompleted = workout.getCompletedSetsCount()
         val context = mvpView.context
         val message = if (setsCompleted > 0) {
@@ -158,6 +166,7 @@ class PresenterHome : BaseActivityPresenter<MvpViewHome>() {
                 .take(1)
                 .compose(applyUISchedulers())
                 .subscribe({ action: Int ->
+                    mOngoingWorkoutPromptShowing = false
                     if (action == DialogInterface.BUTTON_NEGATIVE) {
                         WorkoutManager.manager.clearOngoingWorkout()
                         AnalyticsManager.manager.workoutStopped()
