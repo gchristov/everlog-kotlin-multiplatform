@@ -191,16 +191,28 @@ abstract class BaseAnalytic : Analytic {
         logEvent(AnalyticsConstants.EVENT_SET_REST_TIME_MODIFIED, map)
     }
 
-    override fun setModified() {
-        logEvent(AnalyticsConstants.EVENT_SET_MODIFIED)
-    }
-
     override fun setAdded() {
         logEvent(AnalyticsConstants.EVENT_SET_ADDED)
     }
 
     override fun setDeleted() {
         logEvent(AnalyticsConstants.EVENT_SET_DELETED)
+    }
+
+    override fun setCompleted(source: String, type: ELSetType?, timed: Boolean) {
+        val map = HashMap<String, Any?>()
+        map[AnalyticsConstants.PROPERTY_SOURCE] = source
+        map[AnalyticsConstants.PROPERTY_SET_TYPE] = type?.name
+        // Firebase params are strings or numbers
+        map[AnalyticsConstants.PROPERTY_TIMED] = if (timed) 1 else 0
+        logEvent(AnalyticsConstants.EVENT_SET_COMPLETED, map)
+    }
+
+    override fun setEdited(type: ELSetType?, timed: Boolean) {
+        val map = HashMap<String, Any?>()
+        map[AnalyticsConstants.PROPERTY_SET_TYPE] = type?.name
+        map[AnalyticsConstants.PROPERTY_TIMED] = if (timed) 1 else 0
+        logEvent(AnalyticsConstants.EVENT_SET_EDITED, map)
     }
 
     override fun statisticsRangeModified(rangeType: StatisticsHomeFragment.RangeType) {

@@ -91,9 +91,10 @@ class AnalyticsConstants {
         const val EVENT_SET_REQUIRED_TIME_MODIFIED = "set_required_time_modified"
         const val EVENT_SET_TIME_MODIFIED = "set_time_modified"
         const val EVENT_SET_REST_TIME_MODIFIED = "set_rest_time_modified"
-        const val EVENT_SET_MODIFIED = "set_modified"
+        const val EVENT_SET_EDITED = "set_edited"
         const val EVENT_SET_ADDED = "set_added"
         const val EVENT_SET_DELETED = "set_deleted"
+        const val EVENT_SET_COMPLETED = "set_completed"
 
         // Statistics
 
@@ -204,6 +205,8 @@ class AnalyticsConstants {
         const val PROPERTY_SOURCE = "source"
         const val PROPERTY_PROMPT_NUMBER = "prompt_number"
         const val PROPERTY_METHOD = "method"
+        const val PROPERTY_SET_TYPE = "set_type"
+        const val PROPERTY_TIMED = "timed"
 
         // Legacy user properties. Versions before 2.11.0 set the user's email and name as user
         // properties, which Firebase keeps on the device until cleared. They're PII, so they are
@@ -221,5 +224,8 @@ class AnalyticsConstants {
         const val WORKOUT_SOURCE_QUICK = "quick"
         const val WORKOUT_SOURCE_PLAN = "plan"
         const val WORKOUT_SOURCE_ROUTINE = "routine"
+
+        const val SET_COMPLETED_SOURCE_SCREEN = "screen"
+        const val SET_COMPLETED_SOURCE_NOTIFICATION = "notification"
     }
 }

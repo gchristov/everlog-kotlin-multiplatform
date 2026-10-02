@@ -42,9 +42,10 @@ interface Analytic {
     fun setRequiredTimeModified(value: Int?)
     fun setTimeModified(value: Int?)
     fun setRestTimeModified(value: Int?)
-    fun setModified()
     fun setAdded()
     fun setDeleted()
+    fun setCompleted(source: String, type: ELSetType?, timed: Boolean)
+    fun setEdited(type: ELSetType?, timed: Boolean)
 
     fun statisticsRangeModified(rangeType: RangeType)
 
