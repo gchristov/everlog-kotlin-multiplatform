@@ -363,6 +363,27 @@ class AnalyticsManager : Analytic {
         }
     }
 
+    override fun workoutDiscardPromptShown(setsCompleted: Int) {
+        Timber.tag(TAG).i("Workout discard prompt shown: setsCompleted=%d", setsCompleted)
+        mAnalytics?.forEach {
+            it.workoutDiscardPromptShown(setsCompleted)
+        }
+    }
+
+    override fun workoutDiscardPromptFinished() {
+        Timber.tag(TAG).i("Workout discard prompt finished")
+        mAnalytics?.forEach {
+            it.workoutDiscardPromptFinished()
+        }
+    }
+
+    override fun workoutDiscardPromptCancelled() {
+        Timber.tag(TAG).i("Workout discard prompt cancelled")
+        mAnalytics?.forEach {
+            it.workoutDiscardPromptCancelled()
+        }
+    }
+
     override fun workoutNextExercise() {
         Timber.tag(TAG).i("Workout next exercise")
         mAnalytics?.forEach {

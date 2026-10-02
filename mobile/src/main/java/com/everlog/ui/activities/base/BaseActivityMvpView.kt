@@ -20,6 +20,16 @@ interface BaseActivityMvpView : BaseMvpView {
                    yesResId: Int,
                    noResId: Int): Observable<Int>
 
+    /**
+     * See [com.everlog.ui.dialog.DialogBuilder.showChoicePrompt].
+     */
+    fun showChoicePrompt(title: String,
+                         message: String,
+                         positive: String,
+                         negative: String,
+                         neutral: String?,
+                         destructiveButton: Int?): Observable<Int>
+
     fun showOKPrompt(titleResId: Int, messageResId: Int): Observable<Void>
 
     fun showOKPrompt(title: String, message: String): Observable<Void>

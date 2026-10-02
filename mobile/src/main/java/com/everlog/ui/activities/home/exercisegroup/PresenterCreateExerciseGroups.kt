@@ -256,7 +256,7 @@ abstract class PresenterCreateExerciseGroups<T : MvpViewCreateExerciseGroups> : 
 
     // Handlers
 
-    private fun handleSave() {
+    protected fun handleSave() {
         buildExerciseGroups()
         performSave(mSelectedGroups)
     }

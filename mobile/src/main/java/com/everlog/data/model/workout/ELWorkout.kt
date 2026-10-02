@@ -128,6 +128,15 @@ data class ELWorkout(
         return getExerciseGroups().isNotEmpty()
     }
 
+    /**
+     * Sets marked complete so far. Each exercise in a super set counts separately.
+     */
+    fun getCompletedSetsCount(): Int {
+        return getExerciseGroups().sumOf { group ->
+            group.exercises.sumOf { exercise -> exercise.sets.count { it.isComplete() } }
+        }
+    }
+
     fun getDurationMillis(): Long {
         return completedDate - createdDate
     }

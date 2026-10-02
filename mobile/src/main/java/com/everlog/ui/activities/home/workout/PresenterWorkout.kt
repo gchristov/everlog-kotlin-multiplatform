@@ -102,7 +102,7 @@ class PresenterWorkout : PresenterCreateExerciseGroups<MvpViewWorkout>() {
         if (mSelectedExercises.isNotEmpty()) {
             return super.onBackPressedConsumed()
         }
-        observeStopWorkout()
+        observeDiscardWorkout()
         return true
     }
 
@@ -220,14 +220,42 @@ class PresenterWorkout : PresenterCreateExerciseGroups<MvpViewWorkout>() {
                 }) { throwable: Throwable? -> handleError(throwable) })
     }
 
-    private fun observeStopWorkout() {
-        subscriptions.add(mvpView.showPrompt(R.string.workout_stop_prompt, R.string.workout_stop_description, R.string.stop, R.string.cancel)
+    private fun observeDiscardWorkout() {
+        val setsCompleted = mWorkout?.getCompletedSetsCount() ?: 0
+        val context = mvpView.context
+        val prompt = if (setsCompleted > 0) {
+            // Offer to finish instead, so logged sets aren't lost by accident
+            mvpView.showChoicePrompt(context.getString(R.string.workout_discard_title),
+                    context.resources.getQuantityString(R.plurals.workout_discard_sets_logged, setsCompleted, setsCompleted),
+                    context.getString(R.string.workout_discard_finish),
+                    context.getString(R.string.discard),
+                    context.getString(R.string.workout_discard_keep_going),
+                    DialogInterface.BUTTON_NEGATIVE)
+        } else {
+            mvpView.showChoicePrompt(context.getString(R.string.workout_discard_title),
+                    context.getString(R.string.workout_discard_nothing_logged),
+                    context.getString(R.string.workout_discard_keep_going),
+                    context.getString(R.string.discard),
+                    null,
+                    DialogInterface.BUTTON_NEGATIVE)
+        }
+        AnalyticsManager.manager.workoutDiscardPromptShown(setsCompleted)
+        subscriptions.add(prompt
+                .take(1)
                 .compose(applyUISchedulers())
                 .subscribe({ action: Int ->
-                    if (action == DialogInterface.BUTTON_POSITIVE) {
-                        WorkoutManager.manager.clearOngoingWorkout()
-                        AnalyticsManager.manager.workoutStopped()
-                        mvpView.closeScreen()
+                    when {
+                        action == DialogInterface.BUTTON_NEGATIVE -> {
+                            WorkoutManager.manager.clearOngoingWorkout()
+                            AnalyticsManager.manager.workoutStopped()
+                            mvpView.closeScreen()
+                        }
+                        action == DialogInterface.BUTTON_POSITIVE && setsCompleted > 0 -> {
+                            AnalyticsManager.manager.workoutDiscardPromptFinished()
+                            // Same as the Finish button, which asks about incomplete sets
+                            handleSave()
+                        }
+                        else -> AnalyticsManager.manager.workoutDiscardPromptCancelled()
                     }
                 }) { throwable: Throwable? -> handleError(throwable) })
     }

@@ -57,4 +57,23 @@ class ELWorkoutTest {
 
         assertThat(set.isTimeEntered()).isFalse()
     }
+
+    @Test
+    fun `counts completed sets across exercises`() {
+        val squat = ELExercise(uuid = "squat", name = "Squat")
+        val done = ELSet(reps = 5).apply { updateCompletedDate(at(2026, 10, 1)) }
+        val alsoDone = ELSet(reps = 5).apply { updateCompletedDate(at(2026, 10, 1)) }
+        // Filled in but not ticked off
+        val notDone = ELSet(reps = 5)
+        val ongoing = workout(at(2026, 10, 1), plank to listOf(done, notDone), squat to listOf(alsoDone))
+
+        assertThat(ongoing.getCompletedSetsCount()).isEqualTo(2)
+    }
+
+    @Test
+    fun `counts no completed sets in a workout that's just started`() {
+        val ongoing = workout(at(2026, 10, 1), plank to listOf(ELSet(requiredTimeSeconds = 60)))
+
+        assertThat(ongoing.getCompletedSetsCount()).isEqualTo(0)
+    }
 }
