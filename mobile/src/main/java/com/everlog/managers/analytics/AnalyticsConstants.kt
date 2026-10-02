@@ -205,6 +205,13 @@ class AnalyticsConstants {
         const val PROPERTY_PROMPT_NUMBER = "prompt_number"
         const val PROPERTY_METHOD = "method"
 
+        // Legacy user properties. Versions before 2.11.0 set the user's email and name as user
+        // properties, which Firebase keeps on the device until cleared. They're PII, so they are
+        // cleared on every start. Never set them again.
+
+        const val LEGACY_PROPERTY_EMAIL = "email"
+        const val LEGACY_PROPERTY_DISPLAY_NAME = "displayName"
+
         // Values
 
         const val LOGIN_METHOD_GUEST = "guest"
