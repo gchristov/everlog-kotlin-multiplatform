@@ -74,7 +74,7 @@ class WorkoutService : BaseService() {
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         when {
             intent?.action.equals(ACTION_SERVICE_START) -> handleStartService(intent)
-            intent?.action.equals(ACTION_SERVICE_STOP) -> handleStopService()
+            intent?.action.equals(ACTION_SERVICE_STOP) -> handleStopService(startId)
             intent?.action.equals(ACTION_DECREASE_WEIGHT) -> handleWeightChange(false)
             intent?.action.equals(ACTION_INCREASE_WEIGHT) -> handleWeightChange(true)
             intent?.action.equals(ACTION_DECREASE_REPS) -> handleRepsChange(false)
@@ -91,7 +91,8 @@ class WorkoutService : BaseService() {
 
     private fun handleStartService(intent: Intent?) {
         if (NOTIFICATION_ID < 0) {
-            NOTIFICATION_ID = Random().nextInt()
+            // Positive, as a negative id means the service isn't started
+            NOTIFICATION_ID = Random().nextInt(Int.MAX_VALUE - 1) + 1
         }
         setupWorkoutState(intent)
         ELNotificationManager.startForeground(this,
@@ -100,10 +101,12 @@ class WorkoutService : BaseService() {
                 notificationChannelOptions())
     }
 
-    private fun handleStopService() {
+    private fun handleStopService(startId: Int) {
         NOTIFICATION_ID = -1
         stopForeground(true)
-        stopSelf()
+        // Only stops if no start came in after this stop, otherwise the service would be destroyed with
+        // the newer start's notification still showing
+        stopSelf(startId)
     }
 
     private fun handleSetUpdated(intent: Intent?) {
@@ -154,6 +157,10 @@ class WorkoutService : BaseService() {
     }
 
     private fun refreshNotification() {
+        if (NOTIFICATION_ID < 0) {
+            // Stopped, an update arriving late would post a notification nothing removes
+            return
+        }
         ELNotificationManager.notify(NOTIFICATION_ID,
                 buildNotification(),
                 notificationChannelOptions())

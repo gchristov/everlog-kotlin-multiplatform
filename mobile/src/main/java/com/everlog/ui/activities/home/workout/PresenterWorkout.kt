@@ -79,7 +79,11 @@ class PresenterWorkout : PresenterCreateExerciseGroups<MvpViewWorkout>() {
 
     override fun detachView() {
         stopAllTimers()
-        notifyWorkoutServiceStop()
+        // The workout carries on when the screen is only being rebuilt, and the new screen starts the
+        // service again. Stopping it here as well would race with that start.
+        if (mvpView?.getActivity()?.isChangingConfigurations != true) {
+            notifyWorkoutServiceStop()
+        }
         super.detachView()
     }
 
@@ -252,8 +256,11 @@ class PresenterWorkout : PresenterCreateExerciseGroups<MvpViewWorkout>() {
                         }
                         action == DialogInterface.BUTTON_POSITIVE && setsCompleted > 0 -> {
                             AnalyticsManager.manager.workoutDiscardPromptFinished()
-                            // Same as the Finish button, which asks about incomplete sets
-                            handleSave()
+                            // Choosing Finish over Discard already confirms it, so unlike the Finish button
+                            // this doesn't ask about incomplete sets
+                            buildExerciseGroups()
+                            mWorkout?.setExerciseGroups(mSelectedGroups)
+                            saveWorkout()
                         }
                         else -> AnalyticsManager.manager.workoutDiscardPromptCancelled()
                     }

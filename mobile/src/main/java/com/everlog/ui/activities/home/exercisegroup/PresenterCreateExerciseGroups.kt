@@ -256,7 +256,7 @@ abstract class PresenterCreateExerciseGroups<T : MvpViewCreateExerciseGroups> : 
 
     // Handlers
 
-    protected fun handleSave() {
+    private fun handleSave() {
         buildExerciseGroups()
         performSave(mSelectedGroups)
     }
@@ -327,7 +327,7 @@ abstract class PresenterCreateExerciseGroups<T : MvpViewCreateExerciseGroups> : 
         }
     }
 
-    private fun buildExerciseGroups() {
+    protected fun buildExerciseGroups() {
         mSelectedGroups.clear()
         for (i in 0 until mGroupsDataListManager.count) {
             val group = mGroupsDataListManager[i]
