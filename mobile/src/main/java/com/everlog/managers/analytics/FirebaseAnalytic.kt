@@ -15,6 +15,9 @@ class FirebaseAnalytic : BaseAnalytic() {
     override fun toggleAnalytics(enabled: Boolean) {
         super.toggleAnalytics(enabled)
         mFirebaseAnalytics?.setAnalyticsCollectionEnabled(enabled)
+        if (enabled) {
+            clearLegacyUserProperties()
+        }
     }
 
     override fun logScreenName(eventName: String, screenName: String?) {
@@ -65,5 +68,11 @@ class FirebaseAnalytic : BaseAnalytic() {
 
     private fun setupFirebase() {
         mFirebaseAnalytics = FirebaseAnalytics.getInstance(getInstance())
+    }
+
+    // Setting a user property to null removes it. Cheap and idempotent, so it runs on every start.
+    private fun clearLegacyUserProperties() {
+        mFirebaseAnalytics?.setUserProperty(AnalyticsConstants.LEGACY_PROPERTY_EMAIL, null)
+        mFirebaseAnalytics?.setUserProperty(AnalyticsConstants.LEGACY_PROPERTY_DISPLAY_NAME, null)
     }
 }
