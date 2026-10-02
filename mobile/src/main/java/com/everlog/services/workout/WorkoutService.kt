@@ -79,8 +79,9 @@ class WorkoutService : BaseService() {
         when {
             // Android restarted the service after the app's process was killed mid-workout. The notification
             // is still showing but there's no workout and its buttons would do nothing, so stopping removes it.
-            // Opening the app offers to resume the workout instead.
-            intent == null -> handleStopService(startId)
+            // Opening the app offers to resume the workout instead. Unless the workout screen has already
+            // started it again.
+            intent == null -> if (!mStarted) handleStopService(startId)
             intent?.action.equals(ACTION_SERVICE_START) -> handleStartService(intent)
             intent?.action.equals(ACTION_SERVICE_STOP) -> handleStopService(startId)
             intent?.action.equals(ACTION_DECREASE_WEIGHT) -> handleWeightChange(false)
