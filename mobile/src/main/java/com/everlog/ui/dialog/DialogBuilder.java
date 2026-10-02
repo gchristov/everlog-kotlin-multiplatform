@@ -116,8 +116,7 @@ public class DialogBuilder {
     }
 
     /**
-     * Emitted by {@link #showChoicePrompt} when the dialog is dismissed without tapping a button, e.g. by
-     * tapping outside it or pressing back.
+     * Emitted by {@link #showChoicePrompt} when the dialog is closed without tapping a button, i.e. with back.
      */
     public static final int PROMPT_DISMISSED = 0;
 
