@@ -363,10 +363,10 @@ class AnalyticsManager : Analytic {
         }
     }
 
-    override fun workoutDiscardPromptShown(setsCompleted: Int) {
-        Timber.tag(TAG).i("Workout discard prompt shown: setsCompleted=%d", setsCompleted)
+    override fun workoutDiscardPromptShown(source: String, setsCompleted: Int) {
+        Timber.tag(TAG).i("Workout discard prompt shown: source=%s setsCompleted=%d", source, setsCompleted)
         mAnalytics?.forEach {
-            it.workoutDiscardPromptShown(setsCompleted)
+            it.workoutDiscardPromptShown(source, setsCompleted)
         }
     }
 

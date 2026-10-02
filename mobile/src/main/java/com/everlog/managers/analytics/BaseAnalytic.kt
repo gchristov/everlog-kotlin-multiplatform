@@ -311,8 +311,9 @@ abstract class BaseAnalytic : Analytic {
         logEvent(AnalyticsConstants.EVENT_WORKOUT_COMPLETED)
     }
 
-    override fun workoutDiscardPromptShown(setsCompleted: Int) {
+    override fun workoutDiscardPromptShown(source: String, setsCompleted: Int) {
         val map = HashMap<String, Any?>()
+        map[AnalyticsConstants.PROPERTY_SOURCE] = source
         map[AnalyticsConstants.PROPERTY_SETS_COMPLETED] = setsCompleted
         logEvent(AnalyticsConstants.EVENT_WORKOUT_DISCARD_PROMPT_SHOWN, map)
     }

@@ -243,7 +243,7 @@ class PresenterWorkout : PresenterCreateExerciseGroups<MvpViewWorkout>() {
                     null,
                     DialogInterface.BUTTON_NEGATIVE)
         }
-        AnalyticsManager.manager.workoutDiscardPromptShown(setsCompleted)
+        AnalyticsManager.manager.workoutDiscardPromptShown(AnalyticsConstants.DISCARD_PROMPT_SOURCE_WORKOUT, setsCompleted)
         subscriptions.add(prompt
                 .take(1)
                 .compose(applyUISchedulers())

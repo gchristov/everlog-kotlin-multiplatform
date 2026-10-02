@@ -15,6 +15,7 @@ import com.everlog.managers.ErrorManager
 import com.everlog.managers.PlanManager
 import com.everlog.managers.RemoteConfigManager
 import com.everlog.managers.WorkoutManager
+import com.everlog.managers.analytics.AnalyticsConstants
 import com.everlog.managers.analytics.AnalyticsManager
 import com.everlog.managers.appupdate.AppUpdateController
 import com.everlog.managers.billing.BillingBridge
@@ -140,6 +141,8 @@ class PresenterHome : BaseActivityPresenter<MvpViewHome>() {
     }
 
     private fun observeDiscardOngoingWorkoutConfirm(workout: ELWorkout) {
+        AnalyticsManager.manager.workoutDiscardPromptShown(AnalyticsConstants.DISCARD_PROMPT_SOURCE_HOME,
+                workout.getCompletedSetsCount())
         subscriptions.add(mvpView.showPrompt(R.string.home_week_ongoing_workout_prompt_title, R.string.home_week_ongoing_workout_prompt_subtitle, R.string.resume, R.string.discard)
                 .compose(applyUISchedulers())
                 .subscribe({ action: Int ->

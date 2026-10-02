@@ -231,5 +231,10 @@ class AnalyticsConstants {
 
         const val SET_COMPLETED_SOURCE_SCREEN = "screen"
         const val SET_COMPLETED_SOURCE_NOTIFICATION = "notification"
+
+        // Where the prompt to discard an ongoing workout was shown: leaving the workout screen, or the
+        // home screen's resume prompt after the app was closed mid-workout
+        const val DISCARD_PROMPT_SOURCE_WORKOUT = "workout"
+        const val DISCARD_PROMPT_SOURCE_HOME = "home"
     }
 }
