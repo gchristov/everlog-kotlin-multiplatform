@@ -170,7 +170,7 @@ class PresenterHome : BaseActivityPresenter<MvpViewHome>() {
                     if (action == DialogInterface.BUTTON_NEGATIVE) {
                         WorkoutManager.manager.clearOngoingWorkout()
                         AnalyticsManager.manager.workoutStopped()
-                        // Removes the workout's notification if it was left behind when the app was closed
+                        // In case Android restarted the service after the app's process was killed mid-workout
                         navigator.stopWorkoutService()
                     } else {
                         // Resumed, or closed with back, which keeps the workout for next time

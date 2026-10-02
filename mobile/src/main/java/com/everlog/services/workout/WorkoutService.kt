@@ -29,8 +29,8 @@ class WorkoutService : BaseService() {
     private var mReceiver: BroadcastReceiver? = null
 
     companion object {
-        // Fixed, so the notification can be removed even by a service that didn't post it, e.g. after the
-        // app's process was killed mid-workout
+        // Fixed, so a new start replaces the notification instead of adding another, e.g. after the app's
+        // process was killed mid-workout
         private const val NOTIFICATION_ID = 0x1611
 
         internal const val ACTION_OPEN_WORKOUT = "ACTION_OPEN_WORKOUT"
@@ -77,6 +77,10 @@ class WorkoutService : BaseService() {
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         when {
+            // Android restarted the service after the app's process was killed mid-workout. The notification
+            // is still showing but there's no workout and its buttons would do nothing, so stopping removes it.
+            // Opening the app offers to resume the workout instead.
+            intent == null -> handleStopService(startId)
             intent?.action.equals(ACTION_SERVICE_START) -> handleStartService(intent)
             intent?.action.equals(ACTION_SERVICE_STOP) -> handleStopService(startId)
             intent?.action.equals(ACTION_DECREASE_WEIGHT) -> handleWeightChange(false)
@@ -105,8 +109,6 @@ class WorkoutService : BaseService() {
     private fun handleStopService(startId: Int) {
         mStarted = false
         stopForeground(true)
-        // In case it was posted before the app's process was killed, which stopForeground() can't remove
-        ELNotificationManager.cancel(NOTIFICATION_ID)
         // Only stops if no start came in after this stop, otherwise the service would be destroyed with
         // the newer start's notification still showing
         stopSelf(startId)
