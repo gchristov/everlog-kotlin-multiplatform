@@ -322,8 +322,10 @@ abstract class BaseAnalytic : Analytic {
         logEvent(AnalyticsConstants.EVENT_WORKOUT_DISCARD_PROMPT_FINISHED)
     }
 
-    override fun workoutDiscardPromptCancelled() {
-        logEvent(AnalyticsConstants.EVENT_WORKOUT_DISCARD_PROMPT_CANCELLED)
+    override fun workoutDiscardPromptCancelled(source: String) {
+        val map = HashMap<String, Any?>()
+        map[AnalyticsConstants.PROPERTY_SOURCE] = source
+        logEvent(AnalyticsConstants.EVENT_WORKOUT_DISCARD_PROMPT_CANCELLED, map)
     }
 
     override fun workoutNextExercise() {

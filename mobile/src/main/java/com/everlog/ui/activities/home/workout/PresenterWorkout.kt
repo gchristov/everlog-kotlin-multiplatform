@@ -262,7 +262,7 @@ class PresenterWorkout : PresenterCreateExerciseGroups<MvpViewWorkout>() {
                             mWorkout?.setExerciseGroups(mSelectedGroups)
                             saveWorkout()
                         }
-                        else -> AnalyticsManager.manager.workoutDiscardPromptCancelled()
+                        else -> AnalyticsManager.manager.workoutDiscardPromptCancelled(AnalyticsConstants.DISCARD_PROMPT_SOURCE_WORKOUT)
                     }
                 }) { throwable: Throwable? -> handleError(throwable) })
     }

@@ -377,10 +377,10 @@ class AnalyticsManager : Analytic {
         }
     }
 
-    override fun workoutDiscardPromptCancelled() {
-        Timber.tag(TAG).i("Workout discard prompt cancelled")
+    override fun workoutDiscardPromptCancelled(source: String) {
+        Timber.tag(TAG).i("Workout discard prompt cancelled: source=%s", source)
         mAnalytics?.forEach {
-            it.workoutDiscardPromptCancelled()
+            it.workoutDiscardPromptCancelled(source)
         }
     }
 

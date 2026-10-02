@@ -14,13 +14,13 @@ import com.everlog.data.model.workout.ELWorkoutState
 import com.everlog.managers.ELNotificationManager
 import com.everlog.managers.analytics.AnalyticsManager
 import com.everlog.services.BaseService
-import java.util.Random
 
 class WorkoutService : BaseService() {
 
-    private var NOTIFICATION_ID = -1
-
     // State
+
+    // Whether the screen started the service for a workout, and hasn't stopped it since
+    private var mStarted = false
 
     private var mWorkout: ELWorkout? = null
     private var mNextState: ELWorkoutState? = null
@@ -29,6 +29,10 @@ class WorkoutService : BaseService() {
     private var mReceiver: BroadcastReceiver? = null
 
     companion object {
+        // Fixed, so the notification can be removed even by a service that didn't post it, e.g. after the
+        // app's process was killed mid-workout
+        private const val NOTIFICATION_ID = 0x1611
+
         internal const val ACTION_OPEN_WORKOUT = "ACTION_OPEN_WORKOUT"
         internal const val ACTION_DECREASE_WEIGHT = "ACTION_DECREASE_WEIGHT"
         internal const val ACTION_INCREASE_WEIGHT = "ACTION_INCREASE_WEIGHT"
@@ -90,10 +94,7 @@ class WorkoutService : BaseService() {
     // Handlers
 
     private fun handleStartService(intent: Intent?) {
-        if (NOTIFICATION_ID < 0) {
-            // Positive, as a negative id means the service isn't started
-            NOTIFICATION_ID = Random().nextInt(Int.MAX_VALUE - 1) + 1
-        }
+        mStarted = true
         setupWorkoutState(intent)
         ELNotificationManager.startForeground(this,
                 NOTIFICATION_ID,
@@ -102,8 +103,10 @@ class WorkoutService : BaseService() {
     }
 
     private fun handleStopService(startId: Int) {
-        NOTIFICATION_ID = -1
+        mStarted = false
         stopForeground(true)
+        // In case it was posted before the app's process was killed, which stopForeground() can't remove
+        ELNotificationManager.cancel(NOTIFICATION_ID)
         // Only stops if no start came in after this stop, otherwise the service would be destroyed with
         // the newer start's notification still showing
         stopSelf(startId)
@@ -157,7 +160,7 @@ class WorkoutService : BaseService() {
     }
 
     private fun refreshNotification() {
-        if (NOTIFICATION_ID < 0) {
+        if (!mStarted) {
             // Stopped, an update arriving late would post a notification nothing removes
             return
         }

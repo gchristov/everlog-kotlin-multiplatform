@@ -153,6 +153,10 @@
     <string name="home_week_average_time">Avg. Session\nDuration</string>
     <string name="home_week_ongoing_workout_prompt_title">Resume Workout</string>
     <string name="home_week_ongoing_workout_prompt_subtitle">You have an ongoing workout. Would you like to resume it?</string>
+    <plurals name="home_week_ongoing_workout_prompt_sets_logged">
+        <item quantity="one">You have an ongoing workout with %1$d completed set. Discarding deletes it.</item>
+        <item quantity="other">You have an ongoing workout with %1$d completed sets. Discarding deletes them.</item>
+    </plurals>
     <string name="home_week_goal_achieved">Goal\nachieved!</string>
     <string name="home_week_goal_left">more to go!</string>
     <string name="home_week_plan">Plan</string>

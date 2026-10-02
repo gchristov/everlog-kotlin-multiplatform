@@ -71,7 +71,7 @@ interface Analytic {
     fun workoutCompleted()
     fun workoutDiscardPromptShown(source: String, setsCompleted: Int)
     fun workoutDiscardPromptFinished()
-    fun workoutDiscardPromptCancelled()
+    fun workoutDiscardPromptCancelled(source: String)
     fun workoutNextExercise()
     fun workoutPrevExercise()
     fun workoutRepsModified()
