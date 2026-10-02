@@ -209,13 +209,6 @@ class AnalyticsManager : Analytic {
         }
     }
 
-    override fun setModified() {
-        Timber.tag(TAG).i("Set modified")
-        mAnalytics?.forEach {
-            it.setModified()
-        }
-    }
-
     override fun setAdded() {
         Timber.tag(TAG).i("Set added")
         mAnalytics?.forEach {
@@ -234,6 +227,13 @@ class AnalyticsManager : Analytic {
         Timber.tag(TAG).i("Set completed: source=%s type=%s timed=%s", source, type?.name, timed)
         mAnalytics?.forEach {
             it.setCompleted(source, type, timed)
+        }
+    }
+
+    override fun setEdited(type: ELSetType?, timed: Boolean) {
+        Timber.tag(TAG).i("Set edited: type=%s timed=%s", type?.name, timed)
+        mAnalytics?.forEach {
+            it.setEdited(type, timed)
         }
     }
 

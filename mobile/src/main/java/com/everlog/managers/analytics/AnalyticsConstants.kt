@@ -91,7 +91,7 @@ class AnalyticsConstants {
         const val EVENT_SET_REQUIRED_TIME_MODIFIED = "set_required_time_modified"
         const val EVENT_SET_TIME_MODIFIED = "set_time_modified"
         const val EVENT_SET_REST_TIME_MODIFIED = "set_rest_time_modified"
-        const val EVENT_SET_MODIFIED = "set_modified"
+        const val EVENT_SET_EDITED = "set_edited"
         const val EVENT_SET_ADDED = "set_added"
         const val EVENT_SET_DELETED = "set_deleted"
         const val EVENT_SET_COMPLETED = "set_completed"

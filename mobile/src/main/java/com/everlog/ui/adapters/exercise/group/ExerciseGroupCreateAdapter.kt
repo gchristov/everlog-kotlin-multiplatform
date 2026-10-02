@@ -326,6 +326,9 @@ class ExerciseGroupCreateAdapter {
             if (complete) {
                 // Make set incomplete
                 groupVH.item.setClearCompletedDate(set)
+                groupVH.item.getExercisesForSetIndex(set).forEach {
+                    AnalyticsManager.manager.setEdited(groupVH.item.getSetType(), it.sets[set].isTimeBased())
+                }
                 groupVH.render()
                 builder.saveWorkout()
             } else {
