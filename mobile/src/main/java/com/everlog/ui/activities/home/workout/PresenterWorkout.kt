@@ -79,8 +79,8 @@ class PresenterWorkout : PresenterCreateExerciseGroups<MvpViewWorkout>() {
 
     override fun detachView() {
         stopAllTimers()
-        // The workout carries on when the screen is only being rebuilt, and the new screen starts the
-        // service again. Stopping it here as well would race with that start.
+        // The notification stays while the screen is only being rebuilt, e.g. for a dark mode change. The new
+        // screen starts the service again, which updates it.
         if (mvpView?.getActivity()?.isChangingConfigurations != true) {
             notifyWorkoutServiceStop()
         }

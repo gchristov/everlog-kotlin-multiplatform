@@ -16,11 +16,19 @@ import com.everlog.managers.analytics.AnalyticsManager
 import com.everlog.services.BaseService
 import timber.log.Timber
 
+/**
+ * Shows the ongoing workout's notification while its workout screen is open.
+ *
+ * The workout screen starts the service when it opens and stops it when it closes for good: the workout is
+ * finished or discarded, or the screen goes away, e.g. swiped away from recents. Being rebuilt, e.g. for a dark
+ * mode change, doesn't count. The notification's buttons are handled by the screen, so the service never runs
+ * without it. Opening the app again offers to resume the workout.
+ */
 class WorkoutService : BaseService() {
 
     // State
 
-    // Whether the screen started the service for a workout, and hasn't stopped it since
+    // Whether the workout screen has started the service and not stopped it since
     private var mStarted = false
 
     private var mWorkout: ELWorkout? = null
@@ -30,8 +38,7 @@ class WorkoutService : BaseService() {
     private var mReceiver: BroadcastReceiver? = null
 
     companion object {
-        // Fixed, so a new start replaces the notification instead of adding another, e.g. after the app's
-        // process was killed mid-workout
+        // One workout at a time, so one fixed id: each start replaces the same notification
         private const val NOTIFICATION_ID = 0x1611
 
         internal const val ACTION_OPEN_WORKOUT = "ACTION_OPEN_WORKOUT"
@@ -78,10 +85,9 @@ class WorkoutService : BaseService() {
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         if (!mStarted && intent?.action != ACTION_SERVICE_START) {
-            // Nothing's started the service for a workout, so this comes from a notification left behind when
-            // the app's process was killed mid-workout: Android restarting the service (no intent), or one of
-            // the notification's buttons, which would do nothing without the workout screen. Stopping removes
-            // the notification. Opening the app offers to resume the workout instead.
+            // No workout screen to run for, e.g. Android restarting the service (no intent) after the app's
+            // process was killed mid-workout, which leaves the notification showing, or a tap on one of that
+            // notification's buttons. Stopping removes the notification.
             Timber.tag(tag()).i("Stopping, not started for a workout: action=%s", intent?.action)
             handleStopService(startId)
             return START_STICKY
