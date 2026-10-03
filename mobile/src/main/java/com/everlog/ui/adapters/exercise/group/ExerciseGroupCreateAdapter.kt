@@ -333,9 +333,11 @@ class ExerciseGroupCreateAdapter {
                 builder.saveWorkout()
             } else {
                 // Complete set
-                groupVH.item.setComplete(set)
                 val exercises = groupVH.item.getExercisesForSetIndex(set)
-                exercises.forEach {
+                // Some of a super set's exercises may already be ticked from the notification, and were logged then
+                val newlyTicked = exercises.filter { !it.sets[set].isComplete() }
+                groupVH.item.setComplete(set)
+                newlyTicked.forEach {
                     AnalyticsManager.manager.setCompleted(AnalyticsConstants.SET_COMPLETED_SOURCE_SCREEN,
                             groupVH.item.getSetType(), it.sets[set].isTimeBased())
                 }

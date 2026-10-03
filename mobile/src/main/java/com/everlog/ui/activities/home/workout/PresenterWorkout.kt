@@ -263,7 +263,7 @@ class PresenterWorkout : PresenterCreateExerciseGroups<MvpViewWorkout>() {
                         action == DialogInterface.BUTTON_POSITIVE && setsCompleted > 0 -> {
                             AnalyticsManager.manager.workoutDiscardPromptFinished()
                             // Choosing Finish over Discard already confirms it, so unlike the Finish button
-                            // this doesn't ask about incomplete sets
+                            // this doesn't ask about unticked sets. The prompt said which would be saved as done.
                             buildExerciseGroups()
                             mWorkout?.setExerciseGroups(mSelectedGroups)
                             saveWorkout()
