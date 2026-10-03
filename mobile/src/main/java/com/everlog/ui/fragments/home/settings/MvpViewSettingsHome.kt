@@ -31,6 +31,8 @@ interface MvpViewSettingsHome : BaseFragmentMvpView {
 
     fun onClickManagePro(): Observable<Void>
 
+    fun onClickDesignSystem(): Observable<Void>
+
     // Integrations
 
     fun onClickManageIntegrationGoogleFit(): Observable<Void>

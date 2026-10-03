@@ -327,6 +327,22 @@
     <string name="settings_twitter_prompt">Follow us on Twitter</string>
     <string name="settings_logout">Logout</string>
     <string name="settings_share">Share Everlog</string>
+    <string name="settings_developer">Developer</string>
+    <string name="app_bar_back">Back</string>
+    <string name="settings_design_system">Design system</string>
+    <string name="design_system_typography">Typography</string>
+    <string name="design_system_buttons">Buttons</string>
+    <string name="design_system_card">Card</string>
+    <string name="design_system_card_title">Card title</string>
+    <string name="design_system_card_body">The card background sits on top of the screen background, like the cards in Settings.</string>
+    <string name="design_system_primary">Primary</string>
+    <string name="design_system_secondary">Secondary</string>
+    <string name="design_system_disabled">Disabled</string>
+    <string name="design_system_full_width">Full width</string>
+    <plurals name="design_system_button_clicks">
+        <item quantity="one">Tapped %d time</item>
+        <item quantity="other">Tapped %d times</item>
+    </plurals>
     <string name="settings_logout_prompt">Are you sure you want to log out?</string>
     <string name="settings_workouts">Workouts</string>
     <string name="settings_weight_increase">Weight increment</string>

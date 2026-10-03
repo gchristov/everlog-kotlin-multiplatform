@@ -7,6 +7,7 @@ import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.core.content.ContextCompat
+import com.everlog.BuildConfig
 import com.everlog.R
 import com.everlog.data.model.ELIntegration
 import com.everlog.data.model.ELUser
@@ -35,6 +36,7 @@ class SettingsHomeFragment : BaseTabFragment(), MvpViewSettingsHome {
 
     override fun onFragmentCreated() {
         setupButtons()
+        binding.root.findViewById<View>(R.id.developerSection).visibility = if (BuildConfig.DEBUG) View.VISIBLE else View.GONE
     }
 
     override fun getAnalyticsScreenName(): String {
@@ -109,6 +111,10 @@ class SettingsHomeFragment : BaseTabFragment(), MvpViewSettingsHome {
 
     override fun onClickManagePro(): Observable<Void> {
         return RxView.clicks(binding.root.findViewById(R.id.manageProBtn))
+    }
+
+    override fun onClickDesignSystem(): Observable<Void> {
+        return RxView.clicks(binding.root.findViewById(R.id.designSystemBtn))
     }
 
     override fun onClickManageIntegrationGoogleFit(): Observable<Void> {

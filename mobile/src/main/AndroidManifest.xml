@@ -207,6 +207,10 @@
             android:windowSoftInputMode="stateHidden"
             android:exported="false" />
         <activity
+            android:name="com.everlog.ui.activities.designsystem.DesignSystemActivity"
+            android:theme="@style/AppTheme.NoActionBar"
+            android:exported="false" />
+        <activity
             android:name="com.everlog.ui.activities.home.musclegoal.MuscleGoalActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:theme="@style/AppTheme.NoActionBar"

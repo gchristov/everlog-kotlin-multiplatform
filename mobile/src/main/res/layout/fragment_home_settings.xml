@@ -67,6 +67,15 @@
                 android:layout_marginBottom="@dimen/margin_26" />
 
             <include
+                android:id="@+id/developerSection"
+                layout="@layout/include_settings_developer"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/margin_26"
+                android:visibility="gone"
+                tools:visibility="visible" />
+
+            <include
                 layout="@layout/include_settings_contact"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" />
