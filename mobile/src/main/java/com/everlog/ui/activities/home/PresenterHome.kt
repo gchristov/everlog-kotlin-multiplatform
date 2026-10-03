@@ -15,6 +15,7 @@ import com.everlog.managers.ErrorManager
 import com.everlog.managers.PlanManager
 import com.everlog.managers.RemoteConfigManager
 import com.everlog.managers.WorkoutManager
+import com.everlog.managers.analytics.AnalyticsConstants
 import com.everlog.managers.analytics.AnalyticsManager
 import com.everlog.managers.appupdate.AppUpdateController
 import com.everlog.managers.billing.BillingBridge
@@ -44,6 +45,9 @@ class PresenterHome : BaseActivityPresenter<MvpViewHome>() {
     private var mWeekIsEmpty: Boolean = true
 
     private var mAppUpdateController: AppUpdateController? = null
+
+    // The prompt to resume or discard an ongoing workout, shown on resume, so it isn't shown twice
+    private var mOngoingWorkoutPromptShowing = false
 
     override fun init() {
         super.init()
@@ -140,13 +144,41 @@ class PresenterHome : BaseActivityPresenter<MvpViewHome>() {
     }
 
     private fun observeDiscardOngoingWorkoutConfirm(workout: ELWorkout) {
-        subscriptions.add(mvpView.showPrompt(R.string.home_week_ongoing_workout_prompt_title, R.string.home_week_ongoing_workout_prompt_subtitle, R.string.resume, R.string.discard)
+        if (mOngoingWorkoutPromptShowing) {
+            // Still open from before the app went to the background
+            return
+        }
+        mOngoingWorkoutPromptShowing = true
+        val setsCompleted = workout.getCompletedSetsCount()
+        val context = mvpView.context
+        val message = if (setsCompleted > 0) {
+            context.resources.getQuantityString(R.plurals.home_week_ongoing_workout_prompt_sets_logged, setsCompleted, setsCompleted)
+        } else {
+            context.getString(R.string.home_week_ongoing_workout_prompt_subtitle)
+        }
+        AnalyticsManager.manager.workoutDiscardPromptShown(AnalyticsConstants.DISCARD_PROMPT_SOURCE_HOME, setsCompleted)
+        subscriptions.add(mvpView.showChoicePrompt(context.getString(R.string.home_week_ongoing_workout_prompt_title),
+                message,
+                context.getString(R.string.resume),
+                context.getString(R.string.discard),
+                null,
+                DialogInterface.BUTTON_NEGATIVE)
+                .take(1)
                 .compose(applyUISchedulers())
                 .subscribe({ action: Int ->
-                    if (action == DialogInterface.BUTTON_POSITIVE) {
-                        navigator.resumeWorkout(workout)
-                    } else if (action == DialogInterface.BUTTON_NEGATIVE) {
+                    mOngoingWorkoutPromptShowing = false
+                    if (action == DialogInterface.BUTTON_NEGATIVE) {
                         WorkoutManager.manager.clearOngoingWorkout()
+                        AnalyticsManager.manager.workoutStopped()
+                        // Removes the notification if the app's process was killed mid-workout and Android hasn't
+                        // restarted the service yet, which removes it too
+                        navigator.stopWorkoutService()
+                    } else {
+                        // Resumed, or closed with back, which keeps the workout for next time
+                        AnalyticsManager.manager.workoutDiscardPromptCancelled(AnalyticsConstants.DISCARD_PROMPT_SOURCE_HOME)
+                        if (action == DialogInterface.BUTTON_POSITIVE) {
+                            navigator.resumeWorkout(workout)
+                        }
                     }
                 }, { throwable: Throwable? -> handleError(throwable) }))
     }

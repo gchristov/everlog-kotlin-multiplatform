@@ -14,13 +14,22 @@ import com.everlog.data.model.workout.ELWorkoutState
 import com.everlog.managers.ELNotificationManager
 import com.everlog.managers.analytics.AnalyticsManager
 import com.everlog.services.BaseService
-import java.util.Random
+import timber.log.Timber
 
+/**
+ * Shows the ongoing workout's notification while its workout screen is open.
+ *
+ * The workout screen starts the service when it opens and stops it when it closes for good: the workout is
+ * finished or discarded, or the screen goes away, e.g. swiped away from recents. Being rebuilt, e.g. for a dark
+ * mode change, doesn't count. The notification's buttons are handled by the screen, so the service never runs
+ * without it. Opening the app again offers to resume the workout.
+ */
 class WorkoutService : BaseService() {
 
-    private var NOTIFICATION_ID = -1
-
     // State
+
+    // Whether the workout screen has started the service and not stopped it since
+    private var mStarted = false
 
     private var mWorkout: ELWorkout? = null
     private var mNextState: ELWorkoutState? = null
@@ -29,6 +38,9 @@ class WorkoutService : BaseService() {
     private var mReceiver: BroadcastReceiver? = null
 
     companion object {
+        // One workout at a time, so one fixed id: each start replaces the same notification
+        private const val NOTIFICATION_ID = 0x1611
+
         internal const val ACTION_OPEN_WORKOUT = "ACTION_OPEN_WORKOUT"
         internal const val ACTION_DECREASE_WEIGHT = "ACTION_DECREASE_WEIGHT"
         internal const val ACTION_INCREASE_WEIGHT = "ACTION_INCREASE_WEIGHT"
@@ -72,9 +84,17 @@ class WorkoutService : BaseService() {
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
+        if (!mStarted && intent?.action != ACTION_SERVICE_START) {
+            // No workout screen to run for, e.g. Android restarting the service (no intent) after the app's
+            // process was killed mid-workout, which leaves the notification showing, or a tap on one of that
+            // notification's buttons. Stopping removes the notification.
+            Timber.tag(tag()).i("Stopping, not started for a workout: action=%s", intent?.action)
+            handleStopService(startId)
+            return START_STICKY
+        }
         when {
             intent?.action.equals(ACTION_SERVICE_START) -> handleStartService(intent)
-            intent?.action.equals(ACTION_SERVICE_STOP) -> handleStopService()
+            intent?.action.equals(ACTION_SERVICE_STOP) -> handleStopService(startId)
             intent?.action.equals(ACTION_DECREASE_WEIGHT) -> handleWeightChange(false)
             intent?.action.equals(ACTION_INCREASE_WEIGHT) -> handleWeightChange(true)
             intent?.action.equals(ACTION_DECREASE_REPS) -> handleRepsChange(false)
@@ -90,9 +110,7 @@ class WorkoutService : BaseService() {
     // Handlers
 
     private fun handleStartService(intent: Intent?) {
-        if (NOTIFICATION_ID < 0) {
-            NOTIFICATION_ID = Random().nextInt()
-        }
+        mStarted = true
         setupWorkoutState(intent)
         ELNotificationManager.startForeground(this,
                 NOTIFICATION_ID,
@@ -100,10 +118,12 @@ class WorkoutService : BaseService() {
                 notificationChannelOptions())
     }
 
-    private fun handleStopService() {
-        NOTIFICATION_ID = -1
+    private fun handleStopService(startId: Int) {
+        mStarted = false
         stopForeground(true)
-        stopSelf()
+        // Only stops if no start came in after this stop, otherwise the service would be destroyed with
+        // the newer start's notification still showing
+        stopSelf(startId)
     }
 
     private fun handleSetUpdated(intent: Intent?) {
@@ -154,6 +174,10 @@ class WorkoutService : BaseService() {
     }
 
     private fun refreshNotification() {
+        if (!mStarted) {
+            // Stopped, an update arriving late would post a notification nothing removes
+            return
+        }
         ELNotificationManager.notify(NOTIFICATION_ID,
                 buildNotification(),
                 notificationChannelOptions())

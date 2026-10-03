@@ -128,6 +128,33 @@ data class ELWorkout(
         return getExerciseGroups().isNotEmpty()
     }
 
+    /**
+     * Sets marked complete so far. Each exercise in a super set counts separately.
+     */
+    fun getCompletedSetsCount(): Int {
+        return getExerciseGroups().sumOf { group ->
+            group.exercises.sumOf { exercise -> exercise.sets.count { it.isComplete() } }
+        }
+    }
+
+    /**
+     * True if any set isn't ticked yet, whatever its values. Once saved, a set counts as done if it has reps or a
+     * time, ticked or not.
+     */
+    fun hasUntickedSets(): Boolean {
+        return getExerciseGroups().any { group -> group.exercises.any { exercise -> exercise.sets.any { !it.isComplete() } } }
+    }
+
+    /**
+     * Sets not ticked yet that would still be saved as done on finishing, because they have reps or a time,
+     * e.g. prefilled from the template. Weight on its own doesn't count.
+     */
+    fun getUntickedSetsWithDataCount(): Int {
+        return getExerciseGroups().sumOf { group ->
+            group.exercises.sumOf { exercise -> exercise.sets.count { !it.isComplete() && !it.isWithoutData() } }
+        }
+    }
+
     fun getDurationMillis(): Long {
         return completedDate - createdDate
     }
@@ -284,7 +311,7 @@ data class ELWorkout(
      * it follows along when sets are done out of order. Wraps round to earlier skipped sets once
      * the later ones are complete.
      */
-    fun getNextIncompleteState(allowSkip: Boolean? = true): ELWorkoutState? {
+    fun getNextIncompleteState(): ELWorkoutState? {
         val positions = ArrayList<Pair<ELWorkoutState, ELSet>>()
         getExerciseGroups().forEachIndexed { groupIndex, group ->
             for (setIndex in 0 until group.getTotalSetsCount()) {
@@ -308,7 +335,7 @@ data class ELWorkout(
         }
         for (offset in 1..positions.size) {
             val (state, set) = positions[(lastCompleted + offset) % positions.size]
-            if (!set.isComplete() || (set.isWithoutData() && allowSkip == false)) {
+            if (!set.isComplete()) {
                 return state
             }
         }

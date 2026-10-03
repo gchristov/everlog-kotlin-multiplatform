@@ -10,6 +10,7 @@ import com.everlog.R;
 
 import java.util.Date;
 
+import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
 import rx.Observable;
 import rx.subjects.PublishSubject;
@@ -112,6 +113,56 @@ public class DialogBuilder {
             negativeBtn.setTextColor(ContextCompat.getColor(context, R.color.main_accent));
         });
         return new Pair<>(positiveButtonPublish, dialog);
+    }
+
+    /**
+     * Emitted by {@link #showChoicePrompt} when the dialog is closed without tapping a button, i.e. with back.
+     */
+    public static final int PROMPT_DISMISSED = 0;
+
+    /**
+     * A prompt with up to three buttons. Emits the tapped button (e.g. {@link DialogInterface#BUTTON_NEUTRAL}),
+     * or {@link #PROMPT_DISMISSED}.
+     *
+     * @param neutral           the third button, or null for just two
+     * @param destructiveButton the button that deletes something, shown in red, or null
+     */
+    public static Observable<Integer> showChoicePrompt(Context context,
+                                                       String title,
+                                                       String message,
+                                                       String positive,
+                                                       String negative,
+                                                       @Nullable String neutral,
+                                                       @Nullable Integer destructiveButton) {
+        PublishSubject<Integer> buttonPublish = PublishSubject.create();
+
+        DialogInterface.OnClickListener dialogClickListener = (dialog, which) -> {
+            buttonPublish.onNext(which);
+            dialog.dismiss();
+        };
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(context, R.style.DarkDialogTheme)
+                .setTitle(title)
+                .setMessage(message)
+                .setPositiveButton(positive, dialogClickListener)
+                .setNegativeButton(negative, dialogClickListener)
+                .setOnCancelListener(dialog -> buttonPublish.onNext(PROMPT_DISMISSED));
+        if (neutral != null) {
+            builder.setNeutralButton(neutral, dialogClickListener);
+        }
+        AlertDialog dialog = builder.create();
+        dialog.setOnShowListener(dlg -> {
+            int[] buttons = {AlertDialog.BUTTON_POSITIVE, AlertDialog.BUTTON_NEGATIVE, AlertDialog.BUTTON_NEUTRAL};
+            for (int which : buttons) {
+                Button button = ((AlertDialog) dlg).getButton(which);
+                if (button != null) {
+                    boolean destructive = destructiveButton != null && destructiveButton == which;
+                    button.setTextColor(ContextCompat.getColor(context, destructive ? R.color.remove : R.color.main_accent));
+                }
+            }
+        });
+        dialog.show();
+        return buttonPublish;
     }
 
 	public static Observable<String> showInputStringDialog(Context context,

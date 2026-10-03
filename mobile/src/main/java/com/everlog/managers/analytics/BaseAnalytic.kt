@@ -208,6 +208,14 @@ abstract class BaseAnalytic : Analytic {
         logEvent(AnalyticsConstants.EVENT_SET_COMPLETED, map)
     }
 
+    override fun setGroupCompleted(source: String, type: ELSetType?, exercises: Int) {
+        val map = HashMap<String, Any?>()
+        map[AnalyticsConstants.PROPERTY_SOURCE] = source
+        map[AnalyticsConstants.PROPERTY_SET_TYPE] = type?.name
+        map[AnalyticsConstants.PROPERTY_EXERCISES] = exercises
+        logEvent(AnalyticsConstants.EVENT_SET_GROUP_COMPLETED, map)
+    }
+
     override fun setEdited(type: ELSetType?, timed: Boolean) {
         val map = HashMap<String, Any?>()
         map[AnalyticsConstants.PROPERTY_SET_TYPE] = type?.name
@@ -309,6 +317,23 @@ abstract class BaseAnalytic : Analytic {
 
     override fun workoutCompleted() {
         logEvent(AnalyticsConstants.EVENT_WORKOUT_COMPLETED)
+    }
+
+    override fun workoutDiscardPromptShown(source: String, setsCompleted: Int) {
+        val map = HashMap<String, Any?>()
+        map[AnalyticsConstants.PROPERTY_SOURCE] = source
+        map[AnalyticsConstants.PROPERTY_SETS_COMPLETED] = setsCompleted
+        logEvent(AnalyticsConstants.EVENT_WORKOUT_DISCARD_PROMPT_SHOWN, map)
+    }
+
+    override fun workoutDiscardPromptFinished() {
+        logEvent(AnalyticsConstants.EVENT_WORKOUT_DISCARD_PROMPT_FINISHED)
+    }
+
+    override fun workoutDiscardPromptCancelled(source: String) {
+        val map = HashMap<String, Any?>()
+        map[AnalyticsConstants.PROPERTY_SOURCE] = source
+        logEvent(AnalyticsConstants.EVENT_WORKOUT_DISCARD_PROMPT_CANCELLED, map)
     }
 
     override fun workoutNextExercise() {

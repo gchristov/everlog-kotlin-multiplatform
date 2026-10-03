@@ -45,6 +45,7 @@ interface Analytic {
     fun setAdded()
     fun setDeleted()
     fun setCompleted(source: String, type: ELSetType?, timed: Boolean)
+    fun setGroupCompleted(source: String, type: ELSetType?, exercises: Int)
     fun setEdited(type: ELSetType?, timed: Boolean)
 
     fun statisticsRangeModified(rangeType: RangeType)
@@ -69,6 +70,9 @@ interface Analytic {
     fun workoutStarted(source: String)
     fun workoutStopped()
     fun workoutCompleted()
+    fun workoutDiscardPromptShown(source: String, setsCompleted: Int)
+    fun workoutDiscardPromptFinished()
+    fun workoutDiscardPromptCancelled(source: String)
     fun workoutNextExercise()
     fun workoutPrevExercise()
     fun workoutRepsModified()

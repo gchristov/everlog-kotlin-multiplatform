@@ -230,6 +230,13 @@ class AnalyticsManager : Analytic {
         }
     }
 
+    override fun setGroupCompleted(source: String, type: ELSetType?, exercises: Int) {
+        Timber.tag(TAG).i("Set group completed: source=%s type=%s exercises=%d", source, type?.name, exercises)
+        mAnalytics?.forEach {
+            it.setGroupCompleted(source, type, exercises)
+        }
+    }
+
     override fun setEdited(type: ELSetType?, timed: Boolean) {
         Timber.tag(TAG).i("Set edited: type=%s timed=%s", type?.name, timed)
         mAnalytics?.forEach {
@@ -360,6 +367,27 @@ class AnalyticsManager : Analytic {
         Timber.tag(TAG).i("Workout completed")
         mAnalytics?.forEach {
             it.workoutCompleted()
+        }
+    }
+
+    override fun workoutDiscardPromptShown(source: String, setsCompleted: Int) {
+        Timber.tag(TAG).i("Workout discard prompt shown: source=%s setsCompleted=%d", source, setsCompleted)
+        mAnalytics?.forEach {
+            it.workoutDiscardPromptShown(source, setsCompleted)
+        }
+    }
+
+    override fun workoutDiscardPromptFinished() {
+        Timber.tag(TAG).i("Workout discard prompt finished")
+        mAnalytics?.forEach {
+            it.workoutDiscardPromptFinished()
+        }
+    }
+
+    override fun workoutDiscardPromptCancelled(source: String) {
+        Timber.tag(TAG).i("Workout discard prompt cancelled: source=%s", source)
+        mAnalytics?.forEach {
+            it.workoutDiscardPromptCancelled(source)
         }
     }
 
