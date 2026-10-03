@@ -366,6 +366,10 @@ class PresenterWorkout : PresenterCreateExerciseGroups<MvpViewWorkout>() {
         val set = exercise?.sets?.get(state.setIndex)
         set?.updateStartedDate(Date().time)
         set?.updateCompletedDate(Date().time)
+        if (set != null) {
+            AnalyticsManager.manager.setCompleted(AnalyticsConstants.SET_COMPLETED_SOURCE_NOTIFICATION,
+                    group.getSetType(), set.isTimeBased())
+        }
         // Stop the timer if already running. WorkoutService logs the tap, so stopping it isn't
         // logged again here. The rest timer that starts after the set is logged as usual, like
         // when the set is completed in the app.
@@ -373,9 +377,6 @@ class PresenterWorkout : PresenterCreateExerciseGroups<MvpViewWorkout>() {
         // Only call this is the overall set has been completed
         notifyWorkoutServiceSetUpdated()
         if (group?.setIsComplete(state.setIndex) == true) {
-            // Once per set, like in the app: for a super set, when its last exercise is ticked
-            AnalyticsManager.manager.setCompleted(AnalyticsConstants.SET_COMPLETED_SOURCE_NOTIFICATION,
-                    group.getSetType(), group.setIsTimeBased(state.setIndex))
             setCompleted(group)
         }
         Utils.runWithDelay({

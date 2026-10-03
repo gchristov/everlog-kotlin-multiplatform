@@ -74,7 +74,7 @@ class ELWorkoutTest {
     }
 
     @Test
-    fun `counts a completed super set round once`() {
+    fun `counts each exercise's set in a completed super set`() {
         val squat = ELExercise(uuid = "squat", name = "Squat")
         val plankSet = ELSet(timeSeconds = 60).apply { updateCompletedDate(at(2026, 10, 1)) }
         val squatSet = ELSet(reps = 5).apply { updateCompletedDate(at(2026, 10, 1)) }
@@ -83,21 +83,7 @@ class ELWorkoutTest {
                 ELRoutineExercise(squat.uuid, squat, mutableListOf(squatSet))))
         val ongoing = ELWorkout(routine = ELRoutine(exerciseGroups = mutableListOf(superSet)))
 
-        assertThat(ongoing.getCompletedSetsCount()).isEqualTo(1)
-    }
-
-    @Test
-    fun `counts a super set round with only some exercises ticked`() {
-        val squat = ELExercise(uuid = "squat", name = "Squat")
-        // Ticked from the notification, which goes through a round one exercise at a time
-        val plankSet = ELSet(timeSeconds = 60).apply { updateCompletedDate(at(2026, 10, 1)) }
-        val squatSet = ELSet(reps = 5)
-        val superSet = ELExerciseGroup(exercises = mutableListOf(
-                ELRoutineExercise(plank.uuid, plank, mutableListOf(plankSet)),
-                ELRoutineExercise(squat.uuid, squat, mutableListOf(squatSet))))
-        val ongoing = ELWorkout(routine = ELRoutine(exerciseGroups = mutableListOf(superSet)))
-
-        assertThat(ongoing.getCompletedSetsCount()).isEqualTo(1)
+        assertThat(ongoing.getCompletedSetsCount()).isEqualTo(2)
     }
 
     @Test
