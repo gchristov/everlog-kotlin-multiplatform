@@ -21,6 +21,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.everlog.R
 import com.everlog.ui.design.CommonComposeActivity
+import com.everlog.ui.design.elements.AppBar
 import com.everlog.ui.design.elements.AppButton
 import com.everlog.ui.design.elements.AppScreen
 import com.everlog.ui.design.elements.AppSecondaryButton
@@ -55,7 +56,14 @@ private fun DesignSystemState(
     state: DesignSystemViewModel.State,
     onButtonClick: () -> Unit
 ) {
-    AppScreen {
+    AppScreen(
+        topBar = {
+            AppBar(
+                title = stringResource(R.string.settings_design_system),
+                showBack = true,
+            )
+        }
+    ) {
         Column(
             modifier = Modifier
                 .fillMaxSize()

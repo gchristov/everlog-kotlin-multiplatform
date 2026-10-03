@@ -328,6 +328,7 @@
     <string name="settings_logout">Logout</string>
     <string name="settings_share">Share Everlog</string>
     <string name="settings_developer">Developer</string>
+    <string name="app_bar_back">Back</string>
     <string name="settings_design_system">Design system</string>
     <string name="design_system_typography">Typography</string>
     <string name="design_system_buttons">Buttons</string>

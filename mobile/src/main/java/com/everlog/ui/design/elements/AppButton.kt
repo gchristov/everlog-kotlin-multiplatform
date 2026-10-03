@@ -8,6 +8,7 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.everlog.ui.design.theme.Theme
@@ -64,6 +65,26 @@ fun AppSecondaryButton(
             text = text,
             color = color,
             enabled = enabled,
+        )
+    }
+}
+
+@Composable
+fun AppIconButton(
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+    icon: ImageVector,
+    tint: Color = Theme.contentColors.primary,
+    contentDescription: String? = null,
+) {
+    androidx.compose.material3.IconButton(
+        onClick = onClick,
+        modifier = modifier,
+    ) {
+        AppIcon(
+            imageVector = icon,
+            tint = tint,
+            contentDescription = contentDescription
         )
     }
 }
