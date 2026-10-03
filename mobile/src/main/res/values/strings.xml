@@ -330,6 +330,7 @@
     <string name="settings_developer">Developer</string>
     <string name="app_bar_back">Back</string>
     <string name="settings_design_system">Design system</string>
+    <string name="settings_question_form_prototype">Question form prototype</string>
     <string name="design_system_typography">Typography</string>
     <string name="design_system_buttons">Buttons</string>
     <string name="design_system_card">Card</string>

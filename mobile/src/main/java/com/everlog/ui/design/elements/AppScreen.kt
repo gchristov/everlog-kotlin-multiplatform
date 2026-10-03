@@ -1,6 +1,7 @@
 package com.everlog.ui.design.elements
 
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
@@ -22,6 +23,8 @@ fun AppScreen(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(padding)
+                // So children using e.g. imePadding() don't add the system bars again
+                .consumeWindowInsets(padding)
         ) {
             content()
         }
