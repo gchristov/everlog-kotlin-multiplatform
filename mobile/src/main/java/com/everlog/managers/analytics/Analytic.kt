@@ -56,6 +56,7 @@ interface Analytic {
     fun settingsRestTimeModified(value: Int?)
     fun settingsWeightUnitModified(value: String?)
     fun settingsFirstWeekDayModified(value: String?)
+    fun settingsKeepScreenOnModified(value: Boolean)
 
     fun homeAddFabTapped()
     fun homeAddWeekEmptyStateTapped()

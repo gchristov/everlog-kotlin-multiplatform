@@ -39,6 +39,8 @@ interface MvpViewSettingsHome : BaseFragmentMvpView {
 
     fun onCheckChangeNewsletter(): Observable<Boolean>
 
+    fun onCheckChangeKeepScreenOn(): Observable<Boolean>
+
     fun showAppInfo(appInfo: String)
 
     fun showUserInfo(user: ELUser)

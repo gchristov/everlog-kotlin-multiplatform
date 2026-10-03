@@ -332,6 +332,8 @@
     <string name="settings_weight_increase">Weight increment</string>
     <string name="settings_weight_increase_description">Used when modifying weight with +/-</string>
     <string name="settings_weekly_goal">Weekly workouts goal</string>
+    <string name="settings_keep_screen_on">Keep screen on during workouts</string>
+    <string name="settings_keep_screen_on_description">Stops the screen turning off while you\'re on the workout screen</string>
     <string name="settings_general">General</string>
     <string name="settings_kilograms">Kilograms (kg)</string>
     <string name="settings_kilograms_abbreviation">kg</string>

@@ -293,6 +293,13 @@ class AnalyticsManager : Analytic {
         }
     }
 
+    override fun settingsKeepScreenOnModified(value: Boolean) {
+        Timber.tag(TAG).i("Settings keep screen on modified: value=%s", value)
+        mAnalytics?.forEach {
+            it.settingsKeepScreenOnModified(value)
+        }
+    }
+
     override fun homeAddFabTapped() {
         Timber.tag(TAG).i("Home add FAB tapped")
         mAnalytics?.forEach {
