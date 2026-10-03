@@ -12,6 +12,8 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.everlog.R
@@ -43,6 +45,8 @@ internal fun DesignSystemScreen(onButtonClick: () -> Unit) {
                 .padding(16.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
+            SectionHeader(text = stringResource(R.string.design_system_typography))
+            TypographyExamples()
             SectionHeader(text = stringResource(R.string.design_system_buttons))
             Buttons(onButtonClick = onButtonClick)
             SectionHeader(text = stringResource(R.string.design_system_card))
@@ -55,9 +59,51 @@ internal fun DesignSystemScreen(onButtonClick: () -> Unit) {
 private fun SectionHeader(text: String) {
     AppText(
         text = text,
-        style = Theme.typography.subheading,
+        style = Theme.typography.subtitle,
         color = Theme.contentColors.secondary,
     )
+}
+
+@Composable
+private fun TypographyExamples() {
+    val styles = listOf(
+        "title" to Theme.typography.title,
+        "heading" to Theme.typography.heading,
+        "subtitle" to Theme.typography.subtitle,
+        "body" to Theme.typography.body,
+        "bodyBold" to Theme.typography.bodyBold,
+        "caption" to Theme.typography.caption,
+        "small" to Theme.typography.small,
+        "button" to Theme.typography.button,
+    )
+    Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+        styles.forEach { (name, style) ->
+            Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                AppText(
+                    modifier = Modifier
+                        .weight(1f)
+                        .alignByBaseline(),
+                    text = name,
+                    style = style,
+                )
+                AppText(
+                    modifier = Modifier.alignByBaseline(),
+                    text = style.description(),
+                    style = Theme.typography.small,
+                    color = Theme.contentColors.secondary,
+                )
+            }
+        }
+    }
+}
+
+private fun TextStyle.description(): String {
+    val weight = when (fontWeight) {
+        FontWeight.Medium -> "Medium"
+        FontWeight.Bold -> "Bold"
+        else -> "Regular"
+    }
+    return "${fontSize.value.toInt()}sp · $weight"
 }
 
 @Composable

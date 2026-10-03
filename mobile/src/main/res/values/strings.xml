@@ -329,6 +329,7 @@
     <string name="settings_share">Share Everlog</string>
     <string name="settings_developer">Developer</string>
     <string name="settings_design_system">Design system</string>
+    <string name="design_system_typography">Typography</string>
     <string name="design_system_buttons">Buttons</string>
     <string name="design_system_card">Card</string>
     <string name="design_system_card_title">Card title</string>
