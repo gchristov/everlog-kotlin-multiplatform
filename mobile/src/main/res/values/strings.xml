@@ -340,6 +340,8 @@
     <string name="design_system_secondary">Secondary</string>
     <string name="design_system_disabled">Disabled</string>
     <string name="design_system_full_width">Full width</string>
+    <string name="design_system_footer_primary">Footer action</string>
+    <string name="design_system_footer_secondary">Secondary footer action</string>
     <plurals name="design_system_button_clicks">
         <item quantity="one">Tapped %d time</item>
         <item quantity="other">Tapped %d times</item>

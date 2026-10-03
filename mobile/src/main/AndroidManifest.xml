@@ -213,7 +213,6 @@
         <activity
             android:name="com.everlog.ui.activities.questionform.QuestionFormActivity"
             android:theme="@style/AppTheme.NoActionBar"
-            android:windowSoftInputMode="adjustResize"
             android:exported="false" />
         <activity
             android:name="com.everlog.ui.activities.home.musclegoal.MuscleGoalActivity"

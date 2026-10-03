@@ -4,56 +4,46 @@ import com.everlog.ui.mvvm.CommonViewModel
 import kotlinx.coroutines.CoroutineDispatcher
 
 /**
- * Asks [Question]s one at a time. Answering the active question moves on to the first unanswered
- * one, and answered questions can be reopened and changed without losing the answers after them.
+ * Asks [Question]s one at a time. The active question's input is submitted with [onNext], which
+ * moves on to the first unanswered question. Answered questions can be reopened and changed without
+ * losing the answers after them.
  */
 class QuestionFormViewModel(
     dispatcher: CoroutineDispatcher,
     questions: List<Question> = SampleQuestions,
 ) : CommonViewModel<QuestionFormViewModel.State>(
     dispatcher = dispatcher,
-    initialState = State(
-        questions = questions,
-        activeQuestionId = questions.firstOrNull()?.id,
-    )
+    initialState = State(questions = questions, activeQuestionId = null).activate(questions.firstOrNull()?.id)
 ) {
-    fun onYesNoAnswer(questionId: String, value: Boolean) {
-        submit(questionId, Answer.YesNo(value))
+    fun onYesNoSelect(questionId: String, value: Boolean) {
+        updateInput(questionId) { Answer.YesNo(value) }
     }
 
     fun onOptionSelect(questionId: String, optionId: String) {
-        submit(questionId, Answer.SingleChoice(optionId))
+        updateInput(questionId) { Answer.SingleChoice(optionId) }
     }
 
     fun onOptionToggle(questionId: String, optionId: String) {
-        if (questionId != state.value.activeQuestionId) return
-        setState {
-            copy(
-                multiChoiceInput = if (optionId in multiChoiceInput) {
-                    multiChoiceInput - optionId
-                } else {
-                    multiChoiceInput + optionId
-                }
-            )
+        updateInput(questionId) { input ->
+            val selected = (input as? Answer.MultiChoice)?.optionIds ?: emptySet()
+            Answer.MultiChoice(if (optionId in selected) selected - optionId else selected + optionId)
         }
     }
 
-    fun onNumberInputChange(questionId: String, input: String) {
-        if (questionId != state.value.activeQuestionId) return
-        setState { copy(numberInput = input.filter { it.isDigit() }.take(MaxNumberLength)) }
+    fun onNumberChange(questionId: String, value: Int) {
+        val question = state.value.activeQuestion as? Question.Number ?: return
+        updateInput(questionId) { Answer.Number(value.coerceIn(question.min, question.max)) }
     }
 
-    // Submits the input for questions that need more than one tap (number and multiple choice)
-    fun onContinue(questionId: String) {
+    fun onNext() {
         val currentState = state.value
-        val question = currentState.activeQuestion ?: return
-        if (question.id != questionId || !currentState.canContinue) return
-        val answer = when (question) {
-            is Question.Number -> Answer.Number(currentState.numberInput.toInt())
-            is Question.MultiChoice -> Answer.MultiChoice(currentState.multiChoiceInput)
-            is Question.YesNo, is Question.SingleChoice -> return
+        val questionId = currentState.activeQuestionId ?: return
+        val answer = currentState.input ?: return
+        if (!currentState.canContinue) return
+        setState {
+            val newAnswers = answers + (questionId to answer)
+            copy(answers = newAnswers).activate(questions.firstOrNull { it.id !in newAnswers }?.id)
         }
-        submit(questionId, answer)
     }
 
     fun onEdit(questionId: String) {
@@ -61,31 +51,12 @@ class QuestionFormViewModel(
     }
 
     fun onRestart() {
-        setState {
-            State(
-                questions = questions,
-                activeQuestionId = questions.firstOrNull()?.id,
-            )
-        }
+        setState { State(questions = questions, activeQuestionId = null).activate(questions.firstOrNull()?.id) }
     }
 
-    private fun submit(questionId: String, answer: Answer) {
+    private fun updateInput(questionId: String, update: (Answer?) -> Answer) {
         if (questionId != state.value.activeQuestionId) return
-        setState {
-            val newAnswers = answers + (questionId to answer)
-            val nextQuestionId = questions.firstOrNull { it.id !in newAnswers }?.id
-            copy(answers = newAnswers).activate(nextQuestionId)
-        }
-    }
-
-    // Makes a question active, pre-filling its input with the current answer
-    private fun State.activate(questionId: String?): State {
-        val answer = questionId?.let { answers[it] }
-        return copy(
-            activeQuestionId = questionId,
-            numberInput = (answer as? Answer.Number)?.value?.toString() ?: "",
-            multiChoiceInput = (answer as? Answer.MultiChoice)?.optionIds ?: emptySet(),
-        )
+        setState { copy(input = update(input)) }
     }
 
     data class State(
@@ -93,9 +64,8 @@ class QuestionFormViewModel(
         val answers: Map<String, Answer> = emptyMap(),
         // Null once every question is answered and none is being edited
         val activeQuestionId: String?,
-        // In-progress input for the active question
-        val numberInput: String = "",
-        val multiChoiceInput: Set<String> = emptySet(),
+        // In-progress answer for the active question, submitted with onNext
+        val input: Answer? = null,
     ) {
         val activeQuestion: Question? get() = questions.firstOrNull { it.id == activeQuestionId }
 
@@ -106,12 +76,19 @@ class QuestionFormViewModel(
         val isComplete: Boolean get() = activeQuestionId == null && answers.size == questions.size
 
         val canContinue: Boolean
-            get() = when (val question = activeQuestion) {
-                is Question.Number -> numberInput.toIntOrNull()?.let { it in question.min..question.max } == true
-                is Question.MultiChoice -> multiChoiceInput.isNotEmpty()
-                is Question.YesNo, is Question.SingleChoice, null -> false
+            get() = when (val input = input) {
+                is Answer.MultiChoice -> input.optionIds.isNotEmpty()
+                null -> false
+                else -> true
             }
+
+        // Makes a question active, starting from its current answer or the question's default
+        internal fun activate(questionId: String?): State {
+            val question = questions.firstOrNull { it.id == questionId }
+            return copy(
+                activeQuestionId = questionId,
+                input = answers[questionId] ?: (question as? Question.Number)?.let { Answer.Number(it.default) },
+            )
+        }
     }
 }
-
-private const val MaxNumberLength = 4

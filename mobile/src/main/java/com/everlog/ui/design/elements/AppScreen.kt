@@ -12,10 +12,12 @@ import com.everlog.ui.design.theme.Theme
 @Composable
 fun AppScreen(
     topBar: @Composable () -> Unit = {},
+    bottomBar: @Composable () -> Unit = {},
     content: @Composable () -> Unit,
 ) {
     Scaffold(
         topBar = topBar,
+        bottomBar = bottomBar,
         containerColor = Theme.backgrounds.primary,
         contentColor = Theme.contentColors.primary,
     ) { padding ->

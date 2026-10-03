@@ -76,14 +76,16 @@ fun AppIconButton(
     icon: ImageVector,
     tint: Color = Theme.contentColors.primary,
     contentDescription: String? = null,
+    enabled: Boolean = true,
 ) {
     androidx.compose.material3.IconButton(
         onClick = onClick,
         modifier = modifier,
+        enabled = enabled,
     ) {
         AppIcon(
             imageVector = icon,
-            tint = tint,
+            tint = if (enabled) tint else tint.copy(alpha = DisabledAlpha),
             contentDescription = contentDescription
         )
     }

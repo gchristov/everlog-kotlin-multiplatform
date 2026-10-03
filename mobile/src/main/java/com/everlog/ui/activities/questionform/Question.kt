@@ -14,6 +14,9 @@ sealed interface Question {
         override val title: String,
         val min: Int,
         val max: Int,
+        val step: Int = 1,
+        // Where the stepper starts before the question is answered
+        val default: Int = min,
         val unit: String? = null,
     ) : Question
 
@@ -53,6 +56,7 @@ internal val SampleQuestions = listOf(
         title = "How many days a week can you train?",
         min = 1,
         max = 7,
+        default = 3,
         unit = "days",
     ),
     Question.SingleChoice(
@@ -80,6 +84,8 @@ internal val SampleQuestions = listOf(
         title = "How long is a typical session?",
         min = 10,
         max = 180,
+        step = 5,
+        default = 60,
         unit = "minutes",
     ),
 )

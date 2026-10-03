@@ -23,6 +23,8 @@ import com.everlog.R
 import com.everlog.ui.design.CommonComposeActivity
 import com.everlog.ui.design.elements.AppBar
 import com.everlog.ui.design.elements.AppButton
+import com.everlog.ui.design.elements.AppFooter
+import com.everlog.ui.design.elements.AppFooterAction
 import com.everlog.ui.design.elements.AppScreen
 import com.everlog.ui.design.elements.AppSecondaryButton
 import com.everlog.ui.design.elements.AppSurface
@@ -62,7 +64,22 @@ private fun DesignSystemState(
                 title = stringResource(R.string.settings_design_system),
                 showBack = true,
             )
-        }
+        },
+        bottomBar = {
+            AppFooter(
+                actions = listOf(
+                    AppFooterAction(
+                        text = stringResource(R.string.design_system_footer_primary),
+                        onClick = onButtonClick,
+                    ),
+                    AppFooterAction(
+                        text = stringResource(R.string.design_system_footer_secondary),
+                        onClick = onButtonClick,
+                        style = AppFooterAction.Style.Secondary,
+                    ),
+                )
+            )
+        },
     ) {
         Column(
             modifier = Modifier
