@@ -338,7 +338,10 @@
     <string name="design_system_secondary">Secondary</string>
     <string name="design_system_disabled">Disabled</string>
     <string name="design_system_full_width">Full width</string>
-    <string name="design_system_button_clicked">Button clicked</string>
+    <plurals name="design_system_button_clicks">
+        <item quantity="one">Tapped %d time</item>
+        <item quantity="other">Tapped %d times</item>
+    </plurals>
     <string name="settings_logout_prompt">Are you sure you want to log out?</string>
     <string name="settings_workouts">Workouts</string>
     <string name="settings_weight_increase">Weight increment</string>
