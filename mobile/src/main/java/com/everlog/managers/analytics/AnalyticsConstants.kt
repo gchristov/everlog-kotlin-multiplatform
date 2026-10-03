@@ -109,6 +109,7 @@ class AnalyticsConstants {
         const val EVENT_SETTINGS_REST_TIME_MODIFIED = "settings_rest_time_modified"
         const val EVENT_SETTINGS_WEIGHT_UNIT_MODIFIED = "settings_weight_unit_modified"
         const val EVENT_SETTINGS_FIRST_WEEK_DAY_MODIFIED = "settings_first_week_day_modified"
+        const val EVENT_SETTINGS_KEEP_SCREEN_ON_MODIFIED = "settings_keep_screen_on_modified"
 
         // Home
 

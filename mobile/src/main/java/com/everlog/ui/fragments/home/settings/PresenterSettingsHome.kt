@@ -44,6 +44,7 @@ class PresenterSettingsHome : BaseFragmentPresenter<MvpViewSettingsHome>() {
         observeMuscleGoalClick()
         observeWeightIncreaseClick()
         observeWeeklyGoalClick()
+        observeKeepScreenOnCheckChange()
         observeGooglePlayClick()
         observeFacebookClick()
         observeTwitterClick()
@@ -133,6 +134,12 @@ class PresenterSettingsHome : BaseFragmentPresenter<MvpViewSettingsHome>() {
         subscriptions.add(mvpView.showPickerNumber(SettingsManager.manager.weeklyWorkoutsGoal(), DialogBuilder.NumberPickerDialogType.WEEKLY_GOAL)
                 .compose(applyUISchedulers())
                 .subscribe({ value -> handleWeeklyGoalChanged(value) }, { throwable -> handleError(throwable) }))
+    }
+
+    private fun observeKeepScreenOnCheckChange() {
+        subscriptions.add(mvpView.onCheckChangeKeepScreenOn()
+                .compose(applyUISchedulers())
+                .subscribe({ value -> handleKeepScreenOnChanged(value) }, { throwable -> handleError(throwable) }))
     }
 
     private fun observeGooglePlayClick() {
@@ -273,6 +280,7 @@ class PresenterSettingsHome : BaseFragmentPresenter<MvpViewSettingsHome>() {
                         .weightIncrease(SettingsManager.manager.weightIncrease())
                         .weeklyGoals(SettingsManager.manager.weeklyWorkoutsGoal())
                         .weightUnit(SettingsManager.manager.weightUnit())
+                        .keepScreenOn(SettingsManager.manager.keepScreenOn())
                         .firstWeekDay(SettingsManager.manager.firstDayOfWeek())
                         .integrationGoogleFitEnabled(mIntegrationGoogleFit != null)
                         .notificationNewsletterEnabled(mConsent?.getNewsletter())
@@ -323,6 +331,12 @@ class PresenterSettingsHome : BaseFragmentPresenter<MvpViewSettingsHome>() {
         loadData()
         notifyPreferencesChanged()
         AnalyticsManager.manager.settingsWeeklyGoalModified(value)
+    }
+
+    private fun handleKeepScreenOnChanged(value: Boolean) {
+        SettingsManager.manager.setKeepScreenOn(value)
+        loadData()
+        AnalyticsManager.manager.settingsKeepScreenOnModified(value)
     }
 
     private fun handleWeightUnitChanged(index: Int) {

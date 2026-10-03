@@ -265,6 +265,12 @@ abstract class BaseAnalytic : Analytic {
         logEvent(AnalyticsConstants.EVENT_SETTINGS_FIRST_WEEK_DAY_MODIFIED, map)
     }
 
+    override fun settingsKeepScreenOnModified(value: Boolean) {
+        val map = HashMap<String, Any?>()
+        map[AnalyticsConstants.PROPERTY_VALUE] = if (value) 1 else 0
+        logEvent(AnalyticsConstants.EVENT_SETTINGS_KEEP_SCREEN_ON_MODIFIED, map)
+    }
+
     override fun homeAddFabTapped() {
         logEvent(AnalyticsConstants.EVENT_HOME_ADD_FAB_TAPPED)
     }

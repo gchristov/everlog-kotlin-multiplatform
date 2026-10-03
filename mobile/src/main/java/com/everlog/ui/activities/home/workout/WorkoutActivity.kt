@@ -5,6 +5,7 @@ import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.view.View
+import android.view.WindowManager
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.recyclerview.widget.RecyclerView
@@ -14,6 +15,7 @@ import com.everlog.data.model.workout.ELWorkout
 import com.everlog.data.model.workout.ELWorkoutState
 import com.everlog.databinding.ActivityWorkoutBinding
 import com.everlog.managers.analytics.AnalyticsConstants
+import com.everlog.managers.preferences.SettingsManager
 import com.everlog.services.workout.WorkoutService
 import com.everlog.ui.activities.home.exercisegroup.CreateExerciseGroupsActivity
 import com.everlog.ui.activities.home.exercisegroup.PresenterCreateExerciseGroups
@@ -54,6 +56,17 @@ class WorkoutActivity : CreateExerciseGroupsActivity(), MvpViewWorkout {
     override fun onActivityCreated() {
         super.onActivityCreated()
         setupBroadcastReceivers()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        // Applied on resume so a change in Settings takes effect without restarting the workout.
+        // The flag only holds while this screen is visible.
+        if (SettingsManager.manager.keepScreenOn()) {
+            window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+        } else {
+            window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+        }
     }
 
     override fun requestPermissions(permissions: Array<String>): Observable<Boolean> {

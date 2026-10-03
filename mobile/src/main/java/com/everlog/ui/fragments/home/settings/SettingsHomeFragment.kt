@@ -119,6 +119,10 @@ class SettingsHomeFragment : BaseTabFragment(), MvpViewSettingsHome {
         return binding.root.findViewById<CheckBoxTriStates>(R.id.newsletterCheckbox).observeCheckChange()
     }
 
+    override fun onCheckChangeKeepScreenOn(): Observable<Boolean> {
+        return binding.root.findViewById<CheckBoxTriStates>(R.id.keepScreenOnCheckbox).observeCheckChange()
+    }
+
     override fun showAppInfo(appInfo: String) {
         binding.root.findViewById<TextView>(R.id.versionLbl).text = appInfo
     }
@@ -128,6 +132,7 @@ class SettingsHomeFragment : BaseTabFragment(), MvpViewSettingsHome {
         binding.root.findViewById<TextView>(R.id.muscleGoalSubtitle).text = viewModel.muscleGoal?.valueSettingsSummary(activity, false)
         binding.root.findViewById<TextView>(R.id.weightIncreaseField).text = String.format("%s %s", FormatUtils.formatSetWeight(viewModel.weightIncrease!!), SettingsManager.weightUnitAbbreviation())
         binding.root.findViewById<TextView>(R.id.weeklyGoalField).text = String.format("%d", viewModel.weeklyGoals)
+        binding.root.findViewById<CheckBoxTriStates>(R.id.keepScreenOnCheckbox).setChecked(viewModel.keepScreenOn)
         // Units
         binding.root.findViewById<TextView>(R.id.weightUnitField).text = getString(if (viewModel.weightUnit == SettingsManager.WeightUnit.KILOGRAM) R.string.settings_kilograms else R.string.settings_pounds)
         // First week day
@@ -194,6 +199,9 @@ class SettingsHomeFragment : BaseTabFragment(), MvpViewSettingsHome {
         binding.root.findViewById<View>(R.id.newsletterBtn).setOnClickListener {
             binding.root.findViewById<View>(R.id.newsletterCheckbox).performClick()
         }
+        binding.root.findViewById<View>(R.id.keepScreenOnBtn).setOnClickListener {
+            binding.root.findViewById<View>(R.id.keepScreenOnCheckbox).performClick()
+        }
     }
 
     class SettingsViewModel {
@@ -206,6 +214,8 @@ class SettingsHomeFragment : BaseTabFragment(), MvpViewSettingsHome {
             private set
         var weightUnit: SettingsManager.WeightUnit? = null
             private set
+        var keepScreenOn: Boolean? = null
+            private set
         var firstWeekDay: DayOfWeek? = null
             private set
         var integrationGoogleFitEnabled: Boolean? = null
@@ -217,6 +227,7 @@ class SettingsHomeFragment : BaseTabFragment(), MvpViewSettingsHome {
         fun weightIncrease(weightIncrease: Float) = apply { this.weightIncrease = weightIncrease }
         fun weeklyGoals(weeklyGoals: Int) = apply { this.weeklyGoals = weeklyGoals }
         fun weightUnit(weightUnit: SettingsManager.WeightUnit) = apply { this.weightUnit = weightUnit }
+        fun keepScreenOn(keepScreenOn: Boolean) = apply { this.keepScreenOn = keepScreenOn }
         fun firstWeekDay(firstWeekDay: DayOfWeek) = apply { this.firstWeekDay = firstWeekDay }
         fun integrationGoogleFitEnabled(integrationGoogleFitEnabled: Boolean) = apply { this.integrationGoogleFitEnabled = integrationGoogleFitEnabled }
         fun notificationNewsletterEnabled(notificationNewsletterEnabled: Boolean?) = apply { this.notificationNewsletterEnabled = notificationNewsletterEnabled }

@@ -18,6 +18,7 @@ public class SettingsManager extends PreferencesManager {
         LOGGED_IN,
         UNIT_WEIGHT,
         MUSCLE_GOAL,
+        KEEP_SCREEN_ON,
     }
 
     public enum WeightUnit {
@@ -168,6 +169,7 @@ public class SettingsManager extends PreferencesManager {
         editor.remove(PreferenceKeys.WEEKLY_WORKOUTS_GOAL.name());
         editor.remove(PreferenceKeys.UNIT_WEIGHT.name());
         editor.remove(PreferenceKeys.MUSCLE_GOAL.name());
+        editor.remove(PreferenceKeys.KEEP_SCREEN_ON.name());
         editor.apply();
     }
 
@@ -233,5 +235,13 @@ public class SettingsManager extends PreferencesManager {
 
     public void setMuscleGoal(MuscleGoal value) {
         savePreference(value.name(), PreferenceKeys.MUSCLE_GOAL.name());
+    }
+
+    public boolean keepScreenOn() {
+        return getPreference(PreferenceKeys.KEEP_SCREEN_ON.name(), true);
+    }
+
+    public void setKeepScreenOn(boolean value) {
+        savePreference(value, PreferenceKeys.KEEP_SCREEN_ON.name());
     }
 }
