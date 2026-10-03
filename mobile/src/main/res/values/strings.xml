@@ -327,6 +327,10 @@
     <string name="settings_twitter_prompt">Follow us on Twitter</string>
     <string name="settings_logout">Logout</string>
     <string name="settings_share">Share Everlog</string>
+    <string name="settings_developer">Developer</string>
+    <string name="settings_design_system">Design system</string>
+    <string name="design_system_button">Button</string>
+    <string name="design_system_button_clicked">Button clicked</string>
     <string name="settings_logout_prompt">Are you sure you want to log out?</string>
     <string name="settings_workouts">Workouts</string>
     <string name="settings_weight_increase">Weight increment</string>

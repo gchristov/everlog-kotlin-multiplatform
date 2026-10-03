@@ -54,6 +54,7 @@ class PresenterSettingsHome : BaseFragmentPresenter<MvpViewSettingsHome>() {
         observeFirstWeekDayClick()
         observeShareClick()
         observeManageProClick()
+        observeDesignSystemClick()
         // Integrations
         observeManageIntegrationGoogleFitClick()
         // Consent
@@ -223,6 +224,12 @@ class PresenterSettingsHome : BaseFragmentPresenter<MvpViewSettingsHome>() {
         subscriptions.add(mvpView.onClickManagePro()
                 .compose(applyUISchedulers())
                 .subscribe({ navigator.openProBuyOrManage() }, { throwable -> handleError(throwable) }))
+    }
+
+    private fun observeDesignSystemClick() {
+        subscriptions.add(mvpView.onClickDesignSystem()
+                .compose(applyUISchedulers())
+                .subscribe({ navigator.openDesignSystem() }, { throwable -> handleError(throwable) }))
     }
 
     private fun observeManageIntegrationGoogleFitClick() {

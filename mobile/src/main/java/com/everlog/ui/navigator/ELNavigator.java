@@ -30,6 +30,7 @@ import com.everlog.managers.apprate.RatePromptTrigger;
 import com.everlog.managers.auth.LocalUserManager;
 import com.everlog.managers.preferences.SettingsManager;
 import com.everlog.services.workout.WorkoutService;
+import com.everlog.ui.activities.designsystem.DesignSystemActivity;
 import com.everlog.ui.activities.home.HomeActivity;
 import com.everlog.ui.activities.home.congratulate.CongratulateActivity;
 import com.everlog.ui.activities.home.cover.CoverImagePickerActivity;
@@ -236,6 +237,12 @@ public class ELNavigator implements Navigator {
     @Override
     public void openMuscleGoal() {
         Intent i = new Intent(mContext, MuscleGoalActivity.class);
+        startActivity(i);
+    }
+
+    @Override
+    public void openDesignSystem() {
+        Intent i = new Intent(mContext, DesignSystemActivity.class);
         startActivity(i);
     }
 
