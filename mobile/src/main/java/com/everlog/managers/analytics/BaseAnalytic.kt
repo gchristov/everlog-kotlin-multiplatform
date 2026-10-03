@@ -208,6 +208,14 @@ abstract class BaseAnalytic : Analytic {
         logEvent(AnalyticsConstants.EVENT_SET_COMPLETED, map)
     }
 
+    override fun setGroupCompleted(source: String, type: ELSetType?, exercises: Int) {
+        val map = HashMap<String, Any?>()
+        map[AnalyticsConstants.PROPERTY_SOURCE] = source
+        map[AnalyticsConstants.PROPERTY_SET_TYPE] = type?.name
+        map[AnalyticsConstants.PROPERTY_EXERCISES] = exercises
+        logEvent(AnalyticsConstants.EVENT_SET_GROUP_COMPLETED, map)
+    }
+
     override fun setEdited(type: ELSetType?, timed: Boolean) {
         val map = HashMap<String, Any?>()
         map[AnalyticsConstants.PROPERTY_SET_TYPE] = type?.name

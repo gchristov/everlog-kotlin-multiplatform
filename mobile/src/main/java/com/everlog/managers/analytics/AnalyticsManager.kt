@@ -230,6 +230,13 @@ class AnalyticsManager : Analytic {
         }
     }
 
+    override fun setGroupCompleted(source: String, type: ELSetType?, exercises: Int) {
+        Timber.tag(TAG).i("Set group completed: source=%s type=%s exercises=%d", source, type?.name, exercises)
+        mAnalytics?.forEach {
+            it.setGroupCompleted(source, type, exercises)
+        }
+    }
+
     override fun setEdited(type: ELSetType?, timed: Boolean) {
         Timber.tag(TAG).i("Set edited: type=%s timed=%s", type?.name, timed)
         mAnalytics?.forEach {

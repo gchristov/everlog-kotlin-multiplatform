@@ -92,4 +92,37 @@ class ELWorkoutTest {
 
         assertThat(ongoing.getCompletedSetsCount()).isEqualTo(0)
     }
+
+    @Test
+    fun `a workout with a set not ticked has unticked sets, even if it has values`() {
+        val done = ELSet(reps = 5).apply { updateCompletedDate(at(2026, 10, 1)) }
+        // Prefilled from the template, but not ticked
+        val prefilled = ELSet(reps = 5)
+        val ongoing = workout(at(2026, 10, 1), plank to listOf(done, prefilled))
+
+        assertThat(ongoing.hasUntickedSets()).isTrue()
+    }
+
+    @Test
+    fun `a workout with every set ticked has no unticked sets, even ones without values`() {
+        val done = ELSet(reps = 5).apply { updateCompletedDate(at(2026, 10, 1)) }
+        // Saved as skipped, but the user ticked it
+        val tickedEmpty = ELSet().apply { updateCompletedDate(at(2026, 10, 1)) }
+        val ongoing = workout(at(2026, 10, 1), plank to listOf(done, tickedEmpty))
+
+        assertThat(ongoing.hasUntickedSets()).isFalse()
+    }
+
+    @Test
+    fun `counts unticked sets that would be saved as done`() {
+        val done = ELSet(reps = 5).apply { updateCompletedDate(at(2026, 10, 1)) }
+        val prefilledReps = ELSet(reps = 5)
+        val prefilledTime = ELSet(timeSeconds = 60)
+        // Saved as skipped: weight on its own doesn't count, and neither does nothing
+        val weightOnly = ELSet(weight = 20f)
+        val empty = ELSet()
+        val ongoing = workout(at(2026, 10, 1), plank to listOf(done, prefilledReps, prefilledTime, weightOnly, empty))
+
+        assertThat(ongoing.getUntickedSetsWithDataCount()).isEqualTo(2)
+    }
 }

@@ -228,9 +228,15 @@ class PresenterWorkout : PresenterCreateExerciseGroups<MvpViewWorkout>() {
         val setsCompleted = mWorkout?.getCompletedSetsCount() ?: 0
         val context = mvpView.context
         val prompt = if (setsCompleted > 0) {
-            // Offer to finish instead, so logged sets aren't lost by accident
+            // Offer to finish instead, so logged sets aren't lost by accident. Finishing from here doesn't ask about
+            // unticked sets like the Finish button does, so say which of them would be saved as done.
+            var message = context.resources.getQuantityString(R.plurals.workout_discard_sets_logged, setsCompleted, setsCompleted)
+            val untickedSaved = mWorkout?.getUntickedSetsWithDataCount() ?: 0
+            if (untickedSaved > 0) {
+                message += " " + context.resources.getQuantityString(R.plurals.workout_discard_unticked_saved, untickedSaved, untickedSaved)
+            }
             mvpView.showChoicePrompt(context.getString(R.string.workout_discard_title),
-                    context.resources.getQuantityString(R.plurals.workout_discard_sets_logged, setsCompleted, setsCompleted),
+                    message,
                     context.getString(R.string.workout_discard_finish),
                     context.getString(R.string.discard),
                     context.getString(R.string.workout_discard_keep_going),
@@ -269,11 +275,11 @@ class PresenterWorkout : PresenterCreateExerciseGroups<MvpViewWorkout>() {
 
     private fun observeFinishWorkout() {
         if (mWorkout?.hasExercises() == false
-                || mWorkout?.getNextIncompleteState(false) == null) {
-            // Everything complete
+                || mWorkout?.hasUntickedSets() == false) {
+            // Everything ticked
             saveWorkout()
         } else {
-            // Incomplete reps
+            // Nudge to tick the rest, even ones with prefilled reps or time that would be saved as done anyway
             subscriptions.add(mvpView.showPrompt(R.string.workout_finish_title, R.string.workout_finish_subtitle, R.string.workout_finish, R.string.cancel)
                     .compose(applyUISchedulers())
                     .subscribe({ action: Int ->
@@ -377,6 +383,13 @@ class PresenterWorkout : PresenterCreateExerciseGroups<MvpViewWorkout>() {
         // Only call this is the overall set has been completed
         notifyWorkoutServiceSetUpdated()
         if (group?.setIsComplete(state.setIndex) == true) {
+            // The notification goes through a super set's round one exercise at a time, so the round is done
+            // once its last exercise is ticked
+            val exercises = group.getExercisesForSetIndex(state.setIndex).size
+            if (exercises > 1) {
+                AnalyticsManager.manager.setGroupCompleted(AnalyticsConstants.SET_COMPLETED_SOURCE_NOTIFICATION,
+                        group.getSetType(), exercises)
+            }
             setCompleted(group)
         }
         Utils.runWithDelay({

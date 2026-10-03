@@ -334,9 +334,15 @@ class ExerciseGroupCreateAdapter {
             } else {
                 // Complete set
                 groupVH.item.setComplete(set)
-                groupVH.item.getExercisesForSetIndex(set).forEach {
+                val exercises = groupVH.item.getExercisesForSetIndex(set)
+                exercises.forEach {
                     AnalyticsManager.manager.setCompleted(AnalyticsConstants.SET_COMPLETED_SOURCE_SCREEN,
                             groupVH.item.getSetType(), it.sets[set].isTimeBased())
+                }
+                // A super set's round, or another set of several exercises, all done at once here
+                if (exercises.size > 1) {
+                    AnalyticsManager.manager.setGroupCompleted(AnalyticsConstants.SET_COMPLETED_SOURCE_SCREEN,
+                            groupVH.item.getSetType(), exercises.size)
                 }
                 groupVH.scrollTo(set + 1, 0)
                 builder.listener?.onSetCompleted(groupVH.item)

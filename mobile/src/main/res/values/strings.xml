@@ -279,6 +279,10 @@
         <item quantity="one">You\'ve completed %1$d set. Discarding deletes it.</item>
         <item quantity="other">You\'ve completed %1$d sets. Discarding deletes them.</item>
     </plurals>
+    <plurals name="workout_discard_unticked_saved">
+        <item quantity="one">Finishing also saves %1$d set you haven\'t ticked as done.</item>
+        <item quantity="other">Finishing also saves %1$d sets you haven\'t ticked as done.</item>
+    </plurals>
     <string name="workout_discard_finish">Finish workout</string>
     <string name="workout_discard_keep_going">Keep going</string>
     <string name="workout_metric_prompt_missing">Please enter a value</string>
@@ -305,7 +309,7 @@
     <string name="workout_exercises">Session Exercises</string>
     <string name="workout_finish">Finish</string>
     <string name="workout_finish_title">Finish Workout</string>
-    <string name="workout_finish_subtitle">You have incomplete sets. Would you like to finish the workout and mark them as complete?</string>
+    <string name="workout_finish_subtitle">Some sets aren\'t ticked off yet. Finish anyway? Sets with reps or a time are saved as done.</string>
     <string name="workout_error_no_permissions">We need permission to show notifications and track your activity to provide live workout updates and timers. Please enable these in Settings.</string>
 
     <string name="settings_title">Settings</string>

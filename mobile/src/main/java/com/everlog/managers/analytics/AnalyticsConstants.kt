@@ -95,6 +95,7 @@ class AnalyticsConstants {
         const val EVENT_SET_ADDED = "set_added"
         const val EVENT_SET_DELETED = "set_deleted"
         const val EVENT_SET_COMPLETED = "set_completed"
+        const val EVENT_SET_GROUP_COMPLETED = "set_group_completed"
 
         // Statistics
 
@@ -211,6 +212,7 @@ class AnalyticsConstants {
         const val PROPERTY_SET_TYPE = "set_type"
         const val PROPERTY_TIMED = "timed"
         const val PROPERTY_SETS_COMPLETED = "sets_completed"
+        const val PROPERTY_EXERCISES = "exercises"
 
         // Legacy user properties. Versions before 2.11.0 set the user's email and name as user
         // properties, which Firebase keeps on the device until cleared. They're PII, so they are
