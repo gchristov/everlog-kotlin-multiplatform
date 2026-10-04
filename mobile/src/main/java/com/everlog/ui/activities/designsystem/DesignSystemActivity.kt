@@ -4,11 +4,8 @@ import androidx.activity.viewModels
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
@@ -30,10 +27,12 @@ import com.everlog.ui.design.elements.AppFooterAction
 import com.everlog.ui.design.elements.AppIcon
 import com.everlog.ui.design.elements.AppIconButton
 import com.everlog.ui.design.elements.AppScreen
-import com.everlog.ui.design.elements.AppSectionHeader
 import com.everlog.ui.design.elements.AppSecondaryButton
 import com.everlog.ui.design.elements.AppSurface
 import com.everlog.ui.design.elements.AppText
+import com.everlog.ui.design.elements.list.AppGroupScope
+import com.everlog.ui.design.elements.list.AppGroupedList
+import com.everlog.ui.design.elements.list.AppListItem
 import com.everlog.ui.design.theme.Theme
 import com.everlog.ui.mvvm.createViewModelFactory
 import kotlinx.coroutines.Dispatchers
@@ -86,25 +85,47 @@ private fun DesignSystemState(
             )
         },
     ) { contentPadding ->
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .verticalScroll(rememberScrollState())
-                .padding(contentPadding)
-                .padding(16.dp),
-            verticalArrangement = Arrangement.spacedBy(16.dp)
-        ) {
-            AppSectionHeader(text = stringResource(R.string.design_system_typography))
-            TypographyExamples()
-            AppSectionHeader(text = stringResource(R.string.design_system_icons))
-            IconExamples(onButtonClick = onButtonClick)
-            AppSectionHeader(text = stringResource(R.string.design_system_buttons))
-            Buttons(
-                buttonClicks = state.buttonClicks,
-                onButtonClick = onButtonClick
+        // Sections without rows are a header-only group followed by their content
+        AppGroupedList(contentPadding = contentPadding) {
+            group(key = "typography", header = { stringResource(R.string.design_system_typography) }) {}
+            item(key = "typographyExamples") {
+                TypographyExamples()
+            }
+            group(key = "icons", header = { stringResource(R.string.design_system_icons) }) {}
+            item(key = "iconExamples") {
+                IconExamples(onButtonClick = onButtonClick)
+            }
+            group(key = "buttons", header = { stringResource(R.string.design_system_buttons) }) {}
+            item(key = "buttonExamples") {
+                Buttons(
+                    buttonClicks = state.buttonClicks,
+                    onButtonClick = onButtonClick
+                )
+            }
+            group(key = "list", header = { stringResource(R.string.design_system_list) }) {
+                listRows(onButtonClick = onButtonClick)
+            }
+            group(key = "card", header = { stringResource(R.string.design_system_card) }) {}
+            item(key = "cardExample") {
+                Card(onButtonClick = onButtonClick)
+            }
+        }
+    }
+}
+
+private fun AppGroupScope.listRows(onButtonClick: () -> Unit) {
+    items(count = 3, key = { it }) { index ->
+        when (index) {
+            0 -> AppListItem(title = stringResource(R.string.design_system_list_title))
+            1 -> AppListItem(
+                title = stringResource(R.string.design_system_list_title_subtitle),
+                subtitle = stringResource(R.string.design_system_list_subtitle),
             )
-            AppSectionHeader(text = stringResource(R.string.design_system_card))
-            Card(onButtonClick = onButtonClick)
+            else -> AppListItem(
+                title = stringResource(R.string.design_system_list_tappable),
+                subtitle = stringResource(R.string.design_system_list_tappable_subtitle),
+                onClick = onButtonClick,
+            )
         }
     }
 }

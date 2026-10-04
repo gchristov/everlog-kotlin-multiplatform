@@ -14,6 +14,8 @@ data class Backgrounds(
     val surfaceRaised: Color,
     // Tint over blurred content behind bars, e.g. the footer
     val blurOverlay: Color,
+    // Divider between rows in a card
+    val separator: Color,
 )
 
 internal val LocalBackgrounds = staticCompositionLocalOf {
@@ -22,6 +24,7 @@ internal val LocalBackgrounds = staticCompositionLocalOf {
         surface = Color.Unspecified,
         surfaceRaised = Color.Unspecified,
         blurOverlay = Color.Unspecified,
+        separator = Color.Unspecified,
     )
 }
 
@@ -31,4 +34,5 @@ internal fun backgrounds() = Backgrounds(
     surface = colorResource(R.color.background_card),
     surfaceRaised = colorResource(R.color.background_card_lighter),
     blurOverlay = colorResource(R.color.background_blur),
+    separator = colorResource(R.color.separator),
 )

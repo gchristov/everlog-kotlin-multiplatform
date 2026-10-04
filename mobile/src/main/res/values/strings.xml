@@ -335,6 +335,12 @@
     <string name="design_system_icon_button">Add</string>
     <string name="design_system_buttons">Buttons</string>
     <string name="design_system_card">Card</string>
+    <string name="design_system_list">List</string>
+    <string name="design_system_list_title">Title only</string>
+    <string name="design_system_list_title_subtitle">Title and subtitle</string>
+    <string name="design_system_list_subtitle">Like the rows in Settings</string>
+    <string name="design_system_list_tappable">Tappable row</string>
+    <string name="design_system_list_tappable_subtitle">Counts as a button tap</string>
     <string name="design_system_card_title">Card title</string>
     <string name="design_system_card_body">The card background sits on top of the screen background, like the cards in Settings.</string>
     <string name="design_system_primary">Primary</string>
