@@ -331,6 +331,8 @@
     <string name="app_bar_back">Back</string>
     <string name="settings_design_system">Design system</string>
     <string name="design_system_typography">Typography</string>
+    <string name="design_system_icons">Icons</string>
+    <string name="design_system_icon_button">Add</string>
     <string name="design_system_buttons">Buttons</string>
     <string name="design_system_card">Card</string>
     <string name="design_system_card_title">Card title</string>

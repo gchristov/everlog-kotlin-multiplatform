@@ -12,8 +12,10 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -25,6 +27,8 @@ import com.everlog.ui.design.elements.AppBar
 import com.everlog.ui.design.elements.AppButton
 import com.everlog.ui.design.elements.AppFooter
 import com.everlog.ui.design.elements.AppFooterAction
+import com.everlog.ui.design.elements.AppIcon
+import com.everlog.ui.design.elements.AppIconButton
 import com.everlog.ui.design.elements.AppScreen
 import com.everlog.ui.design.elements.AppSecondaryButton
 import com.everlog.ui.design.elements.AppSurface
@@ -91,6 +95,8 @@ private fun DesignSystemState(
         ) {
             SectionHeader(text = stringResource(R.string.design_system_typography))
             TypographyExamples()
+            SectionHeader(text = stringResource(R.string.design_system_icons))
+            IconExamples(onButtonClick = onButtonClick)
             SectionHeader(text = stringResource(R.string.design_system_buttons))
             Buttons(
                 buttonClicks = state.buttonClicks,
@@ -98,6 +104,66 @@ private fun DesignSystemState(
             )
             SectionHeader(text = stringResource(R.string.design_system_card))
             Card(onButtonClick = onButtonClick)
+        }
+    }
+}
+
+@Composable
+private fun IconExamples(onButtonClick: () -> Unit) {
+    val icons = listOf(
+        R.drawable.ic_back,
+        R.drawable.ic_clear_white,
+        R.drawable.ic_add,
+        R.drawable.ic_remove_white,
+        R.drawable.ic_edit,
+        R.drawable.ic_delete,
+        R.drawable.ic_share,
+        R.drawable.ic_timer,
+        R.drawable.ic_settings,
+        R.drawable.ic_more,
+    ).map { ImageVector.vectorResource(it) }
+    val tints = listOf(
+        Theme.contentColors.primary,
+        Theme.contentColors.secondary,
+        Theme.contentColors.action,
+        Theme.contentColors.destructive,
+    )
+    val star = ImageVector.vectorResource(R.drawable.ic_star_filled)
+
+    Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
+        // The app's vector drawables, in the default tint
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+        ) {
+            icons.forEach { icon ->
+                AppIcon(imageVector = icon)
+            }
+        }
+        // One icon in each content colour
+        Row(horizontalArrangement = Arrangement.spacedBy(24.dp)) {
+            tints.forEach { tint ->
+                AppIcon(
+                    imageVector = star,
+                    tint = tint,
+                )
+            }
+        }
+        // Icon buttons, enabled and disabled
+        Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+            AppIconButton(
+                onClick = onButtonClick,
+                icon = ImageVector.vectorResource(R.drawable.ic_add),
+                tint = Theme.contentColors.action,
+                contentDescription = stringResource(R.string.design_system_icon_button),
+            )
+            AppIconButton(
+                onClick = onButtonClick,
+                icon = ImageVector.vectorResource(R.drawable.ic_add),
+                tint = Theme.contentColors.action,
+                contentDescription = stringResource(R.string.design_system_icon_button),
+                enabled = false,
+            )
         }
     }
 }
