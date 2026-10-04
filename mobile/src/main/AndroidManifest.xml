@@ -211,6 +211,10 @@
             android:theme="@style/AppTheme.NoActionBar"
             android:exported="false" />
         <activity
+            android:name="com.everlog.ui.activities.onboarding.OnboardingActivity"
+            android:theme="@style/AppTheme.NoActionBar"
+            android:exported="false" />
+        <activity
             android:name="com.everlog.ui.activities.home.musclegoal.MuscleGoalActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:theme="@style/AppTheme.NoActionBar"
