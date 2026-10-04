@@ -3,9 +3,11 @@ package com.everlog.ui.activities.designsystem
 import androidx.activity.viewModels
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
@@ -27,6 +29,7 @@ import com.everlog.ui.design.elements.AppIconButton
 import com.everlog.ui.design.elements.AppScreen
 import com.everlog.ui.design.elements.AppSecondaryButton
 import com.everlog.ui.design.elements.AppSurface
+import com.everlog.ui.design.elements.AppTertiaryButton
 import com.everlog.ui.design.elements.AppText
 import com.everlog.ui.design.elements.list.AppGroupScope
 import com.everlog.ui.design.elements.list.AppGroupedList
@@ -79,6 +82,11 @@ private fun DesignSystemState(
                         onClick = onButtonClick,
                         style = AppFooterAction.Style.Secondary,
                     ),
+                    AppFooterAction(
+                        text = "Tertiary footer action",
+                        onClick = onButtonClick,
+                        style = AppFooterAction.Style.Tertiary,
+                    ),
                 )
             )
         },
@@ -112,17 +120,42 @@ private fun DesignSystemState(
 }
 
 private fun AppGroupScope.listRows(onButtonClick: () -> Unit) {
-    items(count = 3, key = { it }) { index ->
+    items(count = 5, key = { it }) { index ->
         when (index) {
             0 -> AppListItem(title = "Title only")
             1 -> AppListItem(
                 title = "Title and subtitle",
                 subtitle = "Like the rows in Settings",
             )
-            else -> AppListItem(
+            2 -> AppListItem(
                 title = "Tappable row",
                 subtitle = "Counts as a button tap",
                 onClick = onButtonClick,
+            )
+            3 -> AppListItem(
+                header = "Header",
+                title = "Title in the action colour",
+                titleColor = Theme.contentColors.action,
+                trailing = {
+                    AppIcon(
+                        modifier = Modifier.size(20.dp),
+                        imageVector = ImageVector.vectorResource(R.drawable.ic_edit),
+                        tint = Theme.contentColors.secondary,
+                    )
+                },
+                onClick = onButtonClick,
+            )
+            else -> AppListItem(
+                title = "Leading and trailing",
+                leading = {
+                    AppIcon(
+                        imageVector = ImageVector.vectorResource(R.drawable.ic_timer),
+                        tint = Theme.contentColors.secondary,
+                    )
+                },
+                trailing = {
+                    AppText(text = "18:00", style = Theme.typography.heading)
+                },
             )
         }
     }
@@ -290,7 +323,10 @@ private fun ButtonRow(
     enabled: Boolean,
     onButtonClick: () -> Unit
 ) {
-    Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+    FlowRow(
+        horizontalArrangement = Arrangement.spacedBy(8.dp),
+        verticalArrangement = Arrangement.spacedBy(8.dp),
+    ) {
         AppButton(
             onClick = onButtonClick,
             text = if (enabled) "Primary" else "Disabled",
@@ -299,6 +335,11 @@ private fun ButtonRow(
         AppSecondaryButton(
             onClick = onButtonClick,
             text = if (enabled) "Secondary" else "Disabled",
+            enabled = enabled,
+        )
+        AppTertiaryButton(
+            onClick = onButtonClick,
+            text = if (enabled) "Tertiary" else "Disabled",
             enabled = enabled,
         )
     }

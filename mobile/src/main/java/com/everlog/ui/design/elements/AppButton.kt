@@ -69,6 +69,31 @@ fun AppSecondaryButton(
     }
 }
 
+// Green text with no outline or fill, same as the XML "Button.Four" style. In an app bar, pass a
+// smaller contentPadding (e.g. 12dp) so the text lines up with the screen's margin.
+@Composable
+fun AppTertiaryButton(
+    modifier: Modifier = Modifier,
+    onClick: () -> Unit,
+    text: String,
+    enabled: Boolean = true,
+    contentPadding: PaddingValues = buttonContentPadding(),
+) {
+    androidx.compose.material3.TextButton(
+        onClick = onClick,
+        modifier = modifier.defaultMinSize(minHeight = ButtonMinHeight),
+        enabled = enabled,
+        shape = Theme.shapes.button,
+        contentPadding = contentPadding,
+    ) {
+        ButtonText(
+            text = text,
+            color = Theme.contentColors.action,
+            enabled = enabled,
+        )
+    }
+}
+
 @Composable
 fun AppIconButton(
     onClick: () -> Unit,
@@ -121,6 +146,7 @@ private fun AppButtonPreview() {
         Column {
             AppButton(onClick = {}, text = "Primary")
             AppSecondaryButton(onClick = {}, text = "Secondary")
+            AppTertiaryButton(onClick = {}, text = "Tertiary")
         }
     }
 }

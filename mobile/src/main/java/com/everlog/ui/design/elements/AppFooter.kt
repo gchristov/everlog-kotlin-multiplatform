@@ -26,12 +26,15 @@ data class AppFooterAction(
     enum class Style {
         Primary,
         Secondary,
+        // Text only, e.g. Skip
+        Tertiary,
     }
 }
 
 // Full-width actions pinned to the bottom of the screen, as AppScreen's footer. Like the XML
 // footers (RealtimeBlurView), it blurs the content scrolling behind it under a translucent tint.
-// Blur needs Android 12+, so older versions only get the tint.
+// Blur needs Android 12+, so older versions get a solid background instead: the tint alone would
+// leave the content sharp behind the buttons.
 @Composable
 fun AppFooter(
     actions: List<AppFooterAction>,
@@ -52,10 +55,11 @@ fun AppFooter(
                             tint = HazeTint(overlay),
                             blurRadius = 20.dp,
                             noiseFactor = 0f,
+                            fallbackTint = HazeTint(Theme.backgrounds.primary),
                         ),
                     )
                 } else {
-                    Modifier.background(overlay)
+                    Modifier.background(Theme.backgrounds.primary)
                 }
             )
             .windowInsetsPadding(WindowInsets.navigationBars)
@@ -77,6 +81,13 @@ fun AppFooter(
                     text = action.text,
                     enabled = action.enabled,
                 )
+
+                AppFooterAction.Style.Tertiary -> AppTertiaryButton(
+                    modifier = Modifier.fillMaxWidth(),
+                    onClick = action.onClick,
+                    text = action.text,
+                    enabled = action.enabled,
+                )
             }
         }
     }
@@ -90,6 +101,7 @@ private fun AppFooterPreview() {
             actions = listOf(
                 AppFooterAction(text = "Primary", onClick = {}),
                 AppFooterAction(text = "Secondary", onClick = {}, style = AppFooterAction.Style.Secondary),
+                AppFooterAction(text = "Tertiary", onClick = {}, style = AppFooterAction.Style.Tertiary),
             )
         )
     }
