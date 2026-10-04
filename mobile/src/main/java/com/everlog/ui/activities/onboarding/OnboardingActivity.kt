@@ -378,7 +378,8 @@ private fun QuestionBlock(
                 selectedId = (input as? Answer.Choice)?.optionId,
                 onSelect = { viewModel.onOptionSelect(question.id, it) },
             )
-            is OnboardingQuestion.Days -> Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+            // Same squares and spacing as the reminder days
+            is OnboardingQuestion.Days -> Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
                 question.options.forEach { count ->
                     NumberChip(
                         modifier = Modifier.weight(1f),

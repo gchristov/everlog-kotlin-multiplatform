@@ -11,6 +11,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.Column
@@ -319,7 +320,7 @@ internal fun SelectableListItem(
     }
 }
 
-// Number chip (days a week): a 22sp numeral, with a 12dp check top right when selected
+// Number chip (days a week): a square with a 22sp numeral, and a 12dp check top right when selected
 @Composable
 internal fun NumberChip(
     value: Int,
@@ -328,7 +329,7 @@ internal fun NumberChip(
     modifier: Modifier = Modifier,
 ) {
     SelectableBox(
-        modifier = modifier.height(64.dp),
+        modifier = modifier.aspectRatio(1f),
         selected = selected,
         onClick = onClick,
         description = "$value days",
@@ -349,7 +350,8 @@ internal fun NumberChip(
     }
 }
 
-// Day-of-week chip. Multi-select, so the state is the outline, fill and an accent label, no check.
+// Day-of-week chip, a square like the number chips. Multi-select, so the state is the outline, fill
+// and an accent label, no check.
 @Composable
 internal fun DayChip(
     label: String,
@@ -364,7 +366,7 @@ internal fun DayChip(
         label = "dayLabel",
     )
     SelectableBox(
-        modifier = modifier.height(48.dp),
+        modifier = modifier.aspectRatio(1f),
         selected = selected,
         onClick = onClick,
         description = fullLabel,
