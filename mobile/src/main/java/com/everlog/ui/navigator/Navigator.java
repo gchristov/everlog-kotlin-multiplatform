@@ -71,6 +71,8 @@ public interface Navigator {
 
     void openMuscleGoal();
 
+    void openDesignSystem();
+
     void startWorkoutService(ELWorkout workout);
 
     void stopWorkoutService();
