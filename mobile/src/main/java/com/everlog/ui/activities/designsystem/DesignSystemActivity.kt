@@ -30,6 +30,7 @@ import com.everlog.ui.design.elements.AppFooterAction
 import com.everlog.ui.design.elements.AppIcon
 import com.everlog.ui.design.elements.AppIconButton
 import com.everlog.ui.design.elements.AppScreen
+import com.everlog.ui.design.elements.AppSectionHeader
 import com.everlog.ui.design.elements.AppSecondaryButton
 import com.everlog.ui.design.elements.AppSurface
 import com.everlog.ui.design.elements.AppText
@@ -93,16 +94,16 @@ private fun DesignSystemState(
                 .padding(16.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-            SectionHeader(text = stringResource(R.string.design_system_typography))
+            AppSectionHeader(text = stringResource(R.string.design_system_typography))
             TypographyExamples()
-            SectionHeader(text = stringResource(R.string.design_system_icons))
+            AppSectionHeader(text = stringResource(R.string.design_system_icons))
             IconExamples(onButtonClick = onButtonClick)
-            SectionHeader(text = stringResource(R.string.design_system_buttons))
+            AppSectionHeader(text = stringResource(R.string.design_system_buttons))
             Buttons(
                 buttonClicks = state.buttonClicks,
                 onButtonClick = onButtonClick
             )
-            SectionHeader(text = stringResource(R.string.design_system_card))
+            AppSectionHeader(text = stringResource(R.string.design_system_card))
             Card(onButtonClick = onButtonClick)
         }
     }
@@ -166,15 +167,6 @@ private fun IconExamples(onButtonClick: () -> Unit) {
             )
         }
     }
-}
-
-@Composable
-private fun SectionHeader(text: String) {
-    AppText(
-        text = text,
-        style = Theme.typography.subtitle,
-        color = Theme.contentColors.secondary,
-    )
 }
 
 @Composable
