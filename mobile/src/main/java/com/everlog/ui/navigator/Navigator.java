@@ -73,8 +73,6 @@ public interface Navigator {
 
     void openDesignSystem();
 
-    void openQuestionFormPrototype();
-
     void startWorkoutService(ELWorkout workout);
 
     void stopWorkoutService();

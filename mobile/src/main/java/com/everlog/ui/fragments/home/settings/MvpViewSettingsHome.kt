@@ -33,8 +33,6 @@ interface MvpViewSettingsHome : BaseFragmentMvpView {
 
     fun onClickDesignSystem(): Observable<Void>
 
-    fun onClickQuestionFormPrototype(): Observable<Void>
-
     // Integrations
 
     fun onClickManageIntegrationGoogleFit(): Observable<Void>
