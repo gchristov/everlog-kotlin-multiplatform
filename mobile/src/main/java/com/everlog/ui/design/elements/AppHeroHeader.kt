@@ -14,7 +14,7 @@ import com.everlog.ui.design.theme.Theme
 // A large title with a line of body text under it, at the top of a screen's content (e.g. "Here's your
 // week"). Fixed height with the text at the bottom, so what follows always starts at the same place.
 @Composable
-fun AppScreenHeader(
+fun AppHeroHeader(
     title: String,
     modifier: Modifier = Modifier,
     body: String? = null,
@@ -22,7 +22,7 @@ fun AppScreenHeader(
     Column(
         modifier = modifier
             .fillMaxWidth()
-            .height(ScreenHeaderHeight),
+            .height(HeroHeaderHeight),
         verticalArrangement = Arrangement.spacedBy(8.dp, Alignment.Bottom),
     ) {
         AppText(
@@ -39,13 +39,13 @@ fun AppScreenHeader(
     }
 }
 
-private val ScreenHeaderHeight = 160.dp
+private val HeroHeaderHeight = 160.dp
 
 @Preview
 @Composable
-private fun AppScreenHeaderPreview() {
+private fun AppHeroHeaderPreview() {
     Theme {
-        AppScreenHeader(
+        AppHeroHeader(
             title = "Here's your week",
             body = "4 days · Upper / Lower · Gym · Build muscle",
         )
