@@ -29,7 +29,7 @@ data class AppFooterAction(
     }
 }
 
-// Full-width actions pinned to the bottom of the screen, as AppScreen's bottomBar. Like the XML
+// Full-width actions pinned to the bottom of the screen, as AppScreen's footer. Like the XML
 // footers (RealtimeBlurView), it blurs the content scrolling behind it under a translucent tint.
 // Blur needs Android 12+, so older versions only get the tint.
 @Composable

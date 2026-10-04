@@ -10,8 +10,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.res.pluralStringResource
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -65,19 +63,19 @@ private fun DesignSystemState(
     AppScreen(
         topBar = {
             AppBar(
-                title = stringResource(R.string.settings_design_system),
+                title = "Design system",
                 showBack = true,
             )
         },
-        bottomBar = {
+        footer = {
             AppFooter(
                 actions = listOf(
                     AppFooterAction(
-                        text = stringResource(R.string.design_system_footer_primary),
+                        text = "Footer action",
                         onClick = onButtonClick,
                     ),
                     AppFooterAction(
-                        text = stringResource(R.string.design_system_footer_secondary),
+                        text = "Secondary footer action",
                         onClick = onButtonClick,
                         style = AppFooterAction.Style.Secondary,
                     ),
@@ -87,25 +85,25 @@ private fun DesignSystemState(
     ) { contentPadding ->
         // Sections without rows are a header-only group followed by their content
         AppGroupedList(contentPadding = contentPadding) {
-            group(key = "typography", header = { stringResource(R.string.design_system_typography) }) {}
+            group(key = "typography", header = { "Typography" }) {}
             item(key = "typographyExamples") {
                 TypographyExamples()
             }
-            group(key = "icons", header = { stringResource(R.string.design_system_icons) }) {}
+            group(key = "icons", header = { "Icons" }) {}
             item(key = "iconExamples") {
                 IconExamples(onButtonClick = onButtonClick)
             }
-            group(key = "buttons", header = { stringResource(R.string.design_system_buttons) }) {}
+            group(key = "buttons", header = { "Buttons" }) {}
             item(key = "buttonExamples") {
                 Buttons(
                     buttonClicks = state.buttonClicks,
                     onButtonClick = onButtonClick
                 )
             }
-            group(key = "list", header = { stringResource(R.string.design_system_list) }) {
+            group(key = "list", header = { "List" }) {
                 listRows(onButtonClick = onButtonClick)
             }
-            group(key = "card", header = { stringResource(R.string.design_system_card) }) {}
+            group(key = "card", header = { "Card" }) {}
             item(key = "cardExample") {
                 Card(onButtonClick = onButtonClick)
             }
@@ -116,14 +114,14 @@ private fun DesignSystemState(
 private fun AppGroupScope.listRows(onButtonClick: () -> Unit) {
     items(count = 3, key = { it }) { index ->
         when (index) {
-            0 -> AppListItem(title = stringResource(R.string.design_system_list_title))
+            0 -> AppListItem(title = "Title only")
             1 -> AppListItem(
-                title = stringResource(R.string.design_system_list_title_subtitle),
-                subtitle = stringResource(R.string.design_system_list_subtitle),
+                title = "Title and subtitle",
+                subtitle = "Like the rows in Settings",
             )
             else -> AppListItem(
-                title = stringResource(R.string.design_system_list_tappable),
-                subtitle = stringResource(R.string.design_system_list_tappable_subtitle),
+                title = "Tappable row",
+                subtitle = "Counts as a button tap",
                 onClick = onButtonClick,
             )
         }
@@ -177,13 +175,13 @@ private fun IconExamples(onButtonClick: () -> Unit) {
                 onClick = onButtonClick,
                 icon = ImageVector.vectorResource(R.drawable.ic_add),
                 tint = Theme.contentColors.action,
-                contentDescription = stringResource(R.string.design_system_icon_button),
+                contentDescription = "Add",
             )
             AppIconButton(
                 onClick = onButtonClick,
                 icon = ImageVector.vectorResource(R.drawable.ic_add),
                 tint = Theme.contentColors.action,
-                contentDescription = stringResource(R.string.design_system_icon_button),
+                contentDescription = "Add",
                 enabled = false,
             )
         }
@@ -239,7 +237,7 @@ private fun Buttons(
 ) {
     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
         AppText(
-            text = pluralStringResource(R.plurals.design_system_button_clicks, buttonClicks, buttonClicks),
+            text = if (buttonClicks == 1) "Tapped 1 time" else "Tapped $buttonClicks times",
             style = Theme.typography.caption,
             color = Theme.contentColors.secondary,
         )
@@ -260,11 +258,11 @@ private fun Card(onButtonClick: () -> Unit) {
         Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
             Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
                 AppText(
-                    text = stringResource(R.string.design_system_card_title),
+                    text = "Card title",
                     style = Theme.typography.heading,
                 )
                 AppText(
-                    text = stringResource(R.string.design_system_card_body),
+                    text = "The card background sits on top of the screen background, like the cards in Settings.",
                     style = Theme.typography.caption,
                     color = Theme.contentColors.secondary,
                 )
@@ -276,12 +274,12 @@ private fun Card(onButtonClick: () -> Unit) {
             AppButton(
                 modifier = Modifier.fillMaxWidth(),
                 onClick = onButtonClick,
-                text = stringResource(R.string.design_system_full_width),
+                text = "Full width",
             )
             AppSecondaryButton(
                 modifier = Modifier.fillMaxWidth(),
                 onClick = onButtonClick,
-                text = stringResource(R.string.design_system_full_width),
+                text = "Full width",
             )
         }
     }
@@ -295,12 +293,12 @@ private fun ButtonRow(
     Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
         AppButton(
             onClick = onButtonClick,
-            text = stringResource(if (enabled) R.string.design_system_primary else R.string.design_system_disabled),
+            text = if (enabled) "Primary" else "Disabled",
             enabled = enabled,
         )
         AppSecondaryButton(
             onClick = onButtonClick,
-            text = stringResource(if (enabled) R.string.design_system_secondary else R.string.design_system_disabled),
+            text = if (enabled) "Secondary" else "Disabled",
             enabled = enabled,
         )
     }

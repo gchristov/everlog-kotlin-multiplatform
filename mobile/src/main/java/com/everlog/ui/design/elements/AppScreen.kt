@@ -16,14 +16,15 @@ import dev.chrisbanes.haze.HazeState
 import dev.chrisbanes.haze.hazeSource
 
 /**
- * @param content Receives the padding that keeps content clear of the [bottomBar]. Content is
- * drawn behind the bottom bar, which blurs it (see [AppFooter]), so apply the padding inside
+ * @param footer Pinned to the bottom, usually an [AppFooter].
+ * @param content Receives the padding that keeps content clear of the [footer]. Content is
+ * drawn behind the footer, which blurs it (see [AppFooter]), so apply the padding inside
  * scrolling containers, e.g. as a LazyColumn's contentPadding.
  */
 @Composable
 fun AppScreen(
     topBar: @Composable () -> Unit = {},
-    bottomBar: @Composable () -> Unit = {},
+    footer: @Composable () -> Unit = {},
     content: @Composable (contentPadding: PaddingValues) -> Unit,
 ) {
     val hazeState = remember { HazeState() }
@@ -31,7 +32,7 @@ fun AppScreen(
     CompositionLocalProvider(LocalAppScreenHazeState provides hazeState) {
         Scaffold(
             topBar = topBar,
-            bottomBar = bottomBar,
+            bottomBar = footer,
             containerColor = Theme.backgrounds.primary,
             contentColor = Theme.contentColors.primary,
         ) { padding ->

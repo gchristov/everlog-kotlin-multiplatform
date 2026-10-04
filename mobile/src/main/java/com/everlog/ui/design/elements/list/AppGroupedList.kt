@@ -30,7 +30,7 @@ import kotlinx.parcelize.RawValue
  * sections in Settings.
  *
  * @param contentPadding Added to the list's own padding, e.g. AppScreen's padding so the last rows
- * scroll clear of its bottom bar.
+ * scroll clear of its footer.
  */
 @Composable
 fun AppGroupedList(
