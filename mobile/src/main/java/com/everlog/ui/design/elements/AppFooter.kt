@@ -13,6 +13,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.everlog.ui.design.theme.Theme
+import dev.chrisbanes.haze.HazeStyle
+import dev.chrisbanes.haze.HazeTint
+import dev.chrisbanes.haze.hazeEffect
 
 data class AppFooterAction(
     val text: String,
@@ -26,16 +29,35 @@ data class AppFooterAction(
     }
 }
 
-// Full-width actions pinned to the bottom of the screen, e.g. as AppScreen's bottomBar.
+// Full-width actions pinned to the bottom of the screen, as AppScreen's bottomBar. Like the XML
+// footers (RealtimeBlurView), it blurs the content scrolling behind it under a translucent tint.
+// Blur needs Android 12+, so older versions only get the tint.
 @Composable
 fun AppFooter(
     actions: List<AppFooterAction>,
     modifier: Modifier = Modifier,
 ) {
+    val hazeState = LocalAppScreenHazeState.current
+    val overlay = Theme.backgrounds.blurOverlay
+
     Column(
         modifier = modifier
             .fillMaxWidth()
-            .background(Theme.backgrounds.primary)
+            .then(
+                if (hazeState != null) {
+                    Modifier.hazeEffect(
+                        state = hazeState,
+                        style = HazeStyle(
+                            backgroundColor = Theme.backgrounds.primary,
+                            tint = HazeTint(overlay),
+                            blurRadius = 20.dp,
+                            noiseFactor = 0f,
+                        ),
+                    )
+                } else {
+                    Modifier.background(overlay)
+                }
+            )
             .windowInsetsPadding(WindowInsets.navigationBars)
             .padding(16.dp),
         verticalArrangement = Arrangement.spacedBy(8.dp)
