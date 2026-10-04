@@ -68,6 +68,7 @@ import com.everlog.managers.preferences.SettingsManager
 import com.everlog.ui.design.CommonComposeActivity
 import com.everlog.ui.design.elements.AppFooter
 import com.everlog.ui.design.elements.AppFooterAction
+import com.everlog.ui.design.elements.AppHeroHeader
 import com.everlog.ui.design.elements.AppIcon
 import com.everlog.ui.design.elements.AppScreen
 import com.everlog.ui.design.elements.AppText
@@ -491,7 +492,7 @@ private fun SetupFooter(
             actions = when (footerMode) {
                 FooterMode.Next -> listOf(
                     AppFooterAction(text = "Next", onClick = viewModel::onSubmit, enabled = state.canContinue),
-                    AppFooterAction(text = "Skip", onClick = viewModel::onSkip, style = AppFooterAction.Style.Tertiary),
+                    AppFooterAction(text = "Skip", onClick = viewModel::onSkip, style = AppFooterAction.Style.Secondary),
                 )
                 FooterMode.Editing -> listOf(
                     AppFooterAction(text = "Done", onClick = viewModel::onSubmit, enabled = state.canContinue),
@@ -542,7 +543,6 @@ private fun Reveal(
     val haptics = LocalHapticFeedback.current
     val enterOffset = with(LocalDensity.current) { OnboardingMotion.EnterOffset.toPx() }
     val title = remember { Animatable(0f) }
-    val ring = remember { Animatable(0f) }
     val buttons = remember { Animatable(0f) }
     val cards = remember(week) { week.routines.map { Animatable(0f) } }
 
@@ -555,11 +555,10 @@ private fun Reveal(
                 card.animateTo(1f, tween(OnboardingMotion.Enter, delayMillis = 60 + 60 * index, easing = OnboardingMotion.EmphasizedDecelerate))
             }
         }
-        // The one celebration: the check ring draws in once, with a confirm haptic
+        // The one celebration: a confirm haptic as the week appears
         launch {
             delay(200)
             haptics.performHapticFeedback(HapticFeedbackType.Confirm)
-            ring.animateTo(1f, tween(400, easing = OnboardingMotion.EmphasizedDecelerate))
         }
     }
 
@@ -588,25 +587,13 @@ private fun Reveal(
                 .fillMaxSize()
                 .verticalScroll(rememberScrollState())
                 .padding(contentPadding)
-                .padding(start = 16.dp, end = 16.dp, top = 72.dp, bottom = 20.dp),
+                .padding(start = 16.dp, end = 16.dp, bottom = 20.dp),
         ) {
-            AppText(
+            AppHeroHeader(
                 modifier = Modifier.alpha(title.value),
-                text = "Here's your week",
-                style = OnboardingType.RevealTitle,
+                title = "Here's your week",
+                body = week.summary,
             )
-            VerticalSpace(10.dp)
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(10.dp),
-            ) {
-                CheckRing(modifier = Modifier.size(22.dp), progress = ring.value)
-                AppText(
-                    text = week.summary,
-                    style = TextStyle(fontSize = 15.sp, lineHeight = 22.sp),
-                    color = Theme.contentColors.secondary,
-                )
-            }
             if (week.experienced) {
                 VerticalSpace(8.dp)
                 AppText(
@@ -709,15 +696,9 @@ private fun End(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(contentPadding)
-                .padding(start = 16.dp, end = 16.dp, top = 180.dp),
+                .padding(start = 16.dp, end = 16.dp),
         ) {
-            AppText(text = "At the gym now?", style = OnboardingType.RevealTitle)
-            VerticalSpace(8.dp)
-            AppText(
-                text = "Your first workout is ready.",
-                style = TextStyle(fontSize = 15.sp, lineHeight = 22.sp),
-                color = Theme.contentColors.secondary,
-            )
+            AppHeroHeader(title = "At the gym now?", body = "Your first workout is ready.")
             VerticalSpace(28.dp)
             Column(
                 modifier = Modifier

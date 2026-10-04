@@ -103,7 +103,6 @@ internal fun onboardingColors() = OnboardingColors(
 
 internal object OnboardingType {
     val QuestionTitle = TextStyle(fontSize = 26.sp, lineHeight = 32.sp, fontWeight = FontWeight.Medium, letterSpacing = (-0.2).sp)
-    val RevealTitle = TextStyle(fontSize = 28.sp, lineHeight = 34.sp, fontWeight = FontWeight.Medium, letterSpacing = (-0.2).sp)
     val Answer = TextStyle(fontSize = 16.sp, lineHeight = 22.sp, fontWeight = FontWeight.Medium)
     val Helper = TextStyle(fontSize = 13.sp, lineHeight = 18.sp)
     val TextAction = TextStyle(fontSize = 14.sp, fontWeight = FontWeight.Medium)
@@ -477,25 +476,6 @@ internal fun AnimatedCheck(
         }
     }
     TrimmedStroke(modifier = modifier, paths = listOf(path), progress = progress, strokeWidth = strokeWidth, color = color)
-}
-
-// The reveal's one celebration: a ring and check that draw in once
-@Composable
-internal fun CheckRing(
-    progress: Float,
-    modifier: Modifier = Modifier,
-) {
-    val paths = remember {
-        listOf(
-            Path().apply { addOval(androidx.compose.ui.geometry.Rect(Offset(12f, 12f), 10f)) },
-            Path().apply {
-                moveTo(7.5f, 12.5f)
-                lineTo(10.5f, 15.5f)
-                lineTo(16.5f, 9f)
-            },
-        )
-    }
-    TrimmedStroke(modifier = modifier, paths = paths, progress = progress, strokeWidth = 1.75f, color = Theme.contentColors.action)
 }
 
 @Composable
