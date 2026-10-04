@@ -13,7 +13,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.layout
-import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.graphics.painter.ColorPainter
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -133,8 +133,8 @@ private fun DesignSystemState(
                         .padding(top = 32.dp)
                         .fullBleed(AppGroupedListMargin),
                     title = "Push day",
-                    body = "With an image from the plan cover gallery",
-                    image = painterResource(R.drawable.design_system_hero_sample),
+                    body = "With an image, here a plain colour",
+                    image = ColorPainter(Theme.backgrounds.surfaceRaised),
                 )
             }
         }

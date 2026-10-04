@@ -11,10 +11,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.graphics.painter.ColorPainter
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.everlog.R
 import com.everlog.ui.design.theme.Theme
 
 /**
@@ -105,7 +104,7 @@ private fun AppHeroHeaderImagePreview() {
         AppHeroHeader(
             title = "Push day",
             body = "6 exercises · About 55 minutes",
-            image = painterResource(R.drawable.design_system_hero_sample),
+            image = ColorPainter(Theme.backgrounds.surfaceRaised),
         )
     }
 }
