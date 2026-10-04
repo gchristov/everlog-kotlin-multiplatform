@@ -17,7 +17,9 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.gestures.animateScrollBy
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
@@ -51,6 +53,7 @@ import com.everlog.ui.design.elements.AppText
 import com.everlog.ui.design.theme.Theme
 import com.everlog.ui.mvvm.createViewModelFactory
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 
 // Debug-only prototype of a one-question-at-a-time form, opened from Settings. Copy is hardcoded and
 // the private composables below are placeholders for design system elements (see TAS-440).
@@ -98,7 +101,9 @@ private fun QuestionFormState(
         val index = visibleQuestions.indexOfFirst { it.id == state.activeQuestionId }
             .takeIf { it >= 0 }
             ?: visibleQuestions.size
-        listState.animateScrollToItem(index)
+        // Wait for the cards to finish resizing, so the list doesn't scroll while they animate
+        delay(QuestionTransitionMillis.toLong())
+        listState.scrollIntoView(index)
     }
 
     AppScreen(
@@ -144,42 +149,52 @@ private fun QuestionFormState(
                 key = { it.id }
             ) { question ->
                 AnimatedContent(
-                    modifier = Modifier.animateItem(),
-                    targetState = question.id == state.activeQuestionId,
-                    // Cross-fade between the expanded and collapsed question while the card resizes
+                    // No placement animation: cards below follow the resizing card frame by frame,
+                    // instead of lagging behind and overlapping it
+                    modifier = Modifier.animateItem(placementSpec = null),
+                    // Carries the input, so a closing question keeps showing its selection while it
+                    // fades out. Only opening and closing animate, not input changes.
+                    targetState = QuestionItem(
+                        active = question.id == state.activeQuestionId,
+                        input = state.input.takeIf { question.id == state.activeQuestionId },
+                    ),
+                    contentKey = { it.active },
+                    // Fade through: the old content fades out quickly, then the new one fades in while
+                    // the card resizes. Clipped, so a growing card doesn't draw over the one below it.
                     transitionSpec = {
-                        (fadeIn(tween(QuestionTransitionMillis)) togetherWith
-                                fadeOut(tween(QuestionTransitionMillis)))
-                            .using(SizeTransform(clip = false) { _, _ -> tween(QuestionTransitionMillis) })
+                        (fadeIn(tween(durationMillis = FadeInMillis, delayMillis = FadeOutMillis)) togetherWith
+                                fadeOut(tween(durationMillis = FadeOutMillis)))
+                            .using(SizeTransform(clip = true) { _, _ -> tween(QuestionTransitionMillis) })
                     },
                     label = "question",
-                ) { active ->
-                    if (active) {
+                ) { item ->
+                    if (item.active) {
                         ActiveQuestion(
                             question = question,
                             position = state.questions.indexOf(question) + 1,
                             total = state.questions.size,
-                            input = state.input,
+                            input = item.input,
                             onYesNoSelect = onYesNoSelect,
                             onOptionSelect = onOptionSelect,
                             onOptionToggle = onOptionToggle,
                             onNumberChange = onNumberChange,
                         )
                     } else {
-                        AnsweredQuestion(
+                        CollapsedQuestion(
                             question = question,
                             answer = state.answers[question.id],
-                            onEdit = { onEdit(question.id) },
+                            onClick = { onEdit(question.id) },
                         )
                     }
                 }
             }
-            if (state.isComplete) {
+            // Stays while an answer is edited, so nothing disappears from under the open question
+            if (state.allAnswered) {
                 item(key = "complete") {
                     AppText(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .animateItem(),
+                            .animateItem(placementSpec = null),
                         text = "All done. Tap an answer to change it.",
                         style = Theme.typography.caption,
                         color = Theme.contentColors.secondary,
@@ -191,18 +206,18 @@ private fun QuestionFormState(
     }
 }
 
-// Element: collapsed answered question, tappable to edit
+// Element: collapsed question, showing its answer (tap to edit) or that it's still to answer
 @Composable
-private fun AnsweredQuestion(
+private fun CollapsedQuestion(
     question: Question,
     answer: Answer?,
-    onEdit: () -> Unit,
+    onClick: () -> Unit,
 ) {
     AppSurface(
         modifier = Modifier
             .fillMaxWidth()
             .clip(Theme.shapes.surface)
-            .clickable(onClick = onEdit)
+            .clickable(onClick = onClick)
     ) {
         Row(verticalAlignment = Alignment.CenterVertically) {
             Column(
@@ -215,12 +230,13 @@ private fun AnsweredQuestion(
                     color = Theme.contentColors.secondary,
                 )
                 AppText(
-                    text = answer?.label(question) ?: "",
+                    text = answer?.label(question) ?: "Not answered yet",
                     style = Theme.typography.bodyBold,
+                    color = if (answer != null) Theme.contentColors.primary else Theme.contentColors.secondary,
                 )
             }
             AppText(
-                text = "Edit",
+                text = if (answer != null) "Edit" else "Answer",
                 style = Theme.typography.button,
                 color = Theme.contentColors.action,
             )
@@ -424,7 +440,33 @@ private fun StepperButton(
     )
 }
 
-private const val QuestionTransitionMillis = 250
+private data class QuestionItem(
+    val active: Boolean,
+    val input: Answer?,
+)
+
+private const val QuestionTransitionMillis = 300
+private const val FadeOutMillis = 90
+private const val FadeInMillis = QuestionTransitionMillis - FadeOutMillis
+
+// Scrolls the least needed to show the item in full above the bottom bar, or not at all
+private suspend fun LazyListState.scrollIntoView(index: Int) {
+    val item = layoutInfo.visibleItemsInfo.firstOrNull { it.index == index }
+    if (item == null) {
+        animateScrollToItem(index)
+        return
+    }
+    val visibleEnd = layoutInfo.viewportEndOffset - layoutInfo.afterContentPadding
+    val delta = when {
+        item.offset < 0 -> item.offset
+        // Scroll up to show the bottom, but never past the item's top
+        item.offset + item.size > visibleEnd -> minOf(item.offset + item.size - visibleEnd, item.offset)
+        else -> 0
+    }
+    if (delta != 0) {
+        animateScrollBy(delta.toFloat())
+    }
+}
 
 private fun Answer.label(question: Question): String = when (this) {
     is Answer.YesNo -> if (value) "Yes" else "No"

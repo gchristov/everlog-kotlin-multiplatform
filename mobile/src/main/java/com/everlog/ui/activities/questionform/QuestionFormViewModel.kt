@@ -69,11 +69,18 @@ class QuestionFormViewModel(
     ) {
         val activeQuestion: Question? get() = questions.firstOrNull { it.id == activeQuestionId }
 
-        // Answered questions and the active one, in order. Later questions stay hidden.
+        // Every question up to the first unanswered one, in order. Later questions stay hidden.
+        // Questions don't disappear while an earlier answer is edited.
         val visibleQuestions: List<Question>
-            get() = questions.filter { it.id in answers || it.id == activeQuestionId }
+            get() {
+                val firstUnanswered = questions.indexOfFirst { it.id !in answers }
+                return if (firstUnanswered == -1) questions else questions.take(firstUnanswered + 1)
+            }
 
-        val isComplete: Boolean get() = activeQuestionId == null && answers.size == questions.size
+        val allAnswered: Boolean get() = answers.size == questions.size
+
+        // Every question is answered and none is being edited
+        val isComplete: Boolean get() = activeQuestionId == null && allAnswered
 
         val canContinue: Boolean
             get() = when (val input = input) {
