@@ -27,6 +27,7 @@ import com.everlog.ui.design.elements.AppFooterAction
 import com.everlog.ui.design.elements.AppIcon
 import com.everlog.ui.design.elements.AppIconButton
 import com.everlog.ui.design.elements.AppScreen
+import com.everlog.ui.design.elements.AppScreenHeader
 import com.everlog.ui.design.elements.AppSecondaryButton
 import com.everlog.ui.design.elements.AppSurface
 import com.everlog.ui.design.elements.AppTertiaryButton
@@ -114,6 +115,13 @@ private fun DesignSystemState(
             group(key = "card", header = { "Card" }) {}
             item(key = "cardExample") {
                 Card(onButtonClick = onButtonClick)
+            }
+            group(key = "screenHeader", header = { "Screen header" }) {}
+            item(key = "screenHeaderExample") {
+                AppScreenHeader(
+                    title = "Screen title",
+                    body = "A line of body text under the title, at the top of a screen's content.",
+                )
             }
         }
     }
