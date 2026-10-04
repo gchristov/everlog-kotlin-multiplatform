@@ -1,5 +1,6 @@
 package com.everlog.ui.activities.questionform
 
+import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.SizeTransform
@@ -32,6 +33,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.vectorResource
@@ -52,23 +54,48 @@ import com.everlog.ui.design.elements.AppSurface
 import com.everlog.ui.design.elements.AppText
 import com.everlog.ui.design.theme.Theme
 import com.everlog.ui.mvvm.createViewModelFactory
+import com.everlog.utils.format.FormatUtils
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 
-// Debug-only prototype of a one-question-at-a-time form, opened from Settings. Copy is hardcoded and
-// the private composables below are placeholders for design system elements (see TAS-440).
+// Debug-only prototype of a one-question-at-a-time form for the app's settings, opened from Settings.
+// Copy is hardcoded and the private composables below are placeholders for design system elements
+// (see TAS-440).
 class QuestionFormActivity : CommonComposeActivity() {
     private val viewModel by viewModels<QuestionFormViewModel> {
-        createViewModelFactory { QuestionFormViewModel(dispatcher = Dispatchers.Main) }
+        createViewModelFactory {
+            // The view-model outlives the activity, so it only holds on to the application context
+            val appContext = applicationContext
+            QuestionFormViewModel(
+                dispatcher = Dispatchers.Main,
+                questions = SettingsQuestions.build(appContext),
+                saveAnswers = { answers -> SettingsQuestions.save(appContext, answers) },
+            )
+        }
     }
 
     @Composable
-    override fun Content() = QuestionFormScreen(viewModel = viewModel)
+    override fun Content() = QuestionFormScreen(
+        viewModel = viewModel,
+        onSaved = {
+            Toast.makeText(this, "Settings saved", Toast.LENGTH_SHORT).show()
+            finish()
+        }
+    )
 }
 
 @Composable
-internal fun QuestionFormScreen(viewModel: QuestionFormViewModel) {
+internal fun QuestionFormScreen(
+    viewModel: QuestionFormViewModel,
+    onSaved: () -> Unit,
+) {
     val state by viewModel.state.collectAsStateWithLifecycle()
+
+    LaunchedEffect(state.saved) {
+        if (state.saved) {
+            onSaved()
+        }
+    }
 
     QuestionFormState(
         state = state,
@@ -78,7 +105,7 @@ internal fun QuestionFormScreen(viewModel: QuestionFormViewModel) {
         onNumberChange = viewModel::onNumberChange,
         onNext = viewModel::onNext,
         onEdit = viewModel::onEdit,
-        onRestart = viewModel::onRestart,
+        onSave = viewModel::onSave,
     )
 }
 
@@ -88,10 +115,10 @@ private fun QuestionFormState(
     onYesNoSelect: (questionId: String, value: Boolean) -> Unit,
     onOptionSelect: (questionId: String, optionId: String) -> Unit,
     onOptionToggle: (questionId: String, optionId: String) -> Unit,
-    onNumberChange: (questionId: String, value: Int) -> Unit,
+    onNumberChange: (questionId: String, value: Double) -> Unit,
     onNext: () -> Unit,
     onEdit: (questionId: String) -> Unit,
-    onRestart: () -> Unit,
+    onSave: () -> Unit,
 ) {
     val listState = rememberLazyListState()
     val visibleQuestions = state.visibleQuestions
@@ -118,9 +145,8 @@ private fun QuestionFormState(
                 actions = listOf(
                     if (state.isComplete) {
                         AppFooterAction(
-                            text = "Start over",
-                            onClick = onRestart,
-                            style = AppFooterAction.Style.Secondary,
+                            text = "Save",
+                            onClick = onSave,
                         )
                     } else {
                         AppFooterAction(
@@ -174,6 +200,7 @@ private fun QuestionFormState(
                             position = state.questions.indexOf(question) + 1,
                             total = state.questions.size,
                             input = item.input,
+                            answers = state.answers,
                             onYesNoSelect = onYesNoSelect,
                             onOptionSelect = onOptionSelect,
                             onOptionToggle = onOptionToggle,
@@ -183,6 +210,7 @@ private fun QuestionFormState(
                         CollapsedQuestion(
                             question = question,
                             answer = state.answers[question.id],
+                            answers = state.answers,
                             onClick = { onEdit(question.id) },
                         )
                     }
@@ -195,7 +223,7 @@ private fun QuestionFormState(
                         modifier = Modifier
                             .fillMaxWidth()
                             .animateItem(placementSpec = null),
-                        text = "All done. Tap an answer to change it.",
+                        text = "All set. Tap an answer to change it, or save.",
                         style = Theme.typography.caption,
                         color = Theme.contentColors.secondary,
                         textAlign = TextAlign.Center,
@@ -211,6 +239,7 @@ private fun QuestionFormState(
 private fun CollapsedQuestion(
     question: Question,
     answer: Answer?,
+    answers: Map<String, Answer>,
     onClick: () -> Unit,
 ) {
     AppSurface(
@@ -230,7 +259,7 @@ private fun CollapsedQuestion(
                     color = Theme.contentColors.secondary,
                 )
                 AppText(
-                    text = answer?.label(question) ?: "Not answered yet",
+                    text = answer?.label(question, answers) ?: "Not answered yet",
                     style = Theme.typography.bodyBold,
                     color = if (answer != null) Theme.contentColors.primary else Theme.contentColors.secondary,
                 )
@@ -251,10 +280,11 @@ private fun ActiveQuestion(
     position: Int,
     total: Int,
     input: Answer?,
+    answers: Map<String, Answer>,
     onYesNoSelect: (questionId: String, value: Boolean) -> Unit,
     onOptionSelect: (questionId: String, optionId: String) -> Unit,
     onOptionToggle: (questionId: String, optionId: String) -> Unit,
-    onNumberChange: (questionId: String, value: Int) -> Unit,
+    onNumberChange: (questionId: String, value: Double) -> Unit,
 ) {
     AppSurface(modifier = Modifier.fillMaxWidth()) {
         Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
@@ -278,7 +308,7 @@ private fun ActiveQuestion(
                 is Question.SingleChoice -> Column {
                     question.options.forEach { option ->
                         ChoiceRow(
-                            label = option.label,
+                            option = option,
                             selected = (input as? Answer.SingleChoice)?.optionId == option.id,
                             multiple = false,
                             onClick = { onOptionSelect(question.id, option.id) },
@@ -289,7 +319,7 @@ private fun ActiveQuestion(
                 is Question.MultiChoice -> Column {
                     question.options.forEach { option ->
                         ChoiceRow(
-                            label = option.label,
+                            option = option,
                             selected = option.id in ((input as? Answer.MultiChoice)?.optionIds ?: emptySet()),
                             multiple = true,
                             onClick = { onOptionToggle(question.id, option.id) },
@@ -298,8 +328,9 @@ private fun ActiveQuestion(
                 }
 
                 is Question.Number -> NumberStepper(
-                    value = (input as? Answer.Number)?.value ?: question.default,
+                    value = (input as? Answer.Number)?.value ?: question.min,
                     question = question,
+                    unit = question.unit(answers),
                     onValueChange = { onNumberChange(question.id, it) },
                 )
             }
@@ -335,7 +366,7 @@ private fun YesNoInput(
 // Element: single (radio) or multiple (checkbox) choice row
 @Composable
 private fun ChoiceRow(
-    label: String,
+    option: Question.Option,
     selected: Boolean,
     multiple: Boolean,
     onClick: () -> Unit,
@@ -345,7 +376,8 @@ private fun ChoiceRow(
             .fillMaxWidth()
             .heightIn(min = 48.dp)
             .clip(Theme.shapes.surface)
-            .clickable(onClick = onClick),
+            .clickable(enabled = option.enabled, onClick = onClick)
+            .alpha(if (option.enabled) 1f else 0.4f),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(8.dp),
     ) {
@@ -369,19 +401,30 @@ private fun ChoiceRow(
                 ),
             )
         }
-        AppText(
-            modifier = Modifier.weight(1f),
-            text = label,
-        )
+        Column(
+            modifier = Modifier
+                .weight(1f)
+                .padding(vertical = 8.dp),
+        ) {
+            AppText(text = option.label)
+            option.description?.let { description ->
+                AppText(
+                    text = description,
+                    style = Theme.typography.caption,
+                    color = Theme.contentColors.secondary,
+                )
+            }
+        }
     }
 }
 
 // Element: −/+ stepper for picking a number in a range
 @Composable
 private fun NumberStepper(
-    value: Int,
+    value: Double,
     question: Question.Number,
-    onValueChange: (Int) -> Unit,
+    unit: String?,
+    onValueChange: (Double) -> Unit,
 ) {
     Row(
         modifier = Modifier.fillMaxWidth(),
@@ -396,10 +439,10 @@ private fun NumberStepper(
         )
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
             AppText(
-                text = value.toString(),
+                text = value.format(),
                 style = Theme.typography.title,
             )
-            question.unit?.let { unit ->
+            unit?.let { unit ->
                 AppText(
                     text = unit,
                     style = Theme.typography.caption,
@@ -468,9 +511,12 @@ private suspend fun LazyListState.scrollIntoView(index: Int) {
     }
 }
 
-private fun Answer.label(question: Question): String = when (this) {
+// Whole numbers without decimals, and others the way the app shows weights (e.g. 2.5)
+private fun Double.format(): String = FormatUtils.formatSetWeight(toFloat())
+
+private fun Answer.label(question: Question, answers: Map<String, Answer>): String = when (this) {
     is Answer.YesNo -> if (value) "Yes" else "No"
-    is Answer.Number -> listOfNotNull(value.toString(), (question as? Question.Number)?.unit).joinToString(" ")
+    is Answer.Number -> listOfNotNull(value.format(), (question as? Question.Number)?.unit?.invoke(answers)).joinToString(" ")
     is Answer.SingleChoice -> question.optionLabels(setOf(optionId))
     is Answer.MultiChoice -> question.optionLabels(optionIds)
 }
@@ -490,10 +536,13 @@ private fun QuestionFormPreview() {
     Theme {
         QuestionFormState(
             state = QuestionFormViewModel.State(
-                questions = SampleQuestions,
-                answers = mapOf("experience" to Answer.YesNo(true)),
-                activeQuestionId = "days",
-                input = Answer.Number(3),
+                questions = listOf(
+                    Question.YesNo(id = "yesNo", title = "Yes or no?"),
+                    Question.Number(id = "number", title = "How many?", min = 1.0, max = 7.0, unit = { "days" }),
+                ),
+                answers = mapOf("yesNo" to Answer.YesNo(true)),
+                activeQuestionId = "number",
+                input = Answer.Number(3.0),
             ),
             onYesNoSelect = { _, _ -> },
             onOptionSelect = { _, _ -> },
@@ -501,7 +550,7 @@ private fun QuestionFormPreview() {
             onNumberChange = { _, _ -> },
             onNext = {},
             onEdit = {},
-            onRestart = {},
+            onSave = {},
         )
     }
 }

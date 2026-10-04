@@ -4,88 +4,51 @@ sealed interface Question {
     val id: String
     val title: String
 
+    // What the question starts with before it's answered, e.g. the current setting
+    val default: Answer?
+
     data class YesNo(
         override val id: String,
         override val title: String,
+        override val default: Answer.YesNo? = null,
     ) : Question
 
     data class Number(
         override val id: String,
         override val title: String,
-        val min: Int,
-        val max: Int,
-        val step: Int = 1,
-        // Where the stepper starts before the question is answered
-        val default: Int = min,
-        val unit: String? = null,
+        val min: Double,
+        val max: Double,
+        val step: Double = 1.0,
+        override val default: Answer.Number? = null,
+        // Can depend on other answers, e.g. a weight's unit on the chosen weight unit
+        val unit: (answers: Map<String, Answer>) -> String? = { null },
     ) : Question
 
     data class SingleChoice(
         override val id: String,
         override val title: String,
         val options: List<Option>,
+        override val default: Answer.SingleChoice? = null,
     ) : Question
 
     data class MultiChoice(
         override val id: String,
         override val title: String,
         val options: List<Option>,
+        override val default: Answer.MultiChoice? = null,
     ) : Question
 
     data class Option(
         val id: String,
         val label: String,
+        val description: String? = null,
+        val enabled: Boolean = true,
     )
 }
 
 sealed interface Answer {
     data class YesNo(val value: Boolean) : Answer
-    data class Number(val value: Int) : Answer
+    data class Number(val value: Double) : Answer
     data class SingleChoice(val optionId: String) : Answer
     data class MultiChoice(val optionIds: Set<String>) : Answer
 }
-
-// Placeholder questions for the prototype. Real ones will come from string resources or config.
-internal val SampleQuestions = listOf(
-    Question.YesNo(
-        id = "experience",
-        title = "Have you trained with weights before?",
-    ),
-    Question.Number(
-        id = "days",
-        title = "How many days a week can you train?",
-        min = 1,
-        max = 7,
-        default = 3,
-        unit = "days",
-    ),
-    Question.SingleChoice(
-        id = "goal",
-        title = "What's your main goal?",
-        options = listOf(
-            Question.Option(id = "muscle", label = "Build muscle"),
-            Question.Option(id = "strength", label = "Get stronger"),
-            Question.Option(id = "fat", label = "Lose fat"),
-            Question.Option(id = "health", label = "Stay healthy"),
-        ),
-    ),
-    Question.MultiChoice(
-        id = "equipment",
-        title = "Which equipment can you use?",
-        options = listOf(
-            Question.Option(id = "barbell", label = "Barbell"),
-            Question.Option(id = "dumbbells", label = "Dumbbells"),
-            Question.Option(id = "machines", label = "Machines"),
-            Question.Option(id = "bodyweight", label = "Bodyweight only"),
-        ),
-    ),
-    Question.Number(
-        id = "duration",
-        title = "How long is a typical session?",
-        min = 10,
-        max = 180,
-        step = 5,
-        default = 60,
-        unit = "minutes",
-    ),
-)

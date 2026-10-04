@@ -2,15 +2,17 @@ package com.everlog.ui.activities.questionform
 
 import com.everlog.ui.mvvm.CommonViewModel
 import kotlinx.coroutines.CoroutineDispatcher
+import kotlin.math.roundToInt
 
 /**
  * Asks [Question]s one at a time. The active question's input is submitted with [onNext], which
  * moves on to the first unanswered question. Answered questions can be reopened and changed without
- * losing the answers after them.
+ * losing the answers after them, and [onSave] hands every answer to [saveAnswers].
  */
 class QuestionFormViewModel(
     dispatcher: CoroutineDispatcher,
-    questions: List<Question> = SampleQuestions,
+    questions: List<Question>,
+    private val saveAnswers: (Map<String, Answer>) -> Unit,
 ) : CommonViewModel<QuestionFormViewModel.State>(
     dispatcher = dispatcher,
     initialState = State(questions = questions, activeQuestionId = null).activate(questions.firstOrNull()?.id)
@@ -20,19 +22,24 @@ class QuestionFormViewModel(
     }
 
     fun onOptionSelect(questionId: String, optionId: String) {
+        if (!isEnabledOption(optionId)) return
         updateInput(questionId) { Answer.SingleChoice(optionId) }
     }
 
     fun onOptionToggle(questionId: String, optionId: String) {
+        if (!isEnabledOption(optionId)) return
         updateInput(questionId) { input ->
             val selected = (input as? Answer.MultiChoice)?.optionIds ?: emptySet()
             Answer.MultiChoice(if (optionId in selected) selected - optionId else selected + optionId)
         }
     }
 
-    fun onNumberChange(questionId: String, value: Int) {
+    fun onNumberChange(questionId: String, value: Double) {
         val question = state.value.activeQuestion as? Question.Number ?: return
-        updateInput(questionId) { Answer.Number(value.coerceIn(question.min, question.max)) }
+        // Snap to the question's step, avoiding floating point drift (e.g. 1.2499999)
+        val steps = ((value - question.min) / question.step).roundToInt()
+        val snapped = (question.min + steps * question.step).coerceIn(question.min, question.max)
+        updateInput(questionId) { Answer.Number(snapped) }
     }
 
     fun onNext() {
@@ -50,8 +57,20 @@ class QuestionFormViewModel(
         setState { activate(questionId) }
     }
 
-    fun onRestart() {
-        setState { State(questions = questions, activeQuestionId = null).activate(questions.firstOrNull()?.id) }
+    fun onSave() {
+        val currentState = state.value
+        if (!currentState.isComplete || currentState.saved) return
+        saveAnswers(currentState.answers)
+        setState { copy(saved = true) }
+    }
+
+    private fun isEnabledOption(optionId: String): Boolean {
+        val options = when (val question = state.value.activeQuestion) {
+            is Question.SingleChoice -> question.options
+            is Question.MultiChoice -> question.options
+            else -> return false
+        }
+        return options.any { it.id == optionId && it.enabled }
     }
 
     private fun updateInput(questionId: String, update: (Answer?) -> Answer) {
@@ -66,6 +85,7 @@ class QuestionFormViewModel(
         val activeQuestionId: String?,
         // In-progress answer for the active question, submitted with onNext
         val input: Answer? = null,
+        val saved: Boolean = false,
     ) {
         val activeQuestion: Question? get() = questions.firstOrNull { it.id == activeQuestionId }
 
@@ -94,7 +114,7 @@ class QuestionFormViewModel(
             val question = questions.firstOrNull { it.id == questionId }
             return copy(
                 activeQuestionId = questionId,
-                input = answers[questionId] ?: (question as? Question.Number)?.let { Answer.Number(it.default) },
+                input = answers[questionId] ?: question?.default,
             )
         }
     }
