@@ -5,15 +5,18 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.everlog.ui.design.elements.AppText
 import com.everlog.ui.design.theme.Theme
 
-// A row's padding, for any content. Rows with a title and subtitle use AppListItem.
+// A row's padding, for any content, at least Material's one-line list item height with the content
+// centred vertically. Rows with a title and subtitle use AppListItem.
 @Composable
 fun AppListRow(
     modifier: Modifier = Modifier,
@@ -22,7 +25,9 @@ fun AppListRow(
     Box(
         modifier = modifier
             .fillMaxWidth()
-            .padding(ListSpacing)
+            .heightIn(min = ListMinHeight)
+            .padding(ListSpacing),
+        contentAlignment = Alignment.CenterStart,
     ) {
         content()
     }
@@ -57,6 +62,7 @@ fun AppListItem(
 }
 
 private val ListSpacing = 16.dp
+private val ListMinHeight = 56.dp
 
 @Preview
 @Composable
