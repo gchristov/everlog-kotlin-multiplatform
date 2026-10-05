@@ -8,6 +8,7 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.runtime.Composable
 import com.everlog.ui.design.theme.Theme
+import com.everlog.utils.ActivityUtils
 
 abstract class CommonComposeActivity : ComponentActivity() {
     @Composable
@@ -20,6 +21,8 @@ abstract class CommonComposeActivity : ComponentActivity() {
             navigationBarStyle = SystemBarStyle.dark(Color.TRANSPARENT),
         )
         super.onCreate(savedInstanceState)
+        // Portrait on phones, any orientation on tablets, like the rest of the app
+        ActivityUtils.setOrientation(this)
         setContent {
             Theme {
                 Content()
