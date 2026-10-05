@@ -12,9 +12,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.layout.layout
+import androidx.compose.ui.graphics.painter.ColorPainter
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -27,6 +30,7 @@ import com.everlog.ui.design.elements.AppFooterAction
 import com.everlog.ui.design.elements.AppIcon
 import com.everlog.ui.design.elements.AppIconButton
 import com.everlog.ui.design.elements.AppScreen
+import com.everlog.ui.design.elements.AppHeroHeader
 import com.everlog.ui.design.elements.AppSecondaryButton
 import com.everlog.ui.design.elements.AppSurface
 import com.everlog.ui.design.elements.AppTertiaryButton
@@ -114,6 +118,24 @@ private fun DesignSystemState(
             group(key = "card", header = { "Card" }) {}
             item(key = "cardExample") {
                 Card(onButtonClick = onButtonClick)
+            }
+            group(key = "heroHeader", header = { "Hero header" }) {}
+            item(key = "heroHeaderExample") {
+                AppHeroHeader(
+                    title = "Screen title",
+                    body = "A line of body text under the title, at the top of a screen's content.",
+                )
+            }
+            item(key = "heroHeaderImageExample") {
+                AppHeroHeader(
+                    // Out of the list's margins, as it would be on a screen
+                    modifier = Modifier
+                        .padding(top = 32.dp)
+                        .fullBleed(AppGroupedListMargin),
+                    title = "Push day",
+                    body = "With an image, here a plain colour",
+                    image = ColorPainter(Theme.backgrounds.surfaceRaised),
+                )
             }
         }
     }
@@ -355,3 +377,19 @@ private fun DesignSystemScreenPreview() {
         )
     }
 }
+
+// Widens the content by margin on each side, so it reaches the screen edges from inside a padded list
+private fun Modifier.fullBleed(margin: Dp) = layout { measurable, constraints ->
+    val bleed = margin.roundToPx()
+    val placeable = measurable.measure(
+        constraints.copy(
+            minWidth = constraints.maxWidth + bleed * 2,
+            maxWidth = constraints.maxWidth + bleed * 2,
+        )
+    )
+    layout(constraints.maxWidth, placeable.height) {
+        placeable.place(-bleed, 0)
+    }
+}
+
+private val AppGroupedListMargin = 16.dp
