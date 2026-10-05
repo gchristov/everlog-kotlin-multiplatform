@@ -59,27 +59,18 @@ private val ScrollExamples = listOf(
 // The app bar's scroll behaviours, each opening a whole screen that uses it
 @Composable
 internal fun ScrollBehaviors(onOpen: (DesignSystemPage) -> Unit) {
-    AppScreen(
-        topBar = {
-            AppBar(
-                title = "App bar scroll behaviours",
-                showBack = true,
-            )
-        },
-    ) { contentPadding ->
-        AppGroupedList(contentPadding = contentPadding) {
-            group(
-                key = "examples",
-                footer = { "Drag on the content and on the header itself, slowly and with flings." },
-            ) {
-                items(count = ScrollExamples.size, key = { ScrollExamples[it].page }) { index ->
-                    val example = ScrollExamples[index]
-                    AppListItem(
-                        title = example.title,
-                        subtitle = example.description,
-                        onClick = { onOpen(example.page) },
-                    )
-                }
+    ShowcasePage(title = "App bar scroll behaviours") {
+        group(
+            key = "examples",
+            footer = { "Drag on the content and on the header itself, slowly and with flings." },
+        ) {
+            items(count = ScrollExamples.size, key = { ScrollExamples[it].page }) { index ->
+                val example = ScrollExamples[index]
+                AppListItem(
+                    title = example.title,
+                    subtitle = example.description,
+                    onClick = { onOpen(example.page) },
+                )
             }
         }
     }

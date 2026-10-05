@@ -3,23 +3,22 @@ package com.everlog.ui.activities.designsystem
 import androidx.activity.compose.BackHandler
 import androidx.activity.viewModels
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.saveable.listSaver
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.runtime.toMutableStateList
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.everlog.ui.design.CommonComposeActivity
-import com.everlog.ui.design.elements.AppBar
-import com.everlog.ui.design.elements.AppScreen
-import com.everlog.ui.design.elements.list.AppGroupedList
 import com.everlog.ui.design.elements.list.AppListItem
 import com.everlog.ui.design.theme.Theme
 import com.everlog.ui.mvvm.createViewModelFactory
 import kotlinx.coroutines.Dispatchers
 
 // Debug-only showcase of the Compose design system, opened from Settings. A list of pages, each in
-// its own file: the components, and screens to try behaviours that need a whole screen (e.g. app
-// bar scrolling).
+// its own file: the foundations (typography, icons), one page per component type, and screens to
+// try behaviours that need a whole screen (e.g. app bar scrolling).
 class DesignSystemActivity : CommonComposeActivity() {
     private val viewModel by viewModels<DesignSystemViewModel> {
         createViewModelFactory { DesignSystemViewModel(dispatcher = Dispatchers.Main) }
@@ -31,7 +30,14 @@ class DesignSystemActivity : CommonComposeActivity() {
 
 internal enum class DesignSystemPage {
     Home,
-    Components,
+    Typography,
+    Icons,
+    Buttons,
+    Lists,
+    Cards,
+    HeroHeader,
+    Dialogs,
+    Footer,
     ScrollBehaviors,
     ScrollAwayList,
     ScrollAwayPage,
@@ -43,6 +49,8 @@ internal enum class DesignSystemPage {
 // returns to the previous page, and from the first one closes the showcase.
 @Composable
 internal fun DesignSystemScreen(viewModel: DesignSystemViewModel) {
+    val state by viewModel.state.collectAsStateWithLifecycle()
+    val onButtonClick = viewModel::onButtonClick
     val pages = rememberSaveable(saver = PagesSaver) { mutableListOf(DesignSystemPage.Home).toMutableStateList() }
     val open: (DesignSystemPage) -> Unit = { pages.add(it) }
 
@@ -52,7 +60,14 @@ internal fun DesignSystemScreen(viewModel: DesignSystemViewModel) {
 
     when (pages.last()) {
         DesignSystemPage.Home -> DesignSystemHome(onOpen = open)
-        DesignSystemPage.Components -> DesignSystemComponents(viewModel = viewModel)
+        DesignSystemPage.Typography -> DesignSystemTypography()
+        DesignSystemPage.Icons -> DesignSystemIcons(onButtonClick = onButtonClick)
+        DesignSystemPage.Buttons -> DesignSystemButtons(buttonClicks = state.buttonClicks, onButtonClick = onButtonClick)
+        DesignSystemPage.Lists -> DesignSystemLists(onButtonClick = onButtonClick)
+        DesignSystemPage.Cards -> DesignSystemCards(onButtonClick = onButtonClick)
+        DesignSystemPage.HeroHeader -> DesignSystemHeroHeader()
+        DesignSystemPage.Dialogs -> DesignSystemDialogs()
+        DesignSystemPage.Footer -> DesignSystemFooter(onButtonClick = onButtonClick)
         DesignSystemPage.ScrollBehaviors -> ScrollBehaviors(onOpen = open)
         DesignSystemPage.ScrollAwayList -> ScrollAwayListExample()
         DesignSystemPage.ScrollAwayPage -> ScrollAwayPageExample()
@@ -66,31 +81,42 @@ private val PagesSaver = listSaver<SnapshotStateList<DesignSystemPage>, String>(
     restore = { names -> names.map { DesignSystemPage.valueOf(it) }.toMutableStateList() },
 )
 
+private data class HubEntry(
+    val page: DesignSystemPage,
+    val title: String,
+    val description: String,
+)
+
+private val HubSections = listOf(
+    "Foundations" to listOf(
+        HubEntry(DesignSystemPage.Typography, "Typography", "Text styles, with their sizes and weights"),
+        HubEntry(DesignSystemPage.Icons, "Icons", "The app's icons, content colours and icon buttons"),
+    ),
+    "Components" to listOf(
+        HubEntry(DesignSystemPage.Buttons, "Buttons", "Primary, secondary and tertiary, enabled and disabled"),
+        HubEntry(DesignSystemPage.Lists, "Lists", "Grouped lists and their rows"),
+        HubEntry(DesignSystemPage.Cards, "Cards", "The card surface, with text and actions"),
+        HubEntry(DesignSystemPage.HeroHeader, "Hero header", "A large title at the top of a screen's content"),
+        HubEntry(DesignSystemPage.Dialogs, "Dialogs", "A title, body text and two actions"),
+        HubEntry(DesignSystemPage.Footer, "Footer", "Actions pinned to the bottom, blurring what scrolls behind"),
+    ),
+    "Behaviours" to listOf(
+        HubEntry(DesignSystemPage.ScrollBehaviors, "App bar scroll behaviours", "Whole screens to try how an app bar's header scrolls"),
+    ),
+)
+
 @Composable
 private fun DesignSystemHome(onOpen: (DesignSystemPage) -> Unit) {
-    AppScreen(
-        topBar = {
-            AppBar(
-                title = "Design system",
-                showBack = true,
-            )
-        },
-    ) { contentPadding ->
-        AppGroupedList(contentPadding = contentPadding) {
-            group(key = "pages") {
-                items(count = 2, key = { it }) { index ->
-                    when (index) {
-                        0 -> AppListItem(
-                            title = "Components",
-                            subtitle = "Typography, icons, buttons, lists, cards and dialogs",
-                            onClick = { onOpen(DesignSystemPage.Components) },
-                        )
-                        else -> AppListItem(
-                            title = "App bar scroll behaviours",
-                            subtitle = "Whole screens to try how an app bar's header scrolls",
-                            onClick = { onOpen(DesignSystemPage.ScrollBehaviors) },
-                        )
-                    }
+    ShowcasePage(title = "Design system") {
+        HubSections.forEach { (section, entries) ->
+            group(key = section, header = { section }) {
+                items(count = entries.size, key = { entries[it].page }) { index ->
+                    val entry = entries[index]
+                    AppListItem(
+                        title = entry.title,
+                        subtitle = entry.description,
+                        onClick = { onOpen(entry.page) },
+                    )
                 }
             }
         }
