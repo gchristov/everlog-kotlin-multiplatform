@@ -18,19 +18,15 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.statusBars
-import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -103,7 +99,6 @@ internal fun onboardingColors() = OnboardingColors(
 
 internal object OnboardingType {
     val QuestionTitle = TextStyle(fontSize = 26.sp, lineHeight = 32.sp, fontWeight = FontWeight.Medium, letterSpacing = (-0.2).sp)
-    val Answer = TextStyle(fontSize = 16.sp, lineHeight = 22.sp, fontWeight = FontWeight.Medium)
     val Helper = TextStyle(fontSize = 13.sp, lineHeight = 18.sp)
     val TextAction = TextStyle(fontSize = 14.sp, fontWeight = FontWeight.Medium)
 }
@@ -507,7 +502,6 @@ private fun TrimmedStroke(
 internal object OnboardingIcons {
     val Pencil: ImageVector by lazy { strokeIcon("pencil", "M4 20h4L18.5 9.5a2.1 2.1 0 0 0-3-3L5 17v3z") }
     val Clock: ImageVector by lazy { strokeIcon("clock", "M3 12a9 9 0 1 0 18 0a9 9 0 1 0-18 0", "M12 7v5l3 2") }
-    val Bell: ImageVector by lazy { strokeIcon("bell", "M6 17V11a6 6 0 0 1 12 0v6l1.5 2h-15L6 17z", "M10 21a2 2 0 0 0 4 0") }
 
     private fun strokeIcon(name: String, vararg paths: String): ImageVector =
         ImageVector.Builder(name = name, defaultWidth = 24.dp, defaultHeight = 24.dp, viewportWidth = 24f, viewportHeight = 24f)

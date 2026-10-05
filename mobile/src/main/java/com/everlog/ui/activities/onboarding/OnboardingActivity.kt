@@ -5,7 +5,6 @@ import androidx.activity.viewModels
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.SizeTransform
-import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
@@ -13,27 +12,21 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.ScrollState
-import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.animateScrollBy
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.statusBars
-import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TimePicker
 import androidx.compose.material3.TimePickerDefaults
@@ -47,30 +40,20 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.graphicsLayer
-import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.layout.positionInRoot
 import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.platform.LocalHapticFeedback
-import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.everlog.managers.preferences.SettingsManager
 import com.everlog.ui.design.CommonComposeActivity
 import com.everlog.ui.design.elements.AppButton
 import com.everlog.ui.design.elements.AppFooter
 import com.everlog.ui.design.elements.AppFooterAction
-import com.everlog.ui.design.elements.AppHeroHeader
-import com.everlog.ui.design.elements.AppIcon
 import com.everlog.ui.design.elements.AppScreen
 import com.everlog.ui.design.elements.AppSecondaryButton
 import com.everlog.ui.design.elements.AppText
@@ -79,13 +62,11 @@ import com.everlog.ui.mvvm.createViewModelFactory
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.android.awaitFrame
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
 import org.threeten.bp.DayOfWeek
-import org.threeten.bp.LocalDate
 
 // Debug-only prototype of the onboarding (first run) journey from the Everlog Onboarding design,
-// opened from Settings. UI only: answers aren't saved, nothing is logged, and the end buttons close
-// the screen.
+// opened from Settings. UI only: answers aren't saved, nothing is logged, and Build my routine
+// closes the screen. The building, reveal and end steps come later.
 class OnboardingActivity : CommonComposeActivity() {
     private val viewModel by viewModels<OnboardingViewModel> {
         createViewModelFactory {
@@ -111,49 +92,19 @@ internal fun OnboardingScreen(
     val state by viewModel.state.collectAsStateWithLifecycle()
     var showSkipSetup by rememberSaveable { mutableStateOf(false) }
 
-    BackHandler(enabled = state.phase == OnboardingViewModel.Phase.Setup) {
+    BackHandler(enabled = !state.finished) {
         showSkipSetup = true
     }
 
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(Theme.backgrounds.primary)
-    ) {
-        AnimatedContent(
-            targetState = state.phase,
-            transitionSpec = {
-                when (targetState) {
-                    // Chrome and options fade out, then the one-line summary fades in
-                    OnboardingViewModel.Phase.Building ->
-                        fadeIn(tween(200, delayMillis = 300, easing = OnboardingMotion.EmphasizedDecelerate)) togetherWith
-                                fadeOut(tween(150, easing = OnboardingMotion.EmphasizedAccelerate))
-                    // The reveal animates its own content in
-                    else -> fadeIn(tween(150)) togetherWith fadeOut(tween(150))
-                }
-            },
-            label = "phase",
-        ) { phase ->
-            when (phase) {
-                OnboardingViewModel.Phase.Setup -> Setup(
-                    state = state,
-                    viewModel = viewModel,
-                    onSkipSetup = { showSkipSetup = true },
-                )
-                OnboardingViewModel.Phase.Building -> Building(summary = state.week?.summary.orEmpty())
-                OnboardingViewModel.Phase.Reveal -> state.week?.let { week ->
-                    Reveal(week = week, onContinue = viewModel::onRevealContinue)
-                }
-                OnboardingViewModel.Phase.End -> state.week?.let { week ->
-                    End(
-                        week = week,
-                        reminders = state.answers[OnboardingQuestions.Reminders] as? Answer.Reminders,
-                        onClose = onClose,
-                    )
-                }
-            }
-        }
+    LaunchedEffect(state.finished) {
+        if (state.finished) onClose()
     }
+
+    Setup(
+        state = state,
+        viewModel = viewModel,
+        onSkipSetup = { showSkipSetup = true },
+    )
 
     var skippingSetup by remember { mutableStateOf(false) }
     if (showSkipSetup) {
@@ -524,235 +475,6 @@ private fun SetupFooter(
         )
     }
 }
-
-// The one-line summary held with its caption while the week is built
-@Composable
-private fun Building(summary: String) {
-    val colors = onboardingColors()
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(horizontal = 16.dp),
-        verticalArrangement = Arrangement.spacedBy(8.dp, Alignment.CenterVertically),
-        horizontalAlignment = Alignment.CenterHorizontally,
-    ) {
-        AppText(
-            text = summary,
-            style = TextStyle(fontSize = 15.sp, lineHeight = 22.sp),
-            color = Theme.contentColors.secondary,
-            textAlign = TextAlign.Center,
-        )
-        AppText(
-            text = "Building your week",
-            style = OnboardingType.Helper,
-            color = colors.textTertiary,
-        )
-    }
-}
-
-@Composable
-private fun Reveal(
-    week: OnboardingWeek,
-    onContinue: () -> Unit,
-) {
-    val haptics = LocalHapticFeedback.current
-    val enterOffset = with(LocalDensity.current) { OnboardingMotion.EnterOffset.toPx() }
-    val title = remember { Animatable(0f) }
-    val buttons = remember { Animatable(0f) }
-    val cards = remember(week) { week.routines.map { Animatable(0f) } }
-
-    LaunchedEffect(week) {
-        launch { title.animateTo(1f, tween(200, easing = OnboardingMotion.EmphasizedDecelerate)) }
-        launch { buttons.animateTo(1f, tween(200, delayMillis = 200, easing = OnboardingMotion.EmphasizedDecelerate)) }
-        // Cards enter one after another, 60ms apart
-        cards.forEachIndexed { index, card ->
-            launch {
-                card.animateTo(1f, tween(OnboardingMotion.Enter, delayMillis = 60 + 60 * index, easing = OnboardingMotion.EmphasizedDecelerate))
-            }
-        }
-        // The one celebration: a confirm haptic as the week appears
-        launch {
-            delay(200)
-            haptics.performHapticFeedback(HapticFeedbackType.Confirm)
-        }
-    }
-
-    AppScreen(
-        footer = {
-            Box(modifier = Modifier.alpha(buttons.value)) {
-                AppFooter(
-                    // Both continue for now, until adding your own program and editing the week exist
-                    actions = if (week.experienced) {
-                        listOf(
-                            AppFooterAction(text = "Got your own program? Add your first day", onClick = onContinue),
-                            AppFooterAction(text = "Use this one", onClick = onContinue, style = AppFooterAction.Style.Secondary),
-                        )
-                    } else {
-                        listOf(
-                            AppFooterAction(text = "Make it yours", onClick = onContinue),
-                            AppFooterAction(text = "Looks good", onClick = onContinue, style = AppFooterAction.Style.Secondary),
-                        )
-                    }
-                )
-            }
-        },
-    ) { contentPadding ->
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .verticalScroll(rememberScrollState())
-                .padding(contentPadding)
-                .padding(start = 16.dp, end = 16.dp, bottom = 20.dp),
-        ) {
-            AppHeroHeader(
-                modifier = Modifier.alpha(title.value),
-                title = "Here's your week",
-                body = week.summary,
-            )
-            if (week.experienced) {
-                VerticalSpace(8.dp)
-                AppText(
-                    modifier = Modifier.alpha(title.value),
-                    text = "You've been lifting for years, so treat this as a starting point.",
-                    style = OnboardingType.Helper,
-                    color = Theme.contentColors.secondary,
-                )
-            }
-            VerticalSpace(if (week.experienced) 20.dp else 24.dp)
-            Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-                week.routines.forEachIndexed { index, routine ->
-                    RoutineCard(
-                        modifier = Modifier.graphicsLayer {
-                            val progress = cards[index].value
-                            alpha = progress
-                            translationY = (1f - progress) * enterOffset
-                        },
-                        routine = routine,
-                    )
-                }
-            }
-        }
-    }
-}
-
-@Composable
-private fun RoutineCard(
-    routine: OnboardingWeek.Routine,
-    modifier: Modifier = Modifier,
-) {
-    Column(
-        modifier = modifier
-            .fillMaxWidth()
-            .clip(RoundedCornerShape(10.dp))
-            .background(Theme.backgrounds.surface)
-            .padding(start = 16.dp, end = 16.dp, top = 16.dp, bottom = 6.dp),
-    ) {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(bottom = 8.dp),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically,
-        ) {
-            AppText(text = routine.name, style = TextStyle(fontSize = 18.sp, lineHeight = 26.sp, fontWeight = FontWeight.Medium))
-            AppText(
-                text = routine.days.joinToString(" · ") { it.shortName() },
-                style = OnboardingType.Helper,
-                color = Theme.contentColors.secondary,
-            )
-        }
-        routine.exercises.forEachIndexed { index, exercise ->
-            if (index > 0) {
-                HorizontalDivider(thickness = 1.dp, color = Theme.backgrounds.separator)
-            }
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(37.dp),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically,
-            ) {
-                AppText(text = exercise.name, style = TextStyle(fontSize = 15.sp))
-                AppText(
-                    text = "${exercise.sets} × ${exercise.reps}",
-                    style = TextStyle(fontSize = 14.sp),
-                    color = Theme.contentColors.secondary,
-                )
-            }
-        }
-    }
-}
-
-@Composable
-private fun End(
-    week: OnboardingWeek,
-    reminders: Answer.Reminders?,
-    onClose: () -> Unit,
-) {
-    val colors = onboardingColors()
-    val today = LocalDate.now().dayOfWeek
-    val trainingDays = week.routines.flatMap { it.days }
-    // Up first is the routine for the next training day from today
-    val firstDay = nextDay(from = today, among = trainingDays)
-    val upFirst = week.routines.firstOrNull { firstDay in it.days } ?: week.routines.first()
-
-    AppScreen(
-        footer = {
-            // Both close the screen for now, until starting a workout from here exists
-            AppFooter(
-                actions = listOf(
-                    AppFooterAction(text = "Start workout", onClick = onClose),
-                    AppFooterAction(text = "Later", onClick = onClose, style = AppFooterAction.Style.Secondary),
-                )
-            )
-        },
-    ) { contentPadding ->
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(contentPadding)
-                .padding(start = 16.dp, end = 16.dp),
-        ) {
-            AppHeroHeader(title = "At the gym now?", body = "Your first workout is ready.")
-            VerticalSpace(28.dp)
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .clip(RoundedCornerShape(10.dp))
-                    .background(Theme.backgrounds.surface)
-                    .padding(16.dp),
-                verticalArrangement = Arrangement.spacedBy(2.dp),
-            ) {
-                AppText(text = "Up first", style = OnboardingType.Helper, color = Theme.contentColors.secondary)
-                AppText(text = upFirst.name, style = TextStyle(fontSize = 20.sp, lineHeight = 28.sp, fontWeight = FontWeight.Medium))
-                AppText(
-                    text = "${upFirst.exercises.size} exercises · ${upFirst.sets} sets",
-                    style = TextStyle(fontSize = 14.sp, lineHeight = 20.sp),
-                    color = Theme.contentColors.secondary,
-                )
-            }
-            // Only when reminders are on, for the next reminder day
-            reminders?.let {
-                val day = nextDay(from = today, among = it.days.toList())
-                VerticalSpace(20.dp)
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(10.dp),
-                ) {
-                    AppIcon(modifier = Modifier.size(18.dp), imageVector = OnboardingIcons.Bell, tint = colors.textTertiary)
-                    AppText(
-                        text = "We'll remind you on ${day.fullName()} at ${OnboardingQuestions.formatTime(it.hour, it.minute)}",
-                        style = OnboardingType.Helper,
-                        color = Theme.contentColors.secondary,
-                    )
-                }
-            }
-        }
-    }
-}
-
-private fun nextDay(from: DayOfWeek, among: List<DayOfWeek>): DayOfWeek =
-    (0L until 7L).map { from.plus(it) }.firstOrNull { it in among } ?: among.firstOrNull() ?: from
 
 @Composable
 private fun SkipSetupDialog(

@@ -2,14 +2,13 @@ package com.everlog.ui.activities.onboarding
 
 import com.everlog.ui.mvvm.CommonViewModel
 import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.delay
 import org.threeten.bp.DayOfWeek
 
 /**
  * The setup questionnaire from the Everlog Onboarding design: one question open at a time, answered
- * questions collapse to summary rows that can be reopened, then the suggested week is revealed.
+ * questions collapse to summary rows that can be reopened, then Build my routine finishes.
  *
- * UI only for now: answers aren't saved and nothing is logged.
+ * UI only for now: answers aren't saved, nothing is logged, and no routine is built.
  */
 class OnboardingViewModel(
     dispatcher: CoroutineDispatcher,
@@ -71,28 +70,12 @@ class OnboardingViewModel(
 
     fun onBuild() {
         if (!state.value.allAnswered) return
-        setState { copy(phase = Phase.Building, week = buildWeek(answers)) }
-        launchCoroutine {
-            // The design holds "Building your week" briefly, even though the week is ready at once
-            delay(BuildingHoldMillis)
-            setState { copy(phase = Phase.Reveal) }
-        }
-    }
-
-    fun onRevealContinue() {
-        setState { copy(phase = Phase.End) }
+        setState { copy(finished = true) }
     }
 
     private fun updateInput(questionId: String, update: (Answer?) -> Answer?) {
         if (questionId != state.value.activeQuestionId) return
         setState { copy(input = update(input)) }
-    }
-
-    enum class Phase {
-        Setup,
-        Building,
-        Reveal,
-        End,
     }
 
     data class State(
@@ -104,8 +87,8 @@ class OnboardingViewModel(
         val activeQuestionId: String?,
         // In-progress answer for the open question
         val input: Answer? = null,
-        val phase: Phase = Phase.Setup,
-        val week: OnboardingWeek? = null,
+        // Build my routine was tapped, so the screen closes
+        val finished: Boolean = false,
         // From Settings, for the order of the reminder days
         val firstDayOfWeek: DayOfWeek = DayOfWeek.MONDAY,
     ) {
@@ -166,5 +149,3 @@ class OnboardingViewModel(
         }
     }
 }
-
-private const val BuildingHoldMillis = 900L
