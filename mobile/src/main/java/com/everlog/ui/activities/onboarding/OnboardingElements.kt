@@ -98,7 +98,8 @@ private object OnboardingSizes {
     val SelectionBorder = 1.5.dp
     val UnitCardHeight = 96.dp
     val UnitCardCheck = 18.dp
-    val ListItemCheck = 20.dp
+    // The same box as a trailing AppIcon, e.g. the pencil on summary rows
+    val ListItemCheck = 24.dp
     val ChipCheck = 12.dp
     const val CheckStroke = 2.5f
     // Heavier on the small chip check so it stays legible
@@ -471,9 +472,10 @@ internal fun AnimatedCheck(
 ) {
     val path = remember {
         Path().apply {
-            moveTo(5f, 12.5f)
-            lineTo(9.5f, 17f)
-            lineTo(19f, 7.5f)
+            // Spans most of the box, about as wide as the app's ic_check
+            moveTo(3.5f, 12.5f)
+            lineTo(9f, 18f)
+            lineTo(20.5f, 6.5f)
         }
     }
     TrimmedStroke(modifier = modifier, paths = listOf(path), progress = progress, strokeWidth = strokeWidth, color = color)
