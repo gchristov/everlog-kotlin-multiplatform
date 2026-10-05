@@ -23,9 +23,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.TextButton
 import androidx.compose.material3.TimePicker
 import androidx.compose.material3.TimePickerDefaults
 import androidx.compose.material3.rememberTimePickerState
@@ -49,6 +47,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.everlog.R
+import com.everlog.ui.design.elements.AppDialog
+import com.everlog.ui.design.elements.AppDialogAction
 import com.everlog.ui.design.elements.AppFooter
 import com.everlog.ui.design.elements.AppFooterAction
 import com.everlog.ui.design.elements.AppScreen
@@ -261,7 +261,7 @@ private fun QuestionBlock(
         if (editing) {
             AppText(
                 text = stringResource(R.string.onboarding_editing),
-                style = OnboardingType.Helper.copy(fontWeight = FontWeight.Medium),
+                style = Theme.typography.caption.copy(fontWeight = FontWeight.Medium),
                 color = Theme.contentColors.action,
             )
             VerticalSpace(6.dp)
@@ -269,7 +269,7 @@ private fun QuestionBlock(
         AppText(text = stringResource(question.title), style = OnboardingType.QuestionTitle)
         question.helper?.let { stringResource(it) }?.let { helper ->
             VerticalSpace(8.dp)
-            AppText(text = helper, style = OnboardingType.Helper, color = Theme.contentColors.secondary)
+            AppText(text = helper, style = Theme.typography.caption, color = Theme.contentColors.secondary)
         }
         VerticalSpace(if (question is OnboardingQuestion.Choice && question.sideBySide) 24.dp else 20.dp)
         when (question) {
@@ -420,36 +420,30 @@ private fun ReminderTimeDialog(
 ) {
     val colors = onboardingColors()
     val pickerState = rememberTimePickerState(initialHour = hour, initialMinute = minute, is24Hour = true)
-    AlertDialog(
+    AppDialog(
+        title = stringResource(R.string.onboarding_reminder_time_title),
         onDismissRequest = onDismiss,
-        containerColor = Theme.backgrounds.surface,
-        text = {
-            TimePicker(
-                state = pickerState,
-                colors = TimePickerDefaults.colors(
-                    clockDialColor = Theme.backgrounds.surfaceRaised,
-                    clockDialSelectedContentColor = Theme.contentColors.onAction,
-                    clockDialUnselectedContentColor = Theme.contentColors.primary,
-                    selectorColor = Theme.contentColors.action,
-                    containerColor = Theme.backgrounds.surface,
-                    timeSelectorSelectedContainerColor = colors.accentFillCurrent,
-                    timeSelectorUnselectedContainerColor = Theme.backgrounds.surfaceRaised,
-                    timeSelectorSelectedContentColor = Theme.contentColors.primary,
-                    timeSelectorUnselectedContentColor = Theme.contentColors.primary,
-                ),
-            )
-        },
-        confirmButton = {
-            TextButton(onClick = { onConfirm(pickerState.hour, pickerState.minute) }) {
-                AppText(text = stringResource(R.string.ok), style = OnboardingType.TextAction, color = Theme.contentColors.action)
-            }
-        },
-        dismissButton = {
-            TextButton(onClick = onDismiss) {
-                AppText(text = stringResource(R.string.cancel), style = OnboardingType.TextAction, color = Theme.contentColors.secondary)
-            }
-        },
-    )
+        primaryAction = AppDialogAction(
+            text = stringResource(R.string.ok),
+            onClick = { onConfirm(pickerState.hour, pickerState.minute) },
+        ),
+        secondaryAction = AppDialogAction(text = stringResource(R.string.cancel), onClick = onDismiss),
+    ) {
+        TimePicker(
+            state = pickerState,
+            colors = TimePickerDefaults.colors(
+                clockDialColor = Theme.backgrounds.surfaceRaised,
+                clockDialSelectedContentColor = Theme.contentColors.onAction,
+                clockDialUnselectedContentColor = Theme.contentColors.primary,
+                selectorColor = Theme.contentColors.action,
+                containerColor = Theme.backgrounds.surface,
+                timeSelectorSelectedContainerColor = colors.accentFillCurrent,
+                timeSelectorUnselectedContainerColor = Theme.backgrounds.surfaceRaised,
+                timeSelectorSelectedContentColor = Theme.contentColors.primary,
+                timeSelectorUnselectedContentColor = Theme.contentColors.primary,
+            ),
+        )
+    }
 }
 
 // How an answer reads on its question's summary row

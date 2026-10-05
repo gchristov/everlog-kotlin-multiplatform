@@ -1,5 +1,7 @@
 package com.everlog.ui.design.elements
 
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
 import androidx.compose.material3.AlertDialog
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -17,6 +19,7 @@ data class AppDialogAction(
  *
  * @param primaryAction The action we want the user to take, as a filled button.
  * @param secondaryAction The way out, e.g. "Skip setup", as an outlined button before it.
+ * @param content Shown under the body, e.g. a time picker.
  */
 @Composable
 fun AppDialog(
@@ -26,6 +29,7 @@ fun AppDialog(
     modifier: Modifier = Modifier,
     body: String? = null,
     secondaryAction: AppDialogAction? = null,
+    content: (@Composable () -> Unit)? = null,
 ) {
     AlertDialog(
         modifier = modifier,
@@ -37,13 +41,20 @@ fun AppDialog(
                 style = Theme.typography.heading,
             )
         },
-        text = body?.let {
+        text = if (body != null || content != null) {
             {
-                AppText(
-                    text = it,
-                    color = Theme.contentColors.secondary,
-                )
+                Column(verticalArrangement = Arrangement.spacedBy(Theme.spacing.large)) {
+                    body?.let {
+                        AppText(
+                            text = it,
+                            color = Theme.contentColors.secondary,
+                        )
+                    }
+                    content?.invoke()
+                }
             }
+        } else {
+            null
         },
         confirmButton = {
             AppButton(

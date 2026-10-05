@@ -37,17 +37,16 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.PathMeasure
-import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.StrokeJoin
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.drawscope.scale
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.graphics.vector.addPathNodes
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.selected
@@ -104,8 +103,6 @@ internal fun onboardingColors() = OnboardingColors(
 
 internal object OnboardingType {
     val QuestionTitle = TextStyle(fontSize = 26.sp, lineHeight = 32.sp, fontWeight = FontWeight.Medium, letterSpacing = (-0.2).sp)
-    val Helper = TextStyle(fontSize = 13.sp, lineHeight = 18.sp)
-    val TextAction = TextStyle(fontSize = 14.sp, fontWeight = FontWeight.Medium)
 }
 
 // Top bar: the app bar with Skip setup, and the progress segments under it
@@ -289,7 +286,7 @@ internal fun UnitCard(
             verticalArrangement = Arrangement.spacedBy(4.dp),
         ) {
             AppText(text = title, style = TextStyle(fontSize = 28.sp, lineHeight = 32.sp, fontWeight = FontWeight.Medium))
-            AppText(text = description, style = OnboardingType.Helper, color = Theme.contentColors.secondary)
+            AppText(text = description, style = Theme.typography.caption, color = Theme.contentColors.secondary)
         }
         AnimatedCheck(
             modifier = Modifier
@@ -410,7 +407,7 @@ internal fun TimeRow(
         AppListItem(
             title = stringResource(R.string.time),
             leading = {
-                AppIcon(imageVector = OnboardingIcons.Clock, tint = Theme.contentColors.secondary)
+                AppIcon(imageVector = ImageVector.vectorResource(R.drawable.ic_time), tint = Theme.contentColors.secondary)
             },
             trailing = {
                 AppText(text = time, style = Theme.typography.heading)
@@ -443,7 +440,7 @@ internal fun SummaryRow(
             title = shownAnswer,
             titleColor = if (skipped) colors.textTertiary else Theme.contentColors.action,
             trailing = {
-                AppIcon(modifier = Modifier.size(18.dp), imageVector = OnboardingIcons.Pencil, tint = colors.textTertiary)
+                AppIcon(modifier = Modifier.size(18.dp), imageVector = ImageVector.vectorResource(R.drawable.ic_edit), tint = colors.textTertiary)
             },
             onClick = onClick,
         )
@@ -508,27 +505,6 @@ private fun TrimmedStroke(
             }
         }
     }
-}
-
-// Stroke icons from the design, drawn white so AppIcon can tint them
-internal object OnboardingIcons {
-    val Pencil: ImageVector by lazy { strokeIcon("pencil", "M4 20h4L18.5 9.5a2.1 2.1 0 0 0-3-3L5 17v3z") }
-    val Clock: ImageVector by lazy { strokeIcon("clock", "M3 12a9 9 0 1 0 18 0a9 9 0 1 0-18 0", "M12 7v5l3 2") }
-
-    private fun strokeIcon(name: String, vararg paths: String): ImageVector =
-        ImageVector.Builder(name = name, defaultWidth = 24.dp, defaultHeight = 24.dp, viewportWidth = 24f, viewportHeight = 24f)
-            .apply {
-                paths.forEach { data ->
-                    addPath(
-                        pathData = addPathNodes(data),
-                        stroke = SolidColor(Color.White),
-                        strokeLineWidth = 1.75f,
-                        strokeLineCap = StrokeCap.Round,
-                        strokeLineJoin = StrokeJoin.Round,
-                    )
-                }
-            }
-            .build()
 }
 
 @Composable

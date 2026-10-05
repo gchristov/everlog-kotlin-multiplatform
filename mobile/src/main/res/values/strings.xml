@@ -459,6 +459,7 @@
     <string name="onboarding_step">Step %1$d of %2$d</string>
     <string name="onboarding_all_steps_answered">All %1$d steps answered</string>
     <string name="onboarding_edit_answer">Edit %1$s, currently %2$s</string>
+    <string name="onboarding_reminder_time_title">Reminder time</string>
     <string name="onboarding_reminder_time_description">Reminder time, %1$s. Opens time picker</string>
 
     <string name="onboarding_units_label">Units</string>
