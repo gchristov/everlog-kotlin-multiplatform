@@ -347,7 +347,7 @@ private fun Card(onButtonClick: () -> Unit) {
                 )
                 AppText(
                     text = "The card background sits on top of the screen background, like the cards in Settings.",
-                    style = Theme.typography.caption,
+                    style = Theme.typography.body,
                     color = Theme.contentColors.secondary,
                 )
             }
