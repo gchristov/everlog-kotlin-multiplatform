@@ -5,8 +5,9 @@ import kotlinx.coroutines.CoroutineDispatcher
 import org.threeten.bp.DayOfWeek
 
 /**
- * The setup questionnaire from the Everlog Onboarding design: one question open at a time, answered
- * questions collapse to summary rows that can be reopened, then Build my routine finishes.
+ * The welcome, then the setup questionnaire from the Everlog Onboarding design: one question open
+ * at a time, answered questions collapse to summary rows that can be reopened, then Build my
+ * routine finishes.
  *
  * UI only for now: answers aren't saved, nothing is logged, and no routine is built.
  */
@@ -18,6 +19,11 @@ class OnboardingViewModel(
     dispatcher = dispatcher,
     initialState = State(questions = questions, activeQuestionId = null, firstDayOfWeek = firstDayOfWeek).activate(questions.firstOrNull()?.id)
 ) {
+    // Let's go on the welcome
+    fun onStart() {
+        setState { copy(welcome = false) }
+    }
+
     fun onOptionSelect(questionId: String, optionId: String) {
         updateInput(questionId) { Answer.Choice(optionId) }
     }
@@ -80,6 +86,8 @@ class OnboardingViewModel(
 
     data class State(
         val questions: List<OnboardingQuestion>,
+        // The welcome shows first, until Let's go opens the questions
+        val welcome: Boolean = true,
         val answers: Map<String, Answer> = emptyMap(),
         // Questions skipped, whose answers are the defaults
         val skipped: Set<String> = emptySet(),

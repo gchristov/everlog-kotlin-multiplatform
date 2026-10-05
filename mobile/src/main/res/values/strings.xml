@@ -444,6 +444,16 @@
     <string name="select_image">Choose an image</string>
 
     <!-- Onboarding -->
+    <string name="onboarding_welcome_eyebrow">Welcome to Everlog</string>
+    <string name="onboarding_welcome_title">Let\'s get you set up</string>
+    <string name="onboarding_welcome_body">A few quick questions, then we\'ll build a training week around you. It takes about a minute.</string>
+    <string name="onboarding_welcome_step_questions">Tell us how you train</string>
+    <string name="onboarding_welcome_step_questions_description">Six quick questions. Skip any you like.</string>
+    <string name="onboarding_welcome_step_week">We build your week</string>
+    <string name="onboarding_welcome_step_week_description">Routines matched to your gym, level and goal.</string>
+    <string name="onboarding_welcome_step_yours">Make it yours</string>
+    <string name="onboarding_welcome_step_yours_description">Swap exercises, then start your first workout.</string>
+    <string name="onboarding_lets_go">Let\'s go</string>
     <string name="onboarding_skip_setup">Skip setup</string>
     <string name="onboarding_skip_setup_title">Skip setup?</string>
     <string name="onboarding_skip_setup_body">We\'ll start you with an empty app. You can build routines yourself, or set this up later from Settings.</string>

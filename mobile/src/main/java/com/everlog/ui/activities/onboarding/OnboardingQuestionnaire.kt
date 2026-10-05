@@ -36,12 +36,15 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.layout.positionInRoot
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -50,7 +53,6 @@ import com.everlog.ui.design.elements.AppDialog
 import com.everlog.ui.design.elements.AppDialogAction
 import com.everlog.ui.design.elements.AppFooter
 import com.everlog.ui.design.elements.AppFooterAction
-import com.everlog.ui.design.elements.AppScreen
 import com.everlog.ui.design.elements.AppText
 import com.everlog.ui.design.elements.list.AppListGroup
 import com.everlog.ui.design.theme.Theme
@@ -58,12 +60,13 @@ import kotlinx.coroutines.delay
 import org.threeten.bp.DayOfWeek
 
 // The setup questions: one open at a time, answered ones collapse to summary rows that can be
-// reopened, and Build my routine finishes
+// reopened, and Build my routine finishes. The content of OnboardingScreen's AppScreen, after the
+// welcome.
 @Composable
 internal fun OnboardingQuestionnaire(
     state: OnboardingViewModel.State,
     viewModel: OnboardingViewModel,
-    onSkipSetup: () -> Unit,
+    contentPadding: PaddingValues,
 ) {
     val scrollState = rememberScrollState()
     var viewportHeight by remember { mutableFloatStateOf(0f) }
@@ -88,32 +91,21 @@ internal fun OnboardingQuestionnaire(
         }
     }
 
-    AppScreen(
-        topBar = {
-            OnboardingTopBar(
-                answered = state.answers.size,
-                total = state.questions.size,
-                onSkipSetup = onSkipSetup,
-            )
-        },
-        footer = { SetupFooter(state = state, viewModel = viewModel) },
-    ) { contentPadding ->
-        Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .onSizeChanged { viewportHeight = it.height.toFloat() }
-                .onGloballyPositioned { viewportTop = it.positionInRoot().y }
-        ) {
-            SetupQuestions(
-                state = state,
-                viewModel = viewModel,
-                scrollState = scrollState,
-                viewportHeight = viewportHeight,
-                contentPadding = contentPadding,
-                onQuestionPositioned = { id, top -> questionTops[id] = top },
-                onTimeClick = { showTimePicker = true },
-            )
-        }
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .onSizeChanged { viewportHeight = it.height.toFloat() }
+            .onGloballyPositioned { viewportTop = it.positionInRoot().y }
+    ) {
+        SetupQuestions(
+            state = state,
+            viewModel = viewModel,
+            scrollState = scrollState,
+            viewportHeight = viewportHeight,
+            contentPadding = contentPadding,
+            onQuestionPositioned = { id, top -> questionTops[id] = top },
+            onTimeClick = { showTimePicker = true },
+        )
     }
 
     val reminders = state.input as? Answer.Reminders
@@ -366,51 +358,77 @@ private fun RemindersInput(
 }
 
 private enum class FooterMode {
+    Welcome,
     Next,
     Editing,
     Reminders,
     Build,
 }
 
+// The footer for every onboarding step. Single-button steps (the welcome, Build my routine) use the
+// lower slot, so a swap is a crossfade in place that never moves the thumb target.
 @Composable
-private fun SetupFooter(
+internal fun OnboardingFooter(
     state: OnboardingViewModel.State,
     viewModel: OnboardingViewModel,
+    // Let's go fades in after the welcome's content, the first time it shows
+    animateIn: Boolean,
 ) {
+    val haptics = LocalHapticFeedback.current
     val mode = when {
+        state.welcome -> FooterMode.Welcome
         state.activeQuestion is OnboardingQuestion.Reminders -> FooterMode.Reminders
         state.activeQuestionId == null -> FooterMode.Build
         state.isEditing -> FooterMode.Editing
         else -> FooterMode.Next
     }
-    // A footer swap is a crossfade with no movement
+    // A footer swap is a crossfade with no movement. Leaving the welcome, Next and Skip wait for the
+    // welcome's content to fade out.
     AnimatedContent(
         targetState = mode,
+        contentAlignment = Alignment.BottomCenter,
         transitionSpec = {
-            fadeIn(tween(OnboardingMotion.Select, easing = OnboardingMotion.Standard)) togetherWith
+            val delay = if (initialState == FooterMode.Welcome) OnboardingMotion.WelcomeExit else 0
+            fadeIn(tween(OnboardingMotion.Select, delay, OnboardingMotion.Standard)) togetherWith
                     fadeOut(tween(OnboardingMotion.Select, easing = OnboardingMotion.Standard))
         },
         label = "footer",
     ) { footerMode ->
-        AppFooter(
-            actions = when (footerMode) {
-                FooterMode.Next -> listOf(
-                    AppFooterAction(text = stringResource(R.string.onboarding_next), onClick = viewModel::onSubmit, enabled = state.canContinue),
-                    AppFooterAction(text = stringResource(R.string.onboarding_skip), onClick = viewModel::onSkip, style = AppFooterAction.Style.Secondary),
-                )
-                FooterMode.Editing -> listOf(
-                    AppFooterAction(text = stringResource(R.string.done), onClick = viewModel::onSubmit, enabled = state.canContinue),
-                    AppFooterAction(text = stringResource(R.string.cancel), onClick = viewModel::onCancel, style = AppFooterAction.Style.Tertiary),
-                )
-                FooterMode.Reminders -> listOf(
-                    AppFooterAction(text = stringResource(R.string.onboarding_remind_me), onClick = viewModel::onSubmit, enabled = state.canContinue),
-                    AppFooterAction(text = stringResource(R.string.onboarding_not_now), onClick = viewModel::onNotNow, style = AppFooterAction.Style.Secondary),
-                )
-                FooterMode.Build -> listOf(
-                    AppFooterAction(text = stringResource(R.string.onboarding_build_my_routine), onClick = viewModel::onBuild),
-                )
-            }
-        )
+        val actions = when (footerMode) {
+            FooterMode.Welcome -> listOf(
+                AppFooterAction(
+                    text = stringResource(R.string.onboarding_lets_go),
+                    onClick = {
+                        haptics.performHapticFeedback(HapticFeedbackType.TextHandleMove)
+                        viewModel.onStart()
+                    },
+                ),
+            )
+            FooterMode.Next -> listOf(
+                AppFooterAction(text = stringResource(R.string.onboarding_next), onClick = viewModel::onSubmit, enabled = state.canContinue),
+                AppFooterAction(text = stringResource(R.string.onboarding_skip), onClick = viewModel::onSkip, style = AppFooterAction.Style.Secondary),
+            )
+            FooterMode.Editing -> listOf(
+                AppFooterAction(text = stringResource(R.string.done), onClick = viewModel::onSubmit, enabled = state.canContinue),
+                AppFooterAction(text = stringResource(R.string.cancel), onClick = viewModel::onCancel, style = AppFooterAction.Style.Tertiary),
+            )
+            FooterMode.Reminders -> listOf(
+                AppFooterAction(text = stringResource(R.string.onboarding_remind_me), onClick = viewModel::onSubmit, enabled = state.canContinue),
+                AppFooterAction(text = stringResource(R.string.onboarding_not_now), onClick = viewModel::onNotNow, style = AppFooterAction.Style.Secondary),
+            )
+            FooterMode.Build -> listOf(
+                AppFooterAction(text = stringResource(R.string.onboarding_build_my_routine), onClick = viewModel::onBuild),
+            )
+        }
+        EnterAnimation(
+            animateIn = animateIn && footerMode == FooterMode.Welcome,
+            delayMillis = WelcomeMotion.ButtonDelay,
+            slide = false,
+            durationMillis = WelcomeMotion.ButtonFade,
+            easing = OnboardingMotion.Standard,
+        ) {
+            AppFooter(actions = actions)
+        }
     }
 }
 
