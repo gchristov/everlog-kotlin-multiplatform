@@ -26,6 +26,7 @@ import dev.chrisbanes.haze.hazeSource
  * like the login screens. The top bar and the footer's background still go edge to edge. Proper
  * tablet layouts will come later.
  *
+ * @param modifier E.g. `Modifier.nestedScroll(...)` for an [AppBarScrollBehavior].
  * @param footer Pinned to the bottom, usually an [AppFooter].
  * @param content Receives the padding that keeps content clear of the [footer]. Content is
  * drawn behind the footer, which blurs it (see [AppFooter]), so apply the padding inside
@@ -33,6 +34,7 @@ import dev.chrisbanes.haze.hazeSource
  */
 @Composable
 fun AppScreen(
+    modifier: Modifier = Modifier,
     topBar: @Composable () -> Unit = {},
     footer: @Composable () -> Unit = {},
     content: @Composable (contentPadding: PaddingValues) -> Unit,
@@ -49,6 +51,7 @@ fun AppScreen(
         LocalAppScreenMaxContentWidth provides maxContentWidth,
     ) {
         Scaffold(
+            modifier = modifier,
             topBar = topBar,
             bottomBar = footer,
             containerColor = Theme.backgrounds.primary,
