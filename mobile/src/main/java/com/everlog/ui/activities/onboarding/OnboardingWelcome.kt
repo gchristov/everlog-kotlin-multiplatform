@@ -7,18 +7,12 @@ import androidx.compose.animation.core.tween
 import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
@@ -33,8 +27,8 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import com.everlog.R
 import com.everlog.ui.design.elements.AppBarHeader
-import com.everlog.ui.design.elements.AppSurface
-import com.everlog.ui.design.elements.AppText
+import com.everlog.ui.design.elements.list.AppListGroup
+import com.everlog.ui.design.elements.list.AppListItem
 import com.everlog.ui.design.theme.Theme
 
 private data class WelcomeStep(
@@ -57,7 +51,7 @@ internal object WelcomeMotion {
 }
 
 // The first onboarding step: its header in the app bar (OnboardingWelcomeHeader), then what's about
-// to happen as a three-step timeline, then Let's go in the footer opens the questions
+// to happen as a list of three steps, then Let's go in the footer opens the questions
 @Composable
 internal fun OnboardingWelcome(
     scrollState: ScrollState,
@@ -73,17 +67,19 @@ internal fun OnboardingWelcome(
             // The header's bottom padding plus this make the design's gap under the body
             .padding(top = Theme.spacing.large, bottom = contentPadding.calculateBottomPadding() + Theme.spacing.large),
     ) {
-        // The card comes in with the first step, the later steps follow inside it
+        // The group comes in with the first step, the later steps follow inside it
         EnterAnimation(animateIn = animateIn, delayMillis = WelcomeMotion.StepsDelay) {
-            AppSurface(modifier = Modifier.fillMaxWidth()) {
+            AppListGroup {
                 WelcomeSteps.forEachIndexed { index, step ->
-                    EnterAnimation(animateIn = animateIn && index > 0, delayMillis = WelcomeMotion.StepStagger * index) {
-                        TimelineStep(
-                            title = stringResource(step.title),
-                            description = stringResource(step.description),
-                            current = index == 0,
-                            last = index == WelcomeSteps.lastIndex,
-                        )
+                    row {
+                        EnterAnimation(animateIn = animateIn && index > 0, delayMillis = WelcomeMotion.StepStagger * index) {
+                            AppListItem(
+                                modifier = Modifier.semantics(mergeDescendants = true) {},
+                                title = stringResource(step.title),
+                                subtitle = stringResource(step.description),
+                                leading = { StepMarker(current = index == 0) },
+                            )
+                        }
                     }
                 }
             }
@@ -103,65 +99,31 @@ internal fun OnboardingWelcomeHeader(animateIn: Boolean) {
     }
 }
 
-// A step on the timeline: a dot joined to the next step's by a line, then the step's title and
-// description. The current step's dot is filled.
+// A step's marker, in a list item's leading slot: filled for the current step, outlined for the ones
+// to come
 @Composable
-private fun TimelineStep(
-    title: String,
-    description: String,
-    current: Boolean,
-    last: Boolean,
-) {
-    Row(
-        // So the line runs the full height of the step
-        modifier = Modifier
-            .height(IntrinsicSize.Min)
-            .semantics(mergeDescendants = true) {},
-        horizontalArrangement = Arrangement.spacedBy(Theme.spacing.large),
+private fun StepMarker(current: Boolean) {
+    Box(
+        modifier = Modifier.size(StepMarkerSizes.Box),
+        contentAlignment = Alignment.Center,
     ) {
-        Column(
-            modifier = Modifier.width(TimelineSizes.Column),
-            horizontalAlignment = Alignment.CenterHorizontally,
-        ) {
-            val dot = Modifier
-                .padding(top = TimelineSizes.DotTop)
-                .size(TimelineSizes.Dot)
-            Box(
-                modifier = if (current) {
-                    dot.background(Theme.contentColors.action, CircleShape)
-                } else {
-                    dot.border(TimelineSizes.Stroke, Theme.contentColors.secondary, CircleShape)
-                }
-            )
-            if (!last) {
-                Box(
-                    modifier = Modifier
-                        .padding(vertical = TimelineSizes.LineGap)
-                        .weight(1f)
-                        .width(TimelineSizes.Stroke)
-                        .background(Theme.backgrounds.separator)
-                )
+        val dot = Modifier.size(StepMarkerSizes.Dot)
+        Box(
+            modifier = if (current) {
+                dot.background(Theme.contentColors.action, CircleShape)
+            } else {
+                dot.border(StepMarkerSizes.Stroke, Theme.contentColors.secondary, CircleShape)
             }
-        }
-        Column(
-            modifier = Modifier.padding(bottom = if (last) 0.dp else TimelineSizes.StepGap),
-            verticalArrangement = Arrangement.spacedBy(Theme.spacing.extraSmall),
-        ) {
-            AppText(text = title, style = Theme.typography.subtitle)
-            AppText(text = description, style = Theme.typography.caption, color = Theme.contentColors.secondary)
-        }
+        )
     }
 }
 
-// Sizes from the design's timeline, which the design system doesn't have
-private object TimelineSizes {
-    val Column = 20.dp
+// Sizes from the design's step markers, which the design system doesn't have
+private object StepMarkerSizes {
+    // The same box as a leading AppIcon, so the text lines up with other list items
+    val Box = 24.dp
     val Dot = 12.dp
-    // Centres the dot on the title's first line
-    val DotTop = 4.dp
     val Stroke = 1.5.dp
-    val LineGap = 6.dp
-    val StepGap = 24.dp
 }
 
 // Fades its content in, sliding it up unless [slide] is off. Drawn in place from the start, so the
