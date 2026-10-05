@@ -20,6 +20,8 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
@@ -69,7 +71,8 @@ internal fun OnboardingWelcome(
     ) {
         // The group comes in with the first step, the later steps follow inside it
         EnterAnimation(animateIn = animateIn, delayMillis = WelcomeMotion.StepsDelay) {
-            AppListGroup {
+            // No dividers, so the markers' line runs through the rows unbroken
+            AppListGroup(showDividers = false) {
                 WelcomeSteps.forEachIndexed { index, step ->
                     row {
                         EnterAnimation(animateIn = animateIn && index > 0, delayMillis = WelcomeMotion.StepStagger * index) {
@@ -77,7 +80,13 @@ internal fun OnboardingWelcome(
                                 modifier = Modifier.semantics(mergeDescendants = true) {},
                                 title = stringResource(step.title),
                                 subtitle = stringResource(step.description),
-                                leading = { StepMarker(current = index == 0) },
+                                leading = {
+                                    StepMarker(
+                                        current = index == 0,
+                                        first = index == 0,
+                                        last = index == WelcomeSteps.lastIndex,
+                                    )
+                                },
                             )
                         }
                     }
@@ -100,11 +109,30 @@ internal fun OnboardingWelcomeHeader(animateIn: Boolean) {
 }
 
 // A step's marker, in a list item's leading slot: filled for the current step, outlined for the ones
-// to come
+// to come, and joined to the markers above and below by a line
 @Composable
-private fun StepMarker(current: Boolean) {
+private fun StepMarker(
+    current: Boolean,
+    first: Boolean,
+    last: Boolean,
+) {
+    val lineColor = Theme.backgrounds.separator
     Box(
-        modifier = Modifier.size(StepMarkerSizes.Box),
+        modifier = Modifier
+            .size(StepMarkerSizes.Box)
+            .drawBehind {
+                val stroke = StepMarkerSizes.Stroke.toPx()
+                val gap = StepMarkerSizes.Dot.toPx() / 2 + StepMarkerSizes.LineGap.toPx()
+                // Runs well past the marker: each row clips to its own bounds, so the line ends at
+                // the row's edge and meets the next row's
+                val reach = size.height * LineReach
+                if (!first) {
+                    drawLine(lineColor, Offset(center.x, center.y - gap), Offset(center.x, center.y - gap - reach), stroke)
+                }
+                if (!last) {
+                    drawLine(lineColor, Offset(center.x, center.y + gap), Offset(center.x, center.y + gap + reach), stroke)
+                }
+            },
         contentAlignment = Alignment.Center,
     ) {
         val dot = Modifier.size(StepMarkerSizes.Dot)
@@ -124,7 +152,13 @@ private object StepMarkerSizes {
     val Box = 24.dp
     val Dot = 12.dp
     val Stroke = 1.5.dp
+    // Between the dot and the line
+    val LineGap = 6.dp
 }
+
+// How far the line reaches past the marker, in marker heights. More than any row is tall, even with
+// large fonts.
+private const val LineReach = 20f
 
 // Fades its content in, sliding it up unless [slide] is off. Drawn in place from the start, so the
 // layout never shifts as things come in.
