@@ -110,7 +110,7 @@ private val CardShape = RoundedCornerShape(10.dp)
 // Top bar: the app bar with Skip setup, and the progress segments under it
 @Composable
 internal fun OnboardingTopBar(
-    step: Int,
+    answered: Int,
     total: Int,
     onSkipSetup: () -> Unit,
 ) {
@@ -137,9 +137,13 @@ internal fun OnboardingTopBar(
             // In line with the content on tablets, while the app bar goes edge to edge
             modifier = Modifier
                 .widthIn(max = LocalAppScreenMaxContentWidth.current)
-                .semantics { contentDescription = "Step $step of $total" },
-            done = step - 1,
-            current = step - 1,
+                .semantics {
+                    contentDescription = if (answered < total) "Step ${answered + 1} of $total" else "All $total steps answered"
+                },
+            // Every question is answered in order, so the next one follows the answered ones. Once
+            // all are answered, every segment is filled and none is current.
+            done = answered,
+            current = answered,
             total = total,
         )
     }

@@ -158,7 +158,7 @@ private fun Setup(
     AppScreen(
         topBar = {
             OnboardingTopBar(
-                step = state.step,
+                answered = state.answers.size,
                 total = state.questions.size,
                 onSkipSetup = onSkipSetup,
             )

@@ -107,10 +107,6 @@ class OnboardingViewModel(
 
         val allAnswered: Boolean get() = answers.size == questions.size
 
-        // The step shown as "{n} of 6": the next question to answer, even while editing
-        val step: Int
-            get() = questions.indexOfFirst { it.id !in answers }.let { if (it == -1) questions.size else it + 1 }
-
         val canContinue: Boolean
             get() = when (val input = input) {
                 is Answer.Reminders -> input.days.isNotEmpty()
