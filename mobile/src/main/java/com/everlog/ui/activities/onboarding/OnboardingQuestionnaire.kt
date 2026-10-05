@@ -52,6 +52,7 @@ import com.everlog.ui.design.elements.AppFooter
 import com.everlog.ui.design.elements.AppFooterAction
 import com.everlog.ui.design.elements.AppScreen
 import com.everlog.ui.design.elements.AppText
+import com.everlog.ui.design.elements.list.AppListGroup
 import com.everlog.ui.design.theme.Theme
 import kotlinx.coroutines.delay
 import org.threeten.bp.DayOfWeek
@@ -353,10 +354,14 @@ private fun RemindersInput(
             }
         }
         VerticalSpace(Theme.spacing.large)
-        TimeRow(
-            time = OnboardingQuestions.formatTime(reminders?.hour ?: 18, reminders?.minute ?: 0),
-            onClick = onTimeClick,
-        )
+        AppListGroup(footer = stringResource(R.string.onboarding_reminders_permission)) {
+            row {
+                TimeRow(
+                    time = OnboardingQuestions.formatTime(reminders?.hour ?: 18, reminders?.minute ?: 0),
+                    onClick = onTimeClick,
+                )
+            }
+        }
     }
 }
 

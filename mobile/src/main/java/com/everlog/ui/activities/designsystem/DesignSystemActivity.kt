@@ -119,7 +119,11 @@ private fun DesignSystemState(
                     onButtonClick = onButtonClick
                 )
             }
-            group(key = "list", header = { "List" }) {
+            group(
+                key = "list",
+                header = { "List" },
+                footer = { "A footer note under a group's rows." },
+            ) {
                 listRows(onButtonClick = onButtonClick)
             }
             group(key = "card", header = { "Card" }) {}

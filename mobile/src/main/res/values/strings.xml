@@ -509,7 +509,8 @@
 
     <string name="onboarding_reminders_label">Reminders</string>
     <string name="onboarding_reminders_title">Want a reminder on training days?</string>
-    <string name="onboarding_reminders_helper">We\'ll only message you on the days you pick. Android will ask to allow notifications when you tap Remind me.</string>
+    <string name="onboarding_reminders_helper">We\'ll only message you on the days you pick.</string>
+    <string name="onboarding_reminders_permission">Android will ask to allow notifications when you tap Remind me.</string>
     <string name="onboarding_reminders_answer">%1$s at %2$s</string>
     <string name="onboarding_reminders_off">Off</string>
 </resources>

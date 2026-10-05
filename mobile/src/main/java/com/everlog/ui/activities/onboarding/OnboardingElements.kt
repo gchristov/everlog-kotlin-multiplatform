@@ -391,30 +391,24 @@ internal fun DayChip(
     }
 }
 
-// Reminder time, opening a time picker
+// Reminder time, opening a time picker. A row for an AppListGroup.
 @Composable
 internal fun TimeRow(
     time: String,
     onClick: () -> Unit,
 ) {
     val description = stringResource(R.string.onboarding_reminder_time_description, time)
-    AppSurface(
-        modifier = Modifier
-            .fillMaxWidth()
-            .semantics(mergeDescendants = true) { contentDescription = description },
-        contentPadding = PaddingValues(),
-    ) {
-        AppListItem(
-            title = stringResource(R.string.time),
-            leading = {
-                AppIcon(imageVector = ImageVector.vectorResource(R.drawable.ic_time), tint = Theme.contentColors.secondary)
-            },
-            trailing = {
-                AppText(text = time, style = Theme.typography.heading)
-            },
-            onClick = onClick,
-        )
-    }
+    AppListItem(
+        modifier = Modifier.semantics(mergeDescendants = true) { contentDescription = description },
+        title = stringResource(R.string.time),
+        leading = {
+            AppIcon(imageVector = ImageVector.vectorResource(R.drawable.ic_time), tint = Theme.contentColors.secondary)
+        },
+        trailing = {
+            AppText(text = time, style = Theme.typography.heading)
+        },
+        onClick = onClick,
+    )
 }
 
 // Collapsed answer: the question's label over the answer in accent, with a pencil. The whole row
