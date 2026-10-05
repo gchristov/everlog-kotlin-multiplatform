@@ -28,7 +28,7 @@ fun AppListRow(
         modifier = modifier
             .fillMaxWidth()
             .heightIn(min = ListMinHeight)
-            .padding(ListSpacing),
+            .padding(Theme.spacing.large),
         contentAlignment = Alignment.CenterStart,
     ) {
         content()
@@ -54,12 +54,12 @@ fun AppListItem(
     ) {
         Row(
             verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(ListSpacing),
+            horizontalArrangement = Arrangement.spacedBy(Theme.spacing.large),
         ) {
             leading?.invoke()
             Column(
                 modifier = Modifier.weight(1f),
-                verticalArrangement = Arrangement.spacedBy(4.dp),
+                verticalArrangement = Arrangement.spacedBy(Theme.spacing.extraSmall),
             ) {
                 header?.let {
                     AppText(
@@ -86,7 +86,6 @@ fun AppListItem(
     }
 }
 
-private val ListSpacing = 16.dp
 private val ListMinHeight = 56.dp
 
 @Preview

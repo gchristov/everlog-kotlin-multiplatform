@@ -44,7 +44,6 @@ import androidx.compose.ui.layout.positionInRoot
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.everlog.R
 import com.everlog.ui.design.elements.AppDialog
@@ -145,7 +144,7 @@ private fun SetupQuestions(
     val visibleIds = state.visibleQuestions.map { it.id }
     // The first question sits lower on an empty screen, like the design's first state
     val topPadding by animateDpAsState(
-        targetValue = if (state.answers.isEmpty()) 72.dp else 16.dp,
+        targetValue = if (state.answers.isEmpty()) Theme.spacing.extraLarge else Theme.spacing.large,
         animationSpec = tween(OnboardingMotion.Collapse, easing = OnboardingMotion.Standard),
         label = "topPadding",
     )
@@ -154,7 +153,7 @@ private fun SetupQuestions(
         modifier = Modifier
             .fillMaxSize()
             .verticalScroll(scrollState)
-            .padding(start = 16.dp, end = 16.dp, top = topPadding),
+            .padding(start = Theme.spacing.large, end = Theme.spacing.large, top = topPadding),
     ) {
         state.questions.forEach { question ->
             AnimatedVisibility(
@@ -225,7 +224,7 @@ private fun QuestionItem(
         label = "question",
     ) { item ->
         when (item.mode) {
-            ItemMode.Open -> Box(modifier = Modifier.padding(top = if (state.answers.isEmpty()) 0.dp else 16.dp, bottom = 24.dp)) {
+            ItemMode.Open -> Box(modifier = Modifier.padding(top = if (state.answers.isEmpty()) 0.dp else Theme.spacing.large, bottom = Theme.spacing.extraLarge)) {
                 QuestionBlock(
                     question = question,
                     input = item.input,
@@ -234,7 +233,7 @@ private fun QuestionItem(
                     onTimeClick = onTimeClick,
                 )
             }
-            ItemMode.Answered -> Box(modifier = Modifier.padding(bottom = 8.dp)) {
+            ItemMode.Answered -> Box(modifier = Modifier.padding(bottom = Theme.spacing.small)) {
                 SummaryRow(
                     label = stringResource(question.label),
                     answer = state.answers[question.id]?.let { answerSummary(question, it, state.firstDayOfWeek) }.orEmpty(),
@@ -242,7 +241,7 @@ private fun QuestionItem(
                     onClick = { viewModel.onEdit(question.id) },
                 )
             }
-            ItemMode.UpNext -> Box(modifier = Modifier.padding(bottom = 8.dp)) {
+            ItemMode.UpNext -> Box(modifier = Modifier.padding(bottom = Theme.spacing.small)) {
                 UpNextRow(label = stringResource(question.label))
             }
         }
@@ -261,17 +260,17 @@ private fun QuestionBlock(
         if (editing) {
             AppText(
                 text = stringResource(R.string.onboarding_editing),
-                style = Theme.typography.caption.copy(fontWeight = FontWeight.Medium),
+                style = Theme.typography.caption,
                 color = Theme.contentColors.action,
             )
-            VerticalSpace(6.dp)
+            VerticalSpace(Theme.spacing.small)
         }
-        AppText(text = stringResource(question.title), style = OnboardingType.QuestionTitle)
+        AppText(text = stringResource(question.title), style = Theme.typography.title)
         question.helper?.let { stringResource(it) }?.let { helper ->
-            VerticalSpace(8.dp)
-            AppText(text = helper, style = Theme.typography.caption, color = Theme.contentColors.secondary)
+            VerticalSpace(Theme.spacing.small)
+            AppText(text = helper, style = Theme.typography.body, color = Theme.contentColors.secondary)
         }
-        VerticalSpace(if (question is OnboardingQuestion.Choice && question.sideBySide) 24.dp else 20.dp)
+        VerticalSpace(if (question is OnboardingQuestion.Choice && question.sideBySide) Theme.spacing.extraLarge else Theme.spacing.large)
         when (question) {
             is OnboardingQuestion.Choice -> ChoiceOptions(
                 question = question,
@@ -279,7 +278,7 @@ private fun QuestionBlock(
                 onSelect = { viewModel.onOptionSelect(question.id, it) },
             )
             // Same squares and spacing as the reminder days
-            is OnboardingQuestion.Days -> Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
+            is OnboardingQuestion.Days -> Row(horizontalArrangement = Arrangement.spacedBy(Theme.spacing.small)) {
                 question.options.forEach { count ->
                     NumberChip(
                         modifier = Modifier.weight(1f),
@@ -307,7 +306,7 @@ private fun ChoiceOptions(
     onSelect: (String) -> Unit,
 ) {
     if (question.sideBySide) {
-        Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+        Row(horizontalArrangement = Arrangement.spacedBy(Theme.spacing.medium)) {
             question.options.forEach { option ->
                 UnitCard(
                     modifier = Modifier.weight(1f),
@@ -319,7 +318,7 @@ private fun ChoiceOptions(
             }
         }
     } else {
-        Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
+        Column(verticalArrangement = Arrangement.spacedBy(Theme.spacing.medium)) {
             question.options.forEach { option ->
                 SelectableListItem(
                     title = stringResource(option.title),
@@ -342,7 +341,7 @@ private fun RemindersInput(
     val days = reminders?.days.orEmpty()
     Column {
         // Starting from the first day of the week set in Settings
-        Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
+        Row(horizontalArrangement = Arrangement.spacedBy(Theme.spacing.small)) {
             OnboardingQuestions.week(startingOn = firstDayOfWeek).forEach { day ->
                 DayChip(
                     modifier = Modifier.weight(1f),
@@ -353,7 +352,7 @@ private fun RemindersInput(
                 )
             }
         }
-        VerticalSpace(16.dp)
+        VerticalSpace(Theme.spacing.large)
         TimeRow(
             time = OnboardingQuestions.formatTime(reminders?.hour ?: 18, reminders?.minute ?: 0),
             onClick = onTimeClick,
@@ -418,7 +417,6 @@ private fun ReminderTimeDialog(
     onDismiss: () -> Unit,
     onConfirm: (hour: Int, minute: Int) -> Unit,
 ) {
-    val colors = onboardingColors()
     val pickerState = rememberTimePickerState(initialHour = hour, initialMinute = minute, is24Hour = true)
     AppDialog(
         title = stringResource(R.string.onboarding_reminder_time_title),
@@ -437,7 +435,7 @@ private fun ReminderTimeDialog(
                 clockDialUnselectedContentColor = Theme.contentColors.primary,
                 selectorColor = Theme.contentColors.action,
                 containerColor = Theme.backgrounds.surface,
-                timeSelectorSelectedContainerColor = colors.accentFillCurrent,
+                timeSelectorSelectedContainerColor = Theme.backgrounds.actionMuted,
                 timeSelectorUnselectedContainerColor = Theme.backgrounds.surfaceRaised,
                 timeSelectorSelectedContentColor = Theme.contentColors.primary,
                 timeSelectorUnselectedContentColor = Theme.contentColors.primary,

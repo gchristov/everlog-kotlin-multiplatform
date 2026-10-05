@@ -73,8 +73,8 @@ fun AppFooter(
             modifier = Modifier
                 .widthIn(max = LocalAppScreenMaxContentWidth.current)
                 .fillMaxWidth()
-                .padding(16.dp),
-            verticalArrangement = Arrangement.spacedBy(8.dp)
+                .padding(Theme.spacing.large),
+            verticalArrangement = Arrangement.spacedBy(Theme.spacing.small)
         ) {
             FooterActions(actions)
         }

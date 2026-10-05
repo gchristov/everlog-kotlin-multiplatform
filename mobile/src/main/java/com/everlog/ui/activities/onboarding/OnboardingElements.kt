@@ -26,7 +26,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -44,18 +43,14 @@ import androidx.compose.ui.graphics.drawscope.scale
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalHapticFeedback
-import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.selected
 import androidx.compose.ui.semantics.semantics
-import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.everlog.R
 import com.everlog.ui.design.elements.AppBar
 import com.everlog.ui.design.elements.AppIcon
@@ -84,27 +79,6 @@ internal object OnboardingMotion {
     val EnterOffset = 16.dp
 }
 
-// Colours the design uses that the theme doesn't have yet
-@Immutable
-internal data class OnboardingColors(
-    val accentPressed: Color,
-    val accentFillSelected: Color,
-    val accentFillCurrent: Color,
-    val textTertiary: Color,
-)
-
-@Composable
-internal fun onboardingColors() = OnboardingColors(
-    accentPressed = colorResource(R.color.main_accent_darker),
-    accentFillSelected = colorResource(R.color.main_accent_faded_1),
-    accentFillCurrent = colorResource(R.color.main_accent_faded_2),
-    textTertiary = colorResource(R.color.gray_3),
-)
-
-internal object OnboardingType {
-    val QuestionTitle = TextStyle(fontSize = 26.sp, lineHeight = 32.sp, fontWeight = FontWeight.Medium, letterSpacing = (-0.2).sp)
-}
-
 // Top bar: the app bar with Skip setup, and the progress segments under it
 @Composable
 internal fun OnboardingTopBar(
@@ -122,7 +96,7 @@ internal fun OnboardingTopBar(
             .fillMaxWidth()
             .background(Theme.backgrounds.primary)
             // A band under the progress bar, so content scrolling up disappears below it
-            .padding(bottom = 8.dp),
+            .padding(bottom = Theme.spacing.small),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         AppBar(
@@ -132,7 +106,7 @@ internal fun OnboardingTopBar(
                 AppTertiaryButton(
                     onClick = onSkipSetup,
                     text = stringResource(R.string.onboarding_skip_setup),
-                    contentPadding = PaddingValues(horizontal = 12.dp),
+                    contentPadding = PaddingValues(horizontal = Theme.spacing.medium),
                 )
             },
         )
@@ -158,12 +132,11 @@ private fun ProgressSegments(
     total: Int,
     modifier: Modifier = Modifier,
 ) {
-    val colors = onboardingColors()
     Row(
         modifier = modifier
             .fillMaxWidth()
-            .padding(horizontal = 16.dp),
-        horizontalArrangement = Arrangement.spacedBy(4.dp),
+            .padding(horizontal = Theme.spacing.large),
+        horizontalArrangement = Arrangement.spacedBy(Theme.spacing.extraSmall),
     ) {
         repeat(total) { index ->
             val fill by animateFloatAsState(
@@ -172,7 +145,7 @@ private fun ProgressSegments(
                 label = "segmentFill",
             )
             val track by animateColorAsState(
-                targetValue = if (index == current) colors.accentFillCurrent else Theme.backgrounds.separator,
+                targetValue = if (index == current) Theme.backgrounds.actionMuted else Theme.backgrounds.separator,
                 animationSpec = tween(OnboardingMotion.Select, easing = OnboardingMotion.Standard),
                 label = "segmentTrack",
             )
@@ -204,7 +177,6 @@ private fun SelectableBox(
     description: String,
     content: @Composable BoxScope.(checkProgress: Float) -> Unit,
 ) {
-    val colors = onboardingColors()
     val haptics = LocalHapticFeedback.current
     val interactionSource = remember { MutableInteractionSource() }
     val pressed by interactionSource.collectIsPressedAsState()
@@ -215,7 +187,7 @@ private fun SelectableBox(
     )
     val border by animateColorAsState(
         targetValue = when {
-            pressed -> colors.accentPressed
+            pressed -> Theme.contentColors.actionPressed
             selected -> Theme.contentColors.action
             else -> Color.Transparent
         },
@@ -225,7 +197,7 @@ private fun SelectableBox(
     val fill by animateColorAsState(
         targetValue = when {
             pressed -> Theme.backgrounds.separator
-            selected -> colors.accentFillSelected
+            selected -> Theme.backgrounds.selected
             else -> Theme.backgrounds.surface
         },
         animationSpec = tween(OnboardingMotion.Select, easing = OnboardingMotion.Standard),
@@ -282,16 +254,16 @@ internal fun UnitCard(
         Column(
             modifier = Modifier
                 .align(Alignment.CenterStart)
-                .padding(horizontal = 16.dp),
-            verticalArrangement = Arrangement.spacedBy(4.dp),
+                .padding(horizontal = Theme.spacing.large),
+            verticalArrangement = Arrangement.spacedBy(Theme.spacing.extraSmall),
         ) {
-            AppText(text = title, style = TextStyle(fontSize = 28.sp, lineHeight = 32.sp, fontWeight = FontWeight.Medium))
+            AppText(text = title, style = Theme.typography.title)
             AppText(text = description, style = Theme.typography.caption, color = Theme.contentColors.secondary)
         }
         AnimatedCheck(
             modifier = Modifier
                 .align(Alignment.TopEnd)
-                .padding(12.dp)
+                .padding(Theme.spacing.medium)
                 .size(18.dp),
             progress = check,
             strokeWidth = 2.5f,
@@ -347,12 +319,13 @@ internal fun NumberChip(
         AppText(
             modifier = Modifier.align(Alignment.Center),
             text = value.toString(),
-            style = TextStyle(fontSize = 22.sp, fontWeight = FontWeight.Medium),
+            style = Theme.typography.heading,
         )
         AnimatedCheck(
             modifier = Modifier
                 .align(Alignment.TopEnd)
-                .padding(6.dp)
+                // The smaller inset keeps the check clear of the number on narrow chips
+                .padding(Theme.spacing.extraSmall)
                 .size(12.dp),
             progress = check,
             strokeWidth = 3f,
@@ -384,7 +357,7 @@ internal fun DayChip(
         AppText(
             modifier = Modifier.align(Alignment.Center),
             text = label,
-            style = TextStyle(fontSize = 13.sp, fontWeight = FontWeight.Medium),
+            style = Theme.typography.caption,
             color = labelColor,
             maxLines = 1,
         )
@@ -426,7 +399,6 @@ internal fun SummaryRow(
     skipped: Boolean,
     onClick: () -> Unit,
 ) {
-    val colors = onboardingColors()
     val shownAnswer = if (skipped) stringResource(R.string.onboarding_skipped) else answer
     val description = stringResource(R.string.onboarding_edit_answer, label, shownAnswer)
     AppSurface(
@@ -438,9 +410,9 @@ internal fun SummaryRow(
         AppListItem(
             header = label,
             title = shownAnswer,
-            titleColor = if (skipped) colors.textTertiary else Theme.contentColors.action,
+            titleColor = if (skipped) Theme.contentColors.secondary else Theme.contentColors.action,
             trailing = {
-                AppIcon(modifier = Modifier.size(18.dp), imageVector = ImageVector.vectorResource(R.drawable.ic_edit), tint = colors.textTertiary)
+                AppIcon(modifier = Modifier.size(18.dp), imageVector = ImageVector.vectorResource(R.drawable.ic_edit), tint = Theme.contentColors.secondary)
             },
             onClick = onClick,
         )
@@ -450,7 +422,6 @@ internal fun SummaryRow(
 // The next question while another one is being edited: dim and outlined, not tappable
 @Composable
 internal fun UpNextRow(label: String) {
-    val colors = onboardingColors()
     Box(
         modifier = Modifier
             .fillMaxWidth()
@@ -459,7 +430,7 @@ internal fun UpNextRow(label: String) {
         AppListItem(
             header = label,
             title = stringResource(R.string.onboarding_up_next),
-            titleColor = colors.textTertiary,
+            titleColor = Theme.contentColors.secondary,
         )
     }
 }

@@ -10,6 +10,8 @@ import com.everlog.R
 @Immutable
 data class ContentColors(
     val action: Color,
+    // The action colour while it's pressed, e.g. a selectable card's outline
+    val actionPressed: Color,
     val onAction: Color,
     val primary: Color,
     val secondary: Color,
@@ -19,6 +21,7 @@ data class ContentColors(
 internal val LocalContentColors = staticCompositionLocalOf {
     ContentColors(
         action = Color.Unspecified,
+        actionPressed = Color.Unspecified,
         onAction = Color.Unspecified,
         primary = Color.Unspecified,
         secondary = Color.Unspecified,
@@ -29,6 +32,7 @@ internal val LocalContentColors = staticCompositionLocalOf {
 @Composable
 internal fun contentColors() = ContentColors(
     action = colorResource(R.color.main_accent),
+    actionPressed = colorResource(R.color.main_accent_darker),
     onAction = colorResource(R.color.background_card),
     primary = colorResource(R.color.white_darker),
     secondary = colorResource(R.color.gray_1),

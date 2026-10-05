@@ -44,10 +44,10 @@ fun AppGroupedList(
         modifier = modifier.fillMaxSize(),
         state = state,
         contentPadding = PaddingValues(
-            start = AppGroupedListSpacing,
-            top = AppGroupedListSpacing + contentPadding.calculateTopPadding(),
-            end = AppGroupedListSpacing,
-            bottom = AppGroupedListSpacing + contentPadding.calculateBottomPadding(),
+            start = Theme.spacing.large,
+            top = Theme.spacing.large + contentPadding.calculateTopPadding(),
+            end = Theme.spacing.large,
+            bottom = Theme.spacing.large + contentPadding.calculateBottomPadding(),
         )
     ) {
         RealAppGroupedListScope(
@@ -109,11 +109,11 @@ private class RealAppGroupedListScope(
             Column(modifier = Modifier.fillMaxWidth()) {
                 // Space between groups, like margin_26 between the sections in Settings
                 if (!isFirstGroup) {
-                    Spacer(modifier = Modifier.height(AppGroupSpacing))
+                    Spacer(modifier = Modifier.height(Theme.spacing.extraLarge))
                 }
                 if (header != null) {
                     AppSectionHeader(
-                        modifier = Modifier.padding(bottom = AppGroupedListSpacing),
+                        modifier = Modifier.padding(bottom = Theme.spacing.large),
                         text = header(),
                     )
                 }
@@ -196,5 +196,3 @@ private data class AppCompositeKey(
     val itemKey: @RawValue Any
 ) : Parcelable
 
-private val AppGroupedListSpacing = 16.dp
-private val AppGroupSpacing = 26.dp

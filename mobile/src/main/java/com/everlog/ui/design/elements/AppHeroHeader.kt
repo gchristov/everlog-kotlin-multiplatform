@@ -38,7 +38,7 @@ fun AppHeroHeader(
             modifier = modifier
                 .fillMaxWidth()
                 .height(HeroHeaderHeight),
-            verticalArrangement = Arrangement.spacedBy(8.dp, Alignment.Bottom),
+            verticalArrangement = Arrangement.spacedBy(Theme.spacing.small, Alignment.Bottom),
         ) {
             HeroHeaderText(title = title, body = body)
         }
@@ -58,7 +58,7 @@ fun AppHeroHeader(
                     top = Theme.spacing.large,
                     end = Theme.spacing.large,
                 ),
-                verticalArrangement = Arrangement.spacedBy(8.dp),
+                verticalArrangement = Arrangement.spacedBy(Theme.spacing.small),
             ) {
                 HeroHeaderText(title = title, body = body)
             }

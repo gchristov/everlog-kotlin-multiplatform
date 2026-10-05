@@ -138,7 +138,7 @@ private fun DesignSystemState(
                     // Out of the list's margins, as it would be on a screen
                     modifier = Modifier
                         .padding(top = 32.dp)
-                        .fullBleed(AppGroupedListMargin),
+                        .fullBleed(Theme.spacing.large),
                     title = "Push day",
                     body = "With an image, here a plain colour",
                     image = ColorPainter(Theme.backgrounds.surfaceRaised),
@@ -417,4 +417,3 @@ private fun Modifier.fullBleed(margin: Dp) = layout { measurable, constraints ->
     }
 }
 
-private val AppGroupedListMargin = 16.dp
