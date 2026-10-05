@@ -70,13 +70,17 @@ internal fun OnboardingWelcome(
             // The header's bottom padding plus this make the design's gap under the body
             .padding(top = Theme.spacing.large, bottom = contentPadding.calculateBottomPadding() + Theme.spacing.large),
     ) {
-        // The group comes in with the first step, the later steps follow inside it
+        // The group comes in with the first step, the later steps follow inside it. Every delay
+        // counts from the welcome appearing, as each animation starts then.
         EnterAnimation(animateIn = animateIn, delayMillis = WelcomeMotion.StepsDelay) {
             // No dividers, so the markers' line runs through the rows unbroken
             AppListGroup(showDividers = false) {
                 WelcomeSteps.forEachIndexed { index, step ->
                     row {
-                        EnterAnimation(animateIn = animateIn && index > 0, delayMillis = WelcomeMotion.StepStagger * index) {
+                        EnterAnimation(
+                            animateIn = animateIn && index > 0,
+                            delayMillis = WelcomeMotion.StepsDelay + WelcomeMotion.StepStagger * index,
+                        ) {
                             AppListItem(
                                 modifier = Modifier.semantics(mergeDescendants = true) {},
                                 title = stringResource(step.title),
