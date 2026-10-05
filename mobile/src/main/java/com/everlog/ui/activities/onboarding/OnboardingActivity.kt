@@ -77,6 +77,7 @@ import com.everlog.ui.design.elements.AppText
 import com.everlog.ui.design.theme.Theme
 import com.everlog.ui.mvvm.createViewModelFactory
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.android.awaitFrame
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.threeten.bp.DayOfWeek
@@ -154,11 +155,23 @@ internal fun OnboardingScreen(
         }
     }
 
+    var skippingSetup by remember { mutableStateOf(false) }
     if (showSkipSetup) {
         SkipSetupDialog(
             onKeepGoing = { showSkipSetup = false },
-            onSkipSetup = onClose,
+            onSkipSetup = {
+                showSkipSetup = false
+                skippingSetup = true
+            },
         )
+    }
+    // Close only once the dialog has gone. Its dim covers the whole task, so closing with it open
+    // leaves the screen underneath dimmed until the close animation ends.
+    if (skippingSetup) {
+        LaunchedEffect(Unit) {
+            awaitFrame()
+            onClose()
+        }
     }
 }
 
