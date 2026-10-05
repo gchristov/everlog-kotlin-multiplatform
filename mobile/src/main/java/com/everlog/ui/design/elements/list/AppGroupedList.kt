@@ -1,7 +1,6 @@
 package com.everlog.ui.design.elements.list
 
 import android.os.Parcelable
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
@@ -15,19 +14,17 @@ import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.LazyScopeMarker
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.unit.dp
 import com.everlog.ui.design.elements.AppSectionHeader
 import com.everlog.ui.design.theme.Theme
 import kotlinx.parcelize.Parcelize
 import kotlinx.parcelize.RawValue
 
 /**
- * A list of groups, each an optional [AppSectionHeader] above its rows drawn as one card, like the
- * sections in Settings.
+ * A list of groups, each an optional [AppSectionHeader] above its rows drawn as one card and an
+ * optional footer note under them, like the sections in Settings. For a single group inside other
+ * scrolling content, use [AppListGroup].
  *
  * @param contentPadding Added to the list's own padding, e.g. AppScreen's padding so the last rows
  * scroll clear of its footer.
@@ -44,10 +41,10 @@ fun AppGroupedList(
         modifier = modifier.fillMaxSize(),
         state = state,
         contentPadding = PaddingValues(
-            start = AppGroupedListSpacing,
-            top = AppGroupedListSpacing + contentPadding.calculateTopPadding(),
-            end = AppGroupedListSpacing,
-            bottom = AppGroupedListSpacing + contentPadding.calculateBottomPadding(),
+            start = Theme.spacing.large,
+            top = Theme.spacing.large + contentPadding.calculateTopPadding(),
+            end = Theme.spacing.large,
+            bottom = Theme.spacing.large + contentPadding.calculateBottomPadding(),
         )
     ) {
         RealAppGroupedListScope(
@@ -62,6 +59,7 @@ interface AppGroupedListScope {
     fun group(
         key: Any,
         header: @Composable (() -> String)? = null,
+        footer: @Composable (() -> String)? = null,
         content: AppGroupScope.() -> Unit
     )
 
@@ -100,6 +98,7 @@ private class RealAppGroupedListScope(
     override fun group(
         key: Any,
         header: @Composable (() -> String)?,
+        footer: @Composable (() -> String)?,
         content: AppGroupScope.() -> Unit
     ) {
         val isFirstGroup = groupCount == 0
@@ -109,13 +108,10 @@ private class RealAppGroupedListScope(
             Column(modifier = Modifier.fillMaxWidth()) {
                 // Space between groups, like margin_26 between the sections in Settings
                 if (!isFirstGroup) {
-                    Spacer(modifier = Modifier.height(AppGroupSpacing))
+                    Spacer(modifier = Modifier.height(Theme.spacing.extraLarge))
                 }
                 if (header != null) {
-                    AppSectionHeader(
-                        modifier = Modifier.padding(bottom = AppGroupedListSpacing),
-                        text = header(),
-                    )
+                    AppListGroupHeader(text = header())
                 }
             }
         }
@@ -124,6 +120,11 @@ private class RealAppGroupedListScope(
             lazyListScope = lazyListScope,
             showDividers = showDividers
         ).apply(content)
+        if (footer != null) {
+            lazyListScope.item(key = AppCompositeKey(key, GroupFooterKey)) {
+                AppListGroupFooter(text = footer())
+            }
+        }
     }
 
     override fun item(
@@ -164,29 +165,11 @@ private class RealAppGroupScope(
         itemIndex: Int,
         content: @Composable () -> Unit
     ) {
-        val isAtLastRow = itemIndex == itemCount - 1
-        val shape = when {
-            itemCount == 1 -> Theme.shapes.groupSingle
-            itemIndex == 0 -> Theme.shapes.groupStart
-            isAtLastRow -> Theme.shapes.groupEnd
-            else -> Theme.shapes.groupMiddle
-        }
-
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .clip(shape)
-                .background(Theme.backgrounds.surface)
-        ) {
-            content()
-
-            if (showDividers && !isAtLastRow) {
-                HorizontalDivider(
-                    thickness = 1.dp,
-                    color = Theme.backgrounds.separator,
-                )
-            }
-        }
+        AppListGroupRow(
+            shape = appListGroupRowShape(index = itemIndex, count = itemCount),
+            showDivider = showDividers && itemIndex < itemCount - 1,
+            content = content,
+        )
     }
 }
 
@@ -196,5 +179,5 @@ private data class AppCompositeKey(
     val itemKey: @RawValue Any
 ) : Parcelable
 
-private val AppGroupedListSpacing = 16.dp
-private val AppGroupSpacing = 26.dp
+private const val GroupFooterKey = "footer"
+

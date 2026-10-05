@@ -32,7 +32,7 @@ public class ActivityUtils {
         }
     }
 
-	public static void setOrientation(AppCompatActivity a) {
+	public static void setOrientation(Activity a) {
 		if ( !DeviceUtils.isTablet(a) )
             a.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 	}

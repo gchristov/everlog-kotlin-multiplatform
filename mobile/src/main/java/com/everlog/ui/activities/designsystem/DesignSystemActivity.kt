@@ -10,27 +10,32 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.painter.ColorPainter
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.layout
-import androidx.compose.ui.graphics.painter.ColorPainter
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.everlog.R
 import com.everlog.ui.design.CommonComposeActivity
 import com.everlog.ui.design.elements.AppBar
 import com.everlog.ui.design.elements.AppButton
+import com.everlog.ui.design.elements.AppDialog
+import com.everlog.ui.design.elements.AppDialogAction
 import com.everlog.ui.design.elements.AppFooter
 import com.everlog.ui.design.elements.AppFooterAction
+import com.everlog.ui.design.elements.AppHeroHeader
 import com.everlog.ui.design.elements.AppIcon
 import com.everlog.ui.design.elements.AppIconButton
 import com.everlog.ui.design.elements.AppScreen
-import com.everlog.ui.design.elements.AppHeroHeader
 import com.everlog.ui.design.elements.AppSecondaryButton
 import com.everlog.ui.design.elements.AppSurface
 import com.everlog.ui.design.elements.AppTertiaryButton
@@ -67,6 +72,8 @@ private fun DesignSystemState(
     state: DesignSystemViewModel.State,
     onButtonClick: () -> Unit
 ) {
+    var showDialog by remember { mutableStateOf(false) }
+
     AppScreen(
         topBar = {
             AppBar(
@@ -112,7 +119,11 @@ private fun DesignSystemState(
                     onButtonClick = onButtonClick
                 )
             }
-            group(key = "list", header = { "List" }) {
+            group(
+                key = "list",
+                header = { "List" },
+                footer = { "A footer note under a group's rows." },
+            ) {
                 listRows(onButtonClick = onButtonClick)
             }
             group(key = "card", header = { "Card" }) {}
@@ -130,14 +141,32 @@ private fun DesignSystemState(
                 AppHeroHeader(
                     // Out of the list's margins, as it would be on a screen
                     modifier = Modifier
-                        .padding(top = 32.dp)
-                        .fullBleed(AppGroupedListMargin),
+                        .padding(top = Theme.spacing.extraLarge)
+                        .fullBleed(Theme.spacing.large),
                     title = "Push day",
                     body = "With an image, here a plain colour",
                     image = ColorPainter(Theme.backgrounds.surfaceRaised),
                 )
             }
+            group(key = "dialog", header = { "Dialog" }) {}
+            item(key = "dialogExample") {
+                AppSecondaryButton(
+                    modifier = Modifier.fillMaxWidth(),
+                    onClick = { showDialog = true },
+                    text = "Show dialog",
+                )
+            }
         }
+    }
+
+    if (showDialog) {
+        AppDialog(
+            title = "Dialog title",
+            body = "A line of body text. The primary action is the one we want the user to take.",
+            onDismissRequest = { showDialog = false },
+            primaryAction = AppDialogAction(text = "Primary", onClick = { showDialog = false }),
+            secondaryAction = AppDialogAction(text = "Secondary", onClick = { showDialog = false }),
+        )
     }
 }
 
@@ -205,7 +234,7 @@ private fun IconExamples(onButtonClick: () -> Unit) {
     )
     val star = ImageVector.vectorResource(R.drawable.ic_star_filled)
 
-    Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
+    Column(verticalArrangement = Arrangement.spacedBy(Theme.spacing.large)) {
         // The app's vector drawables, in the default tint
         Row(
             modifier = Modifier.fillMaxWidth(),
@@ -216,7 +245,7 @@ private fun IconExamples(onButtonClick: () -> Unit) {
             }
         }
         // One icon in each content colour
-        Row(horizontalArrangement = Arrangement.spacedBy(24.dp)) {
+        Row(horizontalArrangement = Arrangement.spacedBy(Theme.spacing.extraLarge)) {
             tints.forEach { tint ->
                 AppIcon(
                     imageVector = star,
@@ -225,7 +254,7 @@ private fun IconExamples(onButtonClick: () -> Unit) {
             }
         }
         // Icon buttons, enabled and disabled
-        Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+        Row(horizontalArrangement = Arrangement.spacedBy(Theme.spacing.small)) {
             AppIconButton(
                 onClick = onButtonClick,
                 icon = ImageVector.vectorResource(R.drawable.ic_add),
@@ -255,9 +284,9 @@ private fun TypographyExamples() {
         "small" to Theme.typography.small,
         "button" to Theme.typography.button,
     )
-    Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+    Column(verticalArrangement = Arrangement.spacedBy(Theme.spacing.small)) {
         styles.forEach { (name, style) ->
-            Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+            Row(horizontalArrangement = Arrangement.spacedBy(Theme.spacing.small)) {
                 AppText(
                     modifier = Modifier
                         .weight(1f)
@@ -290,7 +319,7 @@ private fun Buttons(
     buttonClicks: Int,
     onButtonClick: () -> Unit
 ) {
-    Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+    Column(verticalArrangement = Arrangement.spacedBy(Theme.spacing.small)) {
         AppText(
             text = if (buttonClicks == 1) "Tapped 1 time" else "Tapped $buttonClicks times",
             style = Theme.typography.caption,
@@ -310,15 +339,15 @@ private fun Buttons(
 @Composable
 private fun Card(onButtonClick: () -> Unit) {
     AppSurface(modifier = Modifier.fillMaxWidth()) {
-        Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
-            Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+        Column(verticalArrangement = Arrangement.spacedBy(Theme.spacing.large)) {
+            Column(verticalArrangement = Arrangement.spacedBy(Theme.spacing.extraSmall)) {
                 AppText(
                     text = "Card title",
                     style = Theme.typography.heading,
                 )
                 AppText(
                     text = "The card background sits on top of the screen background, like the cards in Settings.",
-                    style = Theme.typography.caption,
+                    style = Theme.typography.body,
                     color = Theme.contentColors.secondary,
                 )
             }
@@ -346,8 +375,8 @@ private fun ButtonRow(
     onButtonClick: () -> Unit
 ) {
     FlowRow(
-        horizontalArrangement = Arrangement.spacedBy(8.dp),
-        verticalArrangement = Arrangement.spacedBy(8.dp),
+        horizontalArrangement = Arrangement.spacedBy(Theme.spacing.small),
+        verticalArrangement = Arrangement.spacedBy(Theme.spacing.small),
     ) {
         AppButton(
             onClick = onButtonClick,
@@ -392,4 +421,3 @@ private fun Modifier.fullBleed(margin: Dp) = layout { measurable, constraints ->
     }
 }
 
-private val AppGroupedListMargin = 16.dp

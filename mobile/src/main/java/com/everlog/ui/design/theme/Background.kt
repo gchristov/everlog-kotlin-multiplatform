@@ -16,6 +16,10 @@ data class Backgrounds(
     val blurOverlay: Color,
     // Divider between rows in a card
     val separator: Color,
+    // Faint action tint behind a selected option
+    val selected: Color,
+    // Stronger action tint, e.g. the current step of a progress bar
+    val actionMuted: Color,
 )
 
 internal val LocalBackgrounds = staticCompositionLocalOf {
@@ -25,6 +29,8 @@ internal val LocalBackgrounds = staticCompositionLocalOf {
         surfaceRaised = Color.Unspecified,
         blurOverlay = Color.Unspecified,
         separator = Color.Unspecified,
+        selected = Color.Unspecified,
+        actionMuted = Color.Unspecified,
     )
 }
 
@@ -35,4 +41,6 @@ internal fun backgrounds() = Backgrounds(
     surfaceRaised = colorResource(R.color.background_card_lighter),
     blurOverlay = colorResource(R.color.background_blur),
     separator = colorResource(R.color.separator),
+    selected = colorResource(R.color.main_accent_faded_1),
+    actionMuted = colorResource(R.color.main_accent_faded_2),
 )

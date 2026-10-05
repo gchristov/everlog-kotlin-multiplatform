@@ -442,4 +442,75 @@
     <string name="choose_picture">Choose from Gallery</string>
     <string name="remove_picture">Remove Image</string>
     <string name="select_image">Choose an image</string>
+
+    <!-- Onboarding -->
+    <string name="onboarding_skip_setup">Skip setup</string>
+    <string name="onboarding_skip_setup_title">Skip setup?</string>
+    <string name="onboarding_skip_setup_body">We\'ll start you with an empty app. You can build routines yourself, or set this up later from Settings.</string>
+    <string name="onboarding_keep_going">Keep going</string>
+    <string name="onboarding_next">Next</string>
+    <string name="onboarding_skip">Skip</string>
+    <string name="onboarding_remind_me">Remind me</string>
+    <string name="onboarding_not_now">Not now</string>
+    <string name="onboarding_build_my_routine">Build my routine</string>
+    <string name="onboarding_editing">Editing</string>
+    <string name="onboarding_up_next">Up next</string>
+    <string name="onboarding_skipped">Skipped</string>
+    <string name="onboarding_step">Step %1$d of %2$d</string>
+    <string name="onboarding_all_steps_answered">All %1$d steps answered</string>
+    <string name="onboarding_edit_answer">Edit %1$s, currently %2$s</string>
+    <string name="onboarding_reminder_time_title">Reminder time</string>
+    <string name="onboarding_reminder_time_description">Reminder time, %1$s. Opens time picker</string>
+
+    <string name="onboarding_units_label">Units</string>
+    <string name="onboarding_units_title">Which units do you lift in?</string>
+    <string name="onboarding_units_helper">Set from your device. You can change this later in Settings.</string>
+    <string name="onboarding_units_kilograms">Kilograms</string>
+    <string name="onboarding_units_pounds">Pounds</string>
+
+    <string name="onboarding_days_label">Training days</string>
+    <string name="onboarding_days_title">How many days a week do you train?</string>
+    <string name="onboarding_days_helper">We\'ll build your week around this.</string>
+    <plurals name="onboarding_days_answer">
+        <item quantity="one">%1$d day a week</item>
+        <item quantity="other">%1$d days a week</item>
+    </plurals>
+
+    <string name="onboarding_where_label">Where you train</string>
+    <string name="onboarding_where_title">Where do you train?</string>
+    <string name="onboarding_where_gym">Gym</string>
+    <string name="onboarding_where_gym_description">Barbells, machines, cables</string>
+    <string name="onboarding_where_home">Home with dumbbells</string>
+    <string name="onboarding_where_home_description">Dumbbells and a bit of space</string>
+    <string name="onboarding_where_home_answer">Home, dumbbells</string>
+    <string name="onboarding_where_bodyweight">Bodyweight only</string>
+    <string name="onboarding_where_bodyweight_description">No equipment needed</string>
+    <string name="onboarding_where_bodyweight_answer">Bodyweight</string>
+
+    <string name="onboarding_experience_label">Experience</string>
+    <string name="onboarding_experience_title">How long have you been lifting?</string>
+    <string name="onboarding_experience_just_starting">Just starting</string>
+    <string name="onboarding_experience_just_starting_description">Under 6 months</string>
+    <string name="onboarding_experience_a_while">A while</string>
+    <string name="onboarding_experience_a_while_description">6 months to 2 years</string>
+    <string name="onboarding_experience_years">Years</string>
+    <string name="onboarding_experience_years_description">2+ years</string>
+
+    <string name="onboarding_goal_label">Main goal</string>
+    <string name="onboarding_goal_title">What\'s your main goal?</string>
+    <string name="onboarding_goal_stronger">Get stronger</string>
+    <string name="onboarding_goal_stronger_description">Heavier lifts, fewer reps</string>
+    <string name="onboarding_goal_muscle">Build muscle</string>
+    <string name="onboarding_goal_muscle_description">Size and shape, steady volume</string>
+    <string name="onboarding_goal_endurance">Build endurance</string>
+    <string name="onboarding_goal_endurance_description">Higher reps, shorter rests</string>
+    <string name="onboarding_goal_fit">Stay fit</string>
+    <string name="onboarding_goal_fit_description">A balanced week you can keep up</string>
+
+    <string name="onboarding_reminders_label">Reminders</string>
+    <string name="onboarding_reminders_title">Want a reminder on training days?</string>
+    <string name="onboarding_reminders_helper">We\'ll only message you on the days you pick.</string>
+    <string name="onboarding_reminders_permission">Android will ask to allow notifications when you tap Remind me.</string>
+    <string name="onboarding_reminders_answer">%1$s at %2$s</string>
+    <string name="onboarding_reminders_off">Off</string>
 </resources>
