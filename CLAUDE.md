@@ -29,6 +29,11 @@ There is no ktlint/detekt configured — the only lint is Android's built-in lin
 
 You'll also need `mobile/src/debug/google-services.json` / `mobile/src/release/google-services.json` (Firebase config, gitignored) and debug/release keystores. On CI these are all materialized by `tools/secrets/secrets.sh` from GitHub Actions secrets — see that script for the exact list of files/env vars it produces.
 
+### Querying analytics in BigQuery
+
+There's no `bq`/`gcloud` CLI installed. Query the GA4 export (`everlog-prod.analytics_173607556.events_*`) and Crashlytics export (`everlog-prod.firebase_crashlytics`) with the local helper instead. It runs in Docker with a gitignored service-account key from `tools/bigquery/`:
+- `./tools/bigquery/bq_query.sh bigquery-credentials-prod.json --query "SELECT ..."`, or pass a `.sql` file. Add `--output tools/bigquery/<name>.csv` to save results. CSVs there are gitignored because they contain user PII. `--dry-run` and `--max-gb N` limit the cost.
+
 ### Versioning
 
 `versionCode`/`versionName` are computed from `tools/versioning/version.txt` and `version_code.txt`, not hand-bumped per build. See `tools/versioning/README.md` for the full scheme (`MmmPTSS` version code format, per-environment suffixes). `tools/versioning/version_code.sh <staging|nightly|master> [--release]` is what CI (and `compute-app-version` action) invokes; it also shells out to `git describe`/`git rev-list` to derive a commit-based sequence number.
