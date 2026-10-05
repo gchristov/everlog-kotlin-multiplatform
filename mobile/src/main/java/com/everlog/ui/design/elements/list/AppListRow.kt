@@ -46,6 +46,9 @@ fun AppListItem(
     subtitle: String? = null,
     titleColor: Color = Theme.contentColors.primary,
     leading: (@Composable () -> Unit)? = null,
+    // Where [leading] sits against the text: centred, or Top to line it up with the top of the text
+    // (e.g. a marker on the title's first line when the subtitle runs to several lines)
+    leadingAlignment: Alignment.Vertical = Alignment.CenterVertically,
     trailing: (@Composable () -> Unit)? = null,
     onClick: (() -> Unit)? = null,
 ) {
@@ -56,7 +59,9 @@ fun AppListItem(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(Theme.spacing.large),
         ) {
-            leading?.invoke()
+            leading?.let {
+                Box(modifier = Modifier.align(leadingAlignment)) { it() }
+            }
             Column(
                 modifier = Modifier.weight(1f),
                 verticalArrangement = Arrangement.spacedBy(Theme.spacing.extraSmall),

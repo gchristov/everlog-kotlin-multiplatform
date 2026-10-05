@@ -25,6 +25,7 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import com.everlog.R
@@ -87,6 +88,7 @@ internal fun OnboardingWelcome(
                                         last = index == WelcomeSteps.lastIndex,
                                     )
                                 },
+                                leadingAlignment = Alignment.Top,
                             )
                         }
                     }
@@ -109,7 +111,8 @@ internal fun OnboardingWelcomeHeader(animateIn: Boolean) {
 }
 
 // A step's marker, in a list item's leading slot: filled for the current step, outlined for the ones
-// to come, and joined to the markers above and below by a line
+// to come, and joined to the markers above and below by a line. Use with the list item's leading
+// content aligned to the top.
 @Composable
 private fun StepMarker(
     current: Boolean,
@@ -117,9 +120,15 @@ private fun StepMarker(
     last: Boolean,
 ) {
     val lineColor = Theme.backgrounds.separator
+    // One line of the list item's title (body style), so the dot sits on the title's first line
+    val textMeasurer = rememberTextMeasurer()
+    val titleStyle = Theme.typography.body
+    val titleLineHeight = with(LocalDensity.current) {
+        remember(titleStyle) { textMeasurer.measure("A", titleStyle).size.height.toDp() }
+    }
     Box(
         modifier = Modifier
-            .size(StepMarkerSizes.Box)
+            .size(width = StepMarkerSizes.Width, height = titleLineHeight)
             .drawBehind {
                 val stroke = StepMarkerSizes.Stroke.toPx()
                 val gap = StepMarkerSizes.Dot.toPx() / 2 + StepMarkerSizes.LineGap.toPx()
@@ -148,8 +157,8 @@ private fun StepMarker(
 
 // Sizes from the design's step markers, which the design system doesn't have
 private object StepMarkerSizes {
-    // The same box as a leading AppIcon, so the text lines up with other list items
-    val Box = 24.dp
+    // As wide as a leading AppIcon, so the text lines up with other list items
+    val Width = 24.dp
     val Dot = 12.dp
     val Stroke = 1.5.dp
     // Between the dot and the line

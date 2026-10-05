@@ -2,6 +2,7 @@ package com.everlog.ui.activities.designsystem
 
 import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.vectorResource
@@ -59,6 +60,22 @@ internal fun DesignSystemLists(onButtonClick: () -> Unit) {
                         },
                     )
                 }
+            }
+        }
+        group(key = "leadingAlignment", header = { "Leading content alignment" }) {
+            items(count = 2, key = { it }) { index ->
+                val top = index == 1
+                AppListItem(
+                    title = if (top) "Aligned to the top" else "Centred",
+                    subtitle = "A subtitle long enough to run to several lines, to show where the leading icon sits against the text.",
+                    leading = {
+                        AppIcon(
+                            imageVector = ImageVector.vectorResource(R.drawable.ic_timer),
+                            tint = Theme.contentColors.secondary,
+                        )
+                    },
+                    leadingAlignment = if (top) Alignment.Top else Alignment.CenterVertically,
+                )
             }
         }
         group(key = "single", header = { "A group with one row" }) {
