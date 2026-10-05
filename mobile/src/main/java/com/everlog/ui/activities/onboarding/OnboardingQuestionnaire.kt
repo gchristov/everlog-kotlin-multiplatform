@@ -162,7 +162,7 @@ private fun SetupQuestions(
                 // A new question fades in and slides up as the previous one collapses
                 enter = fadeIn(tween(OnboardingMotion.Enter, OnboardingMotion.AppendDelay, OnboardingMotion.EmphasizedDecelerate)) +
                         slideInVertically(tween(OnboardingMotion.Enter, OnboardingMotion.AppendDelay, OnboardingMotion.EmphasizedDecelerate)) { enterOffset },
-                exit = fadeOut(tween(150)),
+                exit = fadeOut(tween(OnboardingMotion.Exit)),
             ) {
                 QuestionItem(
                     question = question,
@@ -213,12 +213,12 @@ private fun QuestionItem(
         transitionSpec = {
             val enter = if (targetState.mode == ItemMode.Open) {
                 // Re-expanding: options fade in
-                fadeIn(tween(200, delayMillis = 50, easing = OnboardingMotion.EmphasizedDecelerate))
+                fadeIn(tween(OnboardingMotion.Expand, OnboardingMotion.ExpandDelay, OnboardingMotion.EmphasizedDecelerate))
             } else {
                 // Collapsing: the summary row fades in once the options have gone
-                fadeIn(tween(150, delayMillis = 100, easing = OnboardingMotion.Standard))
+                fadeIn(tween(OnboardingMotion.SummaryFade, OnboardingMotion.SummaryDelay, OnboardingMotion.Standard))
             }
-            (enter togetherWith fadeOut(tween(120, easing = OnboardingMotion.EmphasizedAccelerate)))
+            (enter togetherWith fadeOut(tween(OnboardingMotion.FadeOut, easing = OnboardingMotion.EmphasizedAccelerate)))
                 .using(SizeTransform(clip = true) { _, _ -> tween(OnboardingMotion.Collapse, easing = OnboardingMotion.Standard) })
         },
         label = "question",

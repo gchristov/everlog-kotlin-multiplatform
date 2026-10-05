@@ -137,7 +137,7 @@ private fun DesignSystemState(
                 AppHeroHeader(
                     // Out of the list's margins, as it would be on a screen
                     modifier = Modifier
-                        .padding(top = 32.dp)
+                        .padding(top = Theme.spacing.extraLarge)
                         .fullBleed(Theme.spacing.large),
                     title = "Push day",
                     body = "With an image, here a plain colour",
@@ -230,7 +230,7 @@ private fun IconExamples(onButtonClick: () -> Unit) {
     )
     val star = ImageVector.vectorResource(R.drawable.ic_star_filled)
 
-    Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
+    Column(verticalArrangement = Arrangement.spacedBy(Theme.spacing.large)) {
         // The app's vector drawables, in the default tint
         Row(
             modifier = Modifier.fillMaxWidth(),
@@ -241,7 +241,7 @@ private fun IconExamples(onButtonClick: () -> Unit) {
             }
         }
         // One icon in each content colour
-        Row(horizontalArrangement = Arrangement.spacedBy(24.dp)) {
+        Row(horizontalArrangement = Arrangement.spacedBy(Theme.spacing.extraLarge)) {
             tints.forEach { tint ->
                 AppIcon(
                     imageVector = star,
@@ -250,7 +250,7 @@ private fun IconExamples(onButtonClick: () -> Unit) {
             }
         }
         // Icon buttons, enabled and disabled
-        Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+        Row(horizontalArrangement = Arrangement.spacedBy(Theme.spacing.small)) {
             AppIconButton(
                 onClick = onButtonClick,
                 icon = ImageVector.vectorResource(R.drawable.ic_add),
@@ -280,9 +280,9 @@ private fun TypographyExamples() {
         "small" to Theme.typography.small,
         "button" to Theme.typography.button,
     )
-    Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+    Column(verticalArrangement = Arrangement.spacedBy(Theme.spacing.small)) {
         styles.forEach { (name, style) ->
-            Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+            Row(horizontalArrangement = Arrangement.spacedBy(Theme.spacing.small)) {
                 AppText(
                     modifier = Modifier
                         .weight(1f)
@@ -315,7 +315,7 @@ private fun Buttons(
     buttonClicks: Int,
     onButtonClick: () -> Unit
 ) {
-    Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+    Column(verticalArrangement = Arrangement.spacedBy(Theme.spacing.small)) {
         AppText(
             text = if (buttonClicks == 1) "Tapped 1 time" else "Tapped $buttonClicks times",
             style = Theme.typography.caption,
@@ -335,8 +335,8 @@ private fun Buttons(
 @Composable
 private fun Card(onButtonClick: () -> Unit) {
     AppSurface(modifier = Modifier.fillMaxWidth()) {
-        Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
-            Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+        Column(verticalArrangement = Arrangement.spacedBy(Theme.spacing.large)) {
+            Column(verticalArrangement = Arrangement.spacedBy(Theme.spacing.extraSmall)) {
                 AppText(
                     text = "Card title",
                     style = Theme.typography.heading,
@@ -371,8 +371,8 @@ private fun ButtonRow(
     onButtonClick: () -> Unit
 ) {
     FlowRow(
-        horizontalArrangement = Arrangement.spacedBy(8.dp),
-        verticalArrangement = Arrangement.spacedBy(8.dp),
+        horizontalArrangement = Arrangement.spacedBy(Theme.spacing.small),
+        verticalArrangement = Arrangement.spacedBy(Theme.spacing.small),
     ) {
         AppButton(
             onClick = onButtonClick,

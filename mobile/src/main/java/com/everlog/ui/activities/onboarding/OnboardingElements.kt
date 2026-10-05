@@ -71,12 +71,38 @@ internal object OnboardingMotion {
     val Standard = CubicBezierEasing(0.2f, 0f, 0f, 1f)
     const val Select = 150
     const val Press = 80
+    const val PressScale = 0.98f
+    // The check draws in just after the selection fill starts
+    const val CheckDelay = 40
     const val Collapse = 250
+    // A reopened question's options fade in as it expands
+    const val Expand = 200
+    const val ExpandDelay = 50
+    // A collapsing question's summary row fades in once the options have gone
+    const val SummaryFade = 150
+    const val SummaryDelay = 100
+    const val FadeOut = 120
     const val Enter = 350
     const val AppendDelay = 80
+    const val Exit = 150
     const val Scroll = 300
     const val ProgressFill = 300
     val EnterOffset = 16.dp
+}
+
+// Sizes from the design that the design system doesn't have
+private object OnboardingSizes {
+    val ProgressHeight = 3.dp
+    val ProgressCornerRadius = 2.dp
+    // A touch heavier than the outlined buttons' 1dp, so a selected option stands out
+    val SelectionBorder = 1.5.dp
+    val UnitCardHeight = 96.dp
+    val UnitCardCheck = 18.dp
+    val ListItemCheck = 20.dp
+    val ChipCheck = 12.dp
+    const val CheckStroke = 2.5f
+    // Heavier on the small chip check so it stays legible
+    const val ChipCheckStroke = 3f
 }
 
 // Top bar: the app bar with Skip setup, and the progress segments under it
@@ -152,8 +178,8 @@ private fun ProgressSegments(
             Box(
                 modifier = Modifier
                     .weight(1f)
-                    .height(3.dp)
-                    .clip(RoundedCornerShape(2.dp))
+                    .height(OnboardingSizes.ProgressHeight)
+                    .clip(RoundedCornerShape(OnboardingSizes.ProgressCornerRadius))
                     .background(track)
             ) {
                 Box(
@@ -181,7 +207,7 @@ private fun SelectableBox(
     val interactionSource = remember { MutableInteractionSource() }
     val pressed by interactionSource.collectIsPressedAsState()
     val scale by animateFloatAsState(
-        targetValue = if (pressed) 0.98f else 1f,
+        targetValue = if (pressed) OnboardingMotion.PressScale else 1f,
         animationSpec = tween(OnboardingMotion.Press, easing = OnboardingMotion.Standard),
         label = "press",
     )
@@ -205,7 +231,7 @@ private fun SelectableBox(
     )
     val check by animateFloatAsState(
         targetValue = if (selected) 1f else 0f,
-        animationSpec = tween(OnboardingMotion.Select, delayMillis = 40, easing = OnboardingMotion.EmphasizedDecelerate),
+        animationSpec = tween(OnboardingMotion.Select, delayMillis = OnboardingMotion.CheckDelay, easing = OnboardingMotion.EmphasizedDecelerate),
         label = "check",
     )
     Box(
@@ -214,7 +240,7 @@ private fun SelectableBox(
             .clip(Theme.shapes.surface)
             .background(fill)
             // Transparent when unselected, so selecting never shifts the layout
-            .border(1.5.dp, border, Theme.shapes.surface)
+            .border(OnboardingSizes.SelectionBorder, border, Theme.shapes.surface)
             .clickable(
                 interactionSource = interactionSource,
                 indication = null,
@@ -246,7 +272,7 @@ internal fun UnitCard(
     SelectableBox(
         modifier = modifier
             .fillMaxWidth()
-            .height(96.dp),
+            .height(OnboardingSizes.UnitCardHeight),
         selected = selected,
         onClick = onClick,
         description = "$title, $description",
@@ -264,9 +290,9 @@ internal fun UnitCard(
             modifier = Modifier
                 .align(Alignment.TopEnd)
                 .padding(Theme.spacing.medium)
-                .size(18.dp),
+                .size(OnboardingSizes.UnitCardCheck),
             progress = check,
-            strokeWidth = 2.5f,
+            strokeWidth = OnboardingSizes.CheckStroke,
         )
     }
 }
@@ -291,9 +317,9 @@ internal fun SelectableListItem(
             subtitle = description,
             trailing = {
                 AnimatedCheck(
-                    modifier = Modifier.size(20.dp),
+                    modifier = Modifier.size(OnboardingSizes.ListItemCheck),
                     progress = check,
-                    strokeWidth = 2.5f,
+                    strokeWidth = OnboardingSizes.CheckStroke,
                 )
             },
         )
@@ -326,9 +352,9 @@ internal fun NumberChip(
                 .align(Alignment.TopEnd)
                 // The smaller inset keeps the check clear of the number on narrow chips
                 .padding(Theme.spacing.extraSmall)
-                .size(12.dp),
+                .size(OnboardingSizes.ChipCheck),
             progress = check,
-            strokeWidth = 3f,
+            strokeWidth = OnboardingSizes.ChipCheckStroke,
         )
     }
 }
@@ -412,7 +438,7 @@ internal fun SummaryRow(
             title = shownAnswer,
             titleColor = if (skipped) Theme.contentColors.secondary else Theme.contentColors.action,
             trailing = {
-                AppIcon(modifier = Modifier.size(18.dp), imageVector = ImageVector.vectorResource(R.drawable.ic_edit), tint = Theme.contentColors.secondary)
+                AppIcon(imageVector = ImageVector.vectorResource(R.drawable.ic_edit), tint = Theme.contentColors.secondary)
             },
             onClick = onClick,
         )
@@ -440,7 +466,7 @@ internal fun UpNextRow(label: String) {
 internal fun AnimatedCheck(
     progress: Float,
     modifier: Modifier = Modifier,
-    strokeWidth: Float = 2.5f,
+    strokeWidth: Float = OnboardingSizes.CheckStroke,
     color: Color = Theme.contentColors.action,
 ) {
     val path = remember {
