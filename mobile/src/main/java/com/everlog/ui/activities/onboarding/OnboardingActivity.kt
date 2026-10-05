@@ -66,11 +66,13 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.everlog.managers.preferences.SettingsManager
 import com.everlog.ui.design.CommonComposeActivity
+import com.everlog.ui.design.elements.AppButton
 import com.everlog.ui.design.elements.AppFooter
 import com.everlog.ui.design.elements.AppFooterAction
 import com.everlog.ui.design.elements.AppHeroHeader
 import com.everlog.ui.design.elements.AppIcon
 import com.everlog.ui.design.elements.AppScreen
+import com.everlog.ui.design.elements.AppSecondaryButton
 import com.everlog.ui.design.elements.AppText
 import com.everlog.ui.design.theme.Theme
 import com.everlog.ui.mvvm.createViewModelFactory
@@ -754,15 +756,12 @@ private fun SkipSetupDialog(
                 color = Theme.contentColors.secondary,
             )
         },
+        // The action we want them to take is primary, leaving is secondary
         confirmButton = {
-            TextButton(onClick = onKeepGoing) {
-                AppText(text = "Keep going", style = OnboardingType.TextAction, color = Theme.contentColors.action)
-            }
+            AppButton(onClick = onKeepGoing, text = "Keep going")
         },
         dismissButton = {
-            TextButton(onClick = onSkipSetup) {
-                AppText(text = "Skip setup", style = OnboardingType.TextAction, color = Theme.contentColors.secondary)
-            }
+            AppSecondaryButton(onClick = onSkipSetup, text = "Skip setup")
         },
     )
 }
