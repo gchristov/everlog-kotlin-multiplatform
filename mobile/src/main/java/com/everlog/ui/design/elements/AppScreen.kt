@@ -78,5 +78,7 @@ fun AppScreen(
 // Content of the current AppScreen, for bars that blur what's behind them
 internal val LocalAppScreenHazeState = staticCompositionLocalOf<HazeState?> { null }
 
-// Widest the current AppScreen's content gets, for bars that line their contents up with it
-internal val LocalAppScreenMaxContentWidth = staticCompositionLocalOf { Dp.Unspecified }
+// Widest the current AppScreen's content gets, for bars that line their contents up with it. The
+// top bar isn't capped, so anything in it that belongs with the content (e.g. a progress bar under
+// the app bar) should use this.
+val LocalAppScreenMaxContentWidth = staticCompositionLocalOf { Dp.Unspecified }

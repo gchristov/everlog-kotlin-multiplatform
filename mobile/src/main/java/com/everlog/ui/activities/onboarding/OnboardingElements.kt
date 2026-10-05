@@ -11,22 +11,23 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.Immutable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -59,6 +60,7 @@ import com.everlog.ui.design.elements.AppBar
 import com.everlog.ui.design.elements.AppIcon
 import com.everlog.ui.design.elements.AppTertiaryButton
 import com.everlog.ui.design.elements.AppText
+import com.everlog.ui.design.elements.LocalAppScreenMaxContentWidth
 import com.everlog.ui.design.elements.list.AppListItem
 import com.everlog.ui.design.theme.Theme
 
@@ -117,7 +119,8 @@ internal fun OnboardingTopBar(
             .fillMaxWidth()
             .background(Theme.backgrounds.primary)
             // A band under the progress bar, so content scrolling up disappears below it
-            .padding(bottom = 8.dp)
+            .padding(bottom = 8.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         AppBar(
             actions = {
@@ -131,7 +134,10 @@ internal fun OnboardingTopBar(
             },
         )
         ProgressSegments(
-            modifier = Modifier.semantics { contentDescription = "Step $step of $total" },
+            // In line with the content on tablets, while the app bar goes edge to edge
+            modifier = Modifier
+                .widthIn(max = LocalAppScreenMaxContentWidth.current)
+                .semantics { contentDescription = "Step $step of $total" },
             done = step - 1,
             current = step - 1,
             total = total,
