@@ -20,8 +20,10 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Stable
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.saveable.Saver
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -29,9 +31,9 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clipToBounds
-import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
 import androidx.compose.ui.input.nestedscroll.NestedScrollSource
@@ -39,6 +41,7 @@ import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
+import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.dp
 import com.everlog.R
@@ -96,6 +99,10 @@ private fun AppBarRow(
     titleProgress: (() -> Float)?,
 ) {
     val titleOffset = with(LocalDensity.current) { CollapsedTitleOffset.toPx() }
+    // A collapsing title is hidden from TalkBack until it starts to show, so the header's title isn't
+    // read twice. Only crossing that point recomposes, not every frame of the scroll.
+    val currentTitleProgress by rememberUpdatedState(titleProgress)
+    val titleShown by remember { derivedStateOf { (currentTitleProgress?.invoke() ?: 1f) > 0f } }
     // Goes through the back dispatcher rather than finishing the activity, so screens can still
     // intercept back (e.g. to confirm discarding changes)
     val backDispatcher = LocalOnBackPressedDispatcherOwner.current?.onBackPressedDispatcher
@@ -105,12 +112,14 @@ private fun AppBarRow(
             title?.let { title ->
                 AppText(
                     modifier = if (titleProgress != null) {
-                        Modifier.graphicsLayer {
-                            val progress = titleProgress()
-                            alpha = progress
-                            // Drifts up into place as it fades in
-                            translationY = (1f - progress) * titleOffset
-                        }
+                        Modifier
+                            .graphicsLayer {
+                                val progress = titleProgress()
+                                alpha = progress
+                                // Drifts up into place as it fades in
+                                translationY = (1f - progress) * titleOffset
+                            }
+                            .then(if (titleShown) Modifier else Modifier.clearAndSetSemantics {})
                     } else {
                         Modifier
                     },
@@ -196,7 +205,8 @@ fun AppBarHeader(
  * Scrolls an [AppBar]'s header away with the content, at the same speed, so it reads as the top of
  * the page rather than a bar. Scrolling up, the header goes first, then the content. Scrolling
  * down, the content goes first and the header comes back once the content is at the top. The header
- * doesn't fold into the bar's title: it just leaves. A collapsing title can come later.
+ * doesn't fold into the bar's title: it just leaves. Give the [AppBar] a title too for it to
+ * collapse, with that title fading into the bar as the header goes.
  *
  * Pass the same behaviour to the [AppBar] and to the screen, as
  * `AppScreen(modifier = Modifier.nestedScroll(behavior.nestedScrollConnection))`.
