@@ -40,6 +40,7 @@ internal enum class DesignSystemPage {
     Footer,
     ScrollBehaviors,
     ScrollAwayList,
+    CollapsingList,
     ScrollAwayPage,
     ScrollAwayShortPage,
     PinnedHeader,
@@ -70,6 +71,7 @@ internal fun DesignSystemScreen(viewModel: DesignSystemViewModel) {
         DesignSystemPage.Footer -> DesignSystemFooter(onButtonClick = onButtonClick)
         DesignSystemPage.ScrollBehaviors -> ScrollBehaviors(onOpen = open)
         DesignSystemPage.ScrollAwayList -> ScrollAwayListExample()
+        DesignSystemPage.CollapsingList -> CollapsingListExample()
         DesignSystemPage.ScrollAwayPage -> ScrollAwayPageExample()
         DesignSystemPage.ScrollAwayShortPage -> ScrollAwayShortPageExample()
         DesignSystemPage.PinnedHeader -> PinnedHeaderExample()

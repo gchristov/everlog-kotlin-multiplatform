@@ -29,15 +29,18 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clipToBounds
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
 import androidx.compose.ui.input.nestedscroll.NestedScrollSource
 import androidx.compose.ui.layout.Layout
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.Constraints
+import androidx.compose.ui.unit.dp
 import com.everlog.R
 import com.everlog.ui.design.theme.Theme
 import kotlin.math.abs
@@ -49,7 +52,9 @@ import kotlin.math.roundToInt
  * @param header A larger header under the bar's row, usually an [AppBarHeader]. It's part of the
  * app bar rather than the content, so it sits right under the row on every screen.
  * @param scrollBehavior Makes the [header] scroll away with the content, as if it were the top of
- * the page. The row (back, title, actions) stays. Without it the header stays put.
+ * the page. The row (back, title, actions) stays. Without it the header stays put. With a [title]
+ * as well, the bar collapses: the title only fades into the row as the header scrolls away, so the
+ * header's large title becomes the screen's title.
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -67,6 +72,12 @@ fun AppBar(
             showBack = showBack,
             contentColor = contentColor,
             actions = actions,
+            // Collapsing: the title shows once the header has (mostly) gone
+            titleProgress = if (header != null && scrollBehavior != null) {
+                { collapsedTitleProgress(scrollBehavior.collapsedFraction) }
+            } else {
+                null
+            },
         )
         header?.let {
             ScrollingHeader(scrollBehavior = scrollBehavior, content = it)
@@ -81,7 +92,10 @@ private fun AppBarRow(
     showBack: Boolean,
     contentColor: Color,
     actions: @Composable (RowScope.() -> Unit)?,
+    // From 0 (hidden) to 1 (showing). Read while drawing, so scrolling doesn't recompose the bar.
+    titleProgress: (() -> Float)?,
 ) {
+    val titleOffset = with(LocalDensity.current) { CollapsedTitleOffset.toPx() }
     // Goes through the back dispatcher rather than finishing the activity, so screens can still
     // intercept back (e.g. to confirm discarding changes)
     val backDispatcher = LocalOnBackPressedDispatcherOwner.current?.onBackPressedDispatcher
@@ -90,6 +104,16 @@ private fun AppBarRow(
         title = {
             title?.let { title ->
                 AppText(
+                    modifier = if (titleProgress != null) {
+                        Modifier.graphicsLayer {
+                            val progress = titleProgress()
+                            alpha = progress
+                            // Drifts up into place as it fades in
+                            translationY = (1f - progress) * titleOffset
+                        }
+                    } else {
+                        Modifier
+                    },
                     text = title,
                     color = contentColor,
                     style = Theme.typography.heading,
@@ -114,6 +138,14 @@ private fun AppBarRow(
         ),
     )
 }
+
+// A collapsing bar's title fades in over the last part of the header scrolling away, roughly as
+// the header's own title goes under the bar
+private fun collapsedTitleProgress(collapsedFraction: Float): Float =
+    ((collapsedFraction - CollapsedTitleStart) / (1f - CollapsedTitleStart)).coerceIn(0f, 1f)
+
+private const val CollapsedTitleStart = 0.5f
+private val CollapsedTitleOffset = 8.dp
 
 /**
  * The standard look for an [AppBar]'s header: a large title, with an optional [eyebrow] above it in
@@ -180,6 +212,14 @@ class AppBarScrollBehavior internal constructor(
 
     // Set when the header is measured. Not state, as nothing draws from it.
     internal var headerHeight = 0f
+
+    // How much of the header has scrolled away, from 0 (none) to 1 (all of it). Reads the offset
+    // first, even before the header is measured, so whatever draws from this redraws as it scrolls.
+    internal val collapsedFraction: Float
+        get() {
+            val offset = headerOffset
+            return if (headerHeight > 0f) (-offset / headerHeight).coerceIn(0f, 1f) else 0f
+        }
 
     val nestedScrollConnection: NestedScrollConnection = object : NestedScrollConnection {
         override fun onPreScroll(available: Offset, source: NestedScrollSource): Offset {

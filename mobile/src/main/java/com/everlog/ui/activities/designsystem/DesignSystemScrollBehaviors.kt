@@ -40,6 +40,11 @@ private val ScrollExamples = listOf(
         description = "A long list. The header leaves first, then the list scrolls. Back down, the list comes back first, then the header.",
     ),
     ScrollExample(
+        page = DesignSystemPage.CollapsingList,
+        title = "Collapses into the title, list",
+        description = "Scrolls away like the list above, and the header's title becomes the bar's title once the header has gone.",
+    ),
+    ScrollExample(
         page = DesignSystemPage.ScrollAwayPage,
         title = "Scrolls away, page with a footer",
         description = "A scrolling column with a pinned footer, like the onboarding welcome on a small screen.",
@@ -82,6 +87,21 @@ internal fun ScrollAwayListExample() {
     val scrollBehavior = rememberAppBarScrollBehavior(canScroll = { listState.canScrollForward })
     ExampleScreen(
         header = "Scrolls away, list",
+        scrollBehavior = scrollBehavior,
+    ) { contentPadding ->
+        AppGroupedList(state = listState, contentPadding = contentPadding) {
+            exampleRows(count = 30)
+        }
+    }
+}
+
+@Composable
+internal fun CollapsingListExample() {
+    val listState = rememberLazyListState()
+    val scrollBehavior = rememberAppBarScrollBehavior(canScroll = { listState.canScrollForward })
+    ExampleScreen(
+        header = "Collapses into the title",
+        collapsedTitle = "Collapses into the title",
         scrollBehavior = scrollBehavior,
     ) { contentPadding ->
         AppGroupedList(state = listState, contentPadding = contentPadding) {
@@ -137,11 +157,14 @@ internal fun PinnedHeaderExample() {
     }
 }
 
-// A screen with a back button and a header in the app bar, scrolling with [scrollBehavior]
+// A screen with a back button and a header in the app bar, scrolling with [scrollBehavior], and
+// collapsing into [collapsedTitle] if there is one
 @Composable
 private fun ExampleScreen(
     header: String,
     scrollBehavior: AppBarScrollBehavior?,
+    // Collapsing: shown in the bar once the header has scrolled away
+    collapsedTitle: String? = null,
     footer: @Composable () -> Unit = {},
     content: @Composable (contentPadding: PaddingValues) -> Unit,
 ) {
@@ -149,6 +172,7 @@ private fun ExampleScreen(
         modifier = scrollBehavior?.let { Modifier.nestedScroll(it.nestedScrollConnection) } ?: Modifier,
         topBar = {
             AppBar(
+                title = collapsedTitle,
                 showBack = true,
                 header = {
                     AppBarHeader(
