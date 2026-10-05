@@ -9,7 +9,9 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.everlog.R
 import com.everlog.managers.preferences.SettingsManager
 import com.everlog.ui.design.CommonComposeActivity
 import com.everlog.ui.design.elements.AppDialog
@@ -88,10 +90,10 @@ private fun SkipSetupDialog(
     onSkipSetup: () -> Unit,
 ) {
     AppDialog(
-        title = "Skip setup?",
-        body = "We'll start you with an empty app. You can build routines yourself, or set this up later from Settings.",
+        title = stringResource(R.string.onboarding_skip_setup_title),
+        body = stringResource(R.string.onboarding_skip_setup_body),
         onDismissRequest = onKeepGoing,
-        primaryAction = AppDialogAction(text = "Keep going", onClick = onKeepGoing),
-        secondaryAction = AppDialogAction(text = "Skip setup", onClick = onSkipSetup),
+        primaryAction = AppDialogAction(text = stringResource(R.string.onboarding_keep_going), onClick = onKeepGoing),
+        secondaryAction = AppDialogAction(text = stringResource(R.string.onboarding_skip_setup), onClick = onSkipSetup),
     )
 }

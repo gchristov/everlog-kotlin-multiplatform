@@ -47,8 +47,10 @@ import androidx.compose.ui.graphics.vector.addPathNodes
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.selected
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -58,6 +60,7 @@ import androidx.compose.ui.unit.sp
 import com.everlog.R
 import com.everlog.ui.design.elements.AppBar
 import com.everlog.ui.design.elements.AppIcon
+import com.everlog.ui.design.elements.AppSurface
 import com.everlog.ui.design.elements.AppTertiaryButton
 import com.everlog.ui.design.elements.AppText
 import com.everlog.ui.design.elements.LocalAppScreenMaxContentWidth
@@ -105,8 +108,6 @@ internal object OnboardingType {
     val TextAction = TextStyle(fontSize = 14.sp, fontWeight = FontWeight.Medium)
 }
 
-private val CardShape = RoundedCornerShape(10.dp)
-
 // Top bar: the app bar with Skip setup, and the progress segments under it
 @Composable
 internal fun OnboardingTopBar(
@@ -114,6 +115,11 @@ internal fun OnboardingTopBar(
     total: Int,
     onSkipSetup: () -> Unit,
 ) {
+    val progressDescription = if (answered < total) {
+        stringResource(R.string.onboarding_step, answered + 1, total)
+    } else {
+        stringResource(R.string.onboarding_all_steps_answered, total)
+    }
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -128,7 +134,7 @@ internal fun OnboardingTopBar(
                 // in line with the progress bar
                 AppTertiaryButton(
                     onClick = onSkipSetup,
-                    text = "Skip setup",
+                    text = stringResource(R.string.onboarding_skip_setup),
                     contentPadding = PaddingValues(horizontal = 12.dp),
                 )
             },
@@ -137,9 +143,7 @@ internal fun OnboardingTopBar(
             // In line with the content on tablets, while the app bar goes edge to edge
             modifier = Modifier
                 .widthIn(max = LocalAppScreenMaxContentWidth.current)
-                .semantics {
-                    contentDescription = if (answered < total) "Step ${answered + 1} of $total" else "All $total steps answered"
-                },
+                .semantics { contentDescription = progressDescription },
             // Every question is answered in order, so the next one follows the answered ones. Once
             // all are answered, every segment is filled and none is current.
             done = answered,
@@ -238,10 +242,10 @@ private fun SelectableBox(
     Box(
         modifier = modifier
             .scale(scale)
-            .clip(CardShape)
+            .clip(Theme.shapes.surface)
             .background(fill)
             // Transparent when unselected, so selecting never shifts the layout
-            .border(1.5.dp, border, CardShape)
+            .border(1.5.dp, border, Theme.shapes.surface)
             .clickable(
                 interactionSource = interactionSource,
                 indication = null,
@@ -252,7 +256,10 @@ private fun SelectableBox(
                 }
                 onClick()
             }
-            .semantics { contentDescription = "$description, ${if (selected) "selected" else "not selected"}" },
+            .semantics {
+                contentDescription = description
+                this.selected = selected
+            },
     ) {
         content(check)
     }
@@ -328,6 +335,8 @@ internal fun SelectableListItem(
 @Composable
 internal fun NumberChip(
     value: Int,
+    // Read out instead of the number, e.g. "4 days a week"
+    description: String,
     selected: Boolean,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
@@ -336,7 +345,7 @@ internal fun NumberChip(
         modifier = modifier.aspectRatio(1f),
         selected = selected,
         onClick = onClick,
-        description = "$value days",
+        description = description,
     ) { check ->
         AppText(
             modifier = Modifier.align(Alignment.Center),
@@ -391,9 +400,15 @@ internal fun TimeRow(
     time: String,
     onClick: () -> Unit,
 ) {
-    ListCard(modifier = Modifier.semantics(mergeDescendants = true) { contentDescription = "Reminder time, $time. Opens time picker" }) {
+    val description = stringResource(R.string.onboarding_reminder_time_description, time)
+    AppSurface(
+        modifier = Modifier
+            .fillMaxWidth()
+            .semantics(mergeDescendants = true) { contentDescription = description },
+        contentPadding = PaddingValues(),
+    ) {
         AppListItem(
-            title = "Time",
+            title = stringResource(R.string.time),
             leading = {
                 AppIcon(imageVector = OnboardingIcons.Clock, tint = Theme.contentColors.secondary)
             },
@@ -415,14 +430,17 @@ internal fun SummaryRow(
     onClick: () -> Unit,
 ) {
     val colors = onboardingColors()
-    ListCard(
-        modifier = Modifier.semantics(mergeDescendants = true) {
-            contentDescription = "Edit $label, currently ${if (skipped) "skipped" else answer}"
-        },
+    val shownAnswer = if (skipped) stringResource(R.string.onboarding_skipped) else answer
+    val description = stringResource(R.string.onboarding_edit_answer, label, shownAnswer)
+    AppSurface(
+        modifier = Modifier
+            .fillMaxWidth()
+            .semantics(mergeDescendants = true) { contentDescription = description },
+        contentPadding = PaddingValues(),
     ) {
         AppListItem(
             header = label,
-            title = if (skipped) "Skipped" else answer,
+            title = shownAnswer,
             titleColor = if (skipped) colors.textTertiary else Theme.contentColors.action,
             trailing = {
                 AppIcon(modifier = Modifier.size(18.dp), imageVector = OnboardingIcons.Pencil, tint = colors.textTertiary)
@@ -439,29 +457,13 @@ internal fun UpNextRow(label: String) {
     Box(
         modifier = Modifier
             .fillMaxWidth()
-            .border(1.dp, Theme.backgrounds.separator, CardShape),
+            .border(1.dp, Theme.backgrounds.separator, Theme.shapes.surface),
     ) {
         AppListItem(
             header = label,
-            title = "Up next",
+            title = stringResource(R.string.onboarding_up_next),
             titleColor = colors.textTertiary,
         )
-    }
-}
-
-// A list item drawn as its own card, like the XML settings cards
-@Composable
-private fun ListCard(
-    modifier: Modifier = Modifier,
-    content: @Composable () -> Unit,
-) {
-    Box(
-        modifier = modifier
-            .fillMaxWidth()
-            .clip(CardShape)
-            .background(Theme.backgrounds.surface),
-    ) {
-        content()
     }
 }
 

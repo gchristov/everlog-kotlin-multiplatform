@@ -44,8 +44,11 @@ import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.layout.positionInRoot
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.res.pluralStringResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.everlog.R
 import com.everlog.ui.design.elements.AppFooter
 import com.everlog.ui.design.elements.AppFooterAction
 import com.everlog.ui.design.elements.AppScreen
@@ -233,14 +236,14 @@ private fun QuestionItem(
             }
             ItemMode.Answered -> Box(modifier = Modifier.padding(bottom = 8.dp)) {
                 SummaryRow(
-                    label = question.label,
-                    answer = state.answers[question.id]?.let { OnboardingQuestions.summary(question, it, state.firstDayOfWeek) }.orEmpty(),
+                    label = stringResource(question.label),
+                    answer = state.answers[question.id]?.let { answerSummary(question, it, state.firstDayOfWeek) }.orEmpty(),
                     skipped = question.id in state.skipped,
                     onClick = { viewModel.onEdit(question.id) },
                 )
             }
             ItemMode.UpNext -> Box(modifier = Modifier.padding(bottom = 8.dp)) {
-                UpNextRow(label = question.label)
+                UpNextRow(label = stringResource(question.label))
             }
         }
     }
@@ -257,14 +260,14 @@ private fun QuestionBlock(
     Column(modifier = Modifier.fillMaxWidth()) {
         if (editing) {
             AppText(
-                text = "Editing",
+                text = stringResource(R.string.onboarding_editing),
                 style = OnboardingType.Helper.copy(fontWeight = FontWeight.Medium),
                 color = Theme.contentColors.action,
             )
             VerticalSpace(6.dp)
         }
-        AppText(text = question.title, style = OnboardingType.QuestionTitle)
-        question.helper?.let { helper ->
+        AppText(text = stringResource(question.title), style = OnboardingType.QuestionTitle)
+        question.helper?.let { stringResource(it) }?.let { helper ->
             VerticalSpace(8.dp)
             AppText(text = helper, style = OnboardingType.Helper, color = Theme.contentColors.secondary)
         }
@@ -281,6 +284,7 @@ private fun QuestionBlock(
                     NumberChip(
                         modifier = Modifier.weight(1f),
                         value = count,
+                        description = pluralStringResource(question.answer, count, count),
                         selected = (input as? Answer.Days)?.count == count,
                         onClick = { viewModel.onDaysSelect(question.id, count) },
                     )
@@ -307,8 +311,8 @@ private fun ChoiceOptions(
             question.options.forEach { option ->
                 UnitCard(
                     modifier = Modifier.weight(1f),
-                    title = option.title,
-                    description = option.description.orEmpty(),
+                    title = stringResource(option.title),
+                    description = option.description?.let { stringResource(it) }.orEmpty(),
                     selected = option.id == selectedId,
                     onClick = { onSelect(option.id) },
                 )
@@ -318,8 +322,8 @@ private fun ChoiceOptions(
         Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
             question.options.forEach { option ->
                 SelectableListItem(
-                    title = option.title,
-                    description = option.description,
+                    title = stringResource(option.title),
+                    description = option.description?.let { stringResource(it) },
                     selected = option.id == selectedId,
                     onClick = { onSelect(option.id) },
                 )
@@ -387,19 +391,19 @@ private fun SetupFooter(
         AppFooter(
             actions = when (footerMode) {
                 FooterMode.Next -> listOf(
-                    AppFooterAction(text = "Next", onClick = viewModel::onSubmit, enabled = state.canContinue),
-                    AppFooterAction(text = "Skip", onClick = viewModel::onSkip, style = AppFooterAction.Style.Secondary),
+                    AppFooterAction(text = stringResource(R.string.onboarding_next), onClick = viewModel::onSubmit, enabled = state.canContinue),
+                    AppFooterAction(text = stringResource(R.string.onboarding_skip), onClick = viewModel::onSkip, style = AppFooterAction.Style.Secondary),
                 )
                 FooterMode.Editing -> listOf(
-                    AppFooterAction(text = "Done", onClick = viewModel::onSubmit, enabled = state.canContinue),
-                    AppFooterAction(text = "Cancel", onClick = viewModel::onCancel, style = AppFooterAction.Style.Tertiary),
+                    AppFooterAction(text = stringResource(R.string.done), onClick = viewModel::onSubmit, enabled = state.canContinue),
+                    AppFooterAction(text = stringResource(R.string.cancel), onClick = viewModel::onCancel, style = AppFooterAction.Style.Tertiary),
                 )
                 FooterMode.Reminders -> listOf(
-                    AppFooterAction(text = "Remind me", onClick = viewModel::onSubmit, enabled = state.canContinue),
-                    AppFooterAction(text = "Not now", onClick = viewModel::onNotNow, style = AppFooterAction.Style.Secondary),
+                    AppFooterAction(text = stringResource(R.string.onboarding_remind_me), onClick = viewModel::onSubmit, enabled = state.canContinue),
+                    AppFooterAction(text = stringResource(R.string.onboarding_not_now), onClick = viewModel::onNotNow, style = AppFooterAction.Style.Secondary),
                 )
                 FooterMode.Build -> listOf(
-                    AppFooterAction(text = "Build my routine", onClick = viewModel::onBuild),
+                    AppFooterAction(text = stringResource(R.string.onboarding_build_my_routine), onClick = viewModel::onBuild),
                 )
             }
         )
@@ -437,13 +441,31 @@ private fun ReminderTimeDialog(
         },
         confirmButton = {
             TextButton(onClick = { onConfirm(pickerState.hour, pickerState.minute) }) {
-                AppText(text = "OK", style = OnboardingType.TextAction, color = Theme.contentColors.action)
+                AppText(text = stringResource(R.string.ok), style = OnboardingType.TextAction, color = Theme.contentColors.action)
             }
         },
         dismissButton = {
             TextButton(onClick = onDismiss) {
-                AppText(text = "Cancel", style = OnboardingType.TextAction, color = Theme.contentColors.secondary)
+                AppText(text = stringResource(R.string.cancel), style = OnboardingType.TextAction, color = Theme.contentColors.secondary)
             }
         },
     )
+}
+
+// How an answer reads on its question's summary row
+@Composable
+private fun answerSummary(question: OnboardingQuestion, answer: Answer, firstDayOfWeek: DayOfWeek): String = when (answer) {
+    is Answer.Choice -> (question as? OnboardingQuestion.Choice)?.options
+        ?.firstOrNull { it.id == answer.optionId }
+        ?.let { stringResource(it.summary) }
+        .orEmpty()
+    is Answer.Days -> (question as? OnboardingQuestion.Days)
+        ?.let { pluralStringResource(it.answer, answer.count, answer.count) }
+        .orEmpty()
+    is Answer.Reminders -> stringResource(
+        R.string.onboarding_reminders_answer,
+        OnboardingQuestions.week(startingOn = firstDayOfWeek).filter { it in answer.days }.joinToString(", ") { it.shortName() },
+        OnboardingQuestions.formatTime(answer.hour, answer.minute),
+    )
+    Answer.RemindersOff -> stringResource(R.string.onboarding_reminders_off)
 }
