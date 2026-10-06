@@ -1,6 +1,5 @@
 package com.everlog.ui.activities.onboarding
 
-import android.widget.Toast
 import androidx.activity.compose.BackHandler
 import androidx.activity.viewModels
 import androidx.compose.animation.AnimatedContent
@@ -12,8 +11,6 @@ import androidx.compose.animation.slideOutVertically
 import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -22,10 +19,8 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -35,7 +30,6 @@ import com.everlog.data.repositories.RealExerciseRepository
 import com.everlog.managers.preferences.SettingsManager
 import com.everlog.ui.design.CommonComposeActivity
 import com.everlog.ui.design.elements.AppBarScrollBehavior
-import com.everlog.ui.design.elements.AppCircularProgressIndicator
 import com.everlog.ui.design.elements.AppDialog
 import com.everlog.ui.design.elements.AppDialogAction
 import com.everlog.ui.design.elements.AppScreen
@@ -47,8 +41,8 @@ import kotlinx.coroutines.android.awaitFrame
 
 // Debug-only prototype of the onboarding (first run) journey from the Everlog Onboarding design,
 // opened from Settings: the welcome, then the questions. Answers aren't saved. Build my week
-// builds the starter routines behind a loading screen, logs them and closes the screen. The reveal
-// and end steps come later.
+// builds the starter routines behind the building animation, logs them and closes the screen. If
+// the build fails, the user can try again or skip. The reveal and end steps come later.
 class OnboardingActivity : CommonComposeActivity() {
     private val viewModel by viewModels<OnboardingViewModel> {
         createViewModelFactory {
@@ -79,16 +73,12 @@ internal fun OnboardingScreen(
     var showSkipSetup by rememberSaveable { mutableStateOf(false) }
 
     BackHandler(enabled = !state.finished) {
-        // Building can't be left part way
+        // Building can't be left part way. Once it fails, OnboardingBuilding handles Back.
         if (state.step != OnboardingViewModel.Step.Building) showSkipSetup = true
     }
 
-    val context = LocalContext.current
     LaunchedEffect(state.finished) {
-        if (state.finished) {
-            if (state.buildFailed) Toast.makeText(context, R.string.onboarding_build_failed, Toast.LENGTH_LONG).show()
-            onClose()
-        }
+        if (state.finished) onClose()
     }
 
     // The welcome's entrance plays once, not again after e.g. rotating
@@ -104,6 +94,8 @@ internal fun OnboardingScreen(
     // change in place around the content, so going between them isn't a change of screen here.
     AnimatedContent(
         targetState = state.step,
+        // Mid crossfade both steps are see-through, so without this the window shows through as a grey flash
+        modifier = Modifier.background(Theme.backgrounds.primary),
         contentKey = { step ->
             when (step) {
                 OnboardingViewModel.Step.Welcome, OnboardingViewModel.Step.Questions -> OnboardingViewModel.Step.Questions
@@ -125,7 +117,12 @@ internal fun OnboardingScreen(
                 appBarScrollBehavior = appBarScrollBehavior,
                 onSkipSetup = { showSkipSetup = true },
             )
-            OnboardingViewModel.Step.Building -> OnboardingLoading()
+            OnboardingViewModel.Step.Building -> OnboardingBuilding(
+                state = state,
+                onRetry = viewModel::onRetryBuild,
+                onSkip = viewModel::onSkipBuild,
+                onShown = viewModel::onBuildShown,
+            )
         }
     }
 
@@ -224,17 +221,4 @@ private fun SkipSetupDialog(
         primaryAction = AppDialogAction(text = stringResource(R.string.onboarding_keep_going), onClick = onKeepGoing),
         secondaryAction = AppDialogAction(text = stringResource(R.string.onboarding_skip_setup), onClick = onSkipSetup),
     )
-}
-
-// The whole screen while the week builds
-@Composable
-private fun OnboardingLoading() {
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(Theme.backgrounds.primary),
-        contentAlignment = Alignment.Center,
-    ) {
-        AppCircularProgressIndicator()
-    }
 }

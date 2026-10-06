@@ -9,10 +9,10 @@ import timber.log.Timber
 /**
  * The welcome, then the setup questionnaire from the Everlog Onboarding design: one question open
  * at a time, answered questions collapse to summary rows that can be reopened, then Build my
- * week builds the starter routines and finishes.
+ * week builds the starter routines behind the building screen and finishes.
  *
  * A prototype for now: answers aren't saved, and the starter routines are built but only logged,
- * not saved or shown.
+ * not saved or shown. If building them fails, the user can try again or skip.
  */
 class OnboardingViewModel(
     dispatcher: CoroutineDispatcher,
@@ -83,17 +83,41 @@ class OnboardingViewModel(
         val currentState = state.value
         if (!currentState.allAnswered || currentState.step == Step.Building) return
         setState { copy(step = Step.Building) }
+        build(currentState.answers)
+    }
+
+    // Try again after the build failed: builds the week from scratch
+    fun onRetryBuild() {
+        val currentState = state.value
+        if (currentState.step != Step.Building || currentState.build != Build.Failed) return
+        setState { copy(build = Build.InProgress, buildAttempt = buildAttempt + 1) }
+        build(currentState.answers)
+    }
+
+    // Skip after the build failed, so the user is never stuck here
+    fun onSkipBuild() {
+        if (state.value.build != Build.Failed) return
+        setState { copy(finished = true) }
+    }
+
+    // The building screen has played the whole success animation. The reveal comes here later.
+    fun onBuildShown() {
+        if (state.value.build != Build.Ready) return
+        setState { copy(finished = true) }
+    }
+
+    private fun build(answers: Map<String, Answer>) {
         launchCoroutine {
-            val profile = OnboardingQuestions.starterProfile(currentState.answers)
+            val profile = OnboardingQuestions.starterProfile(answers)
             buildStarterRoutinesUseCase(BuildStarterRoutinesUseCase.Dto(profile, createdDate = now())).fold(
-                // Reported as a non-fatal. For now the screen closes and says so; retry or skip come later.
+                // Reported as a non-fatal. The screen offers to try again or skip.
                 ifLeft = {
                     Timber.tag(TAG).e(it)
-                    setState { copy(finished = true, buildFailed = true) }
+                    setState { copy(build = Build.Failed) }
                 },
                 ifRight = { routines ->
                     Timber.tag(TAG).i("Built starter routines for %s: %s", profile, routines.joinToString { "${it.name} (${it.getTotalExercises()} exercises)" })
-                    setState { copy(finished = true) }
+                    setState { copy(build = Build.Ready) }
                 },
             )
         }
@@ -114,6 +138,14 @@ class OnboardingViewModel(
         Building,
     }
 
+    // Building the starter routines
+    enum class Build {
+        InProgress,
+        Ready,
+        // Until Try again or Skip
+        Failed,
+    }
+
     data class State(
         val questions: List<OnboardingQuestion>,
         val step: Step = Step.Welcome,
@@ -124,10 +156,12 @@ class OnboardingViewModel(
         val activeQuestionId: String?,
         // In-progress answer for the open question
         val input: Answer? = null,
-        // Building the starter routines is over, so the screen closes
+        // While the step is Building
+        val build: Build = Build.InProgress,
+        // Counts Try again, so the building screen starts its animation over
+        val buildAttempt: Int = 0,
+        // The screen closes
         val finished: Boolean = false,
-        // The starter routines couldn't be built, which the screen says as it closes
-        val buildFailed: Boolean = false,
         // From Settings, for the order of the reminder days
         val firstDayOfWeek: DayOfWeek = DayOfWeek.MONDAY,
     ) {
