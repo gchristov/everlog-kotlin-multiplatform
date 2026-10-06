@@ -47,6 +47,7 @@ import com.airbnb.lottie.compose.rememberLottieAnimatable
 import com.airbnb.lottie.compose.rememberLottieComposition
 import com.everlog.R
 import com.everlog.data.controllers.starterroutines.StarterProfile
+import com.everlog.data.controllers.starterroutines.StarterWeek
 import com.everlog.ui.activities.onboarding.OnboardingViewModel.Build
 import com.everlog.ui.design.elements.AppFooter
 import com.everlog.ui.design.elements.AppFooterAction
@@ -251,7 +252,7 @@ private fun BuildingText(
                 textAlign = TextAlign.Center,
             )
             AppText(
-                text = if (build == Build.Failed) stringResource(R.string.onboarding_build_failed_body) else buildingSummary(answers),
+                text = if (build == Build.Failed) stringResource(R.string.onboarding_build_failed_body) else onboardingSummary(answers),
                 color = Theme.contentColors.secondary,
                 textAlign = TextAlign.Center,
             )
@@ -259,13 +260,15 @@ private fun BuildingText(
     }
 }
 
-// From the answers, e.g. "3 days · Gym · Build muscle". Skipped questions count as their defaults,
-// as for the build.
+// From the answers, e.g. "3 days · Gym · Build muscle", with the week's split after the days once
+// it's built: "3 days · Push / Pull / Legs · Gym · Build muscle". Skipped questions count as their
+// defaults, as for the build.
 @Composable
-private fun buildingSummary(answers: Map<String, Answer>): String {
+internal fun onboardingSummary(answers: Map<String, Answer>, split: StarterWeek.Split? = null): String {
     val profile = OnboardingQuestions.starterProfile(answers)
-    return listOf(
+    return listOfNotNull(
         pluralStringResource(R.plurals.onboarding_building_days, profile.daysPerWeek, profile.daysPerWeek),
+        split?.label(),
         stringResource(
             when (profile.place) {
                 StarterProfile.Place.GYM -> R.string.onboarding_where_gym

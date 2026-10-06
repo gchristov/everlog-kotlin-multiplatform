@@ -475,6 +475,32 @@
     <string name="onboarding_build_failed">Couldn\'t build your week</string>
     <string name="onboarding_build_failed_body">Something went wrong. Try again, or skip and build your own routines later.</string>
     <string name="onboarding_try_again">Try again</string>
+    <string name="onboarding_reveal_title">Here\'s your week</string>
+    <string name="onboarding_reveal_experienced">You\'ve been lifting for years, so treat this as a starting point.</string>
+    <!-- The week's split, in the summary line, e.g. 3 days · Push / Pull / Legs · Gym · Build muscle -->
+    <string name="onboarding_reveal_split_full_body">Full body</string>
+    <string name="onboarding_reveal_split_upper_lower">Upper / Lower</string>
+    <string name="onboarding_reveal_split_push_pull_legs">Push / Pull / Legs</string>
+    <!-- Sets × reps, e.g. 3 × 8–12 -->
+    <string name="onboarding_reveal_reps">%1$d × %2$d–%3$d</string>
+    <!-- Sets × a hold in seconds, e.g. 3 × 30 s -->
+    <string name="onboarding_reveal_hold">%1$d × %2$d s</string>
+    <!-- A closed routine card, e.g. Wed · 4 exercises · 12 sets -->
+    <plurals name="onboarding_reveal_exercises">
+        <item quantity="one">%1$d exercise</item>
+        <item quantity="other">%1$d exercises</item>
+    </plurals>
+    <plurals name="onboarding_reveal_sets">
+        <item quantity="one">%1$d set</item>
+        <item quantity="other">%1$d sets</item>
+    </plurals>
+    <!-- Read out for a routine card, which opens and closes on a tap -->
+    <string name="onboarding_reveal_open">Expanded</string>
+    <string name="onboarding_reveal_closed">Collapsed</string>
+    <string name="onboarding_reveal_make_it_yours">Make it yours</string>
+    <string name="onboarding_reveal_looks_good">Looks good</string>
+    <string name="onboarding_reveal_add_own">Got your own program? Add your first day</string>
+    <string name="onboarding_reveal_use_this">Use this one</string>
     <string name="onboarding_editing">Editing</string>
     <string name="onboarding_up_next">Up next</string>
     <string name="onboarding_skipped">Skipped</string>

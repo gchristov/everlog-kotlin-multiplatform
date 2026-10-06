@@ -26,6 +26,8 @@ billing = "8.3.0"
 playAppUpdate = "2.1.0"
 playReview = "2.0.2"
 glide = "4.16.0"
+# Image loading for Compose, as in newsfeed-kotlin-multiplatform
+coil = "2.7.0"
 rxandroid = "1.2.1"
 rxjava = "1.3.8"
 rxbinding = "1.0.1"
@@ -123,6 +125,7 @@ kotlinx-coroutines-play-services = { group = "org.jetbrains.kotlinx", name = "ko
 arrow-core = { group = "io.arrow-kt", name = "arrow-core", version.ref = "arrow" }
 
 glide = { group = "com.github.bumptech.glide", name = "glide", version.ref = "glide" }
+coil-compose = { group = "io.coil-kt", name = "coil-compose", version.ref = "coil" }
 
 rxandroid = { group = "io.reactivex", name = "rxandroid", version.ref = "rxandroid" }
 rxjava = { group = "io.reactivex", name = "rxjava", version.ref = "rxjava" }

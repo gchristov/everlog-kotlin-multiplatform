@@ -24,8 +24,10 @@ class RealBuildStarterRoutinesUseCaseTest {
         val library = exerciseLibrary(week)
         repository.globalExercises = Either.Right(library)
 
-        val routines = useCase(BuildStarterRoutinesUseCase.Dto(profile, createdDate = 1_000L)).getOrNull()!!
+        val result = useCase(BuildStarterRoutinesUseCase.Dto(profile, createdDate = 1_000L)).getOrNull()!!
+        val routines = result.routines
 
+        assertThat(result.week).isEqualTo(week)
         assertThat(routines.map { it.name }).containsExactly("Upper", "Lower").inOrder()
         assertThat(routines.map { it.createdDate }.distinct()).containsExactly(1_000L)
         assertThat(routines.flatMap { it.exerciseGroups }.map { it.exercises.single().exercise!!.uuid })

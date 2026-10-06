@@ -9,10 +9,10 @@ import timber.log.Timber
 /**
  * The welcome, then the setup questionnaire from the Everlog Onboarding design: one question open
  * at a time, answered questions collapse to summary rows that can be reopened, then Build my
- * week builds the starter routines behind the building screen and finishes.
+ * week builds the starter routines behind the building screen, and the reveal shows them.
  *
- * A prototype for now: answers aren't saved, and the starter routines are built but only logged,
- * not saved or shown. If building them fails, the user can try again or skip.
+ * A prototype for now: answers aren't saved, and the starter routines are shown but not saved. If
+ * building them fails, the user can try again or skip.
  */
 class OnboardingViewModel(
     dispatcher: CoroutineDispatcher,
@@ -100,9 +100,21 @@ class OnboardingViewModel(
         setState { copy(finished = true) }
     }
 
-    // The building screen has played the whole success animation. The reveal comes here later.
+    // The building screen has played the whole success animation
     fun onBuildShown() {
         if (state.value.build != Build.Ready) return
+        setState { copy(step = Step.Reveal) }
+    }
+
+    // Opens or closes a routine's card on the reveal
+    fun onRoutineToggle(index: Int) {
+        setState { copy(openRoutines = if (index in openRoutines) openRoutines - index else openRoutines + index) }
+    }
+
+    // Either of the reveal's buttons. For now both close the screen: saving the routines, editing
+    // them and the end step come later.
+    fun onRevealDone() {
+        if (state.value.step != Step.Reveal) return
         setState { copy(finished = true) }
     }
 
@@ -115,9 +127,9 @@ class OnboardingViewModel(
                     Timber.tag(TAG).e(it)
                     setState { copy(build = Build.Failed) }
                 },
-                ifRight = { routines ->
-                    Timber.tag(TAG).i("Built starter routines for %s: %s", profile, routines.joinToString { "${it.name} (${it.getTotalExercises()} exercises)" })
-                    setState { copy(build = Build.Ready) }
+                ifRight = { starter ->
+                    Timber.tag(TAG).i("Built starter routines for %s: %s", profile, starter.routines.joinToString { "${it.name} (${it.getTotalExercises()} exercises)" })
+                    setState { copy(build = Build.Ready, starter = starter) }
                 },
             )
         }
@@ -134,8 +146,10 @@ class OnboardingViewModel(
         Welcome,
         // One question open at a time, until Build my week
         Questions,
-        // The starter routines building, until the screen closes
+        // The starter routines building, until they're ready or the user skips
         Building,
+        // The starter routines, until the screen closes
+        Reveal,
     }
 
     // Building the starter routines
@@ -160,6 +174,10 @@ class OnboardingViewModel(
         val build: Build = Build.InProgress,
         // Counts Try again, so the building screen starts its animation over
         val buildAttempt: Int = 0,
+        // Once the build is ready
+        val starter: BuildStarterRoutinesUseCase.Result? = null,
+        // The reveal's open routine cards, by index. The first starts open.
+        val openRoutines: Set<Int> = setOf(0),
         // The screen closes
         val finished: Boolean = false,
         // From Settings, for the order of the reminder days
