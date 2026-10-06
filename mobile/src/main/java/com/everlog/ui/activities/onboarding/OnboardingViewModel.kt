@@ -9,7 +9,7 @@ import timber.log.Timber
 /**
  * The welcome, then the setup questionnaire from the Everlog Onboarding design: one question open
  * at a time, answered questions collapse to summary rows that can be reopened, then Build my
- * routine builds the starter routines and finishes.
+ * week builds the starter routines and finishes.
  *
  * A prototype for now: answers aren't saved, and the starter routines are built but only logged,
  * not saved or shown.
@@ -86,7 +86,7 @@ class OnboardingViewModel(
         launchCoroutine {
             val profile = OnboardingQuestions.starterProfile(currentState.answers)
             buildStarterRoutinesUseCase(BuildStarterRoutinesUseCase.Dto(profile, createdDate = now())).fold(
-                // Reported as a non-fatal. The building step will offer retry or skip.
+                // Reported as a non-fatal. For now the screen closes and says so; retry or skip come later.
                 ifLeft = {
                     Timber.tag(TAG).e(it)
                     setState { copy(finished = true, buildFailed = true) }

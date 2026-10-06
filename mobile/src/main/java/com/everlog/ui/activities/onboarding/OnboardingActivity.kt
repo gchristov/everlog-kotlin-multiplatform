@@ -47,8 +47,8 @@ import kotlinx.coroutines.android.awaitFrame
 
 // Debug-only prototype of the onboarding (first run) journey from the Everlog Onboarding design,
 // opened from Settings: the welcome, then the questions. Answers aren't saved. Build my week
-// builds the starter routines, logs them and closes the screen. The building, reveal and end steps
-// come later.
+// builds the starter routines behind a loading screen, logs them and closes the screen. The reveal
+// and end steps come later.
 class OnboardingActivity : CommonComposeActivity() {
     private val viewModel by viewModels<OnboardingViewModel> {
         createViewModelFactory {
