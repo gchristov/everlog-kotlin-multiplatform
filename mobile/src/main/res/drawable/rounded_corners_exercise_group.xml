@@ -6,7 +6,7 @@
         android:width="1dp"
         android:color="@color/separator" />
     <corners
-        android:topLeftRadius="@dimen/card_radius_default"
-        android:topRightRadius="@dimen/card_radius_default" />
+        android:topLeftRadius="@dimen/card_radius_large"
+        android:topRightRadius="@dimen/card_radius_large" />
 
 </shape>

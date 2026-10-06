@@ -5,6 +5,6 @@
     <solid android:color="@color/main_accent" />
 
     <corners
-        android:bottomLeftRadius="@dimen/card_radius_default"
-        android:bottomRightRadius="@dimen/card_radius_default" />
+        android:bottomLeftRadius="@dimen/card_radius_large"
+        android:bottomRightRadius="@dimen/card_radius_large" />
 </shape>
