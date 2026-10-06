@@ -4,16 +4,14 @@ import android.widget.Toast
 import androidx.activity.compose.BackHandler
 import androidx.activity.viewModels
 import androidx.compose.animation.AnimatedContent
-import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.animation.togetherWith
+import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.rememberScrollState
@@ -36,6 +34,7 @@ import com.everlog.data.controllers.starterroutines.RealBuildStarterRoutinesUseC
 import com.everlog.data.repositories.RealExerciseRepository
 import com.everlog.managers.preferences.SettingsManager
 import com.everlog.ui.design.CommonComposeActivity
+import com.everlog.ui.design.elements.AppBarScrollBehavior
 import com.everlog.ui.design.elements.AppCircularProgressIndicator
 import com.everlog.ui.design.elements.AppDialog
 import com.everlog.ui.design.elements.AppDialogAction
@@ -81,7 +80,7 @@ internal fun OnboardingScreen(
 
     BackHandler(enabled = !state.finished) {
         // Building can't be left part way
-        if (!state.building) showSkipSetup = true
+        if (state.step != OnboardingViewModel.Step.Building) showSkipSetup = true
     }
 
     val context = LocalContext.current
@@ -101,66 +100,32 @@ internal fun OnboardingScreen(
     val welcomeScrollState = rememberScrollState()
     val appBarScrollBehavior = rememberAppBarScrollBehavior(canScroll = { welcomeScrollState.canScrollForward })
 
-    Box(modifier = Modifier.fillMaxSize()) {
-        // One screen for every step, so the top bar and footer change in place around the content
-        AppScreen(
-            modifier = Modifier.nestedScroll(appBarScrollBehavior.nestedScrollConnection),
-            topBar = {
-                OnboardingTopBar(
-                    welcome = state.welcome,
-                    animateWelcomeIn = animateWelcomeIn,
-                    answered = state.answers.size,
-                    total = state.questions.size,
-                    scrollBehavior = appBarScrollBehavior,
-                    onSkipSetup = { showSkipSetup = true },
-                )
-            },
-            footer = {
-                OnboardingFooter(
-                    state = state,
-                    viewModel = viewModel,
-                    animateIn = animateWelcomeIn,
-                )
-            },
-        ) { contentPadding ->
-            val enterOffset = with(LocalDensity.current) { OnboardingMotion.EnterOffset.roundToPx() }
-            AnimatedContent(
-                targetState = state.welcome,
-                transitionSpec = {
-                    // A fade through: the welcome lifts away, then the first question comes in like an
-                    // appended one. The question waits for the welcome to go, as the two titles sit in
-                    // the same place and overlapping them reads as a jumble.
-                    val enterDelay = OnboardingMotion.WelcomeExit
-                    (fadeIn(tween(OnboardingMotion.Enter, enterDelay, OnboardingMotion.EmphasizedDecelerate)) +
-                            slideInVertically(tween(OnboardingMotion.Enter, enterDelay, OnboardingMotion.EmphasizedDecelerate)) { enterOffset }) togetherWith
-                            (fadeOut(tween(OnboardingMotion.WelcomeExit, easing = OnboardingMotion.Standard)) +
-                                    slideOutVertically(tween(OnboardingMotion.WelcomeExit, easing = OnboardingMotion.Standard)) { -enterOffset })
-                },
-                label = "step",
-            ) { welcome ->
-                if (welcome) {
-                    OnboardingWelcome(
-                        scrollState = welcomeScrollState,
-                        contentPadding = contentPadding,
-                        animateIn = animateWelcomeIn,
-                    )
-                } else {
-                    OnboardingQuestionnaire(
-                        state = state,
-                        viewModel = viewModel,
-                        contentPadding = contentPadding,
-                    )
-                }
+    // Every step of the screen. The welcome and the questions are one screen, whose top bar and footer
+    // change in place around the content, so going between them isn't a change of screen here.
+    AnimatedContent(
+        targetState = state.step,
+        contentKey = { step ->
+            when (step) {
+                OnboardingViewModel.Step.Welcome, OnboardingViewModel.Step.Questions -> OnboardingViewModel.Step.Questions
+                else -> step
             }
-        }
-
-        // Over everything, top bar and footer included, while the starter routines build
-        AnimatedVisibility(
-            visible = state.building,
-            enter = fadeIn(tween(OnboardingMotion.Enter, easing = OnboardingMotion.Standard)),
-            exit = fadeOut(tween(OnboardingMotion.Enter, easing = OnboardingMotion.Standard)),
-        ) {
-            OnboardingLoading()
+        },
+        transitionSpec = {
+            fadeIn(tween(OnboardingMotion.Enter, easing = OnboardingMotion.Standard)) togetherWith
+                    fadeOut(tween(OnboardingMotion.Enter, easing = OnboardingMotion.Standard))
+        },
+        label = "screen",
+    ) { step ->
+        when (step) {
+            OnboardingViewModel.Step.Welcome, OnboardingViewModel.Step.Questions -> OnboardingSetup(
+                state = state,
+                viewModel = viewModel,
+                animateWelcomeIn = animateWelcomeIn,
+                welcomeScrollState = welcomeScrollState,
+                appBarScrollBehavior = appBarScrollBehavior,
+                onSkipSetup = { showSkipSetup = true },
+            )
+            OnboardingViewModel.Step.Building -> OnboardingLoading()
         }
     }
 
@@ -184,6 +149,69 @@ internal fun OnboardingScreen(
     }
 }
 
+// The welcome, then the questions, on one AppScreen
+@Composable
+private fun OnboardingSetup(
+    state: OnboardingViewModel.State,
+    viewModel: OnboardingViewModel,
+    animateWelcomeIn: Boolean,
+    welcomeScrollState: ScrollState,
+    appBarScrollBehavior: AppBarScrollBehavior,
+    onSkipSetup: () -> Unit,
+) {
+    val welcome = state.step == OnboardingViewModel.Step.Welcome
+    AppScreen(
+        modifier = Modifier.nestedScroll(appBarScrollBehavior.nestedScrollConnection),
+        topBar = {
+            OnboardingTopBar(
+                welcome = welcome,
+                animateWelcomeIn = animateWelcomeIn,
+                answered = state.answers.size,
+                total = state.questions.size,
+                scrollBehavior = appBarScrollBehavior,
+                onSkipSetup = onSkipSetup,
+            )
+        },
+        footer = {
+            OnboardingFooter(
+                state = state,
+                viewModel = viewModel,
+                animateIn = animateWelcomeIn,
+            )
+        },
+    ) { contentPadding ->
+        val enterOffset = with(LocalDensity.current) { OnboardingMotion.EnterOffset.roundToPx() }
+        AnimatedContent(
+            targetState = welcome,
+            transitionSpec = {
+                // A fade through: the welcome lifts away, then the first question comes in like an
+                // appended one. The question waits for the welcome to go, as the two titles sit in
+                // the same place and overlapping them reads as a jumble.
+                val enterDelay = OnboardingMotion.WelcomeExit
+                (fadeIn(tween(OnboardingMotion.Enter, enterDelay, OnboardingMotion.EmphasizedDecelerate)) +
+                        slideInVertically(tween(OnboardingMotion.Enter, enterDelay, OnboardingMotion.EmphasizedDecelerate)) { enterOffset }) togetherWith
+                        (fadeOut(tween(OnboardingMotion.WelcomeExit, easing = OnboardingMotion.Standard)) +
+                                slideOutVertically(tween(OnboardingMotion.WelcomeExit, easing = OnboardingMotion.Standard)) { -enterOffset })
+            },
+            label = "welcome",
+        ) { showWelcome ->
+            if (showWelcome) {
+                OnboardingWelcome(
+                    scrollState = welcomeScrollState,
+                    contentPadding = contentPadding,
+                    animateIn = animateWelcomeIn,
+                )
+            } else {
+                OnboardingQuestionnaire(
+                    state = state,
+                    viewModel = viewModel,
+                    contentPadding = contentPadding,
+                )
+            }
+        }
+    }
+}
+
 @Composable
 private fun SkipSetupDialog(
     onKeepGoing: () -> Unit,
@@ -198,14 +226,13 @@ private fun SkipSetupDialog(
     )
 }
 
-// Covers the whole screen while the week builds, taking every touch so the questions can't be used
+// The whole screen while the week builds
 @Composable
 private fun OnboardingLoading() {
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(Theme.backgrounds.primary)
-            .clickable(interactionSource = remember { MutableInteractionSource() }, indication = null, onClick = {}),
+            .background(Theme.backgrounds.primary),
         contentAlignment = Alignment.Center,
     ) {
         AppCircularProgressIndicator()

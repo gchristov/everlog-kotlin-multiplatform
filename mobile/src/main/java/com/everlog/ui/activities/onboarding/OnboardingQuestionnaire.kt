@@ -376,7 +376,7 @@ internal fun OnboardingFooter(
 ) {
     val haptics = LocalHapticFeedback.current
     val mode = when {
-        state.welcome -> FooterMode.Welcome
+        state.step == OnboardingViewModel.Step.Welcome -> FooterMode.Welcome
         state.activeQuestion is OnboardingQuestion.Reminders -> FooterMode.Reminders
         state.activeQuestionId == null -> FooterMode.Build
         state.isEditing -> FooterMode.Editing

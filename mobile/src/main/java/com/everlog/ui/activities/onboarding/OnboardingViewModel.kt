@@ -26,7 +26,7 @@ class OnboardingViewModel(
 ) {
     // Let's go on the welcome
     fun onStart() {
-        setState { copy(welcome = false) }
+        setState { copy(step = Step.Questions) }
     }
 
     fun onOptionSelect(questionId: String, optionId: String) {
@@ -81,19 +81,19 @@ class OnboardingViewModel(
 
     fun onBuild() {
         val currentState = state.value
-        if (!currentState.allAnswered || currentState.building) return
-        setState { copy(building = true) }
+        if (!currentState.allAnswered || currentState.step == Step.Building) return
+        setState { copy(step = Step.Building) }
         launchCoroutine {
             val profile = OnboardingQuestions.starterProfile(currentState.answers)
             buildStarterRoutinesUseCase(BuildStarterRoutinesUseCase.Dto(profile, createdDate = now())).fold(
                 // Reported as a non-fatal. The building step will offer retry or skip.
                 ifLeft = {
                     Timber.tag(TAG).e(it)
-                    setState { copy(building = false, finished = true, buildFailed = true) }
+                    setState { copy(finished = true, buildFailed = true) }
                 },
                 ifRight = { routines ->
                     Timber.tag(TAG).i("Built starter routines for %s: %s", profile, routines.joinToString { "${it.name} (${it.getTotalExercises()} exercises)" })
-                    setState { copy(building = false, finished = true) }
+                    setState { copy(finished = true) }
                 },
             )
         }
@@ -104,10 +104,19 @@ class OnboardingViewModel(
         setState { copy(input = update(input)) }
     }
 
+    // What the screen shows, in order
+    enum class Step {
+        // Until Let's go
+        Welcome,
+        // One question open at a time, until Build my week
+        Questions,
+        // The starter routines building, until the screen closes
+        Building,
+    }
+
     data class State(
         val questions: List<OnboardingQuestion>,
-        // The welcome shows first, until Let's go opens the questions
-        val welcome: Boolean = true,
+        val step: Step = Step.Welcome,
         val answers: Map<String, Answer> = emptyMap(),
         // Questions skipped, whose answers are the defaults
         val skipped: Set<String> = emptySet(),
@@ -115,8 +124,6 @@ class OnboardingViewModel(
         val activeQuestionId: String?,
         // In-progress answer for the open question
         val input: Answer? = null,
-        // Build my week is building the starter routines
-        val building: Boolean = false,
         // Building the starter routines is over, so the screen closes
         val finished: Boolean = false,
         // The starter routines couldn't be built, which the screen says as it closes
