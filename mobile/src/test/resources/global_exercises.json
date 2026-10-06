@@ -1,0 +1,517 @@
+[
+  {
+    "uuid": "144fbc93-3eff-4edb-95fa-8f57917b5ea6",
+    "name": "Air Twisting Crunch",
+    "category": "ABS"
+  },
+  {
+    "uuid": "2b1d7c68-15f5-44a3-9f25-0b69b7cb97d6",
+    "name": "Bicycle Crunch",
+    "category": "ABS"
+  },
+  {
+    "uuid": "7e2955ca-3410-4f48-a801-988bad105dac",
+    "name": "Brazillian Crunch",
+    "category": "ABS"
+  },
+  {
+    "uuid": "8bc6e3df-79bf-4bde-9ee8-1a5a40b9921c",
+    "name": "Cable Twist",
+    "category": "ABS"
+  },
+  {
+    "uuid": "23a5f227-b7f5-42f0-adcc-1a5814dc9fc8",
+    "name": "Crunch",
+    "category": "ABS"
+  },
+  {
+    "uuid": "6866f6dd-f682-43fd-8cf6-79230c3e02d5",
+    "name": "Crunch Frog",
+    "category": "ABS"
+  },
+  {
+    "uuid": "c5fb5d4e-6988-4d47-beb1-85cb844c7d30",
+    "name": "Dragonfly",
+    "category": "ABS"
+  },
+  {
+    "uuid": "f4a0dafb-3fbd-44a4-9917-ff92e4667cef",
+    "name": "Elbow Plank",
+    "category": "ABS"
+  },
+  {
+    "uuid": "1e7736da-08b9-4624-bb70-081c9e813dbc",
+    "name": "Hanging Knee Raise",
+    "category": "ABS"
+  },
+  {
+    "uuid": "7ed575b5-b9dd-4ebb-9018-cb3188d4b75a",
+    "name": "Hanging Oblique Crunch",
+    "category": "ABS"
+  },
+  {
+    "uuid": "72bd4c39-32fa-471f-af60-a013d2d80e7f",
+    "name": "Knee Tucks",
+    "category": "ABS"
+  },
+  {
+    "uuid": "0759ba7f-4584-4344-9ef2-ffc3e3fb83d4",
+    "name": "Leg Lift Circles",
+    "category": "ABS"
+  },
+  {
+    "uuid": "4a74516d-21d4-4614-8d30-a4201fbd65b5",
+    "name": "Plank Reach Through",
+    "category": "ABS"
+  },
+  {
+    "uuid": "425c6d3b-8f9c-4e8b-8532-72cdfbe56f46",
+    "name": "Plank Twist",
+    "category": "ABS"
+  },
+  {
+    "uuid": "78402cfa-ef6a-4fc2-82e6-8aa6d008a8e4",
+    "name": "Russian Twist",
+    "category": "ABS"
+  },
+  {
+    "uuid": "249f99cc-a714-42af-b26f-70e710f74db8",
+    "name": "Side Plank",
+    "category": "ABS"
+  },
+  {
+    "uuid": "bf22ec8c-934f-4f0c-95e2-bbc9d434c6b4",
+    "name": "Spider Plank",
+    "category": "ABS"
+  },
+  {
+    "uuid": "a4904689-5cc8-454b-b8de-e67e20f8490e",
+    "name": "V Crunch",
+    "category": "ABS"
+  },
+  {
+    "uuid": "8650f17f-bb34-4646-9dd2-e063a0179c32",
+    "name": "Weighted Crunch",
+    "category": "ABS"
+  },
+  {
+    "uuid": "0acbffba-b977-449f-b37f-8bad90b952e9",
+    "name": "Wind Wipers",
+    "category": "ABS"
+  },
+  {
+    "uuid": "68aa1236-bc76-4c1d-8c9e-f1c61c9a6cf2",
+    "name": "Alternating Hammer Curls",
+    "category": "ARMS"
+  },
+  {
+    "uuid": "f97f7709-729b-4863-b531-1aac552e6a7d",
+    "name": "Bench Dip",
+    "category": "ARMS"
+  },
+  {
+    "uuid": "0336a6aa-b264-4ff0-8eb9-62811b7a9c45",
+    "name": "Cable Overhead Extension",
+    "category": "ARMS"
+  },
+  {
+    "uuid": "c8ba67c1-298b-42aa-a481-66ae072ee857",
+    "name": "Cable Pushdown",
+    "category": "ARMS"
+  },
+  {
+    "uuid": "236bed1d-a481-4a73-b55a-b482e848f567",
+    "name": "Chin Up",
+    "category": "ARMS"
+  },
+  {
+    "uuid": "a6c1a5e6-efae-4065-b8ab-78cb2e60263b",
+    "name": "Close Grip Push Up",
+    "category": "ARMS"
+  },
+  {
+    "uuid": "02ad17ce-0398-4038-bd2a-2f4b19446083",
+    "name": "Dumbbell Hammer Curl",
+    "category": "ARMS"
+  },
+  {
+    "uuid": "44a03415-12b1-4ec3-a567-4bdbdc99256c",
+    "name": "EZ Bar Curl",
+    "category": "ARMS"
+  },
+  {
+    "uuid": "12e465ee-5b79-49ef-9a0c-0181bb951b38",
+    "name": "One Arm Kickback",
+    "category": "ARMS"
+  },
+  {
+    "uuid": "e5f30e42-71d3-4a69-b67b-b4508b34c1ea",
+    "name": "Parallel Bar Dips",
+    "category": "ARMS"
+  },
+  {
+    "uuid": "3aa593e4-8858-4eef-a40e-e98f7a5684aa",
+    "name": "Preacher Curl",
+    "category": "ARMS"
+  },
+  {
+    "uuid": "355a35f4-f3f5-4967-b9ed-83dfc90feaa6",
+    "name": "Seated Bicep Curl",
+    "category": "ARMS"
+  },
+  {
+    "uuid": "fedbe2c6-a1cb-4203-97e4-01a1f8aa6a83",
+    "name": "Seated Overhead Extension",
+    "category": "ARMS"
+  },
+  {
+    "uuid": "fa7ad1c9-7474-4aaf-9f88-185d3f5e4918",
+    "name": "Skull Crusher",
+    "category": "ARMS"
+  },
+  {
+    "uuid": "e922c80e-1a09-444e-b49c-20255eb0cfb1",
+    "name": "Standing Curl",
+    "category": "ARMS"
+  },
+  {
+    "uuid": "d41aec16-ea19-464e-872c-91172179d551",
+    "name": "Standing Overhead Triceps Extension",
+    "category": "ARMS"
+  },
+  {
+    "uuid": "92e7eafd-401b-467a-b3b0-d202c9041b53",
+    "name": "Tiger Push Up",
+    "category": "ARMS"
+  },
+  {
+    "uuid": "ffa01a27-3f09-4ba2-b9bc-fa8404800c8e",
+    "name": "Tricep Kickback",
+    "category": "ARMS"
+  },
+  {
+    "uuid": "4f817ef3-0e2f-4723-bc7c-a1577f44768d",
+    "name": "Zottman Curl",
+    "category": "ARMS"
+  },
+  {
+    "uuid": "16112844-fe70-48d3-9738-9dd2b9245fa9",
+    "name": "Bent Over Row",
+    "category": "BACK"
+  },
+  {
+    "uuid": "dd0931e6-2370-4b1b-a53d-36e28814f573",
+    "name": "Chest Pull Over",
+    "category": "BACK"
+  },
+  {
+    "uuid": "7a9a92a9-2d7d-418f-addd-722af5dd7e79",
+    "name": "Cobra",
+    "category": "BACK"
+  },
+  {
+    "uuid": "4d92a1cb-31fe-46da-b78f-624bf98a1012",
+    "name": "Incline Bench Row",
+    "category": "BACK"
+  },
+  {
+    "uuid": "da299546-de47-46b8-8829-261e85bf66ef",
+    "name": "Lat Pulldown",
+    "category": "BACK"
+  },
+  {
+    "uuid": "2c132c78-1c40-412d-b3c3-c8a59fdfc4ee",
+    "name": "One Arm Row",
+    "category": "BACK"
+  },
+  {
+    "uuid": "dda9a745-6ab4-4db7-948d-ce32fe0f4213",
+    "name": "Pull Up",
+    "category": "BACK"
+  },
+  {
+    "uuid": "a2c2b655-bcfe-4539-981e-09925ac0f6d7",
+    "name": "Straight Arm Pulldown",
+    "category": "BACK"
+  },
+  {
+    "uuid": "6b38fc07-e59f-4a6b-b94f-97880838e9e3",
+    "name": "Superman Hold",
+    "category": "BACK"
+  },
+  {
+    "uuid": "a2b6e7dc-7b64-44ee-b037-a77ac2354df5",
+    "name": "Underhand Bent Over Row",
+    "category": "BACK"
+  },
+  {
+    "uuid": "2b2c490b-a233-47d3-bf93-c1b0667bd2f6",
+    "name": "Arm Crossover",
+    "category": "CHEST"
+  },
+  {
+    "uuid": "a30b9d26-9079-41ed-a3d4-9f1c309f200e",
+    "name": "Bench Press",
+    "category": "CHEST"
+  },
+  {
+    "uuid": "0e48b951-85f0-4390-abda-cc28b548bb5e",
+    "name": "Chest Fly",
+    "category": "CHEST"
+  },
+  {
+    "uuid": "6e5f3779-fe58-4160-baad-c17c9ef0b842",
+    "name": "Close Grip Press",
+    "category": "CHEST"
+  },
+  {
+    "uuid": "af902e72-c723-4d4f-bb79-254a95a6511a",
+    "name": "Close-Grip Press to Fly",
+    "category": "CHEST"
+  },
+  {
+    "uuid": "f028533e-dae9-4082-bdca-62713785b29a",
+    "name": "Decline Bench Press",
+    "category": "CHEST"
+  },
+  {
+    "uuid": "11de1ab8-e2de-4213-af98-991316042fcb",
+    "name": "Decline Push Up",
+    "category": "CHEST"
+  },
+  {
+    "uuid": "9f1f4bbf-e9d1-495d-b9a8-defff6597419",
+    "name": "Dumbbell Chest Press",
+    "category": "CHEST"
+  },
+  {
+    "uuid": "afdba2b4-941b-4bf4-99db-06da1370744d",
+    "name": "Dumbbell Floor Press",
+    "category": "CHEST"
+  },
+  {
+    "uuid": "b26385f3-9254-439e-b69f-f4eec8157843",
+    "name": "Dumbbell Incline Press",
+    "category": "CHEST"
+  },
+  {
+    "uuid": "773c52e9-d802-4e67-8945-afc363d53a4e",
+    "name": "Incline Bench Press",
+    "category": "CHEST"
+  },
+  {
+    "uuid": "9d4b306e-fb4c-4176-bd32-8eed7902a949",
+    "name": "Incline Fly",
+    "category": "CHEST"
+  },
+  {
+    "uuid": "ae592bb3-22fa-44b1-a584-0020912cdad4",
+    "name": "Push Up",
+    "category": "CHEST"
+  },
+  {
+    "uuid": "997fc5d5-f06f-47c6-9103-c2b23abfe763",
+    "name": "Svend Press",
+    "category": "CHEST"
+  },
+  {
+    "uuid": "fccec58d-97db-4d3c-9584-41a71ddbe72c",
+    "name": "Barbell Deadlift",
+    "category": "LEGS"
+  },
+  {
+    "uuid": "33ce67e6-616a-400b-af44-413de0c3e17e",
+    "name": "Box Jump",
+    "category": "LEGS"
+  },
+  {
+    "uuid": "c1cd66bd-db95-46b4-93cb-70944bcbee97",
+    "name": "Bulgarian Split Squat",
+    "category": "LEGS"
+  },
+  {
+    "uuid": "227a8a37-c72d-4d30-b9f6-b6fa6fd166c7",
+    "name": "Cable Glute Kickback",
+    "category": "LEGS"
+  },
+  {
+    "uuid": "613da756-3874-4669-98ca-a6204ec34ecf",
+    "name": "Calf Raise",
+    "category": "LEGS"
+  },
+  {
+    "uuid": "7d992f3c-014b-4cb2-ad0e-8046e16431a0",
+    "name": "Donkey Kick",
+    "category": "LEGS"
+  },
+  {
+    "uuid": "068a5a00-15dc-450e-a0d2-2b6e1c65c983",
+    "name": "Forward Lunge",
+    "category": "LEGS"
+  },
+  {
+    "uuid": "7479a68d-667e-42b4-8c02-6f5c7743de1c",
+    "name": "Goblet Squat",
+    "category": "LEGS"
+  },
+  {
+    "uuid": "3af20b0f-d4b8-459b-82b4-48ff5467cf36",
+    "name": "Hip Abduction",
+    "category": "LEGS"
+  },
+  {
+    "uuid": "3689ed44-836a-404c-831a-7ec1f1ac2374",
+    "name": "Hip Thrust",
+    "category": "LEGS"
+  },
+  {
+    "uuid": "c464e5b7-ab2f-40b8-b3b3-b727669b3ddd",
+    "name": "Jefferson Split Squat",
+    "category": "LEGS"
+  },
+  {
+    "uuid": "e45914ed-973f-4157-b3e5-7d94ab5c7f61",
+    "name": "Multi Hip Abduction",
+    "category": "LEGS"
+  },
+  {
+    "uuid": "1216946b-6b6e-4053-9f7b-c4c482898022",
+    "name": "Parallel Squat",
+    "category": "LEGS"
+  },
+  {
+    "uuid": "08d62221-8ba6-452d-a534-f4187dcf63f1",
+    "name": "Pistol Squat",
+    "category": "LEGS"
+  },
+  {
+    "uuid": "fe36fe89-b99f-46d6-abcc-992bf2c5348c",
+    "name": "Rear Alternating Lunge",
+    "category": "LEGS"
+  },
+  {
+    "uuid": "bd817796-b999-42d5-a4fc-359319ad0bdc",
+    "name": "Rear Lunge",
+    "category": "LEGS"
+  },
+  {
+    "uuid": "668f9521-bcab-42f8-b931-fb7b10a04b01",
+    "name": "Rear Lunge from Step",
+    "category": "LEGS"
+  },
+  {
+    "uuid": "7a060e5a-a8d0-46b0-84af-1ecd2671be9d",
+    "name": "Romanian Deadlift",
+    "category": "LEGS"
+  },
+  {
+    "uuid": "0a5781b5-8f9b-4937-9ef5-341f0f75bbda",
+    "name": "Seated Calf Raise",
+    "category": "LEGS"
+  },
+  {
+    "uuid": "e5bb0eb8-6758-4b88-b0eb-cd79e56a5677",
+    "name": "Side Squat",
+    "category": "LEGS"
+  },
+  {
+    "uuid": "9e03139a-ee4d-4902-8dcf-d30c73f44a66",
+    "name": "Single Leg Calf Raise",
+    "category": "LEGS"
+  },
+  {
+    "uuid": "8d2d3fcb-7084-4932-ad62-25c2be2823f9",
+    "name": "Squat",
+    "category": "LEGS"
+  },
+  {
+    "uuid": "4c8d109b-c959-4214-a0de-cdadd9caeb75",
+    "name": "Straight Leg Deadlift",
+    "category": "LEGS"
+  },
+  {
+    "uuid": "6556e3cf-1dc5-4c5a-bd97-d8e52747a590",
+    "name": "Sumo Squat",
+    "category": "LEGS"
+  },
+  {
+    "uuid": "7b41837e-9300-4cfa-80aa-e1a47b4685ff",
+    "name": "Trap Bar Deadlift",
+    "category": "LEGS"
+  },
+  {
+    "uuid": "37f1dd7d-2fbc-4a66-acc3-aaed37f74233",
+    "name": "Alternating Shoulder Press",
+    "category": "SHOULDERS"
+  },
+  {
+    "uuid": "ed1bfc44-bd75-4d12-8e41-2740b010c54c",
+    "name": "Arnold Press",
+    "category": "SHOULDERS"
+  },
+  {
+    "uuid": "2851b948-ebd6-4ca2-8bd8-84f5a0b8b637",
+    "name": "Cable Face Pull",
+    "category": "SHOULDERS"
+  },
+  {
+    "uuid": "361ae35b-4797-47b2-bc11-e46737390b57",
+    "name": "EZ Bar Underhand Press",
+    "category": "SHOULDERS"
+  },
+  {
+    "uuid": "a273b91b-fad3-4609-975c-d5f2077ebc0e",
+    "name": "Lateral Raise",
+    "category": "SHOULDERS"
+  },
+  {
+    "uuid": "cd83f72e-e056-462b-b486-4bd5d0118f2b",
+    "name": "Lateral to Front Raise",
+    "category": "SHOULDERS"
+  },
+  {
+    "uuid": "a428a2aa-53d9-495b-8ac3-7bb2e9d9425f",
+    "name": "Military Press",
+    "category": "SHOULDERS"
+  },
+  {
+    "uuid": "d98ce171-6a2e-4afe-ad18-2aad68a44c1d",
+    "name": "One Arm Front Raise",
+    "category": "SHOULDERS"
+  },
+  {
+    "uuid": "adcdc695-de36-4342-b1d8-22b439ca3f46",
+    "name": "Plate Car Driver",
+    "category": "SHOULDERS"
+  },
+  {
+    "uuid": "5ebd43ce-c87f-4833-9fbf-6c14ccd8dba8",
+    "name": "Rear Delt Fly",
+    "category": "SHOULDERS"
+  },
+  {
+    "uuid": "93729477-7e69-4f22-8e0b-27f204aeab58",
+    "name": "Reverse Fly",
+    "category": "SHOULDERS"
+  },
+  {
+    "uuid": "fff19bc3-b819-4865-aedf-00e27f13a62d",
+    "name": "Seated One Arm Front Raise",
+    "category": "SHOULDERS"
+  },
+  {
+    "uuid": "bc29d6c5-b146-47c5-b5bb-3e41d94d70a0",
+    "name": "Shoulder Press",
+    "category": "SHOULDERS"
+  },
+  {
+    "uuid": "c0d42a30-4dbf-40f0-b207-0232bdf9aa0d",
+    "name": "Shrug",
+    "category": "SHOULDERS"
+  },
+  {
+    "uuid": "866cfcf9-fd47-4017-8c65-34853cd448f6",
+    "name": "Upright Row",
+    "category": "SHOULDERS"
+  }
+]

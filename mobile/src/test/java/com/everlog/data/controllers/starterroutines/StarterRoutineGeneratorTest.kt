@@ -7,6 +7,7 @@ import com.everlog.data.controllers.starterroutines.StarterRoutine.Target
 import com.everlog.data.model.exercise.ELExercise
 import com.everlog.data.model.set.ELSetType
 import com.google.common.truth.Truth.assertThat
+import com.google.gson.Gson
 import org.junit.Assert.assertThrows
 import org.junit.Test
 import org.threeten.bp.DayOfWeek
@@ -149,6 +150,24 @@ class StarterRoutineGeneratorTest {
         assertThat(gym).isNotEqualTo(bodyweight)
     }
 
+    @Test
+    fun `every exercise is in the exercise library`() {
+        val library = globalExercises()
+
+        everyWeek().forEach { week ->
+            assertThat(week.missingExercises(library)).isEmpty()
+        }
+    }
+
+    @Test
+    fun `exercise names match the exercise library`() {
+        val names = globalExercises().associate { it.uuid to it.name }
+
+        everyWeek().flatMap { it.routines }.flatMap { it.exercises }.forEach {
+            assertThat(names[it.exerciseId]).isEqualTo(it.name)
+        }
+    }
+
     // Sets and reps
 
     @Test
@@ -266,6 +285,13 @@ class StarterRoutineGeneratorTest {
         Place.entries.flatMap { place ->
             Experience.entries.map { experience -> generate(days, place, experience) }
         }
+    }
+
+    // A snapshot of global/exercises/all, which is the same in dev and prod. Export a new one with
+    // tools/firebase/firestore/export_collection.sh when the library changes.
+    private fun globalExercises(): List<ELExercise> {
+        val json = javaClass.classLoader!!.getResource("global_exercises.json").readText()
+        return Gson().fromJson(json, Array<ELExercise>::class.java).toList()
     }
 
     private fun names(week: StarterWeek) = week.routines.map { it.name }
