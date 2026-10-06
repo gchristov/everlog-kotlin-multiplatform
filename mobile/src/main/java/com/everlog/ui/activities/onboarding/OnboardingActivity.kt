@@ -10,6 +10,7 @@ import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.ScrollState
+import androidx.compose.foundation.background
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -33,6 +34,7 @@ import com.everlog.ui.design.elements.AppDialog
 import com.everlog.ui.design.elements.AppDialogAction
 import com.everlog.ui.design.elements.AppScreen
 import com.everlog.ui.design.elements.rememberAppBarScrollBehavior
+import com.everlog.ui.design.theme.Theme
 import com.everlog.ui.mvvm.createViewModelFactory
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.android.awaitFrame
@@ -92,6 +94,8 @@ internal fun OnboardingScreen(
     // change in place around the content, so going between them isn't a change of screen here.
     AnimatedContent(
         targetState = state.step,
+        // Mid crossfade both steps are see-through, so without this the window shows through as a grey flash
+        modifier = Modifier.background(Theme.backgrounds.primary),
         contentKey = { step ->
             when (step) {
                 OnboardingViewModel.Step.Welcome, OnboardingViewModel.Step.Questions -> OnboardingViewModel.Step.Questions
