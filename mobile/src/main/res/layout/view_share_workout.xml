@@ -32,7 +32,7 @@
         android:layout_marginRight="@dimen/activity_margin"
         android:layout_marginBottom="@dimen/activity_margin_half_half"
         app:cardBackgroundColor="@color/background_card"
-        app:cardCornerRadius="@dimen/card_radius_default"
+        app:cardCornerRadius="@dimen/card_radius_large"
         app:cardElevation="0dp">
 
         <LinearLayout
@@ -77,7 +77,7 @@
         android:layout_marginRight="@dimen/activity_margin"
         android:layout_marginBottom="@dimen/activity_margin_half_half"
         app:cardBackgroundColor="@color/background_card"
-        app:cardCornerRadius="@dimen/card_radius_default"
+        app:cardCornerRadius="@dimen/card_radius_large"
         app:cardElevation="0dp">
 
         <LinearLayout
@@ -122,7 +122,7 @@
         android:layout_marginRight="@dimen/activity_margin"
         android:layout_marginBottom="@dimen/activity_margin_half_half"
         app:cardBackgroundColor="@color/background_card"
-        app:cardCornerRadius="@dimen/card_radius_default"
+        app:cardCornerRadius="@dimen/card_radius_large"
         app:cardElevation="0dp">
 
         <LinearLayout
@@ -167,7 +167,7 @@
         android:layout_marginRight="@dimen/activity_margin"
         android:layout_marginBottom="@dimen/activity_margin_half_half"
         app:cardBackgroundColor="@color/background_card"
-        app:cardCornerRadius="@dimen/card_radius_default"
+        app:cardCornerRadius="@dimen/card_radius_large"
         app:cardElevation="0dp">
 
         <LinearLayout

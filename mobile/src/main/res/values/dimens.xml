@@ -27,6 +27,9 @@
 
     <dimen name="card_elevation_default">2dp</dimen>
     <dimen name="snackbar_elevation">6dp</dimen>
+    <!-- Cards -->
+    <dimen name="card_radius_large">24dp</dimen>
+    <!-- Smaller rounded controls, and cards drawn in pieces, e.g. an exercise group with its set buttons -->
     <dimen name="card_radius_default">10dp</dimen>
 
     <dimen name="footer_bottom_padding">90dp</dimen>
