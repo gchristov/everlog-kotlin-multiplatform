@@ -1,18 +1,23 @@
 package com.everlog.ui.activities.onboarding
 
+import com.everlog.data.controllers.starterroutines.BuildStarterRoutinesUseCase
 import com.everlog.ui.mvvm.CommonViewModel
 import kotlinx.coroutines.CoroutineDispatcher
 import org.threeten.bp.DayOfWeek
+import timber.log.Timber
 
 /**
  * The welcome, then the setup questionnaire from the Everlog Onboarding design: one question open
  * at a time, answered questions collapse to summary rows that can be reopened, then Build my
- * routine finishes.
+ * routine builds the starter routines and finishes.
  *
- * UI only for now: answers aren't saved, nothing is logged, and no routine is built.
+ * A prototype for now: answers aren't saved, and the starter routines are built but only logged,
+ * not saved or shown.
  */
 class OnboardingViewModel(
     dispatcher: CoroutineDispatcher,
+    private val buildStarterRoutinesUseCase: BuildStarterRoutinesUseCase,
+    private val now: () -> Long = System::currentTimeMillis,
     questions: List<OnboardingQuestion> = OnboardingQuestions.all,
     firstDayOfWeek: DayOfWeek = DayOfWeek.MONDAY,
 ) : CommonViewModel<OnboardingViewModel.State>(
@@ -75,8 +80,20 @@ class OnboardingViewModel(
     }
 
     fun onBuild() {
-        if (!state.value.allAnswered) return
-        setState { copy(finished = true) }
+        val currentState = state.value
+        if (!currentState.allAnswered || currentState.building) return
+        setState { copy(building = true) }
+        launchCoroutine {
+            val profile = OnboardingQuestions.starterProfile(currentState.answers)
+            buildStarterRoutinesUseCase(BuildStarterRoutinesUseCase.Dto(profile, createdDate = now())).fold(
+                // Already reported by the use case. The building step will offer retry or skip.
+                ifLeft = { },
+                ifRight = { routines ->
+                    Timber.tag(TAG).i("Built starter routines for %s: %s", profile, routines.joinToString { "${it.name} (${it.getTotalExercises()} exercises)" })
+                },
+            )
+            setState { copy(building = false, finished = true) }
+        }
     }
 
     private fun updateInput(questionId: String, update: (Answer?) -> Answer?) {
@@ -95,7 +112,9 @@ class OnboardingViewModel(
         val activeQuestionId: String?,
         // In-progress answer for the open question
         val input: Answer? = null,
-        // Build my routine was tapped, so the screen closes
+        // Build my routine is building the starter routines
+        val building: Boolean = false,
+        // The starter routines were built, so the screen closes
         val finished: Boolean = false,
         // From Settings, for the order of the reminder days
         val firstDayOfWeek: DayOfWeek = DayOfWeek.MONDAY,
@@ -151,5 +170,9 @@ class OnboardingViewModel(
             }
             else -> null
         }
+    }
+
+    private companion object {
+        const val TAG = "OnboardingViewModel"
     }
 }

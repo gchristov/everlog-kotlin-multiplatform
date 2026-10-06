@@ -23,6 +23,8 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.everlog.R
+import com.everlog.data.controllers.starterroutines.RealBuildStarterRoutinesUseCase
+import com.everlog.data.repositories.RealExerciseRepository
 import com.everlog.managers.preferences.SettingsManager
 import com.everlog.ui.design.CommonComposeActivity
 import com.everlog.ui.design.elements.AppDialog
@@ -34,13 +36,18 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.android.awaitFrame
 
 // Debug-only prototype of the onboarding (first run) journey from the Everlog Onboarding design,
-// opened from Settings: the welcome, then the questions. UI only: answers aren't saved, nothing is
-// logged, and Build my routine closes the screen. The building, reveal and end steps come later.
+// opened from Settings: the welcome, then the questions. Answers aren't saved. Build my routine
+// builds the starter routines, logs them and closes the screen. The building, reveal and end steps
+// come later.
 class OnboardingActivity : CommonComposeActivity() {
     private val viewModel by viewModels<OnboardingViewModel> {
         createViewModelFactory {
             OnboardingViewModel(
                 dispatcher = Dispatchers.Main,
+                buildStarterRoutinesUseCase = RealBuildStarterRoutinesUseCase(
+                    dispatcher = Dispatchers.Default,
+                    exerciseRepository = RealExerciseRepository(dispatcher = Dispatchers.IO),
+                ),
                 firstDayOfWeek = SettingsManager.manager.firstDayOfWeek(),
             )
         }
