@@ -102,6 +102,7 @@ internal fun OnboardingReveal(
         },
         footer = {
             AppFooter(
+                header = if (experienced) stringResource(R.string.onboarding_reveal_experienced) else null,
                 actions = listOf(
                     AppFooterAction(
                         text = stringResource(if (experienced) R.string.onboarding_reveal_add_own else R.string.onboarding_reveal_make_it_yours),
@@ -119,7 +120,6 @@ internal fun OnboardingReveal(
         RevealRoutines(
             starter = starter,
             openRoutines = state.openRoutines,
-            experienced = experienced,
             animateIn = animateIn,
             scrollState = scrollState,
             bottomPadding = contentPadding.calculateBottomPadding(),
@@ -132,7 +132,6 @@ internal fun OnboardingReveal(
 private fun RevealRoutines(
     starter: BuildStarterRoutinesUseCase.Result,
     openRoutines: Set<Int>,
-    experienced: Boolean,
     animateIn: Boolean,
     scrollState: ScrollState,
     bottomPadding: Dp,
@@ -146,13 +145,6 @@ private fun RevealRoutines(
             .padding(bottom = bottomPadding + Theme.spacing.large),
         verticalArrangement = Arrangement.spacedBy(Theme.spacing.medium),
     ) {
-        if (experienced) {
-            AppText(
-                text = stringResource(R.string.onboarding_reveal_experienced),
-                style = Theme.typography.caption,
-                color = Theme.contentColors.secondary,
-            )
-        }
         starter.week.routines.forEachIndexed { index, routine ->
             // Each card a beat after the one above it
             EnterAnimation(animateIn = animateIn, delayMillis = RevealMotion.CardStagger * index) {
