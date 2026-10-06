@@ -1,6 +1,12 @@
 package com.everlog.ui.activities.onboarding
 
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.core.snap
+import androidx.compose.animation.expandVertically
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.shrinkVertically
 import androidx.compose.animation.core.CubicBezierEasing
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
@@ -53,6 +59,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.everlog.R
 import com.everlog.ui.design.elements.AppBar
+import com.everlog.ui.design.elements.AppBarScrollBehavior
 import com.everlog.ui.design.elements.AppIcon
 import com.everlog.ui.design.elements.AppSurface
 import com.everlog.ui.design.elements.AppTertiaryButton
@@ -87,6 +94,9 @@ internal object OnboardingMotion {
     const val Exit = 150
     const val Scroll = 300
     const val ProgressFill = 300
+    // Let's go: the welcome leaves, then Skip setup, the progress bar and the first question come in
+    const val WelcomeExit = 150
+    const val TopBarFade = 200
     val EnterOffset = 16.dp
 }
 
@@ -106,11 +116,18 @@ private object OnboardingSizes {
     const val ChipCheckStroke = 3f
 }
 
-// Top bar: the app bar with Skip setup, and the progress segments under it
+// Top bar. On the welcome: an empty row with the welcome's header under it, scrolling away with the
+// content. On the questions: Skip setup, and the progress segments under the row. Leaving the
+// welcome, the header fades out, then the bar swaps to the questions' in one frame while the content
+// is invisible, so nothing is seen to move.
 @Composable
 internal fun OnboardingTopBar(
+    welcome: Boolean,
+    // The welcome's entrance, the first time it shows
+    animateWelcomeIn: Boolean,
     answered: Int,
     total: Int,
+    scrollBehavior: AppBarScrollBehavior,
     onSkipSetup: () -> Unit,
 ) {
     val progressDescription = if (answered < total) {
@@ -118,36 +135,60 @@ internal fun OnboardingTopBar(
     } else {
         stringResource(R.string.onboarding_all_steps_answered, total)
     }
+    val questionsIn = fadeIn(tween(OnboardingMotion.TopBarFade, OnboardingMotion.WelcomeExit, OnboardingMotion.Standard))
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .background(Theme.backgrounds.primary)
-            // A band under the progress bar, so content scrolling up disappears below it
-            .padding(bottom = Theme.spacing.small),
+            .background(Theme.backgrounds.primary),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         AppBar(
             actions = {
-                // Text button padding plus the app bar's 4dp inset end the text on the 16dp margin,
-                // in line with the progress bar
-                AppTertiaryButton(
-                    onClick = onSkipSetup,
-                    text = stringResource(R.string.onboarding_skip_setup),
-                    contentPadding = PaddingValues(horizontal = Theme.spacing.medium),
-                )
+                AnimatedVisibility(
+                    visible = !welcome,
+                    enter = questionsIn,
+                    exit = fadeOut(tween(OnboardingMotion.WelcomeExit)),
+                ) {
+                    // Text button padding plus the app bar's 4dp inset end the text on the 16dp
+                    // margin, in line with the progress bar
+                    AppTertiaryButton(
+                        onClick = onSkipSetup,
+                        text = stringResource(R.string.onboarding_skip_setup),
+                        contentPadding = PaddingValues(horizontal = Theme.spacing.medium),
+                    )
+                }
             },
+            header = {
+                AnimatedVisibility(
+                    visible = welcome,
+                    // Leaves with the welcome's content, then gives up its space at once
+                    exit = fadeOut(tween(OnboardingMotion.WelcomeExit, easing = OnboardingMotion.Standard)) +
+                            shrinkVertically(snap(OnboardingMotion.WelcomeExit)),
+                ) {
+                    OnboardingWelcomeHeader(animateIn = animateWelcomeIn)
+                }
+            },
+            scrollBehavior = scrollBehavior,
         )
-        ProgressSegments(
-            // In line with the content on tablets, while the app bar goes edge to edge
-            modifier = Modifier
-                .widthIn(max = LocalAppScreenMaxContentWidth.current)
-                .semantics { contentDescription = progressDescription },
-            // Every question is answered in order, so the next one follows the answered ones. Once
-            // all are answered, every segment is filled and none is current.
-            done = answered,
-            current = answered,
-            total = total,
-        )
+        AnimatedVisibility(
+            visible = !welcome,
+            // Takes its space as the header gives up its own, then fades in
+            enter = expandVertically(snap(OnboardingMotion.WelcomeExit)) + questionsIn,
+        ) {
+            ProgressSegments(
+                // In line with the content on tablets, while the app bar goes edge to edge. The band
+                // under it hides content scrolling up.
+                modifier = Modifier
+                    .widthIn(max = LocalAppScreenMaxContentWidth.current)
+                    .padding(bottom = Theme.spacing.small)
+                    .semantics { contentDescription = progressDescription },
+                // Every question is answered in order, so the next one follows the answered ones.
+                // Once all are answered, every segment is filled and none is current.
+                done = answered,
+                current = answered,
+                total = total,
+            )
+        }
     }
 }
 

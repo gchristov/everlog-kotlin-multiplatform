@@ -2,6 +2,14 @@ package com.everlog.ui.activities.onboarding
 
 import androidx.activity.compose.BackHandler
 import androidx.activity.viewModels
+import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
+import androidx.compose.animation.togetherWith
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -9,6 +17,9 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.everlog.R
@@ -16,13 +27,15 @@ import com.everlog.managers.preferences.SettingsManager
 import com.everlog.ui.design.CommonComposeActivity
 import com.everlog.ui.design.elements.AppDialog
 import com.everlog.ui.design.elements.AppDialogAction
+import com.everlog.ui.design.elements.AppScreen
+import com.everlog.ui.design.elements.rememberAppBarScrollBehavior
 import com.everlog.ui.mvvm.createViewModelFactory
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.android.awaitFrame
 
 // Debug-only prototype of the onboarding (first run) journey from the Everlog Onboarding design,
-// opened from Settings. UI only: answers aren't saved, nothing is logged, and Build my routine
-// closes the screen. The building, reveal and end steps come later.
+// opened from Settings: the welcome, then the questions. UI only: answers aren't saved, nothing is
+// logged, and Build my routine closes the screen. The building, reveal and end steps come later.
 class OnboardingActivity : CommonComposeActivity() {
     private val viewModel by viewModels<OnboardingViewModel> {
         createViewModelFactory {
@@ -56,13 +69,66 @@ internal fun OnboardingScreen(
         if (state.finished) onClose()
     }
 
-    // The one screen for now. An intro before the questions will join it here, animating between
-    // the two.
-    OnboardingQuestionnaire(
-        state = state,
-        viewModel = viewModel,
-        onSkipSetup = { showSkipSetup = true },
-    )
+    // The welcome's entrance plays once, not again after e.g. rotating
+    var welcomeShown by rememberSaveable { mutableStateOf(false) }
+    val animateWelcomeIn = remember { !welcomeShown }
+    LaunchedEffect(Unit) { welcomeShown = true }
+
+    // The welcome's header scrolls away with its content, but only on screens too short to fit it
+    val welcomeScrollState = rememberScrollState()
+    val appBarScrollBehavior = rememberAppBarScrollBehavior(canScroll = { welcomeScrollState.canScrollForward })
+
+    // One screen for every step, so the top bar and footer change in place around the content
+    AppScreen(
+        modifier = Modifier.nestedScroll(appBarScrollBehavior.nestedScrollConnection),
+        topBar = {
+            OnboardingTopBar(
+                welcome = state.welcome,
+                animateWelcomeIn = animateWelcomeIn,
+                answered = state.answers.size,
+                total = state.questions.size,
+                scrollBehavior = appBarScrollBehavior,
+                onSkipSetup = { showSkipSetup = true },
+            )
+        },
+        footer = {
+            OnboardingFooter(
+                state = state,
+                viewModel = viewModel,
+                animateIn = animateWelcomeIn,
+            )
+        },
+    ) { contentPadding ->
+        val enterOffset = with(LocalDensity.current) { OnboardingMotion.EnterOffset.roundToPx() }
+        AnimatedContent(
+            targetState = state.welcome,
+            transitionSpec = {
+                // A fade through: the welcome lifts away, then the first question comes in like an
+                // appended one. The question waits for the welcome to go, as the two titles sit in
+                // the same place and overlapping them reads as a jumble.
+                val enterDelay = OnboardingMotion.WelcomeExit
+                (fadeIn(tween(OnboardingMotion.Enter, enterDelay, OnboardingMotion.EmphasizedDecelerate)) +
+                        slideInVertically(tween(OnboardingMotion.Enter, enterDelay, OnboardingMotion.EmphasizedDecelerate)) { enterOffset }) togetherWith
+                        (fadeOut(tween(OnboardingMotion.WelcomeExit, easing = OnboardingMotion.Standard)) +
+                                slideOutVertically(tween(OnboardingMotion.WelcomeExit, easing = OnboardingMotion.Standard)) { -enterOffset })
+            },
+            label = "step",
+        ) { welcome ->
+            if (welcome) {
+                OnboardingWelcome(
+                    scrollState = welcomeScrollState,
+                    contentPadding = contentPadding,
+                    animateIn = animateWelcomeIn,
+                )
+            } else {
+                OnboardingQuestionnaire(
+                    state = state,
+                    viewModel = viewModel,
+                    contentPadding = contentPadding,
+                )
+            }
+        }
+    }
 
     var skippingSetup by remember { mutableStateOf(false) }
     if (showSkipSetup) {
