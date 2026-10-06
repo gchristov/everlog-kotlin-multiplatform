@@ -38,12 +38,14 @@ internal enum class DesignSystemPage {
     HeroHeader,
     Dialogs,
     Footer,
+    Progress,
     ScrollBehaviors,
     ScrollAwayList,
     CollapsingList,
     ScrollAwayPage,
     ScrollAwayShortPage,
     PinnedHeader,
+    LoadingScreen,
 }
 
 // The pages open on top of each other in this one activity. Back (the app bar's or the system's)
@@ -69,12 +71,14 @@ internal fun DesignSystemScreen(viewModel: DesignSystemViewModel) {
         DesignSystemPage.HeroHeader -> DesignSystemHeroHeader()
         DesignSystemPage.Dialogs -> DesignSystemDialogs()
         DesignSystemPage.Footer -> DesignSystemFooter(onButtonClick = onButtonClick)
+        DesignSystemPage.Progress -> DesignSystemProgress(onOpen = open)
         DesignSystemPage.ScrollBehaviors -> ScrollBehaviors(onOpen = open)
         DesignSystemPage.ScrollAwayList -> ScrollAwayListExample()
         DesignSystemPage.CollapsingList -> CollapsingListExample()
         DesignSystemPage.ScrollAwayPage -> ScrollAwayPageExample()
         DesignSystemPage.ScrollAwayShortPage -> ScrollAwayShortPageExample()
         DesignSystemPage.PinnedHeader -> PinnedHeaderExample()
+        DesignSystemPage.LoadingScreen -> LoadingScreenExample()
     }
 }
 
@@ -101,6 +105,7 @@ private val HubSections = listOf(
         HubEntry(DesignSystemPage.HeroHeader, "Hero header", "A large title at the top of a screen's content"),
         HubEntry(DesignSystemPage.Dialogs, "Dialogs", "A title, body text and two actions"),
         HubEntry(DesignSystemPage.Footer, "Footer", "Actions pinned to the bottom, blurring what scrolls behind"),
+        HubEntry(DesignSystemPage.Progress, "Progress", "A progress indicator, and a loading screen"),
     ),
     "Behaviours" to listOf(
         HubEntry(DesignSystemPage.ScrollBehaviors, "App bar scroll behaviours", "Whole screens to try how an app bar's header scrolls"),

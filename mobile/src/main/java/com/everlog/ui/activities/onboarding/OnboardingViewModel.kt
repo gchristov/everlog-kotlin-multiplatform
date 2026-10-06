@@ -87,12 +87,15 @@ class OnboardingViewModel(
             val profile = OnboardingQuestions.starterProfile(currentState.answers)
             buildStarterRoutinesUseCase(BuildStarterRoutinesUseCase.Dto(profile, createdDate = now())).fold(
                 // Reported as a non-fatal. The building step will offer retry or skip.
-                ifLeft = { Timber.tag(TAG).e(it) },
+                ifLeft = {
+                    Timber.tag(TAG).e(it)
+                    setState { copy(building = false, finished = true, buildFailed = true) }
+                },
                 ifRight = { routines ->
                     Timber.tag(TAG).i("Built starter routines for %s: %s", profile, routines.joinToString { "${it.name} (${it.getTotalExercises()} exercises)" })
+                    setState { copy(building = false, finished = true) }
                 },
             )
-            setState { copy(building = false, finished = true) }
         }
     }
 
@@ -112,10 +115,12 @@ class OnboardingViewModel(
         val activeQuestionId: String?,
         // In-progress answer for the open question
         val input: Answer? = null,
-        // Build my routine is building the starter routines
+        // Build my week is building the starter routines
         val building: Boolean = false,
-        // The starter routines were built, so the screen closes
+        // Building the starter routines is over, so the screen closes
         val finished: Boolean = false,
+        // The starter routines couldn't be built, which the screen says as it closes
+        val buildFailed: Boolean = false,
         // From Settings, for the order of the reminder days
         val firstDayOfWeek: DayOfWeek = DayOfWeek.MONDAY,
     ) {
