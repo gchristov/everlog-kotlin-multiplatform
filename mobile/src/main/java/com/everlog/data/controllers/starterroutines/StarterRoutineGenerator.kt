@@ -1,5 +1,6 @@
 package com.everlog.data.controllers.starterroutines
 
+import arrow.core.Either
 import com.everlog.data.controllers.starterroutines.StarterProfile.Experience
 import com.everlog.data.controllers.starterroutines.StarterProfile.Goal
 import com.everlog.data.controllers.starterroutines.StarterRoutine.Target
@@ -10,7 +11,6 @@ import com.everlog.data.model.exercise.ELRoutineExercise
 import com.everlog.data.model.set.ELSet
 import com.everlog.data.model.set.ELSetType
 import org.threeten.bp.DayOfWeek
-import timber.log.Timber
 import java.util.UUID
 
 /**
@@ -41,29 +41,23 @@ data class StarterWeek(
      * per exercise, and each set's required reps are the top of the exercise's rep range.
      *
      * All or nothing: if the library is missing any of the week's exercises, which means a template
-     * points at the wrong uuid, this reports them as a non-fatal error and throws
-     * [ExerciseNotFoundException] rather than build routines with exercises left out.
+     * points at the wrong uuid, this is an [ExerciseNotFoundException] listing them all, rather
+     * than routines with exercises left out.
      */
-    fun toRoutines(library: Collection<ELExercise>, createdDate: Long): List<ELRoutine> {
+    fun toRoutines(library: Collection<ELExercise>, createdDate: Long): Either<ExerciseNotFoundException, List<ELRoutine>> {
         val byId = library.filter { it.uuid != null }.associateBy { it.uuid!! }
         val missing = routines.flatMap { routine ->
             routine.exercises.filter { it.exerciseId !in byId }.map { routine.name to it }
         }
         if (missing.isNotEmpty()) {
-            val error = ExerciseNotFoundException(missing)
-            Timber.tag(TAG).e(error)
-            throw error
+            return Either.Left(ExerciseNotFoundException(missing))
         }
-        return routines.map { it.toRoutine(byId, createdDate) }
+        return Either.Right(routines.map { it.toRoutine(byId, createdDate) })
     }
 
     class ExerciseNotFoundException(missing: List<Pair<String, StarterRoutine.Exercise>>) : IllegalStateException(
         "Not in the exercise library: " + missing.joinToString { (routine, exercise) -> "$routine ${exercise.name} (${exercise.exerciseId})" }
     )
-
-    private companion object {
-        const val TAG = "StarterWeek"
-    }
 }
 
 data class StarterRoutine(

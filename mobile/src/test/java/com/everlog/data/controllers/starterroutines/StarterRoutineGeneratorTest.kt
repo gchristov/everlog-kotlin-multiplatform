@@ -4,10 +4,9 @@ import com.everlog.data.controllers.starterroutines.StarterProfile.Experience
 import com.everlog.data.controllers.starterroutines.StarterProfile.Goal
 import com.everlog.data.controllers.starterroutines.StarterProfile.Place
 import com.everlog.data.controllers.starterroutines.StarterRoutine.Target
-import com.everlog.data.model.exercise.ELExercise
 import com.everlog.data.model.set.ELSetType
+import com.everlog.testutil.exerciseLibrary
 import com.google.common.truth.Truth.assertThat
-import org.junit.After
 import org.junit.Assert.assertThrows
 import org.junit.Test
 import org.threeten.bp.DayOfWeek
@@ -18,7 +17,6 @@ import org.threeten.bp.DayOfWeek.SUNDAY
 import org.threeten.bp.DayOfWeek.THURSDAY
 import org.threeten.bp.DayOfWeek.TUESDAY
 import org.threeten.bp.DayOfWeek.WEDNESDAY
-import timber.log.Timber
 
 class StarterRoutineGeneratorTest {
 
@@ -322,9 +320,9 @@ class StarterRoutineGeneratorTest {
     @Test
     fun `a week builds one routine per day type, with a single set group per exercise`() {
         val week = generate(days = 4, goal = Goal.BUILD_MUSCLE)
-        val library = library(week)
+        val library = exerciseLibrary(week)
 
-        val routines = week.toRoutines(library, createdDate = 1_000L)
+        val routines = week.toRoutines(library, createdDate = 1_000L).getOrNull()!!
 
         assertThat(routines.map { it.name }).containsExactly("Upper", "Lower").inOrder()
         routines.forEach { routine ->
@@ -343,7 +341,7 @@ class StarterRoutineGeneratorTest {
     fun `routine sets aim for the top of the rep range`() {
         val week = generate(goal = Goal.BUILD_MUSCLE)
 
-        val routines = week.toRoutines(library(week), createdDate = 0L)
+        val routines = week.toRoutines(exerciseLibrary(week), createdDate = 0L).getOrNull()!!
 
         routines.flatMap { it.exerciseGroups }.flatMap { it.exercises }.forEach { exercise ->
             assertThat(exercise.sets).hasSize(3)
@@ -355,7 +353,7 @@ class StarterRoutineGeneratorTest {
     fun `routine holds are timed sets`() {
         val week = generate(days = 3, place = Place.BODYWEIGHT, experience = Experience.A_WHILE)
 
-        val pull = week.toRoutines(library(week), createdDate = 0L).single { it.name == "Pull" }
+        val pull = week.toRoutines(exerciseLibrary(week), createdDate = 0L).getOrNull()!!.single { it.name == "Pull" }
 
         val superman = pull.exerciseGroups.first().exercises.single()
         assertThat(superman.getName()).isEqualTo("Superman Hold")
@@ -363,48 +361,18 @@ class StarterRoutineGeneratorTest {
     }
 
     @Test
-    fun `no routines are built when exercises are missing from the library, and they are reported`() {
+    fun `no routines are built when exercises are missing from the library`() {
         val week = generate(days = 4)
-        val library = library(week).filterNot { it.uuid == benchPress || it.uuid == parallelSquat }
-        val errors = recordErrors()
+        val library = exerciseLibrary(week).filterNot { it.uuid == benchPress || it.uuid == parallelSquat }
 
-        val thrown = assertThrows(StarterWeek.ExerciseNotFoundException::class.java) {
-            week.toRoutines(library, createdDate = 0L)
-        }
+        val error = week.toRoutines(library, createdDate = 0L).leftOrNull()
 
-        assertThat(thrown).hasMessageThat().isEqualTo(
+        assertThat(error).hasMessageThat().isEqualTo(
             "Not in the exercise library: Upper Bench Press ($benchPress), Lower Parallel Squat ($parallelSquat)"
         )
-        assertThat(errors).containsExactly(thrown)
-    }
-
-    @Test
-    fun `a week with every exercise in the library reports nothing`() {
-        val week = generate(days = 5, experience = Experience.YEARS)
-        val errors = recordErrors()
-
-        week.toRoutines(library(week), createdDate = 0L)
-
-        assertThat(errors).isEmpty()
-    }
-
-    @After
-    fun tearDown() {
-        Timber.uprootAll()
     }
 
     // Helpers
-
-    // Errors logged through Timber, which the app sends to Crashlytics as non-fatals
-    private fun recordErrors(): List<Throwable> {
-        val errors = mutableListOf<Throwable>()
-        Timber.plant(object : Timber.Tree() {
-            override fun log(priority: Int, tag: String?, message: String, t: Throwable?) {
-                if (t != null) errors += t
-            }
-        })
-        return errors
-    }
 
     private fun generate(
         days: Int = 3,
@@ -424,11 +392,6 @@ class StarterRoutineGeneratorTest {
     private fun days(week: StarterWeek): Map<String, List<DayOfWeek>> = week.routines.associate { it.name to it.days }
 
     private fun exerciseIdsByRoutine(week: StarterWeek) = week.routines.associate { it.name to it.exercises.map { exercise -> exercise.exerciseId } }
-
-    // The week's exercises as they'd come from the exercise store
-    private fun library(week: StarterWeek) = week.routines.flatMap { it.exercises }
-        .distinctBy { it.exerciseId }
-        .map { ELExercise(uuid = it.exerciseId, name = it.name) }
 
     private companion object {
         // Exercises in global/exercises/all, the same in dev and prod
