@@ -114,6 +114,8 @@ private object OnboardingSizes {
     // The same box as a trailing AppIcon, e.g. the pencil on summary rows
     val ListItemCheck = 24.dp
     val ChipCheck = 12.dp
+    // Just inside the chip's rounded corner, and still clear of the number on narrow chips
+    val ChipCheckInset = 6.dp
     const val CheckStroke = 2.5f
     // Heavier on the small chip check so it stays legible
     const val ChipCheckStroke = 3f
@@ -397,8 +399,7 @@ internal fun NumberChip(
         AnimatedCheck(
             modifier = Modifier
                 .align(Alignment.TopEnd)
-                // The smaller inset keeps the check clear of the number on narrow chips
-                .padding(Theme.spacing.extraSmall)
+                .padding(OnboardingSizes.ChipCheckInset)
                 .size(OnboardingSizes.ChipCheck),
             progress = check,
             strokeWidth = OnboardingSizes.ChipCheckStroke,
