@@ -10,6 +10,7 @@ import com.everlog.data.model.exercise.ELRoutineExercise
 import com.everlog.data.model.set.ELSet
 import com.everlog.data.model.set.ELSetType
 import org.threeten.bp.DayOfWeek
+import timber.log.Timber
 import java.util.UUID
 
 /**
@@ -34,14 +35,6 @@ data class StarterWeek(
     val routines: List<StarterRoutine>,
 ) {
     enum class Split { FULL_BODY, UPPER_LOWER, PUSH_PULL_LEGS }
-
-    /**
-     * Exercises the library doesn't have, which [StarterRoutine.toRoutine] leaves out.
-     */
-    fun missingExercises(library: Collection<ELExercise>): Set<StarterRoutine.Exercise> {
-        val ids = library.mapNotNull { it.uuid }.toSet()
-        return routines.flatMap { it.exercises }.filterNot { it.exerciseId in ids }.toSet()
-    }
 }
 
 data class StarterRoutine(
@@ -64,14 +57,18 @@ data class StarterRoutine(
     }
 
     /**
-     * A routine of single sets, with its exercises from [library]. Exercises the library doesn't
-     * have are left out. Each set's required reps are the top of
-     * the exercise's rep range.
+     * A routine of single sets, with its exercises from [library]. Each set's required reps are
+     * the top of the exercise's rep range. An exercise the library doesn't have is left out and
+     * reported as a non-fatal error, as it means the template points at the wrong uuid.
      */
     fun toRoutine(library: Collection<ELExercise>, createdDate: Long): ELRoutine {
         val byId = library.filter { it.uuid != null }.associateBy { it.uuid!! }
         val groups = exercises.mapNotNull { exercise ->
-            val match = byId[exercise.exerciseId] ?: return@mapNotNull null
+            val match = byId[exercise.exerciseId]
+            if (match == null) {
+                Timber.tag(TAG).e(ExerciseNotFoundException(name, exercise))
+                return@mapNotNull null
+            }
             val sets = List(exercise.sets) {
                 when (val target = exercise.target) {
                     is Target.Reps -> ELSet(requiredReps = target.range.last)
@@ -91,6 +88,13 @@ data class StarterRoutine(
             exerciseGroups = groups.toMutableList(),
             createdDate = createdDate,
         )
+    }
+
+    class ExerciseNotFoundException(routine: String, exercise: Exercise) :
+        IllegalStateException("$routine: ${exercise.name} (${exercise.exerciseId}) isn't in the exercise library")
+
+    private companion object {
+        const val TAG = "StarterRoutine"
     }
 }
 

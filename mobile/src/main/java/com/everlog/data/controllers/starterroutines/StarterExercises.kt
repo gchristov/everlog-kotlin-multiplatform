@@ -5,7 +5,7 @@ import com.everlog.data.controllers.starterroutines.StarterProfile.Place
 /**
  * The exercises in each starter routine, from the global exercise library
  * (`global/exercises/all`, the same in dev and prod). Each day lists 6, main lifts first, and
- * shorter routines take the first few.
+ * shorter routines take the first few. Full body C only goes to those just starting, so it lists 4.
  */
 internal object StarterExercises {
 
@@ -24,7 +24,7 @@ internal object StarterExercises {
     private fun gym(day: Day) = when (day) {
         Day.FULL_BODY_A -> listOf(ParallelSquat, BenchPress, BentOverRow, RomanianDeadlift, LateralRaise, ElbowPlank)
         Day.FULL_BODY_B -> listOf(BarbellDeadlift, MilitaryPress, LatPulldown, BulgarianSplitSquat, DumbbellInclinePress, CablePushdown)
-        Day.FULL_BODY_C -> listOf(TrapBarDeadlift, InclineBenchPress, OneArmRow, ForwardLunge, CableFacePull, HangingKneeRaise)
+        Day.FULL_BODY_C -> listOf(TrapBarDeadlift, InclineBenchPress, OneArmRow, ForwardLunge)
         Day.UPPER -> listOf(BenchPress, BentOverRow, MilitaryPress, LatPulldown, LateralRaise, CablePushdown)
         Day.LOWER -> listOf(ParallelSquat, RomanianDeadlift, BulgarianSplitSquat, HipThrust, SeatedCalfRaise, HangingKneeRaise)
         Day.PUSH -> listOf(BenchPress, MilitaryPress, DumbbellInclinePress, LateralRaise, CablePushdown, SkullCrusher)
@@ -36,7 +36,7 @@ internal object StarterExercises {
     private fun homeDumbbells(day: Day) = when (day) {
         Day.FULL_BODY_A -> listOf(GobletSquat, DumbbellFloorPress, OneArmRow, RearAlternatingLunge, ShoulderPress, ElbowPlank)
         Day.FULL_BODY_B -> listOf(SumoSquat, PushUp, ChestPullOver, HipThrust, LateralRaise, RussianTwist)
-        Day.FULL_BODY_C -> listOf(BulgarianSplitSquat, ArnoldPress, ReverseFly, SideSquat, DumbbellHammerCurl, SidePlank)
+        Day.FULL_BODY_C -> listOf(BulgarianSplitSquat, ArnoldPress, ReverseFly, SideSquat)
         Day.UPPER -> listOf(DumbbellFloorPress, OneArmRow, ShoulderPress, ReverseFly, StandingCurl, SeatedOverheadExtension)
         Day.LOWER -> listOf(GobletSquat, RearAlternatingLunge, BulgarianSplitSquat, HipThrust, SingleLegCalfRaise, ElbowPlank)
         Day.PUSH -> listOf(DumbbellFloorPress, ShoulderPress, PushUp, LateralRaise, SeatedOverheadExtension, TricepKickback)
@@ -48,7 +48,7 @@ internal object StarterExercises {
     private fun bodyweight(day: Day) = when (day) {
         Day.FULL_BODY_A -> listOf(Squat, PushUp, RearLunge, SupermanHold, CalfRaise, ElbowPlank)
         Day.FULL_BODY_B -> listOf(ForwardLunge, DeclinePushUp, DonkeyKick, BenchDip, Cobra, BicycleCrunch)
-        Day.FULL_BODY_C -> listOf(Squat, CloseGripPushUp, RearLunge, SupermanHold, SidePlank, RussianTwist)
+        Day.FULL_BODY_C -> listOf(Squat, CloseGripPushUp, RearLunge, SupermanHold)
         Day.UPPER -> listOf(PushUp, SupermanHold, DeclinePushUp, BenchDip, Cobra, ElbowPlank)
         Day.LOWER -> listOf(Squat, RearLunge, ForwardLunge, DonkeyKick, CalfRaise, SidePlank)
         Day.PUSH -> listOf(PushUp, DeclinePushUp, CloseGripPushUp, TigerPushUp, BenchDip, ElbowPlank)
