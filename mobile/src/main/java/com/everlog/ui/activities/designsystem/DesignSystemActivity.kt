@@ -38,6 +38,7 @@ internal enum class DesignSystemPage {
     HeroHeader,
     Dialogs,
     Footer,
+    Progress,
     ScrollBehaviors,
     ScrollAwayList,
     CollapsingList,
@@ -69,6 +70,7 @@ internal fun DesignSystemScreen(viewModel: DesignSystemViewModel) {
         DesignSystemPage.HeroHeader -> DesignSystemHeroHeader()
         DesignSystemPage.Dialogs -> DesignSystemDialogs()
         DesignSystemPage.Footer -> DesignSystemFooter(onButtonClick = onButtonClick)
+        DesignSystemPage.Progress -> DesignSystemProgress()
         DesignSystemPage.ScrollBehaviors -> ScrollBehaviors(onOpen = open)
         DesignSystemPage.ScrollAwayList -> ScrollAwayListExample()
         DesignSystemPage.CollapsingList -> CollapsingListExample()
@@ -101,6 +103,7 @@ private val HubSections = listOf(
         HubEntry(DesignSystemPage.HeroHeader, "Hero header", "A large title at the top of a screen's content"),
         HubEntry(DesignSystemPage.Dialogs, "Dialogs", "A title, body text and two actions"),
         HubEntry(DesignSystemPage.Footer, "Footer", "Actions pinned to the bottom, blurring what scrolls behind"),
+        HubEntry(DesignSystemPage.Progress, "Progress", "A circular progress indicator"),
     ),
     "Behaviours" to listOf(
         HubEntry(DesignSystemPage.ScrollBehaviors, "App bar scroll behaviours", "Whole screens to try how an app bar's header scrolls"),

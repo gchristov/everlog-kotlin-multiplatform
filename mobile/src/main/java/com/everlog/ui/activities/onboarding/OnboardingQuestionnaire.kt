@@ -60,7 +60,7 @@ import kotlinx.coroutines.delay
 import org.threeten.bp.DayOfWeek
 
 // The setup questions: one open at a time, answered ones collapse to summary rows that can be
-// reopened, and Build my routine finishes. The content of OnboardingScreen's AppScreen, after the
+// reopened, and Build my week finishes. The content of OnboardingScreen's AppScreen, after the
 // welcome.
 @Composable
 internal fun OnboardingQuestionnaire(
@@ -365,7 +365,7 @@ private enum class FooterMode {
     Build,
 }
 
-// The footer for every onboarding step. Single-button steps (the welcome, Build my routine) use the
+// The footer for every onboarding step. Single-button steps (the welcome, Build my week) use the
 // lower slot, so a swap is a crossfade in place that never moves the thumb target.
 @Composable
 internal fun OnboardingFooter(
@@ -376,7 +376,7 @@ internal fun OnboardingFooter(
 ) {
     val haptics = LocalHapticFeedback.current
     val mode = when {
-        state.welcome -> FooterMode.Welcome
+        state.step == OnboardingViewModel.Step.Welcome -> FooterMode.Welcome
         state.activeQuestion is OnboardingQuestion.Reminders -> FooterMode.Reminders
         state.activeQuestionId == null -> FooterMode.Build
         state.isEditing -> FooterMode.Editing
@@ -417,7 +417,7 @@ internal fun OnboardingFooter(
                 AppFooterAction(text = stringResource(R.string.onboarding_not_now), onClick = viewModel::onNotNow, style = AppFooterAction.Style.Secondary),
             )
             FooterMode.Build -> listOf(
-                AppFooterAction(text = stringResource(R.string.onboarding_build_my_routine), onClick = viewModel::onBuild),
+                AppFooterAction(text = stringResource(R.string.onboarding_build_my_week), onClick = viewModel::onBuild),
             )
         }
         EnterAnimation(

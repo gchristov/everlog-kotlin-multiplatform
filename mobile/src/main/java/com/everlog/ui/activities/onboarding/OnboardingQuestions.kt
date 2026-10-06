@@ -3,6 +3,8 @@ package com.everlog.ui.activities.onboarding
 import androidx.annotation.PluralsRes
 import androidx.annotation.StringRes
 import com.everlog.R
+import com.everlog.data.controllers.starterroutines.StarterProfile
+import com.everlog.data.controllers.starterroutines.StarterRoutineGenerator
 import org.threeten.bp.DayOfWeek
 import org.threeten.bp.format.TextStyle
 import java.util.Locale
@@ -153,16 +155,33 @@ internal object OnboardingQuestions {
         else -> Answer.RemindersOff
     }
 
-    // Training days spread across the week for a number of days a week
-    fun trainingDays(count: Int): List<DayOfWeek> = when (count) {
-        1 -> listOf(DayOfWeek.MONDAY)
-        2 -> listOf(DayOfWeek.MONDAY, DayOfWeek.THURSDAY)
-        3 -> listOf(DayOfWeek.MONDAY, DayOfWeek.WEDNESDAY, DayOfWeek.FRIDAY)
-        4 -> listOf(DayOfWeek.MONDAY, DayOfWeek.TUESDAY, DayOfWeek.THURSDAY, DayOfWeek.FRIDAY)
-        5 -> DayOfWeek.entries.take(5)
-        6 -> DayOfWeek.entries.take(6)
-        else -> DayOfWeek.entries
+    // What the starter routines are built from. A missing answer counts as skipped.
+    fun starterProfile(answers: Map<String, Answer>): StarterProfile {
+        fun answer(questionId: String) = answers[questionId] ?: skippedAnswer(questionId)
+        fun choice(questionId: String) = (answer(questionId) as Answer.Choice).optionId
+        return StarterProfile(
+            daysPerWeek = (answer(Days) as Answer.Days).count,
+            place = when (choice(Where)) {
+                Home -> StarterProfile.Place.HOME_DUMBBELLS
+                Bodyweight -> StarterProfile.Place.BODYWEIGHT
+                else -> StarterProfile.Place.GYM
+            },
+            experience = when (choice(Experience)) {
+                AWhile -> StarterProfile.Experience.A_WHILE
+                Years -> StarterProfile.Experience.YEARS
+                else -> StarterProfile.Experience.JUST_STARTING
+            },
+            goal = when (choice(Goal)) {
+                GetStronger -> StarterProfile.Goal.GET_STRONGER
+                BuildMuscle -> StarterProfile.Goal.BUILD_MUSCLE
+                BuildEndurance -> StarterProfile.Goal.BUILD_ENDURANCE
+                else -> StarterProfile.Goal.STAY_FIT
+            },
+        )
     }
+
+    // Training days spread across the week for a number of days a week
+    fun trainingDays(count: Int): List<DayOfWeek> = StarterRoutineGenerator.trainingDays(count)
 
     // The seven days in order, starting on the given day
     fun week(startingOn: DayOfWeek): List<DayOfWeek> = (0L until 7L).map { startingOn.plus(it) }
