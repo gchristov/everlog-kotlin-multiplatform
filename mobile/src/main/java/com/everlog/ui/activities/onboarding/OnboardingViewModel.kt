@@ -9,7 +9,7 @@ import timber.log.Timber
 /**
  * The welcome, then the setup questionnaire from the Everlog Onboarding design: one question open
  * at a time, answered questions collapse to summary rows that can be reopened, then Build my
- * week builds the starter routines and finishes.
+ * week builds the starter routines behind the building screen and finishes.
  *
  * A prototype for now: answers aren't saved, and the starter routines are built but only logged,
  * not saved or shown. If building them fails, the user can try again or skip.

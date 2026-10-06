@@ -71,7 +71,8 @@ private object BuildingClips {
 private object BuildingMotion {
     // The check holds this long before the screen moves on
     const val ReadyHold = 300L
-    // With animations off, the screen still stays up for as long as the intro and one loop
+    // With animations off (or no animation), the screen still stays up for as long as the intro
+    // and one loop
     const val ReducedMotionMinimum = 2200L
     const val TextFade = 150
     const val ActionsFade = 150
@@ -90,7 +91,7 @@ internal fun OnboardingBuilding(
     // The success clip has finished
     onShown: () -> Unit,
 ) {
-    val composition by rememberLottieComposition(LottieCompositionSpec.RawRes(R.raw.everlog_building))
+    val compositionResult = rememberLottieComposition(LottieCompositionSpec.RawRes(R.raw.everlog_building))
     val animatable = rememberLottieAnimatable()
     // What the screen says, which follows the animation rather than the build
     var shown by remember { mutableStateOf(Build.InProgress) }
@@ -99,28 +100,34 @@ internal fun OnboardingBuilding(
     val build by rememberUpdatedState(state.build)
     val currentOnShown by rememberUpdatedState(onShown)
     val haptics = LocalHapticFeedback.current
-    LaunchedEffect(composition, state.buildAttempt) {
-        val composition = composition ?: return@LaunchedEffect
+    LaunchedEffect(compositionResult.isComplete, state.buildAttempt) {
+        if (!compositionResult.isComplete) return@LaunchedEffect
+        // Null if the animation couldn't load, so the screen carries on without it
+        val composition = compositionResult.value
         shown = Build.InProgress
         showActions = false
         // Follows the system's animation scale, which Lottie doesn't by itself
         val scale = coroutineContext[MotionDurationScale]?.scaleFactor ?: 1f
-        val result = if (scale > 0f) {
+        val animate = composition != null && scale > 0f
+        val result = if (animate) {
             animatable.play(composition, BuildingClips.Intro, speed = 1f / scale)
             do {
                 animatable.play(composition, BuildingClips.Loop, speed = 1f / scale)
             } while (build == Build.InProgress)
-            build.also { result ->
-                shown = result
-                if (result == Build.Ready) haptics.performHapticFeedback(HapticFeedbackType.Confirm)
-                animatable.play(composition, result.clip, speed = 1f / scale)
-            }
+            build
         } else {
-            // Animations off: the barbell holds still, then shows the result's last pose
-            animatable.snapTo(composition, progress = composition.markerProgress(BuildingClips.Loop, end = false))
+            // The barbell holds still, for as long as the intro and a loop would take
+            composition?.let { animatable.snapTo(it, progress = it.markerProgress(BuildingClips.Loop, end = false)) }
             delay(BuildingMotion.ReducedMotionMinimum)
-            snapshotFlow { build }.first { it != Build.InProgress }.also { result ->
-                shown = result
+            snapshotFlow { build }.first { it != Build.InProgress }
+        }
+
+        shown = result
+        if (result == Build.Ready) haptics.performHapticFeedback(HapticFeedbackType.Confirm)
+        if (composition != null) {
+            if (animate) {
+                animatable.play(composition, result.clip, speed = 1f / scale)
+            } else {
                 animatable.snapTo(composition, progress = composition.markerProgress(result.clip, end = true))
             }
         }
@@ -169,17 +176,21 @@ internal fun OnboardingBuilding(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center,
         ) {
-            // Decorative, the text says what's happening. Shrinks on short screens.
-            LottieAnimation(
-                composition = composition,
-                progress = { animatable.progress },
-                modifier = Modifier
-                    .weight(1f, fill = false)
-                    .widthIn(max = BuildingSizes.Animation)
-                    .fillMaxWidth()
-                    .aspectRatio(1f, matchHeightConstraintsFirst = true),
-            )
-            Spacer(Modifier.height(Theme.spacing.extraLarge))
+            // Decorative, the text says what's happening. Shrinks on short screens. Its space is
+            // kept while it loads, so the text doesn't jump, but not if it couldn't load, so the
+            // text is centred on its own.
+            if (!compositionResult.isFailure) {
+                LottieAnimation(
+                    composition = compositionResult.value,
+                    progress = { animatable.progress },
+                    modifier = Modifier
+                        .weight(1f, fill = false)
+                        .widthIn(max = BuildingSizes.Animation)
+                        .fillMaxWidth()
+                        .aspectRatio(1f, matchHeightConstraintsFirst = true),
+                )
+                Spacer(Modifier.height(Theme.spacing.extraLarge))
+            }
             BuildingText(shown = shown, answers = state.answers)
         }
     }
