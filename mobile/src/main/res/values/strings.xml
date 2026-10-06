@@ -463,7 +463,18 @@
     <string name="onboarding_remind_me">Remind me</string>
     <string name="onboarding_not_now">Not now</string>
     <string name="onboarding_build_my_week">Build my week</string>
+    <string name="onboarding_building">Building your week</string>
+    <!-- e.g. 3 days · Gym · Build muscle -->
+    <plurals name="onboarding_building_days">
+        <item quantity="one">%1$d day</item>
+        <item quantity="other">%1$d days</item>
+    </plurals>
+    <string name="onboarding_building_home">Home dumbbells</string>
+    <string name="onboarding_building_separator">" · "</string>
+    <string name="onboarding_build_ready">Your week is ready</string>
     <string name="onboarding_build_failed">Couldn\'t build your week</string>
+    <string name="onboarding_build_failed_body">Something went wrong. Try again, or skip and build your own routines later.</string>
+    <string name="onboarding_try_again">Try again</string>
     <string name="onboarding_editing">Editing</string>
     <string name="onboarding_up_next">Up next</string>
     <string name="onboarding_skipped">Skipped</string>
