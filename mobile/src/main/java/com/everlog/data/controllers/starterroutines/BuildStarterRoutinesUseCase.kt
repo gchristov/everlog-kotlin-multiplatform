@@ -7,7 +7,6 @@ import com.everlog.data.model.ELRoutine
 import com.everlog.data.repositories.ExerciseRepository
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.withContext
-import timber.log.Timber
 
 /**
  * The starter routines for someone's onboarding answers: generates the week, loads the exercise
@@ -15,8 +14,7 @@ import timber.log.Timber
  *
  * Fails with the library's load error, [ExerciseLibraryEmptyException] when it loads empty (most
  * likely offline with nothing cached), or [StarterWeek.ExerciseNotFoundException] when a template
- * points at an exercise the library doesn't have. Failures are reported as non-fatals, so the
- * caller only needs to offer a retry or skip.
+ * points at an exercise the library doesn't have. Reporting failures is up to the caller.
  */
 interface BuildStarterRoutinesUseCase {
     suspend operator fun invoke(dto: Dto): Either<Throwable, List<ELRoutine>>
@@ -37,11 +35,7 @@ class RealBuildStarterRoutinesUseCase(
             val library = exerciseRepository.globalExercises().bind()
             ensure(library.isNotEmpty()) { ExerciseLibraryEmptyException() }
             week.toRoutines(library, dto.createdDate).bind()
-        }.onLeft { Timber.tag(TAG).e(it) }
-    }
-
-    private companion object {
-        const val TAG = "BuildStarterRoutines"
+        }
     }
 }
 

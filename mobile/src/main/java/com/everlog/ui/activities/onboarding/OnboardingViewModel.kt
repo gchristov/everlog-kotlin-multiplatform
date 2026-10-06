@@ -86,8 +86,8 @@ class OnboardingViewModel(
         launchCoroutine {
             val profile = OnboardingQuestions.starterProfile(currentState.answers)
             buildStarterRoutinesUseCase(BuildStarterRoutinesUseCase.Dto(profile, createdDate = now())).fold(
-                // Already reported by the use case. The building step will offer retry or skip.
-                ifLeft = { },
+                // Reported as a non-fatal. The building step will offer retry or skip.
+                ifLeft = { Timber.tag(TAG).e(it) },
                 ifRight = { routines ->
                     Timber.tag(TAG).i("Built starter routines for %s: %s", profile, routines.joinToString { "${it.name} (${it.getTotalExercises()} exercises)" })
                 },
