@@ -320,27 +320,32 @@ class StarterRoutineGeneratorTest {
     // Routines
 
     @Test
-    fun `a routine has a single set group per exercise from the library`() {
-        val starter = generate(days = 4, goal = Goal.BUILD_MUSCLE).routines.first()
-        val library = library(starter)
+    fun `a week builds one routine per day type, with a single set group per exercise`() {
+        val week = generate(days = 4, goal = Goal.BUILD_MUSCLE)
+        val library = library(week)
 
-        val routine = starter.toRoutine(library, createdDate = 1_000L)
+        val routines = week.toRoutines(library, createdDate = 1_000L)
 
-        assertThat(routine.uuid).isNotNull()
-        assertThat(routine.name).isEqualTo("Upper")
-        assertThat(routine.createdDate).isEqualTo(1_000L)
-        assertThat(routine.exerciseGroups.map { it.type }.distinct()).containsExactly(ELSetType.SINGLE.name)
-        assertThat(routine.exerciseGroups.map { it.restTimeSeconds }.distinct()).containsExactly(90)
-        assertThat(routine.exerciseGroups.map { it.exercises.single().exercise }).containsExactlyElementsIn(library).inOrder()
+        assertThat(routines.map { it.name }).containsExactly("Upper", "Lower").inOrder()
+        routines.forEach { routine ->
+            assertThat(routine.uuid).isNotNull()
+            assertThat(routine.createdDate).isEqualTo(1_000L)
+            assertThat(routine.exerciseGroups.map { it.type }.distinct()).containsExactly(ELSetType.SINGLE.name)
+            assertThat(routine.exerciseGroups.map { it.restTimeSeconds }.distinct()).containsExactly(90)
+        }
+        val upper = routines.first().exerciseGroups.map { it.exercises.single().exercise }
+        assertThat(upper.map { it?.uuid }).containsExactlyElementsIn(week.routines.first().exercises.map { it.exerciseId }).inOrder()
+        // The library's own exercise, not a copy
+        assertThat(upper.first()).isSameInstanceAs(library.first { it.uuid == benchPress })
     }
 
     @Test
     fun `routine sets aim for the top of the rep range`() {
-        val starter = generate(goal = Goal.BUILD_MUSCLE).routines.first()
+        val week = generate(goal = Goal.BUILD_MUSCLE)
 
-        val routine = starter.toRoutine(library(starter), createdDate = 0L)
+        val routines = week.toRoutines(library(week), createdDate = 0L)
 
-        routine.exerciseGroups.flatMap { it.exercises }.forEach { exercise ->
+        routines.flatMap { it.exerciseGroups }.flatMap { it.exercises }.forEach { exercise ->
             assertThat(exercise.sets).hasSize(3)
             assertThat(exercise.sets.map { it.getRequiredReps() }.distinct()).containsExactly(12)
         }
@@ -348,36 +353,37 @@ class StarterRoutineGeneratorTest {
 
     @Test
     fun `routine holds are timed sets`() {
-        val starter = generate(days = 3, place = Place.BODYWEIGHT, experience = Experience.A_WHILE)
-            .routines.single { it.name == "Pull" }
+        val week = generate(days = 3, place = Place.BODYWEIGHT, experience = Experience.A_WHILE)
 
-        val routine = starter.toRoutine(library(starter), createdDate = 0L)
+        val pull = week.toRoutines(library(week), createdDate = 0L).single { it.name == "Pull" }
 
-        val superman = routine.exerciseGroups.first().exercises.single()
+        val superman = pull.exerciseGroups.first().exercises.single()
         assertThat(superman.getName()).isEqualTo("Superman Hold")
         assertThat(superman.sets.map { it.getRequiredTimeSeconds() to it.getRequiredReps() }.distinct()).containsExactly(30 to 0)
     }
 
     @Test
-    fun `exercises missing from the library are left out and reported`() {
-        val starter = generate(days = 1).routines.single()
-        val missing = starter.exercises.first()
-        val library = library(starter).filterNot { it.uuid == missing.exerciseId }
+    fun `no routines are built when exercises are missing from the library, and they are reported`() {
+        val week = generate(days = 4)
+        val library = library(week).filterNot { it.uuid == benchPress || it.uuid == parallelSquat }
         val errors = recordErrors()
 
-        val routine = starter.toRoutine(library, createdDate = 0L)
+        val thrown = assertThrows(StarterWeek.ExerciseNotFoundException::class.java) {
+            week.toRoutines(library, createdDate = 0L)
+        }
 
-        assertThat(routine.exerciseGroups.map { it.exercises.single().exercise }).containsExactlyElementsIn(library).inOrder()
-        assertThat(errors).hasSize(1)
-        assertThat(errors.single()).isInstanceOf(StarterRoutine.ExerciseNotFoundException::class.java)
-        assertThat(errors.single()).hasMessageThat().isEqualTo("Full body: Parallel Squat ($parallelSquat) isn't in the exercise library")
+        assertThat(thrown).hasMessageThat().isEqualTo(
+            "Not in the exercise library: Upper Bench Press ($benchPress), Lower Parallel Squat ($parallelSquat)"
+        )
+        assertThat(errors).containsExactly(thrown)
     }
 
     @Test
-    fun `routines with every exercise in the library report nothing`() {
+    fun `a week with every exercise in the library reports nothing`() {
+        val week = generate(days = 5, experience = Experience.YEARS)
         val errors = recordErrors()
 
-        generate(days = 5, experience = Experience.YEARS).routines.forEach { it.toRoutine(library(it), createdDate = 0L) }
+        week.toRoutines(library(week), createdDate = 0L)
 
         assertThat(errors).isEmpty()
     }
@@ -419,8 +425,10 @@ class StarterRoutineGeneratorTest {
 
     private fun exerciseIdsByRoutine(week: StarterWeek) = week.routines.associate { it.name to it.exercises.map { exercise -> exercise.exerciseId } }
 
-    // The routine's exercises as they'd come from the exercise store
-    private fun library(routine: StarterRoutine) = routine.exercises.map { ELExercise(uuid = it.exerciseId, name = it.name) }
+    // The week's exercises as they'd come from the exercise store
+    private fun library(week: StarterWeek) = week.routines.flatMap { it.exercises }
+        .distinctBy { it.exerciseId }
+        .map { ELExercise(uuid = it.exerciseId, name = it.name) }
 
     private companion object {
         // Exercises in global/exercises/all, the same in dev and prod

@@ -35,6 +35,35 @@ data class StarterWeek(
     val routines: List<StarterRoutine>,
 ) {
     enum class Split { FULL_BODY, UPPER_LOWER, PUSH_PULL_LEGS }
+
+    /**
+     * The week's routines, with their exercises from [library]. Each routine has a single set group
+     * per exercise, and each set's required reps are the top of the exercise's rep range.
+     *
+     * All or nothing: if the library is missing any of the week's exercises, which means a template
+     * points at the wrong uuid, this reports them as a non-fatal error and throws
+     * [ExerciseNotFoundException] rather than build routines with exercises left out.
+     */
+    fun toRoutines(library: Collection<ELExercise>, createdDate: Long): List<ELRoutine> {
+        val byId = library.filter { it.uuid != null }.associateBy { it.uuid!! }
+        val missing = routines.flatMap { routine ->
+            routine.exercises.filter { it.exerciseId !in byId }.map { routine.name to it }
+        }
+        if (missing.isNotEmpty()) {
+            val error = ExerciseNotFoundException(missing)
+            Timber.tag(TAG).e(error)
+            throw error
+        }
+        return routines.map { it.toRoutine(byId, createdDate) }
+    }
+
+    class ExerciseNotFoundException(missing: List<Pair<String, StarterRoutine.Exercise>>) : IllegalStateException(
+        "Not in the exercise library: " + missing.joinToString { (routine, exercise) -> "$routine ${exercise.name} (${exercise.exerciseId})" }
+    )
+
+    private companion object {
+        const val TAG = "StarterWeek"
+    }
 }
 
 data class StarterRoutine(
@@ -56,19 +85,9 @@ data class StarterRoutine(
         data class Time(val seconds: Int) : Target
     }
 
-    /**
-     * A routine of single sets, with its exercises from [library]. Each set's required reps are
-     * the top of the exercise's rep range. An exercise the library doesn't have is left out and
-     * reported as a non-fatal error, as it means the template points at the wrong uuid.
-     */
-    fun toRoutine(library: Collection<ELExercise>, createdDate: Long): ELRoutine {
-        val byId = library.filter { it.uuid != null }.associateBy { it.uuid!! }
-        val groups = exercises.mapNotNull { exercise ->
-            val match = byId[exercise.exerciseId]
-            if (match == null) {
-                Timber.tag(TAG).e(ExerciseNotFoundException(name, exercise))
-                return@mapNotNull null
-            }
+    // Every exercise must be in the library, which StarterWeek.toRoutines checks first
+    internal fun toRoutine(library: Map<String, ELExercise>, createdDate: Long): ELRoutine {
+        val groups = exercises.map { exercise ->
             val sets = List(exercise.sets) {
                 when (val target = exercise.target) {
                     is Target.Reps -> ELSet(requiredReps = target.range.last)
@@ -78,7 +97,7 @@ data class StarterRoutine(
             ELExerciseGroup(
                 uuid = UUID.randomUUID().toString(),
                 type = ELSetType.SINGLE.name,
-                exercises = mutableListOf(ELRoutineExercise(UUID.randomUUID().toString(), match, sets.toMutableList())),
+                exercises = mutableListOf(ELRoutineExercise(UUID.randomUUID().toString(), library.getValue(exercise.exerciseId), sets.toMutableList())),
                 restTimeSeconds = restTimeSeconds,
             )
         }
@@ -88,13 +107,6 @@ data class StarterRoutine(
             exerciseGroups = groups.toMutableList(),
             createdDate = createdDate,
         )
-    }
-
-    class ExerciseNotFoundException(routine: String, exercise: Exercise) :
-        IllegalStateException("$routine: ${exercise.name} (${exercise.exerciseId}) isn't in the exercise library")
-
-    private companion object {
-        const val TAG = "StarterRoutine"
     }
 }
 
