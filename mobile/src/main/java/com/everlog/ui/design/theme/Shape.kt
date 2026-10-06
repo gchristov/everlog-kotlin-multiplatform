@@ -46,5 +46,5 @@ internal fun shapes() = Shapes(
     groupSingle = RoundedCornerShape(size = CornerRadius),
 )
 
-// card_radius_default
-private val CornerRadius = 10.dp
+// Larger than the XML cards' card_radius_default (10dp)
+private val CornerRadius = 24.dp

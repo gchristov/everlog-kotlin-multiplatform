@@ -11,6 +11,14 @@
     <color name="background_toolbar">#000000</color>
     <color name="background_blur">#70000000</color>
 
+    <!-- The Compose design system's palette: a near-black with a green cast, and cards one step
+    lighter in the same hue. The rest of the app keeps the colours above for now. -->
+    <color name="theme_background_base">#0A0E09</color>
+    <color name="theme_background_card">#151D13</color>
+    <color name="theme_background_blur">#700A0E09</color>
+    <color name="theme_separator">#26331F</color>
+    <color name="theme_on_accent">#101406</color>
+
     <color name="gray_1">#A0A0A0</color>
     <color name="gray_2">#D0D0D0</color>
     <color name="gray_3">#808080</color>

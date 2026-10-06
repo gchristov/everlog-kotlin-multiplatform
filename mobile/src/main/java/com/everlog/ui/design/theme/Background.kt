@@ -36,11 +36,11 @@ internal val LocalBackgrounds = staticCompositionLocalOf {
 
 @Composable
 internal fun backgrounds() = Backgrounds(
-    primary = colorResource(R.color.background_base),
-    surface = colorResource(R.color.background_card),
-    surfaceRaised = colorResource(R.color.background_card_lighter),
-    blurOverlay = colorResource(R.color.background_blur),
-    separator = colorResource(R.color.separator),
+    primary = colorResource(R.color.theme_background_base),
+    surface = colorResource(R.color.theme_background_card),
+    surfaceRaised = colorResource(R.color.theme_separator),
+    blurOverlay = colorResource(R.color.theme_background_blur),
+    separator = colorResource(R.color.theme_separator),
     selected = colorResource(R.color.main_accent_faded_1),
     actionMuted = colorResource(R.color.main_accent_faded_2),
 )

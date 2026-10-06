@@ -42,6 +42,7 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.PathMeasure
+import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.StrokeJoin
 import androidx.compose.ui.graphics.drawscope.Stroke
@@ -104,6 +105,8 @@ internal object OnboardingMotion {
 private object OnboardingSizes {
     val ProgressHeight = 3.dp
     val ProgressCornerRadius = 2.dp
+    // Smaller than the cards' corners, so the small chips don't turn into pills
+    val ChipCornerRadius = 16.dp
     // A touch heavier than the outlined buttons' 1dp, so a selected option stands out
     val SelectionBorder = 1.5.dp
     val UnitCardHeight = 96.dp
@@ -243,6 +246,7 @@ private fun SelectableBox(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
     description: String,
+    shape: Shape = Theme.shapes.surface,
     content: @Composable BoxScope.(checkProgress: Float) -> Unit,
 ) {
     val haptics = LocalHapticFeedback.current
@@ -279,10 +283,10 @@ private fun SelectableBox(
     Box(
         modifier = modifier
             .scale(scale)
-            .clip(Theme.shapes.surface)
+            .clip(shape)
             .background(fill)
             // Transparent when unselected, so selecting never shifts the layout
-            .border(OnboardingSizes.SelectionBorder, border, Theme.shapes.surface)
+            .border(OnboardingSizes.SelectionBorder, border, shape)
             .clickable(
                 interactionSource = interactionSource,
                 indication = null,
@@ -382,6 +386,7 @@ internal fun NumberChip(
         modifier = modifier.aspectRatio(1f),
         selected = selected,
         onClick = onClick,
+        shape = RoundedCornerShape(OnboardingSizes.ChipCornerRadius),
         description = description,
     ) { check ->
         AppText(
@@ -420,6 +425,7 @@ internal fun DayChip(
         modifier = modifier.aspectRatio(1f),
         selected = selected,
         onClick = onClick,
+        shape = RoundedCornerShape(OnboardingSizes.ChipCornerRadius),
         description = fullLabel,
     ) {
         AppText(
