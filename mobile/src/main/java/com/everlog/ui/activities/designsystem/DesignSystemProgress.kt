@@ -7,12 +7,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import com.everlog.ui.design.elements.AppCircularProgressIndicator
-import com.everlog.ui.design.elements.AppLoadingScreen
-import com.everlog.ui.design.elements.list.AppListItem
 import com.everlog.ui.design.theme.Theme
 
 @Composable
-internal fun DesignSystemProgress(onOpen: (DesignSystemPage) -> Unit) {
+internal fun DesignSystemProgress() {
     ShowcasePage(title = "Progress") {
         group(key = "indicator", header = { "Circular progress indicator" }) {}
         item(key = "indicatorExample") {
@@ -20,27 +18,13 @@ internal fun DesignSystemProgress(onOpen: (DesignSystemPage) -> Unit) {
                 AppCircularProgressIndicator()
             }
         }
-        group(key = "screens", header = { "Whole screens" }) {
-            items(count = 1, key = { "loadingScreen" }) {
-                AppListItem(
-                    title = "Loading screen",
-                    subtitle = "Covers the screen while something loads. Back returns here.",
-                    onClick = { onOpen(DesignSystemPage.LoadingScreen) },
-                )
-            }
-        }
     }
-}
-
-@Composable
-internal fun LoadingScreenExample() {
-    AppLoadingScreen()
 }
 
 @Preview
 @Composable
 private fun DesignSystemProgressPreview() {
     Theme {
-        DesignSystemProgress(onOpen = {})
+        DesignSystemProgress()
     }
 }

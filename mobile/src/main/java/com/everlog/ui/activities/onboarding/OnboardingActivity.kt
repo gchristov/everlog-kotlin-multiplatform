@@ -11,6 +11,9 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.animation.togetherWith
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.rememberScrollState
@@ -21,6 +24,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
@@ -32,11 +36,12 @@ import com.everlog.data.controllers.starterroutines.RealBuildStarterRoutinesUseC
 import com.everlog.data.repositories.RealExerciseRepository
 import com.everlog.managers.preferences.SettingsManager
 import com.everlog.ui.design.CommonComposeActivity
+import com.everlog.ui.design.elements.AppCircularProgressIndicator
 import com.everlog.ui.design.elements.AppDialog
 import com.everlog.ui.design.elements.AppDialogAction
-import com.everlog.ui.design.elements.AppLoadingScreen
 import com.everlog.ui.design.elements.AppScreen
 import com.everlog.ui.design.elements.rememberAppBarScrollBehavior
+import com.everlog.ui.design.theme.Theme
 import com.everlog.ui.mvvm.createViewModelFactory
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.android.awaitFrame
@@ -155,7 +160,7 @@ internal fun OnboardingScreen(
             enter = fadeIn(tween(OnboardingMotion.Enter, easing = OnboardingMotion.Standard)),
             exit = fadeOut(tween(OnboardingMotion.Enter, easing = OnboardingMotion.Standard)),
         ) {
-            AppLoadingScreen()
+            OnboardingLoading()
         }
     }
 
@@ -191,4 +196,18 @@ private fun SkipSetupDialog(
         primaryAction = AppDialogAction(text = stringResource(R.string.onboarding_keep_going), onClick = onKeepGoing),
         secondaryAction = AppDialogAction(text = stringResource(R.string.onboarding_skip_setup), onClick = onSkipSetup),
     )
+}
+
+// Covers the whole screen while the week builds, taking every touch so the questions can't be used
+@Composable
+private fun OnboardingLoading() {
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(Theme.backgrounds.primary)
+            .clickable(interactionSource = remember { MutableInteractionSource() }, indication = null, onClick = {}),
+        contentAlignment = Alignment.Center,
+    ) {
+        AppCircularProgressIndicator()
+    }
 }
