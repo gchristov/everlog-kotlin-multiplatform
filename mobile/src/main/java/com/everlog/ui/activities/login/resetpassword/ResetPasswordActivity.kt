@@ -53,6 +53,11 @@ class ResetPasswordActivity : BaseActivity(), MvpViewResetPassword {
                 topMargin = 0
             }
 
+            // The floating footer applies the nav bar inset itself, lift it above the keyboard too
+            val ime = insets.getInsets(WindowInsetsCompat.Type.ime())
+            val navigationBars = insets.getInsets(WindowInsetsCompat.Type.navigationBars())
+            binding.root.updatePadding(bottom = maxOf(ime.bottom - navigationBars.bottom, 0))
+
             insets
         }
     }
