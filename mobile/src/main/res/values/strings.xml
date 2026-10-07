@@ -446,11 +446,11 @@
     <!-- Onboarding -->
     <string name="onboarding_welcome_eyebrow">Welcome to Everlog</string>
     <string name="onboarding_welcome_title">Let\'s get you set up</string>
-    <string name="onboarding_welcome_body">A few quick questions, then we\'ll build a training week around you. It takes about a minute.</string>
+    <string name="onboarding_welcome_body">A few quick questions, then we\'ll build routines around you. It takes about a minute.</string>
     <string name="onboarding_welcome_step_questions">Tell us how you train</string>
     <string name="onboarding_welcome_step_questions_description">Five quick questions. Skip any you like.</string>
-    <string name="onboarding_welcome_step_week">We build your week</string>
-    <string name="onboarding_welcome_step_week_description">Routines matched to your gym, level and goal.</string>
+    <string name="onboarding_welcome_step_week">We build your routines</string>
+    <string name="onboarding_welcome_step_week_description">Matched to your gym, level and goal.</string>
     <string name="onboarding_welcome_step_yours">Make it yours</string>
     <string name="onboarding_welcome_step_yours_description">Keep ours, or build your own routine.</string>
     <string name="onboarding_lets_go">Let\'s go</string>
@@ -462,8 +462,8 @@
     <string name="onboarding_skip">Skip</string>
     <string name="onboarding_remind_me">Remind me</string>
     <string name="onboarding_not_now">Not now</string>
-    <string name="onboarding_build_my_week">Build my week</string>
-    <string name="onboarding_building">Building your week</string>
+    <string name="onboarding_build_my_week">Build my routines</string>
+    <string name="onboarding_building">Building your routines</string>
     <!-- e.g. 3 days · Gym · Build muscle -->
     <plurals name="onboarding_building_days">
         <item quantity="one">%1$d day</item>
@@ -471,11 +471,17 @@
     </plurals>
     <string name="onboarding_building_home">Home dumbbells</string>
     <string name="onboarding_building_separator">" · "</string>
-    <string name="onboarding_build_ready">Your week is ready</string>
-    <string name="onboarding_build_failed">Couldn\'t build your week</string>
+    <plurals name="onboarding_build_ready">
+        <item quantity="one">Your routine is ready</item>
+        <item quantity="other">Your routines are ready</item>
+    </plurals>
+    <string name="onboarding_build_failed">Couldn\'t build your routines</string>
     <string name="onboarding_build_failed_body">Something went wrong. Try again, or skip and build your own routines later.</string>
     <string name="onboarding_try_again">Try again</string>
-    <string name="onboarding_reveal_title">Here\'s your week</string>
+    <plurals name="onboarding_reveal_title">
+        <item quantity="one">Here\'s your routine</item>
+        <item quantity="other">Here are your routines</item>
+    </plurals>
     <string name="onboarding_reveal_experienced">You\'ve been lifting for years, so treat this as a starting point.</string>
     <!-- The week's split, in the summary line, e.g. 3 days · Push / Pull / Legs · Gym · Build muscle -->
     <string name="onboarding_reveal_split_full_body">Full body</string>
@@ -516,7 +522,7 @@
 
     <string name="onboarding_days_label">Training days</string>
     <string name="onboarding_days_title">How many days a week do you train?</string>
-    <string name="onboarding_days_helper">We\'ll build your week around this.</string>
+    <string name="onboarding_days_helper">We\'ll build your routines around this.</string>
     <plurals name="onboarding_days_answer">
         <item quantity="one">%1$d day a week</item>
         <item quantity="other">%1$d days a week</item>

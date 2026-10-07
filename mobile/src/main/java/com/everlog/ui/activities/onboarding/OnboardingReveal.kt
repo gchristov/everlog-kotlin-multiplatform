@@ -62,7 +62,7 @@ import com.everlog.ui.design.elements.list.AppListItem
 import com.everlog.ui.design.elements.rememberAppBarScrollBehavior
 import com.everlog.ui.design.theme.Theme
 
-// The reveal from the Everlog Onboarding design: "Here's your week", the summary of the answers,
+// The reveal from the Everlog Onboarding design: "Here are your routines", the summary of the answers,
 // then a card per routine. The first card starts open with its exercises, the others closed with a
 // line about them, and any card opens or closes on a tap. The routines aren't tied to days of the
 // week, so no days show (onboarding v1 has no schedule or reminders). Looks good keeps them and Build
@@ -91,7 +91,7 @@ internal fun OnboardingReveal(
             AppBar(
                 header = {
                     AppBarHeader(
-                        title = stringResource(R.string.onboarding_reveal_title),
+                        title = pluralStringResource(R.plurals.onboarding_reveal_title, starter.routines.size),
                         body = onboardingSummary(state.answers, split = starter.week.split),
                     )
                 },

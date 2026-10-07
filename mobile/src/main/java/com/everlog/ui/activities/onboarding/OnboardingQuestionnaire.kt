@@ -60,7 +60,7 @@ import kotlinx.coroutines.delay
 import org.threeten.bp.DayOfWeek
 
 // The setup questions: one open at a time, answered ones collapse to summary rows that can be
-// reopened, and Build my week finishes. The content of OnboardingScreen's AppScreen, after the
+// reopened, and Build my routines finishes. The content of OnboardingScreen's AppScreen, after the
 // welcome.
 @Composable
 internal fun OnboardingQuestionnaire(
@@ -379,7 +379,7 @@ private enum class FooterMode {
     Build,
 }
 
-// The footer for every onboarding step. Single-button steps (the welcome, Build my week) use the
+// The footer for every onboarding step. Single-button steps (the welcome, Build my routines) use the
 // lower slot, so a swap is a crossfade in place that never moves the thumb target.
 @Composable
 internal fun OnboardingFooter(

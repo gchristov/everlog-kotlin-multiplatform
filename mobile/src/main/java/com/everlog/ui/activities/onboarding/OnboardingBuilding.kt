@@ -192,7 +192,7 @@ internal fun OnboardingBuilding(
                 )
                 Spacer(Modifier.height(Theme.spacing.extraLarge))
             }
-            BuildingText(shown = shown, answers = state.answers)
+            BuildingText(shown = shown, answers = state.answers, routineCount = state.starter?.routines?.size ?: 0)
         }
     }
 }
@@ -224,6 +224,8 @@ private fun LottieComposition.markerProgress(marker: String, end: Boolean): Floa
 private fun BuildingText(
     shown: Build,
     answers: Map<String, Answer>,
+    // Once the build is ready, for "Your routine is ready" or "Your routines are ready"
+    routineCount: Int,
 ) {
     AnimatedContent(
         targetState = shown,
@@ -241,13 +243,11 @@ private fun BuildingText(
             verticalArrangement = Arrangement.spacedBy(Theme.spacing.small),
         ) {
             AppText(
-                text = stringResource(
-                    when (build) {
-                        Build.InProgress -> R.string.onboarding_building
-                        Build.Ready -> R.string.onboarding_build_ready
-                        Build.Failed -> R.string.onboarding_build_failed
-                    }
-                ),
+                text = when (build) {
+                    Build.InProgress -> stringResource(R.string.onboarding_building)
+                    Build.Ready -> pluralStringResource(R.plurals.onboarding_build_ready, routineCount)
+                    Build.Failed -> stringResource(R.string.onboarding_build_failed)
+                },
                 style = Theme.typography.title,
                 textAlign = TextAlign.Center,
             )
