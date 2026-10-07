@@ -125,7 +125,7 @@
                 android:layout_marginLeft="@dimen/activity_margin"
                 android:layout_marginRight="@dimen/activity_margin"
                 app:cardBackgroundColor="@color/background_base"
-                app:cardCornerRadius="@dimen/card_radius_default"
+                app:cardCornerRadius="@dimen/card_radius_large"
                 app:cardElevation="@dimen/card_elevation_default">
 
                 <LinearLayout

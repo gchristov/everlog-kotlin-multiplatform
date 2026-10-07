@@ -5,11 +5,12 @@
     <color name="main_accent_faded_1">#2287c252</color>
     <color name="main_accent_faded_2">#6687c252</color>
 
-    <color name="background_base">#000000</color>
-    <color name="background_card">#151518</color>
+    <!-- A near-black with a green cast, and cards one step lighter in the same hue -->
+    <color name="background_base">#0A0E09</color>
+    <color name="background_card">#151D13</color>
     <color name="background_card_lighter">@color/black_lighter</color>
-    <color name="background_toolbar">#000000</color>
-    <color name="background_blur">#70000000</color>
+    <color name="background_toolbar">#0A0E09</color>
+    <color name="background_blur">#700A0E09</color>
 
     <color name="gray_1">#A0A0A0</color>
     <color name="gray_2">#D0D0D0</color>
@@ -20,7 +21,7 @@
     <color name="white_base">#fff</color>
     <color name="white_darker">#f3f3f3</color>
 
-    <color name="black_lighter">#232728</color>
+    <color name="black_lighter">#26331F</color>
 
     <color name="separator">@color/black_lighter</color>
 

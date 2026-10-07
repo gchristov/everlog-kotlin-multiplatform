@@ -28,7 +28,7 @@
         android:id="@+id/setTypeLbl"
         android:layout_width="wrap_content"
         android:layout_height="@dimen/options_menu_icon_size"
-        android:layout_marginLeft="@dimen/margin_14"
+        android:layout_marginLeft="@dimen/margin_20"
         android:background="@color/background_base"
         android:gravity="center"
         android:paddingLeft="@dimen/activity_margin_half"

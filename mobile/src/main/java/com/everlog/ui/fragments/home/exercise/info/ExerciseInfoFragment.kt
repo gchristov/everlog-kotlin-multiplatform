@@ -20,7 +20,8 @@ class ExerciseInfoFragment(exercise: ELExercise, stats: ExerciseStatsController.
     private val binding get() = _binding!!
 
     override fun onFragmentCreated() {
-        // No-op
+        // A large image, so it's rounded like a card
+        binding.exerciseImg.applyMask(R.drawable.mask_rounded_large)
     }
 
     override fun getLayoutResId(): Int {
