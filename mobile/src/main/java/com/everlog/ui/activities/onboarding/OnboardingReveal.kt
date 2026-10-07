@@ -142,7 +142,7 @@ private fun RevealRoutines(
             // The same padding and gaps as AppGroupedList: each routine is a group
             .padding(horizontal = Theme.spacing.large)
             .padding(top = Theme.spacing.large, bottom = bottomPadding + Theme.spacing.large),
-        verticalArrangement = Arrangement.spacedBy(Theme.spacing.extraLarge),
+        verticalArrangement = Arrangement.spacedBy(Theme.spacing.large),
     ) {
         starter.week.routines.forEachIndexed { index, routine ->
             // Each card a beat after the one above it

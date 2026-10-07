@@ -231,7 +231,7 @@ private fun QuestionItem(
     ) { item ->
         when (item.mode) {
             // Apart from the rows around it like groups are, so it splits them into two
-            ItemMode.Open -> Box(modifier = Modifier.padding(top = if (question.id == state.visibleQuestions.firstOrNull()?.id) 0.dp else Theme.spacing.extraLarge, bottom = Theme.spacing.extraLarge)) {
+            ItemMode.Open -> Box(modifier = Modifier.padding(top = if (question.id == state.visibleQuestions.firstOrNull()?.id) 0.dp else Theme.spacing.large, bottom = Theme.spacing.large)) {
                 QuestionBlock(
                     question = question,
                     input = item.input,
