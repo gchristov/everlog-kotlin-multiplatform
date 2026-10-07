@@ -102,7 +102,7 @@ private val HubSections = listOf(
         HubEntry(DesignSystemPage.Cards, "Cards", "The card surface, with text and actions"),
         HubEntry(DesignSystemPage.HeroHeader, "Hero header", "A large title at the top of a screen's content"),
         HubEntry(DesignSystemPage.Dialogs, "Dialogs", "A title, body text and two actions"),
-        HubEntry(DesignSystemPage.Footer, "Footer", "Actions pinned to the bottom, blurring what scrolls behind"),
+        HubEntry(DesignSystemPage.Footer, "Footer", "Actions in a card pinned to the bottom, blurring what scrolls behind"),
         HubEntry(DesignSystemPage.Progress, "Progress", "A circular progress indicator"),
     ),
     "Behaviours" to listOf(
