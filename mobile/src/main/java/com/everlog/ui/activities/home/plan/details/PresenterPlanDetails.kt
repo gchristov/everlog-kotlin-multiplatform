@@ -99,7 +99,7 @@ class PresenterPlanDetails : BaseActivityPresenter<MvpViewPlanDetails>() {
     }
 
     private fun observeDeleteConfirm(plan: ELPlan) {
-        subscriptions.add(mvpView.showPrompt(R.string.delete_title, R.string.delete_prompt, R.string.delete, R.string.cancel)
+        subscriptions.add(mvpView.showDestructivePrompt(R.string.delete_title, R.string.delete_prompt, R.string.delete, R.string.cancel)
                 .compose(applyUISchedulers())
                 .subscribe({ action ->
                     if (action == DialogInterface.BUTTON_POSITIVE) {
@@ -109,7 +109,7 @@ class PresenterPlanDetails : BaseActivityPresenter<MvpViewPlanDetails>() {
     }
 
     private fun observeStopConfirm() {
-        subscriptions.add(mvpView.showPrompt(R.string.plan_details_stop, R.string.plan_details_stop_prompt, R.string.stop, R.string.cancel)
+        subscriptions.add(mvpView.showDestructivePrompt(R.string.plan_details_stop, R.string.plan_details_stop_prompt, R.string.stop, R.string.cancel)
                 .compose(applyUISchedulers())
                 .subscribe({ action ->
                     if (action == DialogInterface.BUTTON_POSITIVE) {
@@ -136,7 +136,7 @@ class PresenterPlanDetails : BaseActivityPresenter<MvpViewPlanDetails>() {
         val currentPlanUuid = PlanManager.manager.ongoingPlan()?.uuid
         if (planUuid.equals(currentPlanUuid)) {
             // We didn't find the current user plan
-            subscriptions.add(mvpView.showPrompt(R.string.plan_details_not_found, R.string.plan_details_not_found_prompt_current, R.string.stop, R.string.continue_)
+            subscriptions.add(mvpView.showDestructivePrompt(R.string.plan_details_not_found, R.string.plan_details_not_found_prompt_current, R.string.stop, R.string.continue_)
                     .compose(applyUISchedulers())
                     .subscribe({ action ->
                         if (action == DialogInterface.BUTTON_POSITIVE) {

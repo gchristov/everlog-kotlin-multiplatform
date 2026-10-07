@@ -226,6 +226,13 @@ abstract class BaseActivity : AppCompatActivity(), BaseActivityMvpView {
         return showPrompt(getString(titleResId), getString(messageResId), getString(yesResId), getString(noResId))
     }
 
+    override fun showDestructivePrompt(titleResId: Int,
+                                       messageResId: Int,
+                                       actionResId: Int,
+                                       cancelResId: Int): Observable<Int> {
+        return DialogBuilder.showDestructivePrompt(this, getString(titleResId), getString(messageResId), getString(actionResId), getString(cancelResId))
+    }
+
     override fun showChoicePrompt(title: String,
                                   message: String,
                                   positive: String,

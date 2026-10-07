@@ -169,7 +169,7 @@ class PresenterSettingsHome : BaseFragmentPresenter<MvpViewSettingsHome>() {
     }
 
     private fun observeLogoutConfirm() {
-        subscriptions.add(mvpView.showPrompt(R.string.settings_logout, R.string.settings_logout_prompt, R.string.settings_logout, R.string.cancel)
+        subscriptions.add(mvpView.showDestructivePrompt(R.string.settings_logout, R.string.settings_logout_prompt, R.string.settings_logout, R.string.cancel)
                 .compose(applyUISchedulers())
                 .subscribe({ action ->
                     if (action == DialogInterface.BUTTON_POSITIVE) {

@@ -13,6 +13,11 @@ interface BaseFragmentMvpView : BaseMvpView {
 
     fun showPrompt(titleResId: Int, messageResId: Int, yesResId: Int, noResId: Int): Observable<Int>
 
+    /**
+     * See [com.everlog.ui.dialog.DialogBuilder.showDestructivePrompt].
+     */
+    fun showDestructivePrompt(titleResId: Int, messageResId: Int, actionResId: Int, cancelResId: Int): Observable<Int>
+
     fun showOKPrompt(titleResId: Int, messageResId: Int): Observable<Void>
 
     fun showOKPrompt(title: String?, message: String?): Observable<Void>

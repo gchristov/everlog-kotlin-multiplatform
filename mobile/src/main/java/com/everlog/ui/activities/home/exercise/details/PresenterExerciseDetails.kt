@@ -67,7 +67,7 @@ class PresenterExerciseDetails : BaseActivityPresenter<MvpViewExerciseDetails>()
     }
 
     private fun observeDeleteExerciseConfirm() {
-        subscriptions.add(mvpView.showPrompt(R.string.delete_title, R.string.create_exercise_delete_prompt, R.string.delete, R.string.cancel)
+        subscriptions.add(mvpView.showDestructivePrompt(R.string.delete_title, R.string.create_exercise_delete_prompt, R.string.delete, R.string.cancel)
                 .compose(applyUISchedulers())
                 .subscribe({ action ->
                     if (action == DialogInterface.BUTTON_POSITIVE) {

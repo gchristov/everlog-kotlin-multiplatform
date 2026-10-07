@@ -67,7 +67,7 @@ class PresenterCreateRoutine : PresenterCreateExerciseGroups<MvpViewCreateRoutin
     }
 
     private fun observeDiscard() {
-        subscriptions.add(mvpView.showPrompt(R.string.discard_title, R.string.discard_prompt, R.string.discard, R.string.cancel)
+        subscriptions.add(mvpView.showDestructivePrompt(R.string.discard_title, R.string.discard_prompt, R.string.discard, R.string.cancel)
                 .compose(applyUISchedulers())
                 .subscribe({ action: Int ->
                     if (action == DialogInterface.BUTTON_POSITIVE) {

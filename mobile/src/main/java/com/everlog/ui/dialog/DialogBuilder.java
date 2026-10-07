@@ -104,6 +104,37 @@ public class DialogBuilder {
     }
 
     /**
+     * A prompt confirming a destructive action, e.g. Delete or Discard. As in the workout's discard prompt,
+     * cancelling is the primary button and the action the secondary one. Emits as {@link #showPrompt} does:
+     * {@link DialogInterface#BUTTON_POSITIVE} for the action and {@link DialogInterface#BUTTON_NEGATIVE} for
+     * cancel, whichever button shows each.
+     */
+    public static Observable<Integer> showDestructivePrompt(Context context,
+                                                            String title,
+                                                            String message,
+                                                            String action,
+                                                            String cancel) {
+        PublishSubject<Integer> buttonPublish = PublishSubject.create();
+
+        // Cancel is on the positive (primary) button and the action on the negative (secondary) one
+        DialogInterface.OnClickListener dialogClickListener = (dialog, which) -> {
+            buttonPublish.onNext(which == DialogInterface.BUTTON_NEGATIVE
+                    ? DialogInterface.BUTTON_POSITIVE
+                    : DialogInterface.BUTTON_NEGATIVE);
+            dialog.dismiss();
+        };
+
+        new AlertDialog.Builder(context, R.style.DarkDialogTheme)
+                .setTitle(title)
+                .setMessage(message)
+                .setPositiveButton(cancel, dialogClickListener)
+                .setNegativeButton(action, dialogClickListener)
+                .create()
+                .show();
+        return buttonPublish;
+    }
+
+    /**
      * Emitted by {@link #showChoicePrompt} when the dialog is closed without tapping a button, i.e. with back.
      */
     public static final int PROMPT_DISMISSED = 0;
