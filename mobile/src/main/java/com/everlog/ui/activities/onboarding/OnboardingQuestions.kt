@@ -133,12 +133,18 @@ internal object OnboardingQuestions {
                 OnboardingQuestion.Option(StayFit, R.string.onboarding_goal_fit, R.string.onboarding_goal_fit_description),
             ),
         ),
-        OnboardingQuestion.Reminders(
-            id = Reminders,
-            label = R.string.onboarding_reminders_label,
-            title = R.string.onboarding_reminders_title,
-            helper = R.string.onboarding_reminders_helper,
-        ),
+        // Workout reminders are left out of the first release (onboarding v1), which only tests whether
+        // setting up on day one drives adoption. To bring them back, uncomment this question. The rest of
+        // the reminders step is still in place: its input (RemindersInput), time picker, footer (Remind me,
+        // Not now), answer summary and preselected days. Saving them and asking for the notification
+        // permission still need building, and the welcome's "Five quick questions" needs updating. The
+        // starter routines don't use this answer.
+        // OnboardingQuestion.Reminders(
+        //     id = Reminders,
+        //     label = R.string.onboarding_reminders_label,
+        //     title = R.string.onboarding_reminders_title,
+        //     helper = R.string.onboarding_reminders_helper,
+        // ),
     )
 
     // Pounds in the few countries that lift in them, kilograms everywhere else

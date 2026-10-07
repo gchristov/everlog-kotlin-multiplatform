@@ -40,9 +40,10 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.android.awaitFrame
 
 // Debug-only prototype of the onboarding (first run) journey from the Everlog Onboarding design,
-// opened from Settings: the welcome, then the questions. Answers aren't saved. Build my week
-// builds the starter routines behind the building animation, logs them and closes the screen. If
-// the build fails, the user can try again or skip. The reveal and end steps come later.
+// opened from Settings: the welcome, then the questions. Answers aren't saved. Build my templates
+// builds the starter routines behind the building animation, then the reveal shows them, and its
+// buttons close the screen. If the build fails, the user can try again or skip. Saving the
+// routines and the buttons' actions come next.
 class OnboardingActivity : CommonComposeActivity() {
     private val viewModel by viewModels<OnboardingViewModel> {
         createViewModelFactory {
@@ -73,8 +74,9 @@ internal fun OnboardingScreen(
     var showSkipSetup by rememberSaveable { mutableStateOf(false) }
 
     BackHandler(enabled = !state.finished) {
-        // Building can't be left part way. Once it fails, OnboardingBuilding handles Back.
-        if (state.step != OnboardingViewModel.Step.Building) showSkipSetup = true
+        // Building can't be left part way. Once it fails, OnboardingBuilding handles Back. The
+        // reveal ignores Back, as the answers are in and the routines are built.
+        if (state.step != OnboardingViewModel.Step.Building && state.step != OnboardingViewModel.Step.Reveal) showSkipSetup = true
     }
 
     LaunchedEffect(state.finished) {
@@ -122,6 +124,11 @@ internal fun OnboardingScreen(
                 onRetry = viewModel::onRetryBuild,
                 onSkip = viewModel::onSkipBuild,
                 onShown = viewModel::onBuildShown,
+            )
+            OnboardingViewModel.Step.Reveal -> OnboardingReveal(
+                state = state,
+                onRoutineToggle = viewModel::onRoutineToggle,
+                onDone = viewModel::onRevealDone,
             )
         }
     }

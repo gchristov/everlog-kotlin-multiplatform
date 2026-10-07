@@ -446,24 +446,24 @@
     <!-- Onboarding -->
     <string name="onboarding_welcome_eyebrow">Welcome to Everlog</string>
     <string name="onboarding_welcome_title">Let\'s get you set up</string>
-    <string name="onboarding_welcome_body">A few quick questions, then we\'ll build a training week around you. It takes about a minute.</string>
+    <string name="onboarding_welcome_body">A few quick questions, then we\'ll build workout templates around you. It takes about a minute.</string>
     <string name="onboarding_welcome_step_questions">Tell us how you train</string>
-    <string name="onboarding_welcome_step_questions_description">Six quick questions. Skip any you like.</string>
-    <string name="onboarding_welcome_step_week">We build your week</string>
-    <string name="onboarding_welcome_step_week_description">Routines matched to your gym, level and goal.</string>
+    <string name="onboarding_welcome_step_questions_description">Five quick questions. Skip any you like.</string>
+    <string name="onboarding_welcome_step_week">We build your templates</string>
+    <string name="onboarding_welcome_step_week_description">Matched to your gym, level and goal.</string>
     <string name="onboarding_welcome_step_yours">Make it yours</string>
-    <string name="onboarding_welcome_step_yours_description">Swap exercises, then start your first workout.</string>
+    <string name="onboarding_welcome_step_yours_description">Keep ours, or build your own template.</string>
     <string name="onboarding_lets_go">Let\'s go</string>
     <string name="onboarding_skip_setup">Skip setup</string>
     <string name="onboarding_skip_setup_title">Skip setup?</string>
-    <string name="onboarding_skip_setup_body">We\'ll start you with an empty app. You can build routines yourself, or set this up later from Settings.</string>
+    <string name="onboarding_skip_setup_body">We\'ll start you with an empty app. You can build templates yourself, or set this up later from Settings.</string>
     <string name="onboarding_keep_going">Keep going</string>
     <string name="onboarding_next">Next</string>
     <string name="onboarding_skip">Skip</string>
     <string name="onboarding_remind_me">Remind me</string>
     <string name="onboarding_not_now">Not now</string>
-    <string name="onboarding_build_my_week">Build my week</string>
-    <string name="onboarding_building">Building your week</string>
+    <string name="onboarding_build_my_week">Build my templates</string>
+    <string name="onboarding_building">Building your templates</string>
     <!-- e.g. 3 days · Gym · Build muscle -->
     <plurals name="onboarding_building_days">
         <item quantity="one">%1$d day</item>
@@ -471,10 +471,40 @@
     </plurals>
     <string name="onboarding_building_home">Home dumbbells</string>
     <string name="onboarding_building_separator">" · "</string>
-    <string name="onboarding_build_ready">Your week is ready</string>
-    <string name="onboarding_build_failed">Couldn\'t build your week</string>
-    <string name="onboarding_build_failed_body">Something went wrong. Try again, or skip and build your own routines later.</string>
+    <plurals name="onboarding_build_ready">
+        <item quantity="one">Your template is ready</item>
+        <item quantity="other">Your templates are ready</item>
+    </plurals>
+    <string name="onboarding_build_failed">Couldn\'t build your templates</string>
+    <string name="onboarding_build_failed_body">Something went wrong. Try again, or skip and build your own templates later.</string>
     <string name="onboarding_try_again">Try again</string>
+    <plurals name="onboarding_reveal_title">
+        <item quantity="one">Here\'s your workout template</item>
+        <item quantity="other">Here are your workout templates</item>
+    </plurals>
+    <string name="onboarding_reveal_experienced">You\'ve been lifting for years, so treat this as a starting point.</string>
+    <!-- The week's split, in the summary line, e.g. 3 days · Push / Pull / Legs · Gym · Build muscle -->
+    <string name="onboarding_reveal_split_full_body">Full body</string>
+    <string name="onboarding_reveal_split_upper_lower">Upper / Lower</string>
+    <string name="onboarding_reveal_split_push_pull_legs">Push / Pull / Legs</string>
+    <!-- Sets × reps, e.g. 3 × 8–12 -->
+    <string name="onboarding_reveal_reps">%1$d × %2$d–%3$d</string>
+    <!-- Sets × a hold in seconds, e.g. 3 × 30 s -->
+    <string name="onboarding_reveal_hold">%1$d × %2$d s</string>
+    <!-- A closed routine card, e.g. 4 exercises · 12 sets -->
+    <plurals name="onboarding_reveal_exercises">
+        <item quantity="one">%1$d exercise</item>
+        <item quantity="other">%1$d exercises</item>
+    </plurals>
+    <plurals name="onboarding_reveal_sets">
+        <item quantity="one">%1$d set</item>
+        <item quantity="other">%1$d sets</item>
+    </plurals>
+    <!-- Read out for a routine card, which opens and closes on a tap -->
+    <string name="onboarding_reveal_open">Expanded</string>
+    <string name="onboarding_reveal_closed">Collapsed</string>
+    <string name="onboarding_reveal_looks_good">Looks good</string>
+    <string name="onboarding_reveal_build_own">Build my own template</string>
     <string name="onboarding_editing">Editing</string>
     <string name="onboarding_up_next">Up next</string>
     <string name="onboarding_skipped">Skipped</string>
@@ -492,7 +522,7 @@
 
     <string name="onboarding_days_label">Training days</string>
     <string name="onboarding_days_title">How many days a week do you train?</string>
-    <string name="onboarding_days_helper">We\'ll build your week around this.</string>
+    <string name="onboarding_days_helper">We\'ll build your templates around this.</string>
     <plurals name="onboarding_days_answer">
         <item quantity="one">%1$d day a week</item>
         <item quantity="other">%1$d days a week</item>

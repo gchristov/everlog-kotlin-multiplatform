@@ -150,6 +150,7 @@ dependencies {
     implementation(libs.arrow.core)
 
     implementation(libs.glide)
+    implementation(libs.coil.compose)
 
     implementation(libs.rxandroid)
     implementation(libs.rxjava)
