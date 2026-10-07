@@ -13,14 +13,12 @@ import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
@@ -44,7 +42,6 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
-import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.stateDescription
 import androidx.compose.ui.unit.Dp
@@ -63,6 +60,7 @@ import com.everlog.ui.design.elements.AppIcon
 import com.everlog.ui.design.elements.AppScreen
 import com.everlog.ui.design.elements.AppSurface
 import com.everlog.ui.design.elements.AppText
+import com.everlog.ui.design.elements.list.AppListItem
 import com.everlog.ui.design.elements.rememberAppBarScrollBehavior
 import com.everlog.ui.design.theme.Theme
 
@@ -141,9 +139,10 @@ private fun RevealRoutines(
         modifier = Modifier
             .fillMaxSize()
             .verticalScroll(scrollState)
+            // The same padding and gaps as AppGroupedList: each routine is a group
             .padding(horizontal = Theme.spacing.large)
-            .padding(bottom = bottomPadding + Theme.spacing.large),
-        verticalArrangement = Arrangement.spacedBy(Theme.spacing.medium),
+            .padding(top = Theme.spacing.large, bottom = bottomPadding + Theme.spacing.large),
+        verticalArrangement = Arrangement.spacedBy(Theme.spacing.extraLarge),
     ) {
         starter.week.routines.forEachIndexed { index, routine ->
             // Each card a beat after the one above it
@@ -165,8 +164,10 @@ private fun RevealRoutines(
     }
 }
 
-// A routine's card. Open: its name and days over a row per exercise. Closed: its name over its
-// days and size, with the first three exercises' images and a chevron.
+// A routine's card, drawn like an AppListGroup: rows with dividers between them. Open: its name and
+// days over a row per exercise. Closed: its name over its days and size, with the first three
+// exercises' images and a chevron. An AppListGroup can't animate rows in and out, so it's built
+// from the same pieces.
 @Composable
 private fun RoutineCard(
     routine: StarterRoutine,
@@ -205,14 +206,7 @@ private fun RoutineCard(
             ) {
                 Column {
                     routine.exercises.forEachIndexed { index, exercise ->
-                        // Between rows only, as the header leads straight into the first
-                        if (index > 0) {
-                            HorizontalDivider(
-                                modifier = Modifier.padding(horizontal = Theme.spacing.large),
-                                thickness = 1.dp,
-                                color = Theme.backgrounds.separator,
-                            )
-                        }
+                        HorizontalDivider(thickness = 1.dp, color = Theme.backgrounds.separator)
                         ExerciseRow(
                             name = names.getOrNull(index) ?: exercise.name,
                             imageUrl = imageUrls.getOrNull(index),
@@ -240,85 +234,66 @@ private fun RoutineCardHeader(
         label = "chevron",
     )
     val stateDescription = stringResource(if (open) R.string.onboarding_reveal_open else R.string.onboarding_reveal_closed)
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .clickable(role = Role.Button, onClick = onToggle)
-            .semantics(mergeDescendants = true) { this.stateDescription = stateDescription }
-            .padding(horizontal = Theme.spacing.large, vertical = Theme.spacing.medium),
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(Theme.spacing.small),
-    ) {
-        Column(modifier = Modifier.weight(1f)) {
-            AppText(text = name, style = Theme.typography.heading)
-            AnimatedVisibility(
-                visible = !open,
-                enter = fadeIn(tween(OnboardingMotion.SummaryFade, OnboardingMotion.SummaryDelay)) + expandVertically(tween(OnboardingMotion.Collapse, easing = OnboardingMotion.Standard)),
-                exit = fadeOut(tween(OnboardingMotion.FadeOut)) + shrinkVertically(tween(OnboardingMotion.Collapse, easing = OnboardingMotion.Standard)),
+    AppListItem(
+        modifier = Modifier.semantics(mergeDescendants = true) { this.stateDescription = stateDescription },
+        title = name,
+        // Open, the rows say the rest
+        subtitle = closedSummary.takeUnless { open },
+        trailing = {
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(Theme.spacing.small),
             ) {
-                AppText(
-                    text = closedSummary,
-                    style = Theme.typography.caption,
-                    color = Theme.contentColors.secondary,
+                // Open: the days. Closed: a peek at the exercises.
+                AnimatedContent(
+                    targetState = open,
+                    transitionSpec = {
+                        fadeIn(tween(OnboardingMotion.SummaryFade, easing = OnboardingMotion.Standard)) togetherWith
+                                fadeOut(tween(OnboardingMotion.FadeOut, easing = OnboardingMotion.Standard))
+                    },
+                    contentAlignment = Alignment.CenterEnd,
+                    label = "headerEnd",
+                ) { showDays ->
+                    if (showDays) {
+                        AppText(
+                            text = days,
+                            style = Theme.typography.caption,
+                            color = Theme.contentColors.secondary,
+                        )
+                    } else {
+                        ThumbnailStack(imageUrls = imageUrls)
+                    }
+                }
+                AppIcon(
+                    modifier = Modifier.rotate(chevronRotation),
+                    imageVector = ImageVector.vectorResource(R.drawable.ic_keyboard_down),
+                    tint = Theme.contentColors.secondary,
                 )
             }
-        }
-        // Open: the days, as the rows say the rest. Closed: a peek at the exercises.
-        AnimatedContent(
-            targetState = open,
-            transitionSpec = {
-                fadeIn(tween(OnboardingMotion.SummaryFade, easing = OnboardingMotion.Standard)) togetherWith
-                        fadeOut(tween(OnboardingMotion.FadeOut, easing = OnboardingMotion.Standard))
-            },
-            contentAlignment = Alignment.CenterEnd,
-            label = "headerEnd",
-        ) { showDays ->
-            if (showDays) {
-                AppText(
-                    text = days,
-                    style = Theme.typography.caption,
-                    color = Theme.contentColors.secondary,
-                )
-            } else {
-                ThumbnailStack(imageUrls = imageUrls)
-            }
-        }
-        AppIcon(
-            modifier = Modifier.rotate(chevronRotation),
-            imageVector = ImageVector.vectorResource(R.drawable.ic_keyboard_down),
-            tint = Theme.contentColors.secondary,
-        )
-    }
+        },
+        onClick = onToggle,
+    )
 }
 
-// An exercise in an open card: its image, name, and sets × reps. Denser than an AppListItem, so a
-// day's exercises fit with the other cards still in view.
+// An exercise in an open card: its image, name, and sets × reps
 @Composable
 private fun ExerciseRow(
     name: String,
     imageUrl: String?,
     target: String,
 ) {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .semantics(mergeDescendants = true) {}
-            .heightIn(min = RevealSizes.ExerciseRowHeight)
-            .padding(horizontal = Theme.spacing.large, vertical = Theme.spacing.small),
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(Theme.spacing.medium),
-    ) {
-        ExerciseThumbnail(imageUrl = imageUrl, size = RevealSizes.Thumbnail)
-        AppText(
-            modifier = Modifier.weight(1f),
-            text = name,
-        )
-        AppText(
-            text = target,
-            style = Theme.typography.caption,
-            color = Theme.contentColors.secondary,
-        )
-    }
+    AppListItem(
+        modifier = Modifier.semantics(mergeDescendants = true) {},
+        title = name,
+        leading = { ExerciseThumbnail(imageUrl = imageUrl, size = RevealSizes.Thumbnail) },
+        trailing = {
+            AppText(
+                text = target,
+                style = Theme.typography.caption,
+                color = Theme.contentColors.secondary,
+            )
+        },
+    )
 }
 
 // The first few exercises' images, overlapping, each ringed in the card's colour so they read apart
@@ -376,7 +351,6 @@ private object RevealMotion {
 
 // Sizes from the design that the design system doesn't have
 private object RevealSizes {
-    val ExerciseRowHeight = 52.dp
     val Thumbnail = 36.dp
     val StackThumbnail = 30.dp
     val StackOverlap = 10.dp
