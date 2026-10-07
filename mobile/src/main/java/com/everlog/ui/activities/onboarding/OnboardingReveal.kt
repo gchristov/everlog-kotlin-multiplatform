@@ -1,6 +1,5 @@
 package com.everlog.ui.activities.onboarding
 
-import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.animateFloatAsState
@@ -9,7 +8,6 @@ import androidx.compose.animation.expandVertically
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.shrinkVertically
-import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -66,7 +64,9 @@ import com.everlog.ui.design.theme.Theme
 
 // The reveal from the Everlog Onboarding design: "Here's your week", the summary of the answers,
 // then a card per routine. The first card starts open with its exercises, the others closed with a
-// line about them, and any card opens or closes on a tap. Both buttons close the screen for now.
+// line about them, and any card opens or closes on a tap. The routines aren't tied to days of the
+// week, so no days show (onboarding v1 has no schedule or reminders). Looks good keeps them and Build
+// my own routine opens the routine builder. Both close the screen for now.
 @Composable
 internal fun OnboardingReveal(
     state: OnboardingViewModel.State,
@@ -103,11 +103,11 @@ internal fun OnboardingReveal(
                 header = if (experienced) stringResource(R.string.onboarding_reveal_experienced) else null,
                 actions = listOf(
                     AppFooterAction(
-                        text = stringResource(if (experienced) R.string.onboarding_reveal_add_own else R.string.onboarding_reveal_make_it_yours),
+                        text = stringResource(R.string.onboarding_reveal_looks_good),
                         onClick = onDone,
                     ),
                     AppFooterAction(
-                        text = stringResource(if (experienced) R.string.onboarding_reveal_use_this else R.string.onboarding_reveal_looks_good),
+                        text = stringResource(R.string.onboarding_reveal_build_own),
                         onClick = onDone,
                         style = AppFooterAction.Style.Secondary,
                     ),
@@ -164,9 +164,9 @@ private fun RevealRoutines(
     }
 }
 
-// A routine's card, drawn like an AppListGroup: rows with dividers between them. Open: its name and
-// days over a row per exercise. Closed: its name over its days and size, with the first three
-// exercises' images and a chevron. An AppListGroup can't animate rows in and out, so it's built
+// A routine's card, drawn like an AppListGroup: rows with dividers between them. Open: its name over
+// a row per exercise. Closed: its name over its size, with the first three exercises' images and a
+// chevron. An AppListGroup can't animate rows in and out, so it's built
 // from the same pieces.
 @Composable
 private fun RoutineCard(
@@ -177,9 +177,7 @@ private fun RoutineCard(
     open: Boolean,
     onToggle: () -> Unit,
 ) {
-    val days = routine.days.joinToString(stringResource(R.string.onboarding_building_separator)) { it.shortName() }
     val closedSummary = listOf(
-        days,
         pluralStringResource(R.plurals.onboarding_reveal_exercises, routine.exercises.size, routine.exercises.size),
         routine.exercises.sumOf { it.sets }.let { pluralStringResource(R.plurals.onboarding_reveal_sets, it, it) },
     ).joinToString(stringResource(R.string.onboarding_building_separator))
@@ -191,7 +189,6 @@ private fun RoutineCard(
         Column(modifier = Modifier.animateContentSize(tween(OnboardingMotion.Collapse, easing = OnboardingMotion.Standard))) {
             RoutineCardHeader(
                 name = routine.name,
-                days = days,
                 closedSummary = closedSummary,
                 imageUrls = imageUrls.take(RevealSizes.StackCount),
                 open = open,
@@ -222,7 +219,6 @@ private fun RoutineCard(
 @Composable
 private fun RoutineCardHeader(
     name: String,
-    days: String,
     closedSummary: String,
     imageUrls: List<String?>,
     open: Boolean,
@@ -244,25 +240,13 @@ private fun RoutineCardHeader(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(Theme.spacing.small),
             ) {
-                // Open: the days. Closed: a peek at the exercises.
-                AnimatedContent(
-                    targetState = open,
-                    transitionSpec = {
-                        fadeIn(tween(OnboardingMotion.SummaryFade, easing = OnboardingMotion.Standard)) togetherWith
-                                fadeOut(tween(OnboardingMotion.FadeOut, easing = OnboardingMotion.Standard))
-                    },
-                    contentAlignment = Alignment.CenterEnd,
-                    label = "headerEnd",
-                ) { showDays ->
-                    if (showDays) {
-                        AppText(
-                            text = days,
-                            style = Theme.typography.caption,
-                            color = Theme.contentColors.secondary,
-                        )
-                    } else {
-                        ThumbnailStack(imageUrls = imageUrls)
-                    }
+                // Closed: a peek at the exercises, which the rows show once it's open
+                AnimatedVisibility(
+                    visible = !open,
+                    enter = fadeIn(tween(OnboardingMotion.SummaryFade, easing = OnboardingMotion.Standard)),
+                    exit = fadeOut(tween(OnboardingMotion.FadeOut, easing = OnboardingMotion.Standard)),
+                ) {
+                    ThumbnailStack(imageUrls = imageUrls)
                 }
                 AppIcon(
                     modifier = Modifier.rotate(chevronRotation),

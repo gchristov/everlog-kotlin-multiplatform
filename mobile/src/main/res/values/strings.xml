@@ -448,11 +448,11 @@
     <string name="onboarding_welcome_title">Let\'s get you set up</string>
     <string name="onboarding_welcome_body">A few quick questions, then we\'ll build a training week around you. It takes about a minute.</string>
     <string name="onboarding_welcome_step_questions">Tell us how you train</string>
-    <string name="onboarding_welcome_step_questions_description">Six quick questions. Skip any you like.</string>
+    <string name="onboarding_welcome_step_questions_description">Five quick questions. Skip any you like.</string>
     <string name="onboarding_welcome_step_week">We build your week</string>
     <string name="onboarding_welcome_step_week_description">Routines matched to your gym, level and goal.</string>
     <string name="onboarding_welcome_step_yours">Make it yours</string>
-    <string name="onboarding_welcome_step_yours_description">Swap exercises, then start your first workout.</string>
+    <string name="onboarding_welcome_step_yours_description">Keep ours, or build your own routine.</string>
     <string name="onboarding_lets_go">Let\'s go</string>
     <string name="onboarding_skip_setup">Skip setup</string>
     <string name="onboarding_skip_setup_title">Skip setup?</string>
@@ -497,10 +497,8 @@
     <!-- Read out for a routine card, which opens and closes on a tap -->
     <string name="onboarding_reveal_open">Expanded</string>
     <string name="onboarding_reveal_closed">Collapsed</string>
-    <string name="onboarding_reveal_make_it_yours">Make it yours</string>
     <string name="onboarding_reveal_looks_good">Looks good</string>
-    <string name="onboarding_reveal_add_own">Got your own program? Add your first day</string>
-    <string name="onboarding_reveal_use_this">Use this one</string>
+    <string name="onboarding_reveal_build_own">Build my own routine</string>
     <string name="onboarding_editing">Editing</string>
     <string name="onboarding_up_next">Up next</string>
     <string name="onboarding_skipped">Skipped</string>
