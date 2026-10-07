@@ -45,7 +45,7 @@
         </FrameLayout>
     </LinearLayout>
 
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <com.everlog.ui.views.FloatingFooterView
         android:id="@+id/addBtnContainer"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -53,17 +53,9 @@
         android:visibility="gone"
         tools:visibility="visible">
 
-        <com.github.mmin18.widget.RealtimeBlurView
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:realtimeBlurRadius="20dp"
-            app:realtimeOverlayColor="@color/background_blur" />
-
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:gravity="center"
             android:padding="@dimen/activity_margin">
 
@@ -82,5 +74,5 @@
                 android:layout_weight="1"
                 android:text="@string/exercises_add" />
         </LinearLayout>
-    </androidx.constraintlayout.widget.ConstraintLayout>
+    </com.everlog.ui.views.FloatingFooterView>
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

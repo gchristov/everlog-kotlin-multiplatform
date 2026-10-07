@@ -46,7 +46,6 @@ abstract class CreateExerciseGroupsActivity : BaseActivity(), MvpViewCreateExerc
     protected open fun setupInsets() {
         val topBar = findViewById<View>(R.id.topBar)
         val recyclerView = findViewById<RecyclerView>(R.id.recyclerView)
-        val addBtnContainer = findViewById<View>(R.id.addBtnContainer)
 
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(android.R.id.content)) { _, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
@@ -70,11 +69,7 @@ abstract class CreateExerciseGroupsActivity : BaseActivity(), MvpViewCreateExerc
                 bottom = systemBars.bottom + resources.getDimensionPixelSize(R.dimen.footer_bottom_padding_double)
             )
 
-            val addBtn = addBtnContainer?.findViewById<View>(R.id.addBtn)
-            addBtn?.updateLayoutParams<android.view.ViewGroup.MarginLayoutParams> {
-                bottomMargin = systemBars.bottom + resources.getDimensionPixelSize(R.dimen.activity_margin)
-            }
-
+            // The footer keeps itself above the navigation bar
             insets
         }
     }
