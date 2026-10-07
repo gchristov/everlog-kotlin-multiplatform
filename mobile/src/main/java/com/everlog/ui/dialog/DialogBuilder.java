@@ -4,7 +4,6 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.util.Pair;
-import android.widget.Button;
 
 import com.everlog.R;
 
