@@ -135,6 +135,7 @@ private fun SetupQuestions(
     val density = LocalDensity.current
     val enterOffset = with(density) { OnboardingMotion.EnterOffset.roundToPx() }
     val visibleIds = state.visibleQuestions.map { it.id }
+    val groupPositions = groupPositions(visibleIds, state.activeQuestionId)
     // The first question sits lower on an empty screen, like the design's first state
     val topPadding by animateDpAsState(
         targetValue = if (state.answers.isEmpty()) Theme.spacing.extraLarge else Theme.spacing.large,
@@ -160,6 +161,7 @@ private fun SetupQuestions(
                 QuestionItem(
                     question = question,
                     state = state,
+                    position = groupPositions[question.id],
                     viewModel = viewModel,
                     onTimeClick = onTimeClick,
                 )
@@ -168,6 +170,15 @@ private fun SetupQuestions(
         // Room for the last questions to reach the upper third, above the footer
         VerticalSpace(height = with(density) { (viewportHeight / 2f).toDp() } + contentPadding.calculateBottomPadding())
     }
+}
+
+// Each closed question's place in its run of rows, as the open question splits them into groups
+private fun groupPositions(visibleIds: List<String>, openId: String?): Map<String, GroupPosition> {
+    val runs = mutableListOf(mutableListOf<String>())
+    visibleIds.forEach { id ->
+        if (id == openId) runs += mutableListOf<String>() else runs.last() += id
+    }
+    return runs.flatMap { run -> run.mapIndexed { index, id -> id to GroupPosition(index, run.size) } }.toMap()
 }
 
 private enum class ItemMode {
@@ -187,6 +198,8 @@ private data class ItemState(
 private fun QuestionItem(
     question: OnboardingQuestion,
     state: OnboardingViewModel.State,
+    // In its group of rows, while it's closed
+    position: GroupPosition?,
     viewModel: OnboardingViewModel,
     onTimeClick: () -> Unit,
 ) {
@@ -217,7 +230,8 @@ private fun QuestionItem(
         label = "question",
     ) { item ->
         when (item.mode) {
-            ItemMode.Open -> Box(modifier = Modifier.padding(top = if (state.answers.isEmpty()) 0.dp else Theme.spacing.large, bottom = Theme.spacing.extraLarge)) {
+            // Apart from the rows around it like groups are, so it splits them into two
+            ItemMode.Open -> Box(modifier = Modifier.padding(top = if (question.id == state.visibleQuestions.firstOrNull()?.id) 0.dp else Theme.spacing.extraLarge, bottom = Theme.spacing.extraLarge)) {
                 QuestionBlock(
                     question = question,
                     input = item.input,
@@ -226,17 +240,17 @@ private fun QuestionItem(
                     onTimeClick = onTimeClick,
                 )
             }
-            ItemMode.Answered -> Box(modifier = Modifier.padding(bottom = Theme.spacing.small)) {
-                SummaryRow(
-                    label = stringResource(question.label),
-                    answer = state.answers[question.id]?.let { answerSummary(question, it, state.firstDayOfWeek) }.orEmpty(),
-                    skipped = question.id in state.skipped,
-                    onClick = { viewModel.onEdit(question.id) },
-                )
-            }
-            ItemMode.UpNext -> Box(modifier = Modifier.padding(bottom = Theme.spacing.small)) {
-                UpNextRow(label = stringResource(question.label))
-            }
+            ItemMode.Answered -> SummaryRow(
+                label = stringResource(question.label),
+                answer = state.answers[question.id]?.let { answerSummary(question, it, state.firstDayOfWeek) }.orEmpty(),
+                skipped = question.id in state.skipped,
+                position = position ?: GroupPosition(0, 1),
+                onClick = { viewModel.onEdit(question.id) },
+            )
+            ItemMode.UpNext -> UpNextRow(
+                label = stringResource(question.label),
+                position = position ?: GroupPosition(0, 1),
+            )
         }
     }
 }

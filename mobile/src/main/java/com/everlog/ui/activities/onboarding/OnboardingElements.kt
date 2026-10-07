@@ -31,6 +31,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
@@ -62,11 +63,11 @@ import com.everlog.R
 import com.everlog.ui.design.elements.AppBar
 import com.everlog.ui.design.elements.AppBarScrollBehavior
 import com.everlog.ui.design.elements.AppIcon
-import com.everlog.ui.design.elements.AppSurface
 import com.everlog.ui.design.elements.AppTertiaryButton
 import com.everlog.ui.design.elements.AppText
 import com.everlog.ui.design.elements.LocalAppScreenMaxContentWidth
 import com.everlog.ui.design.elements.list.AppListItem
+import com.everlog.ui.design.elements.list.appListGroupRowShape
 import com.everlog.ui.design.theme.Theme
 
 // Pieces of the onboarding design that aren't in the design system yet. They stay local to this
@@ -460,21 +461,21 @@ internal fun TimeRow(
 }
 
 // Collapsed answer: the question's label over the answer in accent, with a pencil. The whole row
-// edits it. Skipped answers are grey so they never read as a choice.
+// edits it. Skipped answers are grey so they never read as a choice. A row in a group of the rows
+// around it, like an AppListGroup's.
 @Composable
 internal fun SummaryRow(
     label: String,
     answer: String,
     skipped: Boolean,
+    position: GroupPosition,
     onClick: () -> Unit,
 ) {
     val shownAnswer = if (skipped) stringResource(R.string.onboarding_skipped) else answer
     val description = stringResource(R.string.onboarding_edit_answer, label, shownAnswer)
-    AppSurface(
-        modifier = Modifier
-            .fillMaxWidth()
-            .semantics(mergeDescendants = true) { contentDescription = description },
-        contentPadding = PaddingValues(),
+    GroupRow(
+        modifier = Modifier.semantics(mergeDescendants = true) { contentDescription = description },
+        position = position,
     ) {
         AppListItem(
             header = label,
@@ -488,19 +489,42 @@ internal fun SummaryRow(
     }
 }
 
-// The next question while another one is being edited: dim and outlined, not tappable
+// The next question while another one is being edited: grey, not tappable, in the group with the
+// rows above it
 @Composable
-internal fun UpNextRow(label: String) {
-    Box(
-        modifier = Modifier
-            .fillMaxWidth()
-            .border(1.dp, Theme.backgrounds.separator, Theme.shapes.surface),
-    ) {
+internal fun UpNextRow(label: String, position: GroupPosition) {
+    GroupRow(position = position) {
         AppListItem(
             header = label,
             title = stringResource(R.string.onboarding_up_next),
             titleColor = Theme.contentColors.secondary,
         )
+    }
+}
+
+// Where a closed question's row sits in its run of rows. The open question splits the rows into
+// groups, so consecutive rows join into one, like an AppListGroup.
+internal data class GroupPosition(val index: Int, val count: Int) {
+    val last: Boolean get() = index == count - 1
+}
+
+// A row of a group: the group's corners for its place in it, and a divider under every row but the last
+@Composable
+private fun GroupRow(
+    position: GroupPosition,
+    modifier: Modifier = Modifier,
+    content: @Composable () -> Unit,
+) {
+    Column(
+        modifier = modifier
+            .fillMaxWidth()
+            .clip(appListGroupRowShape(index = position.index, count = position.count))
+            .background(Theme.backgrounds.surface),
+    ) {
+        content()
+        if (!position.last) {
+            HorizontalDivider(thickness = 1.dp, color = Theme.backgrounds.separator)
+        }
     }
 }
 
