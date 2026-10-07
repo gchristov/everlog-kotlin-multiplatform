@@ -5,8 +5,6 @@
     style="@style/LoginContentWidth"
     android:layout_height="match_parent"
     android:layout_centerHorizontal="true"
-    android:layout_marginLeft="@dimen/activity_margin"
-    android:layout_marginRight="@dimen/activity_margin"
     tools:background="@color/background_base">
 
     <LinearLayout
@@ -14,8 +12,10 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:gravity="center_horizontal"
+        android:layout_marginLeft="@dimen/activity_margin"
+        android:layout_marginRight="@dimen/activity_margin"
         android:orientation="vertical"
-        app:layout_constraintBottom_toTopOf="@id/showRegisterBtn"
+        app:layout_constraintBottom_toTopOf="@id/introFooter"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
@@ -47,33 +47,39 @@
             android:textStyle="bold" />
     </LinearLayout>
 
-    <com.github.leandroborgesferreira.loadingbutton.customViews.CircularProgressButton
-        android:id="@+id/showRegisterBtn"
-        style="@style/Button"
+    <com.everlog.ui.views.FloatingFooterView
+        android:id="@+id/introFooter"
         android:layout_width="0dp"
-        android:layout_height="42dp"
-        android:layout_marginBottom="@dimen/activity_margin"
-        android:background="@drawable/rounded_corners_btn_one"
-        android:paddingLeft="0dp"
-        android:paddingRight="0dp"
-        android:text="@string/login_get_started"
-        app:initialCornerAngle="21dp"
-        app:layout_constraintBottom_toTopOf="@id/showLoginBtn"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:spinning_bar_color="@color/background_base"
-        app:spinning_bar_padding="8dp" />
-
-    <Button
-        android:id="@+id/showLoginBtn"
-        style="@style/Button.Three"
-        android:layout_width="0dp"
-        android:layout_height="42dp"
-        android:layout_marginBottom="@dimen/margin_20"
-        android:paddingLeft="0dp"
-        android:paddingRight="0dp"
-        android:text="@string/login_existing"
+        android:layout_height="wrap_content"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="parent">
+
+        <com.github.leandroborgesferreira.loadingbutton.customViews.CircularProgressButton
+            android:id="@+id/showRegisterBtn"
+            style="@style/Button"
+            android:layout_width="match_parent"
+            android:layout_height="42dp"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginStart="@dimen/activity_margin"
+            android:layout_marginTop="@dimen/activity_margin"
+            android:layout_marginEnd="@dimen/activity_margin"
+            android:background="@drawable/rounded_corners_btn_one"
+            android:paddingLeft="0dp"
+            android:paddingRight="0dp"
+            android:text="@string/login_get_started"
+            app:initialCornerAngle="21dp"
+            app:spinning_bar_color="@color/background_base"
+            app:spinning_bar_padding="8dp" />
+
+        <Button
+            android:id="@+id/showLoginBtn"
+            style="@style/Button.Three"
+            android:layout_width="match_parent"
+            android:layout_height="42dp"
+            android:layout_margin="@dimen/activity_margin"
+            android:paddingLeft="0dp"
+            android:paddingRight="0dp"
+            android:text="@string/login_existing" />
+    </com.everlog.ui.views.FloatingFooterView>
 </androidx.constraintlayout.widget.ConstraintLayout>

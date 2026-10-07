@@ -82,13 +82,15 @@ class LoginActivity : BaseActivity(), MvpViewLogin {
                 height = toolbarHeight + systemBars.top
             }
 
-            // Bottom insets for form containers
-            // For Intro, we want padding to keep buttons above nav bar
-            binding.formIntro.root.updatePadding(bottom = systemBars.bottom)
+            // Intro and Login keep their buttons above the nav bar in a floating footer, which
+            // applies the nav bar inset itself. Login lifts it above the keyboard too.
+            val ime = insets.getInsets(WindowInsetsCompat.Type.ime())
+            val navigationBars = insets.getInsets(WindowInsetsCompat.Type.navigationBars())
+            binding.formLogin.root.updatePadding(bottom = maxOf(ime.bottom - navigationBars.bottom, 0))
 
             // For Login and Register, we need to offset the top by the toolbar height
             // and apply bottom padding to the scroll content
-            binding.formLogin.root.updatePadding(top = systemBars.top + toolbarHeight, bottom = systemBars.bottom)
+            binding.formLogin.loginScroll.updatePadding(top = systemBars.top + toolbarHeight, bottom = systemBars.bottom)
             binding.formRegister.root.updatePadding(top = systemBars.top + toolbarHeight, bottom = systemBars.bottom)
 
             insets

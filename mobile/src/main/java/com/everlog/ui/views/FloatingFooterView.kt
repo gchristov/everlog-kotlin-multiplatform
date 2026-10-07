@@ -55,7 +55,13 @@ class FloatingFooterView @JvmOverloads constructor(
         if (child.id == R.id.floatingFooterCard) {
             super.addView(child, index, params)
         } else {
-            content.addView(child, index, params)
+            // The layout inflates them with this view's FrameLayout params, keep their gravity in
+            // the card's LinearLayout
+            val contentParams = when (params) {
+                is FrameLayout.LayoutParams -> LinearLayout.LayoutParams(params).also { it.gravity = params.gravity }
+                else -> params
+            }
+            content.addView(child, index, contentParams)
         }
     }
 }
