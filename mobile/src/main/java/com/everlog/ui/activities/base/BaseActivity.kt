@@ -230,9 +230,8 @@ abstract class BaseActivity : AppCompatActivity(), BaseActivityMvpView {
                                   message: String,
                                   positive: String,
                                   negative: String,
-                                  neutral: String?,
-                                  destructiveButton: Int?): Observable<Int> {
-        return DialogBuilder.showChoicePrompt(this, title, message, positive, negative, neutral, destructiveButton)
+                                  neutral: String?): Observable<Int> {
+        return DialogBuilder.showChoicePrompt(this, title, message, positive, negative, neutral)
     }
 
     override fun showOK(titleResId: Int, messageResId: Int) {

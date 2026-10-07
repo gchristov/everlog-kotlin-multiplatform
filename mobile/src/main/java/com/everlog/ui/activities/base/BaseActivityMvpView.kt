@@ -27,8 +27,7 @@ interface BaseActivityMvpView : BaseMvpView {
                          message: String,
                          positive: String,
                          negative: String,
-                         neutral: String?,
-                         destructiveButton: Int?): Observable<Int>
+                         neutral: String?): Observable<Int>
 
     fun showOKPrompt(titleResId: Int, messageResId: Int): Observable<Void>
 
