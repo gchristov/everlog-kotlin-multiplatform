@@ -40,7 +40,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.android.awaitFrame
 
 // Debug-only prototype of the onboarding (first run) journey from the Everlog Onboarding design,
-// opened from Settings: the welcome, then the questions. Answers aren't saved. Build my routines
+// opened from Settings: the welcome, then the questions. Answers aren't saved. Build my templates
 // builds the starter routines behind the building animation, then the reveal shows them, and its
 // buttons close the screen. If the build fails, the user can try again or skip. Saving the
 // routines and the end step come later.

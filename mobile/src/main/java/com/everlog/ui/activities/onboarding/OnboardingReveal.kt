@@ -62,11 +62,11 @@ import com.everlog.ui.design.elements.list.AppListItem
 import com.everlog.ui.design.elements.rememberAppBarScrollBehavior
 import com.everlog.ui.design.theme.Theme
 
-// The reveal from the Everlog Onboarding design: "Here are your routines", the summary of the answers,
-// then a card per routine. The first card starts open with its exercises, the others closed with a
-// line about them, and any card opens or closes on a tap. The routines aren't tied to days of the
-// week, so no days show (onboarding v1 has no schedule or reminders). Looks good keeps them and Build
-// my own routine opens the routine builder. Both close the screen for now.
+// The reveal from the Everlog Onboarding design: "Here are your workout templates", the summary of
+// the answers, then a card per routine. The first card starts open with its exercises, the others
+// closed with a line about them, and any card opens or closes on a tap. The routines aren't tied to
+// days of the week, so no days show (onboarding v1 has no schedule or reminders). Looks good keeps
+// them and Build my own template opens the routine builder. Both close the screen for now.
 @Composable
 internal fun OnboardingReveal(
     state: OnboardingViewModel.State,

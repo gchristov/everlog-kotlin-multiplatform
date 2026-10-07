@@ -144,7 +144,7 @@ class OnboardingViewModel(
     enum class Step {
         // Until Let's go
         Welcome,
-        // One question open at a time, until Build my routines
+        // One question open at a time, until Build my templates
         Questions,
         // The starter routines building, until they're ready or the user skips
         Building,
