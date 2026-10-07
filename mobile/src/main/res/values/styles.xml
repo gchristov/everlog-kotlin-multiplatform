@@ -113,12 +113,15 @@
         <item name="android:paddingTop">@dimen/activity_margin_half</item>
         <item name="android:paddingBottom">@dimen/margin_20</item>
     </style>
-    <!-- The app's buttons with less padding than a full-width one, so up to three fit on a row. Where they
-    still don't fit, e.g. on narrow phones, Android stacks them. -->
+    <!-- The app's buttons with less padding than a full-width one, so up to three fit on a row, and shorter
+    (no 48dp minimum, so about 36dp). Where they still don't fit, Android stacks them. Keep labels short:
+    Android first measures a dialog at about 320dp wide, and if the buttons stack there, the dialog keeps
+    that taller height even after they fit on one row at its real width. -->
     <style name="DialogButton.Primary" parent="Button">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_marginStart">@dimen/activity_margin_half</item>
         <item name="android:minWidth">0dp</item>
+        <item name="android:minHeight">0dp</item>
         <item name="android:paddingLeft">@dimen/margin_12</item>
         <item name="android:paddingRight">@dimen/margin_12</item>
     </style>
@@ -126,12 +129,14 @@
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_marginStart">@dimen/activity_margin_half</item>
         <item name="android:minWidth">0dp</item>
+        <item name="android:minHeight">0dp</item>
         <item name="android:paddingLeft">@dimen/margin_12</item>
         <item name="android:paddingRight">@dimen/margin_12</item>
     </style>
     <style name="DialogButton.Tertiary" parent="Button.Four">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:minWidth">0dp</item>
+        <item name="android:minHeight">0dp</item>
         <item name="android:paddingLeft">@dimen/activity_margin_half</item>
         <item name="android:paddingRight">@dimen/activity_margin_half</item>
     </style>

@@ -283,7 +283,7 @@
         <item quantity="one">Finishing also saves %1$d set you haven\'t ticked as done.</item>
         <item quantity="other">Finishing also saves %1$d sets you haven\'t ticked as done.</item>
     </plurals>
-    <string name="workout_discard_finish">Finish workout</string>
+    <string name="workout_discard_finish">Finish</string>
     <string name="workout_discard_keep_going">Keep going</string>
     <string name="workout_metric_prompt_missing">Please enter a value</string>
     <string name="workout_rest_time">"Rest • %1$s"</string>
