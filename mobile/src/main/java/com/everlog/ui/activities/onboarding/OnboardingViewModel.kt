@@ -9,7 +9,7 @@ import timber.log.Timber
 /**
  * The welcome, then the setup questionnaire from the Everlog Onboarding design: one question open
  * at a time, answered questions collapse to summary rows that can be reopened, then Build my
- * week builds the starter routines behind the building screen, and the reveal shows them.
+ * templates builds the starter routines behind the building screen, and the reveal shows them.
  *
  * A prototype for now: answers aren't saved, and the starter routines are shown but not saved. If
  * building them fails, the user can try again or skip.
@@ -111,8 +111,8 @@ class OnboardingViewModel(
         setState { copy(openRoutines = if (index in openRoutines) openRoutines - index else openRoutines + index) }
     }
 
-    // Either of the reveal's buttons. For now both close the screen: saving the routines, editing
-    // them and the end step come later.
+    // Either of the reveal's buttons. For now both close the screen: saving the routines (Looks
+    // good) and opening the routine builder (Build my own template) come next.
     fun onRevealDone() {
         if (state.value.step != Step.Reveal) return
         setState { copy(finished = true) }

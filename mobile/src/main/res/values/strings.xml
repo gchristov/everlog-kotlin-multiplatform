@@ -491,7 +491,7 @@
     <string name="onboarding_reveal_reps">%1$d × %2$d–%3$d</string>
     <!-- Sets × a hold in seconds, e.g. 3 × 30 s -->
     <string name="onboarding_reveal_hold">%1$d × %2$d s</string>
-    <!-- A closed routine card, e.g. Wed · 4 exercises · 12 sets -->
+    <!-- A closed routine card, e.g. 4 exercises · 12 sets -->
     <plurals name="onboarding_reveal_exercises">
         <item quantity="one">%1$d exercise</item>
         <item quantity="other">%1$d exercises</item>

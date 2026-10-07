@@ -43,7 +43,7 @@ import kotlinx.coroutines.android.awaitFrame
 // opened from Settings: the welcome, then the questions. Answers aren't saved. Build my templates
 // builds the starter routines behind the building animation, then the reveal shows them, and its
 // buttons close the screen. If the build fails, the user can try again or skip. Saving the
-// routines and the end step come later.
+// routines and the buttons' actions come next.
 class OnboardingActivity : CommonComposeActivity() {
     private val viewModel by viewModels<OnboardingViewModel> {
         createViewModelFactory {
@@ -75,7 +75,7 @@ internal fun OnboardingScreen(
 
     BackHandler(enabled = !state.finished) {
         // Building can't be left part way. Once it fails, OnboardingBuilding handles Back. The
-        // reveal ignores Back, as the answers are in and the week is built.
+        // reveal ignores Back, as the answers are in and the routines are built.
         if (state.step != OnboardingViewModel.Step.Building && state.step != OnboardingViewModel.Step.Reveal) showSkipSetup = true
     }
 

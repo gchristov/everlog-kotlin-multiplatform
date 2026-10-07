@@ -166,8 +166,7 @@ private fun RevealRoutines(
 
 // A routine's card, drawn like an AppListGroup: rows with dividers between them. Open: its name over
 // a row per exercise. Closed: its name over its size, with the first three exercises' images and a
-// chevron. An AppListGroup can't animate rows in and out, so it's built
-// from the same pieces.
+// chevron. An AppListGroup can't animate rows in and out, so it's built from the same pieces.
 @Composable
 private fun RoutineCard(
     routine: StarterRoutine,
