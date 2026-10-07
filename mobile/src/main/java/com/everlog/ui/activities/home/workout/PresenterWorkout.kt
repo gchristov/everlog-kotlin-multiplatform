@@ -239,15 +239,13 @@ class PresenterWorkout : PresenterCreateExerciseGroups<MvpViewWorkout>() {
                     message,
                     context.getString(R.string.workout_discard_finish),
                     context.getString(R.string.discard),
-                    context.getString(R.string.workout_discard_keep_going),
-                    DialogInterface.BUTTON_NEGATIVE)
+                    context.getString(R.string.workout_discard_keep_going))
         } else {
             mvpView.showChoicePrompt(context.getString(R.string.workout_discard_title),
                     context.getString(R.string.workout_discard_nothing_logged),
                     context.getString(R.string.workout_discard_keep_going),
                     context.getString(R.string.discard),
-                    null,
-                    DialogInterface.BUTTON_NEGATIVE)
+                    null)
         }
         AnalyticsManager.manager.workoutDiscardPromptShown(AnalyticsConstants.DISCARD_PROMPT_SOURCE_WORKOUT, setsCompleted)
         subscriptions.add(prompt

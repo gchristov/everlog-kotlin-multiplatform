@@ -6,10 +6,10 @@
     android:layout_height="?android:attr/actionBarSize"
     android:clickable="true"
     android:orientation="vertical"
-    app:shape_roundRect_bottomLeftRadius="@dimen/card_radius_default"
-    app:shape_roundRect_bottomRightRadius="@dimen/card_radius_default"
-    app:shape_roundRect_topLeftRadius="@dimen/card_radius_default"
-    app:shape_roundRect_topRightRadius="@dimen/card_radius_default">
+    app:shape_roundRect_bottomLeftRadius="@dimen/card_radius_large"
+    app:shape_roundRect_bottomRightRadius="@dimen/card_radius_large"
+    app:shape_roundRect_topLeftRadius="@dimen/card_radius_large"
+    app:shape_roundRect_topRightRadius="@dimen/card_radius_large">
 
     <View
         android:layout_width="match_parent"

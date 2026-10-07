@@ -23,7 +23,7 @@ import dev.chrisbanes.haze.hazeSource
 
 /**
  * On tablets the content and the footer's actions are capped at [content_width_tablet] and centred,
- * like the login screens. The top bar and the footer's background still go edge to edge. Proper
+ * like the login screens, and so is the footer's card. The top bar still goes edge to edge. Proper
  * tablet layouts will come later.
  *
  * @param modifier E.g. `Modifier.nestedScroll(...)` for an [AppBarScrollBehavior].

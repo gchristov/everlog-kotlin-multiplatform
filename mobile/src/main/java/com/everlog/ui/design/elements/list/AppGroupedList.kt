@@ -106,9 +106,9 @@ private class RealAppGroupedListScope(
 
         lazyListScope.item(key = key) {
             Column(modifier = Modifier.fillMaxWidth()) {
-                // Space between groups, like margin_26 between the sections in Settings
+                // Space between groups, the same as the screen margin at the sides
                 if (!isFirstGroup) {
-                    Spacer(modifier = Modifier.height(Theme.spacing.extraLarge))
+                    Spacer(modifier = Modifier.height(Theme.spacing.large))
                 }
                 if (header != null) {
                     AppListGroupHeader(text = header())

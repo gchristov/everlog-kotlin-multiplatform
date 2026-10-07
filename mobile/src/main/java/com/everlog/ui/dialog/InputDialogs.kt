@@ -12,7 +12,6 @@ import android.view.inputmethod.EditorInfo
 import android.widget.EditText
 import android.widget.FrameLayout
 import android.widget.TextView
-import androidx.core.content.ContextCompat
 import com.everlog.R
 import com.everlog.managers.preferences.SettingsManager
 import com.everlog.ui.dialog.DialogBuilder.MetricDialogType
@@ -70,7 +69,6 @@ internal class InputDialogs {
             inputField.setSelectAllOnFocus(true)
             alertDialog.setOnShowListener { dialog: DialogInterface ->
                 val positiveBtn = (dialog as AlertDialog).getButton(AlertDialog.BUTTON_POSITIVE)
-                positiveBtn.setTextColor(ContextCompat.getColor(context, R.color.main_accent))
                 positiveBtn.setOnClickListener {
                     val text = inputField.text.toString().trim { it <= ' ' }
                     if (!TextUtils.isEmpty(text)) {
@@ -82,13 +80,11 @@ internal class InputDialogs {
                     }
                 }
                 val negativeBtn = dialog.getButton(AlertDialog.BUTTON_NEGATIVE)
-                negativeBtn.setTextColor(ContextCompat.getColor(context, R.color.main_accent))
                 negativeBtn.setOnClickListener {
                     KeyboardUtils.hideKeyboard(context, inputField)
                     dialog.dismiss()
                 }
                 val neutralBtn = dialog.getButton(AlertDialog.BUTTON_NEUTRAL)
-                neutralBtn.setTextColor(ContextCompat.getColor(context, R.color.main_accent))
                 neutralBtn.setOnClickListener {
                     KeyboardUtils.hideKeyboard(context, inputField)
                     positiveButtonPublish.onNext("")
@@ -170,16 +166,13 @@ internal class InputDialogs {
                 }
                 // Add listeners to dialog buttons.
                 val positiveBtn = (dialog as AlertDialog).getButton(AlertDialog.BUTTON_POSITIVE)
-                positiveBtn.setTextColor(ContextCompat.getColor(context, R.color.main_accent))
                 positiveBtn.setOnClickListener { okBlock.run() }
                 val negativeBtn = dialog.getButton(AlertDialog.BUTTON_NEGATIVE)
-                negativeBtn.setTextColor(ContextCompat.getColor(context, R.color.main_accent))
                 negativeBtn.setOnClickListener {
                     KeyboardUtils.hideKeyboard(context, inputField)
                     dialog.dismiss()
                 }
                 val neutralBtn = dialog.getButton(AlertDialog.BUTTON_NEUTRAL)
-                neutralBtn.setTextColor(ContextCompat.getColor(context, R.color.main_accent))
                 neutralBtn.setOnClickListener {
                     KeyboardUtils.hideKeyboard(context, inputField)
                     positiveButtonPublish.onNext("")

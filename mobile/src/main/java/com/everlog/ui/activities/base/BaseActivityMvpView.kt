@@ -21,14 +21,21 @@ interface BaseActivityMvpView : BaseMvpView {
                    noResId: Int): Observable<Int>
 
     /**
+     * See [com.everlog.ui.dialog.DialogBuilder.showDestructivePrompt].
+     */
+    fun showDestructivePrompt(titleResId: Int,
+                              messageResId: Int,
+                              actionResId: Int,
+                              cancelResId: Int): Observable<Int>
+
+    /**
      * See [com.everlog.ui.dialog.DialogBuilder.showChoicePrompt].
      */
     fun showChoicePrompt(title: String,
                          message: String,
                          positive: String,
                          negative: String,
-                         neutral: String?,
-                         destructiveButton: Int?): Observable<Int>
+                         neutral: String?): Observable<Int>
 
     fun showOKPrompt(titleResId: Int, messageResId: Int): Observable<Void>
 

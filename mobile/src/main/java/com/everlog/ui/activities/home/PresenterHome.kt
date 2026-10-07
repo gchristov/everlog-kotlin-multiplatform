@@ -161,8 +161,7 @@ class PresenterHome : BaseActivityPresenter<MvpViewHome>() {
                 message,
                 context.getString(R.string.resume),
                 context.getString(R.string.discard),
-                null,
-                DialogInterface.BUTTON_NEGATIVE)
+                null)
                 .take(1)
                 .compose(applyUISchedulers())
                 .subscribe({ action: Int ->

@@ -4,14 +4,12 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.util.Pair;
-import android.widget.Button;
 
 import com.everlog.R;
 
 import java.util.Date;
 
 import androidx.annotation.Nullable;
-import androidx.core.content.ContextCompat;
 import rx.Observable;
 import rx.subjects.PublishSubject;
 
@@ -67,10 +65,6 @@ public class DialogBuilder {
                 .setMessage(message)
                 .setPositiveButton(R.string.ok, dialogClickListener)
                 .create();
-        dialog.setOnShowListener(dlg -> {
-            Button positiveBtn = ((AlertDialog) dlg).getButton(AlertDialog.BUTTON_POSITIVE);
-            positiveBtn.setTextColor(ContextCompat.getColor(context, R.color.main_accent));
-        });
         dialog.show();
         return okPublish;
     }
@@ -106,13 +100,38 @@ public class DialogBuilder {
                 .setPositiveButton(yes, dialogClickListener)
                 .setNegativeButton(no, dialogClickListener)
                 .create();
-        dialog.setOnShowListener(dlg -> {
-            Button positiveBtn = ((AlertDialog) dlg).getButton(AlertDialog.BUTTON_POSITIVE);
-            positiveBtn.setTextColor(ContextCompat.getColor(context, R.color.main_accent));
-            Button negativeBtn = ((AlertDialog) dlg).getButton(AlertDialog.BUTTON_NEGATIVE);
-            negativeBtn.setTextColor(ContextCompat.getColor(context, R.color.main_accent));
-        });
         return new Pair<>(positiveButtonPublish, dialog);
+    }
+
+    /**
+     * A prompt confirming a destructive action, e.g. Delete or Discard. As in the workout's discard prompt,
+     * cancelling is the primary button and the action the secondary one. Emits as {@link #showPrompt} does:
+     * {@link DialogInterface#BUTTON_POSITIVE} for the action and {@link DialogInterface#BUTTON_NEGATIVE} for
+     * cancel, whichever button shows each.
+     */
+    public static Observable<Integer> showDestructivePrompt(Context context,
+                                                            String title,
+                                                            String message,
+                                                            String action,
+                                                            String cancel) {
+        PublishSubject<Integer> buttonPublish = PublishSubject.create();
+
+        // Cancel is on the positive (primary) button and the action on the negative (secondary) one
+        DialogInterface.OnClickListener dialogClickListener = (dialog, which) -> {
+            buttonPublish.onNext(which == DialogInterface.BUTTON_NEGATIVE
+                    ? DialogInterface.BUTTON_POSITIVE
+                    : DialogInterface.BUTTON_NEGATIVE);
+            dialog.dismiss();
+        };
+
+        new AlertDialog.Builder(context, R.style.DarkDialogTheme)
+                .setTitle(title)
+                .setMessage(message)
+                .setPositiveButton(cancel, dialogClickListener)
+                .setNegativeButton(action, dialogClickListener)
+                .create()
+                .show();
+        return buttonPublish;
     }
 
     /**
@@ -122,18 +141,17 @@ public class DialogBuilder {
 
     /**
      * A prompt with up to three buttons. Emits the tapped button (e.g. {@link DialogInterface#BUTTON_NEUTRAL}),
-     * or {@link #PROMPT_DISMISSED}.
+     * or {@link #PROMPT_DISMISSED}. As in the Compose AppDialog, positive is the primary action, negative the
+     * secondary one and neutral any other (see DarkDialogTheme).
      *
-     * @param neutral           the third button, or null for just two
-     * @param destructiveButton the button that deletes something, shown in red, or null
+     * @param neutral the third button, or null for just two
      */
     public static Observable<Integer> showChoicePrompt(Context context,
                                                        String title,
                                                        String message,
                                                        String positive,
                                                        String negative,
-                                                       @Nullable String neutral,
-                                                       @Nullable Integer destructiveButton) {
+                                                       @Nullable String neutral) {
         PublishSubject<Integer> buttonPublish = PublishSubject.create();
 
         DialogInterface.OnClickListener dialogClickListener = (dialog, which) -> {
@@ -151,16 +169,6 @@ public class DialogBuilder {
             builder.setNeutralButton(neutral, dialogClickListener);
         }
         AlertDialog dialog = builder.create();
-        dialog.setOnShowListener(dlg -> {
-            int[] buttons = {AlertDialog.BUTTON_POSITIVE, AlertDialog.BUTTON_NEGATIVE, AlertDialog.BUTTON_NEUTRAL};
-            for (int which : buttons) {
-                Button button = ((AlertDialog) dlg).getButton(which);
-                if (button != null) {
-                    boolean destructive = destructiveButton != null && destructiveButton == which;
-                    button.setTextColor(ContextCompat.getColor(context, destructive ? R.color.remove : R.color.main_accent));
-                }
-            }
-        });
         dialog.show();
         return buttonPublish;
     }

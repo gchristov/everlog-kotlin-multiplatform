@@ -3,12 +3,10 @@ package com.everlog.ui.activities.home.routine.details
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
-import android.view.ViewGroup
 import android.widget.TextView
 import androidx.appcompat.widget.Toolbar
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
-import androidx.core.view.updateLayoutParams
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.everlog.R
 import com.everlog.constants.ELConstants.EXTRA_ROUTINE
@@ -51,10 +49,7 @@ open class RoutineDetailsActivity : BaseActivity(), MvpViewRoutineDetails {
         ViewCompat.setOnApplyWindowInsetsListener(binding.root) { _, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
 
-            binding.performBtn.updateLayoutParams<ViewGroup.MarginLayoutParams> {
-                bottomMargin = systemBars.bottom + resources.getDimensionPixelSize(R.dimen.activity_margin)
-            }
-
+            // The footer keeps itself above the navigation bar
             binding.recyclerView.setPadding(
                 binding.recyclerView.paddingLeft,
                 binding.recyclerView.paddingTop,

@@ -382,53 +382,42 @@ internal fun OnboardingFooter(
         state.isEditing -> FooterMode.Editing
         else -> FooterMode.Next
     }
-    // A footer swap is a crossfade with no movement. Leaving the welcome, Next and Skip wait for the
-    // welcome's content to fade out.
-    AnimatedContent(
-        targetState = mode,
-        contentAlignment = Alignment.BottomCenter,
-        transitionSpec = {
-            val delay = if (initialState == FooterMode.Welcome) OnboardingMotion.WelcomeExit else 0
-            fadeIn(tween(OnboardingMotion.Select, delay, OnboardingMotion.Standard)) togetherWith
-                    fadeOut(tween(OnboardingMotion.Select, easing = OnboardingMotion.Standard))
-        },
-        label = "footer",
-    ) { footerMode ->
-        val actions = when (footerMode) {
-            FooterMode.Welcome -> listOf(
-                AppFooterAction(
-                    text = stringResource(R.string.onboarding_lets_go),
-                    onClick = {
-                        haptics.performHapticFeedback(HapticFeedbackType.TextHandleMove)
-                        viewModel.onStart()
-                    },
-                ),
-            )
-            FooterMode.Next -> listOf(
-                AppFooterAction(text = stringResource(R.string.onboarding_next), onClick = viewModel::onSubmit, enabled = state.canContinue),
-                AppFooterAction(text = stringResource(R.string.onboarding_skip), onClick = viewModel::onSkip, style = AppFooterAction.Style.Secondary),
-            )
-            FooterMode.Editing -> listOf(
-                AppFooterAction(text = stringResource(R.string.done), onClick = viewModel::onSubmit, enabled = state.canContinue),
-                AppFooterAction(text = stringResource(R.string.cancel), onClick = viewModel::onCancel, style = AppFooterAction.Style.Tertiary),
-            )
-            FooterMode.Reminders -> listOf(
-                AppFooterAction(text = stringResource(R.string.onboarding_remind_me), onClick = viewModel::onSubmit, enabled = state.canContinue),
-                AppFooterAction(text = stringResource(R.string.onboarding_not_now), onClick = viewModel::onNotNow, style = AppFooterAction.Style.Secondary),
-            )
-            FooterMode.Build -> listOf(
-                AppFooterAction(text = stringResource(R.string.onboarding_build_my_week), onClick = viewModel::onBuild),
-            )
-        }
-        EnterAnimation(
-            animateIn = animateIn && footerMode == FooterMode.Welcome,
-            delayMillis = WelcomeMotion.ButtonDelay,
-            slide = false,
-            durationMillis = WelcomeMotion.ButtonFade,
-            easing = OnboardingMotion.Standard,
-        ) {
-            AppFooter(actions = actions)
-        }
+    // AppFooter crossfades the actions in place when they change
+    val actions = when (mode) {
+        FooterMode.Welcome -> listOf(
+            AppFooterAction(
+                text = stringResource(R.string.onboarding_lets_go),
+                onClick = {
+                    haptics.performHapticFeedback(HapticFeedbackType.TextHandleMove)
+                    viewModel.onStart()
+                },
+            ),
+        )
+        FooterMode.Next -> listOf(
+            AppFooterAction(text = stringResource(R.string.onboarding_next), onClick = viewModel::onSubmit, enabled = state.canContinue),
+            AppFooterAction(text = stringResource(R.string.onboarding_skip), onClick = viewModel::onSkip, style = AppFooterAction.Style.Secondary),
+        )
+        FooterMode.Editing -> listOf(
+            AppFooterAction(text = stringResource(R.string.done), onClick = viewModel::onSubmit, enabled = state.canContinue),
+            AppFooterAction(text = stringResource(R.string.cancel), onClick = viewModel::onCancel, style = AppFooterAction.Style.Tertiary),
+        )
+        FooterMode.Reminders -> listOf(
+            AppFooterAction(text = stringResource(R.string.onboarding_remind_me), onClick = viewModel::onSubmit, enabled = state.canContinue),
+            AppFooterAction(text = stringResource(R.string.onboarding_not_now), onClick = viewModel::onNotNow, style = AppFooterAction.Style.Secondary),
+        )
+        FooterMode.Build -> listOf(
+            AppFooterAction(text = stringResource(R.string.onboarding_build_my_week), onClick = viewModel::onBuild),
+        )
+    }
+    // Let's go fades in after the welcome's content, the first time it shows
+    EnterAnimation(
+        animateIn = animateIn && mode == FooterMode.Welcome,
+        delayMillis = WelcomeMotion.ButtonDelay,
+        slide = false,
+        durationMillis = WelcomeMotion.ButtonFade,
+        easing = OnboardingMotion.Standard,
+    ) {
+        AppFooter(actions = actions)
     }
 }
 

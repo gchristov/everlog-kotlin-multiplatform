@@ -73,7 +73,7 @@ public class PresenterCreateExercise extends BaseActivityPresenter<MvpViewCreate
     }
 
     private void observeDiscard() {
-        subscriptions.add(getMvpView().showPrompt(R.string.discard_title, R.string.discard_prompt, R.string.discard, R.string.cancel)
+        subscriptions.add(getMvpView().showDestructivePrompt(R.string.discard_title, R.string.discard_prompt, R.string.discard, R.string.cancel)
                 .compose(applyUISchedulers())
                 .subscribe(action -> {
                     if (action == DialogInterface.BUTTON_POSITIVE) {

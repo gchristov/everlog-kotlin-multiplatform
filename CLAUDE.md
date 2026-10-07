@@ -6,7 +6,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 Everlog is a native Android fitness/workout-tracking app (package `com.everlog`). Despite the repo name (`everlog-kotlin-multiplatform`), the codebase is currently a **single Android application module** (`:mobile`) — `settings.gradle.kts` only includes `:mobile`, there is no shared/iOS Kotlin Multiplatform module yet. Some leftover references to KMP exist (e.g. a link in `PULL_REQUEST_TEMPLATE.md`) but don't reflect the current module layout.
 
-The app itself is a mixed Kotlin/Java codebase (`mobile/src/main/java`, ~284 `.kt` and ~115 `.java` files) built on an older stack: MVP (not MVVM/Compose), RxJava 1 (`rx.Observable`, not RxJava 2/3), and EventBus — see Architecture below before assuming modern Android patterns (coroutines, Flow, Compose) apply.
+The app itself is a mixed Kotlin/Java codebase (`mobile/src/main/java`, ~284 `.kt` and ~115 `.java` files) built on an older stack: MVP, RxJava 1 (`rx.Observable`, not RxJava 2/3), and EventBus — see Architecture below before assuming modern Android patterns (coroutines, Flow, Compose) apply. New screens are the exception: they're Jetpack Compose with view-models (see Compose screens and the design system).
 
 ## Common commands
 
@@ -66,6 +66,15 @@ Fastlane lanes (`fastlane/Fastfile`): `deploy_firebase`, `deploy_play_internal`,
 ### Managers layer (`managers/`)
 
 Singleton-style managers encapsulate cross-cutting concerns and are the integration point for most external services: `auth/AuthManager` + `auth/LocalUserManager` (Firebase Auth + local session), `billing/BillingManager` + `BillingBridge` (Play Billing / Pro subscriptions), `analytics/AnalyticsManager` (routes to `FirebaseAnalytic` implementations of the `Analytic` interface), `firebase/FirestorePathManager` + `FirebaseStorageManager`, `integrations/GoogleFitIntegrationManager`, `api/ApiManager` (Retrofit-based REST, e.g. cover images), `RemoteConfigManager` (Firebase Remote Config), `appupdate/AppUpdateController` (Play In-App Updates), `preferences/PreferencesManager` + `SettingsManager`. `AppConfig` (`config/AppConfig.kt`) is the single object wiring together tunable constants (rest timers, plan limits, rating-prompt thresholds) and app boot sequencing (`configureApp()` called from `ELApplication.onCreate()`).
+
+### Compose screens and the design system
+
+New screens are built in Compose: a `CommonComposeActivity` (wraps the content in `Theme`), a `ui/mvvm/CommonViewModel` with a `StateFlow` state, and coroutine use cases returning Arrow `Either`. The existing XML/MVP screens are unchanged. The design system lives in `ui/design`: `theme/` (colours, typography, shapes, spacing, read through `Theme`) and `elements/` (`AppScreen`, `AppBar` and `AppBarHeader`, `AppSurface`, `AppListGroup`/`AppGroupedList`, `AppListItem`/`AppListRow`, `AppFooter`, the buttons, `AppDialog` and so on). Its showcase (`ui/activities/designsystem`, debug builds only, Settings › Developer) has a page per element type. XML screens have a few twins of its elements so the two look the same, e.g. `ui/views/FloatingFooterView` for `AppFooter`: change both together.
+
+- **Use the design system first.** Build screens from its elements and `Theme` tokens, never hardcoded colours, text sizes or dp values that a token covers. Lay content out the way its elements do: the 16dp screen margin, rows inside a group joined with dividers, groups 16dp apart, the same as the side margin (`AppGroupedList`).
+- **Design mockups may predate it.** The Claude Design canvases (e.g. Everlog Onboarding) don't always follow the design system. Map each mockup piece onto an element and its spacing, and keep the standard styles over mockup-only sizes, colours or densities.
+- **Flag anything that isn't in the design system.** When a screen needs something the design system doesn't have, say so (in the reply and the PR) and ask whether it should become a design system element or stay local to the feature, rather than deciding silently. Only skip the question when the answer is obvious: a generic group, card, row or button belongs in the design system, while something tied to one screen's behaviour (e.g. onboarding's animated question blocks) stays local. Local pieces live in the feature's package, with their sizes in a private object.
+- **Design system changes ship separately** from the feature using them, in their own commits or PR, with a showcase example for anything new.
 
 ### Background work
 

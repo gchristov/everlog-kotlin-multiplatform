@@ -107,7 +107,8 @@ class WorkoutTimeController(mvpView: MvpViewWorkout?,
 
     override fun buildTimer(context: Context): WorkoutTimerView {
         val horizontalMargin = context.resources.getDimensionPixelSize(R.dimen.activity_margin)
-        val topMargin = context.resources.getDimensionPixelSize(R.dimen.activity_margin_half)
+        // The footer card's padding, as at the sides
+        val topMargin = context.resources.getDimensionPixelSize(R.dimen.activity_margin)
         val layoutParams = LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT)
         layoutParams.setMargins(horizontalMargin, topMargin, horizontalMargin, 0)
         return WorkoutTimerView(context, R.layout.view_workout_timer, layoutParams)
