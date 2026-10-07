@@ -1,6 +1,9 @@
 package com.everlog.ui.activities.onboarding
 
 import com.everlog.data.controllers.starterroutines.BuildStarterRoutinesUseCase
+import com.everlog.data.controllers.starterroutines.SaveStarterRoutinesUseCase
+import com.everlog.data.model.ELRoutine
+import com.everlog.managers.preferences.SettingsManager
 import com.everlog.ui.mvvm.CommonViewModel
 import kotlinx.coroutines.CoroutineDispatcher
 import org.threeten.bp.DayOfWeek
@@ -10,13 +13,17 @@ import timber.log.Timber
  * The welcome, then the setup questionnaire from the Everlog Onboarding design: one question open
  * at a time, answered questions collapse to summary rows that can be reopened, then Build my
  * templates builds the starter routines behind the building screen, and the reveal shows them.
+ * Looks good saves them behind the saving screen, then the screen closes.
  *
- * A prototype for now: answers aren't saved, and the starter routines are shown but not saved. If
- * building them fails, the user can try again or skip.
+ * Answers that are app settings (units, and days a week as the weekly workouts goal) are saved as
+ * soon as they're given. A prototype for now: Build my own template just closes the screen. If
+ * building or saving the routines fails, the user can try again or skip.
  */
 class OnboardingViewModel(
     dispatcher: CoroutineDispatcher,
     private val buildStarterRoutinesUseCase: BuildStarterRoutinesUseCase,
+    private val saveStarterRoutinesUseCase: SaveStarterRoutinesUseCase,
+    private val settings: OnboardingSettings,
     private val now: () -> Long = System::currentTimeMillis,
     questions: List<OnboardingQuestion> = OnboardingQuestions.all,
     firstDayOfWeek: DayOfWeek = DayOfWeek.MONDAY,
@@ -57,6 +64,7 @@ class OnboardingViewModel(
         val answer = currentState.input ?: return
         if (!currentState.canContinue) return
         setState { answer(questionId, answer, skipped = false) }
+        saveSetting(questionId, answer)
     }
 
     fun onSkip() {
@@ -89,20 +97,20 @@ class OnboardingViewModel(
     // Try again after the build failed: builds the week from scratch
     fun onRetryBuild() {
         val currentState = state.value
-        if (currentState.step != Step.Building || currentState.build != Build.Failed) return
-        setState { copy(build = Build.InProgress, buildAttempt = buildAttempt + 1) }
+        if (currentState.step != Step.Building || currentState.build != Progress.Failed) return
+        setState { copy(build = Progress.InProgress, buildAttempt = buildAttempt + 1) }
         build(currentState.answers)
     }
 
     // Skip after the build failed, so the user is never stuck here
     fun onSkipBuild() {
-        if (state.value.build != Build.Failed) return
+        if (state.value.step != Step.Building || state.value.build != Progress.Failed) return
         setState { copy(finished = true) }
     }
 
     // The building screen has played the whole success animation
     fun onBuildShown() {
-        if (state.value.build != Build.Ready) return
+        if (state.value.step != Step.Building || state.value.build != Progress.Done) return
         setState { copy(step = Step.Reveal) }
     }
 
@@ -111,10 +119,41 @@ class OnboardingViewModel(
         setState { copy(openRoutines = if (index in openRoutines) openRoutines - index else openRoutines + index) }
     }
 
-    // Either of the reveal's buttons. For now both close the screen: saving the routines (Looks
-    // good) and opening the routine builder (Build my own template) come next.
-    fun onRevealDone() {
+    // Looks good on the reveal: saves the starter routines behind the saving screen
+    fun onLooksGood() {
+        val currentState = state.value
+        val starter = currentState.starter ?: return
+        if (currentState.step != Step.Reveal) return
+        setState { copy(step = Step.Saving) }
+        save(starter.routines)
+    }
+
+    // Build my own template on the reveal. For now it closes the screen: opening the routine
+    // builder comes next.
+    fun onBuildOwn() {
         if (state.value.step != Step.Reveal) return
+        setState { copy(finished = true) }
+    }
+
+    // Try again after saving failed. The routines keep their uuids, so a save that got through
+    // after all is overwritten rather than doubled.
+    fun onRetrySave() {
+        val currentState = state.value
+        val starter = currentState.starter ?: return
+        if (currentState.step != Step.Saving || currentState.save != Progress.Failed) return
+        setState { copy(save = Progress.InProgress, saveAttempt = saveAttempt + 1) }
+        save(starter.routines)
+    }
+
+    // Skip after saving failed: the screen closes without the routines
+    fun onSkipSave() {
+        if (state.value.step != Step.Saving || state.value.save != Progress.Failed) return
+        setState { copy(finished = true) }
+    }
+
+    // The saving screen has played the whole success animation
+    fun onSaveShown() {
+        if (state.value.step != Step.Saving || state.value.save != Progress.Done) return
         setState { copy(finished = true) }
     }
 
@@ -125,13 +164,39 @@ class OnboardingViewModel(
                 // Reported as a non-fatal. The screen offers to try again or skip.
                 ifLeft = {
                     Timber.tag(TAG).e(it)
-                    setState { copy(build = Build.Failed) }
+                    setState { copy(build = Progress.Failed) }
                 },
                 ifRight = { starter ->
                     Timber.tag(TAG).i("Built starter routines for %s: %s", profile, starter.routines.joinToString { "${it.name} (${it.getTotalExercises()} exercises)" })
-                    setState { copy(build = Build.Ready, starter = starter) }
+                    setState { copy(build = Progress.Done, starter = starter) }
                 },
             )
+        }
+    }
+
+    private fun save(routines: List<ELRoutine>) {
+        launchCoroutine {
+            saveStarterRoutinesUseCase(SaveStarterRoutinesUseCase.Dto(routines)).fold(
+                // Reported as a non-fatal. The screen offers to try again or skip.
+                ifLeft = {
+                    Timber.tag(TAG).e(it)
+                    setState { copy(save = Progress.Failed) }
+                },
+                ifRight = {
+                    Timber.tag(TAG).i("Saved starter routines: %s", routines.joinToString { it.name.orEmpty() })
+                    setState { copy(save = Progress.Done) }
+                },
+            )
+        }
+    }
+
+    // Skipped questions leave the settings as they are
+    private fun saveSetting(questionId: String, answer: Answer) {
+        when (questionId) {
+            OnboardingQuestions.Units -> settings.setWeightUnit(
+                if ((answer as Answer.Choice).optionId == OnboardingQuestions.Pounds) SettingsManager.WeightUnit.POUND else SettingsManager.WeightUnit.KILOGRAM
+            )
+            OnboardingQuestions.Days -> settings.setWeeklyWorkoutsGoal((answer as Answer.Days).count)
         }
     }
 
@@ -148,14 +213,16 @@ class OnboardingViewModel(
         Questions,
         // The starter routines building, until they're ready or the user skips
         Building,
-        // The starter routines, until the screen closes
+        // The starter routines, until Looks good or Build my own template
         Reveal,
+        // The starter routines saving after Looks good, until they're saved or the user skips
+        Saving,
     }
 
-    // Building the starter routines
-    enum class Build {
+    // Building or saving the starter routines
+    enum class Progress {
         InProgress,
-        Ready,
+        Done,
         // Until Try again or Skip
         Failed,
     }
@@ -171,11 +238,15 @@ class OnboardingViewModel(
         // In-progress answer for the open question
         val input: Answer? = null,
         // While the step is Building
-        val build: Build = Build.InProgress,
+        val build: Progress = Progress.InProgress,
         // Counts Try again, so the building screen starts its animation over
         val buildAttempt: Int = 0,
         // Once the build is ready
         val starter: BuildStarterRoutinesUseCase.Result? = null,
+        // While the step is Saving
+        val save: Progress = Progress.InProgress,
+        // Counts Try again, so the saving screen starts its animation over
+        val saveAttempt: Int = 0,
         // The reveal's open routine cards, by index. The first starts open.
         val openRoutines: Set<Int> = setOf(0),
         // The screen closes

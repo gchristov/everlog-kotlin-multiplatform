@@ -478,6 +478,13 @@
     <string name="onboarding_build_failed">Couldn\'t build your templates</string>
     <string name="onboarding_build_failed_body">Something went wrong. Try again, or skip and build your own templates later.</string>
     <string name="onboarding_try_again">Try again</string>
+    <string name="onboarding_saving">Saving your templates</string>
+    <plurals name="onboarding_save_done">
+        <item quantity="one">Your template is saved</item>
+        <item quantity="other">Your templates are saved</item>
+    </plurals>
+    <string name="onboarding_save_failed">Couldn\'t save your templates</string>
+    <string name="onboarding_save_failed_body">Something went wrong. Try again, or skip and build your own templates later.</string>
     <plurals name="onboarding_reveal_title">
         <item quantity="one">Here\'s your workout template</item>
         <item quantity="other">Here are your workout templates</item>
