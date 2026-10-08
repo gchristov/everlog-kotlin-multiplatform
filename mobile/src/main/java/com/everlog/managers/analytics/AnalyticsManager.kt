@@ -782,4 +782,81 @@ class AnalyticsManager : Analytic {
             it.consentNewsletterDenied()
         }
     }
+
+    override fun onboardingStepViewed(step: String) {
+        Timber.tag(TAG).i("Onboarding step viewed: step=%s", step)
+        mAnalytics?.forEach {
+            it.onboardingStepViewed(step)
+        }
+    }
+
+    override fun onboardingStepCompleted(step: String, value: String?) {
+        Timber.tag(TAG).i("Onboarding step completed: step=%s value=%s", step, value)
+        mAnalytics?.forEach {
+            it.onboardingStepCompleted(step, value)
+        }
+    }
+
+    override fun onboardingStepSkipped(step: String) {
+        Timber.tag(TAG).i("Onboarding step skipped: step=%s", step)
+        mAnalytics?.forEach {
+            it.onboardingStepSkipped(step)
+        }
+    }
+
+    override fun onboardingStepFailed(step: String) {
+        Timber.tag(TAG).i("Onboarding step failed: step=%s", step)
+        mAnalytics?.forEach {
+            it.onboardingStepFailed(step)
+        }
+    }
+
+    override fun onboardingStepRetried(step: String) {
+        Timber.tag(TAG).i("Onboarding step retried: step=%s", step)
+        mAnalytics?.forEach {
+            it.onboardingStepRetried(step)
+        }
+    }
+
+    override fun onboardingQuestionReopened(step: String) {
+        Timber.tag(TAG).i("Onboarding question reopened: step=%s", step)
+        mAnalytics?.forEach {
+            it.onboardingQuestionReopened(step)
+        }
+    }
+
+    override fun onboardingQuestionEdited(step: String, value: String?) {
+        Timber.tag(TAG).i("Onboarding question edited: step=%s value=%s", step, value)
+        mAnalytics?.forEach {
+            it.onboardingQuestionEdited(step, value)
+        }
+    }
+
+    override fun onboardingSkipPromptShown(step: String) {
+        Timber.tag(TAG).i("Onboarding skip prompt shown: step=%s", step)
+        mAnalytics?.forEach {
+            it.onboardingSkipPromptShown(step)
+        }
+    }
+
+    override fun onboardingSkipPromptCancelled(step: String) {
+        Timber.tag(TAG).i("Onboarding skip prompt cancelled: step=%s", step)
+        mAnalytics?.forEach {
+            it.onboardingSkipPromptCancelled(step)
+        }
+    }
+
+    override fun onboardingTemplateToggled(open: Boolean) {
+        Timber.tag(TAG).i("Onboarding template toggled: open=%s", open)
+        mAnalytics?.forEach {
+            it.onboardingTemplateToggled(open)
+        }
+    }
+
+    override fun onboardingFinished(outcome: String, step: String, routines: Int) {
+        Timber.tag(TAG).i("Onboarding finished: outcome=%s step=%s routines=%s", outcome, step, routines)
+        mAnalytics?.forEach {
+            it.onboardingFinished(outcome, step, routines)
+        }
+    }
 }
