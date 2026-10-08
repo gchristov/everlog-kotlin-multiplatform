@@ -101,7 +101,12 @@ internal fun OnboardingReveal(
         },
         footer = {
             AppFooter(
-                header = if (experienced) stringResource(R.string.onboarding_reveal_experienced) else null,
+                // Everyone hears the templates can be edited later. Experienced users also hear
+                // they're only a starting point.
+                header = pluralStringResource(
+                    if (experienced) R.plurals.onboarding_reveal_experienced else R.plurals.onboarding_reveal_edit_later,
+                    starter.routines.size,
+                ),
                 actions = listOf(
                     AppFooterAction(
                         text = stringResource(R.string.onboarding_reveal_looks_good),

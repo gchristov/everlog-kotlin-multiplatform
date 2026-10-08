@@ -489,7 +489,15 @@
         <item quantity="one">Here\'s your workout template</item>
         <item quantity="other">Here are your workout templates</item>
     </plurals>
-    <string name="onboarding_reveal_experienced">You\'ve been lifting for years, so treat this as a starting point.</string>
+    <!-- The reveal's footer note. Workouts is the tab with the Workout Templates list. -->
+    <plurals name="onboarding_reveal_edit_later">
+        <item quantity="one">You can edit it anytime in Workouts.</item>
+        <item quantity="other">You can edit these anytime in Workouts.</item>
+    </plurals>
+    <plurals name="onboarding_reveal_experienced">
+        <item quantity="one">You\'ve been lifting for years, so treat it as a starting point and edit it anytime in Workouts.</item>
+        <item quantity="other">You\'ve been lifting for years, so treat these as a starting point and edit them anytime in Workouts.</item>
+    </plurals>
     <!-- The week's split, in the summary line, e.g. 3 days · Push / Pull / Legs · Gym · Build muscle -->
     <string name="onboarding_reveal_split_full_body">Full body</string>
     <string name="onboarding_reveal_split_upper_lower">Upper / Lower</string>
