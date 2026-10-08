@@ -10,4 +10,5 @@ object ELActivityRequestCodes {
     const val REQUEST_EDIT_ROUTINE = 6
     const val REQUEST_EDIT_EXERCISE_GROUPS = 7
     const val REQUEST_LOGIN_GOOGLE = 8
+    const val REQUEST_ONBOARDING = 9
 }

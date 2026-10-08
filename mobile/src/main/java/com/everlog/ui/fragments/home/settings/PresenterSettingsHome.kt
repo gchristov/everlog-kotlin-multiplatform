@@ -55,7 +55,6 @@ class PresenterSettingsHome : BaseFragmentPresenter<MvpViewSettingsHome>() {
         observeShareClick()
         observeManageProClick()
         observeDesignSystemClick()
-        observeOnboardingPrototypeClick()
         // Integrations
         observeManageIntegrationGoogleFitClick()
         // Consent
@@ -231,12 +230,6 @@ class PresenterSettingsHome : BaseFragmentPresenter<MvpViewSettingsHome>() {
         subscriptions.add(mvpView.onClickDesignSystem()
                 .compose(applyUISchedulers())
                 .subscribe({ navigator.openDesignSystem() }, { throwable -> handleError(throwable) }))
-    }
-
-    private fun observeOnboardingPrototypeClick() {
-        subscriptions.add(mvpView.onClickOnboardingPrototype()
-                .compose(applyUISchedulers())
-                .subscribe({ navigator.openOnboardingPrototype() }, { throwable -> handleError(throwable) }))
     }
 
     private fun observeManageIntegrationGoogleFitClick() {
