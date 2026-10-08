@@ -65,13 +65,14 @@ import com.everlog.ui.design.theme.Theme
 // The reveal from the Everlog Onboarding design: "Here are your workout templates", the summary of
 // the answers, then a card per routine. The first card starts open with its exercises, the others
 // closed with a line about them, and any card opens or closes on a tap. The routines aren't tied to
-// days of the week, so no days show (onboarding v1 has no schedule or reminders). Looks good keeps
-// them and Build my own template opens the routine builder. Both close the screen for now.
+// days of the week, so no days show (onboarding v1 has no schedule or reminders). Looks good saves
+// them, and Build my own template opens the routine builder (for now it closes the screen).
 @Composable
 internal fun OnboardingReveal(
     state: OnboardingViewModel.State,
     onRoutineToggle: (Int) -> Unit,
-    onDone: () -> Unit,
+    onLooksGood: () -> Unit,
+    onBuildOwn: () -> Unit,
 ) {
     val starter = state.starter ?: return
     val profile = OnboardingQuestions.starterProfile(state.answers)
@@ -100,15 +101,20 @@ internal fun OnboardingReveal(
         },
         footer = {
             AppFooter(
-                header = if (experienced) stringResource(R.string.onboarding_reveal_experienced) else null,
+                // Everyone hears the templates can be edited later. Experienced users also hear
+                // they're only a starting point.
+                header = pluralStringResource(
+                    if (experienced) R.plurals.onboarding_reveal_experienced else R.plurals.onboarding_reveal_edit_later,
+                    starter.routines.size,
+                ),
                 actions = listOf(
                     AppFooterAction(
                         text = stringResource(R.string.onboarding_reveal_looks_good),
-                        onClick = onDone,
+                        onClick = onLooksGood,
                     ),
                     AppFooterAction(
                         text = stringResource(R.string.onboarding_reveal_build_own),
-                        onClick = onDone,
+                        onClick = onBuildOwn,
                         style = AppFooterAction.Style.Secondary,
                     ),
                 ),

@@ -48,7 +48,7 @@ import com.airbnb.lottie.compose.rememberLottieComposition
 import com.everlog.R
 import com.everlog.data.controllers.starterroutines.StarterProfile
 import com.everlog.data.controllers.starterroutines.StarterWeek
-import com.everlog.ui.activities.onboarding.OnboardingViewModel.Build
+import com.everlog.ui.activities.onboarding.OnboardingViewModel.Progress
 import com.everlog.ui.design.elements.AppFooter
 import com.everlog.ui.design.elements.AppFooterAction
 import com.everlog.ui.design.elements.AppScreen
@@ -58,7 +58,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.first
 
 // The design's building animation (res/raw/everlog_building.json), one clip per marker
-private object BuildingClips {
+private object ProgressClips {
     // The barbell comes together, once
     const val Intro = "intro"
     // One lift and set down, whose last pose is its first, so it repeats seamlessly
@@ -69,7 +69,7 @@ private object BuildingClips {
     const val Error = "error"
 }
 
-private object BuildingMotion {
+private object ProgressMotion {
     // The check holds this long before the screen moves on
     const val ReadyHold = 300L
     // With animations off (or no animation), the screen still stays up for as long as the intro
@@ -79,14 +79,73 @@ private object BuildingMotion {
     const val ActionsFade = 150
 }
 
-// The whole screen while the week builds, from the design's Building, Build ready and Build failed
-// artboards. The animation always plays through: the intro, then at least one loop, more until the
-// build is over, then the success or error clip. So the screen says the result only once the
-// animation gets to it, and moves on once the check has drawn. After an error, Try again builds
-// the week again from the intro, and Skip closes the screen.
+// The whole screen while the starter routines build, from the design's Building, Build ready and
+// Build failed artboards. After an error, Try again builds them again and Skip closes the screen.
 @Composable
 internal fun OnboardingBuilding(
     state: OnboardingViewModel.State,
+    onRetry: () -> Unit,
+    onSkip: () -> Unit,
+    onShown: () -> Unit,
+) = OnboardingProgress(
+    progress = state.build,
+    attempt = state.buildAttempt,
+    texts = ProgressTexts(
+        inProgress = stringResource(R.string.onboarding_building),
+        done = pluralStringResource(R.plurals.onboarding_build_ready, state.starter?.routines?.size ?: 0),
+        failed = stringResource(R.string.onboarding_build_failed),
+        failedBody = stringResource(R.string.onboarding_build_failed_body),
+        summary = onboardingSummary(state.answers),
+    ),
+    onRetry = onRetry,
+    onSkip = onSkip,
+    onShown = onShown,
+)
+
+// The same screen while the starter routines save after Looks good, with the split in the summary
+// as on the reveal. After an error, Try again saves them again and Skip closes the screen without
+// them.
+@Composable
+internal fun OnboardingSaving(
+    state: OnboardingViewModel.State,
+    onRetry: () -> Unit,
+    onSkip: () -> Unit,
+    onShown: () -> Unit,
+) = OnboardingProgress(
+    progress = state.save,
+    attempt = state.saveAttempt,
+    texts = ProgressTexts(
+        inProgress = stringResource(R.string.onboarding_saving),
+        done = pluralStringResource(R.plurals.onboarding_save_done, state.starter?.routines?.size ?: 0),
+        failed = stringResource(R.string.onboarding_save_failed),
+        failedBody = stringResource(R.string.onboarding_save_failed_body),
+        summary = onboardingSummary(state.answers, split = state.starter?.week?.split),
+    ),
+    onRetry = onRetry,
+    onSkip = onSkip,
+    onShown = onShown,
+)
+
+// What the progress screen says. The failure says what went wrong in place of the summary.
+internal data class ProgressTexts(
+    val inProgress: String,
+    val done: String,
+    val failed: String,
+    val failedBody: String,
+    // From the answers, e.g. "3 days · Gym · Build muscle"
+    val summary: String,
+)
+
+// The building animation while something is in progress. It always plays through: the intro, then
+// at least one loop, more until the work is over, then the success or error clip. So the screen
+// says the result only once the animation gets to it, and moves on once the check has drawn. After
+// an error, Try again starts the animation over from the intro (a new attempt).
+@Composable
+private fun OnboardingProgress(
+    progress: Progress,
+    // Counts Try again
+    attempt: Int,
+    texts: ProgressTexts,
     onRetry: () -> Unit,
     onSkip: () -> Unit,
     // The success clip has finished
@@ -94,37 +153,37 @@ internal fun OnboardingBuilding(
 ) {
     val compositionResult = rememberLottieComposition(LottieCompositionSpec.RawRes(R.raw.everlog_building))
     val animatable = rememberLottieAnimatable()
-    // What the screen says, which follows the animation rather than the build
-    var shown by remember { mutableStateOf(Build.InProgress) }
+    // What the screen says, which follows the animation rather than the work
+    var shown by remember { mutableStateOf(Progress.InProgress) }
     var showActions by remember { mutableStateOf(false) }
 
-    val build by rememberUpdatedState(state.build)
+    val current by rememberUpdatedState(progress)
     val currentOnShown by rememberUpdatedState(onShown)
     val haptics = LocalHapticFeedback.current
-    LaunchedEffect(compositionResult.isComplete, state.buildAttempt) {
+    LaunchedEffect(compositionResult.isComplete, attempt) {
         if (!compositionResult.isComplete) return@LaunchedEffect
         // Null if the animation couldn't load, so the screen carries on without it
         val composition = compositionResult.value
-        shown = Build.InProgress
+        shown = Progress.InProgress
         showActions = false
         // Follows the system's animation scale, which Lottie doesn't by itself
         val scale = coroutineContext[MotionDurationScale]?.scaleFactor ?: 1f
         val animate = composition != null && scale > 0f
         val result = if (animate) {
-            animatable.play(composition, BuildingClips.Intro, speed = 1f / scale)
+            animatable.play(composition, ProgressClips.Intro, speed = 1f / scale)
             do {
-                animatable.play(composition, BuildingClips.Loop, speed = 1f / scale)
-            } while (build == Build.InProgress)
-            build
+                animatable.play(composition, ProgressClips.Loop, speed = 1f / scale)
+            } while (current == Progress.InProgress)
+            current
         } else {
             // The barbell holds still, for as long as the intro and a loop would take
-            composition?.let { animatable.snapTo(it, progress = it.markerProgress(BuildingClips.Loop, end = false)) }
-            delay(BuildingMotion.ReducedMotionMinimum)
-            snapshotFlow { build }.first { it != Build.InProgress }
+            composition?.let { animatable.snapTo(it, progress = it.markerProgress(ProgressClips.Loop, end = false)) }
+            delay(ProgressMotion.ReducedMotionMinimum)
+            snapshotFlow { current }.first { it != Progress.InProgress }
         }
 
         shown = result
-        if (result == Build.Ready) haptics.performHapticFeedback(HapticFeedbackType.Confirm)
+        if (result == Progress.Done) haptics.performHapticFeedback(HapticFeedbackType.Confirm)
         if (composition != null) {
             if (animate) {
                 animatable.play(composition, result.clip, speed = 1f / scale)
@@ -133,12 +192,12 @@ internal fun OnboardingBuilding(
             }
         }
         when (result) {
-            Build.Ready -> {
-                delay(BuildingMotion.ReadyHold)
+            Progress.Done -> {
+                delay(ProgressMotion.ReadyHold)
                 currentOnShown()
             }
-            Build.Failed -> showActions = true
-            Build.InProgress -> Unit
+            Progress.Failed -> showActions = true
+            Progress.InProgress -> Unit
         }
     }
 
@@ -147,7 +206,7 @@ internal fun OnboardingBuilding(
 
     val actionsAlpha by animateFloatAsState(
         targetValue = if (showActions) 1f else 0f,
-        animationSpec = tween(BuildingMotion.ActionsFade, easing = OnboardingMotion.Standard),
+        animationSpec = tween(ProgressMotion.ActionsFade, easing = OnboardingMotion.Standard),
         label = "actions",
     )
     AppScreen(
@@ -186,24 +245,24 @@ internal fun OnboardingBuilding(
                     progress = { animatable.progress },
                     modifier = Modifier
                         .weight(1f, fill = false)
-                        .widthIn(max = BuildingSizes.Animation)
+                        .widthIn(max = ProgressSizes.Animation)
                         .fillMaxWidth()
                         .aspectRatio(1f, matchHeightConstraintsFirst = true),
                 )
                 Spacer(Modifier.height(Theme.spacing.extraLarge))
             }
-            BuildingText(shown = shown, answers = state.answers, routineCount = state.starter?.routines?.size ?: 0)
+            ProgressText(shown = shown, texts = texts)
         }
     }
 }
 
 // Sizes from the design that the design system doesn't have
-private object BuildingSizes {
+private object ProgressSizes {
     val Animation = 360.dp
 }
 
-private val Build.clip: String
-    get() = if (this == Build.Ready) BuildingClips.Success else BuildingClips.Error
+private val Progress.clip: String
+    get() = if (this == Progress.Done) ProgressClips.Success else ProgressClips.Error
 
 private suspend fun LottieAnimatable.play(composition: LottieComposition, marker: String, speed: Float) = animate(
     composition = composition,
@@ -221,38 +280,36 @@ private fun LottieComposition.markerProgress(marker: String, end: Boolean): Floa
 }
 
 @Composable
-private fun BuildingText(
-    shown: Build,
-    answers: Map<String, Answer>,
-    // Once the build is ready, for "Your routine is ready" or "Your routines are ready"
-    routineCount: Int,
+private fun ProgressText(
+    shown: Progress,
+    texts: ProgressTexts,
 ) {
     AnimatedContent(
         targetState = shown,
         modifier = Modifier.semantics { liveRegion = LiveRegionMode.Polite },
         transitionSpec = {
-            fadeIn(tween(BuildingMotion.TextFade, easing = OnboardingMotion.Standard)) togetherWith
-                    fadeOut(tween(BuildingMotion.TextFade, easing = OnboardingMotion.Standard))
+            fadeIn(tween(ProgressMotion.TextFade, easing = OnboardingMotion.Standard)) togetherWith
+                    fadeOut(tween(ProgressMotion.TextFade, easing = OnboardingMotion.Standard))
         },
         contentAlignment = Alignment.TopCenter,
         label = "text",
-    ) { build ->
+    ) { progress ->
         Column(
             modifier = Modifier.fillMaxWidth(),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(Theme.spacing.small),
         ) {
             AppText(
-                text = when (build) {
-                    Build.InProgress -> stringResource(R.string.onboarding_building)
-                    Build.Ready -> pluralStringResource(R.plurals.onboarding_build_ready, routineCount)
-                    Build.Failed -> stringResource(R.string.onboarding_build_failed)
+                text = when (progress) {
+                    Progress.InProgress -> texts.inProgress
+                    Progress.Done -> texts.done
+                    Progress.Failed -> texts.failed
                 },
                 style = Theme.typography.title,
                 textAlign = TextAlign.Center,
             )
             AppText(
-                text = if (build == Build.Failed) stringResource(R.string.onboarding_build_failed_body) else onboardingSummary(answers),
+                text = if (progress == Progress.Failed) texts.failedBody else texts.summary,
                 color = Theme.contentColors.secondary,
                 textAlign = TextAlign.Center,
             )

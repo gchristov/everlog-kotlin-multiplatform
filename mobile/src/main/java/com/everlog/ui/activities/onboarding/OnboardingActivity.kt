@@ -26,7 +26,9 @@ import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.everlog.R
 import com.everlog.data.controllers.starterroutines.RealBuildStarterRoutinesUseCase
+import com.everlog.data.controllers.starterroutines.RealSaveStarterRoutinesUseCase
 import com.everlog.data.repositories.RealExerciseRepository
+import com.everlog.data.repositories.RealRoutineRepository
 import com.everlog.managers.preferences.SettingsManager
 import com.everlog.ui.design.CommonComposeActivity
 import com.everlog.ui.design.elements.AppBarScrollBehavior
@@ -40,10 +42,11 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.android.awaitFrame
 
 // Debug-only prototype of the onboarding (first run) journey from the Everlog Onboarding design,
-// opened from Settings: the welcome, then the questions. Answers aren't saved. Build my templates
-// builds the starter routines behind the building animation, then the reveal shows them, and its
-// buttons close the screen. If the build fails, the user can try again or skip. Saving the
-// routines and the buttons' actions come next.
+// opened from Settings: the welcome, then the questions. The units and days a week answers are saved
+// to Settings as soon as they're given. Build my templates builds the starter routines behind the
+// building animation, then the reveal shows them. Looks good saves them behind the same animation
+// and closes the screen, and Build my own template just closes it for now. If building or saving
+// fails, the user can try again or skip.
 class OnboardingActivity : CommonComposeActivity() {
     private val viewModel by viewModels<OnboardingViewModel> {
         createViewModelFactory {
@@ -53,6 +56,11 @@ class OnboardingActivity : CommonComposeActivity() {
                     dispatcher = Dispatchers.Default,
                     exerciseRepository = RealExerciseRepository(dispatcher = Dispatchers.IO),
                 ),
+                saveStarterRoutinesUseCase = RealSaveStarterRoutinesUseCase(
+                    dispatcher = Dispatchers.Default,
+                    routineRepository = RealRoutineRepository(dispatcher = Dispatchers.IO),
+                ),
+                settings = RealOnboardingSettings(this),
                 firstDayOfWeek = SettingsManager.manager.firstDayOfWeek(),
             )
         }
@@ -74,9 +82,9 @@ internal fun OnboardingScreen(
     var showSkipSetup by rememberSaveable { mutableStateOf(false) }
 
     BackHandler(enabled = !state.finished) {
-        // Building can't be left part way. Once it fails, OnboardingBuilding handles Back. The
-        // reveal ignores Back, as the answers are in and the routines are built.
-        if (state.step != OnboardingViewModel.Step.Building && state.step != OnboardingViewModel.Step.Reveal) showSkipSetup = true
+        // Building and saving can't be left part way. Once either fails, OnboardingProgress
+        // handles Back. The reveal ignores Back, as the answers are in and the routines are built.
+        if (state.step == OnboardingViewModel.Step.Welcome || state.step == OnboardingViewModel.Step.Questions) showSkipSetup = true
     }
 
     LaunchedEffect(state.finished) {
@@ -128,7 +136,14 @@ internal fun OnboardingScreen(
             OnboardingViewModel.Step.Reveal -> OnboardingReveal(
                 state = state,
                 onRoutineToggle = viewModel::onRoutineToggle,
-                onDone = viewModel::onRevealDone,
+                onLooksGood = viewModel::onLooksGood,
+                onBuildOwn = viewModel::onBuildOwn,
+            )
+            OnboardingViewModel.Step.Saving -> OnboardingSaving(
+                state = state,
+                onRetry = viewModel::onRetrySave,
+                onSkip = viewModel::onSkipSave,
+                onShown = viewModel::onSaveShown,
             )
         }
     }
