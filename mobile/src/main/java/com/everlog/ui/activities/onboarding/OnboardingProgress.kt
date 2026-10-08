@@ -58,7 +58,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.first
 
 // The design's building animation (res/raw/everlog_building.json), one clip per marker
-private object BuildingClips {
+private object ProgressClips {
     // The barbell comes together, once
     const val Intro = "intro"
     // One lift and set down, whose last pose is its first, so it repeats seamlessly
@@ -69,7 +69,7 @@ private object BuildingClips {
     const val Error = "error"
 }
 
-private object BuildingMotion {
+private object ProgressMotion {
     // The check holds this long before the screen moves on
     const val ReadyHold = 300L
     // With animations off (or no animation), the screen still stays up for as long as the intro
@@ -170,15 +170,15 @@ private fun OnboardingProgress(
         val scale = coroutineContext[MotionDurationScale]?.scaleFactor ?: 1f
         val animate = composition != null && scale > 0f
         val result = if (animate) {
-            animatable.play(composition, BuildingClips.Intro, speed = 1f / scale)
+            animatable.play(composition, ProgressClips.Intro, speed = 1f / scale)
             do {
-                animatable.play(composition, BuildingClips.Loop, speed = 1f / scale)
+                animatable.play(composition, ProgressClips.Loop, speed = 1f / scale)
             } while (current == Progress.InProgress)
             current
         } else {
             // The barbell holds still, for as long as the intro and a loop would take
-            composition?.let { animatable.snapTo(it, progress = it.markerProgress(BuildingClips.Loop, end = false)) }
-            delay(BuildingMotion.ReducedMotionMinimum)
+            composition?.let { animatable.snapTo(it, progress = it.markerProgress(ProgressClips.Loop, end = false)) }
+            delay(ProgressMotion.ReducedMotionMinimum)
             snapshotFlow { current }.first { it != Progress.InProgress }
         }
 
@@ -193,7 +193,7 @@ private fun OnboardingProgress(
         }
         when (result) {
             Progress.Done -> {
-                delay(BuildingMotion.ReadyHold)
+                delay(ProgressMotion.ReadyHold)
                 currentOnShown()
             }
             Progress.Failed -> showActions = true
@@ -206,7 +206,7 @@ private fun OnboardingProgress(
 
     val actionsAlpha by animateFloatAsState(
         targetValue = if (showActions) 1f else 0f,
-        animationSpec = tween(BuildingMotion.ActionsFade, easing = OnboardingMotion.Standard),
+        animationSpec = tween(ProgressMotion.ActionsFade, easing = OnboardingMotion.Standard),
         label = "actions",
     )
     AppScreen(
@@ -245,7 +245,7 @@ private fun OnboardingProgress(
                     progress = { animatable.progress },
                     modifier = Modifier
                         .weight(1f, fill = false)
-                        .widthIn(max = BuildingSizes.Animation)
+                        .widthIn(max = ProgressSizes.Animation)
                         .fillMaxWidth()
                         .aspectRatio(1f, matchHeightConstraintsFirst = true),
                 )
@@ -257,12 +257,12 @@ private fun OnboardingProgress(
 }
 
 // Sizes from the design that the design system doesn't have
-private object BuildingSizes {
+private object ProgressSizes {
     val Animation = 360.dp
 }
 
 private val Progress.clip: String
-    get() = if (this == Progress.Done) BuildingClips.Success else BuildingClips.Error
+    get() = if (this == Progress.Done) ProgressClips.Success else ProgressClips.Error
 
 private suspend fun LottieAnimatable.play(composition: LottieComposition, marker: String, speed: Float) = animate(
     composition = composition,
@@ -288,8 +288,8 @@ private fun ProgressText(
         targetState = shown,
         modifier = Modifier.semantics { liveRegion = LiveRegionMode.Polite },
         transitionSpec = {
-            fadeIn(tween(BuildingMotion.TextFade, easing = OnboardingMotion.Standard)) togetherWith
-                    fadeOut(tween(BuildingMotion.TextFade, easing = OnboardingMotion.Standard))
+            fadeIn(tween(ProgressMotion.TextFade, easing = OnboardingMotion.Standard)) togetherWith
+                    fadeOut(tween(ProgressMotion.TextFade, easing = OnboardingMotion.Standard))
         },
         contentAlignment = Alignment.TopCenter,
         label = "text",

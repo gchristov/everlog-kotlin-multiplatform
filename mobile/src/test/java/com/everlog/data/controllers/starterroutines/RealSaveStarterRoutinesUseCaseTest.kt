@@ -37,7 +37,7 @@ class RealSaveStarterRoutinesUseCaseTest {
     fun `fails without saving when there are no routines`() = runTest { useCase ->
         val error = useCase(SaveStarterRoutinesUseCase.Dto(emptyList())).leftOrNull()
 
-        assertThat(error).isInstanceOf(NoStarterRoutinesException::class.java)
+        assertThat(error).isInstanceOf(StarterRoutinesEmptyException::class.java)
         assertThat(repository.saved).isEmpty()
     }
 

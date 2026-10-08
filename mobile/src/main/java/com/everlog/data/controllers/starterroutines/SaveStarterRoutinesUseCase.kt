@@ -14,7 +14,7 @@ import kotlinx.coroutines.withContext
  * with part of their templates. Saving the same routines again overwrites them rather than adding
  * copies, so a failed save can be tried again.
  *
- * Fails with [NoStarterRoutinesException] when there's nothing to save, or with the repository's
+ * Fails with [StarterRoutinesEmptyException] when there's nothing to save, or with the repository's
  * error. Reporting failures is up to the caller.
  */
 interface SaveStarterRoutinesUseCase {
@@ -28,12 +28,14 @@ class RealSaveStarterRoutinesUseCase(
     private val routineRepository: RoutineRepository,
 ) : SaveStarterRoutinesUseCase {
 
-    override suspend operator fun invoke(dto: SaveStarterRoutinesUseCase.Dto): Either<Throwable, Unit> = withContext(dispatcher) {
+    override suspend operator fun invoke(
+        dto: SaveStarterRoutinesUseCase.Dto
+    ): Either<Throwable, Unit> = withContext(dispatcher) {
         either {
-            ensure(dto.routines.isNotEmpty()) { NoStarterRoutinesException() }
+            ensure(dto.routines.isNotEmpty()) { StarterRoutinesEmptyException() }
             routineRepository.saveRoutines(dto.routines).bind()
         }
     }
 }
 
-class NoStarterRoutinesException : IllegalStateException("There are no starter routines to save")
+class StarterRoutinesEmptyException : IllegalStateException("There are no starter routines to save")
