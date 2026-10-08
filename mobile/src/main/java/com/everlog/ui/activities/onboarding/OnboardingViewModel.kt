@@ -13,11 +13,12 @@ import timber.log.Timber
  * The welcome, then the setup questionnaire from the Everlog Onboarding design: one question open
  * at a time, answered questions collapse to summary rows that can be reopened, then Build my
  * templates builds the starter routines behind the building screen, and the reveal shows them.
- * Looks good saves them behind the saving screen, then the screen closes.
+ * Looks good saves them behind the saving screen, then the screen closes. Build my own template
+ * opens the routine builder instead: the screen closes once the user's own routine is saved, and
+ * backing out of the builder returns to the reveal.
  *
  * Answers that are app settings (units, and days a week as the weekly workouts goal) are saved as
- * soon as they're given. A prototype for now: Build my own template just closes the screen. If
- * building or saving the routines fails, the user can try again or skip.
+ * soon as they're given. If building or saving the routines fails, the user can try again or skip.
  */
 class OnboardingViewModel(
     dispatcher: CoroutineDispatcher,
@@ -128,10 +129,21 @@ class OnboardingViewModel(
         save(starter.routines)
     }
 
-    // Build my own template on the reveal. For now it closes the screen: opening the routine
-    // builder comes next.
+    // Build my own template on the reveal: opens the routine builder. The starter routines aren't
+    // saved, so backing out of the builder returns to the reveal as it was.
     fun onBuildOwn() {
         if (state.value.step != Step.Reveal) return
+        setState { copy(openRoutineBuilder = true) }
+    }
+
+    // The screen has opened the routine builder
+    fun onRoutineBuilderOpened() {
+        setState { copy(openRoutineBuilder = false) }
+    }
+
+    // The routine builder saved the user's own routine. Closes whatever the step: after process
+    // death the screen starts over, but the routine is saved, so the user is done here.
+    fun onOwnRoutineSaved() {
         setState { copy(finished = true) }
     }
 
@@ -249,6 +261,8 @@ class OnboardingViewModel(
         val saveAttempt: Int = 0,
         // The reveal's open routine cards, by index. The first starts open.
         val openRoutines: Set<Int> = setOf(0),
+        // Until the screen opens the routine builder
+        val openRoutineBuilder: Boolean = false,
         // The screen closes
         val finished: Boolean = false,
         // From Settings, for the order of the reminder days
