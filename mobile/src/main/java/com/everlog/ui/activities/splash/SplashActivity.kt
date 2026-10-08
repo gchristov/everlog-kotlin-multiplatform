@@ -1,5 +1,6 @@
 package com.everlog.ui.activities.splash
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import com.everlog.R
@@ -30,6 +31,10 @@ class SplashActivity : BaseActivity(), MvpViewSplash {
         if (attempt > 0) {
             AnalyticsManager.manager.appUsageReminderOpened(attempt, intent?.getStringExtra(AppUsageReminderManager.EXTRA_REMINDER_TITLE))
         }
+    }
+
+    override fun isLaunchedOverApp(): Boolean {
+        return !isTaskRoot && intent?.action == Intent.ACTION_MAIN && intent?.hasCategory(Intent.CATEGORY_LAUNCHER) == true
     }
 
     public override fun onActivityCreated() {
