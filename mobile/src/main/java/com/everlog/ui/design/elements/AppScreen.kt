@@ -4,14 +4,15 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
 import com.everlog.R
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.booleanResource
 import androidx.compose.ui.Alignment
 import androidx.compose.foundation.layout.widthIn
-import androidx.compose.material3.Scaffold
+import androidx.compose.material3.ScaffoldDefaults
+import androidx.compose.material3.Surface
+import androidx.compose.ui.layout.SubcomposeLayout
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.remember
@@ -50,32 +51,66 @@ fun AppScreen(
         LocalAppScreenHazeState provides hazeState,
         LocalAppScreenMaxContentWidth provides maxContentWidth,
     ) {
-        Scaffold(
+        Surface(
             modifier = modifier,
-            topBar = topBar,
-            bottomBar = footer,
-            containerColor = Theme.backgrounds.primary,
+            color = Theme.backgrounds.primary,
             contentColor = Theme.contentColors.primary,
-        ) { padding ->
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(top = padding.calculateTopPadding())
-                    // So children using e.g. imePadding() don't add the system bars again
-                    .consumeWindowInsets(padding)
-                    .hazeSource(hazeState)
-            ) {
-                Box(
-                    modifier = Modifier
-                        .align(Alignment.TopCenter)
-                        .widthIn(max = maxContentWidth)
-                        .fillMaxSize()
-                ) {
-                    content(PaddingValues(bottom = padding.calculateBottomPadding()))
+        ) {
+            val insets = ScaffoldDefaults.contentWindowInsets
+            // Like Scaffold, but the content follows the bars in the same frame. Scaffold hands its
+            // content the bars' sizes through state, which the content only picks up a frame later,
+            // so e.g. a top bar's header leaving showed the content under the old height for a frame.
+            SubcomposeLayout { constraints ->
+                val looseConstraints = constraints.copy(minWidth = 0, minHeight = 0)
+                val topBarPlaceables = subcompose(AppScreenSlot.TopBar, topBar).map { it.measure(looseConstraints) }
+                val footerPlaceables = subcompose(AppScreenSlot.Footer, footer).map { it.measure(looseConstraints) }
+                val topBarHeight = topBarPlaceables.maxOfOrNull { it.height } ?: 0
+                val footerHeight = footerPlaceables.maxOfOrNull { it.height } ?: 0
+                // Without a bar, the content keeps clear of the system bars on that side instead
+                val top = if (topBarHeight > 0) topBarHeight else insets.getTop(this)
+                val bottom = if (footerHeight > 0) footerHeight else insets.getBottom(this)
+                val padding = PaddingValues.Absolute(
+                    left = insets.getLeft(this, layoutDirection).toDp(),
+                    top = top.toDp(),
+                    right = insets.getRight(this, layoutDirection).toDp(),
+                    bottom = bottom.toDp(),
+                )
+                val contentPlaceables = subcompose(AppScreenSlot.Content) {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            // So children using e.g. imePadding() don't add the system bars again
+                            .consumeWindowInsets(padding)
+                            .hazeSource(hazeState)
+                    ) {
+                        Box(
+                            modifier = Modifier
+                                .align(Alignment.TopCenter)
+                                .widthIn(max = maxContentWidth)
+                                .fillMaxSize()
+                        ) {
+                            content(PaddingValues(bottom = padding.calculateBottomPadding()))
+                        }
+                    }
+                }.map {
+                    // Under the top bar, and down to the bottom of the screen, behind the footer
+                    it.measure(looseConstraints.copy(maxHeight = (constraints.maxHeight - top).coerceAtLeast(0)))
+                }
+
+                layout(constraints.maxWidth, constraints.maxHeight) {
+                    contentPlaceables.forEach { it.place(0, top) }
+                    topBarPlaceables.forEach { it.place(0, 0) }
+                    footerPlaceables.forEach { it.place(0, constraints.maxHeight - it.height) }
                 }
             }
         }
     }
+}
+
+private enum class AppScreenSlot {
+    TopBar,
+    Footer,
+    Content,
 }
 
 // Content of the current AppScreen, for bars that blur what's behind them
