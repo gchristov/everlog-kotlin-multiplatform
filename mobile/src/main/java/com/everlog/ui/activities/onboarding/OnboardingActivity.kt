@@ -43,12 +43,15 @@ import com.everlog.ui.mvvm.createViewModelFactory
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.android.awaitFrame
 
-// Debug-only prototype of the onboarding (first run) journey from the Everlog Onboarding design,
-// opened from Settings: the welcome, then the questions. The units and days a week answers are saved
-// to Settings as soon as they're given. Build my templates builds the starter routines behind the
-// building animation, then the reveal shows them. Looks good saves them behind the same animation
-// and closes the screen. Build my own template opens the routine builder, and the screen closes
-// once it saves a routine. If building or saving fails, the user can try again or skip.
+// The onboarding (first run) journey from the Everlog Onboarding design, for a signed in user: the
+// welcome, then the questions. The units and days a week answers are saved to Settings as soon as
+// they're given. Build my templates builds the starter routines behind the building animation, then
+// the reveal shows them. Looks good saves them behind the same animation and closes the screen.
+// Build my own template opens the routine builder, and the screen closes once it saves a routine.
+// If building or saving fails, the user can try again or skip.
+//
+// The screen doesn't know what comes after it. It closes with RESULT_OK whether the user set up
+// or skipped, and the screen that opened it for a result decides what's next.
 class OnboardingActivity : CommonComposeActivity() {
     private val viewModel by viewModels<OnboardingViewModel> {
         createViewModelFactory {
@@ -80,7 +83,10 @@ class OnboardingActivity : CommonComposeActivity() {
             // Not the routine's details after saving: the screen decides what comes next
             routineBuilder.launch(CreateRoutineActivity.launchIntent(this, CreateRoutineActivity.Companion.Properties().showDetailsOnSuccess(false)))
         },
-        onClose = { finish() },
+        onClose = {
+            setResult(RESULT_OK)
+            finish()
+        },
     )
 }
 

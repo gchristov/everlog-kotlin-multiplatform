@@ -73,7 +73,7 @@ public interface Navigator {
 
     void openDesignSystem();
 
-    void openOnboardingPrototype();
+    void openOnboarding();
 
     void startWorkoutService(ELWorkout workout);
 

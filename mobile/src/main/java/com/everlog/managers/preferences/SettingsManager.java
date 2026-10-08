@@ -19,6 +19,7 @@ public class SettingsManager extends PreferencesManager {
         UNIT_WEIGHT,
         MUSCLE_GOAL,
         KEEP_SCREEN_ON,
+        ONBOARDING_PENDING,
     }
 
     public enum WeightUnit {
@@ -170,6 +171,7 @@ public class SettingsManager extends PreferencesManager {
         editor.remove(PreferenceKeys.UNIT_WEIGHT.name());
         editor.remove(PreferenceKeys.MUSCLE_GOAL.name());
         editor.remove(PreferenceKeys.KEEP_SCREEN_ON.name());
+        editor.remove(PreferenceKeys.ONBOARDING_PENDING.name());
         editor.apply();
     }
 
@@ -219,6 +221,16 @@ public class SettingsManager extends PreferencesManager {
 
     public void setLoggedIn(boolean value) {
         savePreference(value, PreferenceKeys.LOGGED_IN.name());
+    }
+
+    // A new account that hasn't been through onboarding yet, e.g. because the app was closed during
+    // it. Set and cleared by whichever screen opens onboarding.
+    public boolean onboardingPending() {
+        return getPreference(PreferenceKeys.ONBOARDING_PENDING.name(), false);
+    }
+
+    public void setOnboardingPending(boolean value) {
+        savePreference(value, PreferenceKeys.ONBOARDING_PENDING.name());
     }
 
     public WeightUnit weightUnit() {

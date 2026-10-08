@@ -248,9 +248,9 @@ public class ELNavigator implements Navigator {
     }
 
     @Override
-    public void openOnboardingPrototype() {
+    public void openOnboarding() {
         Intent i = new Intent(mContext, OnboardingActivity.class);
-        startActivity(i);
+        startActivityForResult(i, ELActivityRequestCodes.REQUEST_ONBOARDING);
     }
 
     @Override

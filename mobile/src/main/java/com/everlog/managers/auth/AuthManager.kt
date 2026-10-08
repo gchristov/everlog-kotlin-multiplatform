@@ -1,7 +1,6 @@
 package com.everlog.managers.auth
 
 import android.content.Intent
-import android.os.AsyncTask
 import android.text.TextUtils
 import com.everlog.BuildConfig
 import com.everlog.R
@@ -17,7 +16,6 @@ import com.everlog.managers.PlanManager
 import com.everlog.managers.analytics.AnalyticsConstants
 import com.everlog.managers.analytics.AnalyticsManager
 import com.everlog.managers.apprate.AppLaunchManager
-import com.everlog.managers.auth.samples.CreateSampleRoutinesAsyncTask
 import com.everlog.managers.integrations.GoogleFitIntegrationManager
 import com.everlog.managers.preferences.PreferencesManager
 import com.everlog.managers.preferences.SettingsManager
@@ -303,11 +301,7 @@ object AuthManager : PreferencesManager() {
         val block = Runnable {
             saveUser(user)
             SettingsManager.manager.setLoggedIn(true)
-            if (justRegistered) {
-                addSampleRoutines(user)
-            } else {
-                mAuthListener?.onSuccess(user)
-            }
+            mAuthListener?.onSuccess(user, justRegistered)
         }
         // This is required here for the refresh to work
         LocalUserManager.updateUser(user)
@@ -320,11 +314,6 @@ object AuthManager : PreferencesManager() {
                 block.run()
             }
         })
-    }
-
-    private fun addSampleRoutines(user: ELUser) {
-        val task = CreateSampleRoutinesAsyncTask(ELApplication.getInstance()) { mAuthListener?.onSuccess(user) }
-        task.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR)
     }
 
     // Firebase
@@ -372,6 +361,8 @@ object AuthManager : PreferencesManager() {
     open class OnAuthActionListener {
         open fun onLogout() {}
         open fun onSuccess(user: ELUser) {}
+        // Login and registration. A new account has no data yet.
+        open fun onSuccess(user: ELUser, newUser: Boolean) = onSuccess(user)
         open fun onResetPasswordSuccess() {}
         open fun onError(throwable: Throwable) {}
     }
