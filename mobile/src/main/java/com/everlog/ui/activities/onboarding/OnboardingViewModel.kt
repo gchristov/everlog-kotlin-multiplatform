@@ -118,7 +118,7 @@ class OnboardingViewModel(
     // Skip setup in the top bar, or Back, on the welcome or a question: asks first
     fun onSkipSetup() {
         val currentState = state.value
-        if (currentState.skipSetupPrompt || (currentState.step != Step.Welcome && currentState.step != Step.Questions)) return
+        if (currentState.skipSetupPrompt || currentState.finished || (currentState.step != Step.Welcome && currentState.step != Step.Questions)) return
         setState { copy(skipSetupPrompt = true) }
         analytics.skipPromptShown(currentState.analyticsStep)
     }
