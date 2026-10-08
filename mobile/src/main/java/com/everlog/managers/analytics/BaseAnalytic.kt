@@ -561,4 +561,64 @@ abstract class BaseAnalytic : Analytic {
     override fun consentNewsletterDenied() {
         logEvent(AnalyticsConstants.EVENT_CONSENT_NEWSLETTER_DENIED)
     }
+
+    override fun onboardingStepViewed(step: String) {
+        logOnboardingStep(AnalyticsConstants.EVENT_ONBOARDING_STEP_VIEWED, step)
+    }
+
+    override fun onboardingStepCompleted(step: String, value: String?) {
+        logOnboardingStep(AnalyticsConstants.EVENT_ONBOARDING_STEP_COMPLETED, step, value)
+    }
+
+    override fun onboardingStepSkipped(step: String) {
+        logOnboardingStep(AnalyticsConstants.EVENT_ONBOARDING_STEP_SKIPPED, step)
+    }
+
+    override fun onboardingStepFailed(step: String) {
+        logOnboardingStep(AnalyticsConstants.EVENT_ONBOARDING_STEP_FAILED, step)
+    }
+
+    override fun onboardingStepRetried(step: String) {
+        logOnboardingStep(AnalyticsConstants.EVENT_ONBOARDING_STEP_RETRIED, step)
+    }
+
+    override fun onboardingQuestionReopened(step: String) {
+        logOnboardingStep(AnalyticsConstants.EVENT_ONBOARDING_QUESTION_REOPENED, step)
+    }
+
+    override fun onboardingQuestionEdited(step: String, value: String?) {
+        logOnboardingStep(AnalyticsConstants.EVENT_ONBOARDING_QUESTION_EDITED, step, value)
+    }
+
+    override fun onboardingSkipPromptShown(step: String) {
+        logOnboardingStep(AnalyticsConstants.EVENT_ONBOARDING_SKIP_PROMPT_SHOWN, step)
+    }
+
+    override fun onboardingSkipPromptCancelled(step: String) {
+        logOnboardingStep(AnalyticsConstants.EVENT_ONBOARDING_SKIP_PROMPT_CANCELLED, step)
+    }
+
+    override fun onboardingTemplateToggled(open: Boolean) {
+        val map = HashMap<String, Any?>()
+        // Firebase only takes String, Long and Double values
+        map[AnalyticsConstants.PROPERTY_OPEN] = if (open) 1L else 0L
+        logEvent(AnalyticsConstants.EVENT_ONBOARDING_TEMPLATE_TOGGLED, map)
+    }
+
+    override fun onboardingFinished(outcome: String, step: String, routines: Int) {
+        val map = HashMap<String, Any?>()
+        map[AnalyticsConstants.PROPERTY_OUTCOME] = outcome
+        map[AnalyticsConstants.PROPERTY_STEP] = step
+        map[AnalyticsConstants.PROPERTY_ROUTINES] = routines.toLong()
+        logEvent(AnalyticsConstants.EVENT_ONBOARDING_FINISHED, map)
+    }
+
+    private fun logOnboardingStep(eventName: String, step: String, value: String? = null) {
+        val map = HashMap<String, Any?>()
+        map[AnalyticsConstants.PROPERTY_STEP] = step
+        if (value != null) {
+            map[AnalyticsConstants.PROPERTY_VALUE] = value
+        }
+        logEvent(eventName, map)
+    }
 }

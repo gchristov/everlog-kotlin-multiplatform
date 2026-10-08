@@ -39,6 +39,11 @@ class AnalyticsConstants {
         const val SCREEN_PLAN_DETAILS = "screen_plan_details"
         const val SCREEN_MUSCLE_GOAL = "screen_settings_muscle_goals"
         const val SCREEN_INTEGRATION = "screen_integration"
+        const val SCREEN_ONBOARDING_WELCOME = "screen_onboarding_welcome"
+        const val SCREEN_ONBOARDING_QUESTIONS = "screen_onboarding_questions"
+        const val SCREEN_ONBOARDING_BUILDING = "screen_onboarding_building"
+        const val SCREEN_ONBOARDING_REVEAL = "screen_onboarding_reveal"
+        const val SCREEN_ONBOARDING_SAVING = "screen_onboarding_saving"
 
         // Events
 
@@ -200,6 +205,20 @@ class AnalyticsConstants {
         const val EVENT_CONSENT_NEWSLETTER_GRANTED = "consent_newsletter_granted"
         const val EVENT_CONSENT_NEWSLETTER_DENIED = "consent_newsletter_denied"
 
+        // Onboarding
+
+        const val EVENT_ONBOARDING_STEP_VIEWED = "onboarding_step_viewed"
+        const val EVENT_ONBOARDING_STEP_COMPLETED = "onboarding_step_completed"
+        const val EVENT_ONBOARDING_STEP_SKIPPED = "onboarding_step_skipped"
+        const val EVENT_ONBOARDING_STEP_FAILED = "onboarding_step_failed"
+        const val EVENT_ONBOARDING_STEP_RETRIED = "onboarding_step_retried"
+        const val EVENT_ONBOARDING_QUESTION_REOPENED = "onboarding_question_reopened"
+        const val EVENT_ONBOARDING_QUESTION_EDITED = "onboarding_question_edited"
+        const val EVENT_ONBOARDING_SKIP_PROMPT_SHOWN = "onboarding_skip_prompt_shown"
+        const val EVENT_ONBOARDING_SKIP_PROMPT_CANCELLED = "onboarding_skip_prompt_cancelled"
+        const val EVENT_ONBOARDING_TEMPLATE_TOGGLED = "onboarding_template_toggled"
+        const val EVENT_ONBOARDING_FINISHED = "onboarding_finished"
+
         // Properties
 
         const val PROPERTY_USER_ID = "userId"
@@ -214,6 +233,10 @@ class AnalyticsConstants {
         const val PROPERTY_TIMED = "timed"
         const val PROPERTY_SETS_COMPLETED = "sets_completed"
         const val PROPERTY_EXERCISES = "exercises"
+        const val PROPERTY_STEP = "step"
+        const val PROPERTY_OUTCOME = "outcome"
+        const val PROPERTY_ROUTINES = "routines"
+        const val PROPERTY_OPEN = "open"
 
         // Legacy user properties. Versions before 2.11.0 set the user's email and name as user
         // properties, which Firebase keeps on the device until cleared. They're PII, so they are
@@ -239,5 +262,21 @@ class AnalyticsConstants {
         // home screen's resume prompt after the app was closed mid-workout
         const val DISCARD_PROMPT_SOURCE_WORKOUT = "workout"
         const val DISCARD_PROMPT_SOURCE_HOME = "home"
+
+        // Onboarding steps, besides the questions, which are their question's id (e.g. units, days)
+        const val ONBOARDING_STEP_WELCOME = "welcome"
+        const val ONBOARDING_STEP_BUILDING = "building"
+        const val ONBOARDING_STEP_REVEAL = "reveal"
+        const val ONBOARDING_STEP_SAVING = "saving"
+
+        // The reveal's buttons, as its step's completed value
+        const val ONBOARDING_REVEAL_LOOKS_GOOD = "looks_good"
+        const val ONBOARDING_REVEAL_BUILD_OWN = "build_own"
+
+        // How the onboarding ended: the starter templates saved, the user's own template saved, or
+        // skipped (Skip setup, or Skip after building or saving failed)
+        const val ONBOARDING_OUTCOME_STARTER_TEMPLATES = "starter_templates"
+        const val ONBOARDING_OUTCOME_OWN_TEMPLATE = "own_template"
+        const val ONBOARDING_OUTCOME_SKIPPED = "skipped"
     }
 }

@@ -135,4 +135,16 @@ interface Analytic {
 
     fun consentNewsletterGranted()
     fun consentNewsletterDenied()
+
+    fun onboardingStepViewed(step: String)
+    fun onboardingStepCompleted(step: String, value: String?)
+    fun onboardingStepSkipped(step: String)
+    fun onboardingStepFailed(step: String)
+    fun onboardingStepRetried(step: String)
+    fun onboardingQuestionReopened(step: String)
+    fun onboardingQuestionEdited(step: String, value: String?)
+    fun onboardingSkipPromptShown(step: String)
+    fun onboardingSkipPromptCancelled(step: String)
+    fun onboardingTemplateToggled(open: Boolean)
+    fun onboardingFinished(outcome: String, step: String, routines: Int)
 }

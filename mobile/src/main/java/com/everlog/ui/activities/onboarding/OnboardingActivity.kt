@@ -24,12 +24,15 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
+import androidx.lifecycle.compose.LifecycleResumeEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.everlog.R
 import com.everlog.data.controllers.starterroutines.RealBuildStarterRoutinesUseCase
 import com.everlog.data.controllers.starterroutines.RealSaveStarterRoutinesUseCase
 import com.everlog.data.repositories.RealExerciseRepository
 import com.everlog.data.repositories.RealRoutineRepository
+import com.everlog.managers.analytics.AnalyticsConstants
+import com.everlog.managers.analytics.AnalyticsManager
 import com.everlog.managers.preferences.SettingsManager
 import com.everlog.ui.activities.home.routine.create.CreateRoutineActivity
 import com.everlog.ui.design.CommonComposeActivity
@@ -66,6 +69,7 @@ class OnboardingActivity : CommonComposeActivity() {
                     routineRepository = RealRoutineRepository(dispatcher = Dispatchers.IO),
                 ),
                 settings = RealOnboardingSettings(this),
+                analytics = RealOnboardingAnalytics(),
                 firstDayOfWeek = SettingsManager.manager.firstDayOfWeek(),
             )
         }
@@ -97,16 +101,27 @@ internal fun OnboardingScreen(
     onClose: () -> Unit,
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
-    var showSkipSetup by rememberSaveable { mutableStateOf(false) }
 
     BackHandler(enabled = !state.finished) {
-        // Building and saving can't be left part way. Once either fails, OnboardingProgress
-        // handles Back. The reveal ignores Back, as the answers are in and the routines are built.
-        if (state.step == OnboardingViewModel.Step.Welcome || state.step == OnboardingViewModel.Step.Questions) showSkipSetup = true
+        // Asks to skip setup on the welcome and the questions. Building and saving can't be left
+        // part way. Once either fails, OnboardingProgress handles Back. The reveal ignores Back, as
+        // the answers are in and the routines are built.
+        viewModel.onSkipSetup()
     }
 
     LaunchedEffect(state.finished) {
-        if (state.finished) onClose()
+        if (state.finished) {
+            // Close only once the skip setup dialog has gone. Its dim covers the whole task, so
+            // closing with it open leaves the screen underneath dimmed until the close animation ends.
+            awaitFrame()
+            onClose()
+        }
+    }
+
+    // A screen view per step, and again when the screen comes back (e.g. from the routine builder)
+    LifecycleResumeEffect(state.step) {
+        AnalyticsManager.manager.screenName(state.step.analyticsScreenName)
+        onPauseOrDispose {}
     }
 
     LaunchedEffect(state.openRoutineBuilder) {
@@ -150,7 +165,7 @@ internal fun OnboardingScreen(
                 animateWelcomeIn = animateWelcomeIn,
                 welcomeScrollState = welcomeScrollState,
                 appBarScrollBehavior = appBarScrollBehavior,
-                onSkipSetup = { showSkipSetup = true },
+                onSkipSetup = viewModel::onSkipSetup,
             )
             OnboardingViewModel.Step.Building -> OnboardingBuilding(
                 state = state,
@@ -173,25 +188,22 @@ internal fun OnboardingScreen(
         }
     }
 
-    var skippingSetup by remember { mutableStateOf(false) }
-    if (showSkipSetup) {
+    if (state.skipSetupPrompt) {
         SkipSetupDialog(
-            onKeepGoing = { showSkipSetup = false },
-            onSkipSetup = {
-                showSkipSetup = false
-                skippingSetup = true
-            },
+            onKeepGoing = viewModel::onKeepGoing,
+            onSkipSetup = viewModel::onConfirmSkipSetup,
         )
     }
-    // Close only once the dialog has gone. Its dim covers the whole task, so closing with it open
-    // leaves the screen underneath dimmed until the close animation ends.
-    if (skippingSetup) {
-        LaunchedEffect(Unit) {
-            awaitFrame()
-            onClose()
-        }
-    }
 }
+
+private val OnboardingViewModel.Step.analyticsScreenName: String
+    get() = when (this) {
+        OnboardingViewModel.Step.Welcome -> AnalyticsConstants.SCREEN_ONBOARDING_WELCOME
+        OnboardingViewModel.Step.Questions -> AnalyticsConstants.SCREEN_ONBOARDING_QUESTIONS
+        OnboardingViewModel.Step.Building -> AnalyticsConstants.SCREEN_ONBOARDING_BUILDING
+        OnboardingViewModel.Step.Reveal -> AnalyticsConstants.SCREEN_ONBOARDING_REVEAL
+        OnboardingViewModel.Step.Saving -> AnalyticsConstants.SCREEN_ONBOARDING_SAVING
+    }
 
 // The welcome, then the questions, on one AppScreen
 @Composable
