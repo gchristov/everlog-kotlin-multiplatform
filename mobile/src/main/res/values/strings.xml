@@ -456,7 +456,7 @@
     <string name="onboarding_lets_go">Let\'s go</string>
     <string name="onboarding_skip_setup">Skip setup</string>
     <string name="onboarding_skip_setup_title">Skip setup?</string>
-    <string name="onboarding_skip_setup_body">We\'ll start you with an empty app. You can build templates yourself, or set this up later from Settings.</string>
+    <string name="onboarding_skip_setup_body">We\'ll start you with an empty app. You can build templates yourself in Workouts.</string>
     <string name="onboarding_keep_going">Keep going</string>
     <string name="onboarding_next">Next</string>
     <string name="onboarding_skip">Skip</string>
