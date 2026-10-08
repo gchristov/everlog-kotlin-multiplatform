@@ -1,6 +1,7 @@
 package com.everlog.ui.activities.onboarding
 
 import androidx.activity.compose.BackHandler
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.core.tween
@@ -30,6 +31,7 @@ import com.everlog.data.controllers.starterroutines.RealSaveStarterRoutinesUseCa
 import com.everlog.data.repositories.RealExerciseRepository
 import com.everlog.data.repositories.RealRoutineRepository
 import com.everlog.managers.preferences.SettingsManager
+import com.everlog.ui.activities.home.routine.create.CreateRoutineActivity
 import com.everlog.ui.design.CommonComposeActivity
 import com.everlog.ui.design.elements.AppBarScrollBehavior
 import com.everlog.ui.design.elements.AppDialog
@@ -45,8 +47,8 @@ import kotlinx.coroutines.android.awaitFrame
 // opened from Settings: the welcome, then the questions. The units and days a week answers are saved
 // to Settings as soon as they're given. Build my templates builds the starter routines behind the
 // building animation, then the reveal shows them. Looks good saves them behind the same animation
-// and closes the screen, and Build my own template just closes it for now. If building or saving
-// fails, the user can try again or skip.
+// and closes the screen. Build my own template opens the routine builder, and the screen closes
+// once it saves a routine. If building or saving fails, the user can try again or skip.
 class OnboardingActivity : CommonComposeActivity() {
     private val viewModel by viewModels<OnboardingViewModel> {
         createViewModelFactory {
@@ -66,9 +68,18 @@ class OnboardingActivity : CommonComposeActivity() {
         }
     }
 
+    // Only a saved routine counts. Backing out of the builder leaves the reveal as it was.
+    private val routineBuilder = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+        if (result.resultCode == RESULT_OK) viewModel.onOwnRoutineSaved()
+    }
+
     @Composable
     override fun Content() = OnboardingScreen(
         viewModel = viewModel,
+        onOpenRoutineBuilder = {
+            // Not the routine's details after saving: the screen decides what comes next
+            routineBuilder.launch(CreateRoutineActivity.launchIntent(this, CreateRoutineActivity.Companion.Properties().showDetailsOnSuccess(false)))
+        },
         onClose = { finish() },
     )
 }
@@ -76,6 +87,7 @@ class OnboardingActivity : CommonComposeActivity() {
 @Composable
 internal fun OnboardingScreen(
     viewModel: OnboardingViewModel,
+    onOpenRoutineBuilder: () -> Unit,
     onClose: () -> Unit,
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
@@ -89,6 +101,13 @@ internal fun OnboardingScreen(
 
     LaunchedEffect(state.finished) {
         if (state.finished) onClose()
+    }
+
+    LaunchedEffect(state.openRoutineBuilder) {
+        if (state.openRoutineBuilder) {
+            onOpenRoutineBuilder()
+            viewModel.onRoutineBuilderOpened()
+        }
     }
 
     // The welcome's entrance plays once, not again after e.g. rotating
