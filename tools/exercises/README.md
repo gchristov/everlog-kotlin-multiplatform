@@ -109,12 +109,22 @@ They run in Docker from the repo root with `./tools/exercises/run.sh <script> [a
 
 | File | What |
 |---|---|
-| `import.py` | Adds exercises from the pack: proposes, you review, it applies |
+| `import.py` | Adds exercises from the pack: finds their names, proposes, you review, it applies |
 | `push.py` | The only way changes reach Firestore |
 | `schema.py` | The checks every push runs |
 | `pack.py` | Reads the pack's spreadsheet and illustrations, gives an imported exercise a stable uuid, and compares an exercise with its row |
 
 ### Adding exercises from the pack
+
+The pack's names rarely match the ones people use ("Kneeling Push-up" for a knee push-up, "Glute Bridge Bodyweight"),
+so find them first:
+
+```
+./tools/exercises/run.sh import search "knee push-up" "glute bridge"
+```
+
+It looks through every spreadsheet row and illustration, including common other ways of saying a word ("hip raise",
+"pushup", "db"), and says what the pack has for each: an image, muscle data, a video. Then propose the ones you want:
 
 ```
 ./tools/exercises/run.sh import propose --env dev "Cable lateral raises" "Leg press machine normal stance"
@@ -122,7 +132,10 @@ They run in Docker from the repo root with `./tools/exercises/run.sh <script> [a
 
 Finds each pack row (names as in the pack's spreadsheet; it suggests close ones if a name doesn't match) and proposes
 every field: a name in the library's style, the family, modifiers, muscles, kind, tracking and image, plus any
-registry entries they need. It refuses exercises already in the library. Review `out/import-<time>.md`, especially
+registry entries they need. It refuses exercises already in the library. Some rows have only a name: an illustration
+and videos, but no instructions, tips or muscles in the spreadsheet (the pack's PDF catalogue doesn't have them either).
+Those are proposed with the text and muscles empty and a note; write them in the review, from a similar row with data.
+`apply` refuses an exercise without instructions, and the schema check one without muscles. Review `out/import-<time>.md`, especially
 the names, families and muscles, and edit `out/import-<time>.json` where needed. Then:
 
 ```
