@@ -177,7 +177,7 @@ private fun RevealRoutines(
 private fun RoutineCard(
     routine: StarterRoutine,
     imageUrls: List<String?>,
-    // From the library, as the rest of the app shows them. The template's names are the fallback.
+    // From the library, as the rest of the app shows them
     names: List<String?>,
     open: Boolean,
     onToggle: () -> Unit,
@@ -210,7 +210,7 @@ private fun RoutineCard(
                     routine.exercises.forEachIndexed { index, exercise ->
                         HorizontalDivider(thickness = 1.dp, color = Theme.backgrounds.separator)
                         ExerciseRow(
-                            name = names.getOrNull(index) ?: exercise.name,
+                            name = names.getOrNull(index).orEmpty(),
                             imageUrl = imageUrls.getOrNull(index),
                             target = setsTarget(exercise),
                         )

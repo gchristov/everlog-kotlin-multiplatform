@@ -82,3 +82,4 @@ tools/firebase/firestore/*.json
 tools/firebase/storage/*/
 tools/image_resize/input/
 tools/image_resize/output/
+tools/exercises/out/

@@ -56,7 +56,7 @@ data class StarterWeek(
     }
 
     class ExerciseNotFoundException(missing: List<Pair<String, StarterRoutine.Exercise>>) : IllegalStateException(
-        "Not in the exercise library: " + missing.joinToString { (routine, exercise) -> "$routine ${exercise.name} (${exercise.exerciseId})" }
+        "Not in the exercise library: " + missing.joinToString { (routine, exercise) -> "$routine ${exercise.exerciseId}" }
     )
 }
 
@@ -67,9 +67,8 @@ data class StarterRoutine(
     val restTimeSeconds: Int,
 ) {
     data class Exercise(
-        // A global exercise's uuid, from the exercise library
+        // A global exercise's uuid, from the exercise library, which also has its name and image
         val exerciseId: String,
-        val name: String,
         val sets: Int,
         val target: Target,
     )
@@ -185,7 +184,7 @@ object StarterRoutineGenerator {
             goal == Goal.BUILD_ENDURANCE -> Target.Reps(15..20)
             else -> Target.Reps(10..12)
         }
-        return StarterRoutine.Exercise(exercise.uuid, exercise.name, sets, target)
+        return StarterRoutine.Exercise(exercise.uuid, sets, target)
     }
 
     private fun restTimeSeconds(goal: Goal) = when (goal) {

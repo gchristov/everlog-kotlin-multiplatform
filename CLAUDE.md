@@ -63,6 +63,14 @@ Fastlane lanes (`fastlane/Fastfile`): `deploy_firebase`, `deploy_play_internal`,
 - `data/model` holds Firestore-mapped models (`ELFirestoreModel` base, `ELUser`, `ELRoutine`, `ELIntegration`, etc.) plus feature-specific models under `model/{exercise,plan,pro,set,workout}`.
 - `data/migration` implements a lightweight schema-migration system: `DataMigrationManager` tracks a `SCHEMA_VERSION` preference and runs numbered `Migration` implementations (`Migration1`, ...) sequentially against Firestore via `FirestorePathManager` — add new migrations here rather than mutating data ad hoc.
 
+### Exercise library
+
+The global exercise library is data in Firestore, not code: exercises in `global/exercises/all` and a registry of the ids they use (muscles, equipment, set-ups, grips, families, each with a display name) in `global/exercises/registry/current`. Firestore is the source of truth for both, in dev and prod separately.
+- **Change them only with `tools/exercises/push.py`** (export, edit, dry run, then `--write`; dev first), never in the Firebase console. `tools/exercises/README.md` has the routine, the fields and the rules; `schema.py` checks them on every push.
+- **uuids never change**: routines, workouts and the onboarding's starter routines (`StarterExercises.kt`, uuids only) point at them, and the app shows the library's current name and image for each (`ELRoutineDecorator`). A rename shows everywhere, past workouts included.
+- **Never delete or overwrite exercise images in Storage**: app versions before 2.10.0 show the copies stored in routines and workouts, which point at the images they had when saved. Each environment's exercises use that environment's own bucket.
+- `ELExercise` doesn't read the newer fields (family, muscles, equipment and so on) yet; the app ignores them until a screen needs them.
+
 ### Managers layer (`managers/`)
 
 Singleton-style managers encapsulate cross-cutting concerns and are the integration point for most external services: `auth/AuthManager` + `auth/LocalUserManager` (Firebase Auth + local session), `billing/BillingManager` + `BillingBridge` (Play Billing / Pro subscriptions), `analytics/AnalyticsManager` (routes to `FirebaseAnalytic` implementations of the `Analytic` interface), `firebase/FirestorePathManager` + `FirebaseStorageManager`, `integrations/GoogleFitIntegrationManager`, `api/ApiManager` (Retrofit-based REST, e.g. cover images), `RemoteConfigManager` (Firebase Remote Config), `appupdate/AppUpdateController` (Play In-App Updates), `preferences/PreferencesManager` + `SettingsManager`. `AppConfig` (`config/AppConfig.kt`) is the single object wiring together tunable constants (rest timers, plan limits, rating-prompt thresholds) and app boot sequencing (`configureApp()` called from `ELApplication.onCreate()`).
