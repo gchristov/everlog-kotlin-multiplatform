@@ -27,12 +27,16 @@ IMAGE_BUCKETS = {'dev': 'everlog-9bddf.appspot.com', 'prod': 'everlog-prod.appsp
 BATCH = 400
 
 
-def firestore_client(repo, env):
+def firebase_app(repo, env):
     import firebase_admin
-    from firebase_admin import credentials, firestore
+    from firebase_admin import credentials
     cred = credentials.Certificate(os.path.join(repo, 'tools', 'firebase', f'admin-credentials-{env}.json'))
-    firebase_admin.initialize_app(cred)
-    return firestore.client()
+    return firebase_admin.initialize_app(cred, {'storageBucket': IMAGE_BUCKETS[env]})
+
+
+def firestore_client(repo, env, app=None):
+    from firebase_admin import firestore
+    return firestore.client(app or firebase_app(repo, env))
 
 
 def export(db):
@@ -99,6 +103,60 @@ def write(db, registry, local):
         batch.commit()
 
 
+def run(db, env, registry, local, write_changes, repo, out, pending_images=()):
+    """Backs up what's live, checks `registry` (or None) and `local` exercises against it, writes the diff, and
+    writes them when `write_changes`. `pending_images` are URLs about to be uploaded, so a dry run doesn't fail on
+    them. Returns the live library as it was before the push (empty dict when nothing was pushed)."""
+    live_registry, live = export(db)
+    stamp = datetime.now(timezone.utc).strftime('%Y%m%d-%H%M%S')
+    backup = os.path.join(out, 'backups', f'{env}-{stamp}')
+    os.makedirs(backup)
+    with open(os.path.join(backup, 'registry.json'), 'w') as f:
+        json.dump(live_registry, f, indent=2, ensure_ascii=False, default=str)
+    with open(os.path.join(backup, 'exercises.json'), 'w') as f:
+        json.dump(live, f, indent=2, ensure_ascii=False, default=str)
+    if registry is None and not local:
+        print(f'Exported {env} to {os.path.relpath(backup, out)}: registry and {len(live)} exercises. Nothing to push.')
+        return {}
+
+    errors = []
+    effective_registry = registry if registry is not None else live_registry
+    if effective_registry is None:
+        errors.append(f'{env} has no registry yet: push one with --registry')
+    else:
+        merged = {**live, **local}
+        errors, warnings = schema.validate(effective_registry, merged, schema.starter_uuids(repo),
+                                           previous_registry=live_registry if registry is not None else None,
+                                           previous_exercises=live, image_bucket=IMAGE_BUCKETS[env])
+        for w in warnings:
+            print(f'warning: {w}')
+    for uuid, doc in local.items():
+        old_media = (live.get(uuid) or {}).get('media') or {}
+        for url in [(doc.get('media') or {}).get('image'), (doc.get('media') or {}).get('imageEnd')]:
+            known = (old_media.get('image'), old_media.get('imageEnd'), (live.get(uuid) or {}).get('imageUrl'))
+            if url and url not in known and url not in pending_images and not image_exists(url):
+                errors.append(f'{doc.get("name")}: image not found at {url}')
+
+    report = diff(live_registry, registry, live, local)
+    report_path = os.path.join(out, f'push-{env}-{stamp}.md')
+    with open(report_path, 'w') as f:
+        f.write(report)
+    print(report.split('\n## Exercises')[0] if len(report) > 4000 else report)
+    print(f'Backup: {os.path.relpath(backup, out)} · full diff: {os.path.basename(report_path)}')
+
+    for e in errors:
+        print(f'error: {e}')
+    if errors:
+        print('Nothing written.')
+        sys.exit(1)
+    if not write_changes:
+        print(f'Dry run against {env}: checks passed, nothing written. Add --write to push.')
+        return live
+    write(db, registry, local)
+    print(f'Written to {env}: {"registry, " if registry is not None else ""}{len(local)} exercises.')
+    return live
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     parser.add_argument('--env', required=True, choices=['dev', 'prod'])
@@ -118,54 +176,7 @@ def main():
 
     registry = load(args.registry) if args.registry else None
     local = load(args.exercises) if args.exercises else {}
-
-    db = firestore_client(args.repo, args.env)
-    live_registry, live = export(db)
-    stamp = datetime.now(timezone.utc).strftime('%Y%m%d-%H%M%S')
-    backup = os.path.join(args.out, 'backups', f'{args.env}-{stamp}')
-    os.makedirs(backup)
-    with open(os.path.join(backup, 'registry.json'), 'w') as f:
-        json.dump(live_registry, f, indent=2, ensure_ascii=False, default=str)
-    with open(os.path.join(backup, 'exercises.json'), 'w') as f:
-        json.dump(live, f, indent=2, ensure_ascii=False, default=str)
-    if registry is None and not local:
-        print(f'Exported {args.env} to {os.path.relpath(backup, args.out)}: registry and {len(live)} exercises. Nothing to push.')
-        return
-
-    errors = []
-    effective_registry = registry if registry is not None else live_registry
-    if effective_registry is None:
-        errors.append(f'{args.env} has no registry yet: push one with --registry')
-    else:
-        merged = {**live, **local}
-        errors, warnings = schema.validate(effective_registry, merged, schema.starter_uuids(args.repo),
-                                           previous_registry=live_registry if registry is not None else None,
-                                           previous_exercises=live, image_bucket=IMAGE_BUCKETS[args.env])
-        for w in warnings:
-            print(f'warning: {w}')
-    for uuid, doc in local.items():
-        old_media = (live.get(uuid) or {}).get('media') or {}
-        for url in [(doc.get('media') or {}).get('image'), (doc.get('media') or {}).get('imageEnd')]:
-            if url and url not in (old_media.get('image'), old_media.get('imageEnd'), (live.get(uuid) or {}).get('imageUrl')) and not image_exists(url):
-                errors.append(f'{doc.get("name")}: image not found at {url}')
-
-    report = diff(live_registry, registry, live, local)
-    report_path = os.path.join(args.out, f'push-{args.env}-{stamp}.md')
-    with open(report_path, 'w') as f:
-        f.write(report)
-    print(report.split('\n## Exercises')[0] if len(report) > 4000 else report)
-    print(f'Backup: {os.path.relpath(backup, args.out)} · full diff: {os.path.basename(report_path)}')
-
-    for e in errors:
-        print(f'error: {e}')
-    if errors:
-        print('Nothing written.')
-        sys.exit(1)
-    if not args.write:
-        print(f'Dry run against {args.env}: checks passed, nothing written. Add --write to push.')
-        return
-    write(db, registry, local)
-    print(f'Written to {args.env}: {"registry, " if registry is not None else ""}{len(local)} exercises.')
+    run(firestore_client(args.repo, args.env), args.env, registry, local, args.write, args.repo, args.out)
 
 
 if __name__ == '__main__':

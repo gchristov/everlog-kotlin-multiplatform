@@ -66,7 +66,7 @@ Fastlane lanes (`fastlane/Fastfile`): `deploy_firebase`, `deploy_play_internal`,
 ### Exercise library
 
 The global exercise library is data in Firestore, not code: exercises in `global/exercises/all` and a registry of the ids they use (muscles, equipment, set-ups, grips, families, each with a display name) in `global/exercises/registry/current`. Firestore is the source of truth for both, in dev and prod separately.
-- **Change them only with `tools/exercises/push.py`** (export, edit, dry run, then `--write`; dev first), never in the Firebase console. `tools/exercises/README.md` has the routine, the fields and the rules; `schema.py` checks them on every push.
+- **Change them only with the tools in `tools/exercises/`**: `import.py` adds exercises from the licensed Exercise Animatic pack (propose, review, apply), `push.py` makes any other change (export, edit, dry run, then `--write`); dev first, never in the Firebase console. `tools/exercises/README.md` is the reference for the model, the rules and the routine; `schema.py` checks them on every push.
 - **uuids never change**: routines, workouts and the onboarding's starter routines (`StarterExercises.kt`, uuids only) point at them, and the app shows the library's current name and image for each (`ELRoutineDecorator`). A rename shows everywhere, past workouts included.
 - **Never delete or overwrite exercise images in Storage**: app versions before 2.10.0 show the copies stored in routines and workouts, which point at the images they had when saved. Each environment's exercises use that environment's own bucket.
 - `ELExercise` doesn't read the newer fields (family, muscles, equipment and so on) yet; the app ignores them until a screen needs them.
