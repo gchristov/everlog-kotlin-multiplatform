@@ -25,7 +25,7 @@ from datetime import datetime, timezone
 from urllib.parse import quote
 
 import push
-from pack import PACK_ID, Pack, exercise_uuid, muscles, normalise
+from pack import DELTS, PACK_ID, Pack, exercise_uuid, muscles, normalise
 
 # Words in pack names -> registry ids. Longer phrases are matched first.
 EQUIPMENT = {
@@ -48,10 +48,6 @@ POSITIONS = {'incline': 'incline', 'decline': 'decline', 'flat bench': 'flat', '
              'low to high': 'low_to_high', 'high to low': 'high_to_low'}
 # Dropped from names: camera angles, takes, defaults
 NOISE = r'\((version \d+)\)|\bversion \d+\b|\b(side|front|back|behind) (pov|view)\b|\bpov\b|\b360 degrees?\b|\bwith rack\b|\bnormal (grip|stance)\b|\bboth arms\b|\bsimultaneous( arms)?\b|\bslow\b|\s\d+$'
-# Which delt a plain "Shoulders (Deltoids)" means in a family
-DELTS = defaultdict(lambda: 'front_delts', {'lateral_raise': 'side_delts', 'upright_row': 'side_delts', 'rear_delt_fly': 'rear_delts',
-                                            'face_pull': 'rear_delts', 'row': 'rear_delts', 'pull_up': 'rear_delts',
-                                            'lat_pulldown': 'rear_delts', 'shrug': 'side_delts'})
 SMALL_WORDS = {'to', 'with', 'and', 'on', 'of', 'the', 'a', 'in'}
 
 
@@ -359,12 +355,13 @@ def apply(args):
     print(f'{len(exercises)} exercises, {len(pending)} images to upload to {push.IMAGE_BUCKETS[args.env]}' +
           (f', registry version {registry["registryVersion"]}' if registry else ''))
     # Check everything before uploading anything
-    push.run(db, args.env, registry, exercises, False, args.repo, args.out, pending_images=set(pending))
+    pack = Pack(args.pack)
+    push.run(db, args.env, registry, exercises, False, args.repo, args.out, pending_images=set(pending), pack=pack)
     if not args.write:
         return
     for url, image in pending.items():
         upload(bucket, os.path.join(args.pack, image['source']), image['file'], args.repo)
-    push.run(db, args.env, registry, exercises, True, args.repo, args.out)
+    push.run(db, args.env, registry, exercises, True, args.repo, args.out, pack=pack)
 
 
 def upload(bucket, source, file_name, repo):

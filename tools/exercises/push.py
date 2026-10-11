@@ -10,6 +10,9 @@ needs --confirm-prod. Never edit these documents in the Firebase console: that s
 
 Local files are read from tools/exercises/out/. `--exercises` holds full documents keyed by uuid (only the ones
 that change or are new); `--registry` holds the whole registry document with registryVersion bumped.
+
+When the Exercise Animatic pack is mounted (run.sh does it when it's there), new and changed exercises that came from
+it are also compared with their pack row, and the differences are listed for review (they don't stop the push).
 """
 import argparse
 import json
@@ -18,6 +21,7 @@ import sys
 import urllib.request
 from datetime import datetime, timezone
 
+import pack as pack_module
 import schema
 
 REGISTRY_DOC = 'global/exercises/registry/current'
@@ -103,10 +107,27 @@ def write(db, registry, local):
         batch.commit()
 
 
-def run(db, env, registry, local, write_changes, repo, out, pending_images=()):
+def pack_differences(live, local, pack):
+    """Markdown listing how the new and changed exercises differ from their pack rows; empty when none do."""
+    lines = []
+    for uuid in sorted(local, key=lambda u: local[u]['name']):
+        if pack is None or local[uuid] == live.get(uuid):
+            continue
+        found = pack_module.differences(local[uuid], pack)
+        if found:
+            lines.append(f'- **{local[uuid]["name"]}**')
+            lines += [f'  - {difference}' for difference in found]
+    if not lines:
+        return ''
+    return '\n'.join(['## Differences from the pack', '',
+                      'Not errors: check each one is deliberate (a corrected muscle, a better image), or fix it.', ''] + lines) + '\n'
+
+
+def run(db, env, registry, local, write_changes, repo, out, pending_images=(), pack=None):
     """Backs up what's live, checks `registry` (or None) and `local` exercises against it, writes the diff, and
     writes them when `write_changes`. `pending_images` are URLs about to be uploaded, so a dry run doesn't fail on
-    them. Returns the live library as it was before the push (empty dict when nothing was pushed)."""
+    them. With `pack`, the diff also lists how new and changed exercises differ from their pack rows. Returns the
+    live library as it was before the push (empty dict when nothing was pushed)."""
     live_registry, live = export(db)
     stamp = datetime.now(timezone.utc).strftime('%Y%m%d-%H%M%S')
     backup = os.path.join(out, 'backups', f'{env}-{stamp}')
@@ -138,10 +159,13 @@ def run(db, env, registry, local, write_changes, repo, out, pending_images=()):
                 errors.append(f'{doc.get("name")}: image not found at {url}')
 
     report = diff(live_registry, registry, live, local)
+    from_pack = pack_differences(live, local, pack)
     report_path = os.path.join(out, f'push-{env}-{stamp}.md')
     with open(report_path, 'w') as f:
-        f.write(report)
+        f.write(report + ('\n' + from_pack if from_pack else ''))
     print(report.split('\n## Exercises')[0] if len(report) > 4000 else report)
+    if from_pack:
+        print(from_pack)
     print(f'Backup: {os.path.relpath(backup, out)} · full diff: {os.path.basename(report_path)}')
 
     for e in errors:
@@ -164,6 +188,7 @@ def main():
     parser.add_argument('--exercises', help='Exercise documents to push, keyed by uuid (file in tools/exercises/out)')
     parser.add_argument('--write', action='store_true', help='Write to Firestore; without it this is a dry run')
     parser.add_argument('--confirm-prod', action='store_true', help='Required with --env prod --write')
+    parser.add_argument('--pack', default='/pack')
     parser.add_argument('--repo', default='/repo')
     parser.add_argument('--out', default='/out')
     args = parser.parse_args()
@@ -176,7 +201,11 @@ def main():
 
     registry = load(args.registry) if args.registry else None
     local = load(args.exercises) if args.exercises else {}
-    run(firestore_client(args.repo, args.env), args.env, registry, local, args.write, args.repo, args.out)
+    from_pack = any(doc.get('source') for doc in local.values())
+    pack = pack_module.Pack(args.pack) if from_pack and os.path.isdir(args.pack) else None
+    if from_pack and pack is None:
+        print(f'warning: no pack at {args.pack}, so exercises aren\'t compared with it')
+    run(firestore_client(args.repo, args.env), args.env, registry, local, args.write, args.repo, args.out, pack=pack)
 
 
 if __name__ == '__main__':

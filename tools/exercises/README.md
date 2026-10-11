@@ -94,6 +94,12 @@ Until the registry is loaded, show what the exercise itself has. Older app versi
 
 `schema.py` checks all of this on every push.
 
+Exercises from the pack are also compared with their pack row on every push that adds or changes them, when the pack
+is mounted: primary and secondary muscles, instructions, tips, and whether the image comes from another row. The
+differences are listed in the push's output and diff, not refused, because a review often corrects the pack (its muscle
+lists can be off, and some movements only have an image under another row). Look at each one: keep it if it's
+deliberate, fix it if not. The pack's equipment column isn't compared; it's too unreliable.
+
 ## The tools
 
 They run in Docker from the repo root with `./tools/exercises/run.sh <script> [args]`, use the admin credentials in
@@ -106,7 +112,7 @@ They run in Docker from the repo root with `./tools/exercises/run.sh <script> [a
 | `import.py` | Adds exercises from the pack: proposes, you review, it applies |
 | `push.py` | The only way changes reach Firestore |
 | `schema.py` | The checks every push runs |
-| `pack.py` | Reads the pack's spreadsheet and illustrations; gives an imported exercise a stable uuid |
+| `pack.py` | Reads the pack's spreadsheet and illustrations, gives an imported exercise a stable uuid, and compares an exercise with its row |
 
 ### Adding exercises from the pack
 
@@ -125,7 +131,8 @@ the names, families and muscles, and edit `out/import-<time>.json` where needed.
 ```
 
 `apply` adds the registry entries (bumping `registryVersion`), makes and uploads the images the environment's bucket
-doesn't have yet (never overwriting), and pushes through `push.py`. Check the app on dev, then apply the same file
+doesn't have yet (never overwriting), and pushes through `push.py`. Its dry run also lists where your edits differ from
+the pack; check they're the ones you meant. Check the app on dev, then apply the same file
 with `--env prod --write --confirm-prod`.
 
 ### Any other change
@@ -136,6 +143,6 @@ with `--env prod --write --confirm-prod`.
    ones that change or are new).
 3. **Bump** `registryVersion` when the registry changes.
 4. **Dry run**: `./tools/exercises/run.sh push --env dev --registry registry.json --exercises exercises.json`. It
-   backs up what's live, runs the checks, checks new images exist on the environment's bucket, and writes the diff
-   to `out/push-<env>-<time>.md`.
+   backs up what's live, runs the checks, checks new images exist on the environment's bucket, compares exercises
+   from the pack with their rows, and writes the diff to `out/push-<env>-<time>.md`.
 5. **Push** with `--write`: dev first, check the app, then `--env prod --write --confirm-prod`.

@@ -7,6 +7,7 @@ import os
 import re
 import uuid
 from collections import defaultdict
+from urllib.parse import unquote
 
 SPREADSHEET = '1500+ exercise data.xlsx'
 ILLUSTRATIONS = 'ILLUSTRATIONS'
@@ -94,6 +95,10 @@ LATIN = [
     (r'hamstring|biceps femoris|semitendinosus|semimembranosus', 'hamstrings'),
     (r'gastrocnemius|soleus|calf|calves', 'calves'),
 ]
+# Which delt a plain "Shoulders (Deltoids)" means in a family
+DELTS = defaultdict(lambda: 'front_delts', {'lateral_raise': 'side_delts', 'upright_row': 'side_delts', 'rear_delt_fly': 'rear_delts',
+                                            'face_pull': 'rear_delts', 'row': 'rear_delts', 'pull_up': 'rear_delts',
+                                            'lat_pulldown': 'rear_delts', 'shrug': 'side_delts'})
 # Group words without Latin names
 GROUP_WORDS = {'back': 'lats', 'upper back': 'traps', 'back muscles': 'lats', 'arms': 'biceps', 'legs': 'quads', 'thighs': 'quads'}
 
@@ -119,4 +124,31 @@ def muscles(text, delts='front_delts'):
                 found.append(muscle)
     if 'upper_chest' in found and 'chest' in found:
         found.remove('chest')  # incline work: upper chest says it all
+    return found
+
+
+def differences(exercise, pack):
+    """How a library exercise differs from its pack row: muscles, steps, tips, and an image from another row.
+    Not errors (a review often corrects the pack), so pushes list them for a look rather than refusing them. The
+    pack's equipment column is left out: it's too unreliable to compare."""
+    source = (exercise.get('source') or {}).get('id')
+    if not source:
+        return []
+    row = pack.row(source)
+    if not row:
+        return [f'its source "{source}" isn\'t a pack row with data']
+    delts = DELTS[exercise.get('family')]
+    primary = muscles(row['primary'], delts)
+    secondary = [m for m in muscles(row['secondary'], delts) if m not in primary]
+    found = []
+    for field, expected in [('primaryMuscles', primary), ('secondaryMuscles', secondary)]:
+        if set(exercise.get(field) or []) != set(expected):
+            found.append(f'{field} {exercise.get(field) or []}, pack {expected}')
+    for field, expected in [('instructions', row['instructions']), ('tips', row['tips'])]:
+        if (exercise.get(field) or []) != expected:
+            found.append(f'{field} differ from the pack')
+    image = ((exercise.get('media') or {}).get('image') or exercise.get('imageUrl') or '').rsplit('/', 1)[-1]
+    image_row = re.sub(r'\s*\d$', '', normalise(unquote(image)))
+    if image and image_row != normalise(source):
+        found.append(f'image from the pack\'s "{image_row}", not its source row')
     return found
