@@ -19,13 +19,14 @@ def starter_uuids(repo):
         return re.findall(r'Exercise\("([0-9a-f-]{36})"', f.read())
 
 
-def validate(registry, exercises, starter_uuids=(), previous_registry=None, previous_exercises=None):
-    """`exercises` maps uuid -> document. Returns (errors, warnings), each a list of strings."""
+def validate(registry, exercises, starter_uuids=(), previous_registry=None, previous_exercises=None, image_bucket=None):
+    """`exercises` maps uuid -> document. `image_bucket` is the environment's own Storage bucket, which every
+    image must be on. Returns (errors, warnings), each a list of strings."""
     errors, warnings = [], []
     _registry(registry, previous_registry, errors)
     _exercises(registry, exercises, previous_exercises or {}, errors)
     _families(exercises, errors)
-    _images(exercises, errors)
+    _images(exercises, errors, image_bucket)
     for uuid in starter_uuids:
         exercise = exercises.get(uuid)
         if not exercise:
@@ -135,12 +136,17 @@ def _families(exercises, errors):
             seen[signature] = e['name']
 
 
-def _images(exercises, errors):
+def _images(exercises, errors, image_bucket):
     owners = defaultdict(list)
+    prefix = f'https://storage.googleapis.com/{image_bucket}/' if image_bucket else None
     for e in exercises.values():
+        media = e.get('media') or {}
+        # Each environment uses its own bucket: dev's documents point at dev's images, prod's at prod's
+        for url in (e.get('imageUrl'), media.get('image'), media.get('imageEnd')):
+            if prefix and url and not url.startswith(prefix):
+                errors.append(f'{e.get("name")}: image is not on {image_bucket}: {url}')
         if e.get('status') != 'active':
             continue
-        media = e.get('media') or {}
         for url in (media.get('image'), media.get('imageEnd')):
             if url:
                 owners[url].append(e['name'])

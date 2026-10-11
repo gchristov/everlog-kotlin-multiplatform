@@ -21,6 +21,8 @@ import schema
 
 REGISTRY_DOC = 'global/exercises/registry/current'
 LIBRARY = 'global/exercises/all'
+# Each environment's own Storage bucket; its exercises' images must be there
+IMAGE_BUCKETS = {'dev': 'everlog-9bddf.appspot.com', 'prod': 'everlog-prod.appspot.com'}
 BATCH = 400
 
 
@@ -137,7 +139,7 @@ def main():
         merged = {**live, **local}
         errors, warnings = schema.validate(effective_registry, merged, schema.starter_uuids(args.repo),
                                            previous_registry=live_registry if registry is not None else None,
-                                           previous_exercises=live)
+                                           previous_exercises=live, image_bucket=IMAGE_BUCKETS[args.env])
         for w in warnings:
             print(f'warning: {w}')
     for uuid, doc in local.items():
