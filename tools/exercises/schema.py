@@ -84,14 +84,13 @@ def _exercises(registry, exercises, previous, errors):
             errors.append(f'{label}: status must be active or hidden')
         if e.get('category') not in LEGACY_CATEGORIES:
             errors.append(f'{label}: legacy category {e.get("category")} is not one of the 6')
-        if e.get('splitSides'):
-            errors.append(f'{label}: splitSides is legacy and must stay false')
+        old = previous.get(uuid)
+        # splitSides is legacy: existing values stay as they are, new exercises don't set it
+        if not isinstance(e.get('splitSides', False), bool) or (e.get('splitSides') and not (old or {}).get('splitSides')):
+            errors.append(f'{label}: splitSides is legacy; only exercises that already had it may keep it true')
         media = e.get('media') or {}
         if not media.get('image') or e.get('imageUrl') != media.get('image'):
             errors.append(f'{label}: imageUrl must equal media.image')
-        old = previous.get(uuid)
-        if old and old.get('imageUrl') != e.get('imageUrl') and old.get('imageUrl', '').rsplit('/', 1)[-1] == e.get('imageUrl', '').rsplit('/', 1)[-1]:
-            errors.append(f'{label}: a changed image needs a new file name (apps cache by URL)')
         if e.get('family') is not None and not known('families', e['family']):
             errors.append(f'{label}: unknown family {e["family"]}')
         equipment = e.get('equipment')

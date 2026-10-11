@@ -43,9 +43,13 @@ Never edit these documents in the Firebase console: it skips the checks and the 
 ## Rules
 
 - **uuids and registry ids never change or get reused.** Retire things with `status: hidden`; never delete.
-- **Never delete exercise images from Storage.** Apps before 2.10.0 (still in use in October 2026) show the copies
-  of exercises stored in routines and workouts, which point at the image they had when saved. A changed image is
-  always a new file (apps cache images by URL).
-- **Images** for both dev and prod live in the dev project's bucket (`everlog-9bddf`, `exercises/illustrations/`).
-  Make them with `tools/image_resize` from the pack's illustrations and upload them with `tools/firebase/storage`
-  before pushing the documents that use them.
+- **Never delete or overwrite exercise images in Storage.** Apps before 2.10.0 (still in use in October 2026) show the
+  copies of exercises stored in routines and workouts, which point at the image they had when saved, and apps cache
+  images by URL. A changed image is always a new file; check the name isn't taken before uploading (the upload
+  script overwrites).
+- **Images** live in each project's own bucket under `exercises/illustrations/`: `everlog-prod.appspot.com` for prod,
+  `everlog-9bddf.appspot.com` for dev. Make them with `tools/image_resize` from the pack's illustrations (square,
+  1024 px, WebP) and upload them to both buckets with `tools/firebase/storage` before pushing the documents that
+  use them.
+- **Legacy fields** (`category`, `imageUrl`, `splitSides`) keep their existing values; `imageUrl` always equals
+  `media.image`, and new exercises leave `splitSides` false.
