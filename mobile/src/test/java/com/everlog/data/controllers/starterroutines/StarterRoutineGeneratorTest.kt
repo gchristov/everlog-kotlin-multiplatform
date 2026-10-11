@@ -145,7 +145,7 @@ class StarterRoutineGeneratorTest {
         val week = generate(days = 2, place = Place.GYM, experience = Experience.YEARS)
 
         assertThat(exerciseIdsByRoutine(week)).containsExactly(
-            "Full body A", listOf(parallelSquat, benchPress, bentOverRow, romanianDeadlift, lateralRaise, elbowPlank),
+            "Full body A", listOf(barbellSquat, benchPress, bentOverRow, romanianDeadlift, lateralRaise, elbowPlank),
             "Full body B", listOf(barbellDeadlift, militaryPress, latPulldown, bulgarianSplitSquat, dumbbellInclinePress, cablePushdown),
         ).inOrder()
     }
@@ -155,7 +155,7 @@ class StarterRoutineGeneratorTest {
         val week = generate(days = 3, place = Place.GYM, experience = Experience.JUST_STARTING)
 
         assertThat(exerciseIdsByRoutine(week)).containsExactly(
-            "Full body A", listOf(parallelSquat, benchPress, bentOverRow, romanianDeadlift),
+            "Full body A", listOf(barbellSquat, benchPress, bentOverRow, romanianDeadlift),
             "Full body B", listOf(barbellDeadlift, militaryPress, latPulldown, bulgarianSplitSquat),
             "Full body C", listOf(trapBarDeadlift, inclineBenchPress, oneArmRow, forwardLunge),
         ).inOrder()
@@ -167,7 +167,7 @@ class StarterRoutineGeneratorTest {
 
         assertThat(exerciseIdsByRoutine(week)).containsExactly(
             "Upper", listOf(benchPress, bentOverRow, militaryPress, latPulldown, lateralRaise, cablePushdown),
-            "Lower", listOf(parallelSquat, romanianDeadlift, bulgarianSplitSquat, hipThrust, seatedCalfRaise, hangingKneeRaise),
+            "Lower", listOf(barbellSquat, romanianDeadlift, bulgarianSplitSquat, hipThrust, seatedCalfRaise, hangingKneeRaise),
         ).inOrder()
     }
 
@@ -178,7 +178,7 @@ class StarterRoutineGeneratorTest {
         assertThat(exerciseIdsByRoutine(week)).containsExactly(
             "Push", listOf(benchPress, militaryPress, dumbbellInclinePress, lateralRaise, cablePushdown, skullCrusher),
             "Pull", listOf(barbellDeadlift, pullUp, bentOverRow, latPulldown, cableFacePull, ezBarCurl),
-            "Legs", listOf(parallelSquat, straightLegDeadlift, forwardLunge, hipThrust, singleLegCalfRaise, hangingKneeRaise),
+            "Legs", listOf(barbellSquat, straightLegDeadlift, forwardLunge, hipThrust, singleLegCalfRaise, hangingKneeRaise),
         ).inOrder()
     }
 
@@ -188,7 +188,7 @@ class StarterRoutineGeneratorTest {
 
         assertThat(exerciseIdsByRoutine(week)).containsExactly(
             "Full body A", listOf(gobletSquat, dumbbellFloorPress, oneArmRow, rearAlternatingLunge, shoulderPress, elbowPlank),
-            "Full body B", listOf(sumoSquat, pushUp, chestPullOver, hipThrust, lateralRaise, russianTwist),
+            "Full body B", listOf(sumoSquat, pushUp, chestPullOver, dumbbellHipThrust, lateralRaise, russianTwist),
         ).inOrder()
     }
 
@@ -198,7 +198,7 @@ class StarterRoutineGeneratorTest {
 
         assertThat(exerciseIdsByRoutine(week)).containsExactly(
             "Full body A", listOf(gobletSquat, dumbbellFloorPress, oneArmRow, rearAlternatingLunge),
-            "Full body B", listOf(sumoSquat, pushUp, chestPullOver, hipThrust),
+            "Full body B", listOf(sumoSquat, pushUp, chestPullOver, dumbbellHipThrust),
             "Full body C", listOf(bulgarianSplitSquat, arnoldPress, reverseFly, sideSquat),
         ).inOrder()
     }
@@ -209,7 +209,7 @@ class StarterRoutineGeneratorTest {
 
         assertThat(exerciseIdsByRoutine(week)).containsExactly(
             "Upper", listOf(dumbbellFloorPress, oneArmRow, shoulderPress, reverseFly, standingCurl, seatedOverheadExtension),
-            "Lower", listOf(gobletSquat, rearAlternatingLunge, bulgarianSplitSquat, hipThrust, singleLegCalfRaise, elbowPlank),
+            "Lower", listOf(gobletSquat, rearAlternatingLunge, bulgarianSplitSquat, dumbbellHipThrust, singleLegCalfRaise, elbowPlank),
         ).inOrder()
     }
 
@@ -220,7 +220,7 @@ class StarterRoutineGeneratorTest {
         assertThat(exerciseIdsByRoutine(week)).containsExactly(
             "Push", listOf(dumbbellFloorPress, shoulderPress, pushUp, lateralRaise, seatedOverheadExtension, tricepKickback),
             "Pull", listOf(oneArmRow, chestPullOver, reverseFly, shrug, dumbbellHammerCurl, standingCurl),
-            "Legs", listOf(gobletSquat, bulgarianSplitSquat, sumoSquat, hipThrust, singleLegCalfRaise, russianTwist),
+            "Legs", listOf(gobletSquat, bulgarianSplitSquat, sumoSquat, dumbbellHipThrust, singleLegCalfRaise, russianTwist),
         ).inOrder()
     }
 
@@ -229,7 +229,7 @@ class StarterRoutineGeneratorTest {
         val week = generate(days = 2, place = Place.BODYWEIGHT, experience = Experience.YEARS)
 
         assertThat(exerciseIdsByRoutine(week)).containsExactly(
-            "Full body A", listOf(squat, pushUp, rearLunge, supermanHold, calfRaise, elbowPlank),
+            "Full body A", listOf(bodyweightSquat, pushUp, rearLunge, supermanHold, bodyweightCalfRaise, elbowPlank),
             "Full body B", listOf(forwardLunge, declinePushUp, donkeyKick, benchDip, cobra, bicycleCrunch),
         ).inOrder()
     }
@@ -239,9 +239,9 @@ class StarterRoutineGeneratorTest {
         val week = generate(days = 3, place = Place.BODYWEIGHT, experience = Experience.JUST_STARTING)
 
         assertThat(exerciseIdsByRoutine(week)).containsExactly(
-            "Full body A", listOf(squat, pushUp, rearLunge, supermanHold),
+            "Full body A", listOf(bodyweightSquat, pushUp, rearLunge, supermanHold),
             "Full body B", listOf(forwardLunge, declinePushUp, donkeyKick, benchDip),
-            "Full body C", listOf(squat, closeGripPushUp, rearLunge, supermanHold),
+            "Full body C", listOf(bodyweightSquat, closeGripPushUp, rearLunge, supermanHold),
         ).inOrder()
     }
 
@@ -251,7 +251,7 @@ class StarterRoutineGeneratorTest {
 
         assertThat(exerciseIdsByRoutine(week)).containsExactly(
             "Upper", listOf(pushUp, supermanHold, declinePushUp, benchDip, cobra, elbowPlank),
-            "Lower", listOf(squat, rearLunge, forwardLunge, donkeyKick, calfRaise, sidePlank),
+            "Lower", listOf(bodyweightSquat, rearLunge, forwardLunge, donkeyKick, bodyweightCalfRaise, sidePlank),
         ).inOrder()
     }
 
@@ -262,7 +262,7 @@ class StarterRoutineGeneratorTest {
         assertThat(exerciseIdsByRoutine(week)).containsExactly(
             "Push", listOf(pushUp, declinePushUp, closeGripPushUp, tigerPushUp, benchDip, elbowPlank),
             "Pull", listOf(supermanHold, cobra, plankReachThrough, sidePlank, vCrunch, bicycleCrunch),
-            "Legs", listOf(squat, rearLunge, forwardLunge, donkeyKick, calfRaise, pistolSquat),
+            "Legs", listOf(bodyweightSquat, rearLunge, forwardLunge, donkeyKick, bodyweightCalfRaise, pistolSquat),
         ).inOrder()
     }
 
@@ -356,19 +356,19 @@ class StarterRoutineGeneratorTest {
         val pull = week.toRoutines(exerciseLibrary(week), createdDate = 0L).getOrNull()!!.single { it.name == "Pull" }
 
         val superman = pull.exerciseGroups.first().exercises.single()
-        assertThat(superman.getName()).isEqualTo("Superman Hold")
+        assertThat(superman.exercise?.uuid).isEqualTo(supermanHold)
         assertThat(superman.sets.map { it.getRequiredTimeSeconds() to it.getRequiredReps() }.distinct()).containsExactly(30 to 0)
     }
 
     @Test
     fun `no routines are built when exercises are missing from the library`() {
         val week = generate(days = 4)
-        val library = exerciseLibrary(week).filterNot { it.uuid == benchPress || it.uuid == parallelSquat }
+        val library = exerciseLibrary(week).filterNot { it.uuid == benchPress || it.uuid == barbellSquat }
 
         val error = week.toRoutines(library, createdDate = 0L).leftOrNull()
 
         assertThat(error).hasMessageThat().isEqualTo(
-            "Not in the exercise library: Upper Bench Press ($benchPress), Lower Parallel Squat ($parallelSquat)"
+            "Not in the exercise library: Upper $benchPress, Lower $barbellSquat"
         )
     }
 
@@ -396,15 +396,17 @@ class StarterRoutineGeneratorTest {
     private companion object {
         // Exercises in global/exercises/all, the same in dev and prod
         const val arnoldPress = "ed1bfc44-bd75-4d12-8e41-2740b010c54c" // Arnold Press
+        const val barbellSquat = "8d2d3fcb-7084-4932-ad62-25c2be2823f9" // Barbell Squat
         const val barbellDeadlift = "fccec58d-97db-4d3c-9584-41a71ddbe72c" // Barbell Deadlift
         const val benchDip = "f97f7709-729b-4863-b531-1aac552e6a7d" // Bench Dip
         const val benchPress = "a30b9d26-9079-41ed-a3d4-9f1c309f200e" // Bench Press
         const val bentOverRow = "16112844-fe70-48d3-9738-9dd2b9245fa9" // Bent Over Row
         const val bicycleCrunch = "2b1d7c68-15f5-44a3-9f25-0b69b7cb97d6" // Bicycle Crunch
+        const val bodyweightCalfRaise = "8c81478e-e98b-5f0e-8ae3-ccd77dd44bcd" // Bodyweight Calf Raise
+        const val bodyweightSquat = "4d92c102-e94a-5f71-bfde-b49938a71e80" // Bodyweight Squat
         const val bulgarianSplitSquat = "c1cd66bd-db95-46b4-93cb-70944bcbee97" // Bulgarian Split Squat
         const val cableFacePull = "2851b948-ebd6-4ca2-8bd8-84f5a0b8b637" // Cable Face Pull
         const val cablePushdown = "c8ba67c1-298b-42aa-a481-66ae072ee857" // Cable Pushdown
-        const val calfRaise = "613da756-3874-4669-98ca-a6204ec34ecf" // Calf Raise
         const val chestPullOver = "dd0931e6-2370-4b1b-a53d-36e28814f573" // Chest Pull Over
         const val closeGripPushUp = "a6c1a5e6-efae-4065-b8ab-78cb2e60263b" // Close Grip Push Up
         const val cobra = "7a9a92a9-2d7d-418f-addd-722af5dd7e79" // Cobra
@@ -413,18 +415,18 @@ class StarterRoutineGeneratorTest {
         const val dumbbellFloorPress = "afdba2b4-941b-4bf4-99db-06da1370744d" // Dumbbell Floor Press
         const val dumbbellHammerCurl = "02ad17ce-0398-4038-bd2a-2f4b19446083" // Dumbbell Hammer Curl
         const val dumbbellInclinePress = "b26385f3-9254-439e-b69f-f4eec8157843" // Dumbbell Incline Press
+        const val dumbbellHipThrust = "a21cfe26-5ac9-57a0-8d63-f9cf8df2a69f" // Dumbbell Hip Thrust
         const val elbowPlank = "f4a0dafb-3fbd-44a4-9917-ff92e4667cef" // Elbow Plank
         const val ezBarCurl = "44a03415-12b1-4ec3-a567-4bdbdc99256c" // EZ Bar Curl
         const val forwardLunge = "068a5a00-15dc-450e-a0d2-2b6e1c65c983" // Forward Lunge
         const val gobletSquat = "7479a68d-667e-42b4-8c02-6f5c7743de1c" // Goblet Squat
         const val hangingKneeRaise = "1e7736da-08b9-4624-bb70-081c9e813dbc" // Hanging Knee Raise
-        const val hipThrust = "3689ed44-836a-404c-831a-7ec1f1ac2374" // Hip Thrust
+        const val hipThrust = "3689ed44-836a-404c-831a-7ec1f1ac2374" // Barbell Hip Thrust
         const val inclineBenchPress = "773c52e9-d802-4e67-8945-afc363d53a4e" // Incline Bench Press
         const val latPulldown = "da299546-de47-46b8-8829-261e85bf66ef" // Lat Pulldown
         const val lateralRaise = "a273b91b-fad3-4609-975c-d5f2077ebc0e" // Lateral Raise
         const val militaryPress = "a428a2aa-53d9-495b-8ac3-7bb2e9d9425f" // Military Press
         const val oneArmRow = "2c132c78-1c40-412d-b3c3-c8a59fdfc4ee" // One Arm Row
-        const val parallelSquat = "1216946b-6b6e-4053-9f7b-c4c482898022" // Parallel Squat
         const val pistolSquat = "08d62221-8ba6-452d-a534-f4187dcf63f1" // Pistol Squat
         const val plankReachThrough = "4a74516d-21d4-4614-8d30-a4201fbd65b5" // Plank Reach Through
         const val pullUp = "dda9a745-6ab4-4db7-948d-ce32fe0f4213" // Pull Up
@@ -442,7 +444,6 @@ class StarterRoutineGeneratorTest {
         const val sideSquat = "e5bb0eb8-6758-4b88-b0eb-cd79e56a5677" // Side Squat
         const val singleLegCalfRaise = "9e03139a-ee4d-4902-8dcf-d30c73f44a66" // Single Leg Calf Raise
         const val skullCrusher = "fa7ad1c9-7474-4aaf-9f88-185d3f5e4918" // Skull Crusher
-        const val squat = "8d2d3fcb-7084-4932-ad62-25c2be2823f9" // Squat
         const val standingCurl = "e922c80e-1a09-444e-b49c-20255eb0cfb1" // Standing Curl
         const val straightLegDeadlift = "4c8d109b-c959-4214-a0de-cdadd9caeb75" // Straight Leg Deadlift
         const val sumoSquat = "6556e3cf-1dc5-4c5a-bd97-d8e52747a590" // Sumo Squat

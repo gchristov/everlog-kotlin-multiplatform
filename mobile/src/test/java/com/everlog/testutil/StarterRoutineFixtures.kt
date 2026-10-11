@@ -12,7 +12,7 @@ import com.everlog.data.repositories.RoutineRepository
  */
 fun exerciseLibrary(week: StarterWeek): List<ELExercise> = week.routines.flatMap { it.exercises }
     .distinctBy { it.exerciseId }
-    .map { ELExercise(uuid = it.exerciseId, name = it.name) }
+    .map { ELExercise(uuid = it.exerciseId) }
 
 class FakeExerciseRepository(
     var globalExercises: Either<Throwable, List<ELExercise>> = Either.Right(emptyList()),
