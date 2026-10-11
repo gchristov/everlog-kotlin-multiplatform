@@ -29,13 +29,17 @@ licensed Exercise Animatic pack find it at `EXERCISE_PACK_DIR` (default `~/Docum
 
 ## Changing the registry or the library
 
-1. **Export** what's live: `./tools/firebase/firestore/export_collection.sh global/exercises/all <file>.json admin-credentials-dev.json`
-   (the registry is the `current` document in `global/exercises/registry`).
+The tools use the admin credentials in `tools/firebase/admin-credentials-<env>.json` (gitignored).
+
+1. **Export** what's live: `./tools/exercises/run.sh push --env dev` saves the registry and every exercise to
+   `out/backups/<env>-<time>/`.
 2. **Edit** a copy in `tools/exercises/out/`: the whole registry document, and/or full exercise documents keyed by
-   uuid (only the ones that change or are new).
+   uuid (only the ones that change or are new). A new exercise from the pack gets its uuid from
+   `pack.exercise_uuid(<pack row name>)`.
 3. **Bump** `registryVersion` when the registry changes (and `schemaVersion` only if what a field means changes).
 4. **Dry run**: `./tools/exercises/run.sh push --env dev --registry registry.json --exercises exercises.json`.
-   It backs up what's live to `out/backups/`, runs the schema check, checks new images exist, and writes the diff.
+   It backs up what's live again, runs the schema check, checks new images exist and are on the environment's own
+   bucket, and writes the diff to `out/push-<env>-<time>.md`.
 5. **Push** with `--write`: dev first, check the app, then `--env prod --write --confirm-prod`.
 
 Never edit these documents in the Firebase console: it skips the checks and the backup.

@@ -6,6 +6,7 @@ runs the schema check, checks every new image exists, and shows the diff. It wri
 needs --confirm-prod. Never edit these documents in the Firebase console: that skips all of this.
 
     ./tools/exercises/run.sh push --env dev --exercises exercises.json --registry registry.json [--write]
+    ./tools/exercises/run.sh push --env dev        # no files: only export what's live to out/backups/
 
 Local files are read from tools/exercises/out/. `--exercises` holds full documents keyed by uuid (only the ones
 that change or are new); `--registry` holds the whole registry document with registryVersion bumped.
@@ -88,7 +89,6 @@ def diff(live_registry, registry, live, local):
 
 
 def write(db, registry, local):
-    from firebase_admin import firestore  # noqa: F401  (initialised in firestore_client)
     if registry is not None:
         db.document(REGISTRY_DOC).set(registry)
     uuids = sorted(local)
@@ -109,8 +109,6 @@ def main():
     parser.add_argument('--repo', default='/repo')
     parser.add_argument('--out', default='/out')
     args = parser.parse_args()
-    if not args.registry and not args.exercises:
-        parser.error('nothing to push: give --registry and/or --exercises')
     if args.write and args.env == 'prod' and not args.confirm_prod:
         parser.error('writing to prod needs --confirm-prod')
 
@@ -130,6 +128,9 @@ def main():
         json.dump(live_registry, f, indent=2, ensure_ascii=False, default=str)
     with open(os.path.join(backup, 'exercises.json'), 'w') as f:
         json.dump(live, f, indent=2, ensure_ascii=False, default=str)
+    if registry is None and not local:
+        print(f'Exported {args.env} to {os.path.relpath(backup, args.out)}: registry and {len(live)} exercises. Nothing to push.')
+        return
 
     errors = []
     effective_registry = registry if registry is not None else live_registry
