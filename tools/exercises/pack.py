@@ -5,10 +5,19 @@ The pack lives outside the repo (EXERCISE_PACK_DIR, mounted at /pack by run.sh).
 """
 import os
 import re
+import uuid
 from collections import defaultdict
 
 SPREADSHEET = '1500+ exercise data.xlsx'
 ILLUSTRATIONS = 'ILLUSTRATIONS'
+PACK_ID = 'exercise_animatic'
+# Fixed forever: an exercise imported from the pack gets the same uuid every time, so an import can't duplicate it
+UUID_NAMESPACE = uuid.UUID('6f2b1c1e-6d1b-4c55-9a52-3e2f0e8d7a10')
+
+
+def exercise_uuid(row_name):
+    """The library uuid for a pack row, e.g. exercise_uuid('Bodyweight squat')."""
+    return str(uuid.uuid5(UUID_NAMESPACE, f'{PACK_ID}:{normalise(row_name)}'))
 
 
 def normalise(name):
