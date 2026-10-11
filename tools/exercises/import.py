@@ -25,7 +25,6 @@ from datetime import datetime, timezone
 from urllib.parse import quote
 
 import push
-import schema
 from pack import PACK_ID, Pack, exercise_uuid, muscles, normalise
 
 # Words in pack names -> registry ids. Longer phrases are matched first.
@@ -322,10 +321,19 @@ def apply(args):
     db = push.firestore_client(args.repo, args.env, app)
     from firebase_admin import storage
     bucket = storage.bucket(app=app)
-    live_registry, _ = push.export(db)
+    live_registry, live = push.export(db)
 
+    # Only the registry entries the exercises still in the file use (some may have been removed during review)
+    used = defaultdict(set)
+    for e in proposal['exercises'].values():
+        used['families'].add(e['family'])
+        used['equipment'].update([e['equipment']] + e['accessories'])
+        used['positions'].update(e['position'])
+        used['grips'].update(e['grip'])
+        used['kinds'].add(e['kind'])
+        used['tracking'].add(e['tracking'])
     registry = None
-    additions = {k: {i: v for i, v in entries.items() if i not in live_registry.get(k, {})}
+    additions = {k: {i: v for i, v in entries.items() if i in used[k] and i not in live_registry.get(k, {})}
                  for k, entries in proposal['registryAdditions'].items()}
     if any(additions.values()):
         registry = json.loads(json.dumps(live_registry))
@@ -344,7 +352,9 @@ def apply(args):
         url = base + quote(image['file'])
         if not bucket.blob(f'exercises/illustrations/{image["file"]}').exists():
             pending[url] = image
-        exercises[uuid] = dict(e, createdDate=int(time.time() * 1000), imageUrl=url, media=dict(image=url, imageEnd=None, video=None))
+        # Applying the same file again changes nothing: an exercise that's already there keeps its date
+        created = (live.get(uuid) or {}).get('createdDate') or int(time.time() * 1000)
+        exercises[uuid] = dict(e, createdDate=created, imageUrl=url, media=dict(image=url, imageEnd=None, video=None))
 
     print(f'{len(exercises)} exercises, {len(pending)} images to upload to {push.IMAGE_BUCKETS[args.env]}' +
           (f', registry version {registry["registryVersion"]}' if registry else ''))
