@@ -9,9 +9,10 @@
 `propose` finds each pack row and proposes every field from its name and columns (family, equipment, set-up, grip,
 laterality, muscles, kind, tracking, image), plus any registry entries they need. It flags what needs a look and
 refuses duplicates. A row with only a name (an illustration but no text or muscles in the spreadsheet) is proposed
-with those left empty, for the review to fill in. `apply` adds the registry entries (bumping registryVersion), uploads images that aren't in the
-environment's bucket yet, and pushes through push.py, so the schema check, backup and diff all apply. The same
-reviewed file is applied to dev and then prod; image URLs follow the environment.
+with those left empty, for the review to fill in. `apply` adds the registry entries (bumping registryVersion),
+uploads images that aren't in the environment's bucket yet, and pushes through push.py, so the schema check, the
+comparison with the pack, the backup and the diff all apply. The same reviewed file is applied to dev and then prod;
+image URLs follow the environment.
 """
 import argparse
 import difflib

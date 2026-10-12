@@ -132,11 +132,13 @@ It looks through every spreadsheet row and illustration, including common other 
 
 Finds each pack row (names as in the pack's spreadsheet; it suggests close ones if a name doesn't match) and proposes
 every field: a name in the library's style, the family, modifiers, muscles, kind, tracking and image, plus any
-registry entries they need. It refuses exercises already in the library. Some rows have only a name: an illustration
-and videos, but no instructions, tips or muscles in the spreadsheet (the pack's PDF catalogue doesn't have them either).
-Those are proposed with the text and muscles empty and a note; write them in the review, from a similar row with data.
-`apply` refuses an exercise without instructions, and the schema check one without muscles. Review `out/import-<time>.md`, especially
-the names, families and muscles, and edit `out/import-<time>.json` where needed. Then:
+registry entries they need. It refuses exercises already in the library. Review `out/import-<time>.md`, especially
+the names, families and muscles, and edit `out/import-<time>.json` where needed.
+
+Some rows have only a name: an illustration and videos, but no instructions, tips or muscles in the spreadsheet (the
+pack's PDF catalogue doesn't have them either). Those are proposed with the text and muscles empty and a note; write
+them in the review, from a similar row with data. `apply` refuses an exercise without instructions, and the schema
+check one without muscles. Then:
 
 ```
 ./tools/exercises/run.sh import apply --env dev import-<time>.json             # dry run
@@ -144,9 +146,9 @@ the names, families and muscles, and edit `out/import-<time>.json` where needed.
 ```
 
 `apply` adds the registry entries (bumping `registryVersion`), makes and uploads the images the environment's bucket
-doesn't have yet (never overwriting), and pushes through `push.py`. Its dry run also lists where your edits differ from
-the pack; check they're the ones you meant. Check the app on dev, then apply the same file
-with `--env prod --write --confirm-prod`.
+doesn't have yet (never overwriting), and pushes through `push.py`. Its dry run also lists where your edits differ
+from the pack; check they're the ones you meant. Check the app on dev, then apply the same file with
+`--env prod --write --confirm-prod`.
 
 ### Any other change
 
