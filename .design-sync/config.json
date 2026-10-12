@@ -1,0 +1,8 @@
+{
+  "projectId": "cb874ffd-83f8-4bef-b4fb-d821ef596235",
+  "shape": "package",
+  "pkg": "mobile/src/main/java/com/everlog/ui/design",
+  "offScript": "tokens-only",
+  "buildCmd": ".design-sync/build.sh",
+  "readmeHeader": ".design-sync/conventions.md"
+}

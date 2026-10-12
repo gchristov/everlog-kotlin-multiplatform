@@ -1,0 +1,20 @@
+/* Everlog colours, from ui/design/theme (Background.kt, ContentColor.kt) and res/values/colors.xml.
+   The app only has a dark appearance. */
+:root {
+  /* Backgrounds (Theme.backgrounds) */
+  --background-primary: #0A0E09;            /* screen background (background_base) */
+  --background-surface: #151D13;            /* cards, list groups, dialogs (background_card) */
+  --background-surface-raised: #26331F;     /* placeholders and raised parts of a card (black_lighter) */
+  --background-blur-overlay: rgba(10, 14, 9, 0.44); /* tint over blurred content behind the footer */
+  --background-separator: #26331F;          /* 1px dividers between rows, footer border */
+  --background-selected: rgba(135, 194, 82, 0.13);   /* faint accent behind a selected option */
+  --background-action-muted: rgba(135, 194, 82, 0.4); /* stronger accent, e.g. current progress step */
+
+  /* Content (Theme.contentColors) */
+  --content-action: #87C252;                /* the accent: filled buttons, links, eyebrows */
+  --content-action-pressed: #72B03C;        /* accent while pressed, e.g. a selected card's outline */
+  --content-on-action: #151D13;             /* text on a filled accent button */
+  --content-primary: #F3F3F3;               /* main text and icons */
+  --content-secondary: #A0A0A0;             /* subtitles, section headers, notes */
+  --content-destructive: #FE3824;           /* delete / remove */
+}
