@@ -31,6 +31,7 @@ import com.everlog.managers.auth.LocalUserManager;
 import com.everlog.managers.preferences.SettingsManager;
 import com.everlog.services.workout.WorkoutService;
 import com.everlog.ui.activities.designsystem.DesignSystemActivity;
+import com.everlog.ui.activities.exercisepicker.ExercisePickerActivity;
 import com.everlog.ui.activities.home.HomeActivity;
 import com.everlog.ui.activities.onboarding.OnboardingActivity;
 import com.everlog.ui.activities.home.congratulate.CongratulateActivity;
@@ -244,6 +245,12 @@ public class ELNavigator implements Navigator {
     @Override
     public void openDesignSystem() {
         Intent i = new Intent(mContext, DesignSystemActivity.class);
+        startActivity(i);
+    }
+
+    @Override
+    public void openExercisePickerPrototype() {
+        Intent i = new Intent(mContext, ExercisePickerActivity.class);
         startActivity(i);
     }
 

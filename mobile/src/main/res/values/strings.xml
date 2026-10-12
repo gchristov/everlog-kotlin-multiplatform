@@ -580,4 +580,45 @@
     <string name="onboarding_reminders_permission">Android will ask to allow notifications when you tap Remind me.</string>
     <string name="onboarding_reminders_answer">%1$s at %2$s</string>
     <string name="onboarding_reminders_off">Off</string>
+
+    <!-- Exercise picker (TAS-451). Filters read as "Equipment is Barbell, Dumbbell". -->
+    <string name="exercise_picker_title">Add exercises</string>
+    <string name="exercise_picker_search">Search or filter %1$d exercises</string>
+    <string name="exercise_picker_search_more">Add a filter or name</string>
+    <string name="exercise_picker_key_muscle">Muscle</string>
+    <string name="exercise_picker_key_equipment">Equipment</string>
+    <string name="exercise_picker_key_movement">Movement</string>
+    <string name="exercise_picker_key_set_up">Set-up</string>
+    <string name="exercise_picker_key_grip">Grip</string>
+    <string name="exercise_picker_is">is</string>
+    <string name="exercise_picker_is_not">is not</string>
+    <string name="exercise_picker_values">%1$s is…</string>
+    <string name="exercise_picker_values_not">%1$s is not…</string>
+    <string name="exercise_picker_remove_filter">Remove the %1$s filter</string>
+    <string name="exercise_picker_clear_all">Clear all</string>
+    <string name="exercise_picker_recent">Recent</string>
+    <string name="exercise_picker_filter_by">Filter by</string>
+    <string name="exercise_picker_filters">Filters</string>
+    <string name="exercise_picker_names">Search</string>
+    <string name="exercise_picker_names_containing">Exercises matching “%1$s”</string>
+    <string name="exercise_picker_done">Done</string>
+    <string name="exercise_picker_most_used">Most used in your templates</string>
+    <plurals name="exercise_picker_in_templates">
+        <item quantity="one">In %1$d template</item>
+        <item quantity="other">In %1$d templates</item>
+    </plurals>
+    <string name="exercise_picker_show_all">Show all %1$d</string>
+    <string name="exercise_picker_show_fewer">Show fewer</string>
+    <string name="exercise_picker_own">Your exercises</string>
+    <plurals name="exercise_picker_add">
+        <item quantity="one">Add %1$d exercise</item>
+        <item quantity="other">Add %1$d exercises</item>
+    </plurals>
+    <string name="exercise_picker_add_superset">Add as a superset</string>
+    <string name="exercise_picker_empty_filters">Nothing matches these filters. Tap one in the search bar to change it.</string>
+    <string name="exercise_picker_empty_text">Nothing matches “%1$s”.</string>
+    <string name="exercise_picker_create">Create “%1$s”</string>
+    <string name="exercise_picker_clear_filters">Clear filters</string>
+    <string name="exercise_picker_load_failed">Couldn\'t load the exercises.</string>
+    <string name="exercise_picker_retry">Try again</string>
 </resources>
