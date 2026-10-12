@@ -1,0 +1,24 @@
+<!-- @dsCard group="Colors" -->
+<!doctype html>
+<html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="../styles.css">
+<style>
+  body { padding: var(--space-lg); }
+  h2 { font: var(--font-subtitle); color: var(--content-secondary); margin: var(--space-lg) 0 var(--space-sm); }
+  h2:first-child { margin-top: 0; }
+  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: var(--space-sm); }
+  .sw { border-radius: 12px; overflow: hidden; background: var(--background-surface); border: 1px solid var(--background-separator); }
+  .chip { height: 56px; }
+  .lbl { padding: var(--space-sm); font: var(--font-small); color: var(--content-secondary); word-break: break-all; }
+</style></head><body>
+<h2>Backgrounds</h2><div class="grid" id="bg"></div>
+<h2>Content</h2><div class="grid" id="ct"></div>
+<script>
+  const add = (id, names) => names.forEach(n => {
+    document.getElementById(id).insertAdjacentHTML('beforeend',
+      `<div class="sw"><div class="chip" style="background:var(--${n})"></div><div class="lbl">--${n}</div></div>`);
+  });
+  add('bg', ['background-primary','background-surface','background-surface-raised','background-blur-overlay','background-separator','background-selected','background-action-muted']);
+  add('ct', ['content-action','content-action-pressed','content-on-action','content-primary','content-secondary','content-destructive']);
+</script>
+</body></html>

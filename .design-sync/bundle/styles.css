@@ -1,0 +1,16 @@
+@import "tokens/colors.css";
+@import "tokens/typography.css";
+@import "tokens/layout.css";
+
+/* The app is dark only: every screen sits on the primary background with primary text. */
+html, body {
+  margin: 0;
+  background: var(--background-primary);
+  color: var(--content-primary);
+  font: var(--font-body);
+  -webkit-font-smoothing: antialiased;
+}
+
+*, *::before, *::after {
+  box-sizing: border-box;
+}

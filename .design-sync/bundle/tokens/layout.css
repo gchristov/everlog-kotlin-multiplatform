@@ -1,0 +1,20 @@
+/* Everlog spacing and shapes, from ui/design/theme (Spacing.kt, Shape.kt). 1px here = 1dp. */
+:root {
+  /* Spacing (Theme.spacing) */
+  --space-xs: 4px;
+  --space-sm: 8px;
+  --space-md: 12px;
+  --space-lg: 16px;   /* the screen margin, card padding, gap between groups */
+  --space-xl: 32px;
+
+  /* Shapes (Theme.shapes) */
+  --radius-surface: 24px;  /* cards, list groups (outer corners only), footer, dialogs */
+  --radius-button: 999px;  /* every button is a pill */
+
+  /* Fixed sizes used by the elements */
+  --button-min-height: 42px;
+  --list-row-min-height: 56px;
+  --hero-header-height: 160px;
+  --hero-image-height: 140px;
+  --content-max-width: 400px;  /* tablets: content and footer capped and centred */
+}

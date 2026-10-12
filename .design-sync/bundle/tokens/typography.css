@@ -1,0 +1,14 @@
+/* Everlog type scale, from ui/design/theme/Typography.kt. The app uses the system font (Roboto on
+   Android); Medium is weight 500. Use as `font: var(--font-body);`. */
+:root {
+  --font-family: Roboto, system-ui, -apple-system, "Segoe UI", sans-serif;
+
+  --font-title: 500 30px/1.2 var(--font-family);     /* screen and header titles */
+  --font-heading: 500 20px/1.25 var(--font-family);  /* app bar titles, card/row titles, dialog titles */
+  --font-subtitle: 500 15px/1.3 var(--font-family);  /* section headers */
+  --font-body: 400 16px/1.35 var(--font-family);     /* row text, body copy */
+  --font-body-bold: 700 16px/1.35 var(--font-family);
+  --font-caption: 400 13px/1.35 var(--font-family);  /* row subtitles, notes, eyebrows */
+  --font-small: 400 12px/1.3 var(--font-family);     /* small labels, statistics */
+  --font-button: 500 14px/1.2 var(--font-family);    /* all buttons */
+}
