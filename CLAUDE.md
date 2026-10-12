@@ -96,6 +96,12 @@ New screens are built in Compose: a `CommonComposeActivity` (wraps the content i
 
 Use `PULL_REQUEST_TEMPLATE.md` for PR descriptions (`## What does this pull request change?`, `## Demo`, `## Screenshots`, `## How is this change tested?`). Irrelevant sections (e.g. Demo/Screenshots for a non-UI change) can be dropped.
 
+Merging a PR:
+- Before merging, double-check the entire diff (`gh pr diff <n>`), not just the files you remember changing. Stop and ask if anything unexpected is in it.
+- Merge only once all checks pass, never while one is pending or failing.
+- Always squash merge, without a commit description: `gh pr merge <n> --squash --admin --body "" --delete-branch`. `master` requires a review the solo repo never gets, so the admin override is expected.
+- Afterwards clean up local git: switch to `master`, pull, and delete the merged local branch.
+
 ## Testing
 
 Coverage is still small, so check the actual classes before assuming conventions:
