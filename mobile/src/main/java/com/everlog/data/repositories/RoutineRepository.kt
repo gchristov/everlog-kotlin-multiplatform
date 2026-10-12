@@ -24,6 +24,12 @@ interface RoutineRepository {
      */
     suspend fun saveRoutines(routines: List<ELRoutine>): Either<Throwable, Unit>
 
+    /**
+     * How many of the user's routines (workout templates) use each exercise, by the exercise's
+     * uuid. An exercise in a routine twice counts once.
+     */
+    suspend fun exerciseTemplateCounts(): Either<Throwable, Map<String, Int>>
+
     companion object {
         const val ServerTimeout = 5_000L
     }
@@ -45,6 +51,18 @@ class RealRoutineRepository(
             routines.forEach { batch.set(collection.document(it.documentId()), it.asMap(), SetOptions.merge()) }
             val confirmed = withTimeoutOrNull(RoutineRepository.ServerTimeout) { batch.commit().await() }
             if (confirmed == null) Timber.tag(TAG).w("Saved %d routines offline, they sync once back online", routines.size)
+        }
+    }
+
+    override suspend fun exerciseTemplateCounts(): Either<Throwable, Map<String, Int>> = withContext(dispatcher) {
+        Either.catch {
+            FirestorePathManager.routinesCollection.get().await()
+                .toObjects(ELRoutine::class.java)
+                .flatMap { routine ->
+                    routine.exerciseGroups.flatMap { group -> group.exercises.mapNotNull { it.exercise?.uuid } }.toSet()
+                }
+                .groupingBy { it }
+                .eachCount()
         }
     }
 
