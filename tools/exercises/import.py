@@ -1,5 +1,6 @@
 """Imports exercises from the Exercise Animatic pack into the library, in two steps with a review in between.
 
+    ./tools/exercises/run.sh import search "knee push-up" "glute bridge"   # find the pack's names for exercises
     ./tools/exercises/run.sh import propose --env dev "Cable lateral raises" "Leg press machine normal stance"
     # review (and edit) out/import-<time>.json; out/import-<time>.md summarises it
     ./tools/exercises/run.sh import apply --env dev import-<time>.json            # dry run
@@ -7,9 +8,11 @@
 
 `propose` finds each pack row and proposes every field from its name and columns (family, equipment, set-up, grip,
 laterality, muscles, kind, tracking, image), plus any registry entries they need. It flags what needs a look and
-refuses duplicates. `apply` adds the registry entries (bumping registryVersion), uploads images that aren't in the
-environment's bucket yet, and pushes through push.py, so the schema check, backup and diff all apply. The same
-reviewed file is applied to dev and then prod; image URLs follow the environment.
+refuses duplicates. A row with only a name (an illustration but no text or muscles in the spreadsheet) is proposed
+with those left empty, for the review to fill in. `apply` adds the registry entries (bumping registryVersion),
+uploads images that aren't in the environment's bucket yet, and pushes through push.py, so the schema check, the
+comparison with the pack, the backup and the diff all apply. The same reviewed file is applied to dev and then prod;
+image URLs follow the environment.
 """
 import argparse
 import difflib
@@ -25,7 +28,7 @@ from datetime import datetime, timezone
 from urllib.parse import quote
 
 import push
-from pack import PACK_ID, Pack, exercise_uuid, muscles, normalise
+from pack import DELTS, PACK_ID, Pack, exercise_uuid, muscles, normalise
 
 # Words in pack names -> registry ids. Longer phrases are matched first.
 EQUIPMENT = {
@@ -48,10 +51,6 @@ POSITIONS = {'incline': 'incline', 'decline': 'decline', 'flat bench': 'flat', '
              'low to high': 'low_to_high', 'high to low': 'high_to_low'}
 # Dropped from names: camera angles, takes, defaults
 NOISE = r'\((version \d+)\)|\bversion \d+\b|\b(side|front|back|behind) (pov|view)\b|\bpov\b|\b360 degrees?\b|\bwith rack\b|\bnormal (grip|stance)\b|\bboth arms\b|\bsimultaneous( arms)?\b|\bslow\b|\s\d+$'
-# Which delt a plain "Shoulders (Deltoids)" means in a family
-DELTS = defaultdict(lambda: 'front_delts', {'lateral_raise': 'side_delts', 'upright_row': 'side_delts', 'rear_delt_fly': 'rear_delts',
-                                            'face_pull': 'rear_delts', 'row': 'rear_delts', 'pull_up': 'rear_delts',
-                                            'lat_pulldown': 'rear_delts', 'shrug': 'side_delts'})
 SMALL_WORDS = {'to', 'with', 'and', 'on', 'of', 'the', 'a', 'in'}
 
 
@@ -141,7 +140,8 @@ def family_index(registry, live):
 
 def propose_one(row, registry, live, proposed):
     notes = []
-    text = re.sub(NOISE, ' ', normalise(row['name']).replace('_', ' '))
+    # Hyphens dropped, as in the family index ("Kneeling Push-up" is the Push-Up family)
+    text = re.sub(NOISE, ' ', normalise(row['name']).replace('_', ' ').replace('-', ' '))
     equipment_words, rest = find(EQUIPMENT, text)
     laterality_words, rest = find(LATERALITY, rest)
     grip_words, rest = find(GRIPS, rest)
@@ -231,8 +231,9 @@ def propose(args):
     for wanted in args.names:
         row = pack.row(wanted)
         if not row:
-            close = difflib.get_close_matches(normalise(wanted), list(pack.rows), n=5, cutoff=0.5)
-            problems.append(f'"{wanted}" isn\'t a pack row with data. Close: {", ".join(pack.rows[c]["name"] for c in close) or "none"}')
+            close = [hit['name'] for hit in pack.search(wanted) if hit['image']][:5] or \
+                [pack.rows[c]['name'] for c in difflib.get_close_matches(normalise(wanted), list(pack.rows), n=5, cutoff=0.5)]
+            problems.append(f'"{wanted}" isn\'t a pack row. Close: {", ".join(close) or "none"} (try `import search`)')
             continue
         uuid = exercise_uuid(row['name'])
         if uuid in live or normalise(row['name']) in used_sources:
@@ -244,6 +245,10 @@ def propose(args):
             problems.append(f'"{row["name"]}" has no illustration in the pack')
             continue
         fields, new_family, row_notes = propose_one(row, registry, live, list(exercises.values()))
+        if not row['data']:
+            row_notes = [n for n in row_notes if not n.startswith('muscles:')]
+            row_notes.insert(0, 'the pack has only a name for this row: write the instructions, tips and muscles '
+                                '(and check the category) from a similar row with data')
         if new_family:
             additions['families'][fields['family']] = dict(new_family, primaryMuscles=fields['primaryMuscles'])
         for key, field in [('equipment', 'equipment'), ('positions', 'position'), ('grips', 'grip')]:
@@ -312,9 +317,26 @@ def summary(proposal, problems, registry):
     return '\n'.join(lines)
 
 
+def search(args):
+    """Prints the pack's names that match each query, with what the pack has for them."""
+    pack = Pack(args.pack)
+    for query in args.items:
+        hits = pack.search(query)
+        print(f'## {query}: {len(hits)} found' + (', first 20' if len(hits) > 20 else ''))
+        for hit in hits[:20]:
+            has = ', '.join(k for k in ('image', 'data', 'video') if hit[k]) or 'nothing usable'
+            print(f'- {hit["name"]} ({has})')
+        print()
+    print('Use a name with an image in `import propose`. One without data has only a name in the spreadsheet: its '
+          'instructions, tips and muscles get written in the review.')
+
+
 def apply(args):
     with open(os.path.join(args.out, args.proposal)) as f:
         proposal = json.load(f)
+    unwritten = [e['name'] for e in proposal['exercises'].values() if not e.get('instructions')]
+    if unwritten:
+        sys.exit(f'No instructions yet for {", ".join(unwritten)}: write them in the proposal first')
     if args.write and args.env == 'prod' and not args.confirm_prod:
         sys.exit('writing to prod needs --confirm-prod')
     app = push.firebase_app(args.repo, args.env)
@@ -359,12 +381,13 @@ def apply(args):
     print(f'{len(exercises)} exercises, {len(pending)} images to upload to {push.IMAGE_BUCKETS[args.env]}' +
           (f', registry version {registry["registryVersion"]}' if registry else ''))
     # Check everything before uploading anything
-    push.run(db, args.env, registry, exercises, False, args.repo, args.out, pending_images=set(pending))
+    pack = Pack(args.pack)
+    push.run(db, args.env, registry, exercises, False, args.repo, args.out, pending_images=set(pending), pack=pack)
     if not args.write:
         return
     for url, image in pending.items():
         upload(bucket, os.path.join(args.pack, image['source']), image['file'], args.repo)
-    push.run(db, args.env, registry, exercises, True, args.repo, args.out)
+    push.run(db, args.env, registry, exercises, True, args.repo, args.out, pack=pack)
 
 
 def upload(bucket, source, file_name, repo):
@@ -386,16 +409,20 @@ def upload(bucket, source, file_name, repo):
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
-    parser.add_argument('step', choices=['propose', 'apply'])
-    parser.add_argument('items', nargs='+', help='propose: pack exercise names; apply: the proposal file in out/')
-    parser.add_argument('--env', required=True, choices=['dev', 'prod'])
+    parser.add_argument('step', choices=['search', 'propose', 'apply'])
+    parser.add_argument('items', nargs='+', help='search: what to look for; propose: pack exercise names; apply: the proposal file in out/')
+    parser.add_argument('--env', choices=['dev', 'prod'], help='Required for propose and apply')
     parser.add_argument('--write', action='store_true')
     parser.add_argument('--confirm-prod', action='store_true')
     parser.add_argument('--pack', default='/pack')
     parser.add_argument('--repo', default='/repo')
     parser.add_argument('--out', default='/out')
     args = parser.parse_args()
-    if args.step == 'propose':
+    if args.step != 'search' and not args.env:
+        parser.error(f'{args.step} needs --env')
+    if args.step == 'search':
+        search(args)
+    elif args.step == 'propose':
         args.names = args.items
         propose(args)
     else:

@@ -1,12 +1,15 @@
 """Reads the licensed Exercise Animatic pack (spreadsheet and illustrations) that the library is built from.
 
 The pack lives outside the repo (EXERCISE_PACK_DIR, mounted at /pack by run.sh). Its names are inconsistent
-(trailing spaces, "_female", numbered poses), so rows and images are looked up by a normalised name.
+(trailing spaces, "_female", numbered poses), so rows and images are looked up by a normalised name. Some rows have only
+a name, with an illustration and videos but no instructions, tips or muscles (e.g. "Glute Bridge Bodyweight"); they're
+kept, marked `data: False`, so an import can still use them with text written by hand.
 """
 import os
 import re
 import uuid
 from collections import defaultdict
+from urllib.parse import unquote
 
 SPREADSHEET = '1500+ exercise data.xlsx'
 ILLUSTRATIONS = 'ILLUSTRATIONS'
@@ -32,16 +35,21 @@ class Pack:
         self.root = root
         self.rows = self._load_rows()
         self.images = self._index_images()
+        self._videos = None
 
     def _load_rows(self):
         from openpyxl import load_workbook
         sheet = load_workbook(os.path.join(self.root, SPREADSHEET), read_only=True).worksheets[0]
         rows = {}
         for category, name, instructions, tips, primary, secondary, equipment in sheet.iter_rows(min_row=2, values_only=True):
-            # Only rows with muscle data; the male version wins over the female one
-            if name and primary and normalise(name) not in rows:
-                rows[normalise(name)] = dict(name=name.strip(), instructions=steps(instructions), tips=steps(tips),
-                                             primary=primary, secondary=secondary or '', equipment=equipment or '')
+            if not name:
+                continue
+            key = normalise(str(name))
+            # A row with muscle data wins over one with only a name, then the male version over the female one
+            if key in rows and (rows[key]['data'] or not primary):
+                continue
+            rows[key] = dict(name=str(name).strip(), instructions=steps(instructions), tips=steps(tips),
+                             primary=primary or '', secondary=secondary or '', equipment=equipment or '', data=bool(primary))
         return rows
 
     def _index_images(self):
@@ -61,6 +69,54 @@ class Pack:
 
     def image(self, name, pose):
         return self.images.get(normalise(name), {}).get(pose)
+
+    def videos(self):
+        """Normalised names of the pack's videos, in any of its video folders."""
+        if self._videos is None:
+            self._videos = set()
+            for top in os.listdir(self.root):
+                if top == ILLUSTRATIONS or not os.path.isdir(os.path.join(self.root, top)):
+                    continue
+                for _, _, files in os.walk(os.path.join(self.root, top)):
+                    self._videos.update(normalise(re.sub(r'\.(mp4|mov)$', '', f, flags=re.I)) for f in files
+                                        if re.search(r'\.(mp4|mov)$', f, re.I))
+        return self._videos
+
+    def search(self, query):
+        """Every spreadsheet row and illustration whose name has all the words of `query`, or of a common other way
+        of saying it ("knee push-up" finds "Kneeling Push-up", "hip raise" finds glute bridges), closest first. Each hit
+        says what the pack has for it: muscle data, an illustration, a video."""
+        queries = {query.lower()}
+        for one, other in SYNONYMS:
+            for q in list(queries):
+                for a, b in [(one, other), (other, one)]:
+                    if re.search(rf'\b{re.escape(a)}\b', q):
+                        queries.add(re.sub(rf'\b{re.escape(a)}\b', b, q))
+        names = {key: row['name'] for key, row in self.rows.items()}
+        names.update({key: key for key in self.images if key not in names})
+        hits = []
+        for key, name in names.items():
+            have = words(key)
+            for q in queries:
+                wanted = words(q)
+                if wanted and all(any(h.startswith(w) for h in have) for w in wanted):
+                    row = self.rows.get(key)
+                    hits.append(dict(name=name, data=bool(row and row['data']), image=bool(self.images.get(key)),
+                                     video=key in self.videos(), extra=len(have) - len(wanted)))
+                    break
+        return sorted(hits, key=lambda h: (not h['image'], h['extra'], not h['data'], h['name'].lower()))
+
+
+# Other ways people write the same thing, for search. Each side finds the other.
+SYNONYMS = [('knee', 'kneeling'), ('pushup', 'push up'), ('press up', 'push up'), ('situp', 'sit up'),
+            ('pullup', 'pull up'), ('chinup', 'chin up'), ('hip raise', 'glute bridge'), ('hip lift', 'glute bridge'),
+            ('one arm', 'single arm'), ('one leg', 'single leg'), ('stiff leg', 'straight leg'), ('rdl', 'romanian deadlift'),
+            ('db', 'dumbbell'), ('bb', 'barbell'), ('kb', 'kettlebell'), ('ohp', 'overhead press'), ('skull crusher', 'lying triceps extension')]
+
+
+def words(text):
+    """'Push-Ups (on knees)' -> ['push', 'up', 'on', 'knee']: lower case, no punctuation, no plural s."""
+    return [re.sub(r'(?<=[a-z]{3})s$', '', w) for w in re.sub(r'[^a-z0-9]+', ' ', text.lower()).split()]
 
 
 def steps(text):
@@ -94,6 +150,10 @@ LATIN = [
     (r'hamstring|biceps femoris|semitendinosus|semimembranosus', 'hamstrings'),
     (r'gastrocnemius|soleus|calf|calves', 'calves'),
 ]
+# Which delt a plain "Shoulders (Deltoids)" means in a family
+DELTS = defaultdict(lambda: 'front_delts', {'lateral_raise': 'side_delts', 'upright_row': 'side_delts', 'rear_delt_fly': 'rear_delts',
+                                            'face_pull': 'rear_delts', 'row': 'rear_delts', 'pull_up': 'rear_delts',
+                                            'lat_pulldown': 'rear_delts', 'shrug': 'side_delts'})
 # Group words without Latin names
 GROUP_WORDS = {'back': 'lats', 'upper back': 'traps', 'back muscles': 'lats', 'arms': 'biceps', 'legs': 'quads', 'thighs': 'quads'}
 
@@ -119,4 +179,33 @@ def muscles(text, delts='front_delts'):
                 found.append(muscle)
     if 'upper_chest' in found and 'chest' in found:
         found.remove('chest')  # incline work: upper chest says it all
+    return found
+
+
+def differences(exercise, pack):
+    """How a library exercise differs from its pack row: muscles, steps, tips, and an image from another row.
+    Not errors (a review often corrects the pack), so pushes list them for a look rather than refusing them. The
+    pack's equipment column is left out: it's too unreliable to compare."""
+    source = (exercise.get('source') or {}).get('id')
+    if not source:
+        return []
+    row = pack.row(source)
+    if not row:
+        return [f'its source "{source}" isn\'t a pack row']
+    if not row['data']:
+        return ['the pack has only a name for this row, so its text and muscles were written by hand: check them']
+    delts = DELTS[exercise.get('family')]
+    primary = muscles(row['primary'], delts)
+    secondary = [m for m in muscles(row['secondary'], delts) if m not in primary]
+    found = []
+    for field, expected in [('primaryMuscles', primary), ('secondaryMuscles', secondary)]:
+        if set(exercise.get(field) or []) != set(expected):
+            found.append(f'{field} {exercise.get(field) or []}, pack {expected}')
+    for field, expected in [('instructions', row['instructions']), ('tips', row['tips'])]:
+        if (exercise.get(field) or []) != expected:
+            found.append(f'{field} differ from the pack')
+    image = ((exercise.get('media') or {}).get('image') or exercise.get('imageUrl') or '').rsplit('/', 1)[-1]
+    image_row = re.sub(r'\s*\d$', '', normalise(unquote(image)))
+    if image and image_row != normalise(source):
+        found.append(f'image from the pack\'s "{image_row}", not its source row')
     return found
