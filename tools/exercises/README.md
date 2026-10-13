@@ -62,9 +62,13 @@ registry and exercise names together), an `order` and a `status`:
 - `muscles` (each with its `group` and the body `side` it's on, front or back), `muscleGroups` (each with its
   `region` and legacy `category`), `regions` (upper body, lower body, core)
 - `equipment` (each `main` or `accessory`), `positions`, `grips`, `laterality`, `tracking`, `kinds`
-- `families` (each with `aliases` for search, its main `primaryMuscles`, and `combination` for moves like "curl to
-  press")
+- `families` (each with its main `primaryMuscles`, and `combination` for moves like "curl to press")
 - `schemaVersion`, and `registryVersion`, which goes up on every change
+
+Any entry can also have `aliases`: other words to search by, so search learns a word without an app release. Families
+have the names lifters use ("rdl", "ohp"); muscle groups the muscles in them ("pecs", "quads"); equipment its short and
+other names ("db", "hex"). They're lower case, never the entry's own name, and within one list a word finds one entry.
+Apps match them like names: by the start of each word, so a two-word alias also matches on either word.
 
 It holds only what the library uses, and grows as exercises need more. That's how filters by muscle, group, area,
 body side, equipment, set-up, grip and kind, a body map and families can be built without app releases for data.

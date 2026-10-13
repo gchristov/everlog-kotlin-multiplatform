@@ -47,6 +47,8 @@ def _registry(registry, previous, errors):
                 errors.append(f'registry: {key}.{entry_id} is not a snake_case id')
             if not entry.get('name') or not isinstance(entry.get('order'), int) or entry.get('status') not in STATUSES:
                 errors.append(f'registry: {key}.{entry_id} needs a name, an order and a status')
+            _aliases(f'registry: {key}.{entry_id}', entry, errors)
+        _alias_clashes(key, entries, errors)
     for muscle_id, muscle in registry.get('muscles', {}).items():
         if muscle.get('group') not in registry.get('muscleGroups', {}):
             errors.append(f'registry: muscle {muscle_id} has an unknown group')
@@ -69,6 +71,35 @@ def _registry(registry, previous, errors):
                     errors.append(f'registry: {key}.{entry_id} was removed (hide it instead)')
         if registry.get('registryVersion', 0) <= previous.get('registryVersion', 0):
             errors.append('registry: registryVersion must go up on every push')
+
+
+def _aliases(where, entry, errors):
+    """Optional other words to search by: lower case, trimmed, each once, and not the entry's own name."""
+    aliases = entry.get('aliases')
+    if aliases is None:
+        return
+    if not isinstance(aliases, list) or not all(isinstance(a, str) for a in aliases):
+        errors.append(f'{where} aliases must be a list of strings')
+        return
+    for alias in aliases:
+        if not alias or alias != alias.strip() or alias != alias.lower():
+            errors.append(f'{where} alias "{alias}" must be lower case with no spaces around it')
+        elif alias == str(entry.get('name', '')).lower():
+            errors.append(f'{where} alias "{alias}" is its own name')
+    if len(set(aliases)) != len(aliases):
+        errors.append(f'{where} has the same alias twice')
+
+
+def _alias_clashes(key, entries, errors):
+    """Within one list, a word can only find one entry: an alias can't be another entry's name or alias."""
+    owners = defaultdict(set)
+    for entry_id, entry in entries.items():
+        for word in [str(entry.get('name', '')).lower()] + list(entry.get('aliases') or []):
+            if isinstance(word, str):
+                owners[word].add(entry_id)
+    for word, ids in owners.items():
+        if len(ids) > 1 and any(word in (entries[i].get('aliases') or []) for i in ids):
+            errors.append(f'registry: {key} alias "{word}" is used by {", ".join(sorted(ids))}')
 
 
 def _exercises(registry, exercises, previous, errors):
