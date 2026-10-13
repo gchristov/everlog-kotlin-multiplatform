@@ -301,6 +301,7 @@ private fun PickerList(
                         )
                         if (text.isNotEmpty()) {
                             AppSecondaryButton(
+                                modifier = Modifier.fillMaxWidth(),
                                 onClick = { ELNavigator(context).openEditExercise(null) },
                                 text = stringResource(R.string.exercise_picker_create, text),
                             )
