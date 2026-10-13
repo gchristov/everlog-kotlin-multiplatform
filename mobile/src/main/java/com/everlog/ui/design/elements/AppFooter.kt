@@ -33,6 +33,9 @@ data class AppFooterAction(
     val onClick: () -> Unit,
     val enabled: Boolean = true,
     val style: Style = Style.Primary,
+    // Keeps the action the same one while its text changes, e.g. a count ("Add 2 exercises"), so
+    // the text updates in place instead of crossfading. By default the text is the identity.
+    val key: Any? = null,
 ) {
     enum class Style {
         Primary,
@@ -94,7 +97,7 @@ fun AppFooter(
 
 private data class FooterContent(val header: String?, val actions: List<AppFooterAction>) {
     // What changes the footer's content, rather than updating it in place
-    val key get() = header to actions.map { it.text to it.style }
+    val key get() = header to actions.map { (it.key ?: it.text) to it.style }
 }
 
 private object FooterMotion {
