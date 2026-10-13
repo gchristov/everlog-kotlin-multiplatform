@@ -44,6 +44,9 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.everlog.R
+import com.everlog.constants.ELActivityRequestCodes
+import com.everlog.constants.ELConstants
+import com.everlog.data.model.set.ELSetType
 import com.everlog.ui.activities.home.exercise.details.ExerciseDetailsActivity
 import com.everlog.ui.design.CommonComposeActivity
 import com.everlog.ui.design.elements.AppBar
@@ -89,6 +92,15 @@ class ExercisePickerActivity : CommonComposeActivity() {
 
     @Composable
     override fun Content() = ExercisePickerScreen(viewModel = viewModel)
+
+    // A superset goes through the set type picker first, like ExercisesActivity
+    @Deprecated("Navigator opens the set type picker with startActivityForResult")
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == ELActivityRequestCodes.REQUEST_PICK_SET_TYPE && resultCode == RESULT_OK) {
+            (data?.getSerializableExtra(ELConstants.EXTRA_SET_TYPE) as? ELSetType)?.let { viewModel.onAdd(setType = it) }
+        }
+    }
 
     companion object {
         private const val ExtraPick = "pick"
@@ -151,11 +163,12 @@ internal fun ExercisePickerScreen(viewModel: ExercisePickerViewModel) {
                     actions = listOf(
                         AppFooterAction(
                             text = pluralStringResource(R.plurals.exercise_picker_add, shownCount, shownCount),
-                            onClick = { viewModel.onAdd(superset = false) },
+                            onClick = { viewModel.onAdd(setType = ELSetType.SINGLE) },
                         ),
                         AppFooterAction(
                             text = stringResource(R.string.exercise_picker_add_superset),
-                            onClick = { viewModel.onAdd(superset = true) },
+                            // Picks the kind of set first (superset, giant set…), like the current picker
+                            onClick = { ELNavigator(context).openSetTypePicker(count) },
                             enabled = shownCount >= 2,
                             style = AppFooterAction.Style.Secondary,
                         ),
@@ -359,7 +372,7 @@ private fun PickerMessages(message: PickerMessage?, onShown: () -> Unit) {
         null -> null
         is PickerMessage.TooMany -> stringResource(R.string.exercises_max_selection, message.max)
         // Prototype only: there's nothing to add them to
-        is PickerMessage.Added -> "Would add ${message.count} " + (if (message.superset) "as a superset" else "exercises")
+        is PickerMessage.Added -> "Would add ${message.count} exercises as ${message.setType.name.lowercase()} sets"
     }
     LaunchedEffect(message) {
         if (text != null) {

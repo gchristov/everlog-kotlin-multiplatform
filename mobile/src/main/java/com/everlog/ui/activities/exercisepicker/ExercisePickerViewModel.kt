@@ -1,6 +1,7 @@
 package com.everlog.ui.activities.exercisepicker
 
 import com.everlog.config.AppConfig
+import com.everlog.data.model.set.ELSetType
 import com.everlog.ui.mvvm.CommonViewModel
 import com.google.firebase.firestore.DocumentSnapshot
 import kotlinx.coroutines.CoroutineDispatcher
@@ -50,7 +51,7 @@ internal sealed interface PickerMenu {
 internal sealed interface PickerMessage {
     data class TooMany(val max: Int) : PickerMessage
 
-    data class Added(val count: Int, val superset: Boolean) : PickerMessage
+    data class Added(val count: Int, val setType: ELSetType) : PickerMessage
 }
 
 internal class ExercisePickerViewModel(
@@ -109,9 +110,10 @@ internal class ExercisePickerViewModel(
     }
 
     // Prototype: nothing to add them to yet, so it says what it would do and starts again
-    fun onAdd(superset: Boolean) = update {
+    // SINGLE adds each on its own; any other type links them, from the set type picker
+    fun onAdd(setType: ELSetType) = update {
         copy(
-            message = PickerMessage.Added(count = picked.size, superset = superset),
+            message = PickerMessage.Added(count = picked.size, setType = setType),
             picked = emptyList(),
             recent = if (tokens.isEmpty()) recent else (listOf(tokens) + recent.filter { it != tokens }).take(RecentMax),
         )
