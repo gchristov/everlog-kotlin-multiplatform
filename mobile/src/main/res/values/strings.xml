@@ -593,6 +593,15 @@
     <string name="exercise_picker_key_movement">Movement</string>
     <string name="exercise_picker_key_set_up">Set-up</string>
     <string name="exercise_picker_key_grip">Grip</string>
+    <string name="exercise_picker_key_created_by">Created by</string>
+    <string name="exercise_picker_created_by_me">Me</string>
+    <!-- Other words that find "Created by is Me" while typing -->
+    <string-array name="exercise_picker_created_by_me_aliases">
+        <item>mine</item>
+        <item>my</item>
+        <item>own</item>
+        <item>custom</item>
+    </string-array>
     <string name="exercise_picker_is">is</string>
     <string name="exercise_picker_is_not">is not</string>
     <string name="exercise_picker_values">%1$s is…</string>

@@ -10,6 +10,9 @@ import com.everlog.managers.firebase.FirestorePathManager
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.async
+import kotlinx.coroutines.channels.awaitClose
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.tasks.await
 import java.text.Normalizer
@@ -21,6 +24,8 @@ import java.text.Normalizer
 internal enum class FilterKey(@StringRes val label: Int) {
     Muscle(R.string.exercise_picker_key_muscle),
     Equipment(R.string.exercise_picker_key_equipment),
+    // Only the user's own exercises: "Created by is Me"
+    CreatedBy(R.string.exercise_picker_key_created_by),
     Movement(R.string.exercise_picker_key_movement),
     SetUp(R.string.exercise_picker_key_set_up),
     Grip(R.string.exercise_picker_key_grip),
@@ -63,6 +68,7 @@ internal data class PickerExercise(
         FilterKey.Movement -> listOfNotNull(family)
         FilterKey.SetUp -> positions
         FilterKey.Grip -> grips
+        FilterKey.CreatedBy -> if (own) listOf(CreatedByMe) else emptyList()
     }
 }
 
@@ -74,15 +80,29 @@ internal data class PickerLibrary(
     val familyGroups: Map<String, String>,
     // The exercises as the rest of the app knows them, by uuid, to open their details
     val details: Map<String, ELExercise> = emptyMap(),
+    // What the user's own exercises need when they change: see withOwn
+    val ownContext: OwnContext = OwnContext(),
 ) {
+    data class OwnContext(
+        val groupOfCategory: Map<String?, String> = emptyMap(),
+        val templates: Map<String, Int> = emptyMap(),
+        val lastDone: Map<String, Long> = emptyMap(),
+        // The name of "Created by is Me"'s only value
+        val me: FilterValue = FilterValue(CreatedByMe, CreatedByMe),
+    )
+
     private val names = values.mapValues { (_, values) -> values.associate { it.id to it.name } }
 
-    fun valueName(key: FilterKey, id: String): String = names[key]?.get(id) ?: id
+    // "Me" keeps its name when the last of the user's exercises goes and the filter is still on
+    fun valueName(key: FilterKey, id: String): String =
+        names[key]?.get(id) ?: if (key == FilterKey.CreatedBy) ownContext.me.name else id
 
     fun valueOrder(key: FilterKey, id: String): Int = values[key]?.indexOfFirst { it.id == id }?.takeIf { it >= 0 } ?: Int.MAX_VALUE
 }
 
 private const val RegistryPath = "global/exercises/registry/current"
+
+internal const val CreatedByMe = "me"
 
 // How many of the latest workouts make up Recently done
 private const val RecentWorkouts = 30L
@@ -105,10 +125,11 @@ private val ExtraAliases = mapOf(
     ),
 )
 
-internal suspend fun loadPickerLibrary(): PickerLibrary = coroutineScope {
+// [me] names "Created by is Me"'s value, with its search words
+internal suspend fun loadPickerLibrary(me: FilterValue): PickerLibrary = coroutineScope {
     val registryRead = async { FirebaseFirestore.getInstance().document(RegistryPath).get().await() }
     val globalRead = async { FirestorePathManager.globalExercisesCollection.get().await() }
-    // The user's own exercises and templates are extras: the library still shows without them
+    // The user's own exercises, templates and workouts are extras: the library still shows without them
     val ownRead = async { runCatching { FirestorePathManager.exercisesCollection.get().await() }.getOrNull() }
     val routinesRead = async { runCatching { FirestorePathManager.routinesCollection.get().await() }.getOrNull() }
     val workoutsRead = async {
@@ -145,36 +166,15 @@ internal suspend fun loadPickerLibrary(): PickerLibrary = coroutineScope {
     }
 
     val globalDocuments = globalRead.await().documents
-    val ownDocuments = ownRead.await()?.documents.orEmpty()
-    val details = (globalDocuments + ownDocuments).mapNotNull { document ->
+    val details = globalDocuments.mapNotNull { document ->
         runCatching { document.toObject(ELExercise::class.java) }.getOrNull()?.let { exercise -> (exercise.uuid ?: document.id) to exercise }
     }.toMap()
     val global = globalDocuments
         .filter { it.getString("status") != "hidden" }
         .mapNotNull { it.toPickerExercise(muscleGroupOf, groupOfCategory, templates)?.let { exercise -> exercise.copy(lastDone = lastDone[exercise.uuid]) } }
-    val own = ownDocuments.mapNotNull { document ->
-        val name = document.getString("name") ?: return@mapNotNull null
-        val uuid = document.getString("uuid") ?: document.id
-        PickerExercise(
-            uuid = uuid,
-            name = name,
-            imageUrl = document.getString("imageUrl"),
-            groups = setOfNotNull(groupOfCategory[document.getString("category")]),
-            equipment = null,
-            family = null,
-            positions = emptyList(),
-            grips = emptyList(),
-            aliases = emptyList(),
-            familyDefault = false,
-            own = true,
-            templates = templates[uuid] ?: 0,
-            lastDone = lastDone[uuid],
-        )
-    }
-    val exercises = global + own
 
     fun used(key: FilterKey, entries: List<Pair<String, Map<String, Any?>>>): List<FilterValue> {
-        val ids = exercises.flatMap { it.values(key) }.toSet()
+        val ids = global.flatMap { it.values(key) }.toSet()
         return entries
             .filter { (id, _) -> id in ids }
             .map { (id, entry) ->
@@ -185,9 +185,12 @@ internal suspend fun loadPickerLibrary(): PickerLibrary = coroutineScope {
     }
 
     PickerLibrary(
-        exercises = exercises,
+        exercises = global,
         values = mapOf(
-            FilterKey.Muscle to used(FilterKey.Muscle, groups),
+            // Every group, as users' own exercises can be in any of them
+            FilterKey.Muscle to groups.map { (id, entry) ->
+                FilterValue(id = id, name = entry["name"] as? String ?: id, aliases = ExtraAliases[FilterKey.Muscle]?.get(id).orEmpty())
+            },
             FilterKey.Equipment to used(FilterKey.Equipment, registry.entries("equipment").filter { (_, entry) -> entry["kind"] == "main" }),
             // A to Z: the registry's order for families is just the order they were added in
             FilterKey.Movement to used(FilterKey.Movement, families).sortedBy { it.name },
@@ -200,7 +203,51 @@ internal suspend fun loadPickerLibrary(): PickerLibrary = coroutineScope {
             muscleGroupOf[muscle]?.let { id to it }
         }.toMap(),
         details = details,
+        ownContext = PickerLibrary.OwnContext(groupOfCategory = groupOfCategory, templates = templates, lastDone = lastDone, me = me),
+    ).withOwn(ownRead.await()?.documents.orEmpty())
+}
+
+/**
+ * The library with the user's own exercises swapped for [documents], their latest version. "Created
+ * by" only has a value when there are some.
+ */
+internal fun PickerLibrary.withOwn(documents: List<DocumentSnapshot>): PickerLibrary {
+    val context = ownContext
+    val own = documents.mapNotNull { document ->
+        val name = document.getString("name") ?: return@mapNotNull null
+        val uuid = document.getString("uuid") ?: document.id
+        PickerExercise(
+            uuid = uuid,
+            name = name,
+            imageUrl = document.getString("imageUrl"),
+            groups = setOfNotNull(context.groupOfCategory[document.getString("category")]),
+            equipment = null,
+            family = null,
+            positions = emptyList(),
+            grips = emptyList(),
+            aliases = emptyList(),
+            familyDefault = false,
+            own = true,
+            templates = context.templates[uuid] ?: 0,
+            lastDone = context.lastDone[uuid],
+        )
+    }
+    val ownDetails = documents.mapNotNull { document ->
+        runCatching { document.toObject(ELExercise::class.java) }.getOrNull()?.let { exercise -> (exercise.uuid ?: document.id) to exercise }
+    }
+    return copy(
+        exercises = exercises.filter { !it.own } + own,
+        values = values + (FilterKey.CreatedBy to if (own.isEmpty()) emptyList() else listOf(context.me)),
+        details = details.filterKeys { uuid -> exercises.none { it.own && it.uuid == uuid } } + ownDetails,
     )
+}
+
+// The user's own exercises as they change, while collected: Firestore reports local writes at once
+internal fun ownExerciseUpdates(): Flow<List<DocumentSnapshot>> = callbackFlow {
+    val registration = FirestorePathManager.exercisesCollection.addSnapshotListener { snapshot, error ->
+        if (snapshot != null && error == null) trySend(snapshot.documents)
+    }
+    awaitClose { registration.remove() }
 }
 
 @Suppress("UNCHECKED_CAST")

@@ -2,7 +2,10 @@ package com.everlog.ui.activities.exercisepicker
 
 import com.everlog.config.AppConfig
 import com.everlog.ui.mvvm.CommonViewModel
+import com.google.firebase.firestore.DocumentSnapshot
 import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.flow.Flow
 import timber.log.Timber
 
 internal enum class PickerMode {
@@ -49,7 +52,10 @@ internal class ExercisePickerViewModel(
     dispatcher: CoroutineDispatcher,
     mode: PickerMode,
     private val loadLibrary: suspend () -> PickerLibrary,
+    // The user's own exercises as they change, e.g. one just created
+    private val ownUpdates: () -> Flow<List<DocumentSnapshot>>,
 ) : CommonViewModel<ExercisePickerState>(dispatcher, ExercisePickerState(mode = mode)) {
+    private var ownJob: Job? = null
 
     init {
         load()
@@ -112,6 +118,14 @@ internal class ExercisePickerViewModel(
                 .onFailure { Timber.tag(TAG).e(it, "Couldn't load the exercise library") }
                 .getOrNull()
             setState { copy(library = library, loading = false, failed = library == null) }
+            if (library != null) watchOwn()
+        }
+    }
+
+    private fun watchOwn() {
+        ownJob?.cancel()
+        ownJob = launchCoroutine {
+            ownUpdates().collect { documents -> setState { copy(library = library?.withOwn(documents)) } }
         }
     }
 
@@ -272,7 +286,10 @@ private fun ExercisePickerState.menuContent(library: PickerLibrary, words: List<
             recent = recent,
             keys = FilterKey.entries
                 .filter { library.values[it].orEmpty().isNotEmpty() }
-                .map { key -> key to library.values[key].orEmpty().take(4).joinToString(", ") { it.name } + "…" },
+                .map { key ->
+                    val values = library.values[key].orEmpty()
+                    key to values.take(4).joinToString(", ") { it.name } + if (values.size > 4) "…" else ""
+                },
         )
     } else {
         val last = words.last()

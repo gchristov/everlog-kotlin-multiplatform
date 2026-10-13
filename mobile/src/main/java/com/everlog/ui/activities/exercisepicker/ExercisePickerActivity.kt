@@ -64,7 +64,16 @@ class ExercisePickerActivity : CommonComposeActivity() {
             ExercisePickerViewModel(
                 dispatcher = Dispatchers.Main,
                 mode = if (intent.getBooleanExtra(ExtraPick, false)) PickerMode.Pick else PickerMode.Browse,
-                loadLibrary = ::loadPickerLibrary,
+                loadLibrary = {
+                    loadPickerLibrary(
+                        me = FilterValue(
+                            id = CreatedByMe,
+                            name = getString(R.string.exercise_picker_created_by_me),
+                            aliases = resources.getStringArray(R.array.exercise_picker_created_by_me_aliases).toList(),
+                        )
+                    )
+                },
+                ownUpdates = ::ownExerciseUpdates,
             )
         }
     }
