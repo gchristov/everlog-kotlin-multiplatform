@@ -582,7 +582,7 @@
     <string name="onboarding_reminders_off">Off</string>
 
     <!-- Exercise picker (TAS-451). Filters read as "Equipment is Barbell, Dumbbell". -->
-    <string name="exercise_picker_title">Add exercises</string>
+    <string name="exercise_picker_title">Select exercises</string>
     <string name="exercise_picker_title_browse">Exercises</string>
     <string name="exercise_picker_search_loading">Search exercises</string>
     <string name="exercise_picker_recently_done">Recently done</string>
