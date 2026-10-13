@@ -152,8 +152,6 @@ internal fun ExercisePickerScreen(viewModel: ExercisePickerViewModel) {
                         AppFooterAction(
                             text = pluralStringResource(R.plurals.exercise_picker_add, shownCount, shownCount),
                             onClick = { viewModel.onAdd(superset = false) },
-                            // The count changes with each pick: update the text in place
-                            key = "add",
                         ),
                         AppFooterAction(
                             text = stringResource(R.string.exercise_picker_add_superset),
