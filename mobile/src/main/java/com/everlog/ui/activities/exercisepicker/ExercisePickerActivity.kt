@@ -93,7 +93,7 @@ class ExercisePickerActivity : CommonComposeActivity() {
 @Composable
 internal fun ExercisePickerScreen(viewModel: ExercisePickerViewModel) {
     val state by viewModel.state.collectAsStateWithLifecycle()
-    val content = remember(state) { state.content() }
+    val content = state.content
     val context = LocalContext.current
     val focusManager = LocalFocusManager.current
     val focusRequester = remember { FocusRequester() }
@@ -164,7 +164,8 @@ internal fun ExercisePickerScreen(viewModel: ExercisePickerViewModel) {
                 onRemoveToken = viewModel::onRemoveToken,
             )
             when {
-                state.loading -> PickerSkeleton()
+                // Also while the first list is worked out
+                state.loading || (state.library != null && content == null) -> PickerSkeleton()
                 state.failed || content == null || state.library == null -> LoadFailed(onRetry = viewModel::onRetry)
                 else -> Box(modifier = Modifier.weight(1f)) {
                     Column {

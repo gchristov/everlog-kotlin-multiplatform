@@ -4,7 +4,10 @@ import com.everlog.config.AppConfig
 import com.everlog.ui.mvvm.CommonViewModel
 import com.google.firebase.firestore.DocumentSnapshot
 import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.withContext
 import kotlinx.coroutines.flow.Flow
 import timber.log.Timber
 
@@ -30,6 +33,8 @@ internal data class ExercisePickerState(
     // Earlier searches, newest first
     val recent: List<List<FilterToken>> = emptyList(),
     val message: PickerMessage? = null,
+    // What the screen shows, worked out from the rest off the main thread: see ExercisePickerViewModel.update
+    val content: PickerContent? = null,
 )
 
 internal sealed interface PickerMenu {
@@ -54,8 +59,11 @@ internal class ExercisePickerViewModel(
     private val loadLibrary: suspend () -> PickerLibrary,
     // The user's own exercises as they change, e.g. one just created
     private val ownUpdates: () -> Flow<List<DocumentSnapshot>>,
+    // Where the list is worked out, off the main thread
+    private val contentDispatcher: CoroutineDispatcher = Dispatchers.Default,
 ) : CommonViewModel<ExercisePickerState>(dispatcher, ExercisePickerState(mode = mode)) {
     private var ownJob: Job? = null
+    private var contentJob: Job? = null
 
     init {
         load()
@@ -63,35 +71,35 @@ internal class ExercisePickerViewModel(
 
     fun onRetry() = load()
 
-    fun onSearchFocused() = setState { if (menu == PickerMenu.Closed) copy(menu = PickerMenu.Start) else this }
+    fun onSearchFocused() = update { if (menu == PickerMenu.Closed) copy(menu = PickerMenu.Start) else this }
 
-    fun onTextChange(text: String) = setState { copy(text = text, menu = PickerMenu.Start) }
+    fun onTextChange(text: String) = update(typing = true) { copy(text = text, menu = PickerMenu.Start) }
 
-    fun onCloseMenu() = setState { copy(menu = PickerMenu.Closed) }
+    fun onCloseMenu() = update { copy(menu = PickerMenu.Closed) }
 
-    fun onOpenKey(key: FilterKey) = setState { copy(menu = PickerMenu.Values(key)) }
+    fun onOpenKey(key: FilterKey) = update { copy(menu = PickerMenu.Values(key)) }
 
-    fun onToggleValue(key: FilterKey, value: String) = setState { copy(tokens = tokens.toggle(key, value)) }
+    fun onToggleValue(key: FilterKey, value: String) = update { copy(tokens = tokens.toggle(key, value)) }
 
     // A suggestion while typing: the word being typed becomes the filter
-    fun onPickSuggestion(key: FilterKey, value: String) = setState {
+    fun onPickSuggestion(key: FilterKey, value: String) = update {
         val words = text.trim().split(Regex("\\s+"))
         copy(tokens = tokens.add(key, value), text = words.dropLast(1).joinToString(" "))
     }
 
-    fun onToggleOperator(key: FilterKey) = setState {
+    fun onToggleOperator(key: FilterKey) = update {
         copy(tokens = tokens.map { if (it.key == key) it.copy(not = !it.not) else it })
     }
 
-    fun onRemoveToken(key: FilterKey) = setState { copy(tokens = tokens.filter { it.key != key }) }
+    fun onRemoveToken(key: FilterKey) = update { copy(tokens = tokens.filter { it.key != key }) }
 
-    fun onClearAll() = setState { copy(tokens = emptyList(), text = "") }
+    fun onClearAll() = update { copy(tokens = emptyList(), text = "") }
 
-    fun onRecent(search: List<FilterToken>) = setState { copy(tokens = search, text = "", menu = PickerMenu.Closed) }
+    fun onRecent(search: List<FilterToken>) = update { copy(tokens = search, text = "", menu = PickerMenu.Closed) }
 
-    fun onToggleShowAll() = setState { copy(showAllTop = !showAllTop) }
+    fun onToggleShowAll() = update { copy(showAllTop = !showAllTop) }
 
-    fun onToggleExercise(uuid: String) = setState {
+    fun onToggleExercise(uuid: String) = update {
         val max = AppConfig.configuration.maxExerciseSelection
         when {
             uuid in picked -> copy(picked = picked - uuid)
@@ -101,7 +109,7 @@ internal class ExercisePickerViewModel(
     }
 
     // Prototype: nothing to add them to yet, so it says what it would do and starts again
-    fun onAdd(superset: Boolean) = setState {
+    fun onAdd(superset: Boolean) = update {
         copy(
             message = PickerMessage.Added(count = picked.size, superset = superset),
             picked = emptyList(),
@@ -112,20 +120,36 @@ internal class ExercisePickerViewModel(
     fun onMessageShown() = setState { copy(message = null) }
 
     private fun load() {
-        setState { copy(loading = true, failed = false) }
+        update { copy(loading = true, failed = false) }
         launchCoroutine {
             val library = runCatching { loadLibrary() }
                 .onFailure { Timber.tag(TAG).e(it, "Couldn't load the exercise library") }
                 .getOrNull()
-            setState { copy(library = library, loading = false, failed = library == null) }
+            update { copy(library = library, loading = false, failed = library == null) }
             if (library != null) watchOwn()
+        }
+    }
+
+    /**
+     * Every change but messages goes through here, so the list follows it. The list is worked out
+     * off the main thread, the latest change cancelling one still being worked out, and while typing
+     * only once the text settles: the text field itself takes each letter at once.
+     */
+    private fun update(typing: Boolean = false, reducer: ExercisePickerState.() -> ExercisePickerState) {
+        setState(reducer)
+        contentJob?.cancel()
+        contentJob = launchCoroutine {
+            if (typing) delay(TypingDebounceMillis)
+            val snapshot = state.value
+            val content = withContext(contentDispatcher) { snapshot.buildContent() }
+            setState { copy(content = content) }
         }
     }
 
     private fun watchOwn() {
         ownJob?.cancel()
         ownJob = launchCoroutine {
-            ownUpdates().collect { documents -> setState { copy(library = library?.withOwn(documents)) } }
+            ownUpdates().collect { documents -> update { copy(library = library?.withOwn(documents)) } }
         }
     }
 
@@ -147,6 +171,7 @@ internal class ExercisePickerViewModel(
     private companion object {
         const val TAG = "ExercisePicker"
         const val RecentMax = 3
+        const val TypingDebounceMillis = 150L
     }
 }
 
@@ -201,7 +226,7 @@ internal data class PickerContent(
 private const val TopLimit = 5
 private const val SuggestionLimit = 6
 
-internal fun ExercisePickerState.content(): PickerContent? {
+internal fun ExercisePickerState.buildContent(): PickerContent? {
     val library = library ?: return null
     val words = searchWords(text)
     val scored = library.exercises.mapNotNull { exercise ->

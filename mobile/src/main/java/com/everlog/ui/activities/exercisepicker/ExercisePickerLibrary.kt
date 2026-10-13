@@ -97,6 +97,27 @@ internal data class PickerLibrary(
     fun valueName(key: FilterKey, id: String): String =
         names[key]?.get(id) ?: if (key == FilterKey.CreatedBy) ownContext.me.name else id
 
+    class SearchEntry(val nameWords: List<String>, val words: List<String>)
+
+    // Each exercise's words to search by, worked out once per library rather than on every search:
+    // its name's, its aliases', and the names and aliases of its family, equipment, muscle groups,
+    // set-up and grip
+    private val searchIndex: Map<String, SearchEntry> by lazy {
+        val valueWords = values.mapValues { (_, values) ->
+            values.associate { value -> value.id to (searchWords(value.name) + value.aliases.flatMap { searchWords(it) }) }
+        }
+        exercises.associate { exercise ->
+            val nameWords = searchWords(exercise.name)
+            val words = nameWords +
+                exercise.aliases.flatMap { searchWords(it) } +
+                FilterKey.entries.flatMap { key -> exercise.values(key).flatMap { id -> valueWords[key]?.get(id).orEmpty() } }
+            exercise.uuid to SearchEntry(nameWords = nameWords, words = words.distinct())
+        }
+    }
+
+    fun searchEntry(exercise: PickerExercise): SearchEntry =
+        searchIndex[exercise.uuid] ?: SearchEntry(searchWords(exercise.name), searchWords(exercise.name))
+
     fun valueOrder(key: FilterKey, id: String): Int = values[key]?.indexOfFirst { it.id == id }?.takeIf { it >= 0 } ?: Int.MAX_VALUE
 }
 
@@ -306,16 +327,9 @@ internal fun searchWords(text: String): List<String> =
 // finds Dumbbell Bench Press. Returns how well it matches, lower is better, or null when it doesn't.
 internal fun PickerExercise.searchScore(words: List<String>, library: PickerLibrary): Int? {
     if (words.isEmpty()) return 0
-    val nameWords = searchWords(name)
-    val haystack = nameWords +
-        aliases.flatMap { searchWords(it) } +
-        FilterKey.entries.flatMap { key ->
-            values(key).flatMap { id ->
-                library.values[key]?.find { it.id == id }
-                    ?.let { value -> searchWords(value.name) + value.aliases.flatMap { searchWords(it) } }
-                    .orEmpty()
-            }
-        }
+    val entry = library.searchEntry(this)
+    val nameWords = entry.nameWords
+    val haystack = entry.words
     val exact = words.all { word -> haystack.any { it.startsWith(word) } }
     if (!exact && !words.all { word -> haystack.any { it.startsWith(word) || fuzzyStartsWith(it, word) } }) return null
     val query = words.joinToString(" ")
