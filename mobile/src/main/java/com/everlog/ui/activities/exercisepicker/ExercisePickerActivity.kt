@@ -51,6 +51,7 @@ import com.everlog.ui.design.elements.AppButton
 import com.everlog.ui.design.elements.AppFooter
 import com.everlog.ui.design.elements.AppFooterAction
 import com.everlog.ui.design.elements.AppIcon
+import com.everlog.ui.design.elements.AppIconButton
 import com.everlog.ui.design.elements.AppScreen
 import com.everlog.ui.design.elements.AppSecondaryButton
 import com.everlog.ui.design.elements.AppSurface
@@ -124,6 +125,14 @@ internal fun ExercisePickerScreen(viewModel: ExercisePickerViewModel) {
             AppBar(
                 title = stringResource(if (pick) R.string.exercise_picker_title else R.string.exercise_picker_title_browse),
                 showBack = true,
+                // Opens the create screen; the new exercise then shows up in the list by itself
+                actions = {
+                    AppIconButton(
+                        icon = ImageVector.vectorResource(R.drawable.ic_add),
+                        contentDescription = stringResource(R.string.exercise_picker_create_exercise),
+                        onClick = { ELNavigator(context).openEditExercise(null) },
+                    )
+                },
             )
         },
         footer = {

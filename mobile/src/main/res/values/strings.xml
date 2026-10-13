@@ -631,6 +631,7 @@
     <string name="exercise_picker_empty_filters">Nothing matches these filters. Tap one in the search bar to change it, or clear all.</string>
     <string name="exercise_picker_empty_text">Nothing matches “%1$s”.</string>
     <string name="exercise_picker_create">Create “%1$s”</string>
+    <string name="exercise_picker_create_exercise">Create an exercise</string>
     <string name="exercise_picker_load_failed">Couldn\'t load the exercises.</string>
     <string name="exercise_picker_retry">Try again</string>
 </resources>
