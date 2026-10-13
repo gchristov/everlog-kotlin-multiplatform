@@ -128,24 +128,6 @@ internal const val CreatedByMe = "me"
 // How many of the latest workouts make up Recently done
 private const val RecentWorkouts = 30L
 
-// Search words the registry doesn't have yet for muscle groups and equipment (families have theirs).
-// The spec suggests moving these into the registry.
-private val ExtraAliases = mapOf(
-    FilterKey.Muscle to mapOf(
-        "chest" to listOf("pecs"),
-        "back" to listOf("lats"),
-        "shoulders" to listOf("delts"),
-        "arms" to listOf("biceps", "triceps"),
-        "core" to listOf("abs"),
-        "legs" to listOf("quads", "glutes", "hamstrings"),
-    ),
-    FilterKey.Equipment to mapOf(
-        "barbell" to listOf("bb"),
-        "dumbbell" to listOf("db"),
-        "bodyweight" to listOf("bw"),
-    ),
-)
-
 // [me] names "Created by is Me"'s value, with its search words
 internal suspend fun loadPickerLibrary(me: FilterValue): PickerLibrary = coroutineScope {
     val registryRead = async { FirebaseFirestore.getInstance().document(RegistryPath).get().await() }
@@ -200,7 +182,7 @@ internal suspend fun loadPickerLibrary(me: FilterValue): PickerLibrary = corouti
             .filter { (id, _) -> id in ids }
             .map { (id, entry) ->
                 @Suppress("UNCHECKED_CAST")
-                val aliases = (entry["aliases"] as? List<String>).orEmpty() + ExtraAliases[key]?.get(id).orEmpty()
+                val aliases = (entry["aliases"] as? List<String>).orEmpty()
                 FilterValue(id = id, name = entry["name"] as? String ?: id, aliases = aliases)
             }
     }
@@ -210,7 +192,8 @@ internal suspend fun loadPickerLibrary(me: FilterValue): PickerLibrary = corouti
         values = mapOf(
             // Every group, as users' own exercises can be in any of them
             FilterKey.Muscle to groups.map { (id, entry) ->
-                FilterValue(id = id, name = entry["name"] as? String ?: id, aliases = ExtraAliases[FilterKey.Muscle]?.get(id).orEmpty())
+                @Suppress("UNCHECKED_CAST")
+                FilterValue(id = id, name = entry["name"] as? String ?: id, aliases = (entry["aliases"] as? List<String>).orEmpty())
             },
             FilterKey.Equipment to used(FilterKey.Equipment, registry.entries("equipment").filter { (_, entry) -> entry["kind"] == "main" }),
             // A to Z: the registry's order for families is just the order they were added in
