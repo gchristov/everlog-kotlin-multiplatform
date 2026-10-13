@@ -346,7 +346,6 @@ internal fun PickerMenuCard(
                         AppListItem(
                             title = stringResource(key.label),
                             subtitle = hint,
-                            trailing = { Chevron() },
                             onClick = { onOpenKey(key) },
                         )
                     }
@@ -376,7 +375,7 @@ internal fun PickerMenuCard(
                         MenuLabel(stringResource(R.string.exercise_picker_filters))
                     }
                     keys.forEach { (key, name) ->
-                        AppListItem(title = name, trailing = { Chevron() }, onClick = { onOpenKey(key) })
+                        AppListItem(title = name, onClick = { onOpenKey(key) })
                     }
                     menu.suggestions.forEach { suggestion ->
                         AppListItem(
@@ -448,11 +447,6 @@ private fun MenuLabel(text: String) {
 @Composable
 private fun Count(count: Int) {
     AppText(text = count.toString(), style = Theme.typography.small, color = Theme.contentColors.secondary)
-}
-
-@Composable
-private fun Chevron() {
-    AppIcon(imageVector = ImageVector.vectorResource(R.drawable.ic_right), tint = Theme.contentColors.secondary)
 }
 
 @Composable

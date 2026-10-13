@@ -281,12 +281,11 @@ private fun PickerList(
                             else -> row.details.ifEmpty { null }
                         },
                         leading = { ExerciseThumbnail(imageUrl = row.exercise.imageUrl) },
-                        trailing = {
-                            if (pick) {
-                                PickCheck(picked = row.picked)
-                            } else {
-                                AppIcon(imageVector = ImageVector.vectorResource(R.drawable.ic_right), tint = Theme.contentColors.secondary)
-                            }
+                        // Browse rows have nothing at the end: a chevron is an iOS pattern
+                        trailing = if (pick) {
+                            { PickCheck(picked = row.picked) }
+                        } else {
+                            null
                         },
                     )
                 }
