@@ -34,6 +34,7 @@ internal enum class DesignSystemPage {
     Icons,
     Buttons,
     Lists,
+    Search,
     Cards,
     HeroHeader,
     Dialogs,
@@ -66,6 +67,7 @@ internal fun DesignSystemScreen(viewModel: DesignSystemViewModel) {
         DesignSystemPage.Icons -> DesignSystemIcons(onButtonClick = onButtonClick)
         DesignSystemPage.Buttons -> DesignSystemButtons(buttonClicks = state.buttonClicks, onButtonClick = onButtonClick)
         DesignSystemPage.Lists -> DesignSystemLists(onButtonClick = onButtonClick)
+        DesignSystemPage.Search -> DesignSystemSearch(onButtonClick = onButtonClick)
         DesignSystemPage.Cards -> DesignSystemCards(onButtonClick = onButtonClick)
         DesignSystemPage.HeroHeader -> DesignSystemHeroHeader()
         DesignSystemPage.Dialogs -> DesignSystemDialogs()
@@ -98,12 +100,13 @@ private val HubSections = listOf(
     ),
     "Components" to listOf(
         HubEntry(DesignSystemPage.Buttons, "Buttons", "Primary, secondary and tertiary, enabled and disabled"),
-        HubEntry(DesignSystemPage.Lists, "Lists", "Grouped lists and their rows"),
+        HubEntry(DesignSystemPage.Lists, "Lists", "Grouped lists and their rows, thumbnails and checks"),
+        HubEntry(DesignSystemPage.Search, "Search and filters", "The search bar and chips"),
         HubEntry(DesignSystemPage.Cards, "Cards", "The card surface, with text and actions"),
         HubEntry(DesignSystemPage.HeroHeader, "Hero header", "A large title at the top of a screen's content"),
         HubEntry(DesignSystemPage.Dialogs, "Dialogs", "A title, body text and two actions"),
         HubEntry(DesignSystemPage.Footer, "Footer", "Actions in a card pinned to the bottom, blurring what scrolls behind"),
-        HubEntry(DesignSystemPage.Progress, "Progress", "A circular progress indicator"),
+        HubEntry(DesignSystemPage.Progress, "Progress", "A circular progress indicator and the loading shimmer"),
     ),
     "Behaviours" to listOf(
         HubEntry(DesignSystemPage.ScrollBehaviors, "App bar scroll behaviours", "Whole screens to try how an app bar's header scrolls"),

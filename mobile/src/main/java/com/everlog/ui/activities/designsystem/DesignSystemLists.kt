@@ -2,6 +2,8 @@ package com.everlog.ui.activities.designsystem
 
 import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -9,13 +11,16 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.everlog.R
+import com.everlog.ui.design.elements.AppCheck
 import com.everlog.ui.design.elements.AppIcon
 import com.everlog.ui.design.elements.AppText
+import com.everlog.ui.design.elements.AppThumbnail
 import com.everlog.ui.design.elements.list.AppListItem
 import com.everlog.ui.design.theme.Theme
 
 @Composable
 internal fun DesignSystemLists(onButtonClick: () -> Unit) {
+    val checked = remember { mutableStateListOf(1) }
     ShowcasePage(title = "Lists") {
         group(
             key = "items",
@@ -78,6 +83,21 @@ internal fun DesignSystemLists(onButtonClick: () -> Unit) {
                 )
             }
         }
+        group(
+            key = "thumbnails",
+            header = { "Thumbnails and checks" },
+            footer = { "Tap a row to check it. Without an image, the thumbnail shows a placeholder icon." },
+        ) {
+            items(count = 2, key = { it }) { index ->
+                AppListItem(
+                    title = if (index == 0) "With an image" else "Without an image",
+                    subtitle = "AppThumbnail and AppCheck",
+                    leading = { AppThumbnail(imageUrl = SampleImageUrl.takeIf { index == 0 }) },
+                    trailing = { AppCheck(checked = index in checked) },
+                    onClick = { if (index in checked) checked.remove(index) else checked.add(index) },
+                )
+            }
+        }
         group(key = "single", header = { "A group with one row" }) {
             items(count = 1, key = { it }) {
                 AppListItem(
@@ -88,6 +108,9 @@ internal fun DesignSystemLists(onButtonClick: () -> Unit) {
         }
     }
 }
+
+// An exercise illustration from the dev library
+private const val SampleImageUrl = "https://storage.googleapis.com/everlog-9bddf.appspot.com/exercises/illustrations/high%20knees1.webp"
 
 @Preview
 @Composable
