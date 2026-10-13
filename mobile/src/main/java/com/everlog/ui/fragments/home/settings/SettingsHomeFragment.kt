@@ -117,8 +117,12 @@ class SettingsHomeFragment : BaseTabFragment(), MvpViewSettingsHome {
         return RxView.clicks(binding.root.findViewById(R.id.designSystemBtn))
     }
 
-    override fun onClickExercisePickerPrototype(): Observable<Void> {
-        return RxView.clicks(binding.root.findViewById(R.id.exercisePickerPrototypeBtn))
+    override fun onClickExercisePickerBrowse(): Observable<Void> {
+        return RxView.clicks(binding.root.findViewById(R.id.exercisePickerBrowseBtn))
+    }
+
+    override fun onClickExercisePickerPick(): Observable<Void> {
+        return RxView.clicks(binding.root.findViewById(R.id.exercisePickerPickBtn))
     }
 
     override fun onClickManageIntegrationGoogleFit(): Observable<Void> {

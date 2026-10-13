@@ -5,14 +5,23 @@ import com.everlog.ui.mvvm.CommonViewModel
 import kotlinx.coroutines.CoroutineDispatcher
 import timber.log.Timber
 
+internal enum class PickerMode {
+    // Home › Exercises: a tap opens the exercise
+    Browse,
+
+    // Adding to a workout or template: a tap picks the exercise, a long press opens it
+    Pick,
+}
+
 internal data class ExercisePickerState(
+    val mode: PickerMode = PickerMode.Pick,
     val library: PickerLibrary? = null,
     val loading: Boolean = true,
     val failed: Boolean = false,
     val tokens: List<FilterToken> = emptyList(),
     val text: String = "",
     val menu: PickerMenu = PickerMenu.Closed,
-    val showAllMostUsed: Boolean = false,
+    val showAllTop: Boolean = false,
     // uuids, in the order they were picked
     val picked: List<String> = emptyList(),
     // Earlier searches, newest first
@@ -38,8 +47,9 @@ internal sealed interface PickerMessage {
 
 internal class ExercisePickerViewModel(
     dispatcher: CoroutineDispatcher,
+    mode: PickerMode,
     private val loadLibrary: suspend () -> PickerLibrary,
-) : CommonViewModel<ExercisePickerState>(dispatcher, ExercisePickerState()) {
+) : CommonViewModel<ExercisePickerState>(dispatcher, ExercisePickerState(mode = mode)) {
 
     init {
         load()
@@ -73,7 +83,7 @@ internal class ExercisePickerViewModel(
 
     fun onRecent(search: List<FilterToken>) = setState { copy(tokens = search, text = "", menu = PickerMenu.Closed) }
 
-    fun onToggleShowAll() = setState { copy(showAllMostUsed = !showAllMostUsed) }
+    fun onToggleShowAll() = setState { copy(showAllTop = !showAllTop) }
 
     fun onToggleExercise(uuid: String) = setState {
         val max = AppConfig.configuration.maxExerciseSelection
@@ -138,8 +148,9 @@ internal sealed interface PickerSection {
     val key: String
     val rows: List<PickerRow>
 
-    data class MostUsed(override val rows: List<PickerRow>, val total: Int, val expanded: Boolean) : PickerSection {
-        override val key = "most_used"
+    // The exercises to reach first: most used in templates when picking, recently done when browsing
+    data class Top(val kind: PickerMode, override val rows: List<PickerRow>, val total: Int, val expanded: Boolean) : PickerSection {
+        override val key = "top"
     }
 
     data class Family(val id: String, val title: String, override val rows: List<PickerRow>) : PickerSection {
@@ -173,7 +184,7 @@ internal data class PickerContent(
     val menu: MenuContent?,
 )
 
-private const val MostUsedLimit = 5
+private const val TopLimit = 5
 private const val SuggestionLimit = 6
 
 internal fun ExercisePickerState.content(): PickerContent? {
@@ -197,12 +208,15 @@ internal fun ExercisePickerState.content(): PickerContent? {
     )
 
     val sections = mutableListOf<PickerSection>()
-    val mostUsedAll = results.filter { it.templates > 0 }.sortedWith(compareBy({ -it.templates }, { it.name }))
-    val mostUsed = if (showAllMostUsed) mostUsedAll else mostUsedAll.take(MostUsedLimit)
-    if (mostUsed.isNotEmpty()) {
-        sections += PickerSection.MostUsed(rows = mostUsed.map(::row), total = mostUsedAll.size, expanded = showAllMostUsed)
+    val topAll = when (mode) {
+        PickerMode.Pick -> results.filter { it.templates > 0 }.sortedWith(compareBy({ -it.templates }, { -(it.lastDone ?: 0) }, { it.name }))
+        PickerMode.Browse -> results.filter { it.lastDone != null }.sortedWith(compareBy({ -(it.lastDone ?: 0) }, { it.name }))
     }
-    val rest = results - mostUsed.toSet()
+    val top = if (showAllTop) topAll else topAll.take(TopLimit)
+    if (top.isNotEmpty()) {
+        sections += PickerSection.Top(kind = mode, rows = top.map(::row), total = topAll.size, expanded = showAllTop)
+    }
+    val rest = results - top.toSet()
     val byFamily = rest.filter { it.family != null }.groupBy { it.family!! }
     val muscleFiltered = tokens.any { it.key == FilterKey.Muscle && !it.not }
     val groupOrder = library.values[FilterKey.Muscle].orEmpty().map { it.id }
@@ -268,7 +282,10 @@ private fun ExercisePickerState.menuContent(library: PickerLibrary, words: List<
         val suggestions = FilterKey.entries.flatMap { key ->
             val picked = tokens.find { it.key == key }?.values.orEmpty()
             library.values[key].orEmpty()
-                .filter { value -> value.id !in picked && (searchWords(value.name) + value.aliases.flatMap { searchWords(it) }).any { it.startsWith(last) } }
+                .filter { value ->
+                    val terms = searchWords(value.name) + value.aliases.flatMap { searchWords(it) }
+                    value.id !in picked && terms.any { it.startsWith(last) || fuzzyStartsWith(it, last) }
+                }
                 .map { value -> Suggestion(key = key, value = value, count = filtered.count { value.id in it.values(key) }) }
         }
         MenuContent.Typing(

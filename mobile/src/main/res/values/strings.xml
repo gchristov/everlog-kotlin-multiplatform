@@ -583,6 +583,9 @@
 
     <!-- Exercise picker (TAS-451). Filters read as "Equipment is Barbell, Dumbbell". -->
     <string name="exercise_picker_title">Add exercises</string>
+    <string name="exercise_picker_title_browse">Exercises</string>
+    <string name="exercise_picker_search_loading">Search exercises</string>
+    <string name="exercise_picker_recently_done">Recently done</string>
     <string name="exercise_picker_search">Search or filter %1$d exercises</string>
     <string name="exercise_picker_search_more">Add a filter or name</string>
     <string name="exercise_picker_key_muscle">Muscle</string>
@@ -615,10 +618,9 @@
         <item quantity="other">Add %1$d exercises</item>
     </plurals>
     <string name="exercise_picker_add_superset">Add as a superset</string>
-    <string name="exercise_picker_empty_filters">Nothing matches these filters. Tap one in the search bar to change it.</string>
+    <string name="exercise_picker_empty_filters">Nothing matches these filters. Tap one in the search bar to change it, or clear all.</string>
     <string name="exercise_picker_empty_text">Nothing matches “%1$s”.</string>
     <string name="exercise_picker_create">Create “%1$s”</string>
-    <string name="exercise_picker_clear_filters">Clear filters</string>
     <string name="exercise_picker_load_failed">Couldn\'t load the exercises.</string>
     <string name="exercise_picker_retry">Try again</string>
 </resources>

@@ -3,6 +3,9 @@ package com.everlog.ui.activities.exercisepicker
 import androidx.annotation.StringRes
 import com.everlog.R
 import com.everlog.data.model.ELRoutine
+import com.everlog.data.model.exercise.ELExercise
+import com.everlog.data.model.workout.ELWorkout
+import com.google.firebase.firestore.Query
 import com.everlog.managers.firebase.FirestorePathManager
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FirebaseFirestore
@@ -51,6 +54,8 @@ internal data class PickerExercise(
     val own: Boolean,
     // How many of the user's workout templates use it
     val templates: Int,
+    // When the user last did it, from their recent workouts
+    val lastDone: Long? = null,
 ) {
     fun values(key: FilterKey): Collection<String> = when (key) {
         FilterKey.Muscle -> groups
@@ -67,6 +72,8 @@ internal data class PickerLibrary(
     val values: Map<FilterKey, List<FilterValue>>,
     // A family's muscle group (its first primary muscle's), to order families without a muscle filter
     val familyGroups: Map<String, String>,
+    // The exercises as the rest of the app knows them, by uuid, to open their details
+    val details: Map<String, ELExercise> = emptyMap(),
 ) {
     private val names = values.mapValues { (_, values) -> values.associate { it.id to it.name } }
 
@@ -76,6 +83,9 @@ internal data class PickerLibrary(
 }
 
 private const val RegistryPath = "global/exercises/registry/current"
+
+// How many of the latest workouts make up Recently done
+private const val RecentWorkouts = 30L
 
 // Search words the registry doesn't have yet for muscle groups and equipment (families have theirs).
 // The spec suggests moving these into the registry.
@@ -101,6 +111,14 @@ internal suspend fun loadPickerLibrary(): PickerLibrary = coroutineScope {
     // The user's own exercises and templates are extras: the library still shows without them
     val ownRead = async { runCatching { FirestorePathManager.exercisesCollection.get().await() }.getOrNull() }
     val routinesRead = async { runCatching { FirestorePathManager.routinesCollection.get().await() }.getOrNull() }
+    val workoutsRead = async {
+        runCatching {
+            FirestorePathManager.workoutsCollection
+                .orderBy("createdDate", Query.Direction.DESCENDING)
+                .limit(RecentWorkouts)
+                .get().await()
+        }.getOrNull()
+    }
 
     val registry = registryRead.await().data ?: emptyMap()
     val muscleGroupOf = registry.entries("muscles").associate { (id, entry) -> id to (entry["group"] as? String) }
@@ -117,10 +135,24 @@ internal suspend fun loadPickerLibrary(): PickerLibrary = coroutineScope {
             .forEach { templates[it] = (templates[it] ?: 0) + 1 }
     }
 
-    val global = globalRead.await().documents
+    // Newest first, so the first time an exercise shows up is the last time it was done
+    val lastDone = HashMap<String, Long>()
+    workoutsRead.await()?.documents?.forEach { document ->
+        val workout = runCatching { document.toObject(ELWorkout::class.java) }.getOrNull() ?: return@forEach
+        workout.routine?.exerciseGroups.orEmpty()
+            .flatMap { group -> group.exercises.mapNotNull { it.exercise?.uuid } }
+            .forEach { lastDone.putIfAbsent(it, workout.createdDate) }
+    }
+
+    val globalDocuments = globalRead.await().documents
+    val ownDocuments = ownRead.await()?.documents.orEmpty()
+    val details = (globalDocuments + ownDocuments).mapNotNull { document ->
+        runCatching { document.toObject(ELExercise::class.java) }.getOrNull()?.let { exercise -> (exercise.uuid ?: document.id) to exercise }
+    }.toMap()
+    val global = globalDocuments
         .filter { it.getString("status") != "hidden" }
-        .mapNotNull { it.toPickerExercise(muscleGroupOf, groupOfCategory, templates) }
-    val own = ownRead.await()?.documents.orEmpty().mapNotNull { document ->
+        .mapNotNull { it.toPickerExercise(muscleGroupOf, groupOfCategory, templates)?.let { exercise -> exercise.copy(lastDone = lastDone[exercise.uuid]) } }
+    val own = ownDocuments.mapNotNull { document ->
         val name = document.getString("name") ?: return@mapNotNull null
         val uuid = document.getString("uuid") ?: document.id
         PickerExercise(
@@ -136,6 +168,7 @@ internal suspend fun loadPickerLibrary(): PickerLibrary = coroutineScope {
             familyDefault = false,
             own = true,
             templates = templates[uuid] ?: 0,
+            lastDone = lastDone[uuid],
         )
     }
     val exercises = global + own
@@ -156,7 +189,8 @@ internal suspend fun loadPickerLibrary(): PickerLibrary = coroutineScope {
         values = mapOf(
             FilterKey.Muscle to used(FilterKey.Muscle, groups),
             FilterKey.Equipment to used(FilterKey.Equipment, registry.entries("equipment").filter { (_, entry) -> entry["kind"] == "main" }),
-            FilterKey.Movement to used(FilterKey.Movement, families),
+            // A to Z: the registry's order for families is just the order they were added in
+            FilterKey.Movement to used(FilterKey.Movement, families).sortedBy { it.name },
             FilterKey.SetUp to used(FilterKey.SetUp, registry.entries("positions")),
             FilterKey.Grip to used(FilterKey.Grip, registry.entries("grips")),
         ),
@@ -165,6 +199,7 @@ internal suspend fun loadPickerLibrary(): PickerLibrary = coroutineScope {
             val muscle = (entry["primaryMuscles"] as? List<String>)?.firstOrNull()
             muscleGroupOf[muscle]?.let { id to it }
         }.toMap(),
+        details = details,
     )
 }
 
@@ -234,11 +269,47 @@ internal fun PickerExercise.searchScore(words: List<String>, library: PickerLibr
                     .orEmpty()
             }
         }
-    if (!words.all { word -> haystack.any { it.startsWith(word) } }) return null
+    val exact = words.all { word -> haystack.any { it.startsWith(word) } }
+    if (!exact && !words.all { word -> haystack.any { it.startsWith(word) || fuzzyStartsWith(it, word) } }) return null
     val query = words.joinToString(" ")
     return when {
+        !exact -> 3
         nameWords.joinToString(" ").startsWith(query) -> 0
         nameWords.any { it.startsWith(words.first()) } -> 1
         else -> 2
     }
+}
+
+/**
+ * Whether [candidate] starts with [word] give or take a typo: one for words of 4 to 6 letters, two
+ * for longer ones, counting a wrong, missing, extra or swapped letter as one ("benhc" → bench,
+ * "dumbel" → dumbbell). Shorter words must match exactly.
+ */
+internal fun fuzzyStartsWith(candidate: String, word: String): Boolean {
+    val allowed = when {
+        word.length >= 7 -> 2
+        word.length >= 4 -> 1
+        else -> return false
+    }
+    // The candidate's start can be shorter or longer than the word by the letters missing or extra
+    return (word.length - allowed..word.length + allowed)
+        .filter { it in 1..candidate.length }
+        .any { length -> editDistance(word, candidate.take(length)) <= allowed }
+}
+
+// Optimal string alignment distance: insertions, deletions, substitutions and swaps of neighbours
+private fun editDistance(a: String, b: String): Int {
+    val d = Array(a.length + 1) { IntArray(b.length + 1) }
+    for (i in 0..a.length) d[i][0] = i
+    for (j in 0..b.length) d[0][j] = j
+    for (i in 1..a.length) {
+        for (j in 1..b.length) {
+            val cost = if (a[i - 1] == b[j - 1]) 0 else 1
+            d[i][j] = minOf(d[i - 1][j] + 1, d[i][j - 1] + 1, d[i - 1][j - 1] + cost)
+            if (i > 1 && j > 1 && a[i - 1] == b[j - 2] && a[i - 2] == b[j - 1]) {
+                d[i][j] = minOf(d[i][j], d[i - 2][j - 2] + 1)
+            }
+        }
+    }
+    return d[a.length][b.length]
 }

@@ -1,16 +1,24 @@
 package com.everlog.ui.activities.exercisepicker
 
+import android.content.Context
+import android.content.Intent
+import android.text.format.DateUtils
 import android.widget.Toast
 import androidx.activity.compose.BackHandler
 import androidx.activity.viewModels
+import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.imePadding
-import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -18,22 +26,24 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.res.vectorResource
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.everlog.R
+import com.everlog.ui.activities.home.exercise.details.ExerciseDetailsActivity
 import com.everlog.ui.design.CommonComposeActivity
 import com.everlog.ui.design.elements.AppBar
 import com.everlog.ui.design.elements.AppButton
-import com.everlog.ui.design.elements.AppCircularProgressIndicator
 import com.everlog.ui.design.elements.AppFooter
 import com.everlog.ui.design.elements.AppFooterAction
+import com.everlog.ui.design.elements.AppIcon
 import com.everlog.ui.design.elements.AppScreen
 import com.everlog.ui.design.elements.AppSecondaryButton
 import com.everlog.ui.design.elements.AppSurface
-import com.everlog.ui.design.elements.AppTertiaryButton
 import com.everlog.ui.design.elements.AppText
 import com.everlog.ui.design.elements.list.AppGroupedList
 import com.everlog.ui.design.elements.list.AppListItem
@@ -43,38 +53,66 @@ import com.everlog.ui.mvvm.createViewModelFactory
 import com.everlog.ui.navigator.ELNavigator
 import kotlinx.coroutines.Dispatchers
 
-// Prototype of the new exercise picker (TAS-451), opened from Settings › Developer. It doesn't replace
-// ExercisesActivity yet: picking only says what it would add. The spec is on the Everlog canvas.
+// Prototype of the new exercise picker (TAS-451), opened from Settings › Developer in both its modes.
+// It doesn't replace ExercisesActivity yet: picking only says what it would add. The spec is on the
+// Everlog canvas.
 class ExercisePickerActivity : CommonComposeActivity() {
     private val viewModel by viewModels<ExercisePickerViewModel> {
-        createViewModelFactory { ExercisePickerViewModel(dispatcher = Dispatchers.Main, loadLibrary = ::loadPickerLibrary) }
+        createViewModelFactory {
+            ExercisePickerViewModel(
+                dispatcher = Dispatchers.Main,
+                mode = if (intent.getBooleanExtra(ExtraPick, false)) PickerMode.Pick else PickerMode.Browse,
+                loadLibrary = ::loadPickerLibrary,
+            )
+        }
     }
 
     @Composable
     override fun Content() = ExercisePickerScreen(viewModel = viewModel)
+
+    companion object {
+        private const val ExtraPick = "pick"
+
+        @JvmStatic
+        fun launchIntent(context: Context, pick: Boolean): Intent =
+            Intent(context, ExercisePickerActivity::class.java).putExtra(ExtraPick, pick)
+    }
 }
 
 @Composable
 internal fun ExercisePickerScreen(viewModel: ExercisePickerViewModel) {
     val state by viewModel.state.collectAsStateWithLifecycle()
     val content = remember(state) { state.content() }
+    val context = LocalContext.current
     val focusManager = LocalFocusManager.current
     val focusRequester = remember { FocusRequester() }
+    val pick = state.mode == PickerMode.Pick
     val closeMenu = {
         focusManager.clearFocus()
         viewModel.onCloseMenu()
+    }
+    val openDetails: (String) -> Unit = { uuid ->
+        state.library?.details?.get(uuid)?.let { exercise ->
+            ELNavigator(context).openExerciseDetails(ExerciseDetailsActivity.Companion.Properties().exercise(exercise))
+        }
     }
 
     BackHandler(enabled = state.menu != PickerMenu.Closed, onBack = closeMenu)
     PickerMessages(message = state.message, onShown = viewModel::onMessageShown)
 
     AppScreen(
-        topBar = { AppBar(title = stringResource(R.string.exercise_picker_title), showBack = true) },
+        topBar = {
+            AppBar(
+                title = stringResource(if (pick) R.string.exercise_picker_title else R.string.exercise_picker_title_browse),
+                showBack = true,
+            )
+        },
         footer = {
             val count = state.picked.size
-            if (count > 0) {
+            // From the first pick, like the current picker; a superset needs two
+            if (pick && count > 0) {
                 AppFooter(
-                    actions = listOfNotNull(
+                    actions = listOf(
                         AppFooterAction(
                             text = pluralStringResource(R.plurals.exercise_picker_add, count, count),
                             onClick = { viewModel.onAdd(superset = false) },
@@ -82,42 +120,39 @@ internal fun ExercisePickerScreen(viewModel: ExercisePickerViewModel) {
                         AppFooterAction(
                             text = stringResource(R.string.exercise_picker_add_superset),
                             onClick = { viewModel.onAdd(superset = true) },
+                            enabled = count >= 2,
                             style = AppFooterAction.Style.Secondary,
-                        ).takeIf { count >= 2 },
+                        ),
                     ),
                 )
             }
         },
     ) { contentPadding ->
-        when {
-            state.loading -> Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                AppCircularProgressIndicator()
-            }
-
-            state.failed || content == null || state.library == null -> LoadFailed(onRetry = viewModel::onRetry)
-
-            // The menu keeps above the keyboard
-            else -> Column(modifier = Modifier.fillMaxSize().imePadding()) {
-                val library = state.library!!
-                PickerSearchBar(
-                    modifier = Modifier.padding(horizontal = Theme.spacing.large),
-                    tokens = state.tokens,
-                    library = library,
-                    text = state.text,
-                    placeholder = if (state.tokens.isEmpty()) {
-                        stringResource(R.string.exercise_picker_search, content.total)
-                    } else {
-                        stringResource(R.string.exercise_picker_search_more)
-                    },
-                    focusRequester = focusRequester,
-                    onFocused = viewModel::onSearchFocused,
-                    onTextChange = viewModel::onTextChange,
-                    onSearchAction = closeMenu,
-                    onEditToken = viewModel::onOpenKey,
-                    onToggleOperator = viewModel::onToggleOperator,
-                    onRemoveToken = viewModel::onRemoveToken,
-                )
-                Box(modifier = Modifier.weight(1f)) {
+        // The menu keeps above the keyboard
+        Column(modifier = Modifier.fillMaxSize().imePadding()) {
+            PickerSearchBar(
+                modifier = Modifier.padding(horizontal = Theme.spacing.large),
+                tokens = state.tokens,
+                library = state.library,
+                text = state.text,
+                placeholder = when {
+                    content == null -> stringResource(R.string.exercise_picker_search_loading)
+                    state.tokens.isEmpty() -> stringResource(R.string.exercise_picker_search, content.total)
+                    else -> stringResource(R.string.exercise_picker_search_more)
+                },
+                enabled = content != null,
+                focusRequester = focusRequester,
+                onFocused = viewModel::onSearchFocused,
+                onTextChange = viewModel::onTextChange,
+                onSearchAction = closeMenu,
+                onEditToken = viewModel::onOpenKey,
+                onToggleOperator = viewModel::onToggleOperator,
+                onRemoveToken = viewModel::onRemoveToken,
+            )
+            when {
+                state.loading -> PickerSkeleton()
+                state.failed || content == null || state.library == null -> LoadFailed(onRetry = viewModel::onRetry)
+                else -> Box(modifier = Modifier.weight(1f)) {
                     Column {
                         PickerShortcuts(
                             modifier = Modifier.padding(top = Theme.spacing.medium),
@@ -126,16 +161,18 @@ internal fun ExercisePickerScreen(viewModel: ExercisePickerViewModel) {
                             onOpenKey = viewModel::onOpenKey,
                             onClearAll = viewModel::onClearAll,
                         )
+                        // Keeps the list clear of the chips as it scrolls under them
+                        Spacer(modifier = Modifier.height(Theme.spacing.small))
                         PickerList(
                             listKey = state.tokens to state.text.trim(),
+                            pick = pick,
                             content = content,
-                            hasText = state.text.isNotBlank(),
                             text = state.text.trim(),
                             hasTokens = state.tokens.isNotEmpty(),
                             contentPadding = contentPadding,
-                            onToggleExercise = viewModel::onToggleExercise,
+                            onTap = { uuid -> if (pick) viewModel.onToggleExercise(uuid) else openDetails(uuid) },
+                            onLongPress = { uuid -> if (pick) openDetails(uuid) },
                             onToggleShowAll = viewModel::onToggleShowAll,
-                            onClearAll = viewModel::onClearAll,
                         )
                     }
                     content.menu?.let { menu ->
@@ -143,7 +180,7 @@ internal fun ExercisePickerScreen(viewModel: ExercisePickerViewModel) {
                         PickerMenuCard(
                             modifier = Modifier.padding(start = Theme.spacing.large, end = Theme.spacing.large, top = Theme.spacing.small),
                             menu = menu,
-                            library = library,
+                            library = state.library!!,
                             onRecent = { focusManager.clearFocus(); viewModel.onRecent(it) },
                             onOpenKey = viewModel::onOpenKey,
                             onToggleValue = viewModel::onToggleValue,
@@ -157,50 +194,64 @@ internal fun ExercisePickerScreen(viewModel: ExercisePickerViewModel) {
     }
 }
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 private fun PickerList(
     // A new search starts the list from the top
     listKey: Any,
+    pick: Boolean,
     content: PickerContent,
-    hasText: Boolean,
     text: String,
     hasTokens: Boolean,
-    contentPadding: androidx.compose.foundation.layout.PaddingValues,
-    onToggleExercise: (String) -> Unit,
+    contentPadding: PaddingValues,
+    onTap: (String) -> Unit,
+    onLongPress: (String) -> Unit,
     onToggleShowAll: () -> Unit,
-    onClearAll: () -> Unit,
 ) {
     val context = LocalContext.current
     val mostUsedTitle = stringResource(R.string.exercise_picker_most_used)
+    val recentTitle = stringResource(R.string.exercise_picker_recently_done)
     val ownTitle = stringResource(R.string.exercise_picker_own)
     val listState = rememberLazyListState()
     LaunchedEffect(listKey) { listState.scrollToItem(0) }
-    AppGroupedList(state = listState, contentPadding = contentPadding) {
+    AppGroupedList(state = listState, contentPadding = PaddingValues(bottom = contentPadding.calculateBottomPadding())) {
         content.sections.forEach { section ->
             group(
                 key = section.key,
                 header = {
                     when (section) {
-                        is PickerSection.MostUsed -> mostUsedTitle
+                        is PickerSection.Top -> if (section.kind == PickerMode.Pick) mostUsedTitle else recentTitle
                         is PickerSection.Family -> section.title
                         is PickerSection.Own -> ownTitle
                     }
                 },
             ) {
                 items(items = section.rows, key = { it.exercise.uuid }) { row ->
+                    val uuid = row.exercise.uuid
                     AppListItem(
+                        modifier = Modifier.combinedClickable(onClick = { onTap(uuid) }, onLongClick = { onLongPress(uuid) }),
                         title = row.exercise.name,
-                        subtitle = if (section is PickerSection.MostUsed) {
-                            pluralStringResource(R.plurals.exercise_picker_in_templates, row.exercise.templates, row.exercise.templates)
-                        } else {
-                            row.details.ifEmpty { null }
+                        subtitle = when {
+                            section is PickerSection.Top && section.kind == PickerMode.Pick ->
+                                pluralStringResource(R.plurals.exercise_picker_in_templates, row.exercise.templates, row.exercise.templates)
+
+                            section is PickerSection.Top -> row.exercise.lastDone?.let {
+                                DateUtils.getRelativeTimeSpanString(it, System.currentTimeMillis(), DateUtils.DAY_IN_MILLIS).toString()
+                            }
+
+                            else -> row.details.ifEmpty { null }
                         },
                         leading = { ExerciseThumbnail(imageUrl = row.exercise.imageUrl) },
-                        trailing = { PickCheck(picked = row.picked) },
-                        onClick = { onToggleExercise(row.exercise.uuid) },
+                        trailing = {
+                            if (pick) {
+                                PickCheck(picked = row.picked)
+                            } else {
+                                AppIcon(imageVector = ImageVector.vectorResource(R.drawable.ic_right), tint = Theme.contentColors.secondary)
+                            }
+                        },
                     )
                 }
-                if (section is PickerSection.MostUsed && (section.expanded || section.total > section.rows.size)) {
+                if (section is PickerSection.Top && (section.expanded || section.total > section.rows.size)) {
                     items(count = 1, key = { "show_all" }) {
                         AppListItem(
                             title = if (section.expanded) {
@@ -228,14 +279,11 @@ private fun PickerList(
                             },
                             color = Theme.contentColors.secondary,
                         )
-                        if (hasText) {
+                        if (text.isNotEmpty()) {
                             AppSecondaryButton(
                                 onClick = { ELNavigator(context).openEditExercise(null) },
                                 text = stringResource(R.string.exercise_picker_create, text),
                             )
-                        }
-                        if (hasTokens) {
-                            AppTertiaryButton(onClick = onClearAll, text = stringResource(R.string.exercise_picker_clear_filters))
                         }
                     }
                 }

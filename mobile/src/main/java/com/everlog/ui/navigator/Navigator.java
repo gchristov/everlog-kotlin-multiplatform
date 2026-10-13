@@ -73,7 +73,7 @@ public interface Navigator {
 
     void openDesignSystem();
 
-    void openExercisePickerPrototype();
+    void openExercisePickerPrototype(boolean pick);
 
     void openOnboarding();
 

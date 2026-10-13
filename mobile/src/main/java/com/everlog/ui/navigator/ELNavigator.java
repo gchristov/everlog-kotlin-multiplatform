@@ -249,9 +249,8 @@ public class ELNavigator implements Navigator {
     }
 
     @Override
-    public void openExercisePickerPrototype() {
-        Intent i = new Intent(mContext, ExercisePickerActivity.class);
-        startActivity(i);
+    public void openExercisePickerPrototype(boolean pick) {
+        startActivity(ExercisePickerActivity.launchIntent(mContext, pick));
     }
 
     @Override

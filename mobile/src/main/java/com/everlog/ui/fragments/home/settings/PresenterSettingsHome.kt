@@ -234,9 +234,12 @@ class PresenterSettingsHome : BaseFragmentPresenter<MvpViewSettingsHome>() {
     }
 
     private fun observeExercisePickerPrototypeClick() {
-        subscriptions.add(mvpView.onClickExercisePickerPrototype()
+        subscriptions.add(mvpView.onClickExercisePickerBrowse()
                 .compose(applyUISchedulers())
-                .subscribe({ navigator.openExercisePickerPrototype() }, { throwable -> handleError(throwable) }))
+                .subscribe({ navigator.openExercisePickerPrototype(false) }, { throwable -> handleError(throwable) }))
+        subscriptions.add(mvpView.onClickExercisePickerPick()
+                .compose(applyUISchedulers())
+                .subscribe({ navigator.openExercisePickerPrototype(true) }, { throwable -> handleError(throwable) }))
     }
 
     private fun observeManageIntegrationGoogleFitClick() {

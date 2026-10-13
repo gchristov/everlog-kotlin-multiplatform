@@ -25,7 +25,16 @@ import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.animation.core.LinearEasing
+import androidx.compose.animation.core.animateFloat
+import androidx.compose.animation.core.infiniteRepeatable
+import androidx.compose.animation.core.rememberInfiniteTransition
+import androidx.compose.animation.core.tween
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.compositeOver
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -46,7 +55,7 @@ import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.everlog.R
 import com.everlog.ui.design.elements.AppIcon
-import com.everlog.ui.design.elements.AppTertiaryButton
+import com.everlog.ui.design.elements.AppSecondaryButton
 import com.everlog.ui.design.elements.AppText
 import com.everlog.ui.design.elements.list.AppListItem
 import com.everlog.ui.design.theme.Theme
@@ -76,9 +85,11 @@ private object PickerSizes {
 @Composable
 internal fun PickerSearchBar(
     tokens: List<FilterToken>,
-    library: PickerLibrary,
+    library: PickerLibrary?,
     text: String,
     placeholder: String,
+    // Off while the library loads
+    enabled: Boolean,
     focusRequester: FocusRequester,
     onFocused: () -> Unit,
     onTextChange: (String) -> Unit,
@@ -94,7 +105,7 @@ internal fun PickerSearchBar(
             .heightIn(min = PickerSizes.BarMinHeight)
             .clip(Theme.shapes.surface)
             .background(Theme.backgrounds.surface)
-            .clickable(interactionSource = remember { MutableInteractionSource() }, indication = null) { focusRequester.requestFocus() }
+            .clickable(enabled = enabled, interactionSource = remember { MutableInteractionSource() }, indication = null) { focusRequester.requestFocus() }
             .padding(horizontal = Theme.spacing.large, vertical = 9.dp),
         horizontalArrangement = Arrangement.spacedBy(Theme.spacing.small),
     ) {
@@ -108,7 +119,7 @@ internal fun PickerSearchBar(
             horizontalArrangement = Arrangement.spacedBy(6.dp),
             verticalArrangement = Arrangement.spacedBy(6.dp),
         ) {
-            tokens.forEach { token ->
+            if (library != null) tokens.forEach { token ->
                 FilterTokenView(
                     token = token,
                     library = library,
@@ -126,6 +137,7 @@ internal fun PickerSearchBar(
                     .onFocusChanged { if (it.isFocused) onFocused() },
                 value = text,
                 onValueChange = onTextChange,
+                enabled = enabled,
                 singleLine = true,
                 textStyle = Theme.typography.body.copy(color = Theme.contentColors.primary),
                 cursorBrush = SolidColor(Theme.contentColors.action),
@@ -292,21 +304,18 @@ internal fun PickerMenuCard(
     onDone: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    // Everything scrolls together, Done included, within the space above the keyboard
     Column(
         modifier = modifier
             .fillMaxWidth()
+            .heightIn(max = PickerSizes.MenuMaxHeight)
             .clip(Theme.shapes.surface)
             .background(Theme.backgrounds.surface)
             .border(1.dp, Theme.backgrounds.separator, Theme.shapes.surface)
-            .padding(vertical = Theme.spacing.small),
+            .verticalScroll(rememberScrollState())
+            .padding(top = Theme.spacing.small),
     ) {
-        // Shrinks to the space left above the keyboard, keeping Done in view
-        Column(
-            modifier = Modifier
-                .weight(1f, fill = false)
-                .heightIn(max = PickerSizes.MenuMaxHeight)
-                .verticalScroll(rememberScrollState()),
-        ) {
+        Column {
             when (menu) {
                 is MenuContent.Start -> {
                     if (menu.recent.isNotEmpty()) {
@@ -369,9 +378,13 @@ internal fun PickerMenuCard(
                 }
             }
         }
-        Row(modifier = Modifier.fillMaxWidth().padding(end = Theme.spacing.small), horizontalArrangement = Arrangement.End) {
-            AppTertiaryButton(onClick = onDone, text = stringResource(R.string.exercise_picker_done))
-        }
+        AppSecondaryButton(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(Theme.spacing.large),
+            onClick = onDone,
+            text = stringResource(R.string.exercise_picker_done),
+        )
     }
 }
 
@@ -475,4 +488,53 @@ internal fun PickerScrim(onClick: () -> Unit) {
             .background(Theme.backgrounds.primary.copy(alpha = 0.72f))
             .clickable(interactionSource = remember { MutableInteractionSource() }, indication = null, onClick = onClick),
     )
+}
+
+// Loading: the chips and a couple of groups in the list's layout, with a shimmer sweeping across
+@Composable
+internal fun PickerSkeleton() {
+    val sweep by rememberInfiniteTransition(label = "shimmer").animateFloat(
+        initialValue = -1f,
+        targetValue = 2f,
+        animationSpec = infiniteRepeatable(tween(durationMillis = 1200, easing = LinearEasing)),
+        label = "sweep",
+    )
+    val base = Theme.backgrounds.surfaceRaised
+    val brush = Brush.linearGradient(
+        colors = listOf(base, Theme.contentColors.secondary.copy(alpha = 0.2f).compositeOver(base), base),
+        start = Offset(sweep * 1000f, 0f),
+        end = Offset(sweep * 1000f + 600f, 600f),
+    )
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(top = Theme.spacing.medium),
+        verticalArrangement = Arrangement.spacedBy(Theme.spacing.large),
+    ) {
+        Row(modifier = Modifier.padding(horizontal = Theme.spacing.large), horizontalArrangement = Arrangement.spacedBy(Theme.spacing.small)) {
+            listOf(88.dp, 108.dp, 104.dp, 84.dp).forEach { width ->
+                Box(modifier = Modifier.size(width = width, height = PickerSizes.ChipHeight).clip(Theme.shapes.button).background(brush))
+            }
+        }
+        repeat(2) { group ->
+            Column(modifier = Modifier.padding(horizontal = Theme.spacing.large), verticalArrangement = Arrangement.spacedBy(Theme.spacing.large)) {
+                Box(modifier = Modifier.size(width = if (group == 0) 180.dp else 110.dp, height = 14.dp).clip(RoundedCornerShape(PickerSizes.BoxCorner)).background(brush))
+                Column(modifier = Modifier.fillMaxWidth().clip(Theme.shapes.surface).background(Theme.backgrounds.surface)) {
+                    repeat(if (group == 0) 4 else 3) { index ->
+                        Row(
+                            modifier = Modifier.padding(Theme.spacing.large),
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.spacedBy(Theme.spacing.large),
+                        ) {
+                            Box(modifier = Modifier.size(PickerSizes.Thumbnail).clip(RoundedCornerShape(PickerSizes.ThumbnailCorner)).background(brush))
+                            Column(modifier = Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(Theme.spacing.small)) {
+                                Box(modifier = Modifier.fillMaxWidth(if (index % 2 == 0) 0.7f else 0.55f).height(14.dp).clip(RoundedCornerShape(PickerSizes.BoxCorner)).background(brush))
+                                Box(modifier = Modifier.fillMaxWidth(0.4f).height(10.dp).clip(RoundedCornerShape(PickerSizes.BoxCorner)).background(brush))
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
 }

@@ -33,7 +33,9 @@ interface MvpViewSettingsHome : BaseFragmentMvpView {
 
     fun onClickDesignSystem(): Observable<Void>
 
-    fun onClickExercisePickerPrototype(): Observable<Void>
+    fun onClickExercisePickerBrowse(): Observable<Void>
+
+    fun onClickExercisePickerPick(): Observable<Void>
 
     // Integrations
 
