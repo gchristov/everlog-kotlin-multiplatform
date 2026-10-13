@@ -16,7 +16,8 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.imePadding
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.ime
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.runtime.Composable
@@ -28,6 +29,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
@@ -128,8 +130,11 @@ internal fun ExercisePickerScreen(viewModel: ExercisePickerViewModel) {
             }
         },
     ) { contentPadding ->
-        // The menu keeps above the keyboard
-        Column(modifier = Modifier.fillMaxSize().imePadding()) {
+        // The menu keeps above the keyboard. AppScreen counts the navigation bar as handled, so
+        // imePadding() would leave out its height, but this content runs behind it: pad by the
+        // keyboard's whole height instead.
+        val keyboard = with(LocalDensity.current) { WindowInsets.ime.getBottom(this).toDp() }
+        Column(modifier = Modifier.fillMaxSize().padding(bottom = keyboard)) {
             PickerSearchBar(
                 modifier = Modifier.padding(horizontal = Theme.spacing.large),
                 tokens = state.tokens,
@@ -178,7 +183,13 @@ internal fun ExercisePickerScreen(viewModel: ExercisePickerViewModel) {
                     content.menu?.let { menu ->
                         PickerScrim(onClick = closeMenu)
                         PickerMenuCard(
-                            modifier = Modifier.padding(start = Theme.spacing.large, end = Theme.spacing.large, top = Theme.spacing.small),
+                            // Kept clear of the keyboard when the menu fills the space above it
+                            modifier = Modifier.padding(
+                                start = Theme.spacing.large,
+                                end = Theme.spacing.large,
+                                top = Theme.spacing.small,
+                                bottom = Theme.spacing.large,
+                            ),
                             menu = menu,
                             library = state.library!!,
                             onRecent = { focusManager.clearFocus(); viewModel.onRecent(it) },
