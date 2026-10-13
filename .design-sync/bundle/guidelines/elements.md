@@ -76,6 +76,38 @@ All buttons are pills (`--radius-button`), minimum height `--button-min-height`,
   use 12px horizontal padding so the text lines up with the screen margin).
 - `AppIconButton`: a 48px round touch target with a 24px icon, `--content-primary`.
 
+## AppChip
+
+A compact pill button, e.g. a row of filters to start from: height 36px, `--radius-button`, padding
+`--space-lg` (`--space-md` on the right when it has an arrow), label in `--font-button`.
+- default: `--background-surface` with a 1px `--background-separator` border, label `--content-primary`
+- action: transparent with a 1px `--content-action` border, label `--content-action` (e.g. Clear all)
+- optional 16px down arrow after the label, `--space-xs` from it, when it opens a menu
+
+## AppSearchBar
+
+A search field in a card: `--background-surface`, `--radius-surface`, at least 48px tall, padding
+`--space-lg` at the sides and 9px top and bottom. A 24px search icon in `--content-secondary`, then the
+text in `--font-body` (placeholder in `--content-secondary`), `--space-sm` apart. No outline or colour
+change when focused. The screen can put content before the text, e.g. filters as 30px tokens, which
+wraps onto more lines with the text, 6px apart.
+
+## AppCheck
+
+Whether a row is picked, as its trailing content: a 24px circle with a 2px `--background-separator`
+ring, or filled `--content-action` with a 14px tick in `--content-on-action` when picked.
+
+## AppImage / AppThumbnail
+
+`AppImage` is an image from a URL. `AppThumbnail` is a row's 48px square image with 12px corners, as an
+`AppListItem`'s leading content: the illustration on white, or without one a 24px icon in
+`--content-secondary` on `--background-surface-raised`.
+
+## Shimmer
+
+Loading placeholders are drawn in `--background-surface-raised` with a highlight sweeping across them
+(about 1.2s), all in step. Each screen lays out its own placeholders to match what's loading.
+
 ## AppFooter
 
 Actions pinned to the bottom of an `AppScreen`, in a floating card:
@@ -83,10 +115,12 @@ Actions pinned to the bottom of an `AppScreen`, in a floating card:
 - radius `--radius-surface`, 1px `--background-separator` border, padding `--space-lg`
 - background: the content behind it blurred (20px) under `--background-blur-overlay`
   (`backdrop-filter: blur(20px)`)
-- buttons stacked full width, `--space-sm` apart: primary `AppButton` at the bottom (the thumb
-  target), a secondary or tertiary action above it
+- buttons stacked full width, `--space-sm` apart, in the order given: the primary `AppButton` first,
+  a secondary or tertiary action under it. A single action keeps the lower slot.
 - optional note above the actions in a small card: `--background-primary`, `--font-caption`,
   `--content-secondary`, padding `--space-lg`
+- when the screen says its content is new (a step of a flow), the actions crossfade in place and the
+  card's height follows; otherwise text changes, like a count in "Add 2 exercises", update in place
 
 ## AppDialog
 
