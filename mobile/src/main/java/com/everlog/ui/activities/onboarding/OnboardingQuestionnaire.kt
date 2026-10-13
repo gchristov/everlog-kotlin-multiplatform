@@ -396,7 +396,7 @@ internal fun OnboardingFooter(
         state.isEditing -> FooterMode.Editing
         else -> FooterMode.Next
     }
-    // AppFooter crossfades the actions in place when they change
+    // The actions crossfade in place when the mode changes (AppFooter's transitionKey)
     val actions = when (mode) {
         FooterMode.Welcome -> listOf(
             AppFooterAction(
@@ -431,7 +431,7 @@ internal fun OnboardingFooter(
         durationMillis = WelcomeMotion.ButtonFade,
         easing = OnboardingMotion.Standard,
     ) {
-        AppFooter(actions = actions)
+        AppFooter(actions = actions, transitionKey = mode)
     }
 }
 
