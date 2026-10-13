@@ -48,6 +48,7 @@ import dev.chrisbanes.haze.hazeSource
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.drawWithContent
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
@@ -317,6 +318,7 @@ internal fun PickerMenuCard(
     // bottom over a blur of it, like the screen's floating footer
     val hazeState = remember { HazeState() }
     var doneHeight by remember { mutableIntStateOf(0) }
+    val separator = Theme.backgrounds.separator
     Box(
         modifier = modifier
             .fillMaxWidth()
@@ -408,6 +410,11 @@ internal fun PickerMenuCard(
                         fallbackTint = HazeTint(Theme.backgrounds.surface),
                     ),
                 )
+                // A hairline on top, like AppFooter's border; the sides and bottom are the menu's own edges
+                .drawWithContent {
+                    drawContent()
+                    drawLine(separator, start = Offset.Zero, end = Offset(size.width, 0f), strokeWidth = 1.dp.toPx())
+                }
                 .padding(Theme.spacing.large),
         ) {
             AppSecondaryButton(
