@@ -8,6 +8,8 @@ import com.everlog.data.model.exercise.library.ExerciseRegistry
 import com.everlog.data.model.exercise.library.LibraryExercise
 import com.everlog.data.repositories.ExerciseRepository
 import com.everlog.data.repositories.RoutineRepository
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.emptyFlow
 
 /**
  * The week's exercises as they'd come from the exercise library.
@@ -32,6 +34,8 @@ class FakeExerciseRepository(
     override suspend fun ownExercises(): Either<Throwable, List<LibraryExercise>> = Either.Right(emptyList())
 
     override suspend fun registry(): Either<Throwable, ExerciseRegistry> = Either.Right(ExerciseRegistry())
+
+    override fun ownExerciseUpdates(): Flow<List<LibraryExercise>> = emptyFlow()
 }
 
 class FakeRoutineRepository(
