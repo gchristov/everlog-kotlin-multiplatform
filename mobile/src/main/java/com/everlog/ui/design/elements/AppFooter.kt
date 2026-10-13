@@ -50,14 +50,16 @@ data class AppFooterAction(
 // leave the content sharp behind the buttons. An optional [header] sits above the actions, e.g. a
 // note on what they do.
 //
-// When the header or actions change (their text or style, not e.g. whether they're enabled), the
-// new ones crossfade in place and the card's height follows. A single action keeps the lower slot,
-// so the thumb target doesn't move.
+// The screen decides when the footer's content is new: when [transitionKey] changes (e.g. a step of
+// a flow), the new header and actions crossfade in place and the card's height follows. Otherwise
+// they update in place, so e.g. a count in a button's text ("Add 2 exercises") just changes. Without
+// a key it never crossfades. A single action keeps the lower slot, so the thumb target doesn't move.
 @Composable
 fun AppFooter(
     actions: List<AppFooterAction>,
     modifier: Modifier = Modifier,
     header: String? = null,
+    transitionKey: Any? = null,
 ) {
     val shape = Theme.shapes.surface
     Box(
@@ -68,7 +70,7 @@ fun AppFooter(
         contentAlignment = Alignment.TopCenter,
     ) {
         AnimatedContent(
-            targetState = FooterContent(header, actions),
+            targetState = FooterContent(header, actions, transitionKey),
             modifier = Modifier
                 .widthIn(max = LocalAppScreenMaxContentWidth.current)
                 .fillMaxWidth()
@@ -76,7 +78,7 @@ fun AppFooter(
                 .footerBlur()
                 .border(1.dp, Theme.backgrounds.separator, shape)
                 .padding(Theme.spacing.large),
-            contentKey = { it.key },
+            contentKey = { it.transitionKey },
             contentAlignment = Alignment.BottomCenter,
             transitionSpec = {
                 (fadeIn(tween(FooterMotion.Fade)) togetherWith fadeOut(tween(FooterMotion.Fade)))
@@ -92,10 +94,7 @@ fun AppFooter(
     }
 }
 
-private data class FooterContent(val header: String?, val actions: List<AppFooterAction>) {
-    // What changes the footer's content, rather than updating it in place
-    val key get() = header to actions.map { it.text to it.style }
-}
+private data class FooterContent(val header: String?, val actions: List<AppFooterAction>, val transitionKey: Any?)
 
 private object FooterMotion {
     const val Fade = 150
