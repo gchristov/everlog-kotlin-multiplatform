@@ -627,6 +627,7 @@
         <item quantity="other">Add %1$d exercises</item>
     </plurals>
     <string name="exercise_picker_add_superset">Add as a superset</string>
+    <string name="exercise_picker_details_hint">Press and hold an exercise to see its details.</string>
     <string name="exercise_picker_empty_filters">Nothing matches these filters. Tap one in the search bar to change it, or clear all.</string>
     <string name="exercise_picker_empty_text">Nothing matches “%1$s”.</string>
     <string name="exercise_picker_create">Create “%1$s”</string>

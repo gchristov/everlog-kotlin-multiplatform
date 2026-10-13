@@ -6,6 +6,12 @@ import android.text.format.DateUtils
 import android.widget.Toast
 import androidx.activity.compose.BackHandler
 import androidx.activity.viewModels
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
@@ -23,6 +29,8 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.setValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -120,18 +128,28 @@ internal fun ExercisePickerScreen(viewModel: ExercisePickerViewModel) {
         },
         footer = {
             val count = state.picked.size
+            // The last count stays while the footer slides away, so its buttons don't read "Add 0"
+            var shownCount by remember { mutableIntStateOf(count) }
+            if (count > 0) shownCount = count
             // From the first pick, like the current picker; a superset needs two
-            if (pick && count > 0) {
+            AnimatedVisibility(
+                visible = pick && count > 0,
+                enter = slideInVertically(tween(FooterMotion.In)) { it } + fadeIn(tween(FooterMotion.In)),
+                exit = slideOutVertically(tween(FooterMotion.Out)) { it } + fadeOut(tween(FooterMotion.Out)),
+            ) {
                 AppFooter(
+                    header = stringResource(R.string.exercise_picker_details_hint),
                     actions = listOf(
                         AppFooterAction(
-                            text = pluralStringResource(R.plurals.exercise_picker_add, count, count),
+                            text = pluralStringResource(R.plurals.exercise_picker_add, shownCount, shownCount),
                             onClick = { viewModel.onAdd(superset = false) },
+                            // The count changes with each pick: update the text in place
+                            key = "add",
                         ),
                         AppFooterAction(
                             text = stringResource(R.string.exercise_picker_add_superset),
                             onClick = { viewModel.onAdd(superset = true) },
-                            enabled = count >= 2,
+                            enabled = shownCount >= 2,
                             style = AppFooterAction.Style.Secondary,
                         ),
                     ),
@@ -343,4 +361,9 @@ private fun PickerMessages(message: PickerMessage?, onShown: () -> Unit) {
             onShown()
         }
     }
+}
+
+private object FooterMotion {
+    const val In = 250
+    const val Out = 200
 }
