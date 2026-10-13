@@ -35,7 +35,16 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.compositeOver
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.layout.onSizeChanged
+import androidx.compose.ui.platform.LocalDensity
+import dev.chrisbanes.haze.HazeState
+import dev.chrisbanes.haze.HazeStyle
+import dev.chrisbanes.haze.HazeTint
+import dev.chrisbanes.haze.hazeEffect
+import dev.chrisbanes.haze.hazeSource
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -304,18 +313,24 @@ internal fun PickerMenuCard(
     onDone: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    // Everything scrolls together, Done included, within the space above the keyboard
-    Column(
+    // The list scrolls within the space above the keyboard, behind Done, which stays pinned at the
+    // bottom over a blur of it, like the screen's floating footer
+    val hazeState = remember { HazeState() }
+    var doneHeight by remember { mutableIntStateOf(0) }
+    Box(
         modifier = modifier
             .fillMaxWidth()
             .heightIn(max = PickerSizes.MenuMaxHeight)
             .clip(Theme.shapes.surface)
             .background(Theme.backgrounds.surface)
-            .border(1.dp, Theme.backgrounds.separator, Theme.shapes.surface)
-            .verticalScroll(rememberScrollState())
-            .padding(top = Theme.spacing.small),
+            .border(1.dp, Theme.backgrounds.separator, Theme.shapes.surface),
     ) {
-        Column {
+        Column(
+            modifier = Modifier
+                .hazeSource(hazeState)
+                .verticalScroll(rememberScrollState())
+                .padding(top = Theme.spacing.small, bottom = with(LocalDensity.current) { doneHeight.toDp() }),
+        ) {
             when (menu) {
                 is MenuContent.Start -> {
                     if (menu.recent.isNotEmpty()) {
@@ -378,13 +393,29 @@ internal fun PickerMenuCard(
                 }
             }
         }
-        AppSecondaryButton(
+        Box(
             modifier = Modifier
+                .align(Alignment.BottomCenter)
                 .fillMaxWidth()
+                .onSizeChanged { doneHeight = it.height }
+                .hazeEffect(
+                    state = hazeState,
+                    style = HazeStyle(
+                        backgroundColor = Theme.backgrounds.surface,
+                        tint = HazeTint(Theme.backgrounds.surface.copy(alpha = 0.6f)),
+                        blurRadius = 20.dp,
+                        noiseFactor = 0f,
+                        fallbackTint = HazeTint(Theme.backgrounds.surface),
+                    ),
+                )
                 .padding(Theme.spacing.large),
-            onClick = onDone,
-            text = stringResource(R.string.exercise_picker_done),
-        )
+        ) {
+            AppSecondaryButton(
+                modifier = Modifier.fillMaxWidth(),
+                onClick = onDone,
+                text = stringResource(R.string.exercise_picker_done),
+            )
+        }
     }
 }
 
