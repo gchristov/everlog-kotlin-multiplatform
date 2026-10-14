@@ -25,6 +25,9 @@ import com.everlog.ui.design.theme.Theme
  * chip; [AppChipStyle.Action] is outlined in the accent, like [AppSecondaryButton] at chip height,
  * e.g. Clear all at the end of a row of filters.
  *
+ * `ui/views/tab/TabsPage` is its XML twin (`view_tab`, `chip_background`), so change both together.
+ *
+ * @param selected Tints it in the accent, e.g. the current tab in a row of chips that switch pages.
  * @param dropdown Ends it with a down arrow, when it opens a menu.
  */
 @Composable
@@ -33,11 +36,13 @@ fun AppChip(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
     style: AppChipStyle = AppChipStyle.Default,
+    selected: Boolean = false,
     dropdown: Boolean = false,
 ) {
-    val (content, border, background) = when (style) {
-        AppChipStyle.Default -> Triple(Theme.contentColors.primary, Theme.backgrounds.separator, Theme.backgrounds.surface)
-        AppChipStyle.Action -> Triple(Theme.contentColors.action, Theme.contentColors.action, Color.Transparent)
+    val (content, border, background) = when {
+        selected -> Triple(Theme.contentColors.action, Theme.contentColors.action, Theme.backgrounds.selected)
+        style == AppChipStyle.Default -> Triple(Theme.contentColors.primary, Theme.backgrounds.separator, Theme.backgrounds.surface)
+        else -> Triple(Theme.contentColors.action, Theme.contentColors.action, Color.Transparent)
     }
     Row(
         modifier = modifier
@@ -76,6 +81,7 @@ private object ChipSizes {
 private fun AppChipPreview() {
     Theme {
         Row(horizontalArrangement = Arrangement.spacedBy(Theme.spacing.small)) {
+            AppChip(text = "Info", onClick = {}, selected = true)
             AppChip(text = "Muscle", onClick = {}, dropdown = true)
             AppChip(text = "Clear all", onClick = {}, style = AppChipStyle.Action)
         }

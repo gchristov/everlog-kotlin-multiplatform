@@ -69,14 +69,6 @@
                     android:layout_width="wrap_content"
                     android:text="@string/muscle_goal_title" />
 
-                <!--<com.everlog.ui.views.badge.NewBadge-->
-                <!--android:layout_width="wrap_content"-->
-                <!--android:layout_height="wrap_content"-->
-                <!--android:layout_alignTop="@+id/muscleGoalTitle"-->
-                <!--android:layout_marginLeft="2dp"-->
-                <!--android:layout_marginTop="-7dp"-->
-                <!--android:layout_toRightOf="@+id/muscleGoalTitle"/>-->
-
                 <TextView
                     android:id="@+id/muscleGoalSubtitle"
                     style="@style/SettingsSubtitle"

@@ -31,6 +31,10 @@
     <dimen name="card_radius_large">24dp</dimen>
     <!-- Smaller rounded controls -->
     <dimen name="card_radius_default">10dp</dimen>
+    <!-- AppChip -->
+    <dimen name="chip_height">36dp</dimen>
+    <!-- Half the height, a pill -->
+    <dimen name="chip_radius">18dp</dimen>
 
     <dimen name="footer_bottom_padding">90dp</dimen>
     <dimen name="footer_bottom_padding_double">180dp</dimen>
