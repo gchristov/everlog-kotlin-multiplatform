@@ -96,12 +96,26 @@ For new users, the install (`first_open`) must pass the filters. For the loyal c
 | `sql/new_users.sql` | One row per real new user since 2026-01-01, with the flags every new-user metric is built from |
 | `sql/core.sql` | Workouts finished and people who lifted, per week and per month since 2025 (all real users) |
 | `checks/robots.sql` | Not on the dashboard: installs per month and what each filter removes |
+| `analysis/*.sql` | Not on the dashboard: the queries behind the Funnel baseline in Notion (see below) |
 | `config.json` | Onboarding v1 date, paid test start date, campaigns and spend, labelled chart markers |
 | `build.py` | Works out every number into `out/data.json` and fills it into the page |
 | `dashboard.html` | The page template. Light and dark themes, works at phone width |
 | `refresh.sh` | Runs the queries and the build |
 
 Each query runs on its own too, e.g. `./tools/bigquery/bq_query.sh bigquery-credentials-prod.json tools/monitoring/sql/core.sql`.
+
+### Analysis queries
+
+The Funnel baseline (2020–2026) in Notion was built from these. They're kept here so the page links to them instead of keeping copies. Their results identify users or devices, so save them only under `tools/bigquery/` (gitignored), e.g. `--output tools/bigquery/baseline_users.csv`.
+
+| File | What it returns | Reads |
+|---|---|---|
+| `analysis/baseline_users.sql` | One row per real new user, 2020–2026: day-one actions, first workout, retention windows and feature use. Every user-level number in the baseline is sliced from it | ~1.7 GB |
+| `analysis/baseline_workouts.sql` | One row per workout start by real users, 2020–2026: outcome, duration, sets, notification use, start type | ~1.5 GB |
+| `analysis/new_user_paths.sql` | Each 2026 new user's screens and actions in order, for reading people one by one while there are few | small |
+| `analysis/most_active_users.sql` | Users ranked by workouts finished in the last 90 days (Firebase Auth UIDs; names are in Firestore at `users/<uid>`) | small |
+
+The two baseline tables are kept as they were run for the baseline, without the owner filter added later, so the baseline's numbers can be reproduced exactly. The owner's account is among the power users there.
 
 ### Changing it
 
