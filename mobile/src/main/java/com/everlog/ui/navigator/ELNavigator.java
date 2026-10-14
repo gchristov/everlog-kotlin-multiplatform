@@ -23,6 +23,7 @@ import com.everlog.data.model.exercise.ELExercise;
 import com.everlog.data.model.plan.ELPlan;
 import com.everlog.data.model.workout.ELWorkout;
 import com.everlog.managers.AppUsageReminderManager;
+import com.everlog.managers.RemoteConfigManager;
 import com.everlog.managers.analytics.AnalyticsConstants;
 import com.everlog.managers.analytics.AnalyticsManager;
 import com.everlog.managers.apprate.RatePromptController;
@@ -31,6 +32,7 @@ import com.everlog.managers.auth.LocalUserManager;
 import com.everlog.managers.preferences.SettingsManager;
 import com.everlog.services.workout.WorkoutService;
 import com.everlog.ui.activities.designsystem.DesignSystemActivity;
+import com.everlog.ui.activities.exercisepicker.ExercisePickerActivity;
 import com.everlog.ui.activities.home.HomeActivity;
 import com.everlog.ui.activities.onboarding.OnboardingActivity;
 import com.everlog.ui.activities.home.congratulate.CongratulateActivity;
@@ -152,11 +154,21 @@ public class ELNavigator implements Navigator {
 
     @Override
     public void openExercises() {
+        // The new picker (TAS-451) when Remote Config turns it on
+        if (RemoteConfigManager.manager.exercisePickerV2()) {
+            startActivity(ExercisePickerActivity.launchIntent(mContext, false));
+            return;
+        }
         startActivity(ExercisesActivity.launchIntent(mContext, new ExercisesActivity.Companion.Properties()));
     }
 
     @Override
     public void openExercisePicker() {
+        // The new picker returns its picks the same way, so callers handle both alike
+        if (RemoteConfigManager.manager.exercisePickerV2()) {
+            startActivityForResult(ExercisePickerActivity.launchIntent(mContext, true), ELActivityRequestCodes.REQUEST_PICK_EXERCISES);
+            return;
+        }
         startActivityForResult(ExercisesActivity.launchIntent(mContext, new ExercisesActivity.Companion.Properties()
                 .selection(true)), ELActivityRequestCodes.REQUEST_PICK_EXERCISES);
     }
