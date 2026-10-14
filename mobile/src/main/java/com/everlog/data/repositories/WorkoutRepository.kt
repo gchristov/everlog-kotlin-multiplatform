@@ -26,28 +26,31 @@ class RealWorkoutRepository(
 
     override suspend fun exerciseLastDone(workouts: Long): Either<Throwable, Map<String, Long>> = withContext(dispatcher) {
         Either.catch {
-            val lastDone = HashMap<String, Long>()
-            // Newest first, so an exercise's first workout is the last time it was done. The history
-            // store keeps the cache current, and a new user's history is empty.
-            FirestorePathManager.workoutsCollection
+            // The history store keeps the cache current, and a new user's history is empty
+            val recent = FirestorePathManager.workoutsCollection
                 .orderBy("createdDate", Query.Direction.DESCENDING)
                 .limit(workouts)
                 .getCacheFirst(emptyIsAnswer = true)
                 .documents
-                .forEach { document ->
-                    val workout = runCatching { document.toObject(ELWorkout::class.java) }
+                .mapNotNull { document ->
+                    runCatching { document.toObject(ELWorkout::class.java) }
                         .onFailure { Timber.tag(TAG).w(it, "Skipped workout %s, which doesn't parse", document.id) }
                         .getOrNull()
-                        ?: return@forEach
-                    workout.routine?.exerciseGroups.orEmpty()
-                        .flatMap { group -> group.exercises.mapNotNull { it.exercise?.uuid } }
-                        .forEach { lastDone.putIfAbsent(it, workout.createdDate) }
                 }
-            lastDone
+            exerciseLastDone(recent)
         }
     }
 
     private companion object {
         const val TAG = "WorkoutRepository"
+    }
+}
+
+// When each exercise was last done in these workouts, by the exercise's uuid
+internal fun exerciseLastDone(workouts: List<ELWorkout>): Map<String, Long> = buildMap {
+    workouts.forEach { workout ->
+        workout.routine?.exerciseGroups.orEmpty()
+            .flatMap { group -> group.exercises.mapNotNull { it.exercise?.uuid } }
+            .forEach { uuid -> if (workout.createdDate > (get(uuid) ?: Long.MIN_VALUE)) put(uuid, workout.createdDate) }
     }
 }
