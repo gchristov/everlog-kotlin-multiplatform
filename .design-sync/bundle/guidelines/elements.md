@@ -62,7 +62,8 @@ then an optional footer note.
 A row inside a group. `AppListRow` is the padding for any content: `--space-lg` all round, minimum
 height `--list-row-min-height`, content centred vertically. `AppListItem` is the standard row:
 - optional leading content (icon, image, checkbox), then the text, then optional trailing content
-  (value, chevron, switch), `--space-lg` apart
+  (value, switch, `AppCheck`), `--space-lg` apart. No chevrons on tappable rows: that's an iOS
+  pattern; a row that expands something in place (e.g. Show all) can end in a down arrow.
 - text column, `--space-xs` apart: optional header (`--font-caption`, `--content-secondary`), title
   (`--font-body`, `--content-primary`), optional subtitle (`--font-caption`, `--content-secondary`)
 
