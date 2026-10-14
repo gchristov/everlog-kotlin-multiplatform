@@ -29,6 +29,12 @@ interface ExerciseRepository {
      */
     suspend fun libraryExercises(): Either<Throwable, List<LibraryExercise>>
 
+    /**
+     * One exercise of the global library, hidden or not (history and routines still show hidden ones),
+     * or null when the library doesn't have it, e.g. a user's own exercise.
+     */
+    suspend fun libraryExercise(uuid: String): Either<Throwable, LibraryExercise?>
+
     // The user's own exercises, which have only a name, an image and a category
     suspend fun ownExercises(): Either<Throwable, List<LibraryExercise>>
 
@@ -59,6 +65,14 @@ class RealExerciseRepository(
             FirestorePathManager.globalExercisesCollection.getCacheFirst(refreshKey = "globalExercises")
                 .documents
                 .mapNotNull { it.toLibraryExerciseOrNull(own = false) }
+        }
+    }
+
+    override suspend fun libraryExercise(uuid: String): Either<Throwable, LibraryExercise?> = withContext(dispatcher) {
+        Either.catch {
+            val document = FirestorePathManager.globalExercisesCollection.document(uuid)
+                .getCacheFirst(refreshKey = "globalExercise/$uuid")
+            if (document.exists()) document.toObject(LibraryExerciseDto::class.java)?.toLibraryExercise(documentId = document.id, own = false) else null
         }
     }
 

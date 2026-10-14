@@ -20,6 +20,7 @@ fun exerciseLibrary(week: StarterWeek): List<ELExercise> = week.routines.flatMap
 
 class FakeExerciseRepository(
     var globalExercises: Either<Throwable, List<ELExercise>> = Either.Right(emptyList()),
+    var libraryExercise: Either<Throwable, LibraryExercise?> = Either.Right(null),
 ) : ExerciseRepository {
     var globalExercisesCalls = 0
         private set
@@ -30,6 +31,14 @@ class FakeExerciseRepository(
     }
 
     override suspend fun libraryExercises(): Either<Throwable, List<LibraryExercise>> = Either.Right(emptyList())
+
+    // The uuids asked for, in order
+    val libraryExerciseReads = mutableListOf<String>()
+
+    override suspend fun libraryExercise(uuid: String): Either<Throwable, LibraryExercise?> {
+        libraryExerciseReads += uuid
+        return libraryExercise
+    }
 
     override suspend fun ownExercises(): Either<Throwable, List<LibraryExercise>> = Either.Right(emptyList())
 

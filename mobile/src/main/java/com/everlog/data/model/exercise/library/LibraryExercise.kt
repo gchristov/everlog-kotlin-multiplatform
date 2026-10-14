@@ -29,6 +29,9 @@ data class LibraryExercise(
     val kind: String? = null,
     val tracking: String? = null,
     val aliases: List<String> = emptyList(),
+    // How to do it, one step each, and form tips, from the exercise pack
+    val instructions: List<String> = emptyList(),
+    val tips: List<String> = emptyList(),
     val category: String? = null,
     val own: Boolean = false,
     // As stored, so the exercise can be handed to the rest of the app as an ELExercise
