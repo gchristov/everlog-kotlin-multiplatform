@@ -91,7 +91,7 @@ New screens are built in Compose: a `CommonComposeActivity` (wraps the content i
 
 ## User-facing copy
 
-Anything users read (in-app strings, release notes, the store listing, ads, notifications, emails) follows the tone of voice guide in the "Tone of voice" section of the [Product market fit](https://app.notion.com/p/3e8662113da880779b9be047669d1502) page in Notion: its principles, words to use and avoid, rules for each place, and examples. Read it before drafting copy. In short: plain, direct and concrete, in the words lifters use; every claim true today (no superlatives, "#1", "free forever", or AI and coaching we don't have); calm and a little dry, without hype or exclamation marks; British English and sentence case. Release notes are one paragraph under Play's 500 characters, with each short point led by an emoji.
+Anything users read (in-app strings, release notes, the store listing, ads, notifications, emails) follows the tone of voice guide in the "Tone of voice" section of the [Product market fit](https://app.notion.com/p/3e8662113da880779b9be047669d1502) page in Notion: its principles, words to use and avoid, rules for each place, and examples. Read it before drafting copy. In short: plain, direct and concrete, in the words lifters use; every claim true today (no superlatives, "#1", "free forever", or AI and coaching we don't have); calm and a little dry, without hype or exclamation marks; British English and sentence case. Release notes are one friendly paragraph under Play's 500 characters about the features people will notice (not small UI polish), with emoji only where they help, not on every point.
 
 ## Branches and pull requests
 
