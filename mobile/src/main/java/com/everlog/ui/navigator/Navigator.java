@@ -1,5 +1,6 @@
 package com.everlog.ui.navigator;
 
+import androidx.annotation.Nullable;
 import android.net.Uri;
 
 import com.everlog.data.model.ELIntegration;
@@ -56,6 +57,9 @@ public interface Navigator {
     void openExerciseDetails(@NonNull ExerciseDetailsActivity.Companion.Properties properties);
 
     void openEditExercise(ELExercise exercise);
+
+    // A new exercise, optionally named already; the result carries its uuid once saved
+    void openCreateExercise(@Nullable String name);
 
     void startWorkout(ELRoutine routine,
                       boolean fromRoutine,

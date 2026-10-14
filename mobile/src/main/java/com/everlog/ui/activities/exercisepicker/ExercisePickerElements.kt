@@ -40,6 +40,7 @@ import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.everlog.R
 import com.everlog.ui.design.elements.AppChip
@@ -64,6 +65,9 @@ private object PickerSizes {
     val TokenCorner = 8.dp
     val TokenValueMaxWidth = 180.dp
     val TokenIcon = 14.dp
+    val TokenRemovePadding = 6.dp
+    // The menu's outline and the line over its Done button
+    val Hairline = 1.dp
     val MenuMaxHeight = 480.dp
     val MenuBlur = 20.dp
     val Box = 22.dp
@@ -74,6 +78,11 @@ private object PickerSizes {
     val SkeletonThumbnailCorner = 12.dp
     val SkeletonLineCorner = 6.dp
     val SkeletonChipHeight = 36.dp
+    val SkeletonChipWidths = listOf(88.dp, 108.dp, 104.dp, 84.dp)
+    val SkeletonHeaderWidths = listOf(180.dp, 110.dp)
+    val SkeletonHeaderHeight = 14.dp
+    val SkeletonTitleHeight = 14.dp
+    val SkeletonSubtitleHeight = 10.dp
     const val MenuBlurTint = 0.6f
     const val ScrimAlpha = 0.72f
 }
@@ -118,7 +127,7 @@ internal fun FilterTokenView(
             modifier = Modifier
                 .height(PickerSizes.TokenHeight)
                 .clickable(onClick = onRemove)
-                .padding(horizontal = 6.dp),
+                .padding(horizontal = PickerSizes.TokenRemovePadding),
             contentAlignment = Alignment.Center,
         ) {
             AppIcon(
@@ -137,13 +146,13 @@ private fun TokenPart(
     color: Color,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
-    start: androidx.compose.ui.unit.Dp = 4.dp,
+    start: Dp = Theme.spacing.extraSmall,
 ) {
     Box(
         modifier = Modifier
             .height(PickerSizes.TokenHeight)
             .clickable(onClick = onClick)
-            .padding(start = start, end = 4.dp),
+            .padding(start = start, end = Theme.spacing.extraSmall),
         contentAlignment = Alignment.Center,
     ) {
         AppText(modifier = modifier, text = text, color = color, style = Theme.typography.button, maxLines = 1, overflow = TextOverflow.Ellipsis)
@@ -199,7 +208,7 @@ internal fun PickerMenuCard(
             .heightIn(max = PickerSizes.MenuMaxHeight)
             .clip(Theme.shapes.surface)
             .background(Theme.backgrounds.surface)
-            .border(1.dp, Theme.backgrounds.separator, Theme.shapes.surface),
+            .border(PickerSizes.Hairline, Theme.backgrounds.separator, Theme.shapes.surface),
     ) {
         Column(
             modifier = Modifier
@@ -282,7 +291,7 @@ internal fun PickerMenuCard(
                 // A hairline on top, like AppFooter's border; the sides and bottom are the menu's own edges
                 .drawWithContent {
                     drawContent()
-                    drawLine(separator, start = Offset.Zero, end = Offset(size.width, 0f), strokeWidth = 1.dp.toPx())
+                    drawLine(separator, start = Offset.Zero, end = Offset(size.width, 0f), strokeWidth = PickerSizes.Hairline.toPx())
                 }
                 .padding(Theme.spacing.large),
         ) {
@@ -373,13 +382,13 @@ internal fun PickerSkeleton() {
         verticalArrangement = Arrangement.spacedBy(Theme.spacing.large),
     ) {
         Row(modifier = Modifier.padding(horizontal = Theme.spacing.large), horizontalArrangement = Arrangement.spacedBy(Theme.spacing.small)) {
-            listOf(88.dp, 108.dp, 104.dp, 84.dp).forEach { width ->
+            PickerSizes.SkeletonChipWidths.forEach { width ->
                 Box(modifier = Modifier.size(width = width, height = PickerSizes.SkeletonChipHeight).clip(Theme.shapes.button).background(brush))
             }
         }
         repeat(2) { group ->
             Column(modifier = Modifier.padding(horizontal = Theme.spacing.large), verticalArrangement = Arrangement.spacedBy(Theme.spacing.large)) {
-                Box(modifier = Modifier.size(width = if (group == 0) 180.dp else 110.dp, height = 14.dp).clip(RoundedCornerShape(PickerSizes.SkeletonLineCorner)).background(brush))
+                Box(modifier = Modifier.size(width = PickerSizes.SkeletonHeaderWidths[group], height = PickerSizes.SkeletonHeaderHeight).clip(RoundedCornerShape(PickerSizes.SkeletonLineCorner)).background(brush))
                 Column(modifier = Modifier.fillMaxWidth().clip(Theme.shapes.surface).background(Theme.backgrounds.surface)) {
                     repeat(if (group == 0) 4 else 3) { row ->
                         Row(
@@ -389,8 +398,8 @@ internal fun PickerSkeleton() {
                         ) {
                             Box(modifier = Modifier.size(PickerSizes.SkeletonThumbnail).clip(RoundedCornerShape(PickerSizes.SkeletonThumbnailCorner)).background(brush))
                             Column(modifier = Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(Theme.spacing.small)) {
-                                Box(modifier = Modifier.fillMaxWidth(if (row % 2 == 0) 0.7f else 0.55f).height(14.dp).clip(RoundedCornerShape(PickerSizes.SkeletonLineCorner)).background(brush))
-                                Box(modifier = Modifier.fillMaxWidth(0.4f).height(10.dp).clip(RoundedCornerShape(PickerSizes.SkeletonLineCorner)).background(brush))
+                                Box(modifier = Modifier.fillMaxWidth(if (row % 2 == 0) 0.7f else 0.55f).height(PickerSizes.SkeletonTitleHeight).clip(RoundedCornerShape(PickerSizes.SkeletonLineCorner)).background(brush))
+                                Box(modifier = Modifier.fillMaxWidth(0.4f).height(PickerSizes.SkeletonSubtitleHeight).clip(RoundedCornerShape(PickerSizes.SkeletonLineCorner)).background(brush))
                             }
                         }
                     }

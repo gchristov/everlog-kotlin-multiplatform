@@ -33,7 +33,7 @@ internal data class ExercisePickerState(
     val showAllTop: Boolean = false,
     // uuids, in the order they were picked
     val picked: List<String> = emptyList(),
-    // Earlier searches, newest first
+    // The last filters applied (one at most), offered under Recent
     val recent: List<List<FilterToken>> = emptyList(),
     val message: PickerMessage? = null,
     // The picks to add, once Add (or a set type, for a superset) is chosen
@@ -90,7 +90,7 @@ internal class ExercisePickerViewModel(
                 text = savedState[KeyText] ?: "",
                 picked = savedState.get<ArrayList<String>>(KeyPicked).orEmpty(),
                 showAllTop = savedState[KeyShowAllTop] ?: false,
-                recent = recentSearches.load(),
+                recent = recentSearches.load().take(1),
             )
         }
         load()
@@ -102,7 +102,11 @@ internal class ExercisePickerViewModel(
 
     fun onTextChange(text: String) = update(typing = true) { copy(text = text, menu = PickerMenu.Start) }
 
-    fun onCloseMenu() = update { copy(menu = PickerMenu.Closed) }
+    // Closing the menu applies the filters, so they're remembered under Recent
+    fun onCloseMenu() {
+        val tokens = state.value.tokens
+        update { copy(menu = PickerMenu.Closed, recent = remember(tokens, recent)) }
+    }
 
     // source: chip, menu or token
     fun onOpenKey(key: FilterKey, source: String) = update { copy(menu = PickerMenu.Values(key, source)) }
@@ -178,9 +182,26 @@ internal class ExercisePickerViewModel(
         val exercises = current.picked.mapNotNull { uuid -> index.exercises.find { it.uuid == uuid } }
         if (exercises.isEmpty()) return
         analytics.added(exercises.size, setType.name.lowercase(), current.tokens.size, current.text.isNotBlank())
-        val searches = if (current.tokens.isEmpty()) current.recent else (listOf(current.tokens) + current.recent.filter { it != current.tokens }).take(RecentMax)
+        update { copy(result = PickerResult(exercises = exercises, setType = setType), recent = remember(current.tokens, recent)) }
+    }
+
+    // An exercise the user just created from here: picked when picking, as long as there's room.
+    // It may reach the list a moment later, from Firestore.
+    fun onExerciseCreated(uuid: String) {
+        val current = state.value
+        when {
+            current.mode != PickerMode.Pick || uuid in current.picked -> Unit
+            current.picked.size >= maxPicks -> setState { copy(message = PickerMessage.TooMany(maxPicks)) }
+            else -> update { copy(picked = picked + uuid) }
+        }
+    }
+
+    // The last filters applied, the only recent search kept
+    private fun remember(tokens: List<FilterToken>, recent: List<List<FilterToken>>): List<List<FilterToken>> {
+        if (tokens.isEmpty() || recent == listOf(tokens)) return recent
+        val searches = listOf(tokens)
         recentSearches.save(searches)
-        update { copy(result = PickerResult(exercises = exercises, setType = setType), recent = searches) }
+        return searches
     }
 
     fun onMessageShown() = setState { copy(message = null) }
@@ -219,8 +240,10 @@ internal class ExercisePickerViewModel(
                 library = updated
                 val index = withContext(contentDispatcher) { PickerIndex(updated, me) }
                 // An exercise deleted elsewhere can't stay picked
+                // (one just created and still on its way stays)
                 val uuids = updated.exercises.map { it.uuid }.toSet()
-                update { copy(index = index, picked = picked.filter { it in uuids }) }
+                val before = current.exercises.map { it.uuid }.toSet()
+                update { copy(index = index, picked = picked.filter { it in uuids || it !in before }) }
             }
         }
     }
@@ -281,7 +304,6 @@ internal class ExercisePickerViewModel(
 
     private companion object {
         const val TAG = "ExercisePicker"
-        const val RecentMax = 3
         const val TypingDebounceMillis = 150L
         const val KeyTokens = "tokens"
         const val KeyText = "text"

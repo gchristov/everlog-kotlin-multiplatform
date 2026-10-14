@@ -126,6 +126,10 @@ class ExercisePickerActivity : CommonComposeActivity() {
         if (requestCode == ELActivityRequestCodes.REQUEST_PICK_SET_TYPE && resultCode == RESULT_OK) {
             (data?.getSerializableExtra(ELConstants.EXTRA_SET_TYPE) as? ELSetType)?.let { viewModel.onAdd(it) }
         }
+        // An exercise just created from here is picked, like the old picker's Create "…"
+        if (requestCode == ELActivityRequestCodes.REQUEST_EDIT_EXERCISE && resultCode == RESULT_OK) {
+            data?.getStringExtra(ELConstants.EXTRA_EXERCISE_UUID)?.let { viewModel.onExerciseCreated(it) }
+        }
     }
 
     // As ExercisesActivity's PresenterExercises.finishSelection: one group per exercise, or one
@@ -210,7 +214,7 @@ internal fun ExercisePickerScreen(viewModel: ExercisePickerViewModel, onResult: 
                                 icon = ImageVector.vectorResource(R.drawable.ic_add),
                                 onClick = {
                                     viewModel.onCreateTapped("menu")
-                                    ELNavigator(context).openEditExercise(null)
+                                    ELNavigator(context).openCreateExercise(null)
                                 },
                             ),
                         ),
@@ -309,7 +313,8 @@ internal fun ExercisePickerScreen(viewModel: ExercisePickerViewModel, onResult: 
                             onToggleShowAll = viewModel::onToggleShowAll,
                             onCreate = {
                                 viewModel.onCreateTapped("search")
-                                ELNavigator(context).openEditExercise(null)
+                                // Named what was searched for
+                                ELNavigator(context).openCreateExercise(state.text.trim())
                             },
                         )
                     }

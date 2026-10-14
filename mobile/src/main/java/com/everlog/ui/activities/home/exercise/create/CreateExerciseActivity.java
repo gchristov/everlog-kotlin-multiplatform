@@ -1,5 +1,6 @@
 package com.everlog.ui.activities.home.exercise.create;
 
+import com.everlog.constants.ELConstants;
 import android.content.res.ColorStateList;
 import android.text.TextUtils;
 import android.view.View;
@@ -83,6 +84,11 @@ public class CreateExerciseActivity extends BaseActivity implements MvpViewCreat
     }
 
     @Override
+    public String getNameToCreate() {
+        return getIntent().getStringExtra(ELConstants.EXTRA_EXERCISE_NAME);
+    }
+
+    @Override
     public String getExerciseName() {
         return binding.exerciseName.getText().toString().trim();
     }
@@ -109,7 +115,8 @@ public class CreateExerciseActivity extends BaseActivity implements MvpViewCreat
 
     @Override
     public void loadExerciseDetails(ELExercise exercise, int selectedCategoryIndex) {
-        getSupportActionBar().setTitle(TextUtils.isEmpty(exercise.getName()) ? R.string.create_exercise_title_new : R.string.create_exercise_title_edit);
+        // A new exercise can start with a name, so the title follows whether one was passed to edit
+        getSupportActionBar().setTitle(getItemToEdit() == null ? R.string.create_exercise_title_new : R.string.create_exercise_title_edit);
         binding.exerciseName.setText(exercise.getName());
         binding.exerciseImg.applyMask(R.drawable.mask_square);
         binding.categorySpinner.setSelection(selectedCategoryIndex + 1); // Account for extra None type.

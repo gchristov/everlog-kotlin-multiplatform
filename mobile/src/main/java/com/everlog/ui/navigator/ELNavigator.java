@@ -1,5 +1,6 @@
 package com.everlog.ui.navigator;
 
+import androidx.annotation.Nullable;
 import android.app.Activity;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
@@ -178,6 +179,15 @@ public class ELNavigator implements Navigator {
         Intent intent = new Intent(mContext, CreateExerciseActivity.class);
         if (exercise != null) {
             intent.putExtra(EXTRA_EXERCISE, exercise);
+        }
+        startActivityForResult(intent, ELActivityRequestCodes.REQUEST_EDIT_EXERCISE);
+    }
+
+    @Override
+    public void openCreateExercise(@Nullable String name) {
+        Intent intent = new Intent(mContext, CreateExerciseActivity.class);
+        if (name != null) {
+            intent.putExtra(ELConstants.EXTRA_EXERCISE_NAME, name);
         }
         startActivityForResult(intent, ELActivityRequestCodes.REQUEST_EDIT_EXERCISE);
     }
