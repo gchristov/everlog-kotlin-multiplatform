@@ -3,10 +3,7 @@ package com.everlog.ui.views.tab
 import android.content.Context
 import android.util.AttributeSet
 import android.view.LayoutInflater
-import android.view.View
 import android.widget.LinearLayout
-import android.widget.TextView
-import androidx.core.content.ContextCompat
 import androidx.fragment.app.FragmentManager
 import androidx.viewpager.widget.ViewPager
 import com.everlog.R
@@ -34,10 +31,6 @@ class TabsPage : LinearLayout {
 
     private fun init(attrs: AttributeSet?, defStyle: Int) {
         setupLayout()
-    }
-
-    fun enableNewBadge(index: Int) {
-        binding.tabLayout.getTabAt(index)?.customView?.findViewById<View>(R.id.badge)?.visibility = View.VISIBLE
     }
 
     fun setTabs(fragmentManager: FragmentManager,
@@ -95,14 +88,10 @@ class TabsPage : LinearLayout {
         selectTab(selectedIndex ?: 0)
     }
 
+    // Tabs are chips (view_tab), selected in the accent
     private fun selectTab(position: Int) {
         for (i in 0 until binding.tabLayout.tabCount) {
-            val tab = binding.tabLayout.getTabAt(i)
-            val titleView = tab?.customView?.findViewById<TextView>(android.R.id.text1)
-            titleView?.let {
-                it.setTextColor(ContextCompat.getColor(it.context, if (i == position) R.color.white_base else R.color.gray_1))
-                it.background = ContextCompat.getDrawable(context, if (i == position) R.drawable.rounded_corners_home_tab_selected else R.drawable.rounded_corners_home_tab)
-            }
+            binding.tabLayout.getTabAt(i)?.customView?.isSelected = i == position
         }
     }
 

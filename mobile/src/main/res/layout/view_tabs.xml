@@ -12,7 +12,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="@dimen/activity_margin"
-        android:paddingLeft="@dimen/activity_margin"
+        android:clipToPadding="false"
+        android:paddingStart="@dimen/activity_margin"
         app:tabBackground="@android:color/transparent"
         app:tabGravity="start"
         app:tabIndicatorColor="@android:color/transparent"
@@ -20,9 +21,11 @@
         app:tabMaxWidth="0dp"
         app:tabMinWidth="0dp"
         app:tabMode="scrollable"
-        app:tabPaddingBottom="@dimen/margin_14"
+        app:tabPaddingBottom="0dp"
         app:tabPaddingEnd="0dp"
         app:tabPaddingStart="0dp"
+        app:tabPaddingTop="0dp"
+        app:tabRippleColor="@null"
         tools:background="@color/remove" />
 
     <androidx.viewpager.widget.ViewPager

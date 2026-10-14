@@ -83,6 +83,8 @@ A compact pill button, e.g. a row of filters to start from: height 36px, `--radi
 `--space-lg` (`--space-md` on the right when it has an arrow), label in `--font-button`.
 - default: `--background-surface` with a 1px `--background-separator` border, label `--content-primary`
 - action: transparent with a 1px `--content-action` border, label `--content-action` (e.g. Clear all)
+- selected: `--background-selected` with a 1px `--content-action` border, label `--content-action`
+  (e.g. the current tab in a row of chips that switch pages, 8px apart; the app's XML tabs look the same)
 - optional 16px down arrow after the label, `--space-xs` from it, when it opens a menu
 
 ## AppSearchBar

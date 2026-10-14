@@ -151,7 +151,6 @@ class ExerciseDetailsActivity : BaseActivity(), MvpViewExerciseDetails {
 
             override fun onTabReselected(tab: TabLayout.Tab) {}
         })
-        binding.tabsPage.enableNewBadge(1)
     }
 
     // Setup

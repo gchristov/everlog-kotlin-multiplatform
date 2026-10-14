@@ -25,11 +25,12 @@ import com.everlog.ui.design.elements.AppText
 import com.everlog.ui.design.elements.search.AppSearchBar
 import com.everlog.ui.design.theme.Theme
 
-// The search bar, plain and with content before the text (a screen's own filter tokens), and chips
+// The search bar, plain and with content before the text (a screen's own filter tokens), and chips, plain and selected
 @Composable
 internal fun DesignSystemSearch(onButtonClick: () -> Unit) {
     var plain by remember { mutableStateOf("") }
     var withTokens by remember { mutableStateOf("") }
+    var tab by remember { mutableStateOf("Info") }
     ShowcasePage(title = "Search and filters") {
         group(key = "search", header = { "Search bar" }) {}
         item(key = "searchExample") {
@@ -52,6 +53,14 @@ internal fun DesignSystemSearch(onButtonClick: () -> Unit) {
                 AppChip(text = "Equipment", onClick = onButtonClick, dropdown = true)
                 AppChip(text = "Recent", onClick = onButtonClick)
                 AppChip(text = "Clear all", onClick = onButtonClick, style = AppChipStyle.Action)
+            }
+        }
+        group(key = "chipTabs", header = { "Selected, e.g. tabs (TabsPage is the XML twin)" }) {}
+        item(key = "chipTabsExample") {
+            Row(horizontalArrangement = Arrangement.spacedBy(Theme.spacing.small)) {
+                listOf("Info", "Statistics", "History").forEach {
+                    AppChip(text = it, onClick = { tab = it }, selected = tab == it)
+                }
             }
         }
     }
