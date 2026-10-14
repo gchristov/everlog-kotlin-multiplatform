@@ -1,18 +1,29 @@
 package com.everlog.ui.activities.designsystem
 
+import androidx.compose.foundation.layout.Box
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
 import com.everlog.R
+import com.everlog.ui.design.elements.AppChip
+import com.everlog.ui.design.elements.AppMenu
 import com.everlog.ui.design.elements.AppMenuItem
 import com.everlog.ui.design.elements.AppOverflowMenu
 import com.everlog.ui.design.elements.list.AppListItem
 import com.everlog.ui.design.theme.Theme
 
-// The overflow menu in the app bar, as on the exercise picker, and on a row, as on a plan's days
+// The overflow menu in the app bar, as on the exercise picker, and on a row, as on a plan's days;
+// and a chip picking one of several options, as statistics' time range
 @Composable
 internal fun DesignSystemMenus(onButtonClick: () -> Unit) {
+    val ranges = listOf("Today", "This week", "This month", "This year", "Overall")
+    var range by remember { mutableStateOf("This week") }
+    var rangeOpen by remember { mutableStateOf(false) }
     val add = ImageVector.vectorResource(R.drawable.ic_add)
     val copy = ImageVector.vectorResource(R.drawable.ic_copy)
     val delete = ImageVector.vectorResource(R.drawable.ic_delete_black)
@@ -28,6 +39,17 @@ internal fun DesignSystemMenus(onButtonClick: () -> Unit) {
         },
     ) {
         group(key = "appBar", header = { "In the app bar: tap ⋮ at the top" }) {}
+        group(key = "choice", header = { "Picking one of several, ticked" }) {}
+        item(key = "choiceExample") {
+            Box {
+                AppChip(text = range, onClick = { rangeOpen = true }, dropdown = true)
+                AppMenu(
+                    expanded = rangeOpen,
+                    onDismissRequest = { rangeOpen = false },
+                    items = ranges.map { AppMenuItem(text = it, onClick = { range = it }, selected = it == range) },
+                )
+            }
+        }
         group(key = "row", header = { "On a row" }) {
             items(count = 1, key = { it }) {
                 AppListItem(

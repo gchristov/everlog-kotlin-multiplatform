@@ -98,6 +98,7 @@
                             android:textSize="14sp" />
 
                         <Spinner
+                            style="@style/AppSpinner"
                             android:id="@+id/categorySpinner"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"

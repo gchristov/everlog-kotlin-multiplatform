@@ -97,10 +97,12 @@ wraps onto more lines with the text, 6px apart.
 
 Further options behind a ⋮ icon button, in an `AppBar`'s actions or as a row's trailing content.
 Tapping it opens `AppMenu` below the button, 4px clear of it, its end 12px in from the button's end
-(so in an app bar it keeps the 16px screen margin): a card in `--background-surface` with a 1px
+(so in an app bar it keeps the 16px screen margin). An `AppChip` with a down arrow opens one lined up
+with its start, to pick one of several options. The menu is a card in `--background-surface` with a 1px
 `--background-separator` border, `--radius-surface`, a soft shadow, at least 200px wide and `--space-sm`
 padding top and bottom. Each option is an `AppListItem` row (56px, `--font-body`, `--content-primary`)
-with an optional 24px icon before the label. Picking one closes the menu. No dividers between options.
+with an optional 24px icon before the label, and a 24px tick in `--content-action` after the current
+choice when picking one of several. Picking one closes the menu. No dividers between options.
 The app's XML popup menus look the same.
 
 ## AppCheck

@@ -1,11 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
-<TextView
+<!-- A spinner's option, like an AppMenu row (ui/design/elements/AppOverflowMenu.kt): 56dp, body text,
+     and a tick in the action colour on the current choice (the dropdown checks it) -->
+<CheckedTextView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@android:id/text1"
-    style="@style/SpinnerItemStyle"
-    android:background="@color/background_base"
-    android:fontFamily="sans-serif-medium"
-    android:padding="@dimen/activity_margin"
-    android:textStyle="normal"
-    tools:text="Dropdown"/>
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:checkMark="@drawable/selector_menu_check"
+    android:checkMarkTint="@color/main_accent"
+    android:drawablePadding="@dimen/activity_margin"
+    android:ellipsize="end"
+    android:gravity="center_vertical"
+    android:maxLines="1"
+    android:minWidth="200dp"
+    android:minHeight="56dp"
+    android:paddingStart="@dimen/activity_margin"
+    android:paddingEnd="@dimen/activity_margin"
+    android:textColor="@color/white_darker"
+    android:textSize="16sp"
+    tools:checked="true"
+    tools:text="This week" />
