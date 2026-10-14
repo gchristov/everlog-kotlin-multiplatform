@@ -44,6 +44,10 @@ class AnalyticsConstants {
         const val SCREEN_ONBOARDING_BUILDING = "screen_onboarding_building"
         const val SCREEN_ONBOARDING_REVEAL = "screen_onboarding_reveal"
         const val SCREEN_ONBOARDING_SAVING = "screen_onboarding_saving"
+        // The new exercise picker, beside v1's SCREEN_EXERCISES and SCREEN_EXERCISE_PICKER so the two
+        // can be compared while exercise_picker_v2 rolls out
+        const val SCREEN_EXERCISES_V2 = "screen_exercises_v2"
+        const val SCREEN_EXERCISE_PICKER_V2 = "screen_exercise_picker_v2"
 
         // Events
 
@@ -218,6 +222,14 @@ class AnalyticsConstants {
         const val EVENT_ONBOARDING_SKIP_PROMPT_CANCELLED = "onboarding_skip_prompt_cancelled"
         const val EVENT_ONBOARDING_TEMPLATE_TOGGLED = "onboarding_template_toggled"
         const val EVENT_ONBOARDING_FINISHED = "onboarding_finished"
+        const val EVENT_EXERCISE_PICKER_FILTER_ADDED = "exercise_picker_filter_added"
+        const val EVENT_EXERCISE_PICKER_FILTER_REMOVED = "exercise_picker_filter_removed"
+        const val EVENT_EXERCISE_PICKER_FILTER_OPERATOR_CHANGED = "exercise_picker_filter_operator_changed"
+        const val EVENT_EXERCISE_PICKER_SEARCHED = "exercise_picker_searched"
+        const val EVENT_EXERCISE_PICKER_NO_RESULTS = "exercise_picker_no_results"
+        const val EVENT_EXERCISE_PICKER_EXERCISE_PICKED = "exercise_picker_exercise_picked"
+        const val EVENT_EXERCISE_PICKER_CREATE_TAPPED = "exercise_picker_create_tapped"
+        const val EVENT_EXERCISE_PICKER_ADDED = "exercise_picker_added"
 
         // Properties
 
@@ -237,6 +249,16 @@ class AnalyticsConstants {
         const val PROPERTY_OUTCOME = "outcome"
         const val PROPERTY_ROUTINES = "routines"
         const val PROPERTY_OPEN = "open"
+        const val PROPERTY_FILTER = "filter"
+        const val PROPERTY_NOT = "not"
+        const val PROPERTY_WORDS = "words"
+        const val PROPERTY_RESULTS = "results"
+        const val PROPERTY_TEXT = "text"
+        const val PROPERTY_FILTERS = "filters"
+        const val PROPERTY_SECTION = "section"
+        const val PROPERTY_POSITION = "position"
+        const val PROPERTY_COUNT = "count"
+        const val PROPERTY_HAD_TEXT = "had_text"
 
         // Legacy user properties. Versions before 2.11.0 set the user's email and name as user
         // properties, which Firebase keeps on the device until cleared. They're PII, so they are

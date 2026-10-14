@@ -8,16 +8,20 @@ import java.io.Serializable
 data class RemoteConfig (
 
         var notificationHome: HomeNotification? = null,
-        var notificationAppUsage: AppUsageNotification? = null
+        var notificationAppUsage: AppUsageNotification? = null,
+        // The new exercise picker (TAS-451) instead of ExercisesActivity, for browsing and picking
+        var exercisePickerV2: Boolean = false
 
 ) : Serializable {
 
     private val NOTIFICATION_HOME = "notification_home"
     private val NOTIFICATION_APP_USAGE = "notification_app_usage"
+    private val EXERCISE_PICKER_V2 = "exercise_picker_v2"
 
     fun populateFromSource(config: FirebaseRemoteConfig): RemoteConfig {
         notificationHome = getObjectFromRemoteConfig(NOTIFICATION_HOME, HomeNotification::class.java, config)
         notificationAppUsage = getObjectFromRemoteConfig(NOTIFICATION_APP_USAGE, AppUsageNotification::class.java, config)
+        exercisePickerV2 = config.getBoolean(EXERCISE_PICKER_V2)
         return this
     }
 

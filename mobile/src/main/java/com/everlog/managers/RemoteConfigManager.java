@@ -58,6 +58,12 @@ public class RemoteConfigManager extends PreferencesManager {
         return null;
     }
 
+    // The new exercise picker; off until Remote Config says otherwise
+    public boolean exercisePickerV2() {
+        RemoteConfig localConfig = loadLocalRemoteConfig();
+        return localConfig != null && localConfig.getExercisePickerV2();
+    }
+
     // Config refresh
 
     public void refreshAppConfig() {

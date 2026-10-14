@@ -8,4 +8,8 @@
         <key>notification_app_usage</key>
         <value>{}</value>
     </entry>
+    <entry>
+        <key>exercise_picker_v2</key>
+        <value>false</value>
+    </entry>
 </defaultsMap>
