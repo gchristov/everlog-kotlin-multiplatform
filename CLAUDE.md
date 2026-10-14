@@ -101,7 +101,7 @@ Anything users read (in-app strings, release notes, the store listing, ads, noti
 Use `PULL_REQUEST_TEMPLATE.md` for PR descriptions (`## What does this pull request change?`, `## Demo`, `## Screenshots`, `## How is this change tested?`). Irrelevant sections (e.g. Demo/Screenshots for a non-UI change) can be dropped.
 
 Merging a PR:
-- Before merging, double-check the entire diff (`gh pr diff <n>`), not just the files you remember changing. Stop and ask if anything unexpected is in it.
+- Before merging, review the entire diff (`gh pr diff <n>`) the way a reviewer would, not just the files you remember changing. Look for bugs, for edge cases nobody has raised yet (offline or a weak signal, missing or malformed data, no signed-in user, process death, older app versions reading newer data, cost of Firestore reads) and for anything missing (tests, docs, strings, the Notion ticket). Fix what you can in the PR and say what you changed. Stop and ask about anything unexpected, anything you can't resolve yourself, or an edge case so unlikely that fixing it is a judgement call.
 - Merge only once all checks pass, never while one is pending or failing.
 - Always squash merge, without a commit description: `gh pr merge <n> --squash --admin --body "" --delete-branch`. `master` requires a review the solo repo never gets, so the admin override is expected.
 - Afterwards clean up local git: switch to `master`, pull, and delete the merged local branch.
