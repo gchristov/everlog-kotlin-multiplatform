@@ -9,7 +9,6 @@ import androidx.recyclerview.widget.RecyclerView
 import com.everlog.R
 import com.everlog.data.controllers.statistics.ExerciseStatsController
 import com.everlog.data.model.exercise.ELExercise
-import com.everlog.databinding.FragmentExerciseInfoBinding
 import com.everlog.databinding.FragmentExerciseStatisticsBinding
 import com.everlog.databinding.FragmentHistoryExerciseBinding
 import com.everlog.managers.analytics.AnalyticsConstants

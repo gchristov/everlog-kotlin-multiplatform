@@ -191,7 +191,8 @@
     <string name="exercises_link">Superset (%1$d)</string>
 
     <string name="exercise_info_title">Info</string>
-    <string name="exercise_info_youtube">Watch Instructions Video</string>
+    <string name="exercise_info_instructions">How to do it</string>
+    <string name="exercise_info_tips">Tips</string>
     <string name="exercise_statistics_times_performed">Times Performed</string>
     <string name="exercise_statistics_total_reps">Total Reps</string>
     <string name="exercise_statistics_reps_weight">Reps vs. Weight</string>
