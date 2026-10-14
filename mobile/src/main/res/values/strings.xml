@@ -56,6 +56,7 @@
     <string name="ok">OK</string>
     <string name="disable">Disable</string>
     <string name="edit">Edit</string>
+    <string name="more_options">More options</string>
     <string name="processing">Processing…</string>
     <string name="done">Done</string>
     <string name="retry">Retry</string>

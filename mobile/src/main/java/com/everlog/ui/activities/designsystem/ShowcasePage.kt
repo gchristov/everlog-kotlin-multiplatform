@@ -1,5 +1,6 @@
 package com.everlog.ui.activities.designsystem
 
+import androidx.compose.foundation.layout.RowScope
 import androidx.compose.runtime.Composable
 import com.everlog.ui.design.elements.AppBar
 import com.everlog.ui.design.elements.AppScreen
@@ -11,6 +12,7 @@ import com.everlog.ui.design.elements.list.AppGroupedListScope
 @Composable
 internal fun ShowcasePage(
     title: String,
+    actions: (@Composable RowScope.() -> Unit)? = null,
     footer: @Composable () -> Unit = {},
     content: AppGroupedListScope.() -> Unit,
 ) {
@@ -19,6 +21,7 @@ internal fun ShowcasePage(
             AppBar(
                 title = title,
                 showBack = true,
+                actions = actions,
             )
         },
         footer = footer,

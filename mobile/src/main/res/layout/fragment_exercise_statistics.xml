@@ -233,6 +233,7 @@
         android:background="@drawable/rounded_corners_card_fab">
 
         <Spinner
+            style="@style/AppSpinner"
             android:id="@+id/rangeSpinner"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"

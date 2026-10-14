@@ -5,9 +5,6 @@ import android.graphics.Typeface
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.appcompat.view.menu.MenuBuilder
-import androidx.appcompat.view.menu.MenuPopupHelper
-import androidx.appcompat.widget.PopupMenu
 import androidx.core.content.ContextCompat
 import com.ahamed.multiviewadapter.ItemBinder
 import com.ahamed.multiviewadapter.ItemViewHolder
@@ -18,6 +15,7 @@ import com.everlog.databinding.RowPlanDayBinding
 import com.everlog.managers.analytics.AnalyticsManager
 import com.everlog.ui.adapters.OnListItemListener
 import com.everlog.ui.navigator.ELNavigator
+import com.everlog.ui.views.showPopupMenu
 
 class PlanDayAdapter {
 
@@ -69,10 +67,8 @@ class PlanDayAdapter {
             proRunLocked { listener.onClickStart(item) }
         }
 
-        private fun openMenu(context: Context) {
-            val popup = PopupMenu(context, binding.planMenuBtn)
-            popup.inflate(R.menu.menu_row_plan_day)
-            popup.setOnMenuItemClickListener {
+        private fun openMenu() {
+            showPopupMenu(binding.planMenuBtn, build = { inflate(R.menu.menu_row_plan_day) }) {
                 when (it.itemId) {
                     R.id.action_start_routine -> listener.onClickChooseRoutine(item, absoluteAdapterPosition)
                     R.id.action_rest -> {
@@ -82,11 +78,7 @@ class PlanDayAdapter {
                         renderDay()
                     }
                 }
-                false
             }
-            val menuHelper = MenuPopupHelper(binding.planMenuBtn.context, (popup.menu as MenuBuilder), binding.planMenuBtn)
-            menuHelper.setForceShowIcon(true)
-            menuHelper.show()
         }
 
         private fun proRunLocked(block: Runnable) {
@@ -104,7 +96,7 @@ class PlanDayAdapter {
             itemView.setOnClickListener {
                 proRunLocked {
                     if (edit) {
-                        openMenu(itemView.context)
+                        openMenu()
                     } else {
                         listener.onItemClicked(item, absoluteAdapterPosition)
                     }

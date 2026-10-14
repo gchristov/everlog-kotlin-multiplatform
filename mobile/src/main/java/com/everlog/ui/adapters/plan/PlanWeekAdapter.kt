@@ -5,9 +5,6 @@ import android.graphics.Typeface
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.appcompat.view.menu.MenuBuilder
-import androidx.appcompat.view.menu.MenuPopupHelper
-import androidx.appcompat.widget.PopupMenu
 import androidx.core.content.ContextCompat
 import com.ahamed.multiviewadapter.ItemBinder
 import com.ahamed.multiviewadapter.ItemViewHolder
@@ -15,6 +12,7 @@ import com.everlog.R
 import com.everlog.data.model.plan.ELPlanWeek
 import com.everlog.databinding.RowPlanWeekBinding
 import com.everlog.ui.adapters.OnListItemListener
+import com.everlog.ui.views.showPopupMenu
 
 class PlanWeekAdapter {
 
@@ -37,19 +35,13 @@ class PlanWeekAdapter {
 
         private val binding = RowPlanWeekBinding.bind(itemView)
 
-        private fun openMenu(context: Context) {
-            val popup = PopupMenu(context, binding.menuBtn)
-            popup.inflate(R.menu.menu_row_plan_week)
-            popup.setOnMenuItemClickListener {
+        private fun openMenu() {
+            showPopupMenu(binding.menuBtn, build = { inflate(R.menu.menu_row_plan_week) }) {
                 when (it.itemId) {
                     R.id.action_duplicate -> listener.onClickDuplicate(item, absoluteAdapterPosition)
                     R.id.action_delete -> listener.onClickDelete(item, absoluteAdapterPosition)
                 }
-                false
             }
-            val menuHelper = MenuPopupHelper(itemView.context, (popup.menu as MenuBuilder), binding.menuBtn)
-            menuHelper.setForceShowIcon(true)
-            menuHelper.show()
         }
 
         // Render
@@ -61,7 +53,7 @@ class PlanWeekAdapter {
                 listener.onItemClicked(item, absoluteAdapterPosition)
             }
             binding.menuBtn.setOnClickListener {
-                openMenu(it.context)
+                openMenu()
             }
         }
 
