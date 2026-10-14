@@ -70,7 +70,8 @@ import com.everlog.ui.design.elements.AppButton
 import com.everlog.ui.design.elements.AppCheck
 import com.everlog.ui.design.elements.AppFooter
 import com.everlog.ui.design.elements.AppFooterAction
-import com.everlog.ui.design.elements.AppIconButton
+import com.everlog.ui.design.elements.AppMenuItem
+import com.everlog.ui.design.elements.AppOverflowMenu
 import com.everlog.ui.design.elements.AppScreen
 import com.everlog.ui.design.elements.AppSecondaryButton
 import com.everlog.ui.design.elements.AppSurface
@@ -199,15 +200,20 @@ internal fun ExercisePickerScreen(viewModel: ExercisePickerViewModel, onResult: 
             AppBar(
                 title = stringResource(if (pick) R.string.exercise_picker_title else R.string.exercise_picker_title_browse),
                 showBack = true,
-                // Opens the create screen; the new exercise then shows up in the list by itself
+                // Create opens the create screen; the new exercise then shows up in the list by itself.
+                // Send feedback will join it.
                 actions = {
-                    AppIconButton(
-                        icon = ImageVector.vectorResource(R.drawable.ic_add),
-                        contentDescription = stringResource(R.string.exercise_picker_create_exercise),
-                        onClick = {
-                            viewModel.onCreateTapped("plus")
-                            ELNavigator(context).openEditExercise(null)
-                        },
+                    AppOverflowMenu(
+                        items = listOf(
+                            AppMenuItem(
+                                text = stringResource(R.string.exercise_picker_create_exercise),
+                                icon = ImageVector.vectorResource(R.drawable.ic_add),
+                                onClick = {
+                                    viewModel.onCreateTapped("menu")
+                                    ELNavigator(context).openEditExercise(null)
+                                },
+                            ),
+                        ),
                     )
                 },
             )

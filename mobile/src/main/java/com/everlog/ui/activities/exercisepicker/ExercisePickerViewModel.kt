@@ -166,7 +166,7 @@ internal class ExercisePickerViewModel(
         }
     }
 
-    // source: plus (the app bar's +) or search (Create "…" when nothing matches)
+    // source: menu (Create in the app bar's ⋮) or search (Create "…" when nothing matches)
     fun onCreateTapped(source: String) = analytics.createTapped(source)
 
     fun onAdd(setType: ELSetType) {

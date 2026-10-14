@@ -27,7 +27,7 @@ internal interface ExercisePickerAnalytics {
 
     fun exercisePicked(section: String, position: Int)
 
-    // source: plus or search
+    // source: menu (the app bar's ⋮) or search
     fun createTapped(source: String)
 
     fun added(count: Int, setType: String, filters: Int, hadText: Boolean)
