@@ -1,5 +1,7 @@
 package com.everlog.ui.activities.home.exercise.create;
 
+import com.everlog.constants.ELConstants;
+import android.content.Intent;
 import android.content.DialogInterface;
 import android.net.Uri;
 
@@ -136,7 +138,8 @@ public class PresenterCreateExercise extends BaseActivityPresenter<MvpViewCreate
                 // Update routines and history.
                 handleMigrateRoutinesAndHistory(toSave);
             }
-            getMvpView().setViewResult(RESULT_OK);
+            // The exercise's uuid, so a picker can pick the one just created
+            getMvpView().setViewResult(RESULT_OK, new Intent().putExtra(ELConstants.EXTRA_EXERCISE_UUID, toEdit.getUuid()));
             getMvpView().closeScreen();
         }
     }
@@ -192,6 +195,7 @@ public class PresenterCreateExercise extends BaseActivityPresenter<MvpViewCreate
         mEditMode = toEdit != null;
         if (toEdit == null) {
             toEdit = ELExercise.newExercise(getUserAccount().getId());
+            toEdit.setName(getMvpView().getNameToCreate());
         }
     }
 }

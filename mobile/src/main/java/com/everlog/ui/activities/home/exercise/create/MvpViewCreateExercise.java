@@ -19,6 +19,9 @@ public interface MvpViewCreateExercise extends BaseActivityMvpView {
 
     ELExercise getItemToEdit();
 
+    // For a new exercise, the name it starts with, if any
+    String getNameToCreate();
+
     String getExerciseName();
 
     int getSelectedCategoryIndex();

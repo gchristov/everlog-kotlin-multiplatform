@@ -9,6 +9,8 @@ data class ExerciseLibrary(
     val registry: ExerciseRegistry,
     // How many of the user's workout templates use each exercise, by uuid
     val templateCounts: Map<String, Int> = emptyMap(),
+    // When the user last did each exercise, by uuid, from their recent workouts
+    val lastDone: Map<String, Long> = emptyMap(),
 ) {
     /**
      * The muscle groups an exercise works: its primary muscles' groups, or its category's group
@@ -19,4 +21,6 @@ data class ExerciseLibrary(
             .ifEmpty { setOfNotNull(registry.groupOfCategory(exercise.category)) }
 
     fun templateCount(exercise: LibraryExercise): Int = templateCounts[exercise.uuid] ?: 0
+
+    fun lastDone(exercise: LibraryExercise): Long? = lastDone[exercise.uuid]
 }

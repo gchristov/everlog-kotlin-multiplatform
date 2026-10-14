@@ -859,4 +859,60 @@ class AnalyticsManager : Analytic {
             it.onboardingFinished(outcome, step, routines)
         }
     }
+
+    override fun exercisePickerFilterAdded(filter: String, value: String, source: String) {
+        Timber.tag(TAG).i("Exercise picker filter added: filter=%s value=%s source=%s", filter, value, source)
+        mAnalytics?.forEach {
+            it.exercisePickerFilterAdded(filter, value, source)
+        }
+    }
+
+    override fun exercisePickerFilterRemoved(filter: String) {
+        Timber.tag(TAG).i("Exercise picker filter removed: filter=%s", filter)
+        mAnalytics?.forEach {
+            it.exercisePickerFilterRemoved(filter)
+        }
+    }
+
+    override fun exercisePickerFilterOperatorChanged(filter: String, not: Boolean) {
+        Timber.tag(TAG).i("Exercise picker filter operator changed: filter=%s not=%s", filter, not)
+        mAnalytics?.forEach {
+            it.exercisePickerFilterOperatorChanged(filter, not)
+        }
+    }
+
+    override fun exercisePickerSearched(words: Int, results: Int) {
+        Timber.tag(TAG).i("Exercise picker searched: words=%s results=%s", words, results)
+        mAnalytics?.forEach {
+            it.exercisePickerSearched(words, results)
+        }
+    }
+
+    override fun exercisePickerNoResults(text: String?, filters: Int) {
+        Timber.tag(TAG).i("Exercise picker no results: filters=%s", filters)
+        mAnalytics?.forEach {
+            it.exercisePickerNoResults(text, filters)
+        }
+    }
+
+    override fun exercisePickerExercisePicked(section: String, position: Int) {
+        Timber.tag(TAG).i("Exercise picker exercise picked: section=%s position=%s", section, position)
+        mAnalytics?.forEach {
+            it.exercisePickerExercisePicked(section, position)
+        }
+    }
+
+    override fun exercisePickerCreateTapped(source: String) {
+        Timber.tag(TAG).i("Exercise picker create tapped: source=%s", source)
+        mAnalytics?.forEach {
+            it.exercisePickerCreateTapped(source)
+        }
+    }
+
+    override fun exercisePickerAdded(count: Int, setType: String, filters: Int, hadText: Boolean) {
+        Timber.tag(TAG).i("Exercise picker added: count=%s setType=%s filters=%s hadText=%s", count, setType, filters, hadText)
+        mAnalytics?.forEach {
+            it.exercisePickerAdded(count, setType, filters, hadText)
+        }
+    }
 }

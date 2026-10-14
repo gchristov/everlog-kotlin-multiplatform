@@ -1,5 +1,6 @@
 package com.everlog.ui.navigator;
 
+import androidx.annotation.Nullable;
 import android.app.Activity;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
@@ -23,6 +24,7 @@ import com.everlog.data.model.exercise.ELExercise;
 import com.everlog.data.model.plan.ELPlan;
 import com.everlog.data.model.workout.ELWorkout;
 import com.everlog.managers.AppUsageReminderManager;
+import com.everlog.managers.RemoteConfigManager;
 import com.everlog.managers.analytics.AnalyticsConstants;
 import com.everlog.managers.analytics.AnalyticsManager;
 import com.everlog.managers.apprate.RatePromptController;
@@ -31,6 +33,7 @@ import com.everlog.managers.auth.LocalUserManager;
 import com.everlog.managers.preferences.SettingsManager;
 import com.everlog.services.workout.WorkoutService;
 import com.everlog.ui.activities.designsystem.DesignSystemActivity;
+import com.everlog.ui.activities.exercisepicker.ExercisePickerActivity;
 import com.everlog.ui.activities.home.HomeActivity;
 import com.everlog.ui.activities.onboarding.OnboardingActivity;
 import com.everlog.ui.activities.home.congratulate.CongratulateActivity;
@@ -152,11 +155,21 @@ public class ELNavigator implements Navigator {
 
     @Override
     public void openExercises() {
+        // The new picker (TAS-451) when Remote Config turns it on
+        if (RemoteConfigManager.manager.exercisePickerV2()) {
+            startActivity(ExercisePickerActivity.launchIntent(mContext, false));
+            return;
+        }
         startActivity(ExercisesActivity.launchIntent(mContext, new ExercisesActivity.Companion.Properties()));
     }
 
     @Override
     public void openExercisePicker() {
+        // The new picker returns its picks the same way, so callers handle both alike
+        if (RemoteConfigManager.manager.exercisePickerV2()) {
+            startActivityForResult(ExercisePickerActivity.launchIntent(mContext, true), ELActivityRequestCodes.REQUEST_PICK_EXERCISES);
+            return;
+        }
         startActivityForResult(ExercisesActivity.launchIntent(mContext, new ExercisesActivity.Companion.Properties()
                 .selection(true)), ELActivityRequestCodes.REQUEST_PICK_EXERCISES);
     }
@@ -166,6 +179,15 @@ public class ELNavigator implements Navigator {
         Intent intent = new Intent(mContext, CreateExerciseActivity.class);
         if (exercise != null) {
             intent.putExtra(EXTRA_EXERCISE, exercise);
+        }
+        startActivityForResult(intent, ELActivityRequestCodes.REQUEST_EDIT_EXERCISE);
+    }
+
+    @Override
+    public void openCreateExercise(@Nullable String name) {
+        Intent intent = new Intent(mContext, CreateExerciseActivity.class);
+        if (name != null) {
+            intent.putExtra(ELConstants.EXTRA_EXERCISE_NAME, name);
         }
         startActivityForResult(intent, ELActivityRequestCodes.REQUEST_EDIT_EXERCISE);
     }

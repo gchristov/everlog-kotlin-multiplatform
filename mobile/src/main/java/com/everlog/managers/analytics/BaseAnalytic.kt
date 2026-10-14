@@ -613,6 +613,60 @@ abstract class BaseAnalytic : Analytic {
         logEvent(AnalyticsConstants.EVENT_ONBOARDING_FINISHED, map)
     }
 
+    override fun exercisePickerFilterAdded(filter: String, value: String, source: String) {
+        logEvent(AnalyticsConstants.EVENT_EXERCISE_PICKER_FILTER_ADDED, hashMapOf(
+            AnalyticsConstants.PROPERTY_FILTER to filter,
+            AnalyticsConstants.PROPERTY_VALUE to value,
+            AnalyticsConstants.PROPERTY_SOURCE to source,
+        ))
+    }
+
+    override fun exercisePickerFilterRemoved(filter: String) {
+        logEvent(AnalyticsConstants.EVENT_EXERCISE_PICKER_FILTER_REMOVED, hashMapOf(AnalyticsConstants.PROPERTY_FILTER to filter))
+    }
+
+    override fun exercisePickerFilterOperatorChanged(filter: String, not: Boolean) {
+        logEvent(AnalyticsConstants.EVENT_EXERCISE_PICKER_FILTER_OPERATOR_CHANGED, hashMapOf(
+            AnalyticsConstants.PROPERTY_FILTER to filter,
+            AnalyticsConstants.PROPERTY_NOT to if (not) 1L else 0L,
+        ))
+    }
+
+    override fun exercisePickerSearched(words: Int, results: Int) {
+        logEvent(AnalyticsConstants.EVENT_EXERCISE_PICKER_SEARCHED, hashMapOf(
+            AnalyticsConstants.PROPERTY_WORDS to words.toLong(),
+            AnalyticsConstants.PROPERTY_RESULTS to results.toLong(),
+        ))
+    }
+
+    override fun exercisePickerNoResults(text: String?, filters: Int) {
+        logEvent(AnalyticsConstants.EVENT_EXERCISE_PICKER_NO_RESULTS, hashMapOf(
+            // What people look for that the library lacks feeds the next import list; Firebase takes up to 100 characters
+            AnalyticsConstants.PROPERTY_TEXT to text?.trim()?.take(100),
+            AnalyticsConstants.PROPERTY_FILTERS to filters.toLong(),
+        ))
+    }
+
+    override fun exercisePickerExercisePicked(section: String, position: Int) {
+        logEvent(AnalyticsConstants.EVENT_EXERCISE_PICKER_EXERCISE_PICKED, hashMapOf(
+            AnalyticsConstants.PROPERTY_SECTION to section,
+            AnalyticsConstants.PROPERTY_POSITION to position.toLong(),
+        ))
+    }
+
+    override fun exercisePickerCreateTapped(source: String) {
+        logEvent(AnalyticsConstants.EVENT_EXERCISE_PICKER_CREATE_TAPPED, hashMapOf(AnalyticsConstants.PROPERTY_SOURCE to source))
+    }
+
+    override fun exercisePickerAdded(count: Int, setType: String, filters: Int, hadText: Boolean) {
+        logEvent(AnalyticsConstants.EVENT_EXERCISE_PICKER_ADDED, hashMapOf(
+            AnalyticsConstants.PROPERTY_COUNT to count.toLong(),
+            AnalyticsConstants.PROPERTY_SET_TYPE to setType,
+            AnalyticsConstants.PROPERTY_FILTERS to filters.toLong(),
+            AnalyticsConstants.PROPERTY_HAD_TEXT to if (hadText) 1L else 0L,
+        ))
+    }
+
     private fun logOnboardingStep(eventName: String, step: String, value: String? = null) {
         val map = HashMap<String, Any?>()
         map[AnalyticsConstants.PROPERTY_STEP] = step
