@@ -1,0 +1,15 @@
+{
+  "onboarding_v1_date": "2026-10-08",
+  "paid_test": {
+    "start_date": null,
+    "bar_eur_per_lifter": 10,
+    "campaigns": [
+      { "name": "UAC - Installs - Onboarding v1 - A No subscription", "label": "A · No subscription", "spend_eur": null },
+      { "name": "UAC - Installs - Onboarding v1 - B Program", "label": "B · Program", "spend_eur": null },
+      { "name": "UAC - Installs - Onboarding v1 - C Plan in a minute", "label": "C · Plan in a minute", "spend_eur": null }
+    ]
+  },
+  "events": [
+    { "date": "2026-10-08", "label": "2.16.0 onboarding v1" }
+  ]
+}
