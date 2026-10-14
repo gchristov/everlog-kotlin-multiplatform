@@ -15,6 +15,7 @@ import com.everlog.constants.ELConstants.EXTRA_TYPE
 import com.everlog.data.controllers.statistics.ExerciseStatsController
 import com.everlog.data.model.exercise.ELExercise
 import com.everlog.databinding.ActivityExerciseDetailsBinding
+import com.everlog.managers.RemoteConfigManager
 import com.everlog.managers.analytics.AnalyticsConstants
 import com.everlog.ui.activities.base.BaseActivity
 import com.everlog.ui.activities.base.BaseActivityMvpView
@@ -23,6 +24,7 @@ import com.everlog.ui.fragments.base.BaseTabFragment
 import com.everlog.ui.fragments.home.activity.statistics.StatisticsHomeFragment
 import com.everlog.ui.fragments.home.exercise.history.ExerciseHistoryFragment
 import com.everlog.ui.fragments.home.exercise.info.ExerciseInfoFragment
+import com.everlog.ui.fragments.home.exercise.info.LegacyExerciseInfoFragment
 import com.everlog.ui.fragments.home.exercise.statistics.ExerciseStatisticsFragment
 import com.google.android.material.tabs.TabLayout
 import rx.Observable
@@ -35,6 +37,8 @@ class ExerciseDetailsActivity : BaseActivity(), MvpViewExerciseDetails {
 
     private var mAllowDelete = false
     private var mLastType: Type? = null
+    // Read once, so a Remote Config refresh doesn't swap the tab while the screen is open
+    private val mDetailsV2 = RemoteConfigManager.manager.exerciseDetailsV2()
 
     private val mOnClickEdit = PublishSubject.create<Void>()
     private val mOnClickDelete = PublishSubject.create<Void>()
@@ -136,7 +140,7 @@ class ExerciseDetailsActivity : BaseActivity(), MvpViewExerciseDetails {
         val fragments = ArrayList<BaseTabFragment>()
         Type.values().forEach {
             when (it) {
-                Type.INFO -> fragments.add(ExerciseInfoFragment(exercise, stats))
+                Type.INFO -> fragments.add(if (mDetailsV2) ExerciseInfoFragment(exercise, stats) else LegacyExerciseInfoFragment(exercise, stats))
                 Type.STATISTICS -> fragments.add(ExerciseStatisticsFragment(exercise, stats, range))
                 Type.HISTORY -> fragments.add(ExerciseHistoryFragment(exercise, stats))
             }

@@ -70,6 +70,7 @@ The global exercise library is data in Firestore, not code: exercises in `global
 - **uuids never change**: routines, workouts and the onboarding's starter routines (`StarterExercises.kt`, uuids only) point at them, and the app shows the library's current name and image for each (`ELRoutineDecorator`). A rename shows everywhere, past workouts included.
 - **Never delete or overwrite exercise images in Storage**: app versions before 2.10.0 show the copies stored in routines and workouts, which point at the images they had when saved. Each environment's exercises use that environment's own bucket.
 - `ELExercise` doesn't read the newer fields (family, muscles, equipment and so on). The exercise picker (`ui/activities/exercisepicker`, behind Remote Config `exercise_picker_v2`) reads them as `LibraryExercise`s with the registry, through `LoadExerciseLibraryUseCase` (`data/model/exercise/library`, `data/repositories`), and hands picks on as `ELExercise`s.
+- The exercise detail's Info tab (`ui/fragments/home/exercise/info`, behind Remote Config `exercise_details_v2`, which is meant to cover the whole detail screen as it moves to Compose) shows the library's `instructions` and `tips` through `LoadExerciseGuideUseCase`. While the flag is off it's `LegacyExerciseInfoFragment`, the image only.
 
 ### Managers layer (`managers/`)
 

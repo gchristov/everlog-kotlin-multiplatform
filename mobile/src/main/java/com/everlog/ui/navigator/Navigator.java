@@ -100,8 +100,6 @@ public interface Navigator {
 
     void sendEmail(ContactType type, Uri logFile);
 
-    void openYoutubeSearch(String query);
-
     void runProFeature(Runnable runnable);
 
     void openProBuy();

@@ -89,7 +89,6 @@ public class ELNavigator implements Navigator {
 
     private static final String TAG = "ELNavigator";
 
-    private static final String URL_YOUTUBE = "https://www.youtube.com/results?search_query=%s";
     private static final String URL_PLAY_STORE = "https://play.google.com/store/apps/details?id=%s";
     private static final String URL_RATE = "market://details?id=%s";
     private static final String URL_SUBSCRIPTION = "https://play.google.com/store/account/subscriptions?sku=%s&package=%s";
@@ -392,12 +391,6 @@ public class ELNavigator implements Navigator {
                 .putExtra(Intent.EXTRA_SUBJECT, subject)
                 .putExtra(Intent.EXTRA_TEXT, textBody);
         startActivity(Intent.createChooser(intent, title));
-    }
-
-    @Override
-    public void openYoutubeSearch(String query) {
-        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(String.format(URL_YOUTUBE, query)));
-        startActivity(intent);
     }
 
     @Override
