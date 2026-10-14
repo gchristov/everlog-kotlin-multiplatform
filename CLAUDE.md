@@ -69,7 +69,7 @@ The global exercise library is data in Firestore, not code: exercises in `global
 - **Change them only with the tools in `tools/exercises/`**: `import.py` adds exercises from the licensed Exercise Animatic pack (propose, review, apply), `push.py` makes any other change (export, edit, dry run, then `--write`); dev first, never in the Firebase console. `tools/exercises/README.md` is the reference for the model, the rules and the routine; `schema.py` checks them on every push.
 - **uuids never change**: routines, workouts and the onboarding's starter routines (`StarterExercises.kt`, uuids only) point at them, and the app shows the library's current name and image for each (`ELRoutineDecorator`). A rename shows everywhere, past workouts included.
 - **Never delete or overwrite exercise images in Storage**: app versions before 2.10.0 show the copies stored in routines and workouts, which point at the images they had when saved. Each environment's exercises use that environment's own bucket.
-- `ELExercise` doesn't read the newer fields (family, muscles, equipment and so on) yet; the app ignores them until a screen needs them.
+- `ELExercise` doesn't read the newer fields (family, muscles, equipment and so on). The exercise picker (`ui/activities/exercisepicker`, behind Remote Config `exercise_picker_v2`) reads them as `LibraryExercise`s with the registry, through `LoadExerciseLibraryUseCase` (`data/model/exercise/library`, `data/repositories`), and hands picks on as `ELExercise`s.
 
 ### Managers layer (`managers/`)
 
