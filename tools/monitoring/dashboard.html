@@ -1,0 +1,565 @@
+<title>Everlog KPI Board</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+  /* Everlog's own palette (near-black green-tinted ground, lime accent), with a light twin */
+  :root {
+    --bg: #f2f5ee;
+    --surface: #ffffff;
+    --surface-2: #e9eee3;
+    --line: #d6ddcd;
+    --text: #121810;
+    --text-2: #4b5646;
+    --muted: #6f7a68;
+    --accent: #4b7a1d;
+    --accent-ink: #ffffff;
+    --series-organic: #4b7a1d;
+    --series-paid: #2a78d6;
+    --bar: #6f9a43;
+    --good: #1e7f4f;
+    --warn: #9a6200;
+    --crit: #b3332e;
+    --good-bg: #dcefe3;
+    --warn-bg: #f6ead2;
+    --crit-bg: #f6dcda;
+    --neutral-bg: #e9eee3;
+    --display: "Barlow Condensed", "Arial Narrow", "Roboto Condensed", sans-serif;
+    --body: "IBM Plex Sans", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    --mono: "IBM Plex Mono", ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      color-scheme: dark;
+      --bg: #0a0e09;
+      --surface: #151d13;
+      --surface-2: #1c2619;
+      --line: #27331f;
+      --text: #f3f3f3;
+      --text-2: #c3cabd;
+      --muted: #8e9888;
+      --accent: #87c252;
+      --accent-ink: #0a0e09;
+      --series-organic: #87c252;
+      --series-paid: #3987e5;
+      --bar: #6f9f45;
+      --good: #5cc28a;
+      --warn: #e0a83a;
+      --crit: #ec746d;
+      --good-bg: #16301f;
+      --warn-bg: #33270f;
+      --crit-bg: #3a1a18;
+      --neutral-bg: #1f291c;
+    }
+  }
+  :root[data-theme="dark"] {
+    color-scheme: dark;
+    --bg: #0a0e09;
+    --surface: #151d13;
+    --surface-2: #1c2619;
+    --line: #27331f;
+    --text: #f3f3f3;
+    --text-2: #c3cabd;
+    --muted: #8e9888;
+    --accent: #87c252;
+    --accent-ink: #0a0e09;
+    --series-organic: #87c252;
+    --series-paid: #3987e5;
+    --bar: #6f9f45;
+    --good: #5cc28a;
+    --warn: #e0a83a;
+    --crit: #ec746d;
+    --good-bg: #16301f;
+    --warn-bg: #33270f;
+    --crit-bg: #3a1a18;
+    --neutral-bg: #1f291c;
+  }
+
+  body { background: var(--bg); color: var(--text); font: 15px/1.5 var(--body); }
+  .page { max-width: 1120px; margin: 0 auto; padding-inline: 20px; padding-block: 28px 56px; display: grid; gap: 40px; }
+  h1, h2 { font-family: var(--display); font-weight: 600; letter-spacing: 0.01em; text-wrap: balance; margin: 0; }
+  h1 { font-size: 44px; line-height: 1; }
+  h2 { font-size: 28px; line-height: 1.1; }
+  p { margin: 0; }
+  .eyebrow { font: 500 12px/1 var(--mono); letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); }
+  .lede { color: var(--text-2); max-width: 68ch; }
+  .num { font-family: var(--mono); font-variant-numeric: tabular-nums; }
+  code { font-family: var(--mono); font-size: 0.9em; background: var(--surface-2); padding: 1px 5px; border-radius: 4px; }
+
+  header.top { display: flex; flex-wrap: wrap; gap: 16px 32px; justify-content: space-between; align-items: end; border-bottom: 1px solid var(--line); padding-bottom: 20px; }
+  header.top .title { display: grid; gap: 10px; }
+  .stamp { display: grid; gap: 4px; text-align: right; color: var(--text-2); font-size: 13px; }
+  .stamp strong { font: 500 15px var(--mono); color: var(--text); }
+
+  section { display: grid; gap: 16px; }
+  .section-head { display: grid; gap: 6px; }
+
+  .panel { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; }
+  .empty { padding: 18px 20px; color: var(--text-2); }
+
+  /* Headline metrics */
+  .metrics { display: grid; }
+  .metric { display: grid; grid-template-columns: minmax(200px, 1.4fr) minmax(220px, 1.6fr) minmax(120px, 0.8fr) minmax(150px, 1fr); gap: 12px 24px; align-items: center; padding: 16px 20px; }
+  .metric + .metric { border-top: 1px solid var(--line); }
+  .metric .name { font-weight: 600; }
+  .metric .note { color: var(--muted); font-size: 13px; }
+  .metric .cell-label { font: 500 11px/1 var(--mono); letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); margin-bottom: 4px; }
+  .metric .value { font: 600 30px/1 var(--display); font-variant-numeric: tabular-nums; }
+  .metric .value.dim { color: var(--text-2); font-size: 22px; }
+  .metric .count { color: var(--muted); font-size: 12px; font-family: var(--mono); }
+  .gauge svg { display: block; width: 100%; height: 44px; overflow: visible; }
+  .metrics-head { display: grid; grid-template-columns: minmax(200px, 1.4fr) minmax(220px, 1.6fr) minmax(120px, 0.8fr) minmax(150px, 1fr); gap: 24px; padding: 12px 20px 0; }
+  .legend { display: flex; flex-wrap: wrap; gap: 6px 16px; color: var(--text-2); font-size: 12px; align-items: center; }
+  .legend i { display: inline-block; width: 10px; height: 10px; border-radius: 50%; margin-right: 6px; vertical-align: -1px; }
+  .legend i.tick { width: 2px; height: 12px; border-radius: 1px; }
+
+  .pill { display: inline-flex; align-items: center; gap: 6px; font: 500 12px/1 var(--body); padding: 5px 9px; border-radius: 999px; white-space: nowrap; }
+  .pill svg { width: 12px; height: 12px; flex: none; }
+  .pill.good { background: var(--good-bg); color: var(--good); }
+  .pill.warn { background: var(--warn-bg); color: var(--warn); }
+  .pill.crit { background: var(--crit-bg); color: var(--crit); }
+  .pill.neutral { background: var(--neutral-bg); color: var(--text-2); }
+
+  /* Funnel */
+  .funnel { padding: 12px 20px 18px; display: grid; gap: 2px; }
+  .frow { display: grid; grid-template-columns: minmax(150px, 230px) 1fr 92px; gap: 14px; align-items: center; min-height: 30px; }
+  .frow .flabel { color: var(--text-2); font-size: 14px; }
+  .frow.sub .flabel { padding-left: 14px; color: var(--muted); font-size: 13px; }
+  .frow .ftrack { height: 14px; background: var(--surface-2); border-radius: 0 4px 4px 0; position: relative; }
+  .frow .fbar { position: absolute; inset: 0 auto 0 0; background: var(--accent); border-radius: 0 4px 4px 0; min-width: 2px; }
+  .frow.sub .fbar { opacity: 0.7; }
+  .frow .fval { text-align: right; font: 500 13px var(--mono); font-variant-numeric: tabular-nums; }
+  .frow .fval span { color: var(--muted); }
+  .fgroup { font: 500 11px/1 var(--mono); letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); padding: 14px 0 6px; }
+  .checks { display: flex; flex-wrap: wrap; gap: 8px; padding: 0 20px 18px; }
+
+  /* Tables */
+  .table-wrap { overflow-x: auto; }
+  table { border-collapse: collapse; width: 100%; font-size: 14px; }
+  th, td { padding: 10px 14px; text-align: right; white-space: nowrap; }
+  th:first-child, td:first-child { text-align: left; }
+  th { font: 500 11px/1.2 var(--mono); letter-spacing: 0.05em; text-transform: uppercase; color: var(--muted); border-bottom: 1px solid var(--line); }
+  td { font-family: var(--mono); font-variant-numeric: tabular-nums; border-bottom: 1px solid var(--line); }
+  td:first-child { font-family: var(--body); }
+  tr:last-child td { border-bottom: none; }
+  td.muted { color: var(--muted); }
+  td.strong { color: var(--text); font-weight: 500; }
+  .table-note { padding: 12px 14px 14px; color: var(--muted); font-size: 13px; border-top: 1px solid var(--line); }
+
+  /* Charts */
+  .charts { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 420px), 1fr)); gap: 16px; }
+  .chart { padding: 16px 16px 10px; display: grid; gap: 10px; position: relative; }
+  .chart h3 { margin: 0; font: 600 15px/1.3 var(--body); }
+  .chart .sub { color: var(--muted); font-size: 13px; }
+  .chart svg { display: block; width: 100%; overflow: visible; }
+  .chart svg text { fill: var(--muted); font: 11px var(--mono); }
+  .chart .grid { stroke: var(--line); stroke-width: 1; }
+  .chart .marker { stroke: var(--muted); stroke-width: 1; stroke-dasharray: 3 3; }
+  .chart .marker-label { fill: var(--text-2); font-size: 10px; }
+  .hit { fill: transparent; cursor: default; }
+  .hit:hover + .hover-band, .hover-band.on { opacity: 1; }
+  .hover-band { fill: var(--surface-2); opacity: 0; pointer-events: none; }
+
+  .tip { position: fixed; z-index: 10; pointer-events: none; background: var(--surface); color: var(--text); border: 1px solid var(--line); border-radius: 8px; padding: 8px 10px; font-size: 12px; line-height: 1.45; box-shadow: 0 6px 20px rgb(0 0 0 / 0.18); max-width: 260px; }
+  .tip b { font-family: var(--mono); font-weight: 500; }
+
+  details.defs { color: var(--text-2); font-size: 14px; }
+  details.defs summary { cursor: pointer; font-weight: 600; color: var(--text); }
+  details.defs ul { padding-left: 18px; margin: 10px 0 0; display: grid; gap: 6px; max-width: 80ch; }
+  :focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+  @media (max-width: 760px) {
+    h1 { font-size: 36px; }
+    .stamp { text-align: left; }
+    .metric, .metrics-head { grid-template-columns: 1fr 1fr; }
+    .metric .desc, .metric .gauge { grid-column: 1 / -1; }
+    .metrics-head { display: none; }
+    .frow { grid-template-columns: 1fr 76px; }
+    .frow .ftrack { grid-column: 1 / -1; grid-row: 2; }
+  }
+</style>
+
+<div class="page">
+  <header class="top">
+    <div class="title">
+      <span class="eyebrow">Everlog · Android · real users only</span>
+      <h1>KPI Board</h1>
+      <p class="lede">The Roadmap's numbers for new users, read from the Analytics export with Play robots, sideloaded builds and the owner's account removed. Baselines are 2021–2023 organic users.</p>
+    </div>
+    <div class="stamp">
+      <span>Data as of</span>
+      <strong id="generated"></strong>
+      <span>To refresh, ask Claude to “refresh the KPI dashboard”.</span>
+    </div>
+  </header>
+
+  <section id="headlines">
+    <div class="section-head">
+      <h2>Headline metrics</h2>
+      <p class="lede" id="headlines-lede"></p>
+    </div>
+    <div class="panel">
+      <div class="metrics-head">
+        <span class="eyebrow">Metric</span>
+        <div class="legend" aria-label="Gauge legend">
+          <span><i class="tick" style="background:var(--muted)"></i>Baseline</span>
+          <span><i class="tick" style="background:var(--accent)"></i>Target</span>
+          <span><i style="background:var(--text-2);opacity:.5"></i>2026 before v1</span>
+          <span><i style="background:var(--accent)"></i>Since v1</span>
+        </div>
+        <span class="eyebrow">2026 before v1</span>
+        <span class="eyebrow">Since onboarding v1</span>
+      </div>
+      <div class="metrics" id="metrics"></div>
+    </div>
+  </section>
+
+  <section id="funnel-section">
+    <div class="section-head">
+      <h2>Onboarding v1 funnel</h2>
+      <p class="lede" id="funnel-lede"></p>
+    </div>
+    <div class="panel" id="funnel-panel"></div>
+  </section>
+
+  <section id="paid-section">
+    <div class="section-head">
+      <h2>Paid test</h2>
+      <p class="lede">Each concept is judged by its cost per week-one lifter: a new user who finished a workout within 7 days of installing. The winner needs a week-one rate of at least 21% and a cost at or under the bar.</p>
+    </div>
+    <div class="panel" id="paid-panel"></div>
+  </section>
+
+  <section id="trends">
+    <div class="section-head">
+      <h2>Trends</h2>
+      <p class="lede">New users by install week, and the loyal core that keeps lifting. Dashed lines are releases.</p>
+    </div>
+    <div class="charts">
+      <div class="panel chart">
+        <h3>New users per install week</h3>
+        <p class="sub">Real new users in 2026. Hover a week for how many finished a workout in week one.</p>
+        <div class="legend"><span><i style="background:var(--series-organic)"></i>Organic</span><span><i style="background:var(--series-paid)"></i>Paid</span></div>
+        <div id="chart-cohorts"></div>
+      </div>
+      <div class="panel chart">
+        <h3>Workouts finished per week</h3>
+        <p class="sub">Everyone, not only new users. The current week is still running. Hover a week for how many people lifted.</p>
+        <div id="chart-workouts"></div>
+      </div>
+      <div class="panel chart">
+        <h3>People who finished a workout, per month</h3>
+        <p class="sub">The size of the loyal core. The current month is still running.</p>
+        <div id="chart-lifters"></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="health">
+    <div class="section-head">
+      <h2>Data health</h2>
+      <p class="lede">Installs per month and what each filter removes. If “real” jumps with no campaign running, a new kind of robot is getting through. A device can match several filters.</p>
+    </div>
+    <div class="panel table-wrap" id="robots-panel"></div>
+  </section>
+
+  <details class="defs">
+    <summary>Definitions</summary>
+    <ul>
+      <li><strong>Real users</strong> leave out devices that ever used the Test Lab or owner account, sideloaded installs (<code>manual_install</code>), nightly builds and devices with no country.</li>
+      <li><strong>New users</strong> are new accounts plus installs that never got an account. People logging back in to an older account aren't new.</li>
+      <li>Headline rates count users who reached the home screen, as the baseline does. A rate only includes users who have had long enough to reach it, e.g. 7 days for week one.</li>
+      <li><strong>Setup on day one</strong>: kept the starter templates, or created a routine, exercise or plan, or started a plan. <strong>Tourist</strong>: no setup and no workout started on day one.</li>
+      <li>Queries, definitions and the refresh routine live in <code>tools/monitoring</code> in the app repo.</li>
+    </ul>
+  </details>
+</div>
+<div class="tip" id="tip" hidden></div>
+
+<script>
+const DATA = /*__DATA__*/null;
+
+const $ = (id) => document.getElementById(id);
+const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+const pct = (r, digits) => r == null ? '–' : (r * 100).toFixed(digits ?? (r < 0.1 && r > 0 ? 1 : 0)) + '%';
+const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+const fmtDay = (iso) => { const [y, m, d] = iso.split('-').map(Number); return `${d} ${MONTHS[m - 1]}`; };
+const fmtMonth = (iso) => { const [y, m] = iso.split('-').map(Number); return `${MONTHS[m - 1]} ${String(y).slice(2)}`; };
+const MIN_N = 10;
+
+const ICONS = {
+  good: '<svg viewBox="0 0 12 12" aria-hidden="true"><path d="M2.5 6.2 5 8.5l4.5-5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+  warn: '<svg viewBox="0 0 12 12" aria-hidden="true"><path d="M3 6h6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>',
+  crit: '<svg viewBox="0 0 12 12" aria-hidden="true"><path d="M6 2.5v4.5M6 9.3v.2" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>',
+  neutral: '<svg viewBox="0 0 12 12" aria-hidden="true"><circle cx="6" cy="6" r="3.5" fill="none" stroke="currentColor" stroke-width="1.5"/></svg>',
+};
+const pill = (kind, text) => `<span class="pill ${kind}">${ICONS[kind]}${esc(text)}</span>`;
+
+function status(h, v) {
+  if (!v || v.n < MIN_N) return ['neutral', v && v.n ? `Too few users (${v.n})` : 'No users yet'];
+  const better = (a, b) => h.lower_is_better ? a <= b : a >= b;
+  if (h.target != null && better(v.rate, h.target)) return ['good', 'On target'];
+  if (better(v.rate, h.baseline)) return ['warn', 'Above baseline'];
+  return ['crit', 'Below baseline'];
+}
+
+/* ---------- Tooltip ---------- */
+const tip = $('tip');
+function showTip(html, ev) {
+  tip.innerHTML = html;
+  tip.hidden = false;
+  const pad = 14, w = tip.offsetWidth, h = tip.offsetHeight;
+  let x = ev.clientX + pad, y = ev.clientY + pad;
+  if (x + w > window.innerWidth - 8) x = ev.clientX - w - pad;
+  if (y + h > window.innerHeight - 8) y = ev.clientY - h - pad;
+  tip.style.left = Math.max(8, x) + 'px';
+  tip.style.top = Math.max(8, y) + 'px';
+}
+const hideTip = () => { tip.hidden = true; };
+
+/* ---------- Header ---------- */
+function renderHeader() {
+  const g = DATA.generated_at.replace('T', ' ').replace('Z', ' UTC');
+  $('generated').textContent = g;
+}
+
+/* ---------- Headline metrics ---------- */
+function gauge(h) {
+  const vals = [h.baseline, h.target, h.before.rate, h.since.rate].filter((v) => v != null);
+  const max = Math.min(1, Math.max(0.1, ...vals) * 1.2);
+  const W = 300, x = (v) => 4 + (v / max) * (W - 8);
+  const parts = [];
+  parts.push(`<rect x="4" y="19" width="${W - 8}" height="6" rx="3" fill="var(--surface-2)"/>`);
+  parts.push(`<line x1="${x(h.baseline)}" x2="${x(h.baseline)}" y1="12" y2="32" stroke="var(--muted)" stroke-width="2"/>`);
+  parts.push(`<text x="${x(h.baseline)}" y="44" text-anchor="middle" fill="var(--muted)" style="font:10px var(--mono)">${pct(h.baseline)}</text>`);
+  if (h.target != null) {
+    parts.push(`<line x1="${x(h.target)}" x2="${x(h.target)}" y1="12" y2="32" stroke="var(--accent)" stroke-width="2"/>`);
+    parts.push(`<text x="${x(h.target)}" y="9" text-anchor="middle" fill="var(--accent)" style="font:10px var(--mono)">${pct(h.target)}</text>`);
+  }
+  if (h.before.rate != null) parts.push(`<circle cx="${x(h.before.rate)}" cy="22" r="5" fill="var(--text-2)" fill-opacity="0.5" stroke="var(--surface)" stroke-width="2"/>`);
+  if (h.since.rate != null) parts.push(`<circle cx="${x(h.since.rate)}" cy="22" r="6" fill="var(--accent)" stroke="var(--surface)" stroke-width="2"/>`);
+  return `<svg viewBox="0 0 ${W} 46" preserveAspectRatio="none" role="img" aria-label="${esc(h.label)}: baseline ${pct(h.baseline)}${h.target != null ? ', target ' + pct(h.target) : ''}">${parts.join('')}</svg>`;
+}
+
+function renderHeadlines() {
+  const c = DATA.counts;
+  $('headlines-lede').textContent =
+    `${c.since_v1} real new user${c.since_v1 === 1 ? '' : 's'} since onboarding v1 shipped on ${fmtDay(DATA.onboarding_v1_date)}, ` +
+    `against ${c.before_v1} in 2026 before it. Rates need ${MIN_N}+ users before they say much; until then, read the counts.`;
+  $('metrics').innerHTML = DATA.headlines.map((h) => {
+    const [kind, text] = status(h, h.since);
+    const target = h.target != null ? `${pct(h.baseline)} → ${pct(h.target)}` : `${pct(h.baseline)} baseline`;
+    return `<div class="metric">
+      <div class="desc"><div class="name">${esc(h.label)}</div><div class="note">${esc(h.note)} · read ${esc(h.read_at)} · ${target}</div></div>
+      <div class="gauge">${gauge(h)}</div>
+      <div><div class="value dim num">${pct(h.before.rate)}</div><div class="count">${h.before.hit} of ${h.before.n}</div></div>
+      <div><div class="value num">${pct(h.since.rate)}</div><div class="count">${h.since.hit} of ${h.since.n}</div><div style="margin-top:6px">${pill(kind, text)}</div></div>
+    </div>`;
+  }).join('');
+}
+
+/* ---------- Funnel ---------- */
+const STEP_NAMES = { welcome: 'Welcome', units: 'Units', days: 'Days a week', where: 'Where you train', experience: 'Experience', goal: 'Goal', building: 'Building', reveal: 'Reveal', saving: 'Saving' };
+const OUTCOME_NAMES = { starter_templates: 'Kept the starter templates', own_template: 'Built their own template', skipped: 'Skipped setup' };
+
+function renderFunnel() {
+  const f = DATA.funnel;
+  $('funnel-lede').textContent = `Real new users who installed since ${fmtDay(DATA.onboarding_v1_date)}.` + (f.new_users ? ` Week-one steps only count the ${f.mature_w1} who have had 7 days.` : '');
+  if (!f.new_users) {
+    $('funnel-panel').innerHTML = `<p class="empty">No real new users have installed since onboarding v1 shipped. Every install since then was filtered out as a robot or a sideloaded build (see Data health). The funnel fills in once the paid test brings people in.</p>`;
+    return;
+  }
+  const base = f.new_users;
+  const row = (label, n, of, sub) => {
+    const w = of ? Math.max(0, Math.min(100, (n / of) * 100)) : 0;
+    const share = of ? `<span>${pct(n / of)}</span>` : '';
+    return `<div class="frow${sub ? ' sub' : ''}"><span class="flabel">${esc(label)}</span><div class="ftrack"><div class="fbar" style="width:${w}%"></div></div><span class="fval">${n} ${share}</span></div>`;
+  };
+  const rows = [];
+  rows.push('<div class="fgroup">Install to onboarding</div>');
+  rows.push(row('New users', base, base));
+  rows.push(row('Started onboarding', f.onboarding_started, base));
+  f.steps.filter((s) => s.step !== 'saving').forEach((s) => rows.push(row(STEP_NAMES[s.step] || s.step, s.viewed, base, true)));
+  rows.push('<div class="fgroup">How onboarding ended</div>');
+  Object.entries(f.outcomes).forEach(([k, n]) => rows.push(row(OUTCOME_NAMES[k] || k, n, base, true)));
+  rows.push(row('Reached home', f.reached_home, base));
+  rows.push(`<div class="fgroup">After onboarding (of users with enough days)</div>`);
+  rows.push(row('Did setup on day one', f.setup_d0, f.mature_d1));
+  rows.push(row('Started a workout in week one', f.started_w1, f.mature_w1));
+  rows.push(row('Finished a workout in week one', f.finished_w1, f.mature_w1));
+  rows.push(row('2+ workouts in week one', f.two_plus_w1, f.mature_w1, true));
+  rows.push(row('3+ workouts in week one', f.three_plus_w1, f.mature_w1, true));
+
+  const checks = f.steps.filter((s) => s.viewed > 0 && s.step !== 'saving').map((s) => {
+    const r = s.completed / s.viewed;
+    const kind = s.viewed < MIN_N ? 'neutral' : r >= 0.7 ? 'good' : 'crit';
+    return pill(kind, `${STEP_NAMES[s.step]}: ${s.completed}/${s.viewed} completed`);
+  });
+  const kb = f.kept_or_built;
+  if (kb.n) checks.push(pill(kb.n < MIN_N ? 'neutral' : kb.rate >= 0.3 ? 'good' : 'crit', `Kept or built at the reveal: ${kb.hit}/${kb.n}`));
+  $('funnel-panel').innerHTML = `<div class="funnel">${rows.join('')}</div>` +
+    (checks.length ? `<div class="checks" aria-label="Health checks: 70%+ of each step completed, 30%+ keep or build at the reveal">${checks.join('')}</div>` : '');
+}
+
+/* ---------- Paid test ---------- */
+function renderPaid() {
+  const p = DATA.paid;
+  const eur = (v) => v == null ? '–' : '€' + v.toFixed(v < 100 ? 2 : 0);
+  const head = `<tr><th>Channel</th><th>New users</th><th>Finished onboarding</th><th>Kept or built</th><th>With 7 days</th><th>Week-one lifters</th><th>Rate</th><th>Spend</th><th>Cost per lifter</th></tr>`;
+  const body = p.rows.map((r) => {
+    const rateV = r.mature_w1 ? r.lifters / r.mature_w1 : null;
+    let costCell = eur(r.cost_per_lifter);
+    if (r.cost_per_lifter != null) costCell += r.cost_per_lifter <= p.bar_eur_per_lifter ? ' ✓' : '';
+    return `<tr><td class="strong">${esc(r.label)}</td><td>${r.new_users}</td><td>${r.finished_onboarding}</td><td>${r.kept_or_built}</td><td class="muted">${r.mature_w1}</td><td>${r.lifters}</td><td>${pct(rateV)}</td><td class="muted">${r.paid ? eur(r.spend_eur) : '–'}</td><td>${r.paid ? costCell : '–'}</td></tr>`;
+  }).join('');
+  const note = p.start_date
+    ? `Users who installed since ${fmtDay(p.start_date)}. Bar: €${p.bar_eur_per_lifter} per week-one lifter. Spend is entered by hand in <code>config.json</code> at each read.`
+    : `The campaigns haven't started. Once they do, set <code>paid_test.start_date</code> and each campaign's spend in <code>config.json</code>. Until then this shows organic users since onboarding v1. Bar: €${p.bar_eur_per_lifter} per week-one lifter.`;
+  $('paid-panel').innerHTML = `<div class="table-wrap"><table>${head}${body}</table></div><p class="table-note">${note}</p>`;
+}
+
+/* ---------- Bar charts ---------- */
+function barChart(el, opts) {
+  const { rows, xKey, stacks, xLabel, tipHtml, height = 200, markers = [] } = opts;
+  function draw() {
+    const W = Math.max(280, el.clientWidth), H = height;
+    const m = { t: 18, r: 8, b: 26, l: 34 };
+    const iw = W - m.l - m.r, ih = H - m.t - m.b;
+    const totals = rows.map((r) => stacks.reduce((s, k) => s + r[k.key], 0));
+    const rawMax = Math.max(1, ...totals);
+    const step = niceStep(rawMax / 4);
+    const max = Math.ceil(rawMax / step) * step;
+    const y = (v) => m.t + ih - (v / max) * ih;
+    const band = iw / rows.length;
+    const gap = band > 6 ? 2 : 1;
+    const bw = Math.max(1, band - gap);
+    const out = [];
+    for (let v = 0; v <= max; v += step) {
+      out.push(`<line class="grid" x1="${m.l}" x2="${W - m.r}" y1="${y(v)}" y2="${y(v)}"/>`);
+      out.push(`<text x="${m.l - 6}" y="${y(v) + 4}" text-anchor="end">${v}</text>`);
+    }
+    const idx = new Map(rows.map((r, i) => [r[xKey], i]));
+    markers.forEach((mk) => {
+      const i = nearestIndex(rows, xKey, mk.x);
+      if (i == null) return;
+      const mx = m.l + i * band + band / 2;
+      out.push(`<line class="marker" x1="${mx}" x2="${mx}" y1="${m.t - 4}" y2="${m.t + ih}"/>`);
+      if (mk.label) out.push(`<text class="marker-label" x="${mx + 3}" y="${m.t - 6}">${esc(mk.label)}</text>`);
+    });
+    rows.forEach((r, i) => {
+      const x0 = m.l + i * band;
+      out.push(`<rect class="hover-band" data-i="${i}" x="${x0}" y="${m.t}" width="${band}" height="${ih}"/>`);
+      let acc = 0;
+      const segs = stacks.filter((k) => r[k.key] > 0);
+      segs.forEach((k, si) => {
+        const v = r[k.key];
+        const top = y(acc + v), bot = y(acc);
+        const h = Math.max(0, bot - top - (si > 0 ? 2 : 0));
+        const isTop = si === segs.length - 1;
+        const rad = isTop ? Math.min(4, bw / 2, h) : 0;
+        out.push(`<path d="${roundTop(x0 + gap / 2, top, bw, h, rad)}" fill="${k.color}"/>`);
+        acc += v;
+      });
+    });
+    const ticks = xTicks(rows.length, Math.floor(iw / 70));
+    ticks.forEach((i) => out.push(`<text x="${m.l + i * band + band / 2}" y="${H - 8}" text-anchor="middle">${esc(xLabel(rows[i][xKey]))}</text>`));
+    rows.forEach((r, i) => out.push(`<rect class="hit" data-i="${i}" x="${m.l + i * band}" y="${m.t}" width="${band}" height="${ih}"/>`));
+    el.innerHTML = `<svg viewBox="0 0 ${W} ${H}" height="${H}" role="img" aria-label="${esc(opts.aria)}">${out.join('')}</svg>`;
+    const svg = el.firstChild;
+    svg.querySelectorAll('.hit').forEach((h) => {
+      const i = +h.dataset.i;
+      const bandEl = svg.querySelector(`.hover-band[data-i="${i}"]`);
+      h.addEventListener('mousemove', (ev) => { bandEl.classList.add('on'); showTip(tipHtml(rows[i]), ev); });
+      h.addEventListener('mouseleave', () => { bandEl.classList.remove('on'); hideTip(); });
+    });
+  }
+  draw();
+  let last = el.clientWidth;
+  new ResizeObserver(() => { if (Math.abs(el.clientWidth - last) > 4) { last = el.clientWidth; draw(); } }).observe(el);
+}
+function roundTop(x, y, w, h, r) {
+  if (h <= 0) return '';
+  return `M${x},${y + h} V${y + r} Q${x},${y} ${x + r},${y} H${x + w - r} Q${x + w},${y} ${x + w},${y + r} V${y + h} Z`;
+}
+function niceStep(raw) {
+  const p = Math.pow(10, Math.floor(Math.log10(Math.max(raw, 1))));
+  for (const f of [1, 2, 5, 10]) if (f * p >= raw) return Math.max(1, f * p);
+  return 10 * p;
+}
+function xTicks(n, maxTicks) {
+  const every = Math.max(1, Math.ceil(n / Math.max(2, maxTicks)));
+  const out = [];
+  for (let i = 0; i < n; i += every) out.push(i);
+  return out;
+}
+function nearestIndex(rows, key, x) {
+  if (!rows.length || x < rows[0][key]) return null;
+  let best = null;
+  rows.forEach((r, i) => { if (r[key] <= x) best = i; });
+  return best;
+}
+
+function releaseMarkers(rows, key, toKey) {
+  const minors = (DATA.releases || []).filter((r) => /\.0$/.test(r.version));
+  const labelled = new Set((DATA.events || []).map((e) => e.date));
+  const seen = new Set();
+  const out = [];
+  minors.forEach((r) => {
+    const k = toKey(r.date);
+    if (seen.has(k)) return;
+    seen.add(k);
+    out.push({ x: k, label: labelled.has(r.date) ? r.version : '' });
+  });
+  return out;
+}
+
+function renderCharts() {
+  const weekKey = (iso) => { const d = new Date(iso + 'T00:00:00Z'); const wd = (d.getUTCDay() + 6) % 7; d.setUTCDate(d.getUTCDate() - wd); return d.toISOString().slice(0, 10); };
+  const monthKey = (iso) => iso.slice(0, 7);
+  const cohorts = DATA.cohorts || [];
+  if (cohorts.length) {
+    barChart($('chart-cohorts'), {
+      rows: cohorts, xKey: 'week', aria: 'New users per install week, organic and paid',
+      stacks: [{ key: 'organic', color: 'var(--series-organic)' }, { key: 'paid', color: 'var(--series-paid)' }],
+      xLabel: fmtDay, markers: releaseMarkers(cohorts, 'week', weekKey),
+      tipHtml: (r) => `Week of <b>${fmtDay(r.week)}</b><br>Organic <b>${r.organic}</b> · Paid <b>${r.paid}</b><br>` +
+        (r.mature_w1 ? `Finished a workout in week one: <b>${r.lifters} of ${r.mature_w1}</b>` : 'Week one not over yet'),
+    });
+  } else {
+    $('chart-cohorts').innerHTML = '<p class="sub">No new users yet.</p>';
+  }
+  const weekly = DATA.core_weekly || [];
+  barChart($('chart-workouts'), {
+    rows: weekly, xKey: 'week', aria: 'Workouts finished per week',
+    stacks: [{ key: 'workouts', color: 'var(--bar)' }],
+    xLabel: (w) => { const d = new Date(w + 'T00:00:00Z'); d.setUTCDate(d.getUTCDate() + 3); return fmtMonth(d.toISOString().slice(0, 10)); }, markers: releaseMarkers(weekly, 'week', weekKey),
+    tipHtml: (r) => `Week of <b>${fmtDay(r.week)}</b><br>Workouts finished <b>${r.workouts}</b><br>People who lifted <b>${r.lifters}</b>`,
+  });
+  const monthly = DATA.core_monthly || [];
+  barChart($('chart-lifters'), {
+    rows: monthly, xKey: 'month', aria: 'People who finished a workout per month',
+    stacks: [{ key: 'lifters', color: 'var(--bar)' }],
+    xLabel: fmtMonth, height: 180,
+    tipHtml: (r) => `<b>${fmtMonth(r.month)}</b><br>People who lifted <b>${r.lifters}</b><br>Workouts finished <b>${r.workouts}</b>`,
+  });
+}
+
+/* ---------- Data health ---------- */
+function renderRobots() {
+  const rows = (DATA.robots || []).slice(-12).reverse();
+  const head = `<tr><th>Month</th><th>Installs</th><th>Test Lab account</th><th>Sideloaded</th><th>No country</th><th>Nightly</th><th>Owner</th><th>Real</th></tr>`;
+  const body = rows.map((r) => `<tr><td>${fmtMonth(r.month)}</td><td>${r.installs}</td><td class="muted">${r.testlab_account}</td><td class="muted">${r.manual_install}</td><td class="muted">${r.no_country}</td><td class="muted">${r.nightly}</td><td class="muted">${r.owner}</td><td class="strong">${r.real_installs}</td></tr>`).join('');
+  $('robots-panel').innerHTML = `<table>${head}${body}</table><p class="table-note">“Real” installs include people reinstalling with an existing account, so they can be more than the new users above.</p>`;
+}
+
+if (!DATA) {
+  document.querySelector('.page').insertAdjacentHTML('afterbegin', '<p class="empty panel">No data. Run tools/monitoring/refresh.sh and publish out/dashboard.html.</p>');
+} else {
+  renderHeader();
+  renderHeadlines();
+  renderFunnel();
+  renderPaid();
+  renderCharts();
+  renderRobots();
+}
+</script>

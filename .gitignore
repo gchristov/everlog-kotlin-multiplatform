@@ -83,6 +83,7 @@ tools/firebase/storage/*/
 tools/image_resize/input/
 tools/image_resize/output/
 tools/exercises/out/
+tools/monitoring/out/
 
 # Claude Design sync output
 ds-bundle/
