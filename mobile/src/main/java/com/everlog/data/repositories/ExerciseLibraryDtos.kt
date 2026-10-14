@@ -28,6 +28,9 @@ data class LibraryExerciseDto(
     var category: String? = null,
     var imageUrl: String? = null,
     var media: MediaDto? = null,
+    var splitSides: Boolean = false,
+    var createdByUserId: String? = null,
+    var createdDate: Long = 0,
 ) {
     // Not a stored field, so Firestore's mapper leaves it alone
     @get:Exclude
@@ -53,6 +56,9 @@ data class LibraryExerciseDto(
             aliases = aliases,
             category = category,
             own = own,
+            splitSides = splitSides,
+            createdByUserId = createdByUserId,
+            createdDate = createdDate,
         )
     }
 }

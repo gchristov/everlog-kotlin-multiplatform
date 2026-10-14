@@ -31,4 +31,8 @@ data class LibraryExercise(
     val aliases: List<String> = emptyList(),
     val category: String? = null,
     val own: Boolean = false,
+    // As stored, so the exercise can be handed to the rest of the app as an ELExercise
+    val splitSides: Boolean = false,
+    val createdByUserId: String? = null,
+    val createdDate: Long = 0,
 )
