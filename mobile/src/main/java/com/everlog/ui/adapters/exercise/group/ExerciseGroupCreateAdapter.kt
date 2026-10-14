@@ -9,8 +9,6 @@ import android.view.MenuItem
 import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
-import androidx.appcompat.view.menu.MenuBuilder
-import androidx.appcompat.view.menu.MenuPopupHelper
 import androidx.appcompat.widget.PopupMenu
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.ItemTouchHelper
@@ -36,6 +34,7 @@ import com.everlog.ui.activities.home.exercise.details.ExerciseDetailsActivity
 import com.everlog.ui.dialog.DialogBuilder
 import com.everlog.ui.dialog.ToastBuilder
 import com.everlog.ui.navigator.ELNavigator
+import com.everlog.ui.views.showPopupMenu
 import com.everlog.ui.views.viewpager.wrap.ObjectAtPositionPagerAdapter
 import com.everlog.utils.ArrayResourceTypeUtils
 import com.everlog.utils.Throttler
@@ -361,10 +360,11 @@ class ExerciseGroupCreateAdapter {
                 return
             }
             val menuBtn = myVH.binding.menuBtn
-            val popup = PopupMenu(menuBtn.context, menuBtn)
-            popup.menu.add(0, MENU_DUPLICATE, MENU_DUPLICATE, "Duplicate").setIcon(R.drawable.ic_copy)
-            popup.menu.add(0, MENU_DELETE, MENU_DELETE, "Delete").setIcon(R.drawable.ic_delete_black)
-            popup.setOnMenuItemClickListener { menuItem: MenuItem ->
+            val build: PopupMenu.() -> Unit = {
+                menu.add(0, MENU_DUPLICATE, MENU_DUPLICATE, "Duplicate").setIcon(R.drawable.ic_copy)
+                menu.add(0, MENU_DELETE, MENU_DELETE, "Delete").setIcon(R.drawable.ic_delete_black)
+            }
+            showPopupMenu(menuBtn, build) { menuItem: MenuItem ->
                 var scrollToLast = false
                 when (menuItem.itemId) {
                     MENU_DUPLICATE -> {
@@ -382,11 +382,7 @@ class ExerciseGroupCreateAdapter {
                     groupVH.scrollTo((groupVH.getPager().adapter?.count ?: 0) - 1)
                 }
                 builder.saveWorkout()
-                false
             }
-            val menuHelper = MenuPopupHelper(menuBtn.context, (popup.menu as MenuBuilder), menuBtn)
-            menuHelper.setForceShowIcon(true)
-            menuHelper.show()
         }
 
         private fun handleDelete(set: Int) {

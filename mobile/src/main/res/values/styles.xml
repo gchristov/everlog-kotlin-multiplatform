@@ -19,7 +19,39 @@
     </style>
 
     <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar"/>
-    <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light"/>
+    <!-- Popup menus, from the toolbars' overflow and rows' ⋮ buttons (ui/views/PopupMenus.kt). The
+         XML twin of the design system's AppMenu (AppOverflowMenu.kt): change both together. -->
+    <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Dark">
+        <item name="popupMenuStyle">@style/AppPopupMenu</item>
+        <item name="actionOverflowMenuStyle">@style/AppPopupMenu.Overflow</item>
+        <item name="textAppearanceLargePopupMenu">@style/AppPopupMenuText</item>
+        <item name="textAppearanceSmallPopupMenu">@style/AppPopupMenuText</item>
+        <item name="android:textColorPrimary">@color/white_darker</item>
+        <item name="colorControlHighlight">@color/separator</item>
+        <!-- Rows like AppListItem's: 56dp high, 16dp in from the sides -->
+        <item name="dropdownListPreferredItemHeight">56dp</item>
+        <item name="listPreferredItemPaddingLeft">@dimen/activity_margin</item>
+        <item name="listPreferredItemPaddingRight">@dimen/activity_margin</item>
+    </style>
+    <style name="AppPopupMenu" parent="Widget.AppCompat.PopupMenu">
+        <item name="android:popupBackground">@drawable/rounded_corners_popup_menu</item>
+        <item name="android:popupElevation">8dp</item>
+        <!-- Opens below its button, 4dp clear of it -->
+        <item name="overlapAnchor">false</item>
+        <item name="android:overlapAnchor">false</item>
+        <item name="android:dropDownVerticalOffset">4dp</item>
+    </style>
+    <style name="AppPopupMenu.Overflow" parent="Widget.AppCompat.PopupMenu.Overflow">
+        <item name="android:popupBackground">@drawable/rounded_corners_popup_menu</item>
+        <item name="android:popupElevation">8dp</item>
+        <item name="overlapAnchor">false</item>
+        <item name="android:overlapAnchor">false</item>
+        <item name="android:dropDownVerticalOffset">4dp</item>
+    </style>
+    <style name="AppPopupMenuText" parent="TextAppearance.AppCompat.Widget.PopupMenu.Large">
+        <item name="android:textColor">@color/white_darker</item>
+        <item name="android:textSize">16sp</item>
+    </style>
     <style name="AppTheme.Transparent" parent="AppTheme.NoActionBar">
         <item name="android:windowIsTranslucent">true</item>
         <item name="android:windowBackground">@android:color/transparent</item>

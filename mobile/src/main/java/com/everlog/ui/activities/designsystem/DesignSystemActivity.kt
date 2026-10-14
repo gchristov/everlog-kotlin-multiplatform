@@ -35,6 +35,7 @@ internal enum class DesignSystemPage {
     Buttons,
     Lists,
     Search,
+    Menus,
     Cards,
     HeroHeader,
     Dialogs,
@@ -68,6 +69,7 @@ internal fun DesignSystemScreen(viewModel: DesignSystemViewModel) {
         DesignSystemPage.Buttons -> DesignSystemButtons(buttonClicks = state.buttonClicks, onButtonClick = onButtonClick)
         DesignSystemPage.Lists -> DesignSystemLists(onButtonClick = onButtonClick)
         DesignSystemPage.Search -> DesignSystemSearch(onButtonClick = onButtonClick)
+        DesignSystemPage.Menus -> DesignSystemMenus(onButtonClick = onButtonClick)
         DesignSystemPage.Cards -> DesignSystemCards(onButtonClick = onButtonClick)
         DesignSystemPage.HeroHeader -> DesignSystemHeroHeader()
         DesignSystemPage.Dialogs -> DesignSystemDialogs()
@@ -102,6 +104,7 @@ private val HubSections = listOf(
         HubEntry(DesignSystemPage.Buttons, "Buttons", "Primary, secondary and tertiary, enabled and disabled"),
         HubEntry(DesignSystemPage.Lists, "Lists", "Grouped lists and their rows, thumbnails and checks"),
         HubEntry(DesignSystemPage.Search, "Search and filters", "The search bar and chips"),
+        HubEntry(DesignSystemPage.Menus, "Menus", "Further options behind a ⋮ button, in the app bar or on a row"),
         HubEntry(DesignSystemPage.Cards, "Cards", "The card surface, with text and actions"),
         HubEntry(DesignSystemPage.HeroHeader, "Hero header", "A large title at the top of a screen's content"),
         HubEntry(DesignSystemPage.Dialogs, "Dialogs", "A title, body text and two actions"),
