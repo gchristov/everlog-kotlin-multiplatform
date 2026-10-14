@@ -28,10 +28,9 @@
         <item name="textAppearanceSmallPopupMenu">@style/AppPopupMenuText</item>
         <item name="android:textColorPrimary">@color/white_darker</item>
         <item name="colorControlHighlight">@color/separator</item>
-        <!-- Rows like AppListItem's: 56dp high, 16dp in from the sides -->
+        <!-- Rows like AppListItem's: 56dp high, 16dp in from the sides (AppCompat's own, with icons
+             placed by abc_list_menu_item_icon) -->
         <item name="dropdownListPreferredItemHeight">56dp</item>
-        <item name="listPreferredItemPaddingLeft">@dimen/activity_margin</item>
-        <item name="listPreferredItemPaddingRight">@dimen/activity_margin</item>
     </style>
     <style name="AppPopupMenu" parent="Widget.AppCompat.PopupMenu">
         <item name="android:popupBackground">@drawable/rounded_corners_popup_menu</item>

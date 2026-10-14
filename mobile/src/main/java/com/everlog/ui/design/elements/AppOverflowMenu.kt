@@ -2,6 +2,8 @@ package com.everlog.ui.design.elements
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.runtime.Composable
@@ -85,10 +87,16 @@ fun AppMenu(
         shadowElevation = MenuSizes.Elevation,
         border = BorderStroke(MenuSizes.Border, Theme.backgrounds.separator),
     ) {
+        // When some options have icons, the others leave the icon's space so the labels line up
+        val icons = items.any { it.icon != null }
         items.forEach { item ->
             AppListItem(
                 title = item.text,
-                leading = item.icon?.let { icon -> @Composable { AppIcon(imageVector = icon) } },
+                leading = when {
+                    item.icon != null -> { { AppIcon(imageVector = item.icon) } }
+                    icons -> { { Spacer(modifier = Modifier.size(MenuSizes.Icon)) } }
+                    else -> null
+                },
                 trailing = if (item.selected) {
                     { AppIcon(imageVector = ImageVector.vectorResource(R.drawable.ic_check), tint = Theme.contentColors.action) }
                 } else {
@@ -110,6 +118,8 @@ private object MenuSizes {
     val EndInset = 12.dp
     val Elevation = 8.dp
     val Border = 1.dp
+    // AppIcon's size
+    val Icon = 24.dp
 }
 
 @Preview
