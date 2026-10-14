@@ -4,6 +4,7 @@ import com.everlog.BuildConfig
 import com.everlog.data.model.ELUser
 import com.everlog.managers.auth.LocalUserManager
 import com.google.firebase.firestore.CollectionReference
+import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.FirebaseFirestore
 
 object FirestorePathManager {
@@ -16,6 +17,10 @@ object FirestorePathManager {
 
     val globalExercisesCollection: CollectionReference
         get() = getCollectionReference("global/exercises/all")
+
+    // The ids the exercise library uses, with their names (tools/exercises/README.md)
+    val exerciseRegistryDocument: DocumentReference
+        get() = firestore.document("global/exercises/registry/current")
 
     val usersCollection: CollectionReference
         get() = getCollectionReference("users")
