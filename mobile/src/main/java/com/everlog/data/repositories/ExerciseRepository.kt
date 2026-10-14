@@ -5,6 +5,7 @@ import com.everlog.data.model.exercise.ELExercise
 import com.everlog.data.model.exercise.library.ExerciseRegistry
 import com.everlog.data.model.exercise.library.LibraryExercise
 import com.everlog.managers.firebase.FirestorePathManager
+import com.google.firebase.firestore.DocumentSnapshot
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
@@ -55,24 +56,31 @@ class RealExerciseRepository(
 
     override suspend fun libraryExercises(): Either<Throwable, List<LibraryExercise>> = withContext(dispatcher) {
         Either.catch {
-            FirestorePathManager.globalExercisesCollection.get().await().documents.mapNotNull { document ->
-                document.toObject(LibraryExerciseDto::class.java)
-                    ?.takeUnless { it.hidden }
-                    ?.toLibraryExercise(documentId = document.id, own = false)
-            }
+            FirestorePathManager.globalExercisesCollection.getCacheFirst(refreshKey = "globalExercises")
+                .documents
+                .mapNotNull { it.toLibraryExerciseOrNull(own = false) }
         }
     }
 
     override suspend fun ownExercises(): Either<Throwable, List<LibraryExercise>> = withContext(dispatcher) {
         Either.catch {
-            FirestorePathManager.exercisesCollection.get().await().documents.mapNotNull { document ->
-                document.toObject(LibraryExerciseDto::class.java)?.toLibraryExercise(documentId = document.id, own = true)
-            }
+            // ownExerciseUpdates() keeps them current, so the cache is enough here
+            FirestorePathManager.exercisesCollection.getCacheFirst()
+                .documents
+                .mapNotNull { it.toLibraryExerciseOrNull(own = true) }
         }
     }
 
     override fun ownExerciseUpdates(): Flow<List<LibraryExercise>> = callbackFlow {
-        val registration = FirestorePathManager.exercisesCollection.addSnapshotListener { snapshot, error ->
+        // Throws without a signed-in user: then there's nothing to follow
+        val collection = runCatching { FirestorePathManager.exercisesCollection }
+            .onFailure { Timber.tag(TAG).w(it, "No user's exercises to follow") }
+            .getOrNull()
+        if (collection == null) {
+            close()
+            return@callbackFlow
+        }
+        val registration = collection.addSnapshotListener { snapshot, error ->
             if (error != null || snapshot == null) {
                 Timber.tag(TAG).w(error, "Couldn't follow the user's exercises")
                 return@addSnapshotListener
@@ -81,21 +89,25 @@ class RealExerciseRepository(
         }
         awaitClose { registration.remove() }
     }
-        .map { documents ->
-            documents.mapNotNull { document ->
-                document.toObject(LibraryExerciseDto::class.java)?.toLibraryExercise(documentId = document.id, own = true)
-            }
-        }
+        .map { documents -> documents.mapNotNull { it.toLibraryExerciseOrNull(own = true) } }
         .flowOn(dispatcher)
 
     override suspend fun registry(): Either<Throwable, ExerciseRegistry> = withContext(dispatcher) {
         Either.catch {
-            FirestorePathManager.exerciseRegistryDocument.get().await()
+            FirestorePathManager.exerciseRegistryDocument.getCacheFirst(refreshKey = "exerciseRegistry")
                 .toObject(ExerciseRegistryDto::class.java)
                 ?.toRegistry()
                 ?: ExerciseRegistry()
         }
     }
+
+    // One document that doesn't parse is left out, rather than failing the whole library
+    private fun DocumentSnapshot.toLibraryExerciseOrNull(own: Boolean): LibraryExercise? =
+        runCatching { toObject(LibraryExerciseDto::class.java) }
+            .onFailure { Timber.tag(TAG).w(it, "Skipped exercise %s, which doesn't parse", id) }
+            .getOrNull()
+            ?.takeUnless { it.hidden }
+            ?.toLibraryExercise(documentId = id, own = own)
 }
 
 private const val TAG = "ExerciseRepository"

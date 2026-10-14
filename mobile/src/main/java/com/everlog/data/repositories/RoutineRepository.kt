@@ -56,8 +56,14 @@ class RealRoutineRepository(
 
     override suspend fun exerciseTemplateCounts(): Either<Throwable, Map<String, Int>> = withContext(dispatcher) {
         Either.catch {
-            FirestorePathManager.routinesCollection.get().await()
-                .toObjects(ELRoutine::class.java)
+            // The routines store keeps the cache current while the app runs
+            FirestorePathManager.routinesCollection.getCacheFirst()
+                .documents
+                .mapNotNull { document ->
+                    runCatching { document.toObject(ELRoutine::class.java) }
+                        .onFailure { Timber.tag(TAG).w(it, "Skipped routine %s, which doesn't parse", document.id) }
+                        .getOrNull()
+                }
                 .flatMap { routine ->
                     routine.exerciseGroups.flatMap { group -> group.exercises.mapNotNull { it.exercise?.uuid } }.toSet()
                 }

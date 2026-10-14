@@ -2,6 +2,7 @@ package com.everlog.data.repositories
 
 import com.everlog.data.model.exercise.library.ExerciseRegistry
 import com.everlog.data.model.exercise.library.LibraryExercise
+import com.google.firebase.firestore.Exclude
 import com.google.firebase.firestore.IgnoreExtraProperties
 
 // The library's Firestore documents as stored, see tools/exercises/README.md. Fields the app doesn't
@@ -28,6 +29,8 @@ data class LibraryExerciseDto(
     var imageUrl: String? = null,
     var media: MediaDto? = null,
 ) {
+    // Not a stored field, so Firestore's mapper leaves it alone
+    @get:Exclude
     val hidden get() = status == "hidden"
 
     // Null without a name, which every exercise should have
