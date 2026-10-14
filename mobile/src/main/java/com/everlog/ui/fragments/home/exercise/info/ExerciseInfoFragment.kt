@@ -19,7 +19,8 @@ import com.everlog.ui.fragments.home.exercise.BaseExerciseTabFragment
 import com.everlog.ui.fragments.home.exercise.BasePresenterExerciseTab
 import kotlinx.coroutines.Dispatchers
 
-// The Info tab, in Compose inside the XML tab pager (ExerciseInfoScreen)
+// The Info tab, in Compose inside the XML tab pager (ExerciseInfoScreen), while exercise_details_v2 is on.
+// The flag is meant to grow to the whole screen as it moves to Compose.
 class ExerciseInfoFragment(exercise: ELExercise, stats: ExerciseStatsController.StatsResult?) : BaseExerciseTabFragment(exercise, stats), MvpViewExerciseInfo {
 
     private var mPresenter: PresenterExerciseInfo? = null
