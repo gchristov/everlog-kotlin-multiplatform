@@ -65,7 +65,7 @@ class RealExerciseRepository(
     override suspend fun ownExercises(): Either<Throwable, List<LibraryExercise>> = withContext(dispatcher) {
         Either.catch {
             // ownExerciseUpdates() keeps them current, so the cache is enough here
-            FirestorePathManager.exercisesCollection.getCacheFirst()
+            FirestorePathManager.exercisesCollection.getCacheFirst(emptyIsAnswer = true)
                 .documents
                 .mapNotNull { it.toLibraryExerciseOrNull(own = true) }
         }

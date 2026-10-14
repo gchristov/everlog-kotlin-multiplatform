@@ -57,7 +57,7 @@ class RealRoutineRepository(
     override suspend fun exerciseTemplateCounts(): Either<Throwable, Map<String, Int>> = withContext(dispatcher) {
         Either.catch {
             // The routines store keeps the cache current while the app runs
-            FirestorePathManager.routinesCollection.getCacheFirst()
+            FirestorePathManager.routinesCollection.getCacheFirst(emptyIsAnswer = true)
                 .documents
                 .mapNotNull { document ->
                     runCatching { document.toObject(ELRoutine::class.java) }
