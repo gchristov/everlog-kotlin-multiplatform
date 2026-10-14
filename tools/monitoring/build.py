@@ -181,6 +181,7 @@ def main():
     with open(os.path.join(HERE, 'config.json')) as f:
         config = json.load(f)
     users = load_users()
+    core = read_csv('core')
     v1 = config['onboarding_v1_date']
     before = [u for u in users if u['install_date'] < v1]
     since = [u for u in users if u['install_date'] >= v1]
@@ -197,9 +198,10 @@ def main():
         'funnel': funnel(since),
         'paid': paid(users, config),
         'cohorts': weekly_cohorts(users),
-        'core_weekly': [{'week': r['week'], 'workouts': int(r['workouts_completed']), 'lifters': int(r['lifters'])} for r in read_csv('core')],
-        'core_monthly': [{'month': r['month'], 'lifters': int(r['lifters']), 'workouts': int(r['workouts_completed'])} for r in read_csv('core_monthly')],
-        'robots': [{k: (v if k == 'month' else int(v)) for k, v in r.items()} for r in read_csv('robots')],
+        'core_weekly': [{'week': r['start'], 'workouts': int(r['workouts_completed']), 'lifters': int(r['lifters'])}
+                        for r in core if r['period'] == 'week'],
+        'core_monthly': [{'month': r['start'][:7], 'lifters': int(r['lifters']), 'workouts': int(r['workouts_completed'])}
+                         for r in core if r['period'] == 'month'],
         'releases': releases(),
         'events': config['events'],
     }

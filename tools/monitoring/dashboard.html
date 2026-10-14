@@ -168,14 +168,34 @@
   details.defs ul { padding-left: 18px; margin: 10px 0 0; display: grid; gap: 6px; max-width: 80ch; }
   :focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 
+  .metric .phone-label { display: none; }
   @media (max-width: 760px) {
+    .page { padding-inline: 16px; padding-block: 20px 40px; gap: 32px; }
     h1 { font-size: 36px; }
+    h2 { font-size: 24px; }
     .stamp { text-align: left; }
-    .metric, .metrics-head { grid-template-columns: 1fr 1fr; }
+    .metrics-head { display: block; padding: 12px 16px 0; }
+    .metrics-head > :not(.legend) { display: none; }
+    .metric { grid-template-columns: 1fr 1fr; padding: 14px 16px; gap: 10px 16px; align-items: start; }
     .metric .desc, .metric .gauge { grid-column: 1 / -1; }
-    .metrics-head { display: none; }
-    .frow { grid-template-columns: 1fr 76px; }
-    .frow .ftrack { grid-column: 1 / -1; grid-row: 2; }
+    .metric .phone-label { display: block; }
+    .metric .value { font-size: 26px; }
+    .funnel { padding: 8px 16px 14px; }
+    .checks { padding: 0 16px 14px; }
+    .frow { grid-template-columns: 1fr auto; gap: 4px 12px; padding-block: 4px; }
+    .frow .ftrack { grid-column: 1 / -1; grid-row: 2; height: 10px; }
+    .frow.sub .flabel { padding-left: 10px; }
+    .chart { padding: 14px 12px 8px; }
+    /* The paid table becomes one card per channel */
+    table.cards thead { display: none; }
+    table.cards, table.cards tbody, table.cards tr { display: block; }
+    table.cards tr { padding: 12px 16px; border-bottom: 1px solid var(--line); }
+    table.cards tr:last-child { border-bottom: none; }
+    table.cards td { display: grid; grid-template-columns: 1fr auto; gap: 12px; padding: 3px 0; border: none; white-space: normal; text-align: right; }
+    table.cards td:first-child { display: block; text-align: left; }
+    table.cards td:first-child { font: 600 15px var(--body); padding-bottom: 6px; }
+    table.cards td[data-label]::before { content: attr(data-label); font-family: var(--body); color: var(--muted); text-align: left; }
+    .table-note { padding: 12px 16px 14px; }
   }
 </style>
 
@@ -184,7 +204,7 @@
     <div class="title">
       <span class="eyebrow">Everlog · Android · real users only</span>
       <h1>KPI Board</h1>
-      <p class="lede">The Roadmap's numbers for new users, read from the Analytics export with Play robots, sideloaded builds and the owner's account removed. Baselines are 2021–2023 organic users.</p>
+      <p class="lede">The Roadmap's numbers for real new users, from the Analytics export. Baselines are 2021–2023 organic users.</p>
     </div>
     <div class="stamp">
       <span>Data as of</span>
@@ -255,18 +275,11 @@
     </div>
   </section>
 
-  <section id="health">
-    <div class="section-head">
-      <h2>Data health</h2>
-      <p class="lede">Installs per month and what each filter removes. If “real” jumps with no campaign running, a new kind of robot is getting through. A device can match several filters.</p>
-    </div>
-    <div class="panel table-wrap" id="robots-panel"></div>
-  </section>
 
   <details class="defs">
     <summary>Definitions</summary>
     <ul>
-      <li><strong>Real users</strong> leave out devices that ever used the Test Lab or owner account, sideloaded installs (<code>manual_install</code>), nightly builds and devices with no country.</li>
+      <li><strong>Real users</strong> only: Play's test robots, sideloaded and nightly builds, and the owner's own account are left out of every number on this page.</li>
       <li><strong>New users</strong> are new accounts plus installs that never got an account. People logging back in to an older account aren't new.</li>
       <li>Headline rates count users who reached the home screen, as the baseline does. A rate only includes users who have had long enough to reach it, e.g. 7 days for week one.</li>
       <li><strong>Setup on day one</strong>: kept the starter templates, or created a routine, exercise or plan, or started a plan. <strong>Tourist</strong>: no setup and no workout started on day one.</li>
@@ -352,8 +365,8 @@ function renderHeadlines() {
     return `<div class="metric">
       <div class="desc"><div class="name">${esc(h.label)}</div><div class="note">${esc(h.note)} · read ${esc(h.read_at)} · ${target}</div></div>
       <div class="gauge">${gauge(h)}</div>
-      <div><div class="value dim num">${pct(h.before.rate)}</div><div class="count">${h.before.hit} of ${h.before.n}</div></div>
-      <div><div class="value num">${pct(h.since.rate)}</div><div class="count">${h.since.hit} of ${h.since.n}</div><div style="margin-top:6px">${pill(kind, text)}</div></div>
+      <div><div class="cell-label phone-label">2026 before v1</div><div class="value dim num">${pct(h.before.rate)}</div><div class="count">${h.before.hit} of ${h.before.n}</div></div>
+      <div><div class="cell-label phone-label">Since v1</div><div class="value num">${pct(h.since.rate)}</div><div class="count">${h.since.hit} of ${h.since.n}</div><div style="margin-top:6px">${pill(kind, text)}</div></div>
     </div>`;
   }).join('');
 }
@@ -366,7 +379,7 @@ function renderFunnel() {
   const f = DATA.funnel;
   $('funnel-lede').textContent = `Real new users who installed since ${fmtDay(DATA.onboarding_v1_date)}.` + (f.new_users ? ` Week-one steps only count the ${f.mature_w1} who have had 7 days.` : '');
   if (!f.new_users) {
-    $('funnel-panel').innerHTML = `<p class="empty">No real new users have installed since onboarding v1 shipped. Every install since then was filtered out as a robot or a sideloaded build (see Data health). The funnel fills in once the paid test brings people in.</p>`;
+    $('funnel-panel').innerHTML = `<p class="empty">No real new users have installed since onboarding v1 shipped. The funnel fills in once the paid test brings people in.</p>`;
     return;
   }
   const base = f.new_users;
@@ -405,17 +418,17 @@ function renderFunnel() {
 function renderPaid() {
   const p = DATA.paid;
   const eur = (v) => v == null ? '–' : '€' + v.toFixed(v < 100 ? 2 : 0);
-  const head = `<tr><th>Channel</th><th>New users</th><th>Finished onboarding</th><th>Kept or built</th><th>With 7 days</th><th>Week-one lifters</th><th>Rate</th><th>Spend</th><th>Cost per lifter</th></tr>`;
+  const head = `<thead><tr><th>Channel</th><th>New users</th><th>Finished onboarding</th><th>Kept or built</th><th>With 7 days</th><th>Week-one lifters</th><th>Rate</th><th>Spend</th><th>Cost per lifter</th></tr></thead>`;
   const body = p.rows.map((r) => {
     const rateV = r.mature_w1 ? r.lifters / r.mature_w1 : null;
     let costCell = eur(r.cost_per_lifter);
     if (r.cost_per_lifter != null) costCell += r.cost_per_lifter <= p.bar_eur_per_lifter ? ' ✓' : '';
-    return `<tr><td class="strong">${esc(r.label)}</td><td>${r.new_users}</td><td>${r.finished_onboarding}</td><td>${r.kept_or_built}</td><td class="muted">${r.mature_w1}</td><td>${r.lifters}</td><td>${pct(rateV)}</td><td class="muted">${r.paid ? eur(r.spend_eur) : '–'}</td><td>${r.paid ? costCell : '–'}</td></tr>`;
+    return `<tr><td class="strong">${esc(r.label)}</td><td data-label="New users">${r.new_users}</td><td data-label="Finished onboarding">${r.finished_onboarding}</td><td data-label="Kept or built">${r.kept_or_built}</td><td class="muted" data-label="With 7 days">${r.mature_w1}</td><td data-label="Week-one lifters">${r.lifters}</td><td data-label="Rate">${pct(rateV)}</td><td class="muted" data-label="Spend">${r.paid ? eur(r.spend_eur) : '–'}</td><td data-label="Cost per lifter">${r.paid ? costCell : '–'}</td></tr>`;
   }).join('');
   const note = p.start_date
     ? `Users who installed since ${fmtDay(p.start_date)}. Bar: €${p.bar_eur_per_lifter} per week-one lifter. Spend is entered by hand in <code>config.json</code> at each read.`
     : `The campaigns haven't started. Once they do, set <code>paid_test.start_date</code> and each campaign's spend in <code>config.json</code>. Until then this shows organic users since onboarding v1. Bar: €${p.bar_eur_per_lifter} per week-one lifter.`;
-  $('paid-panel').innerHTML = `<div class="table-wrap"><table>${head}${body}</table></div><p class="table-note">${note}</p>`;
+  $('paid-panel').innerHTML = `<div class="table-wrap"><table class="cards">${head}<tbody>${body}</tbody></table></div><p class="table-note">${note}</p>`;
 }
 
 /* ---------- Bar charts ---------- */
@@ -544,13 +557,6 @@ function renderCharts() {
   });
 }
 
-/* ---------- Data health ---------- */
-function renderRobots() {
-  const rows = (DATA.robots || []).slice(-12).reverse();
-  const head = `<tr><th>Month</th><th>Installs</th><th>Test Lab account</th><th>Sideloaded</th><th>No country</th><th>Nightly</th><th>Owner</th><th>Real</th></tr>`;
-  const body = rows.map((r) => `<tr><td>${fmtMonth(r.month)}</td><td>${r.installs}</td><td class="muted">${r.testlab_account}</td><td class="muted">${r.manual_install}</td><td class="muted">${r.no_country}</td><td class="muted">${r.nightly}</td><td class="muted">${r.owner}</td><td class="strong">${r.real_installs}</td></tr>`).join('');
-  $('robots-panel').innerHTML = `<table>${head}${body}</table><p class="table-note">“Real” installs include people reinstalling with an existing account, so they can be more than the new users above.</p>`;
-}
 
 if (!DATA) {
   document.querySelector('.page').insertAdjacentHTML('afterbegin', '<p class="empty panel">No data. Run tools/monitoring/refresh.sh and publish out/dashboard.html.</p>');
@@ -560,6 +566,5 @@ if (!DATA) {
   renderFunnel();
   renderPaid();
   renderCharts();
-  renderRobots();
 }
 </script>
