@@ -3,7 +3,9 @@ package com.everlog.data.repositories
 import arrow.core.Either
 import com.everlog.data.model.exercise.ELExercise
 import com.everlog.data.model.exercise.library.ExerciseRegistry
+import com.everlog.data.model.exercise.library.ExerciseRegistryDto
 import com.everlog.data.model.exercise.library.LibraryExercise
+import com.everlog.data.model.exercise.library.LibraryExerciseDto
 import com.everlog.managers.firebase.FirestorePathManager
 import com.google.firebase.firestore.DocumentSnapshot
 import kotlinx.coroutines.CoroutineDispatcher

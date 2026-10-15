@@ -1,11 +1,10 @@
-package com.everlog.data.repositories
+package com.everlog.data.model.exercise.library
 
-import com.everlog.data.model.exercise.library.ExerciseRegistry
-import com.everlog.data.model.exercise.library.LibraryExercise
 import com.google.firebase.firestore.Exclude
 import com.google.firebase.firestore.IgnoreExtraProperties
 
-// The library's Firestore documents as stored, see tools/exercises/README.md. Fields the app doesn't
+// The library's Firestore documents as stored, see tools/exercises/README.md. They live with the
+// models because Firestore maps them by reflection, which proguard-rules.pro keeps for data.model. Fields the app doesn't
 // know yet are ignored, so newer data still loads.
 
 @IgnoreExtraProperties

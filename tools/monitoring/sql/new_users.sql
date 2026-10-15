@@ -14,10 +14,14 @@ WITH ev AS (
   FROM `everlog-prod.analytics_173607556.events_*`
   WHERE platform = 'ANDROID' AND _TABLE_SUFFIX >= '20260101'
 ),
--- Devices that ever used the Test Lab account (robots) or the owner's account
+-- Test devices: any device that ever used the Test Lab or owner account, or ever ran a nightly,
+-- local or sideloaded build. Only the owner and Play's robots run those builds.
 excluded AS (
   SELECT DISTINCT user_pseudo_id AS device FROM `everlog-prod.analytics_173607556.events_*`
-  WHERE user_id IN ('V23IEC4EeqadnnbeqUGWZEgFXmC2', 'YOjJX6BgCDVQFZGM9kPFHAW8JfV2')
+  WHERE platform = 'ANDROID' AND (
+    user_id IN ('V23IEC4EeqadnnbeqUGWZEgFXmC2', 'YOjJX6BgCDVQFZGM9kPFHAW8JfV2')
+    OR app_info.version LIKE '%nightly%' OR app_info.version LIKE '%-local%'
+    OR app_info.install_source = 'manual_install')
 ),
 installs AS (
   SELECT device, MIN(ts) AS installed, ANY_VALUE(version) AS version,
