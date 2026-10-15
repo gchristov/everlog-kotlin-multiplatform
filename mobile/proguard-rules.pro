@@ -86,8 +86,6 @@
 # Models
 -keep class com.everlog.data.model.** { *; }
 -keep class com.everlog.config.** { *; }
-# Firestore maps the exercise library's DTOs by reflection (toObject), like the models
--keep class com.everlog.data.repositories.**Dto { *; }
 # Gson doesn't ship R8 rules until 2.11, so without this optimisation can assume the fields are never set
 -keep class com.everlog.managers.api.coverimages.response.** { *; }
 

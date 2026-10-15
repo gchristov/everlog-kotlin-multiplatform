@@ -1,4 +1,4 @@
-package com.everlog.data.repositories
+package com.everlog.data.model.exercise.library
 
 import com.google.common.truth.Truth.assertThat
 import org.junit.Test
