@@ -20,7 +20,7 @@ import com.everlog.managers.analytics.AnalyticsConstants
 import com.everlog.ui.activities.base.BaseActivity
 import com.everlog.ui.activities.base.BaseActivityMvpView
 import com.everlog.ui.activities.base.BaseActivityPresenter
-import com.everlog.ui.fragments.base.BaseTabFragment
+import com.everlog.ui.fragments.home.exercise.BaseExerciseTabFragment
 import com.everlog.ui.fragments.home.activity.statistics.StatisticsHomeFragment
 import com.everlog.ui.fragments.home.exercise.history.ExerciseHistoryFragment
 import com.everlog.ui.fragments.home.exercise.info.ExerciseInfoFragment
@@ -39,6 +39,8 @@ class ExerciseDetailsActivity : BaseActivity(), MvpViewExerciseDetails {
     private var mLastType: Type? = null
     // Read once, so a Remote Config refresh doesn't swap the tab while the screen is open
     private val mDetailsV2 = RemoteConfigManager.manager.exerciseDetailsV2()
+    // Built once: reloads update them, as replacing them lost each tab's state and scroll position
+    private var mTabs: List<BaseExerciseTabFragment>? = null
 
     private val mOnClickEdit = PublishSubject.create<Void>()
     private val mOnClickDelete = PublishSubject.create<Void>()
@@ -137,7 +139,12 @@ class ExerciseDetailsActivity : BaseActivity(), MvpViewExerciseDetails {
         mAllowDelete = exercise.isEditable()
         invalidateOptionsMenu()
         // Tabs
-        val fragments = ArrayList<BaseTabFragment>()
+        mTabs?.let { tabs ->
+            tabs.filterIsInstance<ExerciseStatisticsFragment>().forEach { it.updateRange(range) }
+            tabs.forEach { it.update(exercise, stats) }
+            return
+        }
+        val fragments = ArrayList<BaseExerciseTabFragment>()
         Type.values().forEach {
             when (it) {
                 Type.INFO -> fragments.add(if (mDetailsV2) ExerciseInfoFragment(exercise, stats) else LegacyExerciseInfoFragment(exercise, stats))
@@ -145,6 +152,7 @@ class ExerciseDetailsActivity : BaseActivity(), MvpViewExerciseDetails {
                 Type.HISTORY -> fragments.add(ExerciseHistoryFragment(exercise, stats))
             }
         }
+        mTabs = fragments
         if (mLastType == null) mLastType = getType()
         binding.tabsPage.setTabs(supportFragmentManager, fragments, Type.values().indexOf(mLastType), object : TabLayout.OnTabSelectedListener {
             override fun onTabSelected(tab: TabLayout.Tab) {
