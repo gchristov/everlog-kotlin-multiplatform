@@ -19,6 +19,11 @@ testlab AS (
 owner AS (
   SELECT DISTINCT user_pseudo_id FROM `everlog-prod.analytics_173607556.events_*`
   WHERE user_id = 'YOjJX6BgCDVQFZGM9kPFHAW8JfV2'
+),
+-- Devices that ever ran a nightly or local build, even if they installed a Play build first
+test_builds AS (
+  SELECT DISTINCT user_pseudo_id FROM `everlog-prod.analytics_173607556.events_*`
+  WHERE app_info.version LIKE '%nightly%' OR app_info.version LIKE '%-local%'
 )
 SELECT
   month,
@@ -26,12 +31,13 @@ SELECT
   COUNTIF(t.user_pseudo_id IS NOT NULL) AS testlab_account,
   COUNTIF(src = 'manual_install') AS manual_install,
   COUNTIF(IFNULL(country, '') = '') AS no_country,
-  COUNTIF(IFNULL(v, '') LIKE '%nightly%') AS nightly,
+  COUNTIF(b.user_pseudo_id IS NOT NULL) AS nightly_or_local,
   COUNTIF(o.user_pseudo_id IS NOT NULL) AS owner,
-  COUNTIF(t.user_pseudo_id IS NULL AND o.user_pseudo_id IS NULL AND IFNULL(src, '') != 'manual_install'
-    AND IFNULL(country, '') != '' AND IFNULL(v, '') NOT LIKE '%nightly%') AS real_installs
+  COUNTIF(t.user_pseudo_id IS NULL AND o.user_pseudo_id IS NULL AND b.user_pseudo_id IS NULL
+    AND IFNULL(src, '') != 'manual_install' AND IFNULL(country, '') != '') AS real_installs
 FROM installs i
 LEFT JOIN testlab t USING (user_pseudo_id)
 LEFT JOIN owner o USING (user_pseudo_id)
+LEFT JOIN test_builds b USING (user_pseudo_id)
 GROUP BY month
 ORDER BY month

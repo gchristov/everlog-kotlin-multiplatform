@@ -43,11 +43,13 @@ Nothing on the dashboard includes non-real users. Every query leaves out:
 |---|---|
 | Play pre-launch and Test Lab robots that log in | any device that ever used the Test Lab account, `user_id = 'V23IEC4EeqadnnbeqUGWZEgFXmC2'` |
 | Play pre-launch robots that aren't recognised in time (e.g. OnePlus `IN2025`, Android 11) | no country (`geo.country` empty) |
-| Test Lab installs, scanners and local builds | `app_info.install_source = 'manual_install'` |
-| Pre-launch runs on internal-track nightlies | `-nightly-` in `app_info.version` |
+| Test Lab installs, scanners, emulators and local builds | any device that ever had `app_info.install_source = 'manual_install'` or a `-local` version |
+| Internal-track nightlies (the owner's phone and pre-launch runs) | any device that ever ran a `-nightly-` version |
 | The owner | any device that ever used `user_id = 'YOjJX6BgCDVQFZGM9kPFHAW8JfV2'` |
 
-For new users, the install (`first_open`) must pass the filters. For the loyal core, each finished workout must, since most of the core installed before the export began in May 2020. Don't rely on a blank country alone: one robot run reported Thailand, which is why the account and install-source filters exist too.
+These are **test devices**, left out for good: a device that once ran a nightly or local build stays out even if it later installs from Play, since only the owner and Play's robots run those builds. On top of that, a new user's install (`first_open`) and each of the loyal core's workouts must have a country.
+
+**One gap:** a fresh install from Play on the owner's phone, used as a guest without logging in, looks like a real new user (a reinstall gets a new device id, and nothing ties a guest to the owner). Log in to the owner's account when testing a Play build, or note the date and leave it out by hand. Don't rely on a blank country alone: one robot run reported Thailand, which is why the account and install-source filters exist too.
 
 **Checking the filters:** `checks/robots.sql` lists installs per month and how many each filter removes. It isn't part of the dashboard. Run it by hand when the numbers look odd, e.g. when real installs jump with no campaign running:
 
