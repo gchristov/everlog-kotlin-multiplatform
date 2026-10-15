@@ -2,6 +2,7 @@ package com.everlog.ui.fragments.home.exercise.history
 
 import com.ahamed.multiviewadapter.DataListManager
 import com.ahamed.multiviewadapter.RecyclerAdapter
+import com.everlog.data.controllers.statistics.ExerciseStatsController
 import com.everlog.data.model.exercise.ELExerciseHistory
 import com.everlog.ui.adapters.history.BaseTimelineViewHolder
 import com.everlog.ui.adapters.history.ExerciseHistoryAdapter
@@ -11,6 +12,9 @@ class PresenterExerciseHistory : BasePresenterExerciseTab<MvpViewExerciseHistory
 
     private val mAdapter = RecyclerAdapter()
     private val mDataListManager = DataListManager<ELExerciseHistory>(mAdapter)
+    // The stats the list shows, so updates with the same stats (e.g. the exercise store answering)
+    // keep the list and its scroll position
+    private var mShownStats: ExerciseStatsController.StatsResult? = null
 
     override fun init() {
         super.init()
@@ -29,8 +33,11 @@ class PresenterExerciseHistory : BasePresenterExerciseTab<MvpViewExerciseHistory
             mvpView?.toggleLoadingOverlay(true)
         } else {
             mvpView?.toggleLoadingOverlay(false)
-            mDataListManager.clear()
-            mDataListManager.addAll(stats!!.history)
+            if (stats !== mShownStats) {
+                mShownStats = stats
+                mDataListManager.clear()
+                mDataListManager.addAll(stats!!.history)
+            }
             handleCheckEmptyState()
         }
     }
