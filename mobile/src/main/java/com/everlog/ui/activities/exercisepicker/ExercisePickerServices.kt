@@ -1,9 +1,9 @@
 package com.everlog.ui.activities.exercisepicker
 
+import com.everlog.data.model.exercise.picker.StoredFilterToken
 import com.everlog.managers.analytics.AnalyticsManager
 import com.everlog.managers.preferences.PreferencesManager
 import com.google.gson.Gson
-import com.google.gson.reflect.TypeToken
 import timber.log.Timber
 
 /**
@@ -67,15 +67,12 @@ internal class RealExercisePickerRecentSearches : PreferencesManager(), Exercise
         EXERCISE_PICKER_RECENT_SEARCHES
     }
 
-    // Stored by name, so a key the app no longer has is dropped rather than breaking the rest
-    private data class StoredToken(val key: String? = null, val values: List<String>? = null, val not: Boolean = false)
-
     override fun load(): List<List<FilterToken>> {
         val json = getPreference(PreferenceKeys.EXERCISE_PICKER_RECENT_SEARCHES.name, "")
         if (json.isNullOrEmpty()) return emptyList()
         return try {
-            val type = object : TypeToken<List<List<StoredToken>>>() {}.type
-            Gson().fromJson<List<List<StoredToken>>>(json, type).orEmpty().mapNotNull { search ->
+            // Arrays rather than a TypeToken, whose generic type R8 can strip in release builds
+            Gson().fromJson(json, Array<Array<StoredFilterToken>>::class.java).orEmpty().mapNotNull { search ->
                 search.mapNotNull { stored ->
                     val key = FilterKey.entries.find { it.name == stored.key } ?: return@mapNotNull null
                     val values = stored.values.orEmpty().ifEmpty { return@mapNotNull null }
@@ -89,7 +86,7 @@ internal class RealExercisePickerRecentSearches : PreferencesManager(), Exercise
     }
 
     override fun save(searches: List<List<FilterToken>>) {
-        val stored = searches.map { search -> search.map { StoredToken(it.key.name, it.values, it.not) } }
+        val stored = searches.map { search -> search.map { StoredFilterToken(it.key.name, it.values, it.not) } }
         savePreference(Gson().toJson(stored), PreferenceKeys.EXERCISE_PICKER_RECENT_SEARCHES.name)
     }
 
