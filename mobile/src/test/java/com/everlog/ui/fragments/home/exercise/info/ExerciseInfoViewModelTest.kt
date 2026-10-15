@@ -41,6 +41,18 @@ class ExerciseInfoViewModelTest {
         assertThat(state.guide.isEmpty).isTrue()
     }
 
+    @Test
+    fun `an edited exercise keeps its guide without reading it again`() {
+        val loadGuide = FakeLoadExerciseGuideUseCase(Either.Right(guide))
+        val viewModel = viewModel(bench, loadGuide)
+
+        viewModel.updateExercise(bench.copy(name = "Bench Press"))
+
+        assertThat(viewModel.state.value.exercise.name).isEqualTo("Bench Press")
+        assertThat(viewModel.state.value.guide).isEqualTo(guide)
+        assertThat(loadGuide.reads).containsExactly("bench")
+    }
+
     private fun viewModel(exercise: ExerciseInfoViewModel.Exercise, loadGuide: LoadExerciseGuideUseCase) =
         ExerciseInfoViewModel(dispatcher = FakeCoroutineDispatcher, loadGuide = loadGuide, exercise = exercise)
 

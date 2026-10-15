@@ -33,12 +33,7 @@ class ExerciseInfoFragment(exercise: ELExercise, stats: ExerciseStatsController.
                 ExerciseInfoViewModel(
                     dispatcher = Dispatchers.Main,
                     loadGuide = RealLoadExerciseGuideUseCase(io, RealExerciseRepository(io)),
-                    exercise = ExerciseInfoViewModel.Exercise(
-                        uuid = exercise.uuid.orEmpty(),
-                        name = exercise.name.orEmpty(),
-                        imageUrl = exercise.imageUrl,
-                        own = exercise.isEditable(),
-                    ),
+                    exercise = exercise.toInfoExercise(),
                 )
             }
         }
@@ -78,7 +73,11 @@ class ExerciseInfoFragment(exercise: ELExercise, stats: ExerciseStatsController.
     }
 
     override fun loadExerciseDetails(exercise: ELExercise, stats: ExerciseStatsController.StatsResult?) {
-        // No-op: the screen opens new tabs when the exercise changes, so the arguments' copy is current
+        // Reloads pass the exercise here (see BaseExerciseTabFragment.update): the view-model keeps
+        // the guide, and the screen its scroll position
+        if (isAdded) {
+            viewModel.updateExercise(exercise.toInfoExercise())
+        }
     }
 
     // Setup
@@ -87,3 +86,10 @@ class ExerciseInfoFragment(exercise: ELExercise, stats: ExerciseStatsController.
         mPresenter = PresenterExerciseInfo()
     }
 }
+
+private fun ELExercise.toInfoExercise() = ExerciseInfoViewModel.Exercise(
+    uuid = uuid.orEmpty(),
+    name = name.orEmpty(),
+    imageUrl = imageUrl,
+    own = isEditable(),
+)

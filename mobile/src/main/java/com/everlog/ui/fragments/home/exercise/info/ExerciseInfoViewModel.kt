@@ -41,6 +41,14 @@ class ExerciseInfoViewModel(
         }
     }
 
+    /**
+     * The same exercise, edited while the screen is open (a user's own exercise renamed or given a new
+     * image). The guide stays: it belongs to the exercise's uuid, which doesn't change.
+     */
+    fun updateExercise(exercise: Exercise) {
+        setState { copy(exercise = exercise) }
+    }
+
     private companion object {
         const val TAG = "ExerciseInfo"
     }
