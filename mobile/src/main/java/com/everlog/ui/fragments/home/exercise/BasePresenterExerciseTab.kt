@@ -14,6 +14,15 @@ abstract class BasePresenterExerciseTab<T : BaseMvpViewExerciseTab> : BaseFragme
         loadData()
     }
 
+    // The tab's exercise or stats changed, see BaseExerciseTabFragment.update
+    fun update(exercise: ELExercise, stats: ExerciseStatsController.StatsResult?) {
+        this.exercise = exercise
+        this.stats = stats
+        if (isAttachedToView) {
+            loadData()
+        }
+    }
+
     // Loading
 
     internal open fun loadData() {

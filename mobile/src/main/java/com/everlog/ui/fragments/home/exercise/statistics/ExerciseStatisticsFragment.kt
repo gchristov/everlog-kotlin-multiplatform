@@ -28,7 +28,7 @@ import rx.subjects.PublishSubject
 
 class ExerciseStatisticsFragment(exercise: ELExercise,
                                  stats: ExerciseStatsController.StatsResult?,
-                                 private val range: StatisticsHomeFragment.RangeType) : BaseExerciseTabFragment(exercise, stats), MvpViewExerciseStatistics {
+                                 private var range: StatisticsHomeFragment.RangeType) : BaseExerciseTabFragment(exercise, stats), MvpViewExerciseStatistics {
 
     private var mPresenter: PresenterExerciseStatistics? = null
     private var _binding: FragmentExerciseStatisticsBinding? = null
@@ -81,11 +81,16 @@ class ExerciseStatisticsFragment(exercise: ELExercise,
         BaseActivity.toggleShimmerLayout(binding.root.findViewById(R.id.shimmerView), show, true)
     }
 
+    // The range picked in the spinner, set before the update with its stats
+    fun updateRange(range: StatisticsHomeFragment.RangeType) {
+        this.range = range
+    }
+
     override fun loadExerciseDetails(exercise: ELExercise, stats: ExerciseStatsController.StatsResult?) {
+        // Updates keep the scroll position, so new stats don't jump back to the top
         renderRange(range)
         renderSummaryViews(stats)
         renderCharts(stats)
-        binding.scrollView.scrollTo(0, 0)
     }
 
     private fun renderSummaryViews(stats: ExerciseStatsController.StatsResult?) {
