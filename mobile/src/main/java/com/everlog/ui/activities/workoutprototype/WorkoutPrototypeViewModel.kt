@@ -204,7 +204,8 @@ internal class WorkoutPrototypeViewModel(
         copy(
             blocks = blocks,
             current = current,
-            setTimer = setTimer?.takeUnless { it.ref == ref },
+            // Completing another set ends a running set timer; its set stays not done
+            setTimer = null,
             rest = if (roundDone && current != null) RestTimer(endsAt = now + restSeconds * 1000L, totalSeconds = restSeconds) else rest,
             now = now,
         )
@@ -220,11 +221,12 @@ internal class WorkoutPrototypeViewModel(
         }
     }
 
-    // Runs a timed set's timer, making it the current set
+    // Runs a timed set's timer, making it the current set. A done one is run again, not done.
     fun onStartTimerAt(ref: SetRef) = setState {
         val set = blocks.set(ref) ?: return@setState this
         val now = clock()
         copy(
+            blocks = blocks.updateSet(ref) { it.copy(done = false) },
             current = ref,
             editing = null,
             rest = null,

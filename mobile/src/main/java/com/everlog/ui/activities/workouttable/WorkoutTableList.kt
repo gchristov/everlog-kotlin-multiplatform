@@ -1,6 +1,5 @@
 package com.everlog.ui.activities.workouttable
 
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -17,11 +16,20 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.relocation.BringIntoViewRequester
-import androidx.compose.foundation.relocation.bringIntoViewRequester
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.rememberUpdatedState
+import androidx.compose.ui.layout.boundsInWindow
+import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.foundation.gestures.animateScrollBy
+import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.staticCompositionLocalOf
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -58,6 +66,7 @@ import com.everlog.ui.design.elements.AppTertiaryButton
 import com.everlog.ui.design.elements.AppText
 import com.everlog.ui.design.elements.AppThumbnail
 import com.everlog.ui.design.theme.Theme
+import kotlinx.coroutines.delay
 
 private object TableSizes {
     val Thumbnail = 40.dp
@@ -72,6 +81,7 @@ private object TableSizes {
     val ColumnGap = 8.dp
     val RestHeight = 32.dp
     val FocusOutline = 1.5.dp
+    const val KeypadOpenMillis = 350L
 }
 
 /**
@@ -83,13 +93,28 @@ private object TableSizes {
 internal fun WorkoutTable(
     state: WorkoutPrototypeState,
     focus: CellFocus?,
+    selected: SetRef?,
     typed: String?,
     contentPadding: PaddingValues,
     onCellTapped: (CellFocus) -> Unit,
+    onSelect: (SetRef) -> Unit,
     viewModel: WorkoutPrototypeViewModel,
 ) {
+    // The keypad floats over the table, so a focused cell scrolls up to clear it: the table's visible
+    // bottom is its own bottom less the footer's height
+    val listState = rememberLazyListState()
+    var listBottom by remember { mutableStateOf(0f) }
+    val keepClear = with(LocalDensity.current) { (contentPadding.calculateBottomPadding() + Theme.spacing.extraLarge).toPx() }
+    val ensureVisible: suspend (Float) -> Unit = { cellBottom ->
+        val overlap = cellBottom - (listBottom - keepClear)
+        if (overlap > 0) listState.animateScrollBy(overlap)
+    }
+    CompositionLocalProvider(LocalEnsureVisible provides ensureVisible) {
     LazyColumn(
-        modifier = Modifier.fillMaxSize(),
+        modifier = Modifier
+            .fillMaxSize()
+            .onGloballyPositioned { listBottom = it.boundsInWindow().bottom },
+        state = listState,
         contentPadding = PaddingValues(
             start = Theme.spacing.large,
             end = Theme.spacing.large,
@@ -99,23 +124,27 @@ internal fun WorkoutTable(
     ) {
         state.blocks.forEach { block ->
             item(key = block.id) {
-                ExerciseTable(block, state, focus, typed, onCellTapped, viewModel)
+                ExerciseTable(block, state, focus, selected, typed, onCellTapped, onSelect, viewModel)
             }
         }
     }
+    }
 }
+
+// Scrolls the table so a cell whose bottom is at this window position clears the keypad
+private val LocalEnsureVisible = staticCompositionLocalOf<suspend (Float) -> Unit> { {} }
 
 @Composable
 private fun ExerciseTable(
     block: PrototypeBlock,
     state: WorkoutPrototypeState,
     focus: CellFocus?,
+    selected: SetRef?,
     typed: String?,
     onCellTapped: (CellFocus) -> Unit,
+    onSelect: (SetRef) -> Unit,
     viewModel: WorkoutPrototypeViewModel,
 ) {
-    // Nothing's highlighted until the first set is done or a timer runs (or a cell is tapped)
-    val started = state.setTimer != null || state.blocks.any { b -> b.rounds.any { r -> r.sets.any { it.done } } }
     Column(modifier = Modifier.padding(bottom = Theme.spacing.extraLarge)) {
         ExerciseHeader(block, viewModel)
         Spacer(modifier = Modifier.height(Theme.spacing.medium))
@@ -136,23 +165,29 @@ private fun ExerciseTable(
                     TableRow(
                         number = if (i == 0) r + 1 else null,
                         set = set,
-                        current = (started || focus != null) && state.current?.roundId == round.id,
+                        // Nothing's lime until the first touch
+                        current = selected != null && state.current?.roundId == round.id,
                         weightText = cellText(set, ValueField.Weight, focus, typed, ref),
                         // A running set timer counts down in its time cell
                         countText = timer?.let { formatClock(ceilSeconds(it.remainingMillis(state.now)).toLong()) }
                             ?: cellText(set, countFieldOf(set), focus, typed, ref),
                         timing = timer != null,
-                        // The row being typed into, or else the current set once the workout's under way
-                        selected = if (focus != null) focus.ref == ref else started && state.current == ref,
+                        selected = selected == ref,
                         onRow = { onCellTapped(CellFocus(ref, ValueField.Weight)) },
                         weightFocused = focus == CellFocus(ref, ValueField.Weight),
                         countFocused = focus?.ref == ref && focus.field != ValueField.Weight,
                         onWeight = { onCellTapped(CellFocus(ref, ValueField.Weight)) },
                         onCount = { onCellTapped(CellFocus(ref, countFieldOf(set))) },
-                        onTick = { viewModel.onToggleSetAt(ref) },
+                        onTick = {
+                            onSelect(ref)
+                            viewModel.onToggleSetAt(ref)
+                        },
                         // A timed set not done yet starts its timer from the row; once running, the tick completes it
                         onStart = if (set.values.mode == SetMode.Time && !set.done && timer == null) {
-                            { viewModel.onStartTimerAt(ref) }
+                            {
+                                onSelect(ref)
+                                viewModel.onStartTimerAt(ref)
+                            }
                         } else {
                             null
                         },
@@ -235,8 +270,7 @@ private fun RestLine(remainingSeconds: Int) {
     }
 }
 
-// The selected row (being typed into, or the current set) is tinted lime, and the current set's
-// number is lime. Tapping the row selects it, typing into its kg. A done set has its tick filled.
+// The selected row (the set last touched) is tinted lime, and the current set's number is lime. Tapping the row selects it, typing into its kg. A done set has its tick filled.
 @Composable
 private fun TableRow(
     number: Int?,
@@ -284,17 +318,22 @@ private fun TableRow(
 }
 
 // A value to type into. The focused one is outlined in lime and kept in view above the keypad.
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
 private fun Cell(text: String, focused: Boolean, onClick: () -> Unit, highlight: Boolean = false) {
     val shape = RoundedCornerShape(TableSizes.CellCorner)
-    val requester = remember { BringIntoViewRequester() }
+    var bottom by remember { mutableStateOf(0f) }
+    // The latest, measured with the keypad open rather than as it was when the cell was tapped
+    val ensureVisible by rememberUpdatedState(LocalEnsureVisible.current)
+    // Once the keypad has opened, so the cell ends up above it rather than behind it
     LaunchedEffect(focused) {
-        if (focused) requester.bringIntoView()
+        if (focused) {
+            delay(TableSizes.KeypadOpenMillis)
+            ensureVisible(bottom)
+        }
     }
     Box(
         modifier = Modifier
-            .bringIntoViewRequester(requester)
+            .onGloballyPositioned { bottom = it.boundsInWindow().bottom }
             .size(TableSizes.Cell, TableSizes.CellHeight)
             .clip(shape)
             .background(WorkoutColors.Inset)

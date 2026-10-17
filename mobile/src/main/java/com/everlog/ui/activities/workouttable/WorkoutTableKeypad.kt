@@ -173,7 +173,7 @@ private fun Keypad(state: WorkoutPrototypeState, focus: CellFocus, keys: KeypadK
             DigitKey('0', keys)
             Key(text = "Next", onClick = keys.onNext)
             // A timed set runs its timer; anything else is completed
-            if (timed && !set.done) {
+            if (timed && state.setTimer?.ref != focus.ref) {
                 Key(text = "Start", primary = true, onClick = keys.onComplete)
             } else {
                 Key(icon = ImageVector.vectorResource(R.drawable.ic_check), contentDescription = "Complete set", primary = true, onClick = keys.onComplete)

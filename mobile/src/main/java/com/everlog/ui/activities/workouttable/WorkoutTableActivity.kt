@@ -75,6 +75,9 @@ internal fun WorkoutTableScreen(viewModel: WorkoutPrototypeViewModel, onClose: (
     val state by viewModel.state.collectAsStateWithLifecycle()
     val context = LocalContext.current
     var focus by remember { mutableStateOf<CellFocus?>(null) }
+    // The highlighted set: the last one touched (row, cell, tick or ▶), and the keypad's while it's open.
+    // Nothing until the first touch; once the selected set is completed, the next set.
+    var selected by remember { mutableStateOf<SetRef?>(null) }
     // What's been typed into the focused cell. Null until the first key, which replaces its value.
     var typed by remember { mutableStateOf<String?>(null) }
 
@@ -110,6 +113,22 @@ internal fun WorkoutTableScreen(viewModel: WorkoutPrototypeViewModel, onClose: (
     fun focusOn(cell: CellFocus?) {
         focus = cell
         typed = null
+        cell?.let { selected = it.ref }
+    }
+
+    // Touching a set's tick or ▶ selects it, and moves the keypad there if it's open
+    fun select(ref: SetRef) {
+        selected = ref
+        if (focus != null) focusOn(CellFocus(ref, ValueField.Weight))
+    }
+
+    // The selected set got completed (its tick, ✓ or its timer ending): select the next one
+    LaunchedEffect(state.current) {
+        val current = selected ?: return@LaunchedEffect
+        if (state.blocks.set(current)?.done == true) {
+            selected = state.current
+            if (focus != null) focusOn(state.current?.let { CellFocus(it, ValueField.Weight) })
+        }
     }
 
     val keys = KeypadKeys(
@@ -153,7 +172,8 @@ internal fun WorkoutTableScreen(viewModel: WorkoutPrototypeViewModel, onClose: (
         onComplete = {
             val cell = focus ?: return@KeypadKeys
             val set = state.blocks.set(cell.ref) ?: return@KeypadKeys
-            if (set.values.mode == SetMode.Time && !set.done) {
+            // A timed set, done or not, runs its timer (again); while it runs, ✓ completes it
+            if (set.values.mode == SetMode.Time && state.setTimer?.ref != cell.ref) {
                 viewModel.onStartTimerAt(cell.ref)
             } else {
                 viewModel.onCompleteSetAt(cell.ref)
@@ -179,9 +199,11 @@ internal fun WorkoutTableScreen(viewModel: WorkoutPrototypeViewModel, onClose: (
                 WorkoutTable(
                     state = state,
                     focus = focus,
+                    selected = selected,
                     typed = typed,
                     contentPadding = contentPadding,
                     onCellTapped = { focusOn(it) },
+                    onSelect = { select(it) },
                     viewModel = viewModel,
                 )
             }
