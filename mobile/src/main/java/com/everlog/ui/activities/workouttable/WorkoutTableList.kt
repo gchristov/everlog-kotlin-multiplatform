@@ -27,6 +27,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
@@ -139,6 +140,9 @@ private fun ExerciseTable(
                         countText = timer?.let { formatClock(ceilSeconds(it.remainingMillis(state.now)).toLong()) }
                             ?: cellText(set, countFieldOf(set), focus, typed, ref),
                         timing = timer != null,
+                        // The row being typed into, or else the current set
+                        selected = if (focus != null) focus.ref == ref else state.current == ref,
+                        onRow = { onCellTapped(CellFocus(ref, ValueField.Weight)) },
                         weightFocused = focus == CellFocus(ref, ValueField.Weight),
                         countFocused = focus?.ref == ref && focus.field != ValueField.Weight,
                         onWeight = { onCellTapped(CellFocus(ref, ValueField.Weight)) },
@@ -229,7 +233,8 @@ private fun RestLine(remainingSeconds: Int) {
     }
 }
 
-// The current set's number is lime; a done set has its tick filled
+// The selected row (being typed into, or the current set) is tinted lime, and the current set's
+// number is lime. Tapping the row selects it, typing into its kg. A done set has its tick filled.
 @Composable
 private fun TableRow(
     number: Int?,
@@ -238,6 +243,8 @@ private fun TableRow(
     weightText: String,
     countText: String,
     timing: Boolean,
+    selected: Boolean,
+    onRow: () -> Unit,
     weightFocused: Boolean,
     countFocused: Boolean,
     onWeight: () -> Unit,
@@ -249,6 +256,8 @@ private fun TableRow(
         modifier = Modifier
             .fillMaxWidth()
             .height(TableSizes.RowHeight)
+            .background(if (selected) Theme.backgrounds.selected else Color.Transparent)
+            .clickable(onClick = onRow)
             .padding(horizontal = TableSizes.RowPadding),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(TableSizes.ColumnGap),
