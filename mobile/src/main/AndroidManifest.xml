@@ -211,6 +211,14 @@
             android:theme="@style/AppTheme.NoActionBar"
             android:exported="false" />
         <activity
+            android:name="com.everlog.ui.activities.workoutprototype.WorkoutPrototypeActivity"
+            android:theme="@style/AppTheme.NoActionBar"
+            android:exported="false" />
+        <activity
+            android:name="com.everlog.ui.activities.workouttable.WorkoutTableActivity"
+            android:theme="@style/AppTheme.NoActionBar"
+            android:exported="false" />
+        <activity
             android:name="com.everlog.ui.activities.exercisepicker.ExercisePickerActivity"
             android:theme="@style/AppTheme.NoActionBar"
             android:windowSoftInputMode="adjustResize"
