@@ -114,6 +114,8 @@ private fun ExerciseTable(
     onCellTapped: (CellFocus) -> Unit,
     viewModel: WorkoutPrototypeViewModel,
 ) {
+    // Nothing's highlighted until the first set is done or a timer runs (or a cell is tapped)
+    val started = state.setTimer != null || state.blocks.any { b -> b.rounds.any { r -> r.sets.any { it.done } } }
     Column(modifier = Modifier.padding(bottom = Theme.spacing.extraLarge)) {
         ExerciseHeader(block, viewModel)
         Spacer(modifier = Modifier.height(Theme.spacing.medium))
@@ -134,14 +136,14 @@ private fun ExerciseTable(
                     TableRow(
                         number = if (i == 0) r + 1 else null,
                         set = set,
-                        current = state.current?.roundId == round.id,
+                        current = (started || focus != null) && state.current?.roundId == round.id,
                         weightText = cellText(set, ValueField.Weight, focus, typed, ref),
                         // A running set timer counts down in its time cell
                         countText = timer?.let { formatClock(ceilSeconds(it.remainingMillis(state.now)).toLong()) }
                             ?: cellText(set, countFieldOf(set), focus, typed, ref),
                         timing = timer != null,
-                        // The row being typed into, or else the current set
-                        selected = if (focus != null) focus.ref == ref else state.current == ref,
+                        // The row being typed into, or else the current set once the workout's under way
+                        selected = if (focus != null) focus.ref == ref else started && state.current == ref,
                         onRow = { onCellTapped(CellFocus(ref, ValueField.Weight)) },
                         weightFocused = focus == CellFocus(ref, ValueField.Weight),
                         countFocused = focus?.ref == ref && focus.field != ValueField.Weight,
