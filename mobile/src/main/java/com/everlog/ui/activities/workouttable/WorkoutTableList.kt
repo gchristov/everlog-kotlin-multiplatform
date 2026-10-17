@@ -16,6 +16,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.runtime.Composable
@@ -353,7 +354,7 @@ private fun Cell(text: String, focused: Boolean, onClick: () -> Unit, highlight:
 // In place of the tick on a timed set: runs its timer
 @Composable
 private fun StartButton(onClick: () -> Unit) {
-    val shape = RoundedCornerShape(TableSizes.CellCorner)
+    val shape = CircleShape
     Box(
         modifier = Modifier
             .size(TableSizes.Check)
@@ -374,7 +375,8 @@ private fun StartButton(onClick: () -> Unit) {
 
 @Composable
 private fun Tick(done: Boolean, onClick: () -> Unit) {
-    val shape = RoundedCornerShape(TableSizes.CellCorner)
+    // Round, like the Spine and Dock prototype's ticks
+    val shape = CircleShape
     Box(
         modifier = Modifier
             .size(TableSizes.Check)
