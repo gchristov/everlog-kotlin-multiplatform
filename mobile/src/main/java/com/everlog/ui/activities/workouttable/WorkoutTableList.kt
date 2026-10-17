@@ -359,14 +359,15 @@ private fun StartButton(onClick: () -> Unit) {
             .size(TableSizes.Check)
             .clip(shape)
             .background(WorkoutColors.Inset)
-            .border(1.dp, Theme.contentColors.action, shape)
+            .border(1.dp, Theme.backgrounds.separator, shape)
             .clickable(onClick = onClick),
         contentAlignment = Alignment.Center,
     ) {
+        // Grey like a tick not done yet
         AppIcon(
             modifier = Modifier.size(18.dp),
             imageVector = ImageVector.vectorResource(R.drawable.ic_timer),
-            tint = Theme.contentColors.action,
+            tint = Theme.contentColors.secondary,
             contentDescription = "Start timer",
         )
     }
