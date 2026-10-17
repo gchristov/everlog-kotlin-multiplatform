@@ -10,6 +10,8 @@ import androidx.activity.compose.BackHandler
 import androidx.activity.viewModels
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -114,11 +116,7 @@ internal fun WorkoutPrototypeScreen(viewModel: WorkoutPrototypeViewModel, onClos
         if (state.alerts > 0) vibrate(context)
     }
 
-    LaunchedEffect(state.deletedRound) {
-        if (state.deletedRound == null) return@LaunchedEffect
-        val result = snackbar.showSnackbar(message = "Set deleted", actionLabel = "Undo", duration = SnackbarDuration.Long)
-        if (result == SnackbarResult.ActionPerformed) viewModel.onUndoDelete() else viewModel.onUndoGone()
-    }
+    UndoDeletedSet(state, viewModel, snackbar)
 
     val spineActions = remember(viewModel) {
         SpineActions(
@@ -149,25 +147,11 @@ internal fun WorkoutPrototypeScreen(viewModel: WorkoutPrototypeViewModel, onClos
                 state.blocks.isEmpty() -> GhostSpine(contentPadding)
                 else -> SpineList(state = state, actions = spineActions, contentPadding = contentPadding)
             }
-            SnackbarHost(
-                modifier = Modifier
-                    .align(Alignment.BottomCenter)
-                    .padding(bottom = contentPadding.calculateBottomPadding() + Theme.spacing.small),
-                hostState = snackbar,
-            ) { data ->
-                Snackbar(
-                    snackbarData = data,
-                    modifier = Modifier.padding(horizontal = Theme.spacing.large),
-                    shape = Theme.shapes.surface,
-                    containerColor = Theme.backgrounds.surfaceRaised,
-                    contentColor = Theme.contentColors.primary,
-                    actionColor = Theme.contentColors.action,
-                )
-            }
+            WorkoutSnackbarHost(snackbar, contentPadding)
         }
     }
 
-    Dialogs(state, viewModel)
+    WorkoutDialogs(state, viewModel)
 
     if (focusOpen) {
         ModalBottomSheet(onDismissRequest = { focusOpen = false }, containerColor = Theme.backgrounds.surface) {
@@ -214,7 +198,37 @@ private fun WorkoutHeader(state: WorkoutPrototypeState, viewModel: WorkoutProtot
     }
 }
 
-private fun workoutMenuItems(state: WorkoutPrototypeState, viewModel: WorkoutPrototypeViewModel) = buildList {
+// Set deleted, with Undo, while a swiped set can still come back
+@Composable
+internal fun UndoDeletedSet(state: WorkoutPrototypeState, viewModel: WorkoutPrototypeViewModel, snackbar: SnackbarHostState) {
+    LaunchedEffect(state.deletedRound) {
+        if (state.deletedRound == null) return@LaunchedEffect
+        val result = snackbar.showSnackbar(message = "Set deleted", actionLabel = "Undo", duration = SnackbarDuration.Long)
+        if (result == SnackbarResult.ActionPerformed) viewModel.onUndoDelete() else viewModel.onUndoGone()
+    }
+}
+
+// Above the footer, in the app's colours
+@Composable
+internal fun BoxScope.WorkoutSnackbarHost(snackbar: SnackbarHostState, contentPadding: PaddingValues) {
+    SnackbarHost(
+        modifier = Modifier
+            .align(Alignment.BottomCenter)
+            .padding(bottom = contentPadding.calculateBottomPadding() + Theme.spacing.small),
+        hostState = snackbar,
+    ) { data ->
+        Snackbar(
+            snackbarData = data,
+            modifier = Modifier.padding(horizontal = Theme.spacing.large),
+            shape = Theme.shapes.surface,
+            containerColor = Theme.backgrounds.surfaceRaised,
+            contentColor = Theme.contentColors.primary,
+            actionColor = Theme.contentColors.action,
+        )
+    }
+}
+
+internal fun workoutMenuItems(state: WorkoutPrototypeState, viewModel: WorkoutPrototypeViewModel) = buildList {
     if (state.blocks.isNotEmpty() && !state.editMode) add(AppMenuItem(text = "Edit workout", onClick = viewModel::onEditWorkout))
     add(AppMenuItem(text = "Rest timer · ${formatClock(state.restSeconds.toLong())}", onClick = viewModel::onRestTimerSettings))
     add(AppMenuItem(text = "Discard workout", onClick = viewModel::onDiscard))
@@ -224,7 +238,7 @@ private fun workoutMenuItems(state: WorkoutPrototypeState, viewModel: WorkoutPro
 }
 
 @Composable
-private fun Dialogs(state: WorkoutPrototypeState, viewModel: WorkoutPrototypeViewModel) {
+internal fun WorkoutDialogs(state: WorkoutPrototypeState, viewModel: WorkoutPrototypeViewModel) {
     when (val dialog = state.dialog) {
         null -> Unit
         is WorkoutDialog.Finish -> AppDialog(
@@ -313,7 +327,7 @@ private fun EnterValueDialog(state: WorkoutPrototypeState, field: ValueField, vi
 
 // The screen stays on through a workout, like the current workout screen can
 @Composable
-private fun KeepScreenOn() {
+internal fun KeepScreenOn() {
     val view = LocalView.current
     DisposableEffect(view) {
         view.keepScreenOn = true
@@ -322,7 +336,7 @@ private fun KeepScreenOn() {
 }
 
 // When a rest or a set timer ends
-private fun vibrate(context: Context) {
+internal fun vibrate(context: Context) {
     val vibrator = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
         context.getSystemService(VibratorManager::class.java)?.defaultVibrator
     } else {

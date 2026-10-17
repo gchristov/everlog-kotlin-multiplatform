@@ -5,6 +5,13 @@ import java.math.BigDecimal
 // The workout screen prototype's own models: immutable, so the view-model's state can hold them, and
 // in memory only. If the Spine and Dock design is built for real, they map onto ELWorkout and ELSet.
 
+internal enum class Effort(val label: String) {
+    Easy("Easy"),
+    Good("Good"),
+    Hard("Hard"),
+    Max("Max"),
+}
+
 internal enum class SetMode {
     Reps,
     Time,
@@ -22,6 +29,15 @@ internal data class SetValues(
 internal data class PrototypeSet(
     val values: SetValues,
     val done: Boolean = false,
+    // Deleted from a superset or circuit's round, which keeps it so each set still lines up with its
+    // exercise. It's left out of everything; once every exercise's set is gone, the round goes.
+    val removed: Boolean = false,
+    // How hard it felt, asked for after it's done
+    val effort: Effort? = null,
+    // The weight the app suggested for it, if any (mock: what the sample starts it on)
+    val suggestedKg: Float? = null,
+    // Its weight was typed in, so it's no longer the suggestion
+    val weightConfirmed: Boolean = false,
     // What the same set was last time, if there is a last time
     val lastTime: SetValues? = null,
 )
@@ -37,7 +53,11 @@ internal data class PrototypeExercise(
 internal data class PrototypeRound(
     val id: Long,
     val sets: List<PrototypeSet>,
-)
+) {
+    // Every exercise's set that's still there is done
+    val done: Boolean
+        get() = sets.all { it.done || it.removed }
+}
 
 internal enum class BlockKind {
     Single,
@@ -126,6 +146,12 @@ internal data class WorkoutPrototypeState(
     val message: String? = null,
     // Goes up each time a timer ends, for the screen to vibrate
     val alerts: Int = 0,
+    // Weight suggestions on: sets not done start on the suggested weight, marked until confirmed
+    val suggestions: Boolean = true,
+    // The set just completed, asked how hard it was until rest ends or it's answered
+    val effortPrompt: SetRef? = null,
+    // Prototype only: shows the later ideas (set effort, comparison with last time), off by default
+    val laterIdeas: Boolean = false,
     // Goes up each time the current set's row is tapped, for the dock to nudge: that's where it's logged
     val dockNudges: Int = 0,
     val finished: Boolean = false,
@@ -137,7 +163,11 @@ internal data class WorkoutPrototypeState(
 
     fun block(id: Long): PrototypeBlock? = blocks.firstOrNull { it.id == id }
 
-    fun unfinishedSets(): Int = blocks.sumOf { block -> block.rounds.sumOf { round -> round.sets.count { !it.done } } }
+    // The set's weight is the app's suggestion, not yet confirmed (typed in or the set completed)
+    fun isSuggested(set: PrototypeSet): Boolean =
+        suggestions && !set.done && !set.weightConfirmed && set.suggestedKg != null && set.suggestedKg == set.values.weightKg
+
+    fun unfinishedSets(): Int = blocks.sumOf { block -> block.rounds.sumOf { round -> round.sets.count { !it.done && !it.removed } } }
 
     companion object {
         const val DefaultRestSeconds = 60
@@ -148,7 +178,7 @@ internal fun ceilSeconds(millis: Long): Int = ((millis.coerceAtLeast(0) + 999) /
 
 // Every set in the order they're done: block by block, round by round, exercise by exercise
 internal fun List<PrototypeBlock>.refs(): List<SetRef> = flatMap { block ->
-    block.rounds.flatMap { round -> round.sets.indices.map { SetRef(block.id, round.id, it) } }
+    block.rounds.flatMap { round -> round.sets.indices.filter { !round.sets[it].removed }.map { SetRef(block.id, round.id, it) } }
 }
 
 internal fun List<PrototypeBlock>.set(ref: SetRef): PrototypeSet? =
@@ -232,8 +262,8 @@ internal object WorkoutPrototypeSamples {
         )
     }
 
-    // Push day, as on the design's boards: a single exercise, a superset, another single and a time
-    // based one, each with last time's values
+    // Push day, as on the design's boards: a single exercise, a superset, another single, a time
+    // based one and a four exercise circuit to finish, each with last time's values
     fun pushDay(nextId: () -> Long): List<PrototypeBlock> {
         fun reps(reps: Int, kg: Float) = SetValues(SetMode.Reps, reps = reps, timeSeconds = 30, weightKg = kg)
         fun time(seconds: Int, kg: Float) = SetValues(SetMode.Time, reps = 10, timeSeconds = seconds, weightKg = kg)
@@ -255,6 +285,20 @@ internal object WorkoutPrototypeSamples {
             },
         )
 
+        // Mixes reps and time, so its column reads REPS/TIME
+        val circuit = PrototypeBlock(
+            id = nextId(),
+            exercises = listOf("Dumbbell Reverse Lunge", "Hanging Knee Raise", "Spider Plank", "Side Plank").map { exercise(nextId(), it) },
+            rounds = List(3) {
+                PrototypeRound(nextId(), listOf(
+                    PrototypeSet(reps(12, 16f), lastTime = reps(12, 14f)),
+                    PrototypeSet(reps(10, 0f), lastTime = reps(10, 0f)),
+                    PrototypeSet(time(40, 0f), lastTime = time(35, 0f)),
+                    PrototypeSet(time(30, 0f), lastTime = time(30, 0f)),
+                ))
+            },
+        )
+
         return listOf(
             single("Dumbbell Bench Press", listOf(
                 reps(15, 18f) to reps(15, 17f),
@@ -269,6 +313,7 @@ internal object WorkoutPrototypeSamples {
                 time(30, 10f) to time(25, 10f),
                 time(30, 10f) to time(20, 10f),
             )),
+            circuit,
         )
     }
 }

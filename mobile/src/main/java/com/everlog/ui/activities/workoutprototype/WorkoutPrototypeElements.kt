@@ -27,6 +27,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.PathEffect
 import androidx.compose.ui.geometry.Size
@@ -346,8 +347,8 @@ internal fun DockPill(
     modifier: Modifier = Modifier,
     height: Dp = WorkoutSizes.OutlinedButton,
     horizontalPadding: Dp = Theme.spacing.large,
+    shape: Shape = Theme.shapes.button,
 ) {
-    val shape = Theme.shapes.button
     Box(
         modifier = modifier
             .height(height)

@@ -49,6 +49,9 @@ private object EditSizes {
     val LiftScale = 1.03f
 }
 
+// The edit view's tip, shown under the cards or by the screen in its footer
+internal const val EditHint = "Drag the grip to move. Tap the bin to delete."
+
 /**
  * Edit workout: the exercises as cards, with the main screen's headers, to drag into a new order
  * by their grip. A superset or circuit moves as one.
@@ -58,6 +61,8 @@ internal fun EditList(
     state: WorkoutPrototypeState,
     viewModel: WorkoutPrototypeViewModel,
     contentPadding: PaddingValues,
+    // Off where the screen shows the tip in its footer instead
+    showHint: Boolean = true,
 ) {
     val blocks by rememberUpdatedState(state.blocks)
     val heights = remember { mutableStateMapOf<Long, Int>() }
@@ -123,12 +128,14 @@ internal fun EditList(
         }
         // A note under the last card, like a list group's footer: the cards' 8dp gap above it.
         // Add exercise is in the screen's footer.
-        AppText(
-            modifier = Modifier.fillMaxWidth(),
-            text = "Drag the grip to move. Tap the bin to delete.",
-            style = Theme.typography.caption,
-            color = Theme.contentColors.secondary,
-        )
+        if (showHint) {
+            AppText(
+                modifier = Modifier.fillMaxWidth(),
+                text = EditHint,
+                style = Theme.typography.caption,
+                color = Theme.contentColors.secondary,
+            )
+        }
         Spacer(modifier = Modifier.height(Theme.spacing.large))
     }
 }

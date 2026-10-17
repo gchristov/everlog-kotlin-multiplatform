@@ -44,7 +44,8 @@ internal class WorkoutPrototypeViewModel(
             }
             val rest = next.rest
             if (rest != null && now >= rest.endsAt) {
-                next = next.copy(rest = null, alerts = next.alerts + 1)
+                // The effort question goes with the rest
+                next = next.copy(rest = null, alerts = next.alerts + 1, effortPrompt = null)
             }
             next
         }
@@ -108,7 +109,7 @@ internal class WorkoutPrototypeViewModel(
         }
         val round = block(blockId)?.rounds?.firstOrNull { it.id == roundId } ?: return@setState this
         val inRound = { ref: SetRef? -> ref?.roundId == roundId }
-        val done = round.sets.all { it.done }
+        val done = round.done
         val blocks = blocks.map { block ->
             if (block.id != blockId) return@map block
             block.copy(rounds = block.rounds.map { if (it.id == roundId) it.copy(sets = it.sets.map { set -> set.copy(done = !done) }) else it })
@@ -121,6 +122,7 @@ internal class WorkoutPrototypeViewModel(
         copy(
             blocks = blocks,
             current = current,
+            effortPrompt = SetRef(blockId, roundId, round.sets.indexOfLast { !it.removed }.coerceAtLeast(0)),
             setTimer = setTimer?.takeUnless { inRound(it.ref) },
             editing = editing?.takeUnless { inRound(it.ref) },
             rest = if (current != null) RestTimer(endsAt = now + restSeconds * 1000L, totalSeconds = restSeconds) else rest,
@@ -175,6 +177,96 @@ internal class WorkoutPrototypeViewModel(
     // the full time
     fun onFinishTimerEarly() = setState { completeCurrent(clock()) }
 
+    // Any set, for the table prototype's cells and keypad
+
+    fun onSetValue(ref: SetRef, field: ValueField, value: Float) = setState {
+        copy(blocks = blocks.updateSet(ref) { set ->
+            set.copy(values = when (field) {
+                ValueField.Reps -> set.values.copy(reps = value.toInt().coerceAtLeast(0))
+                ValueField.Time -> set.values.copy(timeSeconds = value.toInt().coerceAtLeast(0))
+                ValueField.Weight -> set.values.copy(weightKg = value.coerceAtLeast(0f))
+            }, weightConfirmed = set.weightConfirmed || field == ValueField.Weight)
+        })
+    }
+
+    // Effort
+
+    fun onSetEffort(ref: SetRef, effort: Effort) = setState {
+        copy(blocks = blocks.updateSet(ref) { it.copy(effort = effort) }, effortPrompt = effortPrompt.takeUnless { it == ref })
+    }
+
+    fun onToggleLaterIdeas() = setState { copy(laterIdeas = !laterIdeas) }
+
+    fun onDismissEffort() = setState { if (effortPrompt == null) this else copy(effortPrompt = null) }
+
+    // Weight suggestions on or off: sets not done that are still on the suggestion (or on last time's
+    // weight, when off) move to the other
+    fun onToggleSuggestions() = setState {
+        val on = !suggestions
+        copy(
+            suggestions = on,
+            blocks = blocks.map { block ->
+                block.copy(rounds = block.rounds.map { round ->
+                    round.copy(sets = round.sets.map { set ->
+                        val suggested = set.suggestedKg
+                        val last = set.lastTime?.weightKg
+                        if (set.done || set.weightConfirmed || suggested == null || last == null) set
+                        else set.copy(values = set.values.copy(weightKg = if (on) suggested else last))
+                    })
+                })
+            },
+        )
+    }
+
+    fun onSetMode(ref: SetRef, mode: SetMode) = setState {
+        copy(blocks = blocks.updateSet(ref) { it.copy(values = it.values.copy(mode = mode)) })
+    }
+
+    // Completes one exercise's set. The current one moves on as Complete set does; another is just
+    // marked done, and rest starts once its round is done.
+    fun onCompleteSetAt(ref: SetRef) = setState {
+        val set = blocks.set(ref) ?: return@setState this
+        if (set.done) return@setState this
+        val now = clock()
+        if (ref == current) return@setState completeCurrent(now)
+        val blocks = blocks.updateSet(ref) { it.copy(done = true) }
+        val roundDone = blocks.firstOrNull { it.id == ref.blockId }?.rounds?.firstOrNull { it.id == ref.roundId }?.done == true
+        val current = current ?: blocks.nextOpenAfter(ref)
+        copy(
+            blocks = blocks,
+            current = current,
+            effortPrompt = ref,
+            // Completing another set ends a running set timer; its set stays not done
+            setTimer = null,
+            rest = if (roundDone && current != null) RestTimer(endsAt = now + restSeconds * 1000L, totalSeconds = restSeconds) else rest,
+            now = now,
+        )
+    }
+
+    // A row's tick: completes it, or undoes it
+    fun onToggleSetAt(ref: SetRef) {
+        val set = state.value.blocks.set(ref) ?: return
+        if (set.done) {
+            setState { copy(blocks = blocks.updateSet(ref) { it.copy(done = false) }, current = current ?: ref) }
+        } else {
+            onCompleteSetAt(ref)
+        }
+    }
+
+    // Runs a timed set's timer, making it the current set. A done one is run again, not done.
+    fun onStartTimerAt(ref: SetRef) = setState {
+        val set = blocks.set(ref) ?: return@setState this
+        val now = clock()
+        copy(
+            blocks = blocks.updateSet(ref) { it.copy(done = false) },
+            current = ref,
+            editing = null,
+            rest = null,
+            setTimer = SetTimer(ref, endsAt = now + set.values.timeSeconds * 1000L, totalSeconds = set.values.timeSeconds),
+            now = now,
+        )
+    }
+
     // Rest
 
     // Changes this rest, and the workout's rest for every one after it
@@ -189,7 +281,7 @@ internal class WorkoutPrototypeViewModel(
         )
     }
 
-    fun onSkipRest() = setState { copy(rest = null) }
+    fun onSkipRest() = setState { copy(rest = null, effortPrompt = null) }
 
     fun onRestTimerSettings() = setState { copy(dialog = WorkoutDialog.RestTimer) }
 
@@ -234,10 +326,34 @@ internal class WorkoutPrototypeViewModel(
         )
     }
 
+    // Swiping one exercise's set away in a superset or circuit: just that set, unless it was the last
+    // one left in its round, which then goes. A single exercise's set is its round.
+    fun onDeleteSet(ref: SetRef) {
+        val round = state.value.block(ref.blockId)?.rounds?.firstOrNull { it.id == ref.roundId } ?: return
+        val others = round.sets.filterIndexed { i, set -> i != ref.index && !set.removed }
+        if (others.isEmpty()) return onDeleteRound(ref.blockId, ref.roundId)
+        setState {
+            val block = block(ref.blockId) ?: return@setState this
+            val position = block.rounds.indexOfFirst { it.id == ref.roundId }
+            val blocks = blocks.updateSet(ref) { it.copy(removed = true) }
+            copy(
+                blocks = blocks,
+                current = if (current == ref) blocks.nextOpenAfter(ref) else current,
+                setTimer = setTimer?.takeUnless { it.ref == ref },
+                editing = editing?.takeUnless { it.ref == ref },
+                deletedRound = DeletedRound(ref.blockId, position, round, current),
+            )
+        }
+    }
+
     fun onUndoDelete() = setState {
         val deleted = deletedRound ?: return@setState this
         val blocks = blocks.map { block ->
             if (block.id != deleted.blockId) return@map block
+            // A round that's still there (one exercise's set was deleted) is put back as it was
+            if (block.rounds.any { it.id == deleted.round.id }) {
+                return@map block.copy(rounds = block.rounds.map { if (it.id == deleted.round.id) deleted.round else it })
+            }
             val rounds = block.rounds.toMutableList().apply { add(deleted.position.coerceAtMost(size), deleted.round) }
             block.copy(rounds = rounds)
         }
@@ -323,7 +439,15 @@ internal class WorkoutPrototypeViewModel(
         private const val TickMillis = 200L
 
         private fun sampleState(now: Long, ids: IdGenerator): WorkoutPrototypeState {
-            val blocks = WorkoutPrototypeSamples.pushDay(ids::next)
+            // Mock suggestions: a set whose weight differs from last time's starts on a suggestion
+            val blocks = WorkoutPrototypeSamples.pushDay(ids::next).map { block ->
+                block.copy(rounds = block.rounds.map { round ->
+                    round.copy(sets = round.sets.map { set ->
+                        val last = set.lastTime?.weightKg
+                        if (last != null && last != set.values.weightKg) set.copy(suggestedKg = set.values.weightKg) else set
+                    })
+                })
+            }
             return WorkoutPrototypeState(
                 name = "Push day",
                 startedAt = now,
@@ -344,14 +468,15 @@ internal fun WorkoutPrototypeState.completeCurrent(now: Long): WorkoutPrototypeS
     val ref = current ?: return this
     val blocks = blocks.updateSet(ref) { it.copy(done = true) }
     val round = blocks.firstOrNull { it.id == ref.blockId }?.rounds?.firstOrNull { it.id == ref.roundId }
-    val leftInRound = round?.sets?.indexOfFirst { !it.done }?.takeIf { it >= 0 }
+    val leftInRound = round?.sets?.indexOfFirst { !it.done && !it.removed }?.takeIf { it >= 0 }
     if (leftInRound != null) {
-        return copy(blocks = blocks, current = SetRef(ref.blockId, ref.roundId, leftInRound), setTimer = null, editing = null, now = now)
+        return copy(blocks = blocks, current = SetRef(ref.blockId, ref.roundId, leftInRound), setTimer = null, editing = null, effortPrompt = ref, now = now)
     }
     val next = blocks.nextOpenAfter(ref)
     return copy(
         blocks = blocks,
         current = next,
+        effortPrompt = ref,
         setTimer = null,
         editing = null,
         rest = if (next != null) RestTimer(endsAt = now + restSeconds * 1000L, totalSeconds = restSeconds) else rest,

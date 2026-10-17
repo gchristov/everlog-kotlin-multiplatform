@@ -137,7 +137,7 @@ private enum class SpineFill {
 // exercise's Add set is lime once the line reaches its last set and that set is done.
 private fun spineFills(items: List<SpineItem>, currentIndex: Int): List<SpineFill> {
     val rounds = items.indices.filter { items[it] is SpineItem.Round }
-    fun done(index: Int) = (items[index] as SpineItem.Round).round.sets.all { it.done }
+    fun done(index: Int) = (items[index] as SpineItem.Round).round.done
     // Whether the line into the set at [index] is lime
     fun litInto(index: Int?): Boolean {
         if (index == null) return false
@@ -570,7 +570,7 @@ private fun RoundRow(
     val style = when {
         isEditing -> CapsuleStyle.Editing
         isCurrent -> CapsuleStyle.Current
-        round.sets.all { it.done } -> CapsuleStyle.Done
+        round.done -> CapsuleStyle.Done
         else -> CapsuleStyle.Upcoming
     }
     val nodeStyle = when (style) {
@@ -682,6 +682,7 @@ private fun Capsule(item: SpineItem.Round, state: WorkoutPrototypeState, style: 
             return@Column
         }
         round.sets.forEachIndexed { i, set ->
+            if (set.removed) return@forEachIndexed
             if (i > 0) HorizontalDivider(thickness = 1.dp, color = Theme.backgrounds.separator)
             val ref = SetRef(item.block.id, round.id, i)
             val values = shownValues(state, ref, set)
@@ -711,7 +712,7 @@ private fun Capsule(item: SpineItem.Round, state: WorkoutPrototypeState, style: 
 @Composable
 private fun CompactRound(item: SpineItem.Round, state: WorkoutPrototypeState, actions: SpineActions) {
     val round = item.round
-    val target = round.sets.indexOfFirst { !it.done }.coerceAtLeast(0)
+    val target = round.sets.indexOfFirst { !it.done && !it.removed }.coerceAtLeast(0)
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -720,6 +721,7 @@ private fun CompactRound(item: SpineItem.Round, state: WorkoutPrototypeState, ac
         verticalArrangement = Arrangement.spacedBy(Theme.spacing.extraSmall),
     ) {
         round.sets.forEachIndexed { i, set ->
+            if (set.removed) return@forEachIndexed
             val values = shownValues(state, SetRef(item.block.id, round.id, i), set)
             Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(Theme.spacing.large)) {
                 AppText(modifier = Modifier.weight(1f), text = values.summary(), style = Theme.typography.body)
