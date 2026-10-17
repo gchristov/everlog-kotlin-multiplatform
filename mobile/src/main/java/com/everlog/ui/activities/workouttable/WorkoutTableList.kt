@@ -27,7 +27,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
@@ -45,6 +44,7 @@ import com.everlog.ui.activities.workoutprototype.ValueField
 import com.everlog.ui.activities.workoutprototype.WorkoutColors
 import com.everlog.ui.activities.workoutprototype.WorkoutPrototypeState
 import com.everlog.ui.activities.workoutprototype.WorkoutPrototypeViewModel
+import com.everlog.ui.activities.workoutprototype.ceilSeconds
 import com.everlog.ui.activities.workoutprototype.formatClock
 import com.everlog.ui.activities.workoutprototype.formatWeight
 import com.everlog.ui.activities.workoutprototype.outlinedCircle
@@ -75,7 +75,7 @@ private object TableSizes {
 
 /**
  * The workout as a table: per exercise its header, then a card of rows, SET · LAST TIME · KG · REPS
- * (or TIME) · tick. A superset or circuit has a row per exercise in each set, in its title's order.
+ * (or TIME) · tick (▶ for a timed set not done). A superset or circuit has a row per exercise in each set, in its title's order.
  * Tapping a kg or reps cell focuses it for the keypad; the tick completes the row, or undoes it.
  */
 @Composable
@@ -129,17 +129,27 @@ private fun ExerciseTable(
                 if (state.rest != null && state.current?.roundId == round.id) RestLine(state.restRemainingSeconds())
                 round.sets.forEachIndexed { i, set ->
                     val ref = SetRef(block.id, round.id, i)
+                    val timer = state.setTimer?.takeIf { it.ref == ref }
                     TableRow(
                         number = if (i == 0) r + 1 else null,
                         set = set,
                         current = state.current?.roundId == round.id,
                         weightText = cellText(set, ValueField.Weight, focus, typed, ref),
-                        countText = cellText(set, countFieldOf(set), focus, typed, ref),
+                        // A running set timer counts down in its time cell
+                        countText = timer?.let { formatClock(ceilSeconds(it.remainingMillis(state.now)).toLong()) }
+                            ?: cellText(set, countFieldOf(set), focus, typed, ref),
+                        timing = timer != null,
                         weightFocused = focus == CellFocus(ref, ValueField.Weight),
                         countFocused = focus?.ref == ref && focus.field != ValueField.Weight,
                         onWeight = { onCellTapped(CellFocus(ref, ValueField.Weight)) },
                         onCount = { onCellTapped(CellFocus(ref, countFieldOf(set))) },
                         onTick = { viewModel.onToggleSetAt(ref) },
+                        // A timed set not done yet starts its timer from the row; once running, the tick completes it
+                        onStart = if (set.values.mode == SetMode.Time && !set.done && timer == null) {
+                            { viewModel.onStartTimerAt(ref) }
+                        } else {
+                            null
+                        },
                     )
                 }
             }
@@ -219,7 +229,7 @@ private fun RestLine(remainingSeconds: Int) {
     }
 }
 
-// Done rows are tinted lime; the current set's number is lime
+// The current set's number is lime; a done set has its tick filled
 @Composable
 private fun TableRow(
     number: Int?,
@@ -227,17 +237,18 @@ private fun TableRow(
     current: Boolean,
     weightText: String,
     countText: String,
+    timing: Boolean,
     weightFocused: Boolean,
     countFocused: Boolean,
     onWeight: () -> Unit,
     onCount: () -> Unit,
     onTick: () -> Unit,
+    onStart: (() -> Unit)?,
 ) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
             .height(TableSizes.RowHeight)
-            .background(if (set.done) Theme.backgrounds.selected else Color.Transparent)
             .padding(horizontal = TableSizes.RowPadding),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(TableSizes.ColumnGap),
@@ -256,15 +267,15 @@ private fun TableRow(
             maxLines = 1,
         )
         Cell(text = weightText, focused = weightFocused, onClick = onWeight)
-        Cell(text = countText, focused = countFocused, onClick = onCount)
-        Tick(done = set.done, onClick = onTick)
+        Cell(text = countText, focused = countFocused, onClick = onCount, highlight = timing)
+        if (onStart != null) StartButton(onClick = onStart) else Tick(done = set.done, onClick = onTick)
     }
 }
 
 // A value to type into. The focused one is outlined in lime and kept in view above the keypad.
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-private fun Cell(text: String, focused: Boolean, onClick: () -> Unit) {
+private fun Cell(text: String, focused: Boolean, onClick: () -> Unit, highlight: Boolean = false) {
     val shape = RoundedCornerShape(TableSizes.CellCorner)
     val requester = remember { BringIntoViewRequester() }
     LaunchedEffect(focused) {
@@ -280,7 +291,34 @@ private fun Cell(text: String, focused: Boolean, onClick: () -> Unit) {
             .clickable(onClick = onClick),
         contentAlignment = Alignment.Center,
     ) {
-        AppText(text = text, style = Theme.typography.body.copy(fontFeatureSettings = "tnum"), maxLines = 1)
+        AppText(
+            text = text,
+            style = Theme.typography.body.copy(fontFeatureSettings = "tnum"),
+            color = if (highlight) Theme.contentColors.action else Theme.contentColors.primary,
+            maxLines = 1,
+        )
+    }
+}
+
+// In place of the tick on a timed set: runs its timer
+@Composable
+private fun StartButton(onClick: () -> Unit) {
+    val shape = RoundedCornerShape(TableSizes.CellCorner)
+    Box(
+        modifier = Modifier
+            .size(TableSizes.Check)
+            .clip(shape)
+            .background(WorkoutColors.Inset)
+            .border(1.dp, Theme.contentColors.action, shape)
+            .clickable(onClick = onClick),
+        contentAlignment = Alignment.Center,
+    ) {
+        AppIcon(
+            modifier = Modifier.size(18.dp),
+            imageVector = ImageVector.vectorResource(R.drawable.ic_play_triangle),
+            tint = Theme.contentColors.action,
+            contentDescription = "Start timer",
+        )
     }
 }
 
