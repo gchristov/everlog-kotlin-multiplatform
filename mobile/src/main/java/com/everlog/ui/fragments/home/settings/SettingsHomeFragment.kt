@@ -121,6 +121,10 @@ class SettingsHomeFragment : BaseTabFragment(), MvpViewSettingsHome {
         return RxView.clicks(binding.root.findViewById(R.id.workoutPrototypeBtn))
     }
 
+    override fun onClickWorkoutTablePrototype(): Observable<Void> {
+        return RxView.clicks(binding.root.findViewById(R.id.workoutTablePrototypeBtn))
+    }
+
     override fun onClickManageIntegrationGoogleFit(): Observable<Void> {
         return RxView.clicks(binding.root.findViewById(R.id.googleFitBtn))
     }

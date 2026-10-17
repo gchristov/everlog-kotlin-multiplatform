@@ -167,7 +167,7 @@ internal fun WorkoutPrototypeScreen(viewModel: WorkoutPrototypeViewModel, onClos
         }
     }
 
-    Dialogs(state, viewModel)
+    WorkoutDialogs(state, viewModel)
 
     if (focusOpen) {
         ModalBottomSheet(onDismissRequest = { focusOpen = false }, containerColor = Theme.backgrounds.surface) {
@@ -214,7 +214,7 @@ private fun WorkoutHeader(state: WorkoutPrototypeState, viewModel: WorkoutProtot
     }
 }
 
-private fun workoutMenuItems(state: WorkoutPrototypeState, viewModel: WorkoutPrototypeViewModel) = buildList {
+internal fun workoutMenuItems(state: WorkoutPrototypeState, viewModel: WorkoutPrototypeViewModel) = buildList {
     if (state.blocks.isNotEmpty() && !state.editMode) add(AppMenuItem(text = "Edit workout", onClick = viewModel::onEditWorkout))
     add(AppMenuItem(text = "Rest timer · ${formatClock(state.restSeconds.toLong())}", onClick = viewModel::onRestTimerSettings))
     add(AppMenuItem(text = "Discard workout", onClick = viewModel::onDiscard))
@@ -224,7 +224,7 @@ private fun workoutMenuItems(state: WorkoutPrototypeState, viewModel: WorkoutPro
 }
 
 @Composable
-private fun Dialogs(state: WorkoutPrototypeState, viewModel: WorkoutPrototypeViewModel) {
+internal fun WorkoutDialogs(state: WorkoutPrototypeState, viewModel: WorkoutPrototypeViewModel) {
     when (val dialog = state.dialog) {
         null -> Unit
         is WorkoutDialog.Finish -> AppDialog(
@@ -313,7 +313,7 @@ private fun EnterValueDialog(state: WorkoutPrototypeState, field: ValueField, vi
 
 // The screen stays on through a workout, like the current workout screen can
 @Composable
-private fun KeepScreenOn() {
+internal fun KeepScreenOn() {
     val view = LocalView.current
     DisposableEffect(view) {
         view.keepScreenOn = true
@@ -322,7 +322,7 @@ private fun KeepScreenOn() {
 }
 
 // When a rest or a set timer ends
-private fun vibrate(context: Context) {
+internal fun vibrate(context: Context) {
     val vibrator = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
         context.getSystemService(VibratorManager::class.java)?.defaultVibrator
     } else {

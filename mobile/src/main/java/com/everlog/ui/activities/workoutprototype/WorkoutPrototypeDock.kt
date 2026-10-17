@@ -192,7 +192,7 @@ internal fun Dock(state: WorkoutPrototypeState, actions: DockActions) {
 
 // The same blur and tint as AppFooter
 @Composable
-private fun Modifier.dockBlur(): Modifier {
+internal fun Modifier.dockBlur(): Modifier {
     val hazeState = LocalAppScreenHazeState.current
     return if (hazeState != null) {
         hazeEffect(

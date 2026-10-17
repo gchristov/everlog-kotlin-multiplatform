@@ -175,6 +175,64 @@ internal class WorkoutPrototypeViewModel(
     // the full time
     fun onFinishTimerEarly() = setState { completeCurrent(clock()) }
 
+    // Any set, for the table prototype's cells and keypad
+
+    fun onSetValue(ref: SetRef, field: ValueField, value: Float) = setState {
+        copy(blocks = blocks.updateSet(ref) { set ->
+            set.copy(values = when (field) {
+                ValueField.Reps -> set.values.copy(reps = value.toInt().coerceAtLeast(0))
+                ValueField.Time -> set.values.copy(timeSeconds = value.toInt().coerceAtLeast(0))
+                ValueField.Weight -> set.values.copy(weightKg = value.coerceAtLeast(0f))
+            })
+        })
+    }
+
+    fun onSetMode(ref: SetRef, mode: SetMode) = setState {
+        copy(blocks = blocks.updateSet(ref) { it.copy(values = it.values.copy(mode = mode)) })
+    }
+
+    // Completes one exercise's set. The current one moves on as Complete set does; another is just
+    // marked done, and rest starts once its round is done.
+    fun onCompleteSetAt(ref: SetRef) = setState {
+        val set = blocks.set(ref) ?: return@setState this
+        if (set.done) return@setState this
+        val now = clock()
+        if (ref == current) return@setState completeCurrent(now)
+        val blocks = blocks.updateSet(ref) { it.copy(done = true) }
+        val roundDone = blocks.firstOrNull { it.id == ref.blockId }?.rounds?.firstOrNull { it.id == ref.roundId }?.sets?.all { it.done } == true
+        val current = current ?: blocks.nextOpenAfter(ref)
+        copy(
+            blocks = blocks,
+            current = current,
+            setTimer = setTimer?.takeUnless { it.ref == ref },
+            rest = if (roundDone && current != null) RestTimer(endsAt = now + restSeconds * 1000L, totalSeconds = restSeconds) else rest,
+            now = now,
+        )
+    }
+
+    // A row's tick: completes it, or undoes it
+    fun onToggleSetAt(ref: SetRef) {
+        val set = state.value.blocks.set(ref) ?: return
+        if (set.done) {
+            setState { copy(blocks = blocks.updateSet(ref) { it.copy(done = false) }, current = current ?: ref) }
+        } else {
+            onCompleteSetAt(ref)
+        }
+    }
+
+    // Runs a timed set's timer, making it the current set
+    fun onStartTimerAt(ref: SetRef) = setState {
+        val set = blocks.set(ref) ?: return@setState this
+        val now = clock()
+        copy(
+            current = ref,
+            editing = null,
+            rest = null,
+            setTimer = SetTimer(ref, endsAt = now + set.values.timeSeconds * 1000L, totalSeconds = set.values.timeSeconds),
+            now = now,
+        )
+    }
+
     // Rest
 
     // Changes this rest, and the workout's rest for every one after it
