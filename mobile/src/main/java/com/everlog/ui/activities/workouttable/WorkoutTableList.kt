@@ -86,7 +86,7 @@ private object TableSizes {
 
 /**
  * The workout as a table: per exercise its header, then a card of rows, SET · LAST TIME · KG · REPS
- * (or TIME) · tick (▶ for a timed set not done). A superset or circuit has a row per exercise in each set, in its title's order.
+ * (or TIME) · tick (a timer button for a timed set not done). A superset or circuit has a row per exercise in each set, in its title's order.
  * Tapping a kg or reps cell focuses it for the keypad; the tick completes the row, or undoes it.
  */
 @Composable
@@ -365,7 +365,7 @@ private fun StartButton(onClick: () -> Unit) {
     ) {
         AppIcon(
             modifier = Modifier.size(18.dp),
-            imageVector = ImageVector.vectorResource(R.drawable.ic_play_triangle),
+            imageVector = ImageVector.vectorResource(R.drawable.ic_timer),
             tint = Theme.contentColors.action,
             contentDescription = "Start timer",
         )
