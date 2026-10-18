@@ -335,7 +335,8 @@ data class ELWorkout(
         }
         for (offset in 1..positions.size) {
             val (state, set) = positions[(lastCompleted + offset) % positions.size]
-            if (!set.isComplete()) {
+            // A set removed from a superset's round only keeps its place, it isn't done
+            if (!set.isComplete() && !set.removed) {
                 return state
             }
         }

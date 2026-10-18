@@ -7,6 +7,7 @@ import com.everlog.managers.preferences.SettingsManager
 import com.everlog.utils.UnitUtils.Companion.kgToLb
 import com.everlog.utils.UnitUtils.Companion.lbToKg
 import com.everlog.utils.format.FormatUtils
+import com.google.firebase.firestore.Exclude
 import java.io.Serializable
 import java.util.*
 
@@ -26,7 +27,11 @@ data class ELSet (
 
         // Aux
 
-        var remainingTimeSeconds: Int? = null
+        var remainingTimeSeconds: Int? = null,
+        // Deleted from one exercise in a superset or circuit's round during a workout, kept so the round's other
+        // sets still line up with their exercises. Only the ongoing workout has these; finishing drops them.
+        @get:Exclude @set:Exclude
+        var removed: Boolean = false
 
 ) : Serializable, ELFirestoreModel {
 
@@ -149,6 +154,14 @@ data class ELSet (
         } else {
             updateWeight(getWeight() + offset)
         }
+    }
+
+    /**
+     * @return The weight as stored, in kg whatever the user's unit, or null if it's not entered.
+     */
+    @Exclude
+    fun getWeightKg(): Float? {
+        return weight
     }
 
     fun isWeightEntered(): Boolean {
