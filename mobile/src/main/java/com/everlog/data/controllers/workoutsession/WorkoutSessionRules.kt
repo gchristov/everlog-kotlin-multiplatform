@@ -1,6 +1,7 @@
 package com.everlog.data.controllers.workoutsession
 
 import com.everlog.data.model.exercise.ELExerciseGroup
+import com.everlog.data.model.set.ELSetType
 
 // How the ongoing workout changes, as pure functions on its blocks, so they can be tested without a screen.
 // Sets are done in order: block by block, round by round, exercise by exercise. In a superset or circuit a round
@@ -146,39 +147,46 @@ fun List<WorkoutBlock>.addRound(blockId: Long, ids: SessionIds): List<WorkoutBlo
 /**
  * Deletes a round. Returns null if there's no such round, otherwise the blocks and what to put back to undo it.
  */
-fun List<WorkoutBlock>.deleteRound(blockId: Long, roundId: Long): Pair<List<WorkoutBlock>, DeletedRound>? {
+fun List<WorkoutBlock>.deleteRound(blockId: Long, roundId: Long): Pair<List<WorkoutBlock>, DeletedSets>? {
     val block = block(blockId) ?: return null
-    val position = block.rounds.indexOfFirst { it.id == roundId }
-    if (position < 0) return null
-    val blocks = map { if (it.id == blockId) it.copy(rounds = it.rounds.filterNot { round -> round.id == roundId }) else it }
-    return blocks to DeletedRound(blockId, position, block.rounds[position])
+    if (block.rounds.none { it.id == roundId }) return null
+    return replace(block.copy(rounds = block.rounds.filterNot { it.id == roundId })) to DeletedSets(block)
 }
 
 /**
  * Deletes one exercise's set. In a superset or circuit only that set goes, unless it was the last one left in its
- * round, which then goes too. A single exercise's set is its round.
+ * round, which then goes too. A single exercise's set is its round. An exercise with no sets left goes from the
+ * block, and a block left with one exercise becomes a single, as deleting an exercise from a superset did on the
+ * old screen.
  */
-fun List<WorkoutBlock>.deleteSet(ref: SetRef): Pair<List<WorkoutBlock>, DeletedRound>? {
+fun List<WorkoutBlock>.deleteSet(ref: SetRef): Pair<List<WorkoutBlock>, DeletedSets>? {
     val block = block(ref.blockId) ?: return null
-    val position = block.rounds.indexOfFirst { it.id == ref.roundId }
-    if (position < 0) return null
-    val round = block.rounds[position]
+    val round = block.rounds.firstOrNull { it.id == ref.roundId } ?: return null
     val othersLeft = round.sets.withIndex().any { (i, set) -> i != ref.index && !set.removed }
     if (!othersLeft) return deleteRound(ref.blockId, ref.roundId)
-    return updateSet(ref) { it.copy(removed = true) } to DeletedRound(ref.blockId, position, round)
+    val removed = block.copy(rounds = block.rounds.map { r ->
+        if (r.id != ref.roundId) r else r.copy(sets = r.sets.mapIndexed { i, set -> if (i == ref.index) set.copy(removed = true) else set })
+    })
+    val exerciseLeft = removed.rounds.any { !it.sets[ref.index].removed }
+    return replace(if (exerciseLeft) removed else removed.withoutExercise(ref.index)) to DeletedSets(block)
 }
 
-/**
- * Puts a deleted round back as it was, where it was.
- */
-fun List<WorkoutBlock>.restore(deleted: DeletedRound): List<WorkoutBlock> = map { block ->
-    if (block.id != deleted.blockId) return@map block
-    // A round that's still there (one exercise's set was deleted) goes back to how it was
-    if (block.rounds.any { it.id == deleted.round.id }) {
-        return@map block.copy(rounds = block.rounds.map { if (it.id == deleted.round.id) deleted.round else it })
-    }
-    block.copy(rounds = block.rounds.toMutableList().apply { add(deleted.position.coerceAtMost(size), deleted.round) })
+private fun WorkoutBlock.withoutExercise(index: Int): WorkoutBlock {
+    val exercises = exercises.filterIndexed { i, _ -> i != index }
+    return copy(
+        exercises = exercises,
+        rounds = rounds.map { round -> round.copy(sets = round.sets.filterIndexed { i, _ -> i != index }) }.filterNot { round -> round.sets.all { it.removed } },
+        type = if (exercises.size == 1) ELSetType.SINGLE.name else type,
+    )
 }
+
+private fun List<WorkoutBlock>.replace(block: WorkoutBlock): List<WorkoutBlock> = map { if (it.id == block.id) block else it }
+
+/**
+ * Puts a block back as it was before its sets were deleted. Changes made to the block since are lost too, so the
+ * undo should go once anything else changes.
+ */
+fun List<WorkoutBlock>.restore(deleted: DeletedSets): List<WorkoutBlock> = replace(deleted.block)
 
 fun List<WorkoutBlock>.deleteBlock(blockId: Long): List<WorkoutBlock> = filterNot { it.id == blockId }
 

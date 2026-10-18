@@ -152,9 +152,10 @@ class WorkoutSessionMapperTest {
         val blocks = workout.toSessionBlocks(SessionIds())
         val removed = blocks.updateSet(SetRef(blocks[0].id, blocks[0].rounds[0].id, 1)) { it.copy(removed = true) }
 
-        val exercises = workout.withSessionBlocks(removed, finished = true).getExerciseGroups().single().exercises
+        val group = workout.withSessionBlocks(removed, finished = true).getExerciseGroups().single()
 
-        assertThat(exercises.map { it.uuid }).containsExactly("fly")
+        assertThat(group.exercises.map { it.uuid }).containsExactly("fly")
+        assertThat(group.type).isEqualTo("SINGLE")
     }
 
     @Test

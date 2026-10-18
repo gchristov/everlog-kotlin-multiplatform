@@ -3,6 +3,7 @@ package com.everlog.data.controllers.workoutsession
 import com.everlog.data.model.exercise.ELExerciseGroup
 import com.everlog.data.model.exercise.ELRoutineExercise
 import com.everlog.data.model.set.ELSet
+import com.everlog.data.model.set.ELSetType
 import com.everlog.data.model.workout.ELWorkout
 import org.apache.commons.lang3.SerializationUtils
 
@@ -51,6 +52,8 @@ private fun WorkoutBlock.toExerciseGroup(finished: Boolean): ELExerciseGroup? {
     if (exercises.isEmpty()) {
         return null
     }
+    // The rules take an exercise with no sets left out of its block already, this is in case one slips through
+    val type = if (exercises.size == 1 && exercises.size < this.exercises.size) ELSetType.SINGLE.name else type
     return ELExerciseGroup(uuid = uuid, type = type, exercises = exercises.toMutableList(), restTimeSeconds = restSeconds)
 }
 

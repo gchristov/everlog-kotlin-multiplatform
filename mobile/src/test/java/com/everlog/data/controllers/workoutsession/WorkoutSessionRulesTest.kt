@@ -148,6 +148,29 @@ class WorkoutSessionRulesTest {
     }
 
     @Test
+    fun `deleting an exercise's last set in a superset makes it a single`() {
+        val (oneRound, _) = blocks.deleteRound(superset.id, superset.rounds[1].id)!!
+
+        val (deleted, undo) = oneRound.deleteSet(ref(superset, 0, index = 1))!!
+
+        val block = deleted.block(superset.id)!!
+        assertThat(block.type).isEqualTo("SINGLE")
+        assertThat(block.exercises.map { it.uuid }).containsExactly("exercise-0")
+        assertThat(block.rounds.map { it.sets.size }).containsExactly(1)
+        assertThat(deleted.restore(undo)).isEqualTo(oneRound)
+    }
+
+    @Test
+    fun `deleting a circuit exercise's last set keeps it a circuit while two are left`() {
+        val circuit = block(exercises = 3, rounds = 1).copy(type = "CIRCUIT")
+
+        val (deleted, _) = listOf(circuit).deleteSet(ref(circuit, 0, index = 2))!!
+
+        assertThat(deleted.single().type).isEqualTo("CIRCUIT")
+        assertThat(deleted.single().exercises).hasSize(2)
+    }
+
+    @Test
     fun `a deleted round goes back where it was`() {
         val (deleted, undo) = blocks.deleteRound(single.id, single.rounds[0].id)!!
 

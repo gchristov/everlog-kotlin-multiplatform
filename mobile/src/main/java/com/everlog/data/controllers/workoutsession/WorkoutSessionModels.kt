@@ -83,12 +83,10 @@ data class SetRef(
 )
 
 /**
- * A deleted round, or a round one exercise's set was deleted from, as it was, so it can be put back.
+ * A block as it was before some of its sets were deleted, so the delete can be undone.
  */
-data class DeletedRound(
-    val blockId: Long,
-    val position: Int,
-    val round: WorkoutRound,
+data class DeletedSets(
+    val block: WorkoutBlock,
 )
 
 /**
