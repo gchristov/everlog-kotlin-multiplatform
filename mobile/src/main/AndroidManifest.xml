@@ -182,6 +182,12 @@
             android:windowSoftInputMode="stateHidden"
             android:exported="false" />
         <activity
+            android:name=".ui.activities.workoutlog.WorkoutLogActivity"
+            android:configChanges="keyboardHidden|orientation|screenSize"
+            android:launchMode="singleTask"
+            android:windowSoftInputMode="stateHidden|adjustNothing"
+            android:exported="false" />
+        <activity
             android:name=".ui.activities.home.workout.WorkoutActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:launchMode="singleTask"

@@ -286,6 +286,25 @@
         <item quantity="other">Finishing also saves %1$d sets you haven\'t ticked as done.</item>
     </plurals>
     <string name="workout_discard_finish">Finish</string>
+    <!-- The Compose workout screen (TAS-455) -->
+    <string name="workout_log_close">Close</string>
+    <string name="workout_log_finish_title">Finish workout?</string>
+    <string name="workout_log_column_set">SET</string>
+    <string name="workout_log_column_reps">REPS</string>
+    <string name="workout_log_column_time">TIME</string>
+    <string name="workout_log_column_reps_time">REPS/TIME</string>
+    <string name="workout_log_keypad_label">SET %1$d OF %2$d · %3$s</string>
+    <string name="workout_log_keypad_label_group">SET %1$d OF %2$d · %3$d OF %4$d · %5$s</string>
+    <string name="workout_log_reps">Reps</string>
+    <string name="workout_log_time">Time</string>
+    <string name="workout_log_next">Next</string>
+    <string name="workout_log_done">Done</string>
+    <string name="workout_log_complete_set">Complete set</string>
+    <string name="workout_log_undo_set">Undo set</string>
+    <string name="workout_log_add_exercise">Add exercise</string>
+    <string name="workout_log_empty_hint">Add an exercise to start</string>
+    <string name="workout_log_example">EXAMPLE · NOT YOUR DATA</string>
+    <string name="workout_log_example_exercise">Example exercise</string>
     <string name="workout_discard_keep_going">Keep going</string>
     <string name="workout_metric_prompt_missing">Please enter a value</string>
     <string name="workout_rest_time">"Rest • %1$s"</string>

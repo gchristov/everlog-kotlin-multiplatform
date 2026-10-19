@@ -30,6 +30,8 @@ class AnalyticsConstants {
         const val SCREEN_ROUTINE_PICKER = "screen_routine_picker"
         const val SCREEN_SET_TYPE_PICKER = "screen_set_type_picker"
         const val SCREEN_WORKOUT = "screen_workout"
+        // The Compose workout screen (TAS-455), beside the old one while workout_screen_v2 rolls out
+        const val SCREEN_WORKOUT_V2 = "screen_workout_v2"
         const val SCREEN_WORKOUT_DETAILS = "screen_workout_details"
         const val SCREEN_WEB_VIEW = "screen_web_view"
         const val SCREEN_PRO = "screen_pro"
