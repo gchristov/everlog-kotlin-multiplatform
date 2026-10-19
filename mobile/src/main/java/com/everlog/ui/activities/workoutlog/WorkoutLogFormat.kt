@@ -1,5 +1,7 @@
 package com.everlog.ui.activities.workoutlog
 
+import com.everlog.managers.preferences.SettingsManager.WeightUnit
+import com.everlog.utils.ArrayResourceTypeUtils
 import java.math.BigDecimal
 import java.math.RoundingMode
 
@@ -36,3 +38,9 @@ internal fun secondsTyped(seconds: Int): String {
     val minutes = seconds / 60
     return if (minutes > 0) "$minutes%02d".format(seconds % 60) else "$seconds"
 }
+
+/**
+ * KG or LB, as the column and the keypad label it.
+ */
+internal fun unitLabel(unit: WeightUnit): String =
+    ArrayResourceTypeUtils.withWeightAbbreviations().getTitle(unit.name, "--").orEmpty().uppercase()

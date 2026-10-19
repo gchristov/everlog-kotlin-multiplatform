@@ -57,7 +57,6 @@ import com.everlog.data.controllers.workoutsession.ValueField
 import com.everlog.data.controllers.workoutsession.WorkoutBlock
 import com.everlog.data.controllers.workoutsession.WorkoutSet
 import com.everlog.data.model.set.ELSetType
-import com.everlog.managers.preferences.SettingsManager
 import com.everlog.managers.preferences.SettingsManager.WeightUnit
 import com.everlog.ui.design.elements.AppIcon
 import com.everlog.ui.design.elements.AppText
@@ -73,7 +72,7 @@ private object TableSizes {
     val GroupThumbnail = 24.dp
     val GroupThumbnailCorner = 8.dp
     val GroupRowGap = 6.dp
-    val Badge = 14.dp
+    val Badge = 16.dp
     val BadgeOffset = 3.dp
     val RowHeight = 52.dp
     val RowPadding = 12.dp
@@ -184,7 +183,7 @@ private fun ExerciseTable(
     Column(modifier = Modifier.padding(bottom = Theme.spacing.extraLarge)) {
         ExerciseHeader(block)
         Spacer(modifier = Modifier.height(Theme.spacing.medium))
-        ColumnLabels(block)
+        ColumnLabels(block, unit)
         Spacer(modifier = Modifier.height(Theme.spacing.extraSmall))
         Column(
             modifier = Modifier
@@ -294,7 +293,7 @@ private fun GroupHeader(modifier: Modifier, block: WorkoutBlock) {
 }
 
 @Composable
-private fun ColumnLabels(block: WorkoutBlock) {
+private fun ColumnLabels(block: WorkoutBlock, unit: WeightUnit) {
     val modes = block.rounds.flatMap { round -> round.sets.filterNot { it.removed }.map { it.mode } }.toSet()
     val count = when {
         modes == setOf(SetMode.Time) -> stringResource(R.string.workout_log_column_time)
@@ -308,7 +307,7 @@ private fun ColumnLabels(block: WorkoutBlock) {
         Label(stringResource(R.string.workout_log_column_set), Modifier.width(TableSizes.SetColumn), TextAlign.Center)
         Spacer(modifier = Modifier.weight(1f))
         Label(count, Modifier.width(TableSizes.Cell), TextAlign.Center)
-        Label(SettingsManager.weightUnitAbbreviation().uppercase(), Modifier.width(TableSizes.Cell), TextAlign.Center)
+        Label(unitLabel(unit), Modifier.width(TableSizes.Cell), TextAlign.Center)
         Spacer(modifier = Modifier.width(TableSizes.CheckTarget))
     }
 }

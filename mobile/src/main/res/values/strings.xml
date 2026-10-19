@@ -289,6 +289,7 @@
     <!-- The Compose workout screen (TAS-455) -->
     <string name="workout_log_close">Close</string>
     <string name="workout_log_finish_title">Finish workout?</string>
+    <string name="workout_log_finish_body">Some sets aren\'t ticked off yet. Sets with reps or a time are saved as done.</string>
     <string name="workout_log_column_set">SET</string>
     <string name="workout_log_column_reps">REPS</string>
     <string name="workout_log_column_time">TIME</string>

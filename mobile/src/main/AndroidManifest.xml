@@ -185,6 +185,7 @@
             android:name=".ui.activities.workoutlog.WorkoutLogActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:launchMode="singleTask"
+            android:theme="@style/AppTheme.NoActionBar"
             android:windowSoftInputMode="stateHidden|adjustNothing"
             android:exported="false" />
         <activity

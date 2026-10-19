@@ -1,6 +1,7 @@
 package com.everlog.ui.activities.workoutlog
 
 import android.content.Intent
+import android.os.Bundle
 import androidx.activity.compose.BackHandler
 import androidx.activity.viewModels
 import androidx.compose.foundation.background
@@ -106,7 +107,7 @@ class WorkoutLogActivity : CommonComposeActivity() {
         }
     }
 
-    override fun onCreate(savedInstanceState: android.os.Bundle?) {
+    override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         if (savedInstanceState == null) {
             // Closes screens that shouldn't stay under a workout, as the old screen does
@@ -157,7 +158,7 @@ internal fun WorkoutLogScreen(viewModel: WorkoutLogViewModel, onAddExercise: () 
         AnalyticsManager.manager.screenName(AnalyticsConstants.SCREEN_WORKOUT_V2)
         keepScreenOn = SettingsManager.manager.keepScreenOn()
         viewModel.onResume()
-        onPauseOrDispose {}
+        onPauseOrDispose { viewModel.onPause() }
     }
     if (keepScreenOn) KeepScreenOn()
 
@@ -437,7 +438,7 @@ private fun Dialogs(dialog: WorkoutLogDialog?, viewModel: WorkoutLogViewModel) {
         null -> Unit
         WorkoutLogDialog.Finish -> AppDialog(
             title = stringResource(R.string.workout_log_finish_title),
-            body = stringResource(R.string.workout_finish_subtitle),
+            body = stringResource(R.string.workout_log_finish_body),
             onDismissRequest = viewModel::onDialogDismissed,
             primaryAction = AppDialogAction(stringResource(R.string.workout_finish), viewModel::onFinishConfirmed),
             secondaryAction = AppDialogAction(stringResource(R.string.cancel), viewModel::onDialogDismissed),
@@ -483,7 +484,7 @@ private fun focusLabel(blocks: List<WorkoutBlock>, focus: CellFocus, unit: Setti
     val block = blocks.block(focus.ref.blockId) ?: return ""
     val round = block.rounds.indexOfFirst { it.id == focus.ref.roundId } + 1
     val field = when (focus.field) {
-        ValueField.Weight -> SettingsManager.weightUnitAbbreviation().uppercase()
+        ValueField.Weight -> unitLabel(unit)
         ValueField.Reps -> stringResource(R.string.workout_log_column_reps)
         ValueField.Time -> stringResource(R.string.workout_log_column_time)
     }

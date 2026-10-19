@@ -25,6 +25,7 @@ import com.everlog.managers.preferences.SettingsManager.WeightUnit
 import com.everlog.ui.mvvm.CommonViewModel
 import com.everlog.utils.UnitUtils
 import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
 import java.util.Date
@@ -37,7 +38,7 @@ import java.util.Date
  * @param workout The workout as launched or resumed (see [load]), for everything but its exercises, which the state
  * holds
  * @param clock The current time, so tests can pin it
- * @param tickMillis How often the workout's time moves on; null stops it, for tests
+ * @param tickMillis How often the workout's time moves on while the screen shows; null stops it, for tests
  */
 internal class WorkoutLogViewModel(
     dispatcher: CoroutineDispatcher,
@@ -46,26 +47,35 @@ internal class WorkoutLogViewModel(
     private val store: WorkoutLogStore,
     private val analytics: WorkoutLogAnalytics,
     private val clock: () -> Long = System::currentTimeMillis,
-    tickMillis: Long? = TickMillis,
+    private val tickMillis: Long? = TickMillis,
 ) : CommonViewModel<WorkoutLogState>(dispatcher, initialState(workout, store, clock())) {
 
     private val ids = SessionIds(start = state.value.blocks.lastId())
+    private var ticking: Job? = null
 
     init {
         // So the workout can be resumed from the start, as the old screen does
         save()
-        if (tickMillis != null) {
-            launchCoroutine {
-                while (isActive) {
-                    delay(tickMillis)
-                    setState { copy(now = clock()) }
-                }
+    }
+
+    // A setting may have changed while the screen was away, e.g. the weight unit. The time only moves on while
+    // the screen shows.
+    fun onResume() {
+        setState { copy(unit = store.weightUnit(), now = clock()) }
+        val tick = tickMillis ?: return
+        ticking?.cancel()
+        ticking = launchCoroutine {
+            while (isActive) {
+                delay(tick)
+                setState { copy(now = clock()) }
             }
         }
     }
 
-    // A setting may have changed while the screen was away, e.g. the weight unit
-    fun onResume() = setState { copy(unit = store.weightUnit(), now = clock()) }
+    fun onPause() {
+        ticking?.cancel()
+        ticking = null
+    }
 
     // The keypad's ± for a weight, in the user's unit
     fun weightIncrease(): Float = store.weightIncrease()
