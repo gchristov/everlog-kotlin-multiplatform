@@ -1,7 +1,10 @@
 package com.everlog.ui.activities.workoutlog
 
+import com.everlog.data.controllers.workoutsession.ValueField
+import com.everlog.data.controllers.workoutsession.WorkoutSet
 import com.everlog.managers.preferences.SettingsManager.WeightUnit
 import com.everlog.utils.ArrayResourceTypeUtils
+import com.everlog.utils.UnitUtils
 import java.math.BigDecimal
 import java.math.RoundingMode
 
@@ -44,3 +47,36 @@ internal fun secondsTyped(seconds: Int): String {
  */
 internal fun unitLabel(unit: WeightUnit): String =
     ArrayResourceTypeUtils.withWeightAbbreviations().getTitle(unit.name, "--").orEmpty().uppercase()
+
+/**
+ * A weight in kg, in the user's unit.
+ */
+internal fun displayWeight(kg: Float, unit: WeightUnit): Float = if (unit == WeightUnit.POUND) UnitUtils.kgToLb(kg) else kg
+
+/**
+ * A weight in the user's unit, in kg.
+ */
+internal fun storedWeight(value: Float, unit: WeightUnit): Float = if (unit == WeightUnit.POUND) UnitUtils.lbToKg(value) else value
+
+// Typing into a cell with the keypad
+
+// How many characters each value takes
+internal fun maxLength(field: ValueField) = when (field) {
+    ValueField.Weight -> 6
+    ValueField.Reps -> 3
+    ValueField.Time -> 4
+}
+
+// What's typed as the value to set. Nothing typed clears it.
+internal fun parse(field: ValueField, text: String): Float? = when (field) {
+    ValueField.Weight -> text.toFloatOrNull()
+    ValueField.Reps -> text.toIntOrNull()?.toFloat()
+    ValueField.Time -> text.takeIf { it.isNotEmpty() }?.let { typedSeconds(it).toFloat() }
+}
+
+// A value as its digits, for backspacing into it
+internal fun rawText(set: WorkoutSet, field: ValueField, unit: WeightUnit): String = when (field) {
+    ValueField.Weight -> set.weightKg?.let { formatWeight(displayWeight(it, unit)) }.orEmpty()
+    ValueField.Reps -> set.reps?.toString().orEmpty()
+    ValueField.Time -> set.timeSeconds?.let(::secondsTyped).orEmpty()
+}

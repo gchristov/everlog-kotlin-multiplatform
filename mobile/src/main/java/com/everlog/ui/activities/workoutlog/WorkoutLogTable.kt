@@ -3,6 +3,7 @@ package com.everlog.ui.activities.workoutlog
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.animateScrollBy
 import androidx.compose.foundation.indication
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
@@ -20,7 +21,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.foundation.gestures.animateScrollBy
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.HorizontalDivider
@@ -56,7 +56,6 @@ import com.everlog.data.controllers.workoutsession.SetRef
 import com.everlog.data.controllers.workoutsession.ValueField
 import com.everlog.data.controllers.workoutsession.WorkoutBlock
 import com.everlog.data.controllers.workoutsession.WorkoutSet
-import com.everlog.data.model.set.ELSetType
 import com.everlog.managers.preferences.SettingsManager.WeightUnit
 import com.everlog.ui.design.elements.AppIcon
 import com.everlog.ui.design.elements.AppText
@@ -252,7 +251,7 @@ private fun ExerciseHeader(block: WorkoutBlock) {
 @Composable
 private fun GroupHeader(modifier: Modifier, block: WorkoutBlock) {
     val context = LocalContext.current
-    val type = block.type?.let { runCatching { ELSetType.valueOf(it) }.getOrNull() }
+    val type = block.setType
     Column(modifier = modifier, verticalArrangement = Arrangement.spacedBy(TableSizes.GroupRowGap)) {
         type?.getTitle(context)?.let { title ->
             AppText(

@@ -91,6 +91,15 @@ New screens are built in Compose: a `CommonComposeActivity` (wraps the content i
 
 `services/workout/WorkoutService` + `WorkoutNotificationBuilder` run the active-workout foreground service/notification. `services/fcm/ELFirebaseMessagingService` handles push notifications. `receivers/` holds broadcast receivers.
 
+## Code quality
+
+The owner can't review every line of larger features (e.g. the Compose workout screen, TAS-455), so the code has to stand on its own: testable, easy to read and following good design, without needing the author to explain it.
+- **Testable.** Keep logic out of composables and Android classes: rules in plain functions or classes (like `data/controllers/workoutsession`), screen behaviour in the view-model. Pass dependencies in through small interfaces (store, settings, analytics) and take `now` or a clock as a parameter, rather than reading singletons (`SettingsManager.manager`, `AnalyticsManager.manager`, `WorkoutManager.manager`) from inside a view-model, reducer or composable. Composables render state and forward events.
+- **Readable.** One responsibility per file, named after what it holds (screen, view-model, models, services, table, dialogs). Names from the domain (set, round, block, rest), small functions, comments that say why. No stage or PR numbers in code comments: they go stale.
+- **Consistent.** Follow the patterns already in the codebase (view-model and `StateFlow` state, design system elements, use-case style services) before inventing new ones, and say so when a new pattern is needed.
+- **Ask before it grows.** When doing it properly needs a change beyond the PR's scope (a refactor of existing code, a new dependency, a design system change, moving logic around after the fact), say what and why and wait for a go, rather than folding it in.
+- **Review before handing over.** Re-read the whole diff against these points before asking for a review or merge, and list what was checked and what was left.
+
 ## User-facing copy
 
 Anything users read (in-app strings, release notes, the store listing, ads, notifications, emails) follows the tone of voice guide in the "Tone of voice" section of the [Product market fit](https://app.notion.com/p/3e8662113da880779b9be047669d1502) page in Notion: its principles, words to use and avoid, rules for each place, and examples. Read it before drafting copy. In short: plain, direct and concrete, in the words lifters use; every claim true today (no superlatives, "#1", "free forever", or AI and coaching we don't have); calm and a little dry, without hype or exclamation marks; British English and sentence case. Release notes are one friendly paragraph under Play's 500 characters about the features people will notice (not small UI polish), with emoji only where they help, not on every point.

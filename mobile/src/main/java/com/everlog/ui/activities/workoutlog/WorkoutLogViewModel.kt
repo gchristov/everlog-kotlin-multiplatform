@@ -1,6 +1,5 @@
 package com.everlog.ui.activities.workoutlog
 
-import com.everlog.data.controllers.workoutsession.Completion
 import com.everlog.data.controllers.workoutsession.SessionIds
 import com.everlog.data.controllers.workoutsession.SetMode
 import com.everlog.data.controllers.workoutsession.SetRef
@@ -19,16 +18,13 @@ import com.everlog.data.controllers.workoutsession.toSessionBlocks
 import com.everlog.data.controllers.workoutsession.uncompleteSet
 import com.everlog.data.controllers.workoutsession.withSessionBlocks
 import com.everlog.data.model.exercise.ELExerciseGroup
-import com.everlog.data.model.set.ELSetType
 import com.everlog.data.model.workout.ELWorkout
-import com.everlog.managers.preferences.SettingsManager.WeightUnit
 import com.everlog.ui.mvvm.CommonViewModel
-import com.everlog.utils.UnitUtils
+import java.util.Date
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
-import java.util.Date
 
 /**
  * The new workout screen (TAS-455): the ongoing workout as a table, typed into with a docked keypad. It does what
@@ -38,6 +34,7 @@ import java.util.Date
  * @param workout The workout as launched or resumed (see [load]), for everything but its exercises, which the state
  * holds
  * @param clock The current time, so tests can pin it
+ * @param ids Ids for the blocks and rounds, the loaded ones and any added later
  * @param tickMillis How often the workout's time moves on while the screen shows; null stops it, for tests
  */
 internal class WorkoutLogViewModel(
@@ -45,12 +42,13 @@ internal class WorkoutLogViewModel(
     private val workout: ELWorkout,
     private val fromPlan: Boolean,
     private val store: WorkoutLogStore,
+    private val settings: WorkoutLogSettings,
     private val analytics: WorkoutLogAnalytics,
     private val clock: () -> Long = System::currentTimeMillis,
+    private val ids: SessionIds = SessionIds(),
     private val tickMillis: Long? = TickMillis,
-) : CommonViewModel<WorkoutLogState>(dispatcher, initialState(workout, store, clock())) {
+) : CommonViewModel<WorkoutLogState>(dispatcher, initialState(workout, ids, settings, clock())) {
 
-    private val ids = SessionIds(start = state.value.blocks.lastId())
     private var ticking: Job? = null
 
     init {
@@ -61,7 +59,8 @@ internal class WorkoutLogViewModel(
     // A setting may have changed while the screen was away, e.g. the weight unit. The time only moves on while
     // the screen shows.
     fun onResume() {
-        setState { copy(unit = store.weightUnit(), now = clock()) }
+        analytics.screenViewed()
+        setState { withSettings(settings).copy(now = clock()) }
         val tick = tickMillis ?: return
         ticking?.cancel()
         ticking = launchCoroutine {
@@ -77,16 +76,13 @@ internal class WorkoutLogViewModel(
         ticking = null
     }
 
-    // The keypad's ± for a weight, in the user's unit
-    fun weightIncrease(): Float = store.weightIncrease()
-
     // Values
 
     /**
      * @param value Reps, seconds, or a weight in the user's unit. Null clears it.
      */
     fun onSetValue(ref: SetRef, field: ValueField, value: Float?) = change {
-        val stored = if (field == ValueField.Weight) value?.let { toKg(it, unit) } else value
+        val stored = if (field == ValueField.Weight) value?.let { storedWeight(it, unit) } else value
         copy(blocks = blocks.setValue(ref, field, stored))
     }
 
@@ -101,27 +97,28 @@ internal class WorkoutLogViewModel(
         val set = state.value.blocks.set(ref) ?: return
         if (set.done) {
             change { copy(blocks = blocks.uncompleteSet(ref), current = current ?: ref) }
-            analytics.setEdited(setType(ref), set.mode == SetMode.Time)
+            analytics.setEdited(state.value.blocks.block(ref.blockId)?.setType, set.mode == SetMode.Time)
         } else {
             onCompleteSet(ref)
         }
     }
 
     /**
-     * Completes a set: the current one moves on to the next set not done. Rest comes with the timers (stage 3).
+     * Completes a set: the current one moves on to the next set not done.
      */
     fun onCompleteSet(ref: SetRef) {
         val before = state.value
         val set = before.blocks.set(ref) ?: return
         if (set.done) return
-        val completion: Completion = before.blocks.completeSet(ref, before.current, clock())
+        val completion = before.blocks.completeSet(ref, before.current, clock())
         change { copy(blocks = completion.blocks, current = completion.current) }
-        analytics.setCompleted(setType(ref), set.mode == SetMode.Time)
+        val type = completion.blocks.block(ref.blockId)?.setType
+        analytics.setCompleted(type, set.mode == SetMode.Time)
         // A superset's round (or another set of several exercises) done with this set
         val round = completion.blocks.round(ref.blockId, ref.roundId)
         val exercises = round?.sets?.count { !it.removed } ?: 0
         if (round?.done == true && exercises > 1) {
-            analytics.setGroupCompleted(setType(ref), exercises)
+            analytics.setGroupCompleted(type, exercises)
         }
     }
 
@@ -204,9 +201,6 @@ internal class WorkoutLogViewModel(
         }
     }
 
-    private fun setType(ref: SetRef): ELSetType? =
-        state.value.blocks.block(ref.blockId)?.type?.let { runCatching { ELSetType.valueOf(it) }.getOrNull() }
-
     companion object {
         private const val TickMillis = 1000L
 
@@ -227,17 +221,25 @@ internal class WorkoutLogViewModel(
             return launched
         }
 
-        private fun initialState(workout: ELWorkout, store: WorkoutLogStore, now: Long): WorkoutLogState {
-            val blocks = workout.toSessionBlocks(SessionIds())
+        private fun initialState(workout: ELWorkout, ids: SessionIds, settings: WorkoutLogSettings, now: Long): WorkoutLogState {
+            val blocks = workout.toSessionBlocks(ids)
             return WorkoutLogState(
                 name = workout.getName().orEmpty(),
                 startedAt = workout.createdDate,
                 now = now,
                 blocks = blocks,
                 current = blocks.resumeAt(),
-                unit = store.weightUnit(),
+                unit = settings.weightUnit(),
+                weightStep = settings.weightIncrease(),
+                keepScreenOn = settings.keepScreenOn(),
             )
         }
+
+        private fun WorkoutLogState.withSettings(settings: WorkoutLogSettings) = copy(
+            unit = settings.weightUnit(),
+            weightStep = settings.weightIncrease(),
+            keepScreenOn = settings.keepScreenOn(),
+        )
 
         // The next set not done after the one completed last, as the notification picks it
         private fun List<WorkoutBlock>.resumeAt(): SetRef? {
@@ -245,13 +247,5 @@ internal class WorkoutLogViewModel(
             return nextOpenAfter(last)
         }
 
-        private fun List<WorkoutBlock>.lastId(): Long = maxOfOrNull { block -> maxOf(block.id, block.rounds.maxOfOrNull { it.id } ?: 0) } ?: 0
-
-        private fun toKg(value: Float, unit: WeightUnit): Float = if (unit == WeightUnit.POUND) UnitUtils.lbToKg(value) else value
     }
 }
-
-/**
- * A weight in kg, in the user's unit.
- */
-internal fun displayWeight(kg: Float, unit: WeightUnit): Float = if (unit == WeightUnit.POUND) UnitUtils.kgToLb(kg) else kg

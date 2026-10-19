@@ -16,6 +16,9 @@ internal data class WorkoutLogState(
     val current: SetRef?,
     // Weights show and are typed in this unit; the blocks hold kg
     val unit: WeightUnit,
+    // The keypad's ± for a weight, in [unit]
+    val weightStep: Float,
+    val keepScreenOn: Boolean,
     val dialog: WorkoutLogDialog? = null,
     // Set once the workout is finished or discarded, for the screen to close
     val exit: WorkoutLogExit? = null,

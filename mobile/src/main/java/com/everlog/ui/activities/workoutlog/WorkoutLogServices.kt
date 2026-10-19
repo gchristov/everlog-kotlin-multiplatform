@@ -26,11 +26,6 @@ internal interface WorkoutLogStore {
 
     // Saves the finished workout and checks it off the ongoing plan
     fun saveFinished(workout: ELWorkout, fromPlan: Boolean)
-
-    fun weightUnit(): SettingsManager.WeightUnit
-
-    // The keypad's ± for weight, in the user's unit
-    fun weightIncrease(): Float
 }
 
 internal class RealWorkoutLogStore : WorkoutLogStore {
@@ -46,16 +41,35 @@ internal class RealWorkoutLogStore : WorkoutLogStore {
         ELDatastore.workoutStore().create(workout, SetOptions.merge())
         PlanManager.manager.checkCompletedWorkout(workout, fromPlan)
     }
+}
 
+/**
+ * The settings the workout screen follows. Read again each time it shows, as they can change in Settings meanwhile.
+ */
+internal interface WorkoutLogSettings {
+    fun weightUnit(): SettingsManager.WeightUnit
+
+    // The keypad's ± for a weight, in the user's unit
+    fun weightIncrease(): Float
+
+    fun keepScreenOn(): Boolean
+}
+
+internal class RealWorkoutLogSettings : WorkoutLogSettings {
     override fun weightUnit(): SettingsManager.WeightUnit = SettingsManager.manager.weightUnit()
 
     override fun weightIncrease(): Float = SettingsManager.manager.weightIncrease()
+
+    override fun keepScreenOn(): Boolean = SettingsManager.manager.keepScreenOn()
 }
 
 /**
  * The workout screen's events, the same ones the old screen logs.
  */
 internal interface WorkoutLogAnalytics {
+    // Logged as the screen shows, before its other events, so they're credited to it
+    fun screenViewed()
+
     fun setCompleted(type: ELSetType?, timed: Boolean)
 
     // A superset's round (or another set of several exercises) done
@@ -79,6 +93,8 @@ internal interface WorkoutLogAnalytics {
 
 internal class RealWorkoutLogAnalytics : WorkoutLogAnalytics {
     private val analytics = AnalyticsManager.manager
+
+    override fun screenViewed() = analytics.screenName(AnalyticsConstants.SCREEN_WORKOUT_V2)
 
     override fun setCompleted(type: ELSetType?, timed: Boolean) =
         analytics.setCompleted(AnalyticsConstants.SET_COMPLETED_SOURCE_SCREEN, type, timed)
