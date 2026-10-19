@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -48,7 +47,7 @@ fun AppKeypadTimer(
         AppKeypadTimerStyle.Active -> Triple(Theme.contentColors.action, Theme.backgrounds.selected, Theme.backgrounds.actionMuted)
         AppKeypadTimerStyle.Rest -> Triple(KeypadColors.Rest, KeypadColors.RestMuted, KeypadColors.RestBorder)
     }
-    val shape = RoundedCornerShape(KeypadSizes.KeyCorner)
+    val shape = Theme.shapes.button
     Row(
         modifier = modifier
             .fillMaxWidth()
@@ -64,7 +63,7 @@ fun AppKeypadTimer(
             AppText(text = label, style = Theme.typography.small, color = color, maxLines = 1)
             AppText(text = time, style = keypadNumberStyle(), color = color, maxLines = 1)
         }
-        listOf(less, more, end).forEach { AppKeypadPill(text = it.text, onClick = it.onClick) }
+        listOf(less, more, end).forEach { KeypadPill(text = it.text, onClick = it.onClick) }
     }
 }
 
@@ -79,7 +78,7 @@ fun AppKeypadNote(
     highlighted: Boolean = false,
     action: AppKeypadAction? = null,
 ) {
-    val shape = RoundedCornerShape(KeypadSizes.KeyCorner)
+    val shape = Theme.shapes.button
     Row(
         modifier = modifier
             .fillMaxWidth()
@@ -98,7 +97,7 @@ fun AppKeypadNote(
             style = Theme.typography.caption,
             color = if (highlighted) Theme.contentColors.action else Theme.contentColors.secondary,
         )
-        action?.let { AppKeypadPill(text = it.text, onClick = it.onClick) }
+        action?.let { KeypadPill(text = it.text, onClick = it.onClick) }
     }
 }
 

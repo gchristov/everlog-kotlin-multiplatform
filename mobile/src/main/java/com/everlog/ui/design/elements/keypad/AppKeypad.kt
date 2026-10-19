@@ -160,23 +160,19 @@ fun AppKeypad(
     }
 }
 
-/**
- * A small pill in the keypad's style, e.g. a timer's ±10s.
- */
+// A small button in the keypad's inset: Add exercise in the closed row, a timer's ±10s in a strip
 @Composable
-fun AppKeypadPill(
+internal fun KeypadPill(
     text: String,
     onClick: () -> Unit,
-    modifier: Modifier = Modifier,
     height: Dp = KeypadSizes.Chip,
 ) {
-    val shape = RoundedCornerShape(KeypadSizes.KeyCorner)
     Box(
-        modifier = modifier
+        modifier = Modifier
             .height(height)
-            .clip(shape)
+            .clip(Theme.shapes.button)
             .background(KeypadColors.Inset)
-            .border(1.dp, Theme.backgrounds.separator, shape)
+            .border(1.dp, Theme.backgrounds.separator, Theme.shapes.button)
             .clickable(onClick = onClick)
             .padding(horizontal = Theme.spacing.medium),
         contentAlignment = Alignment.Center,
@@ -185,7 +181,8 @@ fun AppKeypadPill(
     }
 }
 
-// The keypad's own colours and sizes, which only it uses for now
+// The keypad's own colours and sizes, which only it uses for now. Its keys, toggle, pills and strips are all
+// fully rounded, like the app's buttons.
 internal object KeypadColors {
     // The keys, toggle and pills sit darker than the card's tint
     val Inset = Color.Black.copy(alpha = 0.32f)
@@ -199,7 +196,6 @@ internal object KeypadSizes {
     val Corner = 30.dp
     val Padding = 14.dp
     val Key = 48.dp
-    val KeyCorner = 14.dp
     val Gap = 6.dp
     val StripHeight = 50.dp
     // The circle buttons and the toggle: as tall as AppButton
@@ -245,7 +241,7 @@ private fun Controls(onShow: (() -> Unit)?, actions: List<AppKeypadAction>, prim
                 onClick = it,
             )
         }
-        actions.forEach { AppKeypadPill(text = it.text, onClick = it.onClick, height = KeypadSizes.Button) }
+        actions.forEach { KeypadPill(text = it.text, onClick = it.onClick, height = KeypadSizes.Button) }
         Spacer(modifier = Modifier.weight(1f))
         primaryAction?.let { AppButton(onClick = it.onClick, text = it.text) }
     }
@@ -267,14 +263,13 @@ private fun CircleButton(icon: ImageVector, contentDescription: String, onClick:
 
 @Composable
 private fun Toggle(toggle: AppKeypadToggle) {
-    val outer = RoundedCornerShape(KeypadSizes.KeyCorner)
-    val inner = RoundedCornerShape(KeypadSizes.KeyCorner - KeypadSizes.ToggleInset)
+    val shape = Theme.shapes.button
     Row(
         modifier = Modifier
             .height(KeypadSizes.Button)
-            .clip(outer)
+            .clip(shape)
             .background(KeypadColors.Inset)
-            .border(1.dp, Theme.backgrounds.separator, outer)
+            .border(1.dp, Theme.backgrounds.separator, shape)
             .padding(KeypadSizes.ToggleInset),
     ) {
         toggle.options.forEachIndexed { index, option ->
@@ -282,7 +277,7 @@ private fun Toggle(toggle: AppKeypadToggle) {
             Box(
                 modifier = Modifier
                     .fillMaxHeight()
-                    .clip(inner)
+                    .clip(shape)
                     .background(if (selected) Theme.contentColors.action else Color.Transparent)
                     .clickable { toggle.onSelect(index) }
                     .padding(horizontal = Theme.spacing.medium),
@@ -355,7 +350,7 @@ private fun RowScope.Key(
     enabled: Boolean = true,
     weight: Float = 1f,
 ) {
-    val shape = RoundedCornerShape(KeypadSizes.KeyCorner)
+    val shape = Theme.shapes.button
     val content = if (primary) Theme.contentColors.onAction else Theme.contentColors.primary
     val gap = with(LocalDensity.current) { KeypadSizes.Gap.roundToPx() }
     Box(

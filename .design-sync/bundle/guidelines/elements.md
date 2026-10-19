@@ -144,8 +144,8 @@ Actions pinned to the bottom of an `AppScreen`, in a floating card:
 
 A number keypad in a floating card, docked over the bottom of a screen like `AppFooter` (same insets, blur and
 tint), radius 30px, 1px `--background-separator` border, padding 14px, its parts `--space-sm` apart. Its keys,
-toggle and pills sit in a darker inset, `rgba(0,0,0,0.32)`, with a 1px `--background-separator` border and 14px
-corners.
+toggle and pills sit in a darker inset, `rgba(0,0,0,0.32)`, with a 1px `--background-separator` border. Everything
+inside it (keys, toggle, pills, strips) is fully rounded, `--radius-button`, like the app's buttons.
 - closed: one row of controls: a 42px circle keyboard button that opens it, small pills (42px tall,
   `--font-button`, padding `--space-md`, e.g. Add exercise), and the primary `AppButton` at the end
 - open: a header row (a 42px circle ⌄ that closes it; a label in `--font-small` / `--content-secondary`,
