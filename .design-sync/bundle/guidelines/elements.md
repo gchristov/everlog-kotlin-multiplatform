@@ -75,7 +75,9 @@ All buttons are pills (`--radius-button`), minimum height `--button-min-height`,
 - `AppSecondaryButton`: transparent with a 1px `--content-action` border, label `--content-action`.
 - `AppTertiaryButton`: text only, label `--content-action` (e.g. "Skip", app bar actions; in an app bar
   use 12px horizontal padding so the text lines up with the screen margin).
-- `AppIconButton`: a 48px round touch target with a 24px icon, `--content-primary`.
+- `AppIconButton`: a 48px round touch target with a 24px icon, `--content-primary`. Outlined: in a 40px circle
+  with a 1px `--background-separator` border, for an icon button standing next to content rather than in an
+  app bar (`AppOverflowMenu` takes the same option for a card's ⋮).
 
 ## AppChip
 
@@ -137,6 +139,34 @@ Actions pinned to the bottom of an `AppScreen`, in a floating card:
   `--content-secondary`, padding `--space-lg`
 - when the screen says its content is new (a step of a flow), the actions crossfade in place and the
   card's height follows; otherwise text changes, like a count in "Add 2 exercises", update in place
+
+## AppKeypad
+
+A number keypad in a floating card, docked over the bottom of a screen like `AppFooter` (same insets, blur and
+tint), radius 30px, 1px `--background-separator` border, padding 14px, its parts `--space-sm` apart. Its keys,
+toggle and pills sit in a darker inset, `rgba(0,0,0,0.32)`, with a 1px `--background-separator` border. Everything
+inside it (keys, toggle, pills, strips) is fully rounded, `--radius-button`, like the app's buttons.
+- closed: one row of controls: a 42px circle keyboard button that opens it, small pills (42px tall,
+  `--font-button`, padding `--space-md`, e.g. Add exercise), and the primary `AppButton` at the end
+- open: a header row (a 42px circle ⌄ that closes it; a label in `--font-small` / `--content-secondary`,
+  e.g. SET 2 OF 4 · KG, over a title in `--font-body-bold`; an optional segmented toggle, e.g. Reps | Time,
+  the picked segment filled `--content-action` with `--content-on-action` text), then four rows of 48px keys
+  6px apart: 1 2 3 −, 4 5 6 +, 7 8 9 ⌫, . 0 and one wide main key two columns across, filled
+  `--content-action`, whose label the screen sets (Next, Complete set, Done). Digits in `--font-heading` with
+  tabular figures, words in `--font-button`. "." is dimmed where only whole numbers go.
+- strips, above the keys or the closed row:
+  - timer: 50px tall, a label in `--font-small` over the time left in `--font-heading` (tabular), then three
+    36px pills (−10s, +10s, Skip). Active (something being timed): `--content-action` on
+    `--background-selected` with a `--background-action-muted` border. Rest: amber `#F2B84B` on `#2A2210`
+    with a `#6B5420` border (the keypad's own colours).
+  - note: a line of `--font-caption`, in `--content-secondary` on `--background-primary`, or highlighted
+    (something the app suggests) in `--content-action` on the inset, with an optional pill at its end (Why?)
+
+## AppSnackbarHost
+
+A short message over the bottom of the screen, e.g. "Set deleted" with Undo: `--background-surface-raised`,
+`--radius-surface`, text `--content-primary`, the action in `--content-action`, across the screen inside the
+16px margins, just above the footer.
 
 ## AppDialog
 

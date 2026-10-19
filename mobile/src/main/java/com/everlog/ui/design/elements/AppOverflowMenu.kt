@@ -41,6 +41,8 @@ fun AppOverflowMenu(
     items: List<AppMenuItem>,
     modifier: Modifier = Modifier,
     tint: Color = Theme.contentColors.primary,
+    // The ⋮ in a thin circle, see AppIconButton
+    outlined: Boolean = false,
 ) {
     var expanded by remember { mutableStateOf(false) }
     Box(modifier = modifier) {
@@ -49,6 +51,7 @@ fun AppOverflowMenu(
             icon = ImageVector.vectorResource(R.drawable.ic_more),
             tint = tint,
             contentDescription = stringResource(R.string.more_options),
+            outlined = outlined,
         )
         AppMenu(
             expanded = expanded,

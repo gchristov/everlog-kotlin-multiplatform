@@ -1,9 +1,12 @@
 package com.everlog.ui.design.elements
 
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.defaultMinSize
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -94,6 +97,10 @@ fun AppTertiaryButton(
     }
 }
 
+/**
+ * @param outlined In a thin circle, for an icon button that stands on its own next to content rather than in an
+ * app bar, e.g. a card's ⋮ menu.
+ */
 @Composable
 fun AppIconButton(
     onClick: () -> Unit,
@@ -102,10 +109,11 @@ fun AppIconButton(
     tint: Color = Theme.contentColors.primary,
     contentDescription: String? = null,
     enabled: Boolean = true,
+    outlined: Boolean = false,
 ) {
     androidx.compose.material3.IconButton(
         onClick = onClick,
-        modifier = modifier,
+        modifier = if (outlined) modifier.outlinedCircle() else modifier,
         enabled = enabled,
     ) {
         AppIcon(
@@ -150,3 +158,11 @@ private fun AppButtonPreview() {
         }
     }
 }
+
+// The outlined icon button's circle: the icon button's own size, its touch area still the minimum 48dp
+@Composable
+private fun Modifier.outlinedCircle(): Modifier = this
+    .size(OutlinedIconButtonSize)
+    .border(1.dp, Theme.backgrounds.separator, CircleShape)
+
+private val OutlinedIconButtonSize = 40.dp

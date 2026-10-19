@@ -11,6 +11,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import com.everlog.R
 import com.everlog.ui.design.elements.AppIcon
 import com.everlog.ui.design.elements.AppIconButton
+import com.everlog.ui.design.elements.AppMenuItem
+import com.everlog.ui.design.elements.AppOverflowMenu
 import com.everlog.ui.design.theme.Theme
 
 @Composable
@@ -24,7 +26,7 @@ internal fun DesignSystemIcons(onButtonClick: () -> Unit) {
         item(key = "tintsExample") {
             Tints()
         }
-        group(key = "buttons", header = { "Icon buttons, enabled and disabled" }) {}
+        group(key = "buttons", header = { "Icon buttons: enabled, disabled and outlined" }) {}
         item(key = "buttonsExample") {
             IconButtons(onButtonClick = onButtonClick)
         }
@@ -89,6 +91,16 @@ private fun IconButtons(onButtonClick: () -> Unit) {
             tint = Theme.contentColors.action,
             contentDescription = "Add",
             enabled = false,
+        )
+        AppIconButton(
+            onClick = onButtonClick,
+            icon = ImageVector.vectorResource(R.drawable.ic_settings),
+            contentDescription = "Settings",
+            outlined = true,
+        )
+        AppOverflowMenu(
+            items = listOf(AppMenuItem(text = "Details", onClick = onButtonClick)),
+            outlined = true,
         )
     }
 }
