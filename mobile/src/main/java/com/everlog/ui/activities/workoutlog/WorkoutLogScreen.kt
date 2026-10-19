@@ -21,8 +21,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -66,18 +64,13 @@ import com.everlog.ui.design.theme.Theme
 import com.everlog.utils.UnitUtils
 import kotlinx.coroutines.android.awaitFrame
 
+/**
+ * Renders the view-model's state and forwards what's tapped and typed to it. The keypad's rules (what each key does,
+ * where the selection goes) are the view-model's.
+ */
 @Composable
 internal fun WorkoutLogScreen(viewModel: WorkoutLogViewModel, onAddExercise: () -> Unit, onExit: (WorkoutLogExit) -> Unit) {
     val state by viewModel.state.collectAsStateWithLifecycle()
-    // The cell the keypad types into; the keypad is open while there is one
-    var focus by remember { mutableStateOf<CellFocus?>(null) }
-    // The highlighted set: the current one as the workout starts, then the last one touched. Once it's completed,
-    // the next set.
-    var selected by remember { mutableStateOf(state.current) }
-    // What's been typed into the focused cell. Null until the first key, which replaces its value.
-    var typed by remember { mutableStateOf<String?>(null) }
-    // Goes up with every key, so the edited cell comes back into view if it was scrolled away
-    var reveal by remember { mutableIntStateOf(0) }
 
     LifecycleResumeEffect(Unit) {
         viewModel.onResume()
@@ -92,117 +85,18 @@ internal fun WorkoutLogScreen(viewModel: WorkoutLogViewModel, onAddExercise: () 
         }
     }
 
-    BackHandler {
-        if (focus != null) focus = null else viewModel.onClose()
-    }
+    BackHandler(onBack = viewModel::onBack)
 
-    // A set that's gone can't keep the keypad's focus or the selection
-    LaunchedEffect(state.blocks) {
-        focus?.let { if (state.blocks.set(it.ref) == null) focus = null }
-        selected?.let { if (state.blocks.set(it) == null) selected = state.current }
-    }
-
-    fun focusOn(cell: CellFocus?) {
-        focus = cell
-        typed = null
-        cell?.let { selected = it.ref }
-    }
-
-    // The selected set got completed: select the next one, and move the keypad there if it's open
-    LaunchedEffect(state.current) {
-        val current = selected
-        if (current == null || state.blocks.set(current) == null) {
-            selected = state.current
-            return@LaunchedEffect
-        }
-        val next = state.current
-        if (state.blocks.set(current)?.done == true && next != null) {
-            selected = next
-            if (focus != null) focusOn(state.blocks.set(next)?.let { CellFocus(next, countField(it)) })
+    val input = remember(viewModel) {
+        object : AppKeypadInput {
+            override fun onDigit(digit: Char) = viewModel.onDigit(digit)
+            override fun onDecimal() = viewModel.onDecimal()
+            override fun onBackspace() = viewModel.onBackspace()
+            override fun onStep(direction: Int) = viewModel.onStep(direction)
         }
     }
-
-    val step = { field: ValueField ->
-        when (field) {
-            ValueField.Weight -> state.weightStep
-            ValueField.Reps -> RepsStep
-            ValueField.Time -> TimeStepSeconds.toFloat()
-        }
-    }
-    val input = object : AppKeypadInput {
-        fun type(key: Char) {
-            val cell = focus ?: return
-            val base = typed ?: ""
-            if (key == '.' && (cell.field != ValueField.Weight || base.contains('.'))) return
-            val text = (base + key).take(maxLength(cell.field))
-            typed = text
-            viewModel.onSetValue(cell.ref, cell.field, parse(cell.field, text))
-            reveal++
-        }
-
-        override fun onDigit(digit: Char) = type(digit)
-
-        override fun onDecimal() = type('.')
-
-        override fun onBackspace() {
-            val cell = focus ?: return
-            val set = state.blocks.set(cell.ref) ?: return
-            val text = (typed ?: rawText(set, cell.field, state.unit)).dropLast(1)
-            typed = text
-            viewModel.onSetValue(cell.ref, cell.field, parse(cell.field, text))
-            reveal++
-        }
-
-        override fun onStep(direction: Int) {
-            val cell = focus ?: return
-            val set = state.blocks.set(cell.ref) ?: return
-            val value = when (cell.field) {
-                ValueField.Weight -> set.weightKg?.let { displayWeight(it, state.unit) } ?: 0f
-                ValueField.Reps -> (set.reps ?: 0).toFloat()
-                ValueField.Time -> (set.timeSeconds ?: 0).toFloat()
-            }
-            typed = null
-            viewModel.onSetValue(cell.ref, cell.field, (value + direction * step(cell.field)).coerceAtLeast(0f))
-            reveal++
-        }
-    }
-
-    // Reps (or time), then the weight, whose main key completes the set and moves on to the next set's reps
-    val entry = focus?.let { cell ->
-        val set = state.blocks.set(cell.ref) ?: return@let null
-        AppKeypadEntry(
-            label = focusLabel(state.blocks, cell, state.unit),
-            title = exerciseName(state.blocks, cell.ref),
-            decimal = cell.field == ValueField.Weight,
-            toggle = AppKeypadToggle(
-                options = listOf(stringResource(R.string.workout_log_reps), stringResource(R.string.workout_log_time)),
-                selected = if (set.mode == SetMode.Time) 1 else 0,
-                onSelect = { index ->
-                    val mode = if (index == 1) SetMode.Time else SetMode.Reps
-                    viewModel.onSetMode(cell.ref, mode)
-                    if (cell.field != ValueField.Weight) focusOn(CellFocus(cell.ref, if (mode == SetMode.Time) ValueField.Time else ValueField.Reps))
-                },
-            ),
-            mainKey = when {
-                cell.field != ValueField.Weight -> AppKeypadAction(stringResource(R.string.workout_log_next)) {
-                    focusOn(CellFocus(cell.ref, ValueField.Weight))
-                }
-                // A done set's values save as they're typed, so its key just finishes editing
-                set.done -> AppKeypadAction(stringResource(R.string.workout_log_done)) {
-                    focusOn(null)
-                    selected = state.current ?: selected
-                }
-                else -> AppKeypadAction(stringResource(R.string.workout_log_complete_set)) {
-                    viewModel.onCompleteSet(cell.ref)
-                    val next = viewModel.state.value.current
-                    focusOn(next?.let { ref -> viewModel.state.value.blocks.set(ref)?.let { CellFocus(ref, countField(it)) } })
-                }
-            },
-        )
-    }
-    // The set the closed keypad's main action completes: the selected one, or else the current one
-    val target = selected?.takeIf { state.blocks.set(it)?.done == false } ?: state.current
     val addExercise = AppKeypadAction(stringResource(R.string.workout_log_add_exercise), onAddExercise)
+    val empty = state.blocks.isEmpty()
 
     AppScreen(
         topBar = { Header(state, onClose = viewModel::onClose, onFinish = viewModel::onFinish) },
@@ -211,49 +105,70 @@ internal fun WorkoutLogScreen(viewModel: WorkoutLogViewModel, onAddExercise: () 
                 modifier = Modifier
                     .windowInsetsPadding(WindowInsets.navigationBars)
                     .padding(start = Theme.spacing.large, end = Theme.spacing.large, bottom = Theme.spacing.small),
-                entry = entry,
+                entry = keypadEntry(state, viewModel),
                 input = input,
-                onHide = { focusOn(null) },
-                onShow = if (state.blocks.isEmpty()) null else {
-                    { (selected ?: state.current)?.let { ref -> state.blocks.set(ref)?.let { focusOn(CellFocus(ref, countField(it))) } } }
-                },
-                actions = if (state.blocks.isEmpty()) emptyList() else listOf(addExercise),
+                onHide = viewModel::onHideKeypad,
+                onShow = if (empty) null else viewModel::onShowKeypad,
+                actions = if (empty) emptyList() else listOf(addExercise),
                 primaryAction = when {
                     // The empty workout's only action
-                    state.blocks.isEmpty() -> addExercise
-                    target != null -> AppKeypadAction(stringResource(R.string.workout_log_complete_set)) { viewModel.onCompleteSet(target) }
+                    empty -> addExercise
+                    state.target != null -> AppKeypadAction(stringResource(R.string.workout_log_complete_set), viewModel::onCompleteTarget)
                     // Every set done: Finish in the header is filled instead
                     else -> null
                 },
                 strips = {
-                    if (state.blocks.isEmpty()) AppKeypadNote(text = stringResource(R.string.workout_log_empty_hint))
+                    if (empty) AppKeypadNote(text = stringResource(R.string.workout_log_empty_hint))
                 },
             )
         },
     ) { contentPadding ->
-        if (state.blocks.isEmpty()) {
+        if (empty) {
             EmptyTable(contentPadding, state.unit)
         } else {
             WorkoutTable(
                 blocks = state.blocks,
                 unit = state.unit,
-                focus = focus,
-                selected = selected,
-                typed = typed,
-                reveal = reveal,
+                focus = state.focus,
+                selected = state.selected,
+                typed = state.typed,
+                reveal = state.reveal,
                 contentPadding = contentPadding,
-                onCellTapped = { focusOn(it) },
-                onTick = { ref ->
-                    selected = ref
-                    // The keypad follows to the touched set
-                    if (focus != null) state.blocks.set(ref)?.let { focusOn(CellFocus(ref, countField(it))) }
-                    viewModel.onToggleSet(ref)
-                },
+                onCellTapped = viewModel::onCellTapped,
+                onTick = viewModel::onTick,
             )
         }
     }
 
     WorkoutLogDialogs(state.dialog, viewModel)
+}
+
+// What the open keypad shows for the focused cell
+@Composable
+private fun keypadEntry(state: WorkoutLogState, viewModel: WorkoutLogViewModel): AppKeypadEntry? {
+    val focus = state.focus ?: return null
+    val set = state.blocks.set(focus.ref) ?: return null
+    val mainKey = state.mainKey ?: return null
+    return AppKeypadEntry(
+        label = focusLabel(state.blocks, focus, state.unit),
+        title = exerciseName(state.blocks, focus.ref),
+        decimal = focus.field == ValueField.Weight,
+        toggle = AppKeypadToggle(
+            options = listOf(stringResource(R.string.workout_log_reps), stringResource(R.string.workout_log_time)),
+            selected = if (set.mode == SetMode.Time) 1 else 0,
+            onSelect = { viewModel.onModeSelected(if (it == 1) SetMode.Time else SetMode.Reps) },
+        ),
+        mainKey = AppKeypadAction(
+            text = stringResource(
+                when (mainKey) {
+                    KeypadMainKey.Next -> R.string.workout_log_next
+                    KeypadMainKey.CompleteSet -> R.string.workout_log_complete_set
+                    KeypadMainKey.Done -> R.string.workout_log_done
+                },
+            ),
+            onClick = viewModel::onMainKey,
+        ),
+    )
 }
 
 // Close, the workout's time with its name under it, and Finish
@@ -384,6 +299,3 @@ private fun focusLabel(blocks: List<WorkoutBlock>, focus: CellFocus, unit: Setti
 
 private fun exerciseName(blocks: List<WorkoutBlock>, ref: SetRef): String =
     blocks.block(ref.blockId)?.exercises?.getOrNull(ref.index)?.exercise?.name.orEmpty()
-
-private const val RepsStep = 1f
-private const val TimeStepSeconds = 5

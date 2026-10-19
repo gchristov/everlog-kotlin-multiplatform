@@ -92,11 +92,6 @@ private object TableSizes {
 private val Inset = Color.Black.copy(alpha = 0.32f)
 
 /**
- * The cell the keypad types into.
- */
-internal data class CellFocus(val ref: SetRef, val field: ValueField)
-
-/**
  * The workout as a table: per exercise its header, then a card of rows, SET · REPS (or TIME) · KG · tick. A superset
  * or circuit has a row per exercise in each round, in its header's order. Tapping a value focuses it for the keypad;
  * the tick completes the row, or undoes it.
@@ -448,9 +443,6 @@ private fun Tick(done: Boolean, armed: Boolean, onClick: () -> Unit) {
         }
     }
 }
-
-// Reps or time, whichever the set records
-internal fun countField(set: WorkoutSet) = if (set.mode == SetMode.Time) ValueField.Time else ValueField.Reps
 
 // The cell's value, or what's being typed into it
 private fun cellText(set: WorkoutSet, field: ValueField, unit: WeightUnit, focus: CellFocus?, typed: String?, ref: SetRef): String {

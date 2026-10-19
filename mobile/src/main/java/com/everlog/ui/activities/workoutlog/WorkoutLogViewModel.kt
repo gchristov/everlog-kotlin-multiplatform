@@ -76,42 +76,108 @@ internal class WorkoutLogViewModel(
         ticking = null
     }
 
-    // Values
+    // The keypad
 
-    /**
-     * @param value Reps, seconds, or a weight in the user's unit. Null clears it.
-     */
-    fun onSetValue(ref: SetRef, field: ValueField, value: Float?) = change {
-        val stored = if (field == ValueField.Weight) value?.let { storedWeight(it, unit) } else value
-        copy(blocks = blocks.setValue(ref, field, stored))
+    fun onCellTapped(cell: CellFocus) = setState { focusOn(cell) }
+
+    // Opens the keypad on the selected set's reps (or time)
+    fun onShowKeypad() = setState { (selected ?: current)?.let { focusOn(countCell(it)) } ?: this }
+
+    fun onHideKeypad() = setState { focusOn(null) }
+
+    // Back closes the keypad first, then asks about leaving
+    fun onBack() {
+        if (state.value.focus != null) onHideKeypad() else onClose()
     }
 
-    fun onSetMode(ref: SetRef, mode: SetMode) = change { copy(blocks = blocks.setMode(ref, mode)) }
+    fun onDigit(digit: Char) = type(digit)
+
+    fun onDecimal() = type('.')
+
+    fun onBackspace() {
+        val state = state.value
+        val cell = state.focus ?: return
+        val set = state.blocks.set(cell.ref) ?: return
+        enter(cell, (state.typed ?: rawText(set, cell.field, state.unit)).dropLast(1))
+    }
+
+    // − or +: by a rep, 5 seconds or the weight step from Settings
+    fun onStep(direction: Int) {
+        val state = state.value
+        val cell = state.focus ?: return
+        val set = state.blocks.set(cell.ref) ?: return
+        val (value, step) = when (cell.field) {
+            ValueField.Weight -> (set.weightKg?.let { displayWeight(it, state.unit) } ?: 0f) to state.weightStep
+            ValueField.Reps -> (set.reps ?: 0).toFloat() to RepsStep
+            ValueField.Time -> (set.timeSeconds ?: 0).toFloat() to TimeStepSeconds
+        }
+        change { withValue(cell, (value + direction * step).coerceAtLeast(0f)).copy(typed = null, reveal = reveal + 1) }
+    }
+
+    // Reps or Time for the focused set. Typing reps or time carries on in the other.
+    fun onModeSelected(mode: SetMode) {
+        val cell = state.value.focus ?: return
+        change {
+            val switched = copy(blocks = blocks.setMode(cell.ref, mode))
+            if (cell.field == ValueField.Weight) switched else switched.focusOn(CellFocus(cell.ref, if (mode == SetMode.Time) ValueField.Time else ValueField.Reps))
+        }
+    }
+
+    fun onMainKey() {
+        val cell = state.value.focus ?: return
+        when (state.value.mainKey) {
+            KeypadMainKey.Next -> setState { focusOn(CellFocus(cell.ref, ValueField.Weight)) }
+            KeypadMainKey.Done -> setState { focusOn(null).copy(selected = current ?: selected) }
+            // On to the next set's reps, or closed when there's none left
+            KeypadMainKey.CompleteSet -> {
+                complete(cell.ref)
+                setState { focusOn(current?.let { countCell(it) }) }
+            }
+            null -> Unit
+        }
+    }
+
+    // The closed keypad's Complete set
+    fun onCompleteTarget() {
+        state.value.target?.let(::complete)
+    }
+
+    private fun type(key: Char) {
+        val state = state.value
+        val cell = state.focus ?: return
+        val base = state.typed.orEmpty()
+        if (key == '.' && (cell.field != ValueField.Weight || base.contains('.'))) return
+        enter(cell, (base + key).take(maxLength(cell.field)))
+    }
+
+    private fun enter(cell: CellFocus, text: String) =
+        change { withValue(cell, parse(cell.field, text)).copy(typed = text, reveal = reveal + 1) }
 
     // Completing
 
     /**
-     * A set's tick: completes it with the values it has, or undoes it.
+     * A set's tick: selects it (the open keypad follows), then completes it with the values it has, or undoes it.
      */
-    fun onToggleSet(ref: SetRef) {
+    fun onTick(ref: SetRef) {
+        setState { if (focus != null) focusOn(countCell(ref)) else copy(selected = ref) }
         val set = state.value.blocks.set(ref) ?: return
         if (set.done) {
             change { copy(blocks = blocks.uncompleteSet(ref), current = current ?: ref) }
             analytics.setEdited(state.value.blocks.block(ref.blockId)?.setType, set.mode == SetMode.Time)
         } else {
-            onCompleteSet(ref)
+            complete(ref)
         }
     }
 
     /**
-     * Completes a set: the current one moves on to the next set not done.
+     * Completes a set: the current one moves on to the next set not done, and the selection follows it.
      */
-    fun onCompleteSet(ref: SetRef) {
+    private fun complete(ref: SetRef) {
         val before = state.value
         val set = before.blocks.set(ref) ?: return
         if (set.done) return
         val completion = before.blocks.completeSet(ref, before.current, clock())
-        change { copy(blocks = completion.blocks, current = completion.current) }
+        change { copy(blocks = completion.blocks, current = completion.current).followCurrent() }
         val type = completion.blocks.block(ref.blockId)?.setType
         analytics.setCompleted(type, set.mode == SetMode.Time)
         // A superset's round (or another set of several exercises) done with this set
@@ -129,7 +195,7 @@ internal class WorkoutLogViewModel(
         change {
             val blocks = blocks.addGroups(groups, ids)
             // Nothing was current (an empty workout, or every set done): the first new set is
-            copy(blocks = blocks, current = current ?: blocks.nextOpenAfter(this.blocks.refs().lastOrNull()))
+            copy(blocks = blocks, current = current ?: blocks.nextOpenAfter(this.blocks.refs().lastOrNull())).followCurrent()
         }
         analytics.exercisesAdded()
     }
@@ -203,6 +269,8 @@ internal class WorkoutLogViewModel(
 
     companion object {
         private const val TickMillis = 1000L
+        private const val RepsStep = 1f
+        private const val TimeStepSeconds = 5f
 
         /**
          * The workout to show for the one the screen was opened with: its saved copy if it's the ongoing one, with
@@ -248,4 +316,26 @@ internal class WorkoutLogViewModel(
         }
 
     }
+}
+
+// Focuses a cell for the keypad, or closes it, starting afresh: the first key replaces the value. A focused set is
+// the selected one.
+private fun WorkoutLogState.focusOn(cell: CellFocus?) = copy(focus = cell, typed = null, selected = cell?.ref ?: selected)
+
+// The set's reps or time, whichever it records
+private fun WorkoutLogState.countCell(ref: SetRef): CellFocus? = blocks.set(ref)?.let { CellFocus(ref, countField(it)) }
+
+// Sets one of the focused set's values. A weight is typed in the user's unit and stored in kg.
+private fun WorkoutLogState.withValue(cell: CellFocus, value: Float?): WorkoutLogState {
+    val stored = if (cell.field == ValueField.Weight) value?.let { storedWeight(it, unit) } else value
+    return copy(blocks = blocks.setValue(cell.ref, cell.field, stored))
+}
+
+// Once the selected set is done, the selection (and the open keypad) moves on to the current set. Nothing selected
+// yet, e.g. in an empty workout that just got its first exercise, selects the current set too.
+private fun WorkoutLogState.followCurrent(): WorkoutLogState {
+    val next = current ?: return this
+    val selectedSet = selected?.let { blocks.set(it) }
+    if (selectedSet != null && !selectedSet.done) return this
+    return if (focus != null) focusOn(countCell(next)) else copy(selected = next)
 }
