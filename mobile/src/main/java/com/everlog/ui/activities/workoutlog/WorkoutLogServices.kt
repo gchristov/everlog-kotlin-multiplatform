@@ -3,6 +3,7 @@ package com.everlog.ui.activities.workoutlog
 import android.content.Context
 import com.everlog.data.controllers.workoutprefill.BaseWorkoutPrefillController.PrefillSource
 import com.everlog.data.controllers.workoutprefill.WorkoutPrefillController
+import com.everlog.data.controllers.workoutsession.ValueField
 import com.everlog.data.datastores.ELDatastore
 import com.everlog.data.datastores.base.OnStoreItemsListener
 import com.everlog.data.model.exercise.ELExercise
@@ -190,6 +191,9 @@ internal interface WorkoutLogAnalytics {
     // The rest after each set changed from the workout's options
     fun restChanged(seconds: Int)
 
+    // A set's weight (in the user's unit), reps or time changed, once per value typed or each ± step
+    fun valueChanged(field: ValueField, value: Float?)
+
     fun restStarted()
 
     // Rest skipped (not run out)
@@ -234,6 +238,12 @@ internal class RealWorkoutLogAnalytics : WorkoutLogAnalytics {
     override fun setDeleted() = analytics.setDeleted()
 
     override fun restChanged(seconds: Int) = analytics.setRestTimeModified(seconds)
+
+    override fun valueChanged(field: ValueField, value: Float?) = when (field) {
+        ValueField.Weight -> analytics.setWeightModified(value)
+        ValueField.Reps -> analytics.setRepsModified(value?.toInt())
+        ValueField.Time -> analytics.setTimeModified(value?.toInt())
+    }
 
     override fun restStarted() = analytics.workoutTimerStartedRest()
 

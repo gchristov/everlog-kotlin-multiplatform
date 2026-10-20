@@ -174,6 +174,47 @@ class WorkoutLogViewModelTest {
     }
 
     @Test
+    fun `a typed value is logged once, when the keypad moves on from its cell`() {
+        val viewModel = viewModel()
+        viewModel.onCellTapped(CellFocus(viewModel.ref(0, 0), ValueField.Reps))
+        viewModel.type("12")
+        assertThat(analytics.events.filter { "modified" in it }).isEmpty()
+
+        viewModel.onMainKey()
+        viewModel.type("40")
+        viewModel.onHideKeypad()
+
+        assertThat(analytics.events.filter { "modified" in it }).containsExactly("reps_modified 12.0", "weight_modified 40.0").inOrder()
+    }
+
+    @Test
+    fun `a cell left without typing logs nothing, and each step logs its value`() {
+        val viewModel = viewModel()
+        viewModel.onCellTapped(CellFocus(viewModel.ref(0, 0), ValueField.Reps))
+        viewModel.onCellTapped(CellFocus(viewModel.ref(0, 1), ValueField.Reps))
+        viewModel.onStep(1)
+        viewModel.onStep(1)
+        viewModel.onHideKeypad()
+
+        assertThat(analytics.events.filter { "modified" in it }).containsExactly("reps_modified 9.0", "reps_modified 10.0").inOrder()
+    }
+
+    @Test
+    fun `a value typed before a tick or finishing is logged before them`() {
+        val viewModel = viewModel()
+        viewModel.onCellTapped(CellFocus(viewModel.ref(0, 0), ValueField.Weight))
+        viewModel.type("20")
+        viewModel.onTick(viewModel.ref(0, 0))
+        viewModel.onCellTapped(CellFocus(viewModel.ref(0, 1), ValueField.Reps))
+        viewModel.onModeSelected(SetMode.Time)
+        viewModel.type("45")
+        viewModel.onFinish()
+
+        assertThat(analytics.events.filter { "modified" in it }).containsExactly("weight_modified 20.0", "time_modified 45.0").inOrder()
+        assertThat(analytics.events.indexOf("weight_modified 20.0")).isLessThan(analytics.events.indexOfFirst { it.startsWith("set_completed") })
+    }
+
+    @Test
     fun `switching to time moves the keypad there, and time is typed like a microwave's`() {
         val viewModel = viewModel()
         viewModel.onCellTapped(CellFocus(viewModel.ref(0, 0), ValueField.Reps))
@@ -740,6 +781,7 @@ class WorkoutLogViewModelTest {
 
         assertThat(viewModel.set(0, 0).weightKg).isEqualTo(2.5f)
         assertThat(viewModel.set(0, 0).reps).isEqualTo(7)
+        assertThat(analytics.events).containsAtLeast("weight_modified 2.5", "reps_modified 7.0").inOrder()
     }
 
     @Test
@@ -989,6 +1031,10 @@ class WorkoutLogViewModelTest {
 
         override fun restChanged(seconds: Int) {
             events += "rest_changed $seconds"
+        }
+
+        override fun valueChanged(field: ValueField, value: Float?) {
+            events += "${field.name.lowercase()}_modified $value"
         }
 
         override fun restStarted() {
