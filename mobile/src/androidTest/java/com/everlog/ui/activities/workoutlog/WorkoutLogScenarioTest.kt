@@ -16,6 +16,7 @@ import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
+import androidx.compose.ui.test.performScrollToNode
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.everlog.data.model.ELRoutine
 import com.everlog.data.model.exercise.ELExercise
@@ -124,8 +125,9 @@ class WorkoutLogScenarioTest {
         tick(0, 0, 0).assertContentDescriptionEquals("Undo set")
         cell(0, 1, 0, "count").assertTextEquals("1:30")
 
-        // An exercise added at the end
+        // An exercise added at the end, which may be below the screen
         key("Add exercise").performClick()
+        compose.onNodeWithTag(WorkoutLogTags.Table).performScrollToNode(hasText("Squat"))
         compose.onNodeWithText("Squat").assertExists()
 
         // Finish asks, as sets aren't ticked, then saves the workout as it is

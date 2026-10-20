@@ -137,6 +137,7 @@ internal fun WorkoutTable(
         LazyColumn(
             modifier = Modifier
                 .fillMaxSize()
+                .testTag(WorkoutLogTags.Table)
                 .onGloballyPositioned {
                     val bounds = it.boundsInWindow()
                     listTop = bounds.top
@@ -468,6 +469,7 @@ private const val Empty = "–"
  */
 internal object WorkoutLogTags {
     const val Keypad = "keypad"
+    const val Table = "table"
 
     fun set(block: Int, round: Int, exercise: Int) = "set:$block:$round:$exercise"
 
