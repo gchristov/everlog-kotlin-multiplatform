@@ -206,6 +206,12 @@ class WorkoutLogScenarioTest {
         alerts = object : WorkoutLogAlerts {
             override fun timerRanOut() = Unit
         },
+        notification = object : WorkoutLogNotification {
+            override fun start(workout: ELWorkout) = Unit
+            override fun stop() = Unit
+            override fun update(workout: ELWorkout) = Unit
+            override fun showRest(remainingPercent: Int, remainingSeconds: Int) = Unit
+        },
         clock = { now },
         tickMillis = null,
     )
@@ -274,11 +280,11 @@ class WorkoutLogScenarioTest {
 
         override fun screenViewed() = Unit
 
-        override fun setCompleted(type: ELSetType?, timed: Boolean) {
+        override fun setCompleted(type: ELSetType?, timed: Boolean, fromNotification: Boolean) {
             events += "set_completed $type"
         }
 
-        override fun setGroupCompleted(type: ELSetType?, exercises: Int) {
+        override fun setGroupCompleted(type: ELSetType?, exercises: Int, fromNotification: Boolean) {
             events += "set_group_completed $type $exercises"
         }
 

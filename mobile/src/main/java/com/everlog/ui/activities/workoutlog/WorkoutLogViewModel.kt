@@ -21,6 +21,7 @@ import com.everlog.data.controllers.workoutsession.withRestSeconds
 import com.everlog.data.controllers.workoutsession.withSessionBlocks
 import com.everlog.data.model.exercise.ELExerciseGroup
 import com.everlog.data.model.workout.ELWorkout
+import com.everlog.data.model.workout.ELWorkoutState
 import com.everlog.ui.mvvm.CommonViewModel
 import java.util.Date
 import kotlinx.coroutines.CoroutineDispatcher
@@ -47,6 +48,7 @@ internal class WorkoutLogViewModel(
     private val settings: WorkoutLogSettings,
     private val analytics: WorkoutLogAnalytics,
     private val alerts: WorkoutLogAlerts,
+    private val notification: WorkoutLogNotification,
     private val clock: () -> Long = System::currentTimeMillis,
     private val ids: SessionIds = SessionIds(),
     private val tickMillis: Long? = TickMillis,
@@ -81,10 +83,21 @@ internal class WorkoutLogViewModel(
     fun tick() {
         setState { copy(now = clock()) }
         val timer = state.value.timer ?: return
-        if (clock() < timer.endsAt) return
+        if (clock() < timer.endsAt) {
+            // The notification counts down with the screen
+            when (timer) {
+                is WorkoutTimer.Rest -> notification.showRest(remainingPercent(timer), state.value.timerRemainingSeconds())
+                is WorkoutTimer.SetTimer -> notifyWorkout()
+            }
+            return
+        }
         setState { stopped(timer) }
         alerts.timerRanOut()
+        notifyWorkout()
     }
+
+    private fun remainingPercent(timer: WorkoutTimer): Int =
+        if (timer.totalSeconds <= 0) 0 else (state.value.timerRemainingSeconds() * 100 / timer.totalSeconds).coerceIn(0, 100)
 
     private fun keepTicking() {
         val tick = tickMillis ?: return
@@ -172,7 +185,9 @@ internal class WorkoutLogViewModel(
      * Runs a timed set's timer for its time, making it the current set. Without a time there's nothing to count down,
      * so the keypad opens on it instead.
      */
-    fun onStartSetTimer(ref: SetRef) {
+    fun onStartSetTimer(ref: SetRef) = startSetTimer(ref, fromNotification = false)
+
+    private fun startSetTimer(ref: SetRef, fromNotification: Boolean) {
         val set = state.value.blocks.set(ref) ?: return
         val seconds = set.timeSeconds ?: return setState { focusOn(CellFocus(ref, ValueField.Time)) }
         change {
@@ -183,7 +198,8 @@ internal class WorkoutLogViewModel(
                 now = clock(),
             )
         }
-        analytics.setTimerStarted()
+        // WorkoutService logs the notification's buttons itself
+        if (!fromNotification) analytics.setTimerStarted()
         keepTicking()
     }
 
@@ -217,14 +233,67 @@ internal class WorkoutLogViewModel(
     /**
      * Skip on a rest, Stop on a set timer: stops it early, without a sound. The set is left to be ticked.
      */
-    fun onTimerEnd() {
+    fun onTimerEnd() = endTimer(fromNotification = false)
+
+    private fun endTimer(fromNotification: Boolean) {
         val timer = state.value.timer ?: return
         setState { stopped(timer) }
+        notifyWorkout()
+        if (fromNotification) return
         when (timer) {
             is WorkoutTimer.Rest -> analytics.restStopped()
             is WorkoutTimer.SetTimer -> analytics.setTimerStopped()
         }
     }
+
+    // The notification, shown while the screen is open (it stops when the screen closes for good)
+
+    fun onScreenStarted() = notification.start(notificationWorkout())
+
+    fun onScreenClosed() = notification.stop()
+
+    // Its buttons, each for the set it shows: [position] is that set in the workout it was last sent
+
+    fun onNotificationCompleteSet(position: ELWorkoutState) {
+        setAt(position)?.let { complete(it, fromNotification = true) }
+    }
+
+    fun onNotificationWeight(position: ELWorkoutState, direction: Int) {
+        val ref = setAt(position) ?: return
+        val set = state.value.blocks.set(ref) ?: return
+        val weight = set.weightKg?.let { displayWeight(it, state.value.unit) } ?: 0f
+        change { withValue(CellFocus(ref, ValueField.Weight), (weight + direction * weightStep).coerceAtLeast(0f)) }
+    }
+
+    fun onNotificationReps(position: ELWorkoutState, direction: Int) {
+        val ref = setAt(position) ?: return
+        val reps = state.value.blocks.set(ref)?.reps ?: 0
+        change { withValue(CellFocus(ref, ValueField.Reps), (reps + direction * RepsStep).coerceAtLeast(0f)) }
+    }
+
+    fun onNotificationSetTimer(position: ELWorkoutState, start: Boolean) {
+        val ref = setAt(position) ?: return
+        if (start) startSetTimer(ref, fromNotification = true) else if (state.value.isTiming(ref)) endTimer(fromNotification = true)
+    }
+
+    fun onNotificationRestStop() {
+        if (state.value.timer is WorkoutTimer.Rest) endTimer(fromNotification = true)
+    }
+
+    // The set at a position in the workout as the notification has it: its group, its round and its place among the
+    // exercises that have a set in that round
+    private fun setAt(position: ELWorkoutState): SetRef? {
+        val blocks = state.value.blocks
+        val block = blocks.getOrNull(position.groupIndex) ?: return null
+        val round = block.rounds.getOrNull(position.setIndex) ?: return null
+        val group = workout.withSessionBlocks(blocks).getExerciseGroups().getOrNull(position.groupIndex) ?: return null
+        val exercise = group.getExercisesForSetIndex(position.setIndex).getOrNull(position.exerciseIndex) ?: return null
+        val index = group.exercises.indexOfFirst { it === exercise }
+        return SetRef(block.id, round.id, index).takeIf { index >= 0 }
+    }
+
+    private val weightStep: Float
+        get() = state.value.weightStep
 
     private fun type(key: Char) {
         val state = state.value
@@ -256,7 +325,7 @@ internal class WorkoutLogViewModel(
     /**
      * Completes a set: the current one moves on to the next set not done, and the selection follows it.
      */
-    private fun complete(ref: SetRef) {
+    private fun complete(ref: SetRef, fromNotification: Boolean = false) {
         val before = state.value
         val set = before.blocks.set(ref) ?: return
         if (set.done) return
@@ -278,12 +347,12 @@ internal class WorkoutLogViewModel(
             ).followCurrent()
         }
         val type = completion.blocks.block(ref.blockId)?.setType
-        analytics.setCompleted(type, set.mode == SetMode.Time)
+        analytics.setCompleted(type, set.mode == SetMode.Time, fromNotification)
         // A superset's round (or another set of several exercises) done with this set
         val round = completion.blocks.round(ref.blockId, ref.roundId)
         val exercises = round?.sets?.count { !it.removed } ?: 0
         if (round?.done == true && exercises > 1) {
-            analytics.setGroupCompleted(type, exercises)
+            analytics.setGroupCompleted(type, exercises, fromNotification)
         }
         if (rest != null) {
             analytics.restStarted()
@@ -367,7 +436,22 @@ internal class WorkoutLogViewModel(
     private fun save() {
         if (state.value.exit == null) {
             store.saveOngoing(workout.withSessionBlocks(state.value.blocks))
+            notifyWorkout()
         }
+    }
+
+    private fun notifyWorkout() = notification.update(notificationWorkout())
+
+    // The workout for the notification, with a running set timer's seconds left on its set, which it shows
+    private fun notificationWorkout(): ELWorkout {
+        val state = state.value
+        val workout = workout.withSessionBlocks(state.blocks)
+        val timer = state.timer as? WorkoutTimer.SetTimer ?: return workout
+        val blockIndex = state.blocks.indexOfFirst { it.id == timer.ref.blockId }
+        val roundIndex = state.blocks.getOrNull(blockIndex)?.rounds?.indexOfFirst { it.id == timer.ref.roundId } ?: -1
+        workout.getExerciseGroups().getOrNull(blockIndex)?.exercises?.getOrNull(timer.ref.index)?.sets?.getOrNull(roundIndex)
+            ?.remainingTimeSeconds = state.timerRemainingSeconds()
+        return workout
     }
 
     companion object {

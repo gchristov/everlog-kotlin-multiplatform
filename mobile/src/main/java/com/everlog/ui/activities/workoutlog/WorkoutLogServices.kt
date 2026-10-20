@@ -10,6 +10,7 @@ import com.everlog.managers.analytics.AnalyticsConstants
 import com.everlog.managers.analytics.AnalyticsManager
 import com.everlog.managers.apprate.AppLaunchManager
 import com.everlog.managers.preferences.SettingsManager
+import com.everlog.ui.navigator.Navigator
 import com.everlog.utils.SoundUtils
 import com.everlog.utils.VibrationUtils
 import com.google.firebase.firestore.SetOptions
@@ -67,6 +68,33 @@ internal class RealWorkoutLogSettings : WorkoutLogSettings {
 }
 
 /**
+ * The ongoing workout's notification, run by WorkoutService while the screen is open, exactly as the old screen
+ * drives it: it's sent the workout after every change and a rest's countdown every second, and its buttons come back
+ * to the screen as broadcasts (see WorkoutLogActivity).
+ */
+internal interface WorkoutLogNotification {
+    fun start(workout: ELWorkout)
+
+    fun stop()
+
+    // The workout as it is now, with a running set timer's seconds left on its set
+    fun update(workout: ELWorkout)
+
+    fun showRest(remainingPercent: Int, remainingSeconds: Int)
+}
+
+internal class RealWorkoutLogNotification(private val navigator: Navigator) : WorkoutLogNotification {
+    override fun start(workout: ELWorkout) = navigator.startWorkoutService(workout)
+
+    override fun stop() = navigator.stopWorkoutService()
+
+    override fun update(workout: ELWorkout) = navigator.notifyWorkoutServiceSetUpdated(workout)
+
+    override fun showRest(remainingPercent: Int, remainingSeconds: Int) =
+        navigator.notifyWorkoutServiceShowRestTimer(remainingPercent, remainingSeconds)
+}
+
+/**
  * The sound and vibration when a countdown runs out. Called from the view-model rather than the screen, so they
  * play with the phone locked, as the old screen's do.
  */
@@ -88,10 +116,11 @@ internal interface WorkoutLogAnalytics {
     // Logged as the screen shows, before its other events, so they're credited to it
     fun screenViewed()
 
-    fun setCompleted(type: ELSetType?, timed: Boolean)
+    // [fromNotification]: completed with the notification's button rather than on the screen
+    fun setCompleted(type: ELSetType?, timed: Boolean, fromNotification: Boolean)
 
     // A superset's round (or another set of several exercises) done
-    fun setGroupCompleted(type: ELSetType?, exercises: Int)
+    fun setGroupCompleted(type: ELSetType?, exercises: Int, fromNotification: Boolean)
 
     // A done set undone
     fun setEdited(type: ELSetType?, timed: Boolean)
@@ -124,11 +153,14 @@ internal class RealWorkoutLogAnalytics : WorkoutLogAnalytics {
 
     override fun screenViewed() = analytics.screenName(AnalyticsConstants.SCREEN_WORKOUT_V2)
 
-    override fun setCompleted(type: ELSetType?, timed: Boolean) =
-        analytics.setCompleted(AnalyticsConstants.SET_COMPLETED_SOURCE_SCREEN, type, timed)
+    override fun setCompleted(type: ELSetType?, timed: Boolean, fromNotification: Boolean) =
+        analytics.setCompleted(source(fromNotification), type, timed)
 
-    override fun setGroupCompleted(type: ELSetType?, exercises: Int) =
-        analytics.setGroupCompleted(AnalyticsConstants.SET_COMPLETED_SOURCE_SCREEN, type, exercises)
+    override fun setGroupCompleted(type: ELSetType?, exercises: Int, fromNotification: Boolean) =
+        analytics.setGroupCompleted(source(fromNotification), type, exercises)
+
+    private fun source(fromNotification: Boolean) =
+        if (fromNotification) AnalyticsConstants.SET_COMPLETED_SOURCE_NOTIFICATION else AnalyticsConstants.SET_COMPLETED_SOURCE_SCREEN
 
     override fun setEdited(type: ELSetType?, timed: Boolean) = analytics.setEdited(type, timed)
 

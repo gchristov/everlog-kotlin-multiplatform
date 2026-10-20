@@ -11,6 +11,7 @@ import com.everlog.data.model.exercise.ELRoutineExercise
 import com.everlog.data.model.set.ELSet
 import com.everlog.data.model.set.ELSetType
 import com.everlog.data.model.workout.ELWorkout
+import com.everlog.data.model.workout.ELWorkoutState
 import com.everlog.managers.preferences.SettingsManager.WeightUnit
 import com.everlog.testutil.FakeCoroutineDispatcher
 import com.google.common.truth.Truth.assertThat
@@ -25,6 +26,7 @@ class WorkoutLogViewModelTest {
     private val settings = FakeSettings()
     private val analytics = RecordingAnalytics()
     private val alerts = CountingAlerts()
+    private val notification = FakeNotification()
 
     // Bench press, 2 sets of 8, then a superset of fly and raise, 2 rounds of 12
     private fun template() = ELWorkout(
@@ -47,6 +49,7 @@ class WorkoutLogViewModelTest {
         settings = settings,
         analytics = analytics,
         alerts = alerts,
+        notification = notification,
         clock = { time },
         tickMillis = null,
     )
@@ -387,6 +390,88 @@ class WorkoutLogViewModelTest {
         assertThat(viewModel.state.value.focus).isEqualTo(CellFocus(viewModel.ref(0, 0), ValueField.Time))
     }
 
+    // The notification
+
+    @Test
+    fun `the notification starts and stops with the screen, and is sent every change`() {
+        val viewModel = viewModel()
+        viewModel.onScreenStarted()
+        assertThat(notification.started?.uuid).isEqualTo("workout")
+
+        viewModel.onTick(viewModel.ref(0, 0))
+        assertThat(notification.shown?.getExerciseGroups()?.first()?.exercises?.first()?.sets?.first()?.isComplete()).isTrue()
+
+        viewModel.onScreenClosed()
+        assertThat(notification.stopped).isTrue()
+    }
+
+    @Test
+    fun `the notification counts a rest down`() {
+        val viewModel = viewModel()
+        viewModel.onTick(viewModel.ref(0, 0))
+        time = now + 45_000
+        viewModel.tick()
+
+        assertThat(notification.rest).isEqualTo(50 to 45)
+    }
+
+    @Test
+    fun `the notification shows a set timer's seconds left on its set`() {
+        val viewModel = timedSetRunning(seconds = "30")
+        time = now + 10_000
+        viewModel.tick()
+
+        assertThat(notification.shown?.getExerciseGroups()?.first()?.exercises?.first()?.sets?.first()?.remainingTimeSeconds).isEqualTo(20)
+    }
+
+    @Test
+    fun `the notification's button completes its set, logged as from the notification`() {
+        val viewModel = viewModel()
+        viewModel.onNotificationCompleteSet(position(group = 0, set = 0, exercise = 0))
+
+        assertThat(viewModel.set(0, 0).done).isTrue()
+        assertThat(viewModel.state.value.timer).isInstanceOf(WorkoutTimer.Rest::class.java)
+        assertThat(analytics.events.first()).isEqualTo("set_completed SINGLE notification")
+    }
+
+    @Test
+    fun `the notification's buttons point at a superset exercise by its place in the round`() {
+        val viewModel = viewModel()
+        viewModel.onNotificationCompleteSet(position(group = 1, set = 1, exercise = 1))
+
+        assertThat(viewModel.set(1, 1, 1).done).isTrue()
+    }
+
+    @Test
+    fun `the notification's ± change weight by the weight step and reps by one`() {
+        settings.step = 2.5f
+        val viewModel = viewModel()
+        viewModel.onNotificationWeight(position(0, 0, 0), 1)
+        viewModel.onNotificationReps(position(0, 0, 0), -1)
+
+        assertThat(viewModel.set(0, 0).weightKg).isEqualTo(2.5f)
+        assertThat(viewModel.set(0, 0).reps).isEqualTo(7)
+    }
+
+    @Test
+    fun `the notification starts and stops a set timer and stops a rest, which it logs itself`() {
+        val viewModel = viewModel()
+        viewModel.onCellTapped(CellFocus(viewModel.ref(0, 0), ValueField.Reps))
+        viewModel.onModeSelected(SetMode.Time)
+        viewModel.type("30")
+        viewModel.onHideKeypad()
+
+        viewModel.onNotificationSetTimer(position(0, 0, 0), start = true)
+        assertThat(viewModel.state.value.isTiming(viewModel.ref(0, 0))).isTrue()
+        viewModel.onNotificationSetTimer(position(0, 0, 0), start = false)
+        assertThat(viewModel.state.value.timer).isNull()
+
+        viewModel.onTick(viewModel.ref(0, 1))
+        viewModel.onNotificationRestStop()
+        assertThat(viewModel.state.value.timer).isNull()
+        assertThat(analytics.events).containsNoneOf("set_timer_started", "set_timer_stopped", "rest_stopped")
+    }
+
     // Leaving and finishing
 
     @Test
@@ -462,6 +547,9 @@ class WorkoutLogViewModelTest {
         assertThat(store.ongoing?.getExerciseGroups()?.first()?.exercises?.first()?.sets?.first()?.getReps()).isEqualTo(6)
     }
 
+    private fun position(group: Int, set: Int, exercise: Int) =
+        ELWorkoutState(groupIndex = group, setIndex = set, exerciseIndex = exercise)
+
     // Bench press's first set switched to time and its timer running
     private fun timedSetRunning(seconds: String): WorkoutLogViewModel {
         val viewModel = viewModel()
@@ -513,6 +601,31 @@ class WorkoutLogViewModelTest {
         override fun keepScreenOn() = false
     }
 
+    private class FakeNotification : WorkoutLogNotification {
+        var started: ELWorkout? = null
+        var stopped = false
+        // The workout it was last sent
+        var shown: ELWorkout? = null
+        var rest: Pair<Int, Int>? = null
+
+        override fun start(workout: ELWorkout) {
+            started = workout
+        }
+
+        override fun stop() {
+            stopped = true
+        }
+
+        override fun update(workout: ELWorkout) {
+            shown = workout
+            rest = null
+        }
+
+        override fun showRest(remainingPercent: Int, remainingSeconds: Int) {
+            rest = remainingPercent to remainingSeconds
+        }
+    }
+
     private class CountingAlerts : WorkoutLogAlerts {
         var count = 0
 
@@ -528,12 +641,12 @@ class WorkoutLogViewModelTest {
             events += "screen"
         }
 
-        override fun setCompleted(type: ELSetType?, timed: Boolean) {
-            events += "set_completed $type"
+        override fun setCompleted(type: ELSetType?, timed: Boolean, fromNotification: Boolean) {
+            events += "set_completed $type" + if (fromNotification) " notification" else ""
         }
 
-        override fun setGroupCompleted(type: ELSetType?, exercises: Int) {
-            events += "set_group_completed $type $exercises"
+        override fun setGroupCompleted(type: ELSetType?, exercises: Int, fromNotification: Boolean) {
+            events += "set_group_completed $type $exercises" + if (fromNotification) " notification" else ""
         }
 
         override fun setEdited(type: ELSetType?, timed: Boolean) {
