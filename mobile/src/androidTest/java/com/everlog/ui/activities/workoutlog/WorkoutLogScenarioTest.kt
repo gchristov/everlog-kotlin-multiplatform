@@ -40,7 +40,8 @@ import org.junit.runner.RunWith
  * level scenarios rather than a test per detail (the view-model's unit tests cover those), as each one is slow.
  *
  * The ongoing workout is saved and loaded through the device's real WorkoutManager, so resuming is the real thing.
- * Only Firestore and the plan are left out: the finished workout is kept here instead.
+ * Only Firestore and the plan are left out: the finished workout is kept here instead. It runs in the installed debug
+ * app, so it clears that app's ongoing workout: run it on an emulator, not on a phone mid-workout.
  */
 @RunWith(AndroidJUnit4::class)
 class WorkoutLogScenarioTest {
