@@ -33,9 +33,9 @@ class OnboardingViewModel(
     private val now: () -> Long = System::currentTimeMillis,
     questions: List<OnboardingQuestion> = OnboardingQuestions.all,
     firstDayOfWeek: DayOfWeek = DayOfWeek.MONDAY,
-) : CommonViewModel<OnboardingViewModel.State>(
+) : CommonViewModel<OnboardingState>(
     dispatcher = dispatcher,
-    initialState = State(questions = questions, activeQuestionId = null, firstDayOfWeek = firstDayOfWeek).activate(questions.firstOrNull()?.id)
+    initialState = OnboardingState(questions = questions, activeQuestionId = null, firstDayOfWeek = firstDayOfWeek).activate(questions.firstOrNull()?.id)
 ) {
     // Steps already logged as viewed, so going back to one (e.g. after editing an answer) isn't
     // counted again
@@ -45,10 +45,12 @@ class OnboardingViewModel(
         logViewed(AnalyticsConstants.ONBOARDING_STEP_WELCOME)
     }
 
+    fun onScreenShown() = analytics.screenViewed(state.value.step)
+
     // Let's go on the welcome
     fun onStart() {
-        if (state.value.step != Step.Welcome) return
-        setState { copy(step = Step.Questions) }
+        if (state.value.step != OnboardingStep.Welcome) return
+        setState { copy(step = OnboardingStep.Questions) }
         analytics.stepCompleted(AnalyticsConstants.ONBOARDING_STEP_WELCOME)
         logNextQuestionViewed()
     }
@@ -118,7 +120,7 @@ class OnboardingViewModel(
     // Skip setup in the top bar, or Back, on the welcome or a question: asks first
     fun onSkipSetup() {
         val currentState = state.value
-        if (currentState.skipSetupPrompt || currentState.finished || (currentState.step != Step.Welcome && currentState.step != Step.Questions)) return
+        if (currentState.skipSetupPrompt || currentState.finished || (currentState.step != OnboardingStep.Welcome && currentState.step != OnboardingStep.Questions)) return
         setState { copy(skipSetupPrompt = true) }
         analytics.skipPromptShown(currentState.analyticsStep)
     }
@@ -139,8 +141,8 @@ class OnboardingViewModel(
 
     fun onBuild() {
         val currentState = state.value
-        if (!currentState.allAnswered || currentState.step == Step.Building) return
-        setState { copy(step = Step.Building) }
+        if (!currentState.allAnswered || currentState.step == OnboardingStep.Building) return
+        setState { copy(step = OnboardingStep.Building) }
         logViewed(AnalyticsConstants.ONBOARDING_STEP_BUILDING)
         build(currentState.answers)
     }
@@ -148,15 +150,15 @@ class OnboardingViewModel(
     // Try again after the build failed: builds the week from scratch
     fun onRetryBuild() {
         val currentState = state.value
-        if (currentState.step != Step.Building || currentState.build != Progress.Failed) return
-        setState { copy(build = Progress.InProgress, buildAttempt = buildAttempt + 1) }
+        if (currentState.step != OnboardingStep.Building || currentState.build != StarterRoutinesProgress.Failed) return
+        setState { copy(build = StarterRoutinesProgress.InProgress, buildAttempt = buildAttempt + 1) }
         analytics.stepRetried(AnalyticsConstants.ONBOARDING_STEP_BUILDING)
         build(currentState.answers)
     }
 
     // Skip after the build failed, so the user is never stuck here
     fun onSkipBuild() {
-        if (state.value.step != Step.Building || state.value.build != Progress.Failed) return
+        if (state.value.step != OnboardingStep.Building || state.value.build != StarterRoutinesProgress.Failed) return
         setState { copy(finished = true) }
         analytics.stepSkipped(AnalyticsConstants.ONBOARDING_STEP_BUILDING)
         analytics.finished(AnalyticsConstants.ONBOARDING_OUTCOME_SKIPPED, AnalyticsConstants.ONBOARDING_STEP_BUILDING, routines = 0)
@@ -164,8 +166,8 @@ class OnboardingViewModel(
 
     // The building screen has played the whole success animation
     fun onBuildShown() {
-        if (state.value.step != Step.Building || state.value.build != Progress.Done) return
-        setState { copy(step = Step.Reveal) }
+        if (state.value.step != OnboardingStep.Building || state.value.build != StarterRoutinesProgress.Done) return
+        setState { copy(step = OnboardingStep.Reveal) }
         logViewed(AnalyticsConstants.ONBOARDING_STEP_REVEAL)
     }
 
@@ -180,8 +182,8 @@ class OnboardingViewModel(
     fun onLooksGood() {
         val currentState = state.value
         val starter = currentState.starter ?: return
-        if (currentState.step != Step.Reveal) return
-        setState { copy(step = Step.Saving) }
+        if (currentState.step != OnboardingStep.Reveal) return
+        setState { copy(step = OnboardingStep.Saving) }
         analytics.stepCompleted(AnalyticsConstants.ONBOARDING_STEP_REVEAL, AnalyticsConstants.ONBOARDING_REVEAL_LOOKS_GOOD)
         logViewed(AnalyticsConstants.ONBOARDING_STEP_SAVING)
         save(starter.routines)
@@ -190,7 +192,7 @@ class OnboardingViewModel(
     // Build my own template on the reveal: opens the routine builder. The starter routines aren't
     // saved, so backing out of the builder returns to the reveal as it was.
     fun onBuildOwn() {
-        if (state.value.step != Step.Reveal) return
+        if (state.value.step != OnboardingStep.Reveal) return
         setState { copy(openRoutineBuilder = true) }
         analytics.stepCompleted(AnalyticsConstants.ONBOARDING_STEP_REVEAL, AnalyticsConstants.ONBOARDING_REVEAL_BUILD_OWN)
     }
@@ -212,15 +214,15 @@ class OnboardingViewModel(
     fun onRetrySave() {
         val currentState = state.value
         val starter = currentState.starter ?: return
-        if (currentState.step != Step.Saving || currentState.save != Progress.Failed) return
-        setState { copy(save = Progress.InProgress, saveAttempt = saveAttempt + 1) }
+        if (currentState.step != OnboardingStep.Saving || currentState.save != StarterRoutinesProgress.Failed) return
+        setState { copy(save = StarterRoutinesProgress.InProgress, saveAttempt = saveAttempt + 1) }
         analytics.stepRetried(AnalyticsConstants.ONBOARDING_STEP_SAVING)
         save(starter.routines)
     }
 
     // Skip after saving failed: the screen closes without the routines
     fun onSkipSave() {
-        if (state.value.step != Step.Saving || state.value.save != Progress.Failed) return
+        if (state.value.step != OnboardingStep.Saving || state.value.save != StarterRoutinesProgress.Failed) return
         setState { copy(finished = true) }
         analytics.stepSkipped(AnalyticsConstants.ONBOARDING_STEP_SAVING)
         analytics.finished(AnalyticsConstants.ONBOARDING_OUTCOME_SKIPPED, AnalyticsConstants.ONBOARDING_STEP_SAVING, routines = 0)
@@ -228,7 +230,7 @@ class OnboardingViewModel(
 
     // The saving screen has played the whole success animation
     fun onSaveShown() {
-        if (state.value.step != Step.Saving || state.value.save != Progress.Done) return
+        if (state.value.step != OnboardingStep.Saving || state.value.save != StarterRoutinesProgress.Done) return
         setState { copy(finished = true) }
     }
 
@@ -239,12 +241,12 @@ class OnboardingViewModel(
                 // Reported as a non-fatal. The screen offers to try again or skip.
                 ifLeft = {
                     Timber.tag(TAG).e(it)
-                    setState { copy(build = Progress.Failed) }
+                    setState { copy(build = StarterRoutinesProgress.Failed) }
                     analytics.stepFailed(AnalyticsConstants.ONBOARDING_STEP_BUILDING)
                 },
                 ifRight = { starter ->
                     Timber.tag(TAG).i("Built starter routines for %s: %s", profile, starter.routines.joinToString { "${it.name} (${it.getTotalExercises()} exercises)" })
-                    setState { copy(build = Progress.Done, starter = starter) }
+                    setState { copy(build = StarterRoutinesProgress.Done, starter = starter) }
                     analytics.stepCompleted(AnalyticsConstants.ONBOARDING_STEP_BUILDING)
                 },
             )
@@ -257,12 +259,12 @@ class OnboardingViewModel(
                 // Reported as a non-fatal. The screen offers to try again or skip.
                 ifLeft = {
                     Timber.tag(TAG).e(it)
-                    setState { copy(save = Progress.Failed) }
+                    setState { copy(save = StarterRoutinesProgress.Failed) }
                     analytics.stepFailed(AnalyticsConstants.ONBOARDING_STEP_SAVING)
                 },
                 ifRight = {
                     Timber.tag(TAG).i("Saved starter routines: %s", routines.joinToString { it.name.orEmpty() })
-                    setState { copy(save = Progress.Done) }
+                    setState { copy(save = StarterRoutinesProgress.Done) }
                     analytics.stepCompleted(AnalyticsConstants.ONBOARDING_STEP_SAVING)
                     analytics.finished(AnalyticsConstants.ONBOARDING_OUTCOME_STARTER_TEMPLATES, AnalyticsConstants.ONBOARDING_STEP_SAVING, routines.size)
                 },
@@ -283,7 +285,7 @@ class OnboardingViewModel(
     // The question that opens after an answer, unless it was an edit and every question is answered
     private fun logNextQuestionViewed() {
         val currentState = state.value
-        if (currentState.step != Step.Questions || currentState.isEditing) return
+        if (currentState.step != OnboardingStep.Questions || currentState.isEditing) return
         currentState.activeQuestionId?.let { logViewed(it) }
     }
 
@@ -302,116 +304,6 @@ class OnboardingViewModel(
     private fun updateInput(questionId: String, update: (Answer?) -> Answer?) {
         if (questionId != state.value.activeQuestionId) return
         setState { copy(input = update(input)) }
-    }
-
-    // What the screen shows, in order
-    enum class Step {
-        // Until Let's go
-        Welcome,
-        // One question open at a time, until Build my templates
-        Questions,
-        // The starter routines building, until they're ready or the user skips
-        Building,
-        // The starter routines, until Looks good or Build my own template
-        Reveal,
-        // The starter routines saving after Looks good, until they're saved or the user skips
-        Saving,
-    }
-
-    // Building or saving the starter routines
-    enum class Progress {
-        InProgress,
-        Done,
-        // Until Try again or Skip
-        Failed,
-    }
-
-    data class State(
-        val questions: List<OnboardingQuestion>,
-        val step: Step = Step.Welcome,
-        val answers: Map<String, Answer> = emptyMap(),
-        // Questions skipped, whose answers are the defaults
-        val skipped: Set<String> = emptySet(),
-        // The open question: the next one to answer, or an answered one being edited
-        val activeQuestionId: String?,
-        // In-progress answer for the open question
-        val input: Answer? = null,
-        // While the step is Building
-        val build: Progress = Progress.InProgress,
-        // Counts Try again, so the building screen starts its animation over
-        val buildAttempt: Int = 0,
-        // Once the build is ready
-        val starter: BuildStarterRoutinesUseCase.Result? = null,
-        // While the step is Saving
-        val save: Progress = Progress.InProgress,
-        // Counts Try again, so the saving screen starts its animation over
-        val saveAttempt: Int = 0,
-        // The reveal's open routine cards, by index. The first starts open.
-        val openRoutines: Set<Int> = setOf(0),
-        // Until the screen opens the routine builder
-        val openRoutineBuilder: Boolean = false,
-        // Skip setup asks first, on the welcome and the questions
-        val skipSetupPrompt: Boolean = false,
-        // The screen closes
-        val finished: Boolean = false,
-        // From Settings, for the order of the reminder days
-        val firstDayOfWeek: DayOfWeek = DayOfWeek.MONDAY,
-    ) {
-        val firstUnansweredId: String? get() = questions.firstOrNull { it.id !in answers }?.id
-
-        val activeQuestion: OnboardingQuestion? get() = questions.firstOrNull { it.id == activeQuestionId }
-
-        val isEditing: Boolean get() = activeQuestionId != null && activeQuestionId in answers
-
-        // Every question up to the next one to answer. Later ones stay hidden.
-        val visibleQuestions: List<OnboardingQuestion>
-            get() {
-                val firstUnanswered = questions.indexOfFirst { it.id !in answers }
-                return if (firstUnanswered == -1) questions else questions.take(firstUnanswered + 1)
-            }
-
-        val allAnswered: Boolean get() = answers.size == questions.size
-
-        // Where Skip setup was tapped: the welcome, or the open question
-        val analyticsStep: String
-            get() = if (step == Step.Welcome) AnalyticsConstants.ONBOARDING_STEP_WELCOME else activeQuestionId ?: AnalyticsConstants.ONBOARDING_STEP_WELCOME
-
-        val canContinue: Boolean
-            get() = when (val input = input) {
-                is Answer.Reminders -> input.days.isNotEmpty()
-                null -> false
-                else -> true
-            }
-
-        internal fun answer(questionId: String, answer: Answer, skipped: Boolean): State {
-            val newState = copy(
-                answers = answers + (questionId to answer),
-                skipped = if (skipped) this.skipped + questionId else this.skipped - questionId,
-            )
-            return newState.activate(newState.firstUnansweredId)
-        }
-
-        // Opens a question, starting from its answer, or what the design preselects
-        internal fun activate(questionId: String?): State {
-            val question = questions.firstOrNull { it.id == questionId }
-            // A skipped question or reminders turned off start again from the preselection
-            val answer = answers[questionId]?.takeIf { questionId !in skipped && it != Answer.RemindersOff }
-            return copy(
-                activeQuestionId = questionId,
-                input = answer ?: question?.let { initialInput(it) },
-            )
-        }
-
-        private fun initialInput(question: OnboardingQuestion): Answer? = when (question.id) {
-            // Preselected from the device's locale
-            OnboardingQuestions.Units -> Answer.Choice(OnboardingQuestions.deviceUnit())
-            // Days follow the days-a-week answer, at 18:00
-            OnboardingQuestions.Reminders -> {
-                val days = (answers[OnboardingQuestions.Days] as? Answer.Days)?.count ?: 3
-                Answer.Reminders(OnboardingQuestions.trainingDays(days).toSet(), hour = 18, minute = 0)
-            }
-            else -> null
-        }
     }
 
     private companion object {

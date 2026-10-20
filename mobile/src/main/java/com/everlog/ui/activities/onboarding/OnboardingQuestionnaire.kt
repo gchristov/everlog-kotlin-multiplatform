@@ -64,7 +64,7 @@ import org.threeten.bp.DayOfWeek
 // welcome.
 @Composable
 internal fun OnboardingQuestionnaire(
-    state: OnboardingViewModel.State,
+    state: OnboardingState,
     viewModel: OnboardingViewModel,
     contentPadding: PaddingValues,
 ) {
@@ -124,7 +124,7 @@ internal fun OnboardingQuestionnaire(
 
 @Composable
 private fun SetupQuestions(
-    state: OnboardingViewModel.State,
+    state: OnboardingState,
     viewModel: OnboardingViewModel,
     scrollState: ScrollState,
     viewportHeight: Float,
@@ -197,7 +197,7 @@ private data class ItemState(
 @Composable
 private fun QuestionItem(
     question: OnboardingQuestion,
-    state: OnboardingViewModel.State,
+    state: OnboardingState,
     // In its group of rows, while it's closed
     position: GroupPosition?,
     viewModel: OnboardingViewModel,
@@ -383,14 +383,14 @@ private enum class FooterMode {
 // lower slot, so a swap is a crossfade in place that never moves the thumb target.
 @Composable
 internal fun OnboardingFooter(
-    state: OnboardingViewModel.State,
+    state: OnboardingState,
     viewModel: OnboardingViewModel,
     // Let's go fades in after the welcome's content, the first time it shows
     animateIn: Boolean,
 ) {
     val haptics = LocalHapticFeedback.current
     val mode = when {
-        state.step == OnboardingViewModel.Step.Welcome -> FooterMode.Welcome
+        state.step == OnboardingStep.Welcome -> FooterMode.Welcome
         state.activeQuestion is OnboardingQuestion.Reminders -> FooterMode.Reminders
         state.activeQuestionId == null -> FooterMode.Build
         state.isEditing -> FooterMode.Editing

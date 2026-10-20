@@ -65,11 +65,11 @@ import com.everlog.ui.design.theme.Theme
 // The reveal from the Everlog Onboarding design: "Here are your workout templates", the summary of
 // the answers, then a card per routine. The first card starts open with its exercises, the others
 // closed with a line about them, and any card opens or closes on a tap. The routines aren't tied to
-// days of the week, so no days show (onboarding v1 has no schedule or reminders). Looks good saves
-// them, and Build my own template opens the routine builder (for now it closes the screen).
+// days of the week, so no days show. Looks good saves them, and Build my own template opens the
+// routine builder; the screen closes once it saves a routine.
 @Composable
 internal fun OnboardingReveal(
-    state: OnboardingViewModel.State,
+    state: OnboardingState,
     onRoutineToggle: (Int) -> Unit,
     onLooksGood: () -> Unit,
     onBuildOwn: () -> Unit,
