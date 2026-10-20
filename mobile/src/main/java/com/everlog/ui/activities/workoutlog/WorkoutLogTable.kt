@@ -169,7 +169,23 @@ internal fun WorkoutTable(
         ) {
             blocks.forEachIndexed { b, block ->
                 item(key = block.id) {
-                    ExerciseTable(b, block, unit, focus, selected, typed, timing, startsTimer, onCellTapped, onTick, onStartTimer, onAddSet, onDeleteSet, onOpenExercise, onDeleteExercise)
+                    ExerciseTable(
+                        index = b,
+                        block = block,
+                        unit = unit,
+                        focus = focus,
+                        selected = selected,
+                        typed = typed,
+                        timing = timing,
+                        startsTimer = startsTimer,
+                        onCellTapped = onCellTapped,
+                        onTick = onTick,
+                        onStartTimer = onStartTimer,
+                        onAddSet = onAddSet,
+                        onDeleteSet = onDeleteSet,
+                        onOpenExercise = onOpenExercise,
+                        onDeleteExercise = onDeleteExercise,
+                    )
                 }
             }
         }
