@@ -62,11 +62,12 @@ internal class WorkoutLogViewModel(
         save()
     }
 
-    // A setting may have changed while the screen was away, e.g. the weight unit
+    // A setting may have changed while the screen was away, e.g. the weight unit, which the notification shows too
     fun onResume() {
         resumed = true
         analytics.screenViewed()
         setState { withSettings(settings).copy(now = clock()) }
+        notifyWorkout()
         keepTicking()
     }
 

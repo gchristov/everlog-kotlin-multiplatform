@@ -406,6 +406,15 @@ class WorkoutLogViewModelTest {
     }
 
     @Test
+    fun `the notification is sent the workout again when the screen comes back, as a setting may have changed`() {
+        val viewModel = viewModel()
+        notification.shown = null
+        viewModel.onResume()
+
+        assertThat(notification.shown?.uuid).isEqualTo("workout")
+    }
+
+    @Test
     fun `the notification counts a rest down`() {
         val viewModel = viewModel()
         viewModel.onTick(viewModel.ref(0, 0))
