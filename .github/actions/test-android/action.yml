@@ -20,7 +20,8 @@ runs:
         emulator-boot-timeout: 120
         emulator-options: -no-snapshot-save -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
         disable-animations: true
-        script: ./gradlew connectedAndroidTest
+        # On a failure, keep the device's log for the artifacts below
+        script: ./gradlew connectedAndroidTest || (adb logcat -d > logcat.txt; exit 1)
     - name: Artifacts
       uses: actions/upload-artifact@v7
       if: always() # Ensure all artifacts are collected, even after errors
@@ -28,3 +29,5 @@ runs:
         name: Android Tests
         path: |
           **/test-result.pb
+          **/build/outputs/androidTest-results/connected/**/*.xml
+          logcat.txt

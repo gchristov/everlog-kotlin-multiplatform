@@ -28,11 +28,14 @@ import com.everlog.managers.WorkoutManager
 import com.everlog.managers.preferences.SettingsManager.WeightUnit
 import com.everlog.ui.design.theme.Theme
 import com.google.common.truth.Truth.assertThat
+import java.util.concurrent.TimeUnit
 import kotlinx.coroutines.Dispatchers
 import org.junit.After
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
+import org.junit.rules.RuleChain
+import org.junit.rules.Timeout
 import org.junit.runner.RunWith
 
 /**
@@ -46,8 +49,13 @@ import org.junit.runner.RunWith
 @RunWith(AndroidJUnit4::class)
 class WorkoutLogScenarioTest {
 
-    @get:Rule
     val compose = createComposeRule()
+
+    // A scenario that hangs (e.g. the screen never settles) fails with where it was stuck, rather than holding up CI
+    @get:Rule
+    val rules: RuleChain = RuleChain
+        .outerRule(Timeout.builder().withTimeout(2, TimeUnit.MINUTES).withLookingForStuckThread(true).build())
+        .around(compose)
 
     private val store = DeviceStore()
     private val analytics = RecordingAnalytics()
