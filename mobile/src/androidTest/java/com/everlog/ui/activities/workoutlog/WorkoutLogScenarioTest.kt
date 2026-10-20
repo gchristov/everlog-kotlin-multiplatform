@@ -29,6 +29,7 @@ import androidx.test.platform.app.InstrumentationRegistry
 import com.everlog.constants.ELConstants
 import com.everlog.data.controllers.workoutprefill.BaseWorkoutPrefillController.PrefillSource
 import com.everlog.data.controllers.workoutprefill.WorkoutPrefillController
+import com.everlog.data.controllers.workoutsession.ValueField
 import com.everlog.data.model.ELRoutine
 import com.everlog.data.model.exercise.ELExercise
 import com.everlog.data.model.exercise.ELExerciseGroup
@@ -129,6 +130,9 @@ class WorkoutLogScenarioTest {
         keys("130")
         cell(0, 1, 0, "count").assertTextEquals("1:30")
         compose.onNodeWithContentDescription("Hide keypad").performClick()
+        // Each value is logged once, as the keypad leaves it, in lb
+        assertThat(analytics.events.filter { "modified" in it })
+            .containsExactly("reps_modified 10.0", "weight_modified 135.0", "time_modified 90.0").inOrder()
 
         // A timed set starts its timer from its row. +10s adds to its time, and Stop leaves the set to be ticked, which
         // starts its rest
@@ -161,6 +165,7 @@ class WorkoutLogScenarioTest {
         assertThat(notification.shownSetName()).isEqualTo("Raise")
         notificationButton(receiver, WorkoutService.BROADCAST_REQUEST_INCREASE_REPS)
         cell(1, 0, 1, "count").assertTextEquals("13")
+        assertThat(analytics.events.last()).isEqualTo("reps_modified 13.0")
         notificationButton(receiver, WorkoutService.BROADCAST_REQUEST_COMPLETE_SET)
         tick(1, 0, 1).assertContentDescriptionEquals("Undo set")
         compose.onNodeWithText("REST").assertExists()
@@ -444,6 +449,10 @@ class WorkoutLogScenarioTest {
 
         override fun restChanged(seconds: Int) {
             events += "rest_changed $seconds"
+        }
+
+        override fun valueChanged(field: ValueField, value: Float?) {
+            events += "${field.name.lowercase()}_modified $value"
         }
 
         override fun restStarted() {
