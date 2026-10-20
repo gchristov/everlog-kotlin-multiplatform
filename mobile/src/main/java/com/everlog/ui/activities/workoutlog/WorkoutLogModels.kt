@@ -32,6 +32,9 @@ internal data class WorkoutLogState(
     val typed: String? = null,
     // Goes up with every key, so the edited cell comes back into view if it was scrolled away
     val reveal: Int = 0,
+    // The one countdown running, a rest or a timed set's. Not saved: like the old screen's, it's gone if the app is
+    // killed.
+    val timer: WorkoutTimer? = null,
     val dialog: WorkoutLogDialog? = null,
     // Set once the workout is finished or discarded, for the screen to close
     val exit: WorkoutLogExit? = null,
@@ -50,13 +53,37 @@ internal data class WorkoutLogState(
             return when {
                 focus.field != ValueField.Weight -> KeypadMainKey.Next
                 set.done -> KeypadMainKey.Done
+                set.mode == SetMode.Time && !isTiming(focus.ref) -> KeypadMainKey.StartTimer
                 else -> KeypadMainKey.CompleteSet
             }
         }
 
-    // The set the closed keypad's Complete set completes: the selected one, or else the current one
+    // The set the closed keypad's main action completes (or times): the selected one, or else the current one
     val target: SetRef?
         get() = selected?.takeIf { blocks.set(it)?.done == false } ?: current
+
+    // The closed keypad's main action for [target]: a timed set's timer starts first, then completes it
+    val targetStartsTimer: Boolean
+        get() = target?.let { blocks.set(it)?.mode == SetMode.Time && !isTiming(it) } == true
+
+    fun isTiming(ref: SetRef): Boolean = (timer as? WorkoutTimer.SetTimer)?.ref == ref
+
+    // Whole seconds left on the countdown, rounded up so it shows 1 until it's done
+    fun timerRemainingSeconds(): Int = timer?.let { ((it.endsAt - now).coerceAtLeast(0) + 999).toInt() / 1000 } ?: 0
+}
+
+/**
+ * A countdown that ends at [endsAt]. [totalSeconds] is how long it runs, with any time added or taken off.
+ */
+internal sealed interface WorkoutTimer {
+    val endsAt: Long
+    val totalSeconds: Int
+
+    // After a set, before the next
+    data class Rest(override val endsAt: Long, override val totalSeconds: Int) : WorkoutTimer
+
+    // A timed set being done
+    data class SetTimer(val ref: SetRef, override val endsAt: Long, override val totalSeconds: Int) : WorkoutTimer
 }
 
 /**
@@ -72,6 +99,8 @@ internal fun countField(set: WorkoutSet) = if (set.mode == SetMode.Time) ValueFi
 internal enum class KeypadMainKey {
     Next,
     CompleteSet,
+    // A timed set's timer, before Complete set
+    StartTimer,
     Done,
 }
 

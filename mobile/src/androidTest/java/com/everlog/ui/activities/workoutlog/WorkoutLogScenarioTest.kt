@@ -105,8 +105,19 @@ class WorkoutLogScenarioTest {
         cell(0, 1, 0, "count").assertTextEquals("1:30")
         compose.onNodeWithContentDescription("Hide keypad").performClick()
 
-        // Its tick completes it, and the closed keypad's Complete set goes through the superset exercise by exercise
-        tick(0, 1, 0).performClick()
+        // A timed set starts its timer from its row. +10s adds to its time, and Done completes it early, which starts
+        // the rest (set 1's rest was replaced by the set timer)
+        tick(0, 1, 0).assertContentDescriptionEquals("Start timer").performClick()
+        compose.onNodeWithText("SET TIMER").assertExists()
+        key("+10s").performClick()
+        cell(0, 1, 0, "count").assertTextEquals("1:40")
+        key("Done").performClick()
+        tick(0, 1, 0).assertContentDescriptionEquals("Undo set")
+        compose.onNodeWithText("REST").assertExists()
+        key("Skip").performClick()
+        compose.onNodeWithText("REST").assertDoesNotExist()
+
+        // The closed keypad's Complete set goes through the superset exercise by exercise
         key("Complete set").performClick()
         key("Complete set").performClick()
         tick(1, 0, 0).assertContentDescriptionEquals("Undo set")
@@ -123,7 +134,7 @@ class WorkoutLogScenarioTest {
         cell(0, 0, 0, "count").assertTextEquals("10")
         cell(0, 0, 0, "weight").assertTextEquals("135")
         tick(0, 0, 0).assertContentDescriptionEquals("Undo set")
-        cell(0, 1, 0, "count").assertTextEquals("1:30")
+        cell(0, 1, 0, "count").assertTextEquals("1:40")
 
         // An exercise added at the end, which may be below the screen
         key("Add exercise").performClick()
@@ -141,7 +152,7 @@ class WorkoutLogScenarioTest {
         assertThat(bench[0].getReps()).isEqualTo(10)
         assertThat(bench[0].getWeightKg()).isWithin(0.01f).of(61.23f)
         assertThat(bench[0].getCompletedDate()).isEqualTo(now)
-        assertThat(bench[1].getTimeSeconds()).isEqualTo(90)
+        assertThat(bench[1].getTimeSeconds()).isEqualTo(100)
         assertThat(finished.getExerciseGroups().map { it.exercises.first().exercise?.name }).containsExactly("Bench press", "Fly", "Squat").inOrder()
         // Which screen it ran on stays on the device
         assertThat(finished.asMap().keys).doesNotContain("workoutScreenV2")
@@ -191,6 +202,9 @@ class WorkoutLogScenarioTest {
         store = store,
         settings = PoundSettings,
         analytics = analytics,
+        alerts = object : WorkoutLogAlerts {
+            override fun timerRanOut() = Unit
+        },
         clock = { now },
         tickMillis = null,
     )
@@ -273,6 +287,22 @@ class WorkoutLogScenarioTest {
 
         override fun exercisesAdded() {
             events += "exercises_added"
+        }
+
+        override fun restStarted() {
+            events += "rest_started"
+        }
+
+        override fun restStopped() {
+            events += "rest_stopped"
+        }
+
+        override fun setTimerStarted() {
+            events += "set_timer_started"
+        }
+
+        override fun setTimerStopped() {
+            events += "set_timer_stopped"
         }
 
         override fun workoutCompleted() {

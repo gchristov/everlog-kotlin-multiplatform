@@ -33,6 +33,7 @@ class WorkoutLogActivity : CommonComposeActivity() {
                     store = store,
                     settings = RealWorkoutLogSettings(),
                     analytics = RealWorkoutLogAnalytics(),
+                    alerts = RealWorkoutLogAlerts(applicationContext),
                 )
             }
         }

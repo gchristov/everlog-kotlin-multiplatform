@@ -19,9 +19,12 @@ import org.junit.Test
 class WorkoutLogViewModelTest {
 
     private val now = 1_000_000L
+    // The clock the view-model reads, moved on by tests that let time pass
+    private var time = now
     private val store = FakeStore()
     private val settings = FakeSettings()
     private val analytics = RecordingAnalytics()
+    private val alerts = CountingAlerts()
 
     // Bench press, 2 sets of 8, then a superset of fly and raise, 2 rounds of 12
     private fun template() = ELWorkout(
@@ -43,7 +46,8 @@ class WorkoutLogViewModelTest {
         store = store,
         settings = settings,
         analytics = analytics,
-        clock = { now },
+        alerts = alerts,
+        clock = { time },
         tickMillis = null,
     )
 
@@ -207,7 +211,7 @@ class WorkoutLogViewModelTest {
         viewModel.onTick(viewModel.ref(0, 0))
         assertThat(viewModel.set(0, 0).done).isFalse()
         assertThat(viewModel.set(0, 0).reps).isEqualTo(8)
-        assertThat(analytics.events).containsExactly("set_completed SINGLE", "set_edited SINGLE").inOrder()
+        assertThat(analytics.events).containsExactly("set_completed SINGLE", "rest_started", "set_edited SINGLE").inOrder()
     }
 
     @Test
@@ -220,7 +224,8 @@ class WorkoutLogViewModelTest {
 
         viewModel.onCompleteTarget()
         assertThat(viewModel.state.value.current).isEqualTo(viewModel.ref(1, 1, 0))
-        assertThat(analytics.events.takeLast(3)).containsExactly("set_completed SUPER", "set_completed SUPER", "set_group_completed SUPER 2").inOrder()
+        assertThat(analytics.events.filter { it.startsWith("set_") }.takeLast(3))
+            .containsExactly("set_completed SUPER", "set_completed SUPER", "set_group_completed SUPER 2").inOrder()
     }
 
     @Test
@@ -242,6 +247,136 @@ class WorkoutLogViewModelTest {
 
         assertThat(viewModel.state.value.selected).isEqualTo(viewModel.ref(0, 0))
         assertThat(analytics.events).contains("exercises_added")
+    }
+
+    // Timers
+
+    @Test
+    fun `a done set starts its rest, which sounds when it runs out`() {
+        val viewModel = viewModel()
+        viewModel.onTick(viewModel.ref(0, 0))
+        assertThat(viewModel.state.value.timer).isEqualTo(WorkoutTimer.Rest(endsAt = now + 90_000, totalSeconds = 90))
+
+        time = now + 90_000
+        viewModel.tick()
+
+        assertThat(viewModel.state.value.timer).isNull()
+        assertThat(alerts.count).isEqualTo(1)
+    }
+
+    @Test
+    fun `a superset rests after its round, not between its exercises`() {
+        val viewModel = viewModel()
+        viewModel.onTick(viewModel.ref(1, 0, 0))
+        assertThat(viewModel.state.value.timer).isNull()
+
+        viewModel.onTick(viewModel.ref(1, 0, 1))
+        assertThat(viewModel.state.value.timer).isInstanceOf(WorkoutTimer.Rest::class.java)
+    }
+
+    @Test
+    fun `−10s and +10s change this rest and every one after it`() {
+        val viewModel = viewModel()
+        viewModel.onTick(viewModel.ref(0, 0))
+        viewModel.onTimerStep(1)
+
+        assertThat(viewModel.state.value.timer?.totalSeconds).isEqualTo(100)
+        assertThat(viewModel.blocks.map { it.restSeconds }).containsExactly(100, 100)
+    }
+
+    @Test
+    fun `taking a rest down to nothing ends it, and the rests after keep theirs`() {
+        val viewModel = viewModel()
+        viewModel.onTick(viewModel.ref(0, 0))
+        repeat(10) { viewModel.onTimerStep(-1) }
+
+        assertThat(viewModel.state.value.timer).isNull()
+        assertThat(viewModel.blocks.map { it.restSeconds }).containsExactly(10, 10)
+    }
+
+    @Test
+    fun `skipping a rest ends it without a sound`() {
+        val viewModel = viewModel()
+        viewModel.onTick(viewModel.ref(0, 0))
+        viewModel.onTimerEnd()
+
+        assertThat(viewModel.state.value.timer).isNull()
+        assertThat(alerts.count).isEqualTo(0)
+        assertThat(analytics.events.last()).isEqualTo("rest_stopped")
+    }
+
+    @Test
+    fun `the last set of the workout doesn't start a rest`() {
+        val viewModel = viewModel()
+        viewModel.blocks.indices.forEach { b ->
+            viewModel.blocks[b].rounds.indices.forEach { r ->
+                viewModel.blocks[b].exercises.indices.forEach { e -> viewModel.onTick(viewModel.ref(b, r, e)) }
+            }
+            viewModel.onTimerEnd()
+        }
+
+        assertThat(viewModel.state.value.timer).isNull()
+    }
+
+    @Test
+    fun `a timed set's key starts its timer, and running out completes it and starts the rest`() {
+        val viewModel = viewModel()
+        viewModel.onCellTapped(CellFocus(viewModel.ref(0, 0), ValueField.Reps))
+        viewModel.onModeSelected(SetMode.Time)
+        viewModel.type("45")
+        viewModel.onMainKey()
+        assertThat(viewModel.state.value.mainKey).isEqualTo(KeypadMainKey.StartTimer)
+
+        viewModel.onMainKey()
+        assertThat(viewModel.state.value.timer).isEqualTo(WorkoutTimer.SetTimer(viewModel.ref(0, 0), endsAt = now + 45_000, totalSeconds = 45))
+        assertThat(viewModel.state.value.mainKey).isEqualTo(KeypadMainKey.CompleteSet)
+
+        time = now + 45_000
+        viewModel.tick()
+        assertThat(viewModel.set(0, 0).done).isTrue()
+        assertThat(viewModel.state.value.timer).isInstanceOf(WorkoutTimer.Rest::class.java)
+        assertThat(alerts.count).isEqualTo(1)
+    }
+
+    @Test
+    fun `+10s on a set timer adds to the set's time`() {
+        val viewModel = timedSetRunning(seconds = "30")
+        viewModel.onTimerStep(1)
+
+        assertThat(viewModel.set(0, 0).timeSeconds).isEqualTo(40)
+        assertThat(viewModel.state.value.timer?.endsAt).isEqualTo(now + 40_000)
+    }
+
+    @Test
+    fun `done on a set timer completes the set early, keeping its time`() {
+        val viewModel = timedSetRunning(seconds = "30")
+        viewModel.onTimerEnd()
+
+        assertThat(viewModel.set(0, 0).done).isTrue()
+        assertThat(viewModel.set(0, 0).timeSeconds).isEqualTo(30)
+        assertThat(analytics.events).containsAtLeast("set_timer_started", "set_timer_stopped", "set_completed SINGLE").inOrder()
+    }
+
+    @Test
+    fun `completing another set ends a running set timer`() {
+        val viewModel = timedSetRunning(seconds = "30")
+        viewModel.onTick(viewModel.ref(0, 1))
+
+        assertThat(viewModel.state.value.timer).isInstanceOf(WorkoutTimer.Rest::class.java)
+        assertThat(viewModel.set(0, 0).done).isFalse()
+    }
+
+    @Test
+    fun `a timed set without a time opens the keypad on it rather than starting`() {
+        val viewModel = viewModel()
+        viewModel.onCellTapped(CellFocus(viewModel.ref(0, 0), ValueField.Reps))
+        viewModel.onModeSelected(SetMode.Time)
+        viewModel.onHideKeypad()
+
+        viewModel.onStartSetTimer(viewModel.ref(0, 0))
+
+        assertThat(viewModel.state.value.timer).isNull()
+        assertThat(viewModel.state.value.focus).isEqualTo(CellFocus(viewModel.ref(0, 0), ValueField.Time))
     }
 
     // Leaving and finishing
@@ -319,12 +454,23 @@ class WorkoutLogViewModelTest {
         assertThat(store.ongoing?.getExerciseGroups()?.first()?.exercises?.first()?.sets?.first()?.getReps()).isEqualTo(6)
     }
 
+    // Bench press's first set switched to time and its timer running
+    private fun timedSetRunning(seconds: String): WorkoutLogViewModel {
+        val viewModel = viewModel()
+        viewModel.onCellTapped(CellFocus(viewModel.ref(0, 0), ValueField.Reps))
+        viewModel.onModeSelected(SetMode.Time)
+        viewModel.type(seconds)
+        viewModel.onStartSetTimer(viewModel.ref(0, 0))
+        return viewModel
+    }
+
     private fun group(type: String, vararg exercises: Pair<String, Int>, sets: Int) = ELExerciseGroup(
         uuid = "group-${exercises.first().first}",
         type = type,
         exercises = exercises.map { (name, reps) ->
             ELRoutineExercise(name, ELExercise(uuid = name, name = name), MutableList(sets) { ELSet(requiredReps = reps) })
         }.toMutableList(),
+        restTimeSeconds = 90,
     )
 
     private class FakeStore : WorkoutLogStore {
@@ -359,6 +505,14 @@ class WorkoutLogViewModelTest {
         override fun keepScreenOn() = false
     }
 
+    private class CountingAlerts : WorkoutLogAlerts {
+        var count = 0
+
+        override fun timerRanOut() {
+            count++
+        }
+    }
+
     private class RecordingAnalytics : WorkoutLogAnalytics {
         val events = mutableListOf<String>()
 
@@ -380,6 +534,22 @@ class WorkoutLogViewModelTest {
 
         override fun exercisesAdded() {
             events += "exercises_added"
+        }
+
+        override fun restStarted() {
+            events += "rest_started"
+        }
+
+        override fun restStopped() {
+            events += "rest_stopped"
+        }
+
+        override fun setTimerStarted() {
+            events += "set_timer_started"
+        }
+
+        override fun setTimerStopped() {
+            events += "set_timer_stopped"
         }
 
         override fun workoutCompleted() {

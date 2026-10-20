@@ -60,6 +60,8 @@ import com.everlog.ui.design.elements.keypad.AppKeypadAction
 import com.everlog.ui.design.elements.keypad.AppKeypadEntry
 import com.everlog.ui.design.elements.keypad.AppKeypadInput
 import com.everlog.ui.design.elements.keypad.AppKeypadNote
+import com.everlog.ui.design.elements.keypad.AppKeypadTimer
+import com.everlog.ui.design.elements.keypad.AppKeypadTimerStyle
 import com.everlog.ui.design.elements.keypad.AppKeypadToggle
 import com.everlog.ui.design.theme.Theme
 import com.everlog.utils.UnitUtils
@@ -115,12 +117,16 @@ internal fun WorkoutLogScreen(viewModel: WorkoutLogViewModel, onAddExercise: () 
                 primaryAction = when {
                     // The empty workout's only action
                     empty -> addExercise
-                    state.target != null -> AppKeypadAction(stringResource(R.string.workout_log_complete_set), viewModel::onCompleteTarget)
+                    state.target != null -> AppKeypadAction(
+                        stringResource(if (state.targetStartsTimer) R.string.workout_log_start_timer else R.string.workout_log_complete_set),
+                        viewModel::onCompleteTarget,
+                    )
                     // Every set done: Finish in the header is filled instead
                     else -> null
                 },
                 strips = {
                     if (empty) AppKeypadNote(text = stringResource(R.string.workout_log_empty_hint))
+                    state.timer?.let { TimerStrip(it, state.timerRemainingSeconds(), viewModel) }
                 },
             )
         },
@@ -135,14 +141,30 @@ internal fun WorkoutLogScreen(viewModel: WorkoutLogViewModel, onAddExercise: () 
                 selected = state.selected,
                 typed = state.typed,
                 reveal = state.reveal,
+                timing = (state.timer as? WorkoutTimer.SetTimer)?.let { Countdown(it.ref, state.timerRemainingSeconds()) },
                 contentPadding = contentPadding,
                 onCellTapped = viewModel::onCellTapped,
                 onTick = viewModel::onTick,
+                onStartTimer = viewModel::onStartSetTimer,
             )
         }
     }
 
     WorkoutLogDialogs(state.dialog, viewModel)
+}
+
+// The running countdown: a rest in amber with Skip, a set timer with Done
+@Composable
+private fun TimerStrip(timer: WorkoutTimer, remainingSeconds: Int, viewModel: WorkoutLogViewModel) {
+    val rest = timer is WorkoutTimer.Rest
+    AppKeypadTimer(
+        label = stringResource(if (rest) R.string.workout_log_rest else R.string.workout_log_set_timer),
+        time = formatClock(remainingSeconds.toLong()),
+        style = if (rest) AppKeypadTimerStyle.Rest else AppKeypadTimerStyle.Active,
+        less = AppKeypadAction(stringResource(R.string.workout_log_timer_less)) { viewModel.onTimerStep(-1) },
+        more = AppKeypadAction(stringResource(R.string.workout_log_timer_more)) { viewModel.onTimerStep(1) },
+        end = AppKeypadAction(stringResource(if (rest) R.string.workout_log_skip else R.string.workout_log_done), viewModel::onTimerEnd),
+    )
 }
 
 // What the open keypad shows for the focused cell
@@ -165,6 +187,7 @@ private fun keypadEntry(state: WorkoutLogState, viewModel: WorkoutLogViewModel):
                 when (mainKey) {
                     KeypadMainKey.Next -> R.string.workout_log_next
                     KeypadMainKey.CompleteSet -> R.string.workout_log_complete_set
+                    KeypadMainKey.StartTimer -> R.string.workout_log_start_timer
                     KeypadMainKey.Done -> R.string.workout_log_done
                 },
             ),
@@ -253,9 +276,11 @@ private fun EmptyTable(contentPadding: PaddingValues, unit: SettingsManager.Weig
                     selected = SetRef(-1, -3, 0),
                     typed = null,
                     reveal = 0,
+                    timing = null,
                     contentPadding = contentPadding,
                     onCellTapped = {},
                     onTick = {},
+                    onStartTimer = {},
                 )
             }
             // Takes every touch, so the example can't be used
