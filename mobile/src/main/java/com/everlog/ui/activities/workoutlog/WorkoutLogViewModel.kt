@@ -7,13 +7,13 @@ import com.everlog.data.controllers.workoutsession.SetRef
 import com.everlog.data.controllers.workoutsession.ValueField
 import com.everlog.data.controllers.workoutsession.WorkoutBlock
 import com.everlog.data.controllers.workoutsession.addGroups
-import com.everlog.data.controllers.workoutsession.restore
-import com.everlog.data.controllers.workoutsession.deleteSet
 import com.everlog.data.controllers.workoutsession.addRound
 import com.everlog.data.controllers.workoutsession.block
 import com.everlog.data.controllers.workoutsession.completeSet
+import com.everlog.data.controllers.workoutsession.deleteSet
 import com.everlog.data.controllers.workoutsession.nextOpenAfter
 import com.everlog.data.controllers.workoutsession.refs
+import com.everlog.data.controllers.workoutsession.restore
 import com.everlog.data.controllers.workoutsession.round
 import com.everlog.data.controllers.workoutsession.set
 import com.everlog.data.controllers.workoutsession.setMode
@@ -393,11 +393,11 @@ internal class WorkoutLogViewModel(
         // The current set, or the next one not done after it that's still there
         val refs = before.blocks.refs()
         val from = refs.indexOf(before.current)
-        val current = (refs.drop(from + 1) + refs.take(from + 1)).firstOrNull { blocks.set(it)?.done == false }
+        val next = (refs.drop(from + 1) + refs.take(from + 1)).firstOrNull { blocks.set(it)?.done == false }
         change(keepUndo = true) {
             copy(
                 blocks = blocks,
-                current = before.current.takeIf(kept) ?: current,
+                current = before.current.takeIf(kept) ?: next,
                 selected = selected.takeIf(kept),
                 focus = focus?.takeIf { kept(it.ref) },
                 typed = typed.takeIf { kept(focus?.ref) },
