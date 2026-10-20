@@ -16,4 +16,8 @@
         <key>exercise_details_v2</key>
         <value>false</value>
     </entry>
+    <entry>
+        <key>workout_screen_v2</key>
+        <value>false</value>
+    </entry>
 </defaultsMap>

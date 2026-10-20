@@ -70,6 +70,12 @@ public class RemoteConfigManager extends PreferencesManager {
         return localConfig != null && localConfig.getExerciseDetailsV2();
     }
 
+    // The workout screen in Compose; off until Remote Config says otherwise. Only read as a workout starts.
+    public boolean workoutScreenV2() {
+        RemoteConfig localConfig = loadLocalRemoteConfig();
+        return localConfig != null && localConfig.getWorkoutScreenV2();
+    }
+
     // Config refresh
 
     public void refreshAppConfig() {

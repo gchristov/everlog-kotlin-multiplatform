@@ -1,6 +1,7 @@
 package com.everlog.data.controllers.workoutsession
 
 import com.everlog.data.model.exercise.ELExercise
+import com.everlog.data.model.set.ELSetType
 
 // The ongoing workout as the new workout screen (TAS-455) holds it: immutable, so a view-model's state can hold
 // it, and mapped to and from ELWorkout (WorkoutSessionMapper), which stays what's saved, sent to the notification
@@ -71,7 +72,11 @@ data class WorkoutBlock(
     val restSeconds: Int,
     val exercises: List<WorkoutExercise>,
     val rounds: List<WorkoutRound>,
-)
+) {
+    // Null for a type this version doesn't know
+    val setType: ELSetType?
+        get() = type?.let { name -> ELSetType.entries.firstOrNull { it.name == name } }
+}
 
 /**
  * One exercise's set ([index] is the exercise's) in one round of a block.

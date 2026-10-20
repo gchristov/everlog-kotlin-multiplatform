@@ -173,7 +173,9 @@ A short message over the bottom of the screen, e.g. "Set deleted" with Undo: `--
 An alert: background `--background-surface`, radius 28px (Material's dialog default), padding 24px, title in `--font-heading`,
 an optional line of body text in `--font-body` / `--content-secondary`, optional content under it
 (`--space-lg` apart), and up to two buttons side by side at the bottom right, sized to their text:
-`AppSecondaryButton` (the way out) then `AppButton` (the action we want).
+`AppSecondaryButton` (the way out) then `AppButton` (the action we want). A third, quieter choice (like the
+system dialog's neutral button, e.g. Keep going) is an `AppTertiaryButton` at the start of the same row, with the
+other two at the end.
 
 ## AppCircularProgressIndicator
 

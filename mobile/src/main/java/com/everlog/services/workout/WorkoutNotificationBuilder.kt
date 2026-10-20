@@ -17,7 +17,7 @@ import com.everlog.services.workout.WorkoutNotificationState.Done
 import com.everlog.services.workout.WorkoutNotificationState.NextSet
 import com.everlog.services.workout.WorkoutNotificationState.NoExercises
 import com.everlog.services.workout.WorkoutNotificationState.Rest
-import com.everlog.ui.activities.home.workout.WorkoutActivity
+import com.everlog.ui.navigator.ELNavigator
 import com.everlog.utils.ArrayResourceTypeUtils
 import com.everlog.utils.format.FormatUtils
 import java.util.concurrent.TimeUnit
@@ -192,7 +192,7 @@ class WorkoutNotificationBuilder(private val context: Context) {
     // Intents
 
     private fun openWorkoutIntent(workout: ELWorkout?): PendingIntent {
-        val intent = Intent(context, WorkoutActivity::class.java)
+        val intent = Intent(context, ELNavigator.workoutActivity(workout))
         intent.putExtra(ELConstants.EXTRA_WORKOUT, workout)
         intent.action = WorkoutService.ACTION_OPEN_WORKOUT
         return PendingIntent.getActivity(context, REQUEST_OPEN_WORKOUT, intent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)

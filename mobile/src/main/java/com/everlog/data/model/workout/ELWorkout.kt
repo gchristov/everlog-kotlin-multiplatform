@@ -14,6 +14,7 @@ import com.everlog.ui.fragments.home.activity.statistics.StatisticsHomeFragment
 import com.everlog.utils.*
 import com.everlog.utils.format.FormatUtils
 import com.everlog.utils.format.StatsFormatUtils
+import com.google.firebase.firestore.Exclude
 import org.apache.commons.lang3.SerializationUtils
 import org.threeten.bp.Instant
 import org.threeten.bp.ZoneId
@@ -32,6 +33,11 @@ data class ELWorkout(
         var note: String? = null
 
 ) : Serializable, ELFirestoreModel {
+
+    // Which workout screen it runs on: the Compose one (TAS-455) when true. Decided as it starts, so a Remote Config
+    // change can't move a workout that's under way. Only the ongoing workout has it, it's never saved to Firestore.
+    @get:Exclude @set:Exclude
+    var workoutScreenV2: Boolean = false
 
     companion object {
 

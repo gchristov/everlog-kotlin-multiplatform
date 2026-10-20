@@ -1,0 +1,301 @@
+package com.everlog.ui.activities.workoutlog
+
+import androidx.activity.compose.BackHandler
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.gestures.awaitEachGesture
+import androidx.compose.foundation.gestures.awaitFirstDown
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.navigationBars
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.statusBars
+import androidx.compose.foundation.layout.windowInsetsPadding
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.CompositingStrategy
+import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.platform.LocalView
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.res.vectorResource
+import androidx.compose.ui.semantics.clearAndSetSemantics
+import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.LifecycleResumeEffect
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.everlog.R
+import com.everlog.data.controllers.workoutsession.SetMode
+import com.everlog.data.controllers.workoutsession.SetRef
+import com.everlog.data.controllers.workoutsession.ValueField
+import com.everlog.data.controllers.workoutsession.WorkoutBlock
+import com.everlog.data.controllers.workoutsession.WorkoutExercise
+import com.everlog.data.controllers.workoutsession.WorkoutRound
+import com.everlog.data.controllers.workoutsession.WorkoutSet
+import com.everlog.data.controllers.workoutsession.block
+import com.everlog.data.controllers.workoutsession.set
+import com.everlog.data.model.exercise.ELExercise
+import com.everlog.managers.preferences.SettingsManager
+import com.everlog.ui.design.elements.AppButton
+import com.everlog.ui.design.elements.AppIconButton
+import com.everlog.ui.design.elements.AppScreen
+import com.everlog.ui.design.elements.AppSecondaryButton
+import com.everlog.ui.design.elements.AppText
+import com.everlog.ui.design.elements.keypad.AppKeypad
+import com.everlog.ui.design.elements.keypad.AppKeypadAction
+import com.everlog.ui.design.elements.keypad.AppKeypadEntry
+import com.everlog.ui.design.elements.keypad.AppKeypadInput
+import com.everlog.ui.design.elements.keypad.AppKeypadNote
+import com.everlog.ui.design.elements.keypad.AppKeypadToggle
+import com.everlog.ui.design.theme.Theme
+import com.everlog.utils.UnitUtils
+import kotlinx.coroutines.android.awaitFrame
+
+/**
+ * Renders the view-model's state and forwards what's tapped and typed to it. The keypad's rules (what each key does,
+ * where the selection goes) are the view-model's.
+ */
+@Composable
+internal fun WorkoutLogScreen(viewModel: WorkoutLogViewModel, onAddExercise: () -> Unit, onExit: (WorkoutLogExit) -> Unit) {
+    val state by viewModel.state.collectAsStateWithLifecycle()
+
+    LifecycleResumeEffect(Unit) {
+        viewModel.onResume()
+        onPauseOrDispose { viewModel.onPause() }
+    }
+    if (state.keepScreenOn) KeepScreenOn()
+
+    LaunchedEffect(state.exit) {
+        state.exit?.let {
+            awaitFrame()
+            onExit(it)
+        }
+    }
+
+    BackHandler(onBack = viewModel::onBack)
+
+    val input = remember(viewModel) {
+        object : AppKeypadInput {
+            override fun onDigit(digit: Char) = viewModel.onDigit(digit)
+            override fun onDecimal() = viewModel.onDecimal()
+            override fun onBackspace() = viewModel.onBackspace()
+            override fun onStep(direction: Int) = viewModel.onStep(direction)
+        }
+    }
+    val addExercise = AppKeypadAction(stringResource(R.string.workout_log_add_exercise), onAddExercise)
+    val empty = state.blocks.isEmpty()
+
+    AppScreen(
+        topBar = { Header(state, onClose = viewModel::onClose, onFinish = viewModel::onFinish) },
+        footer = {
+            AppKeypad(
+                modifier = Modifier
+                    .windowInsetsPadding(WindowInsets.navigationBars)
+                    .padding(start = Theme.spacing.large, end = Theme.spacing.large, bottom = Theme.spacing.small),
+                entry = keypadEntry(state, viewModel),
+                input = input,
+                onHide = viewModel::onHideKeypad,
+                onShow = if (empty) null else viewModel::onShowKeypad,
+                actions = if (empty) emptyList() else listOf(addExercise),
+                primaryAction = when {
+                    // The empty workout's only action
+                    empty -> addExercise
+                    state.target != null -> AppKeypadAction(stringResource(R.string.workout_log_complete_set), viewModel::onCompleteTarget)
+                    // Every set done: Finish in the header is filled instead
+                    else -> null
+                },
+                strips = {
+                    if (empty) AppKeypadNote(text = stringResource(R.string.workout_log_empty_hint))
+                },
+            )
+        },
+    ) { contentPadding ->
+        if (empty) {
+            EmptyTable(contentPadding, state.unit)
+        } else {
+            WorkoutTable(
+                blocks = state.blocks,
+                unit = state.unit,
+                focus = state.focus,
+                selected = state.selected,
+                typed = state.typed,
+                reveal = state.reveal,
+                contentPadding = contentPadding,
+                onCellTapped = viewModel::onCellTapped,
+                onTick = viewModel::onTick,
+            )
+        }
+    }
+
+    WorkoutLogDialogs(state.dialog, viewModel)
+}
+
+// What the open keypad shows for the focused cell
+@Composable
+private fun keypadEntry(state: WorkoutLogState, viewModel: WorkoutLogViewModel): AppKeypadEntry? {
+    val focus = state.focus ?: return null
+    val set = state.blocks.set(focus.ref) ?: return null
+    val mainKey = state.mainKey ?: return null
+    return AppKeypadEntry(
+        label = focusLabel(state.blocks, focus, state.unit),
+        title = exerciseName(state.blocks, focus.ref),
+        decimal = focus.field == ValueField.Weight,
+        toggle = AppKeypadToggle(
+            options = listOf(stringResource(R.string.workout_log_reps), stringResource(R.string.workout_log_time)),
+            selected = if (set.mode == SetMode.Time) 1 else 0,
+            onSelect = { viewModel.onModeSelected(if (it == 1) SetMode.Time else SetMode.Reps) },
+        ),
+        mainKey = AppKeypadAction(
+            text = stringResource(
+                when (mainKey) {
+                    KeypadMainKey.Next -> R.string.workout_log_next
+                    KeypadMainKey.CompleteSet -> R.string.workout_log_complete_set
+                    KeypadMainKey.Done -> R.string.workout_log_done
+                },
+            ),
+            onClick = viewModel::onMainKey,
+        ),
+    )
+}
+
+// Close, the workout's time with its name under it, and Finish
+@Composable
+private fun Header(state: WorkoutLogState, onClose: () -> Unit, onFinish: () -> Unit) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .background(Theme.backgrounds.primary)
+            .windowInsetsPadding(WindowInsets.statusBars)
+            .padding(start = Theme.spacing.extraSmall, end = Theme.spacing.large, top = Theme.spacing.small, bottom = Theme.spacing.small),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(Theme.spacing.small),
+    ) {
+        AppIconButton(onClick = onClose, icon = ImageVector.vectorResource(R.drawable.ic_remove), contentDescription = stringResource(R.string.workout_log_close))
+        Column(modifier = Modifier.weight(1f)) {
+            AppText(text = formatClock(state.elapsedSeconds), style = Theme.typography.heading.copy(fontFeatureSettings = "tnum"), maxLines = 1)
+            if (state.name.isNotEmpty()) {
+                AppText(text = state.name, style = Theme.typography.small, color = Theme.contentColors.secondary, maxLines = 1)
+            }
+        }
+        // Filled once every set is done: it's what's next
+        when {
+            state.blocks.isEmpty() -> Unit
+            state.unfinishedSets == 0 -> AppButton(onClick = onFinish, text = stringResource(R.string.workout_finish))
+            else -> AppSecondaryButton(onClick = onFinish, text = stringResource(R.string.workout_finish))
+        }
+    }
+}
+
+// The empty workout: a faded example of what the table becomes, which can't be touched. The keypad has Add exercise.
+@Composable
+private fun EmptyTable(contentPadding: PaddingValues, unit: SettingsManager.WeightUnit) {
+    val name = stringResource(R.string.workout_log_example_exercise)
+    val example = remember(name, unit) {
+        // A round number in either unit
+        val weightKg = if (unit == SettingsManager.WeightUnit.POUND) UnitUtils.lbToKg(45f) else 20f
+        val set = WorkoutSet(reps = 12, weightKg = weightKg)
+        listOf(
+            WorkoutBlock(
+                id = -1,
+                uuid = null,
+                type = null,
+                restSeconds = 0,
+                exercises = listOf(WorkoutExercise(null, ELExercise(name = name))),
+                rounds = listOf(
+                    WorkoutRound(-2, listOf(set.copy(completedDate = 1))),
+                    WorkoutRound(-3, listOf(set)),
+                    WorkoutRound(-4, listOf(set)),
+                ),
+            ),
+        )
+    }
+    Column(modifier = Modifier.fillMaxSize()) {
+        AppText(
+            modifier = Modifier
+                .padding(horizontal = Theme.spacing.large, vertical = Theme.spacing.small)
+                .clip(Theme.shapes.button)
+                .border(1.dp, Theme.backgrounds.separator, Theme.shapes.button)
+                .padding(horizontal = Theme.spacing.medium, vertical = Theme.spacing.extraSmall),
+            text = stringResource(R.string.workout_log_example),
+            style = Theme.typography.small,
+            color = Theme.contentColors.secondary,
+        )
+        Box(modifier = Modifier.fillMaxSize()) {
+            // Faded as one, so nothing shows through
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .graphicsLayer {
+                        alpha = 0.35f
+                        compositingStrategy = CompositingStrategy.Offscreen
+                    }
+                    .clearAndSetSemantics {},
+            ) {
+                WorkoutTable(
+                    blocks = example,
+                    unit = unit,
+                    focus = null,
+                    selected = SetRef(-1, -3, 0),
+                    typed = null,
+                    reveal = 0,
+                    contentPadding = contentPadding,
+                    onCellTapped = {},
+                    onTick = {},
+                )
+            }
+            // Takes every touch, so the example can't be used
+            Box(modifier = Modifier.fillMaxSize().pointerInput(Unit) {
+                awaitEachGesture {
+                    awaitFirstDown().consume()
+                    do {
+                        val event = awaitPointerEvent()
+                        event.changes.forEach { it.consume() }
+                    } while (event.changes.any { it.pressed })
+                }
+            })
+        }
+    }
+}
+
+// The screen stays on through a workout when Settings says so, as on the old screen
+@Composable
+private fun KeepScreenOn() {
+    val view = LocalView.current
+    DisposableEffect(view) {
+        view.keepScreenOn = true
+        onDispose { view.keepScreenOn = false }
+    }
+}
+
+// SET 2 OF 4 · KG, with a superset's exercise: SET 1 OF 3 · 2 OF 2 · REPS
+@Composable
+private fun focusLabel(blocks: List<WorkoutBlock>, focus: CellFocus, unit: SettingsManager.WeightUnit): String {
+    val block = blocks.block(focus.ref.blockId) ?: return ""
+    val round = block.rounds.indexOfFirst { it.id == focus.ref.roundId } + 1
+    val field = when (focus.field) {
+        ValueField.Weight -> unitLabel(unit)
+        ValueField.Reps -> stringResource(R.string.workout_log_column_reps)
+        ValueField.Time -> stringResource(R.string.workout_log_column_time)
+    }
+    return if (block.exercises.size > 1) {
+        stringResource(R.string.workout_log_keypad_label_group, round, block.rounds.size, focus.ref.index + 1, block.exercises.size, field)
+    } else {
+        stringResource(R.string.workout_log_keypad_label, round, block.rounds.size, field)
+    }
+}
+
+private fun exerciseName(blocks: List<WorkoutBlock>, ref: SetRef): String =
+    blocks.block(ref.blockId)?.exercises?.getOrNull(ref.index)?.exercise?.name.orEmpty()
