@@ -105,7 +105,7 @@ internal interface WorkoutLogAnalytics {
 
     fun setTimerStarted()
 
-    // A set timer finished early (not run out)
+    // A set timer stopped early (not run out)
     fun setTimerStopped()
 
     fun workoutCompleted()
