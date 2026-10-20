@@ -281,21 +281,21 @@ class WorkoutLogScenarioTest {
     private fun viewModel(launched: ELWorkout): WorkoutLogViewModel {
         val loaded = WorkoutLogViewModel.load(launched, store)
         return WorkoutLogViewModel(
-        dispatcher = Dispatchers.Main,
-        workout = loaded.workout,
-        resumed = loaded.resumed,
-        fromPlan = false,
-        store = store,
-        settings = PoundSettings,
-        analytics = analytics,
-        alerts = object : WorkoutLogAlerts {
-            override fun timerRanOut() = Unit
-        },
-        notification = notification,
-        prefill = BenchHistory,
-        clock = { now },
-        tickMillis = null,
-    )
+            dispatcher = Dispatchers.Main,
+            workout = loaded.workout,
+            resumed = loaded.resumed,
+            fromPlan = false,
+            store = store,
+            settings = PoundSettings,
+            analytics = analytics,
+            alerts = object : WorkoutLogAlerts {
+                override fun timerRanOut() = Unit
+            },
+            notification = notification,
+            prefill = BenchHistory,
+            clock = { now },
+            tickMillis = null,
+        )
     }
 
     // Bench press, 2 sets of 8, then a superset of fly and raise, 2 rounds of 12

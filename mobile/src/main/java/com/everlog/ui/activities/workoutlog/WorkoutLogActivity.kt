@@ -27,8 +27,7 @@ import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
 
 /**
- * The workout screen in Compose (TAS-455), for workouts started while Remote Config's workout_screen_v2 is on (see
- * ELNavigator.workoutActivity). Opened with the workout as [ELConstants.EXTRA_WORKOUT], like WorkoutActivity.
+ * For workouts started while Remote Config's workout_screen_v2 is on (ELNavigator.workoutActivity).
  */
 class WorkoutLogActivity : CommonComposeActivity() {
     private val viewModel by viewModels<WorkoutLogViewModel> {
@@ -56,7 +55,7 @@ class WorkoutLogActivity : CommonComposeActivity() {
 
     private val notificationReceiver by lazy { WorkoutLogNotificationReceiver(viewModel) }
 
-    // The notification needs these, as on the old screen. Without them it asks to have them turned on in Settings.
+    // The notification needs these
     private val permissions = registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { granted ->
         if (granted.values.all { it }) {
             viewModel.onScreenStarted()
@@ -68,7 +67,7 @@ class WorkoutLogActivity : CommonComposeActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         if (savedInstanceState == null) {
-            // Closes screens that shouldn't stay under a workout, as the old screen does
+            // Closes screens that shouldn't stay under a workout
             LocalBroadcastManager.getInstance(this).sendBroadcast(Intent(ELConstants.BROADCAST_WORKOUT_STARTED))
         }
         LocalBroadcastManager.getInstance(this).registerReceiver(notificationReceiver, WorkoutLogNotificationReceiver.Filter)
@@ -76,7 +75,7 @@ class WorkoutLogActivity : CommonComposeActivity() {
         startNotification()
     }
 
-    // An exercise edited meanwhile, e.g. renamed from its details
+    // E.g. renamed from its details
     @Subscribe(threadMode = ThreadMode.MAIN)
     fun onExerciseModified(event: ELExercisesStore.ELColStoreExerciseModifiedEvent) {
         viewModel.onExerciseChanged(event.item)

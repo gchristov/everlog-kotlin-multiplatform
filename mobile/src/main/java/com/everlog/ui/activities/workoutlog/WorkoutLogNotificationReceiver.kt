@@ -9,8 +9,7 @@ import com.everlog.data.model.workout.ELWorkoutState
 import com.everlog.services.workout.WorkoutService
 
 /**
- * The notification's buttons, which WorkoutService sends to the open workout screen as local broadcasts, each with the
- * set it shows. Handed to the view-model, as the old screen's WorkoutActivity does for its presenter.
+ * The notification's buttons, which WorkoutService sends as local broadcasts, each with the set it shows.
  */
 internal class WorkoutLogNotificationReceiver(private val viewModel: WorkoutLogViewModel) : BroadcastReceiver() {
 

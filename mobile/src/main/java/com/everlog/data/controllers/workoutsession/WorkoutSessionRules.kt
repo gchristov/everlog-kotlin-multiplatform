@@ -7,8 +7,6 @@ import com.everlog.data.model.set.ELSetType
 // Sets are done in order: block by block, round by round, exercise by exercise. In a superset or circuit a round
 // isn't left until all its exercises are done, and rest comes after the round.
 
-// Finding sets
-
 /**
  * Every set that's still there, in the order they're done.
  */
@@ -35,8 +33,6 @@ fun List<WorkoutBlock>.nextOpenAfter(ref: SetRef?): SetRef? {
 
 fun List<WorkoutBlock>.unfinishedSets(): Int = refs().count { set(it)?.done == false }
 
-// Changing sets
-
 fun List<WorkoutBlock>.updateSet(ref: SetRef, transform: (WorkoutSet) -> WorkoutSet): List<WorkoutBlock> =
     updateRound(ref.blockId, ref.roundId) { round -> round.copy(sets = round.sets.mapIndexed { i, set -> if (i == ref.index) transform(set) else set }) }
 
@@ -60,8 +56,7 @@ fun List<WorkoutBlock>.setValue(ref: SetRef, field: ValueField, value: Float?): 
 
 fun List<WorkoutBlock>.setMode(ref: SetRef, mode: SetMode): List<WorkoutBlock> = updateSet(ref) { it.copy(mode = mode) }
 
-// Completing sets. Like the old screen, completing gives a set both its start and its completed date.
-
+// A set's start date is when it was completed: nothing records when a set starts
 private fun WorkoutSet.completed(now: Long) = copy(startedDate = now, completedDate = now)
 
 /**
@@ -104,38 +99,15 @@ fun List<WorkoutBlock>.completeSet(ref: SetRef, current: SetRef?, now: Long): Co
 }
 
 /**
- * Completes every exercise's set in a round at once, with the values they have. The current set moves on only if
- * it was in the round.
- */
-fun List<WorkoutBlock>.completeRound(blockId: Long, roundId: Long, current: SetRef?, now: Long): Completion {
-    val round = round(blockId, roundId) ?: return Completion(this, current, startsRest = false)
-    val blocks = updateRound(blockId, roundId) { it.copy(sets = it.sets.map { set -> if (set.removed || set.done) set else set.completed(now) }) }
-    val next = if (current == null || current.roundId == roundId) {
-        blocks.nextOpenAfter(SetRef(blockId, roundId, round.sets.lastIndex))
-    } else {
-        current
-    }
-    return Completion(blocks, next, startsRest = next != null)
-}
-
-/**
- * Undoes a set, keeping its values. Like the old screen, only its completed date goes.
+ * Keeps the set's values and start date.
  */
 fun List<WorkoutBlock>.uncompleteSet(ref: SetRef): List<WorkoutBlock> = updateSet(ref) { it.copy(completedDate = null) }
 
-fun List<WorkoutBlock>.uncompleteRound(blockId: Long, roundId: Long): List<WorkoutBlock> =
-    updateRound(blockId, roundId) { it.copy(sets = it.sets.map { set -> set.copy(completedDate = null) }) }
-
-// Adding and deleting
-
-/**
- * Adds the picked exercise groups at the end.
- */
 fun List<WorkoutBlock>.addGroups(groups: List<ELExerciseGroup>, ids: SessionIds): List<WorkoutBlock> = this + groups.map { it.toSessionBlock(ids) }
 
 /**
- * A new round after the last, with the last round's values and targets, not done. Every exercise gets a set,
- * one removed from the last round included, as the old screen's add set does.
+ * A new round after the last, with the last round's values and targets, not done. Every exercise gets a set, one
+ * removed from the last round included.
  */
 fun List<WorkoutBlock>.addRound(blockId: Long, ids: SessionIds): List<WorkoutBlock> = map { block ->
     val last = block.rounds.lastOrNull()
@@ -157,8 +129,7 @@ fun List<WorkoutBlock>.deleteRound(blockId: Long, roundId: Long): Pair<List<Work
 /**
  * Deletes one exercise's set. In a superset or circuit only that set goes, unless it was the last one left in its
  * round, which then goes too. A single exercise's set is its round. An exercise with no sets left goes from the
- * block, and a block left with one exercise becomes a single, as deleting an exercise from a superset did on the
- * old screen.
+ * block, and a block left with one exercise becomes a single.
  */
 fun List<WorkoutBlock>.deleteSet(ref: SetRef): Pair<List<WorkoutBlock>, DeletedSets>? {
     val block = block(ref.blockId) ?: return null
@@ -181,7 +152,7 @@ private fun WorkoutBlock.withoutExercise(index: Int): WorkoutBlock {
     )
 }
 
-// A block left without sets goes, as on the old screen
+// A block left without sets goes
 private fun List<WorkoutBlock>.replace(block: WorkoutBlock): List<WorkoutBlock> =
     if (block.rounds.isEmpty()) filterNot { it.id == block.id } else map { if (it.id == block.id) block else it }
 
@@ -203,20 +174,4 @@ fun List<WorkoutBlock>.moveBlock(from: Int, to: Int): List<WorkoutBlock> {
     return toMutableList().apply { add(to, removeAt(from)) }
 }
 
-/**
- * The first set not done after [current] that isn't in the deleted round or block, so the current set can move on
- * from something about to be deleted. Called with the blocks before the delete.
- */
-fun List<WorkoutBlock>.nextOpenOutside(current: SetRef?, roundId: Long? = null, blockId: Long? = null): SetRef? {
-    val refs = refs()
-    val start = refs.indexOf(current)
-    val ordered = refs.drop(start + 1) + refs.take(start + 1)
-    return ordered.firstOrNull { it.roundId != roundId && it.blockId != blockId && set(it)?.done == false }
-}
-
-// Rest
-
-/**
- * Changes every block's rest, as changing the rest timer does on the old screen.
- */
 fun List<WorkoutBlock>.withRestSeconds(seconds: Int): List<WorkoutBlock> = map { it.copy(restSeconds = seconds) }

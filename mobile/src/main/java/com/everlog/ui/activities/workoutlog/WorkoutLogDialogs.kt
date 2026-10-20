@@ -38,7 +38,7 @@ internal fun WorkoutLogDialogs(state: WorkoutLogState, viewModel: WorkoutLogView
             )
         }
         is WorkoutLogDialog.Discard -> if (dialog.setsCompleted > 0) {
-            // Finish instead, so logged sets aren't lost by accident, as on the old screen
+            // Finish is the main action, so logged sets aren't lost by accident
             var body = pluralStringResource(R.plurals.workout_discard_sets_logged, dialog.setsCompleted, dialog.setsCompleted)
             if (dialog.untickedSaved > 0) {
                 body += " " + pluralStringResource(R.plurals.workout_discard_unticked_saved, dialog.untickedSaved, dialog.untickedSaved)
