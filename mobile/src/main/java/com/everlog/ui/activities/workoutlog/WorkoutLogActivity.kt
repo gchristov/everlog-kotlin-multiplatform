@@ -1,12 +1,18 @@
 package com.everlog.ui.activities.workoutlog
 
+import android.Manifest
 import android.content.Intent
+import android.content.pm.PackageManager
+import android.os.Build
 import android.os.Bundle
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.compose.runtime.Composable
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
+import com.everlog.R
 import com.everlog.constants.ELActivityRequestCodes
 import com.everlog.constants.ELConstants
 import com.everlog.data.model.exercise.ELExerciseGroup
@@ -34,8 +40,20 @@ class WorkoutLogActivity : CommonComposeActivity() {
                     settings = RealWorkoutLogSettings(),
                     analytics = RealWorkoutLogAnalytics(),
                     alerts = RealWorkoutLogAlerts(applicationContext),
+                    notification = RealWorkoutLogNotification(ELNavigator(applicationContext)),
                 )
             }
+        }
+    }
+
+    private val notificationReceiver by lazy { WorkoutLogNotificationReceiver(viewModel) }
+
+    // The notification needs these, as on the old screen. Without them it asks to have them turned on in Settings.
+    private val permissions = registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { granted ->
+        if (granted.values.all { it }) {
+            viewModel.onScreenStarted()
+        } else {
+            ELNavigator(this).promptForAppSettings(R.string.workout_error_no_permissions)
         }
     }
 
@@ -45,6 +63,24 @@ class WorkoutLogActivity : CommonComposeActivity() {
             // Closes screens that shouldn't stay under a workout, as the old screen does
             LocalBroadcastManager.getInstance(this).sendBroadcast(Intent(ELConstants.BROADCAST_WORKOUT_STARTED))
         }
+        LocalBroadcastManager.getInstance(this).registerReceiver(notificationReceiver, WorkoutLogNotificationReceiver.Filter)
+        startNotification()
+    }
+
+    override fun onDestroy() {
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(notificationReceiver)
+        // The notification stays while the screen is only being rebuilt, e.g. for a dark mode change: the new screen
+        // starts it again
+        if (!isChangingConfigurations) viewModel.onScreenClosed()
+        super.onDestroy()
+    }
+
+    private fun startNotification() {
+        val missing = buildList {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) add(Manifest.permission.POST_NOTIFICATIONS)
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) add(Manifest.permission.ACTIVITY_RECOGNITION)
+        }.filter { ContextCompat.checkSelfPermission(this, it) != PackageManager.PERMISSION_GRANTED }
+        if (missing.isEmpty()) viewModel.onScreenStarted() else permissions.launch(missing.toTypedArray())
     }
 
     @Composable
