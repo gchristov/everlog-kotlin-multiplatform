@@ -42,6 +42,8 @@ internal data class WorkoutLogState(
     val deletion: Deletion? = null,
     // A short message to show once, then clear (onMessageShown)
     val message: WorkoutLogMessage? = null,
+    // Edit workout: the exercises as cards to reorder or delete, in place of the table and keypad
+    val editing: Boolean = false,
     val dialog: WorkoutLogDialog? = null,
     // Set once the workout is finished or discarded, for the screen to close
     val exit: WorkoutLogExit? = null,
@@ -79,6 +81,10 @@ internal data class WorkoutLogState(
         val set = blocks.set(ref) ?: return false
         return set.mode == SetMode.Time && !set.done && !isTiming(ref) && ref !in timedSets
     }
+
+    // The rest after each set: every exercise's is the same, as on the old screen, which sets them all at once
+    val restSeconds: Int
+        get() = blocks.firstOrNull()?.restSeconds ?: 0
 
     fun isTiming(ref: SetRef): Boolean = (timer as? WorkoutTimer.SetTimer)?.ref == ref
 
@@ -138,6 +144,9 @@ internal sealed interface WorkoutLogDialog {
 
     // Deleting an exercise (or a superset) from its menu
     data class DeleteExercise(val blockId: Long) : WorkoutLogDialog
+
+    // The rest after each set, from the workout's options
+    data object RestTimer : WorkoutLogDialog
 }
 
 internal sealed interface WorkoutLogExit {

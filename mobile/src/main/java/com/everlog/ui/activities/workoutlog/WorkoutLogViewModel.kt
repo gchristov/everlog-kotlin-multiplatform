@@ -12,6 +12,7 @@ import com.everlog.data.controllers.workoutsession.block
 import com.everlog.data.controllers.workoutsession.completeSet
 import com.everlog.data.controllers.workoutsession.deleteBlock
 import com.everlog.data.controllers.workoutsession.deleteSet
+import com.everlog.data.controllers.workoutsession.moveBlock
 import com.everlog.data.controllers.workoutsession.nextOpenAfter
 import com.everlog.data.controllers.workoutsession.refs
 import com.everlog.data.controllers.workoutsession.restore
@@ -125,9 +126,13 @@ internal class WorkoutLogViewModel(
 
     fun onHideKeypad() = setState { focusOn(null) }
 
-    // Back closes the keypad first, then asks about leaving
+    // Back closes the keypad or Edit workout first, then asks about leaving
     fun onBack() {
-        if (state.value.focus != null) onHideKeypad() else onClose()
+        when {
+            state.value.editing -> onEditDone()
+            state.value.focus != null -> onHideKeypad()
+            else -> onClose()
+        }
     }
 
     fun onDigit(digit: Char) = type(digit)
@@ -413,8 +418,9 @@ internal class WorkoutLogViewModel(
     fun onDeleteExerciseConfirmed(blockId: Long) {
         change {
             val remaining = withSetsGone(blocks.deleteBlock(blockId))
-            // No rest without exercises to rest between
-            remaining.copy(timer = remaining.timer.takeIf { remaining.blocks.isNotEmpty() }, dialog = null)
+            // No rest without exercises to rest between, nor anything left to edit
+            val any = remaining.blocks.isNotEmpty()
+            remaining.copy(timer = remaining.timer.takeIf { any }, editing = editing && any, dialog = null)
         }
     }
 
@@ -429,6 +435,26 @@ internal class WorkoutLogViewModel(
                 block.copy(exercises = block.exercises.map { if (it.exercise?.uuid == uuid) it.copy(exercise = exercise) else it })
             })
         }
+    }
+
+    // Edit workout: reordering and deleting exercises
+
+    fun onEditWorkout() = setState { focusOn(null).copy(editing = true) }
+
+    fun onEditDone() = setState { copy(editing = false) }
+
+    // Drags an exercise (a superset moves as one) from one place to another
+    fun onMoveExercise(from: Int, to: Int) = change { copy(blocks = blocks.moveBlock(from, to)) }
+
+    // The rest after each set
+
+    fun onRestTimerSettings() = setState { copy(dialog = WorkoutLogDialog.RestTimer) }
+
+    // −10s or +10s on every exercise's rest, not below 10s. A rest already running keeps its time.
+    fun onRestStep(direction: Int) {
+        val seconds = (state.value.restSeconds + direction * TimerStepSeconds).coerceAtLeast(TimerStepSeconds)
+        change { copy(blocks = blocks.withRestSeconds(seconds)) }
+        analytics.restChanged(seconds)
     }
 
     // Adding exercises

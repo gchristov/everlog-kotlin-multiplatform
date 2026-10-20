@@ -4,6 +4,7 @@ import android.content.Intent
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.test.SemanticsNodeInteraction
 import androidx.compose.ui.test.assertContentDescriptionEquals
 import androidx.compose.ui.test.assertTextEquals
@@ -188,6 +189,24 @@ class WorkoutLogScenarioTest {
         compose.onNode(hasText("Delete") and hasAnyAncestor(isDialog())).performClick()
         compose.onNodeWithText("Squat").assertDoesNotExist()
 
+        // The workout's options: the rest after each set up by 10s, then Edit workout to drag bench press below the
+        // superset by its grip, and Done
+        compose.onNodeWithContentDescription("Workout options").performClick()
+        compose.onNodeWithText("Rest timer").performClick()
+        compose.onNodeWithContentDescription("More rest").performClick()
+        compose.onNode(hasText("Done") and hasAnyAncestor(isDialog())).performClick()
+        assertThat(analytics.events).contains("rest_changed 70")
+        compose.onNodeWithContentDescription("Workout options").performClick()
+        compose.onNodeWithText("Edit workout").performClick()
+        compose.onNodeWithTag(WorkoutLogTags.editGrip(0)).performTouchInput {
+            down(center)
+            moveBy(Offset(0f, height * 4f), delayMillis = 200)
+            up()
+        }
+        compose.onNode(hasText("Fly", substring = true) and hasAnyAncestor(hasTestTag(WorkoutLogTags.editCard(0)))).assertExists()
+        compose.onNode(hasText("Done") and hasAnyAncestor(hasTestTag(WorkoutLogTags.EditFooter))).performClick()
+        compose.onNodeWithTag(WorkoutLogTags.EditList).assertDoesNotExist()
+
         // Finish asks, as sets aren't ticked, then saves the workout as it is
         compose.onNode(hasText("Finish") and hasAnyAncestor(isDialog()).not()).performClick()
         compose.onNodeWithText("Finish workout?").assertExists()
@@ -195,12 +214,12 @@ class WorkoutLogScenarioTest {
         compose.waitForIdle()
 
         val finished = store.finished!!
-        val bench = finished.getExerciseGroups()[0].exercises[0].sets
+        val bench = finished.getExerciseGroups()[1].exercises[0].sets
         assertThat(bench[0].getReps()).isEqualTo(10)
         assertThat(bench[0].getWeightKg()).isWithin(0.01f).of(61.23f)
         assertThat(bench[0].getCompletedDate()).isEqualTo(now)
         assertThat(bench[1].getTimeSeconds()).isEqualTo(100)
-        assertThat(finished.getExerciseGroups().map { it.exercises.first().exercise?.name }).containsExactly("Bench press", "Fly").inOrder()
+        assertThat(finished.getExerciseGroups().map { it.exercises.first().exercise?.name }).containsExactly("Fly", "Bench press").inOrder()
         // Which screen it ran on stays on the device
         assertThat(finished.asMap().keys).doesNotContain("workoutScreenV2")
         assertThat(WorkoutManager.manager.ongoingWorkout()).isNull()
@@ -385,6 +404,10 @@ class WorkoutLogScenarioTest {
 
         override fun setDeleted() {
             events += "set_deleted"
+        }
+
+        override fun restChanged(seconds: Int) {
+            events += "rest_changed $seconds"
         }
 
         override fun restStarted() {
