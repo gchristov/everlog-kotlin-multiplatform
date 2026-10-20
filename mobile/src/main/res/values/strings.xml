@@ -330,7 +330,8 @@
         <item quantity="one">%1$d set</item>
         <item quantity="other">%1$d sets</item>
     </plurals>
-    <string name="workout_log_exercise_details">%1$s details</string>
+    <string name="workout_log_history">History</string>
+    <string name="workout_log_exercise_history">%1$s history</string>
     <string name="workout_log_delete_exercise_title">Delete %1$s?</string>
     <string name="workout_log_delete_exercise_body">Its sets go with it.</string>
     <string name="workout_log_stop">Stop</string>

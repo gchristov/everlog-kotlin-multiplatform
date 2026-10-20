@@ -275,15 +275,27 @@ class WorkoutLogViewModelTest {
     }
 
     @Test
-    fun `a done set's key is Done, which closes the keypad on the current set`() {
+    fun `a done set's key is Done, which moves the keypad on to the set to complete next`() {
         val viewModel = viewModel()
         viewModel.onTick(viewModel.ref(0, 0))
         viewModel.onCellTapped(CellFocus(viewModel.ref(0, 0), ValueField.Weight))
         assertThat(viewModel.state.value.mainKey).isEqualTo(KeypadMainKey.Done)
 
         viewModel.onMainKey()
-        assertThat(viewModel.state.value.focus).isNull()
+        assertThat(viewModel.state.value.focus).isEqualTo(CellFocus(viewModel.ref(0, 1), ValueField.Reps))
         assertThat(viewModel.state.value.selected).isEqualTo(viewModel.ref(0, 1))
+    }
+
+    @Test
+    fun `Done closes the keypad once every set is done`() {
+        val viewModel = viewModel()
+        listOf(viewModel.ref(0, 0), viewModel.ref(0, 1), viewModel.ref(1, 0, 0), viewModel.ref(1, 0, 1), viewModel.ref(1, 1, 0), viewModel.ref(1, 1, 1))
+            .forEach(viewModel::onTick)
+        viewModel.onCellTapped(CellFocus(viewModel.ref(0, 0), ValueField.Weight))
+
+        viewModel.onMainKey()
+
+        assertThat(viewModel.state.value.focus).isNull()
     }
 
     @Test
@@ -420,12 +432,11 @@ class WorkoutLogViewModelTest {
     }
 
     @Test
-    fun `a timed set's key starts its timer, which sounds when it runs out and leaves the set to be ticked`() {
+    fun `a timed set's key starts its timer from its time, then completes the set once the timer has run out`() {
         val viewModel = viewModel()
         viewModel.onCellTapped(CellFocus(viewModel.ref(0, 0), ValueField.Reps))
         viewModel.onModeSelected(SetMode.Time)
         viewModel.type("45")
-        viewModel.onMainKey()
         assertThat(viewModel.state.value.mainKey).isEqualTo(KeypadMainKey.StartTimer)
 
         viewModel.onMainKey()
@@ -443,6 +454,100 @@ class WorkoutLogViewModelTest {
         viewModel.onMainKey()
         assertThat(viewModel.set(0, 0).done).isTrue()
         assertThat(viewModel.state.value.timer).isInstanceOf(WorkoutTimer.Rest::class.java)
+    }
+
+    @Test
+    fun `a timed set's weight goes on to its time, whose key starts the timer`() {
+        val viewModel = viewModel()
+        viewModel.onCellTapped(CellFocus(viewModel.ref(0, 0), ValueField.Reps))
+        viewModel.onModeSelected(SetMode.Time)
+        viewModel.type("45")
+        viewModel.onCellTapped(CellFocus(viewModel.ref(0, 0), ValueField.Weight))
+        assertThat(viewModel.state.value.mainKey).isEqualTo(KeypadMainKey.Next)
+
+        viewModel.onMainKey()
+
+        assertThat(viewModel.state.value.focus).isEqualTo(CellFocus(viewModel.ref(0, 0), ValueField.Time))
+        assertThat(viewModel.state.value.mainKey).isEqualTo(KeypadMainKey.StartTimer)
+    }
+
+    @Test
+    fun `a stopped set timer leaves its key on Complete set, on the weight too`() {
+        val viewModel = timedSetRunning(seconds = "30")
+        viewModel.onTimerEnd()
+        assertThat(viewModel.state.value.mainKey).isEqualTo(KeypadMainKey.CompleteSet)
+
+        viewModel.onCellTapped(CellFocus(viewModel.ref(0, 0), ValueField.Weight))
+
+        assertThat(viewModel.state.value.mainKey).isEqualTo(KeypadMainKey.CompleteSet)
+    }
+
+    @Test
+    fun `a done timed set's key runs its timer again, keeping it done, then finishes editing`() {
+        val viewModel = timedSetRunning(seconds = "30")
+        viewModel.onMainKey()
+        assertThat(viewModel.set(0, 0).done).isTrue()
+
+        viewModel.onCellTapped(CellFocus(viewModel.ref(0, 0), ValueField.Time))
+        assertThat(viewModel.state.value.mainKey).isEqualTo(KeypadMainKey.StartTimer)
+        viewModel.onMainKey()
+        assertThat(viewModel.state.value.timer).isEqualTo(WorkoutTimer.SetTimer(viewModel.ref(0, 0), endsAt = now + 30_000, totalSeconds = 30))
+        assertThat(viewModel.set(0, 0).done).isTrue()
+        assertThat(viewModel.state.value.current).isEqualTo(viewModel.ref(0, 1))
+        assertThat(viewModel.state.value.mainKey).isEqualTo(KeypadMainKey.Done)
+
+        time = now + 30_000
+        viewModel.tick()
+        assertThat(viewModel.state.value.mainKey).isEqualTo(KeypadMainKey.Done)
+        viewModel.onMainKey()
+        assertThat(viewModel.state.value.focus?.ref).isEqualTo(viewModel.ref(0, 1))
+        assertThat(viewModel.set(0, 0).done).isTrue()
+
+        // Edited again later, it can run once more
+        viewModel.onCellTapped(CellFocus(viewModel.ref(0, 0), ValueField.Time))
+        assertThat(viewModel.state.value.mainKey).isEqualTo(KeypadMainKey.StartTimer)
+    }
+
+    @Test
+    fun `Done on a done timed set stops its timer running again`() {
+        val viewModel = timedSetRunning(seconds = "30")
+        viewModel.onMainKey()
+        viewModel.onCellTapped(CellFocus(viewModel.ref(0, 0), ValueField.Time))
+        viewModel.onMainKey()
+        assertThat(viewModel.state.value.isTiming(viewModel.ref(0, 0))).isTrue()
+
+        viewModel.onMainKey()
+
+        assertThat(viewModel.state.value.timer).isNull()
+        assertThat(viewModel.set(0, 0).done).isTrue()
+        assertThat(alerts.count).isEqualTo(0)
+        assertThat(analytics.events.last()).isEqualTo("set_timer_stopped")
+    }
+
+    @Test
+    fun `a done timed set's weight key is Done and its row shows its tick, as for a set of reps`() {
+        val viewModel = timedSetRunning(seconds = "30")
+        viewModel.onMainKey()
+        viewModel.onCellTapped(CellFocus(viewModel.ref(0, 0), ValueField.Weight))
+
+        assertThat(viewModel.state.value.mainKey).isEqualTo(KeypadMainKey.Done)
+        assertThat(viewModel.state.value.startsTimer(viewModel.ref(0, 0))).isFalse()
+    }
+
+    @Test
+    fun `a done timed set run again offers its timer once more when it's next selected`() {
+        val viewModel = timedSetRunning(seconds = "30")
+        viewModel.onMainKey()
+        viewModel.onCellTapped(CellFocus(viewModel.ref(0, 0), ValueField.Time))
+        viewModel.onMainKey()
+        time = now + 30_000
+        viewModel.tick()
+        assertThat(viewModel.state.value.mainKey).isEqualTo(KeypadMainKey.Done)
+
+        viewModel.onCellTapped(CellFocus(viewModel.ref(0, 1), ValueField.Reps))
+        viewModel.onCellTapped(CellFocus(viewModel.ref(0, 0), ValueField.Time))
+
+        assertThat(viewModel.state.value.mainKey).isEqualTo(KeypadMainKey.StartTimer)
     }
 
     @Test
@@ -473,6 +578,42 @@ class WorkoutLogViewModelTest {
 
         assertThat(viewModel.state.value.timer).isInstanceOf(WorkoutTimer.Rest::class.java)
         assertThat(viewModel.set(0, 0).done).isFalse()
+    }
+
+    @Test
+    fun `moving on to another set stops a running set timer, which its set can start again`() {
+        val viewModel = timedSetRunning(seconds = "30")
+        viewModel.onCellTapped(CellFocus(viewModel.ref(0, 0), ValueField.Weight))
+        assertThat(viewModel.state.value.isTiming(viewModel.ref(0, 0))).isTrue()
+
+        viewModel.onCellTapped(CellFocus(viewModel.ref(0, 1), ValueField.Reps))
+
+        assertThat(viewModel.state.value.timer).isNull()
+        assertThat(viewModel.set(0, 0).done).isFalse()
+        assertThat(viewModel.state.value.startsTimer(viewModel.ref(0, 0))).isTrue()
+        assertThat(alerts.count).isEqualTo(0)
+        assertThat(analytics.events.last()).isEqualTo("set_timer_stopped")
+    }
+
+    @Test
+    fun `undoing another set stops a running set timer`() {
+        val viewModel = timedSetRunning(seconds = "30")
+        viewModel.onTick(viewModel.ref(1, 0, 0))
+        viewModel.onStartSetTimer(viewModel.ref(0, 0))
+
+        viewModel.onTick(viewModel.ref(1, 0, 0))
+
+        assertThat(viewModel.state.value.timer).isNull()
+        assertThat(viewModel.set(1, 0, 0).done).isFalse()
+    }
+
+    @Test
+    fun `a rest keeps running as the selection moves`() {
+        val viewModel = viewModel()
+        viewModel.onTick(viewModel.ref(0, 0))
+        viewModel.onCellTapped(CellFocus(viewModel.ref(1, 0, 0), ValueField.Reps))
+
+        assertThat(viewModel.state.value.timer).isInstanceOf(WorkoutTimer.Rest::class.java)
     }
 
     @Test

@@ -106,7 +106,13 @@ class WorkoutLogActivity : CommonComposeActivity() {
     override fun Content() = WorkoutLogScreen(
         viewModel = viewModel,
         onAddExercise = { ELNavigator(this).openExercisePicker() },
-        onOpenExercise = { ELNavigator(this).openExerciseDetails(ExerciseDetailsActivity.Companion.Properties().exercise(it)) },
+        onOpenExercise = { exercise, tab ->
+            val type = when (tab) {
+                ExerciseTab.Info -> ExerciseDetailsActivity.Companion.Type.INFO
+                ExerciseTab.History -> ExerciseDetailsActivity.Companion.Type.HISTORY
+            }
+            ELNavigator(this).openExerciseDetails(ExerciseDetailsActivity.Companion.Properties().exercise(exercise).type(type))
+        },
         onExit = ::exit,
     )
 

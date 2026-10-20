@@ -40,7 +40,13 @@ private fun List<WorkoutBlock>.resumeAt(): SetRef? {
 }
 
 // The first key after focusing replaces the value
-internal fun WorkoutLogState.focusOn(cell: CellFocus?) = copy(focus = cell, typed = null, selected = cell?.ref ?: selected)
+internal fun WorkoutLogState.focusOn(cell: CellFocus?) = copy(focus = cell, typed = null).select(cell?.ref ?: selected)
+
+// A done set whose timer ran again offers it once more when it's next selected
+internal fun WorkoutLogState.select(ref: SetRef?): WorkoutLogState {
+    if (ref == selected) return this
+    return copy(selected = ref, timedSets = timedSets.filterNot { blocks.set(it)?.done == true }.toSet())
+}
 
 internal fun WorkoutLogState.countCell(ref: SetRef): CellFocus? = blocks.set(ref)?.let { CellFocus(ref, countField(it)) }
 
@@ -56,7 +62,7 @@ internal fun WorkoutLogState.followCurrent(): WorkoutLogState {
     val next = current ?: return this
     val selectedSet = selected?.let { blocks.set(it) }
     if (selectedSet != null && !selectedSet.done) return this
-    return if (focus != null) focusOn(countCell(next)) else copy(selected = next)
+    return if (focus != null) focusOn(countCell(next)) else select(next)
 }
 
 // A timed set whose timer has run is ticked next rather than timed again

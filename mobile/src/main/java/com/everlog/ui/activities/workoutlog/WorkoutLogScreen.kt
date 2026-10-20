@@ -80,7 +80,7 @@ import kotlinx.coroutines.android.awaitFrame
 internal fun WorkoutLogScreen(
     viewModel: WorkoutLogViewModel,
     onAddExercise: () -> Unit,
-    onOpenExercise: (ELExercise) -> Unit,
+    onOpenExercise: (ELExercise, ExerciseTab) -> Unit,
     onExit: (WorkoutLogExit) -> Unit,
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
@@ -115,7 +115,7 @@ internal fun WorkoutLogScreen(
             override fun onStartTimer(ref: SetRef) = viewModel.onStartSetTimer(ref)
             override fun onAddSet(blockId: Long) = viewModel.onAddSet(blockId)
             override fun onDeleteSet(ref: SetRef) = viewModel.onDeleteSet(ref)
-            override fun onOpenExercise(exercise: ELExercise) = onOpenExercise(exercise)
+            override fun onOpenExercise(exercise: ELExercise, tab: ExerciseTab) = onOpenExercise(exercise, tab)
             override fun onDeleteExercise(blockId: Long) = viewModel.onDeleteExercise(blockId)
         }
     }

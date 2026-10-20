@@ -33,7 +33,7 @@ internal data class WorkoutLogState(
     val reveal: Int = 0,
     // Not saved, so it's gone if the app is killed
     val timer: WorkoutTimer? = null,
-    // Timed sets whose timer has run out or been stopped, which are ticked next rather than timed again
+    // Timed sets whose timer has run out or been stopped, which are completed next rather than timed again
     val timedSets: Set<SetRef> = emptySet(),
     // Undo puts it back until anything else changes
     val deletion: Deletion? = null,
@@ -56,12 +56,20 @@ internal data class WorkoutLogState(
             val focus = focus ?: return null
             val set = blocks.set(focus.ref) ?: return null
             return when {
-                focus.field != ValueField.Weight -> KeypadMainKey.Next
+                timerNext(focus.ref) && focus.field == ValueField.Time -> KeypadMainKey.StartTimer
+                // A timed set not done yet goes on from its weight to its time, where the timer starts
+                timerNext(focus.ref) && !set.done -> KeypadMainKey.Next
+                set.mode == SetMode.Reps && focus.field != ValueField.Weight -> KeypadMainKey.Next
                 set.done -> KeypadMainKey.Done
-                startsTimer(focus.ref) -> KeypadMainKey.StartTimer
                 else -> KeypadMainKey.CompleteSet
             }
         }
+
+    // A done timed set can run its timer again
+    private fun timerNext(ref: SetRef): Boolean {
+        val set = blocks.set(ref) ?: return false
+        return set.mode == SetMode.Time && !isTiming(ref) && ref !in timedSets
+    }
 
     // What the closed keypad's main action completes (or times)
     val target: SetRef?
@@ -102,8 +110,9 @@ internal data class CellFocus(val ref: SetRef, val field: ValueField)
 
 internal fun countField(set: WorkoutSet) = if (set.mode == SetMode.Time) ValueField.Time else ValueField.Reps
 
-// Reps (or time), then the weight, whose key completes the set. A done set's values save as they're typed, so its
-// key just finishes editing.
+// Reps, then the weight, whose key completes the set. A timed set's time starts its timer instead, then completes the
+// set once the timer has run. A done set's values save as they're typed, so its key just moves on to the set to
+// complete next, after running a timed set's timer again.
 internal enum class KeypadMainKey {
     Next,
     CompleteSet,

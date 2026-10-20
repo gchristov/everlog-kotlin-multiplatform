@@ -88,6 +88,11 @@ class WorkoutLogTableRowsTest {
     }
 
     @Test
+    fun `each row's last time opens its own exercise's history`() {
+        assertThat(superset.rows(view).map { it.historyOf?.name }).containsExactly("fly", "raise", "raise").inOrder()
+    }
+
+    @Test
     fun `a weight filled in from history is marked as a suggestion`() {
         val suggested = single.copy(rounds = listOf(WorkoutRound(10, listOf(WorkoutSet(weightKg = 60f, suggestedKg = 60f)))))
 

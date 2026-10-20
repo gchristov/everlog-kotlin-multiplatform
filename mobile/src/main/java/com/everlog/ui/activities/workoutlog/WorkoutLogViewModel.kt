@@ -130,7 +130,17 @@ internal class WorkoutLogViewModel(
 
     fun onCellTapped(cell: CellFocus) {
         finishTyping()
+        leaveSetTimer(cell.ref)
         setState { focusOn(cell) }
+    }
+
+    // Moving on to another set stops a timer left running on the last, so it can be started again rather than ticked
+    private fun leaveSetTimer(ref: SetRef) {
+        val timer = state.value.timer as? WorkoutTimer.SetTimer ?: return
+        if (timer.ref == ref) return
+        setState { copy(timer = null) }
+        notifyWorkout()
+        analytics.setTimerStopped()
     }
 
     fun onShowKeypad() = setState { (selected ?: current)?.let { focusOn(countCell(it)) } ?: this }
@@ -188,8 +198,12 @@ internal class WorkoutLogViewModel(
         finishTyping()
         val cell = state.value.focus ?: return
         when (state.value.mainKey) {
-            KeypadMainKey.Next -> setState { focusOn(CellFocus(cell.ref, ValueField.Weight)) }
-            KeypadMainKey.Done -> setState { focusOn(null).copy(selected = current ?: selected) }
+            KeypadMainKey.Next -> setState { focusOn(CellFocus(cell.ref, if (cell.field == ValueField.Weight) ValueField.Time else ValueField.Weight)) }
+            KeypadMainKey.Done -> {
+                if (state.value.isTiming(cell.ref)) endTimer(fromNotification = false)
+                // On to the set to complete next, or closed once every set is done
+                setState { focusOn(current?.let { countCell(it) }).let { it.copy(timedSets = it.timedSets - cell.ref) } }
+            }
             KeypadMainKey.CompleteSet -> {
                 complete(cell.ref)
                 setState { focusOn(current?.let { countCell(it) }) }
@@ -218,11 +232,11 @@ internal class WorkoutLogViewModel(
         val seconds = set.timeSeconds ?: return setState { focusOn(CellFocus(ref, ValueField.Time)) }
         change {
             copy(
-                current = ref,
-                selected = ref,
+                // A done set run again stays done
+                current = if (set.done) current else ref,
                 timer = WorkoutTimer.SetTimer(ref, endsAt = clock() + seconds * 1000L, totalSeconds = seconds),
                 now = clock(),
-            )
+            ).select(ref)
         }
         // WorkoutService logs the notification's buttons itself
         if (!fromNotification) analytics.setTimerStarted()
@@ -335,7 +349,8 @@ internal class WorkoutLogViewModel(
 
     fun onTick(ref: SetRef) {
         finishTyping()
-        setState { if (focus != null) focusOn(countCell(ref)) else copy(selected = ref) }
+        leaveSetTimer(ref)
+        setState { if (focus != null) focusOn(countCell(ref)) else select(ref) }
         val set = state.value.blocks.set(ref) ?: return
         if (set.done) {
             change { copy(blocks = blocks.uncompleteSet(ref), current = current ?: ref) }
@@ -362,6 +377,7 @@ internal class WorkoutLogViewModel(
                 blocks = completion.blocks,
                 current = completion.current,
                 timer = rest ?: timer.takeUnless { it is WorkoutTimer.SetTimer },
+                timedSets = timedSets - ref,
                 now = clock(),
             ).followCurrent()
         }
