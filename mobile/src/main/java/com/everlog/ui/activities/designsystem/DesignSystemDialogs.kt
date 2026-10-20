@@ -16,6 +16,7 @@ import com.everlog.ui.design.theme.Theme
 @Composable
 internal fun DesignSystemDialogs() {
     var showDialog by rememberSaveable { mutableStateOf(false) }
+    var showThreeActions by rememberSaveable { mutableStateOf(false) }
 
     ShowcasePage(title = "Dialogs") {
         group(key = "dialog", header = { "Title, body and two actions" }) {}
@@ -26,6 +27,25 @@ internal fun DesignSystemDialogs() {
                 text = "Show dialog",
             )
         }
+        group(key = "threeActions", header = { "Three actions, e.g. leaving a workout" }) {}
+        item(key = "threeActionsExample") {
+            AppSecondaryButton(
+                modifier = Modifier.fillMaxWidth(),
+                onClick = { showThreeActions = true },
+                text = "Show dialog with three actions",
+            )
+        }
+    }
+
+    if (showThreeActions) {
+        AppDialog(
+            title = "Discard workout?",
+            body = "You've completed 3 sets. Discarding deletes them.",
+            onDismissRequest = { showThreeActions = false },
+            primaryAction = AppDialogAction(text = "Finish", onClick = { showThreeActions = false }),
+            secondaryAction = AppDialogAction(text = "Discard", onClick = { showThreeActions = false }),
+            tertiaryAction = AppDialogAction(text = "Keep going", onClick = { showThreeActions = false }),
+        )
     }
 
     if (showDialog) {

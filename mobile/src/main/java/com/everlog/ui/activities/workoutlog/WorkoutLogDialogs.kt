@@ -19,7 +19,7 @@ internal fun WorkoutLogDialogs(dialog: WorkoutLogDialog?, viewModel: WorkoutLogV
             secondaryAction = AppDialogAction(stringResource(R.string.cancel), viewModel::onDialogDismissed),
         )
         is WorkoutLogDialog.Discard -> if (dialog.setsCompleted > 0) {
-            // Finish instead, so logged sets aren't lost by accident; dismissing keeps going
+            // Finish instead, so logged sets aren't lost by accident, as on the old screen
             var body = pluralStringResource(R.plurals.workout_discard_sets_logged, dialog.setsCompleted, dialog.setsCompleted)
             if (dialog.untickedSaved > 0) {
                 body += " " + pluralStringResource(R.plurals.workout_discard_unticked_saved, dialog.untickedSaved, dialog.untickedSaved)
@@ -30,6 +30,7 @@ internal fun WorkoutLogDialogs(dialog: WorkoutLogDialog?, viewModel: WorkoutLogV
                 onDismissRequest = viewModel::onDialogDismissed,
                 primaryAction = AppDialogAction(stringResource(R.string.workout_discard_finish), viewModel::onDiscardFinish),
                 secondaryAction = AppDialogAction(stringResource(R.string.discard), viewModel::onDiscardConfirmed),
+                tertiaryAction = AppDialogAction(stringResource(R.string.workout_discard_keep_going), viewModel::onDialogDismissed),
             )
         } else {
             AppDialog(

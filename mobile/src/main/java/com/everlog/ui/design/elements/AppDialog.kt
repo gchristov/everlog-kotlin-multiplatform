@@ -2,6 +2,7 @@ package com.everlog.ui.design.elements
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material3.AlertDialog
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -15,10 +16,13 @@ data class AppDialogAction(
 
 /**
  * An alert with a title, an optional line of body text and up to two buttons side by side, sized
- * to their text like the system's dialogs.
+ * to their text like the system's dialogs. With a third action the buttons stack full width instead, like
+ * AppFooter's, as three don't fit side by side.
  *
  * @param primaryAction The action we want the user to take, as a filled button.
- * @param secondaryAction The way out, e.g. "Skip setup", as an outlined button before it.
+ * @param secondaryAction The way out, e.g. "Skip setup", as an outlined button before it (under it when stacked).
+ * @param tertiaryAction A third, quieter choice, e.g. "Keep going" under Finish and Discard, as a text button at the
+ * bottom. Like the system dialog's neutral button.
  * @param content Shown under the body, e.g. a time picker.
  */
 @Composable
@@ -29,6 +33,7 @@ fun AppDialog(
     modifier: Modifier = Modifier,
     body: String? = null,
     secondaryAction: AppDialogAction? = null,
+    tertiaryAction: AppDialogAction? = null,
     content: (@Composable () -> Unit)? = null,
 ) {
     AlertDialog(
@@ -57,12 +62,20 @@ fun AppDialog(
             null
         },
         confirmButton = {
-            AppButton(
-                onClick = primaryAction.onClick,
-                text = primaryAction.text,
-            )
+            if (tertiaryAction != null) {
+                Column(modifier = Modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(Theme.spacing.small)) {
+                    AppButton(modifier = Modifier.fillMaxWidth(), onClick = primaryAction.onClick, text = primaryAction.text)
+                    secondaryAction?.let { AppSecondaryButton(modifier = Modifier.fillMaxWidth(), onClick = it.onClick, text = it.text) }
+                    AppTertiaryButton(modifier = Modifier.fillMaxWidth(), onClick = tertiaryAction.onClick, text = tertiaryAction.text)
+                }
+            } else {
+                AppButton(
+                    onClick = primaryAction.onClick,
+                    text = primaryAction.text,
+                )
+            }
         },
-        dismissButton = secondaryAction?.let {
+        dismissButton = secondaryAction?.takeIf { tertiaryAction == null }?.let {
             {
                 AppSecondaryButton(
                     onClick = it.onClick,
