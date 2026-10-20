@@ -92,6 +92,8 @@ internal class WorkoutLogViewModel(
     // The time stops while the screen's away, unless a countdown is running, so a rest still sounds with the phone locked
     fun onPause() {
         showing = false
+        // Typing saves once the keypad moves on, which may not happen if the app is killed in the background
+        if (state.value.typed != null) save()
     }
 
     /**
@@ -127,14 +129,14 @@ internal class WorkoutLogViewModel(
     }
 
     fun onCellTapped(cell: CellFocus) {
-        logTypedValue()
+        finishTyping()
         setState { focusOn(cell) }
     }
 
     fun onShowKeypad() = setState { (selected ?: current)?.let { focusOn(countCell(it)) } ?: this }
 
     fun onHideKeypad() {
-        logTypedValue()
+        finishTyping()
         setState { focusOn(null) }
     }
 
@@ -158,7 +160,7 @@ internal class WorkoutLogViewModel(
     }
 
     fun onStep(direction: Int) {
-        logTypedValue()
+        finishTyping()
         val state = state.value
         val cell = state.focus ?: return
         val set = state.blocks.set(cell.ref) ?: return
@@ -174,7 +176,7 @@ internal class WorkoutLogViewModel(
 
     // Typing reps or time carries on in the other
     fun onModeSelected(mode: SetMode) {
-        logTypedValue()
+        finishTyping()
         val cell = state.value.focus ?: return
         change {
             val switched = copy(blocks = blocks.setMode(cell.ref, mode))
@@ -183,7 +185,7 @@ internal class WorkoutLogViewModel(
     }
 
     fun onMainKey() {
-        logTypedValue()
+        finishTyping()
         val cell = state.value.focus ?: return
         when (state.value.mainKey) {
             KeypadMainKey.Next -> setState { focusOn(CellFocus(cell.ref, ValueField.Weight)) }
@@ -199,7 +201,7 @@ internal class WorkoutLogViewModel(
 
     // The closed keypad's main action: a timed set's timer starts first, then the set completes
     fun onCompleteTarget() {
-        logTypedValue()
+        finishTyping()
         val state = state.value
         val target = state.target ?: return
         if (state.targetStartsTimer) onStartSetTimer(target) else complete(target)
@@ -207,7 +209,7 @@ internal class WorkoutLogViewModel(
 
     // Without a time there's nothing to count down, so the keypad opens on it instead
     fun onStartSetTimer(ref: SetRef) {
-        logTypedValue()
+        finishTyping()
         startSetTimer(ref, fromNotification = false)
     }
 
@@ -316,21 +318,23 @@ internal class WorkoutLogViewModel(
         enter(cell, (base + key).take(maxLength(cell.field)))
     }
 
+    // Saving the whole workout on every key is slow on long workouts, so a typed value is saved by finishTyping
     private fun enter(cell: CellFocus, text: String) =
-        change { withValue(cell, parse(cell.field, text)).copy(typed = text, reveal = reveal + 1) }
+        setState { copy(deletion = null).withValue(cell, parse(cell.field, text)).copy(typed = text, reveal = reveal + 1) }
 
-    // Logged once the keypad moves on from the cell, not at every key, so every event that does calls this first.
-    // Logged as typed, in the user's unit, rather than converted back from kg.
-    private fun logTypedValue() {
+    // Every event that moves the keypad on from the cell calls this first, so a typed value is saved and logged once.
+    // It's logged as typed, in the user's unit, rather than converted back from kg.
+    private fun finishTyping() {
         val state = state.value
         val cell = state.focus ?: return
         val typed = state.typed ?: return
         analytics.valueChanged(cell.field, parse(cell.field, typed))
         setState { copy(typed = null) }
+        save()
     }
 
     fun onTick(ref: SetRef) {
-        logTypedValue()
+        finishTyping()
         setState { if (focus != null) focusOn(countCell(ref)) else copy(selected = ref) }
         val set = state.value.blocks.set(ref) ?: return
         if (set.done) {
@@ -387,7 +391,7 @@ internal class WorkoutLogViewModel(
     }
 
     fun onDeleteSet(ref: SetRef) {
-        logTypedValue()
+        finishTyping()
         val before = state.value
         val (blocks, deleted) = before.blocks.deleteSet(ref) ?: return
         change(keepUndo = true) { withSetsGone(blocks).copy(deletion = Deletion(deleted, before.current)) }
@@ -406,7 +410,7 @@ internal class WorkoutLogViewModel(
     fun onDeleteExercise(blockId: Long) = setState { copy(dialog = WorkoutLogDialog.DeleteExercise(blockId)) }
 
     fun onDeleteExerciseConfirmed(blockId: Long) {
-        logTypedValue()
+        finishTyping()
         change {
             val remaining = withSetsGone(blocks.deleteBlock(blockId))
             // No rest without exercises to rest between, nor anything left to edit
@@ -427,7 +431,7 @@ internal class WorkoutLogViewModel(
     }
 
     fun onEditWorkout() {
-        logTypedValue()
+        finishTyping()
         setState { focusOn(null).copy(editing = true) }
     }
 
@@ -472,8 +476,10 @@ internal class WorkoutLogViewModel(
                     sources = sources + found
                     setState { copy(lastTime = lastTime + found.mapValues { (_, source) -> source.lastSets() }) }
                     if (fill && prefill.fillsSets()) {
-                        val ids = blocks.map { it.id }.toSet()
-                        change { copy(blocks = this.blocks.map { if (it.id in ids) it.filledFromHistory(sources, prefill) else it }) }
+                        val before = blocks.associateBy { it.id }
+                        change {
+                            copy(blocks = this.blocks.map { block -> before[block.id]?.let { block.filledFromHistory(it, sources, prefill) } ?: block })
+                        }
                     }
                 },
             )
@@ -482,7 +488,7 @@ internal class WorkoutLogViewModel(
 
     // Unticked sets are saved as they are, those with reps or a time as done, so it asks first
     fun onFinish() {
-        logTypedValue()
+        finishTyping()
         if (state.value.unfinishedSets > 0) {
             setState { copy(dialog = WorkoutLogDialog.Finish) }
         } else {
@@ -503,7 +509,7 @@ internal class WorkoutLogViewModel(
 
     // Close or Back. With sets done, the prompt offers Finish instead.
     fun onClose() {
-        logTypedValue()
+        finishTyping()
         val blocks = state.value.blocks
         val refs = blocks.refs()
         val completed = refs.count { blocks.set(it)?.done == true }

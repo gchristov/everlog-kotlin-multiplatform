@@ -27,6 +27,7 @@ import com.everlog.managers.preferences.SettingsManager.WeightUnit
 import com.everlog.testutil.FakeCoroutineDispatcher
 import com.everlog.testutil.InMemorySharedPreferences
 import com.google.common.truth.Truth.assertThat
+import kotlinx.coroutines.CompletableDeferred
 import org.junit.After
 import org.junit.Before
 import org.junit.Test
@@ -143,6 +144,29 @@ class WorkoutLogViewModelTest {
 
         assertThat(viewModel.state.value.typed).isEqualTo("13.50")
         assertThat(displayWeight(viewModel.set(0, 0).weightKg!!, WeightUnit.POUND)).isWithin(0.01f).of(13.5f)
+    }
+
+    @Test
+    fun `a value takes only as many digits as fit its cell`() {
+        val viewModel = viewModel()
+        viewModel.onCellTapped(CellFocus(viewModel.ref(0, 0), ValueField.Reps))
+        viewModel.type("12345")
+        assertThat(viewModel.set(0, 0).reps).isEqualTo(123)
+
+        viewModel.onCellTapped(CellFocus(viewModel.ref(0, 0), ValueField.Weight))
+        viewModel.type("1234.567")
+        assertThat(viewModel.state.value.typed).isEqualTo("1234.5")
+    }
+
+    @Test
+    fun `keys do nothing while the keypad is closed`() {
+        val viewModel = viewModel()
+        viewModel.type("9")
+        viewModel.onBackspace()
+        viewModel.onStep(1)
+
+        assertThat(viewModel.set(0, 0).reps).isEqualTo(8)
+        assertThat(analytics.events.filter { "modified" in it }).isEmpty()
     }
 
     @Test
@@ -467,6 +491,17 @@ class WorkoutLogViewModelTest {
     // Adding and deleting sets
 
     @Test
+    fun `picking no exercises changes nothing`() {
+        val viewModel = viewModel()
+        val saved = store.ongoing
+
+        viewModel.onExercisesPicked(emptyList())
+
+        assertThat(store.ongoing).isSameInstanceAs(saved)
+        assertThat(analytics.events).doesNotContain("exercises_added")
+    }
+
+    @Test
     fun `an added set copies the last set's values, not done`() {
         val viewModel = viewModel()
         viewModel.onTick(viewModel.ref(0, 1))
@@ -666,6 +701,7 @@ class WorkoutLogViewModelTest {
         first.onCellTapped(CellFocus(first.ref(0, 0), ValueField.Weight))
         first.onBackspace()
         first.onBackspace()
+        first.onHideKeypad()
         store.saved = store.ongoing
 
         val resumed = viewModel()
@@ -717,6 +753,37 @@ class WorkoutLogViewModelTest {
 
         assertThat(viewModel.set(0, 0).weightKg).isNull()
         assertThat(viewModel.state.value.lastTime).isEmpty()
+    }
+
+    @Test
+    fun `a set changed while history loads keeps its values, the others are filled in`() {
+        prefill.lastWeightKg = 60f
+        val loading = CompletableDeferred<Unit>()
+        prefill.loading = loading
+        val viewModel = viewModel()
+        viewModel.onCellTapped(CellFocus(viewModel.ref(0, 0), ValueField.Weight))
+        viewModel.type("40")
+        viewModel.onHideKeypad()
+
+        loading.complete(Unit)
+
+        assertThat(viewModel.set(0, 0).weightKg).isEqualTo(40f)
+        assertThat(viewModel.set(0, 0).weightSuggested).isFalse()
+        assertThat(viewModel.set(0, 1).weightKg).isEqualTo(60f)
+    }
+
+    @Test
+    fun `history for an exercise deleted while it loads changes nothing`() {
+        prefill.lastWeightKg = 60f
+        val loading = CompletableDeferred<Unit>()
+        prefill.loading = loading
+        val viewModel = viewModel()
+        viewModel.onDeleteExerciseConfirmed(viewModel.blocks[0].id)
+
+        loading.complete(Unit)
+
+        assertThat(viewModel.blocks).hasSize(1)
+        assertThat(viewModel.set(0, 0, 0).weightKg).isEqualTo(60f)
     }
 
     // The notification
@@ -790,6 +857,20 @@ class WorkoutLogViewModelTest {
         assertThat(viewModel.set(0, 0).weightKg).isEqualTo(2.5f)
         assertThat(viewModel.set(0, 0).reps).isEqualTo(7)
         assertThat(analytics.events).containsAtLeast("weight_modified 2.5", "reps_modified 7.0").inOrder()
+    }
+
+    @Test
+    fun `a notification button for a set that's gone since does nothing`() {
+        val viewModel = viewModel()
+        viewModel.onDeleteSet(viewModel.ref(0, 1))
+        val saved = store.ongoing
+
+        viewModel.onNotificationCompleteSet(position(0, 1, 0))
+        viewModel.onNotificationReps(position(0, 1, 0), 1)
+        viewModel.onNotificationWeight(position(5, 0, 0), 1)
+
+        assertThat(store.ongoing).isSameInstanceAs(saved)
+        assertThat(analytics.events.filter { it.startsWith("set_completed") || "modified" in it }).isEmpty()
     }
 
     @Test
@@ -877,13 +958,39 @@ class WorkoutLogViewModelTest {
         assertThat(viewModel.state.value.dialog).isNull()
     }
 
+    private fun FakeStore.savedReps() = ongoing?.getExerciseGroups()?.first()?.exercises?.first()?.sets?.first()?.getReps()
+
     @Test
-    fun `every change is saved as the ongoing workout`() {
+    fun `a typed value is saved once the keypad leaves its cell, not at every key`() {
+        val viewModel = viewModel()
+        viewModel.onCellTapped(CellFocus(viewModel.ref(0, 0), ValueField.Reps))
+        viewModel.type("6")
+        assertThat(store.savedReps()).isEqualTo(8)
+
+        viewModel.onMainKey()
+
+        assertThat(store.savedReps()).isEqualTo(6)
+    }
+
+    @Test
+    fun `a value being typed is saved when the screen goes away`() {
         val viewModel = viewModel()
         viewModel.onCellTapped(CellFocus(viewModel.ref(0, 0), ValueField.Reps))
         viewModel.type("6")
 
-        assertThat(store.ongoing?.getExerciseGroups()?.first()?.exercises?.first()?.sets?.first()?.getReps()).isEqualTo(6)
+        viewModel.onPause()
+
+        assertThat(store.savedReps()).isEqualTo(6)
+        assertThat(viewModel.state.value.typed).isEqualTo("6")
+    }
+
+    @Test
+    fun `every other change is saved straight away`() {
+        val viewModel = viewModel()
+        viewModel.onCellTapped(CellFocus(viewModel.ref(0, 0), ValueField.Reps))
+        viewModel.onStep(-1)
+
+        assertThat(store.savedReps()).isEqualTo(7)
     }
 
     private fun position(group: Int, set: Int, exercise: Int) =
@@ -949,10 +1056,13 @@ class WorkoutLogViewModelTest {
         var lastSets = 2
         var fills = true
         var fails = false
+        // History arrives once this completes, if set
+        var loading: CompletableDeferred<Unit>? = null
 
         override fun fillsSets() = fills
 
         override suspend fun invoke(exercises: List<ELExercise>): Either<Throwable, Map<String, PrefillSource>> {
+            loading?.await()
             if (fails) return IllegalStateException("offline").left()
             val weight = lastWeightKg ?: return emptyMap<String, PrefillSource>().right()
             return exercises.associate { exercise ->

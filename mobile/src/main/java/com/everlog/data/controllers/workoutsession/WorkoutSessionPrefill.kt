@@ -54,6 +54,21 @@ fun WorkoutBlock.filledFromHistory(sources: Map<String, PrefillSource>, prefill:
 }
 
 /**
+ * Fills the block in as it was when history started loading ([before]). Sets changed since, e.g. a weight cleared,
+ * stay as they are now.
+ */
+fun WorkoutBlock.filledFromHistory(before: WorkoutBlock, sources: Map<String, PrefillSource>, prefill: WorkoutSetPrefill): WorkoutBlock {
+    val filled = before.filledFromHistory(sources, prefill)
+    return copy(rounds = rounds.map { round ->
+        val was = before.rounds.firstOrNull { it.id == round.id }
+        val fill = filled.rounds.firstOrNull { it.id == round.id }
+        // A round whose exercises changed since keeps its sets
+        if (was == null || fill == null || was.sets.size != round.sets.size) return@map round
+        round.copy(sets = round.sets.mapIndexed { i, set -> if (set == was.sets[i]) fill.sets[i] else set })
+    })
+}
+
+/**
  * The block's last round, just added, filled in from the last session's sets at its place.
  */
 fun WorkoutBlock.withAddedRoundFilled(sources: Map<String, PrefillSource>, prefill: WorkoutSetPrefill): WorkoutBlock {

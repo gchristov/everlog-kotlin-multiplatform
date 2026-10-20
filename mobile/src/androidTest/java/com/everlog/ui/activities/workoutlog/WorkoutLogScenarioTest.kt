@@ -24,6 +24,7 @@ import androidx.compose.ui.test.performScrollToIndex
 import androidx.compose.ui.test.performScrollToNode
 import androidx.compose.ui.test.performTouchInput
 import androidx.compose.ui.test.swipeLeft
+import androidx.test.espresso.Espresso
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
 import arrow.core.Either
@@ -280,6 +281,20 @@ class WorkoutLogScenarioTest {
         compose.waitForIdle()
         assertThat(store.finished).isNotNull()
         assertThat(exit).isInstanceOf(WorkoutLogExit.Finished::class.java)
+
+        // Discard throws the done sets away too, after the system back button asks
+        exit = null
+        store.finished = null
+        viewModel = viewModel(template())
+        compose.waitForIdle()
+        tick(0, 0, 0).performClick()
+        Espresso.pressBack()
+        compose.onNodeWithText("You've completed 1 set.", substring = true).assertExists()
+        compose.onNode(hasText("Discard") and hasAnyAncestor(isDialog())).performClick()
+        compose.waitForIdle()
+        assertThat(exit).isEqualTo(WorkoutLogExit.Discarded)
+        assertThat(store.finished).isNull()
+        assertThat(WorkoutManager.manager.ongoingWorkout()).isNull()
     }
 
     private fun viewModel(launched: ELWorkout): WorkoutLogViewModel {
