@@ -42,15 +42,12 @@ import kotlinx.coroutines.isActive
 import timber.log.Timber
 
 /**
- * The new workout screen (TAS-455): the ongoing workout as a table, typed into with a docked keypad. It does what
- * the old screen's PresenterWorkout does: the workout is saved as the ongoing one after every change, so it can be
- * resumed, and finishing saves it to Firestore and checks it off the plan.
+ * The ongoing workout as a table, typed into with a docked keypad. The workout is saved as the ongoing one after
+ * every change, so it can be resumed, and finishing saves it to Firestore and checks it off the plan.
  *
- * @param workout The workout as launched or resumed (see [load]), for everything but its exercises, which the state
- * holds
+ * @param workout The workout as launched or resumed (see [load]). The state holds its exercises; everything else
+ * comes from here.
  * @param resumed Whether [workout] is a saved copy being resumed, whose sets were filled in from history already
- * @param clock The current time, so tests can pin it
- * @param ids Ids for the blocks and rounds, the loaded ones and any added later
  * @param tickMillis How often the workout's time moves on while the screen shows; null stops it, for tests
  */
 internal class WorkoutLogViewModel(
@@ -70,20 +67,18 @@ internal class WorkoutLogViewModel(
 ) : CommonViewModel<WorkoutLogState>(dispatcher, initialState(workout, ids, settings, clock())) {
 
     private var ticking: Job? = null
-    // Whether the screen is showing, which keeps the time ticking
     private var showing = false
 
-    // What each exercise is filled in from, by its uuid, once the user's history has loaded
+    // By exercise uuid, once the user's history has loaded
     private var sources: Map<String, PrefillSource> = emptyMap()
 
     init {
-        // So the workout can be resumed from the start, as the old screen does
         save()
         // A resumed workout was filled in when it started, and the user may have cleared values since
         loadHistory(state.value.blocks, fill = !resumed)
     }
 
-    // A setting may have changed while the screen was away, e.g. the weight unit, which the notification shows too
+    // A setting such as the weight unit may have changed while the screen was away, and the notification shows it too
     fun onResume() {
         showing = true
         analytics.screenViewed()
@@ -92,21 +87,18 @@ internal class WorkoutLogViewModel(
         keepTicking()
     }
 
-    // The time stops while the screen's away, unless a countdown is running: a rest still sounds with the phone
-    // locked, as on the old screen
+    // The time stops while the screen's away, unless a countdown is running, so a rest still sounds with the phone locked
     fun onPause() {
         showing = false
     }
 
     /**
-     * Moves the time on, and ends a countdown that has run out, with a sound. A timed set is left to be ticked, as on
-     * the old screen.
+     * Moves the time on, and ends a countdown that has run out, with a sound. A timed set is left to be ticked.
      */
     fun tick() {
         setState { copy(now = clock()) }
         val timer = state.value.timer ?: return
         if (clock() < timer.endsAt) {
-            // The notification counts down with the screen
             when (timer) {
                 is WorkoutTimer.Rest -> notification.showRest(remainingPercent(timer), state.value.timerRemainingSeconds())
                 is WorkoutTimer.SetTimer -> notifyWorkout()
@@ -132,14 +124,11 @@ internal class WorkoutLogViewModel(
         }
     }
 
-    // The keypad
-
     fun onCellTapped(cell: CellFocus) {
         logTypedValue()
         setState { focusOn(cell) }
     }
 
-    // Opens the keypad on the selected set's reps (or time)
     fun onShowKeypad() = setState { (selected ?: current)?.let { focusOn(countCell(it)) } ?: this }
 
     fun onHideKeypad() {
@@ -147,7 +136,6 @@ internal class WorkoutLogViewModel(
         setState { focusOn(null) }
     }
 
-    // Back closes the keypad or Edit workout first, then asks about leaving
     fun onBack() {
         when {
             state.value.editing -> onEditDone()
@@ -167,7 +155,6 @@ internal class WorkoutLogViewModel(
         enter(cell, (state.typed ?: rawText(set, cell.field, state.unit)).dropLast(1))
     }
 
-    // − or +: by a rep, 5 seconds or the weight step from Settings
     fun onStep(direction: Int) {
         logTypedValue()
         val state = state.value
@@ -183,7 +170,7 @@ internal class WorkoutLogViewModel(
         analytics.valueChanged(cell.field, stepped)
     }
 
-    // Reps or Time for the focused set. Typing reps or time carries on in the other.
+    // Typing reps or time carries on in the other
     fun onModeSelected(mode: SetMode) {
         logTypedValue()
         val cell = state.value.focus ?: return
@@ -199,7 +186,6 @@ internal class WorkoutLogViewModel(
         when (state.value.mainKey) {
             KeypadMainKey.Next -> setState { focusOn(CellFocus(cell.ref, ValueField.Weight)) }
             KeypadMainKey.Done -> setState { focusOn(null).copy(selected = current ?: selected) }
-            // On to the next set's reps, or closed when there's none left
             KeypadMainKey.CompleteSet -> {
                 complete(cell.ref)
                 setState { focusOn(current?.let { countCell(it) }) }
@@ -209,7 +195,7 @@ internal class WorkoutLogViewModel(
         }
     }
 
-    // The closed keypad's main action: a timed set's timer starts first, then Complete set completes it
+    // The closed keypad's main action: a timed set's timer starts first, then the set completes
     fun onCompleteTarget() {
         logTypedValue()
         val state = state.value
@@ -217,12 +203,7 @@ internal class WorkoutLogViewModel(
         if (state.targetStartsTimer) onStartSetTimer(target) else complete(target)
     }
 
-    // Timers
-
-    /**
-     * Runs a timed set's timer for its time, making it the current set. Without a time there's nothing to count down,
-     * so the keypad opens on it instead.
-     */
+    // Without a time there's nothing to count down, so the keypad opens on it instead
     fun onStartSetTimer(ref: SetRef) {
         logTypedValue()
         startSetTimer(ref, fromNotification = false)
@@ -245,15 +226,14 @@ internal class WorkoutLogViewModel(
     }
 
     /**
-     * −10s or +10s on the running countdown. A rest's change carries on to every rest after it, a set timer's to
-     * the set's time, as on the old screen.
+     * A rest's change carries on to every rest after it, a set timer's to the set's time.
      */
     fun onTimerStep(direction: Int) {
         val timer = state.value.timer ?: return
         val offset = direction * TimerStepSeconds
         val total = (timer.totalSeconds + offset).coerceAtLeast(0)
         when (timer) {
-            // Taken down to nothing, it only ends this rest: the ones after keep theirs, as on the old screen
+            // Taken down to nothing, it only ends this rest: the ones after keep theirs
             is WorkoutTimer.Rest -> change {
                 copy(
                     timer = timer.copy(endsAt = timer.endsAt + offset * 1000L, totalSeconds = total),
@@ -271,9 +251,7 @@ internal class WorkoutLogViewModel(
         tick()
     }
 
-    /**
-     * Skip on a rest, Stop on a set timer: stops it early, without a sound. The set is left to be ticked.
-     */
+    // Skip on a rest, Stop on a set timer: no sound, and the set is left to be ticked
     fun onTimerEnd() = endTimer(fromNotification = false)
 
     private fun endTimer(fromNotification: Boolean) {
@@ -287,13 +265,11 @@ internal class WorkoutLogViewModel(
         }
     }
 
-    // The notification, shown while the screen is open (it stops when the screen closes for good)
-
     fun onScreenStarted() = notification.start(notificationWorkout())
 
     fun onScreenClosed() = notification.stop()
 
-    // Its buttons, each for the set it shows: [position] is that set in the workout it was last sent
+    // The notification's buttons. [position] is the set it shows, in the workout it was last sent.
 
     fun onNotificationCompleteSet(position: ELWorkoutState) {
         setAt(position)?.let { complete(it, fromNotification = true) }
@@ -325,8 +301,7 @@ internal class WorkoutLogViewModel(
         if (state.value.timer is WorkoutTimer.Rest) endTimer(fromNotification = true)
     }
 
-    // The set at a position in the workout as the notification has it: its group, its round and its place among the
-    // exercises that have a set in that round
+    // The notification counts an exercise's place among those with a set in that round, skipping removed ones
     private fun setAt(position: ELWorkoutState): SetRef? {
         val blocks = state.value.blocks
         val block = blocks.getOrNull(position.groupIndex) ?: return null
@@ -351,22 +326,16 @@ internal class WorkoutLogViewModel(
     private fun enter(cell: CellFocus, text: String) =
         change { withValue(cell, parse(cell.field, text)).copy(typed = text, reveal = reveal + 1) }
 
-    // A value typed into the focused cell is logged once the keypad moves on from it, not at every key. Called before
-    // anything that does, and done with what's typed, so it's logged once.
+    // Logged once the keypad moves on from the cell, not at every key, so every event that does calls this first.
+    // Logged as typed, in the user's unit, rather than converted back from kg.
     private fun logTypedValue() {
         val state = state.value
         val cell = state.focus ?: return
         val typed = state.typed ?: return
-        // As typed, in the user's unit, rather than back from kg
         analytics.valueChanged(cell.field, parse(cell.field, typed))
         setState { copy(typed = null) }
     }
 
-    // Completing
-
-    /**
-     * A set's tick: selects it (the open keypad follows), then completes it with the values it has, or undoes it.
-     */
     fun onTick(ref: SetRef) {
         logTypedValue()
         setState { if (focus != null) focusOn(countCell(ref)) else copy(selected = ref) }
@@ -379,16 +348,12 @@ internal class WorkoutLogViewModel(
         }
     }
 
-    /**
-     * Completes a set: the current one moves on to the next set not done, and the selection follows it.
-     */
     private fun complete(ref: SetRef, fromNotification: Boolean = false) {
         val before = state.value
         val set = before.blocks.set(ref) ?: return
         if (set.done) return
         val completion = before.blocks.completeSet(ref, before.current, clock())
-        // The workout's rest starts once a set (or a superset's round) is done, replacing any countdown running.
-        // Completing another set ends a running set timer.
+        // A rest replaces any countdown running, and completing another set ends a running set timer
         val restSeconds = completion.blocks.block(ref.blockId)?.restSeconds ?: 0
         val rest = if (completion.startsRest && restSeconds > 0) {
             WorkoutTimer.Rest(endsAt = clock() + restSeconds * 1000L, totalSeconds = restSeconds)
@@ -405,7 +370,6 @@ internal class WorkoutLogViewModel(
         }
         val type = completion.blocks.block(ref.blockId)?.setType
         analytics.setCompleted(type, set.mode == SetMode.Time, fromNotification)
-        // A superset's round (or another set of several exercises) done with this set
         val round = completion.blocks.round(ref.blockId, ref.roundId)
         val exercises = round?.sets?.count { !it.removed } ?: 0
         if (round?.done == true && exercises > 1) {
@@ -417,12 +381,6 @@ internal class WorkoutLogViewModel(
         }
     }
 
-    // Adding and deleting sets
-
-    /**
-     * A new set at the end of an exercise (or a new round of a superset), with the last set's values, up to the old
-     * screen's limit.
-     */
     fun onAddSet(blockId: Long) {
         val block = state.value.blocks.block(blockId) ?: return
         if (block.rounds.size >= MaxSets) {
@@ -430,15 +388,11 @@ internal class WorkoutLogViewModel(
             return
         }
         val blocks = state.value.blocks.addRound(blockId, ids).fillAdded(blockId)
-        // Every set was done: the new one is current
+        // When every set was done, the new one is current
         change { copy(blocks = blocks, current = current ?: blocks.nextOpenAfter(null)).followCurrent() }
         analytics.setAdded()
     }
 
-    /**
-     * Deletes one exercise's set, the whole exercise with its last set, until Undo. A countdown or the keypad on it
-     * goes, and the current set moves on.
-     */
     fun onDeleteSet(ref: SetRef) {
         logTypedValue()
         val before = state.value
@@ -452,14 +406,10 @@ internal class WorkoutLogViewModel(
         change { copy(blocks = blocks.restore(deletion.sets), current = deletion.current ?: current) }
     }
 
-    // The undo's message went without Undo
     fun onUndoGone() = setState { copy(deletion = null) }
 
     fun onMessageShown() = setState { copy(message = null) }
 
-    // Exercises
-
-    // Its menu's Delete, which asks first: its sets go with it
     fun onDeleteExercise(blockId: Long) = setState { copy(dialog = WorkoutLogDialog.DeleteExercise(blockId)) }
 
     fun onDeleteExerciseConfirmed(blockId: Long) {
@@ -472,9 +422,7 @@ internal class WorkoutLogViewModel(
         }
     }
 
-    /**
-     * An exercise changed in the library or by the user, e.g. renamed, shown as it is now, as the old screen does.
-     */
+    // Renamed in the library or by the user, for example
     fun onExerciseChanged(exercise: ELExercise) {
         val uuid = exercise.uuid ?: return
         if (state.value.blocks.none { block -> block.exercises.any { it.exercise?.uuid == uuid } }) return
@@ -485,8 +433,6 @@ internal class WorkoutLogViewModel(
         }
     }
 
-    // Edit workout: reordering and deleting exercises
-
     fun onEditWorkout() {
         logTypedValue()
         setState { focusOn(null).copy(editing = true) }
@@ -494,28 +440,23 @@ internal class WorkoutLogViewModel(
 
     fun onEditDone() = setState { copy(editing = false) }
 
-    // Drags an exercise (a superset moves as one) from one place to another
     fun onMoveExercise(from: Int, to: Int) = change { copy(blocks = blocks.moveBlock(from, to)) }
-
-    // The rest after each set
 
     fun onRestTimerSettings() = setState { copy(dialog = WorkoutLogDialog.RestTimer) }
 
-    // −10s or +10s on every exercise's rest, not below 10s. A rest already running keeps its time.
+    // A rest already running keeps its time
     fun onRestStep(direction: Int) {
         val seconds = (state.value.restSeconds + direction * TimerStepSeconds).coerceAtLeast(TimerStepSeconds)
         change { copy(blocks = blocks.withRestSeconds(seconds)) }
         analytics.restChanged(seconds)
     }
 
-    // Adding exercises
-
     fun onExercisesPicked(groups: List<ELExerciseGroup>) {
         if (groups.isEmpty()) return
         val before = state.value.blocks
         change {
             val blocks = blocks.addGroups(groups, ids)
-            // Nothing was current (an empty workout, or every set done): the first new set is
+            // In an empty workout, or with every set done, the first new set becomes current
             copy(blocks = blocks, current = current ?: blocks.nextOpenAfter(this.blocks.refs().lastOrNull())).followCurrent()
         }
         analytics.exercisesAdded()
@@ -523,12 +464,9 @@ internal class WorkoutLogViewModel(
         loadHistory(state.value.blocks.filter { block -> before.none { it.id == block.id } }, fill = true)
     }
 
-    // Filling in from history
-
     /**
-     * Loads what the exercises in [blocks] are filled in from, for their last time and for sets added later. With
-     * [fill], and when the muscle goal fills sets in, it fills their empty values too, as the old screen does. A
-     * weight filled in shows as a suggestion until it's changed.
+     * Loads each exercise's history, for its last time and for sets added later. With [fill], and when the muscle
+     * goal fills sets in, it fills their empty values too.
      */
     private fun loadHistory(blocks: List<WorkoutBlock>, fill: Boolean) {
         val exercises = blocks.flatMap { block -> block.exercises.mapNotNull { it.exercise } }.distinctBy { it.uuid }
@@ -537,7 +475,6 @@ internal class WorkoutLogViewModel(
             val found = try {
                 prefill.sources(exercises)
             } catch (e: Exception) {
-                // Without history the sets keep the values they have, as on the old screen
                 Timber.tag(TAG).e(e, "Couldn't load history to fill in from")
                 return@launchCoroutine
             }
@@ -550,7 +487,6 @@ internal class WorkoutLogViewModel(
         }
     }
 
-    // Every set's empty values filled in from its exercise's source
     private fun WorkoutBlock.filled(): WorkoutBlock = copy(rounds = rounds.mapIndexed { index, round ->
         round.copy(sets = round.sets.mapIndexed { i, set ->
             val source = sources[exercises[i].exercise?.uuid]
@@ -558,7 +494,7 @@ internal class WorkoutLogViewModel(
         })
     })
 
-    // A block's set just added filled in from the last session's set at its place, as the old screen does
+    // The set just added takes the last session's set at its place, when there was one
     private fun List<WorkoutBlock>.fillAdded(blockId: Long): List<WorkoutBlock> {
         if (!prefill.fillsSets()) return this
         return map { block ->
@@ -572,9 +508,7 @@ internal class WorkoutLogViewModel(
         }
     }
 
-    // Finishing
-
-    // Asks first when sets aren't ticked: they're saved as they are, those with reps or a time as done
+    // Unticked sets are saved as they are, those with reps or a time as done, so it asks first
     fun onFinish() {
         logTypedValue()
         if (state.value.unfinishedSets > 0) {
@@ -595,9 +529,7 @@ internal class WorkoutLogViewModel(
         setState { copy(dialog = null, exit = WorkoutLogExit.Finished(finished)) }
     }
 
-    // Leaving
-
-    // Close or Back: discard, or finish instead when sets have been done
+    // Close or Back. With sets done, the prompt offers Finish instead.
     fun onClose() {
         logTypedValue()
         val blocks = state.value.blocks
@@ -627,10 +559,7 @@ internal class WorkoutLogViewModel(
         setState { copy(dialog = null) }
     }
 
-    // Saving
-
-    // A change to the workout, saved as the ongoing one straight away. Any change but a delete ends the undo of the
-    // last delete, which puts its sets back as they were.
+    // Undo puts the deleted block back as it was, so any other change ends it
     private fun change(keepUndo: Boolean = false, reducer: WorkoutLogState.() -> WorkoutLogState) {
         setState { (if (keepUndo) this else copy(deletion = null)).reducer() }
         save()
@@ -645,7 +574,7 @@ internal class WorkoutLogViewModel(
 
     private fun notifyWorkout() = notification.update(notificationWorkout())
 
-    // The workout for the notification, with a running set timer's seconds left on its set, which it shows
+    // The notification shows a running set timer's seconds left from its set
     private fun notificationWorkout(): ELWorkout {
         val state = state.value
         val workout = workout.withSessionBlocks(state.blocks)
@@ -659,7 +588,6 @@ internal class WorkoutLogViewModel(
 
     companion object {
         private const val TickMillis = 1000L
-        // A countdown's −10s and +10s, AppConfig's offset for the old screen's timer
         private val TimerStepSeconds = AppConfig.configuration.defaultRestTimeOffsetSeconds
         private val MaxSets = AppConfig.configuration.maxExerciseSets
         private const val TAG = "WorkoutLogViewModel"
@@ -667,18 +595,15 @@ internal class WorkoutLogViewModel(
         private const val TimeStepSeconds = 5f
 
         /**
-         * The workout to show for the one the screen was opened with: its saved copy if it's the ongoing one, with
-         * everything done since it started, otherwise the new workout with the routine's targets as its values.
+         * The launch intent only has the workout as it was when it started. When it's resumed, or Android rebuilds
+         * the screen after the app was killed, the saved copy has everything done since.
          */
         fun load(launched: ELWorkout, store: WorkoutLogStore): LoadedWorkout {
-            // The launch intent only has the workout as it was when it started. When Android rebuilds this screen
-            // after the app was killed, or it's resumed, continue from the saved copy instead.
             val saved = store.savedCopyOf(launched)
             if (saved != null) {
                 saved.clearRemainingTimes()
                 return LoadedWorkout(saved, resumed = true)
             }
-            // A new workout starts with the routine's targets as its values
             launched.prefillRequiredMetrics()
             return LoadedWorkout(launched, resumed = false)
         }
@@ -703,7 +628,7 @@ internal class WorkoutLogViewModel(
             keepScreenOn = settings.keepScreenOn(),
         )
 
-        // The next set not done after the one completed last, as the notification picks it
+        // The notification picks the next set the same way
         private fun List<WorkoutBlock>.resumeAt(): SetRef? {
             val last = refs().filter { set(it)?.done == true }.maxByOrNull { set(it)?.completedDate ?: 0 }
             return nextOpenAfter(last)
@@ -712,21 +637,19 @@ internal class WorkoutLogViewModel(
     }
 }
 
-// Focuses a cell for the keypad, or closes it, starting afresh: the first key replaces the value. A focused set is
-// the selected one.
+// The first key after focusing replaces the value
 private fun WorkoutLogState.focusOn(cell: CellFocus?) = copy(focus = cell, typed = null, selected = cell?.ref ?: selected)
 
-// The set's reps or time, whichever it records
 private fun WorkoutLogState.countCell(ref: SetRef): CellFocus? = blocks.set(ref)?.let { CellFocus(ref, countField(it)) }
 
-// Sets one of the focused set's values. A weight is typed in the user's unit and stored in kg.
+// A weight is typed in the user's unit and stored in kg
 private fun WorkoutLogState.withValue(cell: CellFocus, value: Float?): WorkoutLogState {
     val stored = if (cell.field == ValueField.Weight) value?.let { storedWeight(it, unit) } else value
     return copy(blocks = blocks.setValue(cell.ref, cell.field, stored))
 }
 
-// Once the selected set is done, the selection (and the open keypad) moves on to the current set. Nothing selected
-// yet, e.g. in an empty workout that just got its first exercise, selects the current set too.
+// Once the selected set is done, the selection (and the open keypad) moves on to the current set. So does an empty
+// selection, e.g. in an empty workout that just got its first exercise.
 private fun WorkoutLogState.followCurrent(): WorkoutLogState {
     val next = current ?: return this
     val selectedSet = selected?.let { blocks.set(it) }
@@ -734,14 +657,14 @@ private fun WorkoutLogState.followCurrent(): WorkoutLogState {
     return if (focus != null) focusOn(countCell(next)) else copy(selected = next)
 }
 
-// A countdown gone: a timed set's is remembered, so the set is ticked next rather than timed again
+// A timed set whose timer has run is ticked next rather than timed again
 private fun WorkoutLogState.stopped(timer: WorkoutTimer) = copy(
     timer = null,
     timedSets = if (timer is WorkoutTimer.SetTimer) timedSets + timer.ref else timedSets,
 )
 
-// The workout with some of its sets gone: anything on them goes too (the keypad, a set timer, the selection) and the
-// current set, if it went, moves on to the next one not done after it that's still there
+// Anything on the sets that went goes too (the keypad, a set timer, the selection), and the current set moves on to
+// the next one not done that's still there
 private fun WorkoutLogState.withSetsGone(remaining: List<WorkoutBlock>): WorkoutLogState {
     val kept = { it: SetRef? -> it != null && remaining.set(it) != null }
     val refs = blocks.refs()
@@ -757,13 +680,9 @@ private fun WorkoutLogState.withSetsGone(remaining: List<WorkoutBlock>): Workout
     ).followCurrent()
 }
 
-/**
- * The workout the screen shows, and whether it's a saved copy being resumed.
- */
 internal data class LoadedWorkout(val workout: ELWorkout, val resumed: Boolean)
 
-// The set as the old screen's ELSet, filled in by [fill], and back. A weight filled in where there was none is the
-// set's suggestion.
+// The prefill controller fills an ELSet. A weight it fills in is the set's suggestion.
 private fun WorkoutSet.filledFrom(fill: (ELSet) -> Unit): WorkoutSet {
     val set = toELSet()
     fill(set)
@@ -772,5 +691,4 @@ private fun WorkoutSet.filledFrom(fill: (ELSet) -> Unit): WorkoutSet {
     return filled.copy(suggestedKg = suggested ?: suggestedKg)
 }
 
-// The last session's sets, for the last time column
 private fun PrefillSource.lastSets(): List<WorkoutSet> = lastSession?.exercise?.sets.orEmpty().map { it.toSessionSet() }

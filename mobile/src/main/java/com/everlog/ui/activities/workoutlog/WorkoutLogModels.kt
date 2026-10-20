@@ -13,7 +13,6 @@ import com.everlog.managers.preferences.SettingsManager.WeightUnit
 
 internal data class WorkoutLogState(
     val name: String,
-    // The workout's created date, which its time counts from
     val startedAt: Long,
     val now: Long,
     val blocks: List<WorkoutBlock>,
@@ -21,33 +20,29 @@ internal data class WorkoutLogState(
     val current: SetRef?,
     // Weights show and are typed in this unit; the blocks hold kg
     val unit: WeightUnit,
-    // The keypad's ± for a weight, in [unit]
     val weightStep: Float,
     val keepScreenOn: Boolean,
     // The highlighted set: the current one as the workout starts, then the last one touched. Once it's completed,
     // the next one.
     val selected: SetRef? = current,
-    // The cell the keypad types into. The keypad is open while there is one.
+    // The keypad is open while a cell has focus
     val focus: CellFocus? = null,
     // What's been typed into the focused cell. Null until the first key, which replaces its value.
     val typed: String? = null,
     // Goes up with every key, so the edited cell comes back into view if it was scrolled away
     val reveal: Int = 0,
-    // The one countdown running, a rest or a timed set's. Not saved: like the old screen's, it's gone if the app is
-    // killed.
+    // Not saved, so it's gone if the app is killed
     val timer: WorkoutTimer? = null,
-    // Timed sets whose timer has run out or been stopped, which are then ticked rather than timed again
+    // Timed sets whose timer has run out or been stopped, which are ticked next rather than timed again
     val timedSets: Set<SetRef> = emptySet(),
-    // The sets just deleted, which Undo puts back until anything else changes
+    // Undo puts it back until anything else changes
     val deletion: Deletion? = null,
-    // A short message to show once, then clear (onMessageShown)
+    // Shown once, then cleared with onMessageShown
     val message: WorkoutLogMessage? = null,
-    // Each exercise's last session's sets, by its uuid, once history has loaded: the table's last time column
+    // Each exercise's last session's sets, by its uuid
     val lastTime: Map<String, List<WorkoutSet>> = emptyMap(),
-    // Edit workout: the exercises as cards to reorder or delete, in place of the table and keypad
     val editing: Boolean = false,
     val dialog: WorkoutLogDialog? = null,
-    // Set once the workout is finished or discarded, for the screen to close
     val exit: WorkoutLogExit? = null,
 ) {
     val elapsedSeconds: Long
@@ -56,7 +51,6 @@ internal data class WorkoutLogState(
     val unfinishedSets: Int
         get() = blocks.unfinishedSets()
 
-    // What the open keypad's wide key does
     val mainKey: KeypadMainKey?
         get() {
             val focus = focus ?: return null
@@ -69,51 +63,43 @@ internal data class WorkoutLogState(
             }
         }
 
-    // The set the closed keypad's main action completes (or times): the selected one, or else the current one
+    // What the closed keypad's main action completes (or times)
     val target: SetRef?
         get() = selected?.takeIf { blocks.set(it)?.done == false } ?: current
 
-    // The closed keypad's main action for [target]: a timed set's timer starts first
     val targetStartsTimer: Boolean
         get() = target?.let(::startsTimer) == true
 
-    // A timed set not done whose timer hasn't run yet: its main action starts the timer, and its row shows a timer
-    // button in place of the tick. Once the timer has run, it's ticked like any set, as on the old screen.
+    // A timed set's timer runs once; after that it's ticked like any set
     fun startsTimer(ref: SetRef): Boolean {
         val set = blocks.set(ref) ?: return false
         return set.mode == SetMode.Time && !set.done && !isTiming(ref) && ref !in timedSets
     }
 
-    // The rest after each set: every exercise's is the same, as on the old screen, which sets them all at once
+    // Every exercise has the same rest, as the options change them all at once
     val restSeconds: Int
         get() = blocks.firstOrNull()?.restSeconds ?: 0
 
     fun isTiming(ref: SetRef): Boolean = (timer as? WorkoutTimer.SetTimer)?.ref == ref
 
-    // Whole seconds left on the countdown, rounded up so it shows 1 until it's done
+    // Rounded up, so it shows 1 until it's done
     fun timerRemainingSeconds(): Int = timer?.let { ((it.endsAt - now).coerceAtLeast(0) + 999).toInt() / 1000 } ?: 0
 }
 
 /**
- * A countdown that ends at [endsAt]. [totalSeconds] is how long it runs, with any time added or taken off.
+ * [totalSeconds] is how long it runs, with any time added or taken off.
  */
 internal sealed interface WorkoutTimer {
     val endsAt: Long
     val totalSeconds: Int
 
-    // After a set, before the next
     data class Rest(override val endsAt: Long, override val totalSeconds: Int) : WorkoutTimer
 
-    // A timed set being done
     data class SetTimer(val ref: SetRef, override val endsAt: Long, override val totalSeconds: Int) : WorkoutTimer
 }
 
-/**
- * A cell the keypad types into.
- */
 internal data class CellFocus(val ref: SetRef, val field: ValueField)
 
-// Reps or time, whichever the set records
 internal fun countField(set: WorkoutSet) = if (set.mode == SetMode.Time) ValueField.Time else ValueField.Reps
 
 // Reps (or time), then the weight, whose key completes the set. A done set's values save as they're typed, so its
@@ -121,18 +107,13 @@ internal fun countField(set: WorkoutSet) = if (set.mode == SetMode.Time) ValueFi
 internal enum class KeypadMainKey {
     Next,
     CompleteSet,
-    // A timed set's timer, before Complete set
     StartTimer,
     Done,
 }
 
-/**
- * Sets deleted, as they were, and the set that was current then, for Undo.
- */
 internal data class Deletion(val sets: DeletedSets, val current: SetRef?)
 
 internal sealed interface WorkoutLogMessage {
-    // The old screen's limit on sets per exercise
     data class TooManySets(val max: Int) : WorkoutLogMessage
 }
 
@@ -140,20 +121,16 @@ internal sealed interface WorkoutLogDialog {
     // Finish with sets not ticked
     data object Finish : WorkoutLogDialog
 
-    // Leaving the workout. With sets done it offers to finish instead, saying how many unticked sets would be
-    // saved as done.
+    // [untickedSaved]: the unticked sets that Finish would save as done
     data class Discard(val setsCompleted: Int, val untickedSaved: Int) : WorkoutLogDialog
 
-    // Deleting an exercise (or a superset) from its menu
     data class DeleteExercise(val blockId: Long) : WorkoutLogDialog
 
-    // The rest after each set, from the workout's options
     data object RestTimer : WorkoutLogDialog
 }
 
 internal sealed interface WorkoutLogExit {
     data object Discarded : WorkoutLogExit
 
-    // The workout as saved, for its summary
     data class Finished(val workout: ELWorkout) : WorkoutLogExit
 }

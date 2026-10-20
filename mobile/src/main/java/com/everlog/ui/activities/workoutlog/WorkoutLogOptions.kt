@@ -20,7 +20,7 @@ import com.everlog.ui.design.elements.list.AppListItem
 import com.everlog.ui.design.theme.Theme
 
 /**
- * The cog in the header, opening the workout's options: the rest after each set, Edit workout and Discard.
+ * The cog in the header, with the rest after each set, Edit workout and Discard.
  */
 @Composable
 internal fun WorkoutOptionsButton(state: WorkoutLogState, viewModel: WorkoutLogViewModel) {
@@ -63,9 +63,6 @@ internal fun WorkoutOptionsButton(state: WorkoutLogState, viewModel: WorkoutLogV
     }
 }
 
-/**
- * The rest's − and + in its dialog, by 10s.
- */
 @Composable
 internal fun RestStepper(seconds: Int, onStep: (Int) -> Unit) {
     Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(Theme.spacing.large)) {

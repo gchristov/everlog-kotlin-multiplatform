@@ -471,7 +471,7 @@ class WorkoutLogViewModelTest {
     }
 
     @Test
-    fun `no more sets than the old screen's limit`() {
+    fun `no more sets than the limit per exercise`() {
         val viewModel = viewModel()
         repeat(20) { viewModel.onAddSet(viewModel.blocks[0].id) }
 
@@ -934,7 +934,7 @@ class WorkoutLogViewModelTest {
 
     /**
      * History with every exercise last done at [lastWeightKg] for [lastSets] sets, filling in empty weights like the
-     * old screen's history prefill.
+     * WorkoutPrefillController's history prefill.
      */
     private class FakePrefill : WorkoutLogPrefill {
         var lastWeightKg: Float? = null

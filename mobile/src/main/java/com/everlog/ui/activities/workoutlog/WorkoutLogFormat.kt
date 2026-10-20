@@ -9,8 +9,6 @@ import com.everlog.utils.UnitUtils
 import java.math.BigDecimal
 import java.math.RoundingMode
 
-// How the workout screen writes and reads its numbers
-
 /**
  * 62.5, 60, 137.79: at most two decimals, without trailing zeros.
  */
@@ -43,39 +41,27 @@ internal fun secondsTyped(seconds: Int): String {
     return if (minutes > 0) "$minutes%02d".format(seconds % 60) else "$seconds"
 }
 
-/**
- * KG or LB, as the column and the keypad label it.
- */
 internal fun unitLabel(unit: WeightUnit): String =
     ArrayResourceTypeUtils.withWeightAbbreviations().getTitle(unit.name, "--").orEmpty().uppercase()
 
-/**
- * A weight in kg, in the user's unit.
- */
 internal fun displayWeight(kg: Float, unit: WeightUnit): Float = if (unit == WeightUnit.POUND) UnitUtils.kgToLb(kg) else kg
 
-/**
- * A weight in the user's unit, in kg.
- */
 internal fun storedWeight(value: Float, unit: WeightUnit): Float = if (unit == WeightUnit.POUND) UnitUtils.lbToKg(value) else value
 
-// Typing into a cell with the keypad
-
-// How many characters each value takes
 internal fun maxLength(field: ValueField) = when (field) {
     ValueField.Weight -> 6
     ValueField.Reps -> 3
     ValueField.Time -> 4
 }
 
-// What's typed as the value to set. Nothing typed clears it.
+// Nothing typed clears the value
 internal fun parse(field: ValueField, text: String): Float? = when (field) {
     ValueField.Weight -> text.toFloatOrNull()
     ValueField.Reps -> text.toIntOrNull()?.toFloat()
     ValueField.Time -> text.takeIf { it.isNotEmpty() }?.let { typedSeconds(it).toFloat() }
 }
 
-// A value as its digits, for backspacing into it
+// For backspacing into a value that hasn't been typed
 internal fun rawText(set: WorkoutSet, field: ValueField, unit: WeightUnit): String = when (field) {
     ValueField.Weight -> set.weightKg?.let { formatWeight(displayWeight(it, unit)) }.orEmpty()
     ValueField.Reps -> set.reps?.toString().orEmpty()
@@ -83,8 +69,7 @@ internal fun rawText(set: WorkoutSet, field: ValueField, unit: WeightUnit): Stri
 }
 
 /**
- * A set as its last time column shows it: 15 × 17 kg, 0:30 × 10 kg, 12 or 0:45 without a weight. Null when nothing
- * was logged.
+ * 15 × 17 kg, 0:30 × 10 kg, or 12 and 0:45 without a weight. Null when nothing was logged.
  */
 internal fun lastTimeText(set: WorkoutSet, unit: WeightUnit): String? {
     val count = if (set.mode == SetMode.Time) set.timeSeconds?.let { formatClock(it.toLong()) } else set.reps?.toString()

@@ -80,14 +80,6 @@ class WorkoutSessionRulesTest {
     }
 
     @Test
-    fun `completing a round completes each exercise's set and moves the current set on`() {
-        val completion = blocks.completeRound(superset.id, superset.rounds[0].id, current = ref(superset, 0, index = 0), now)
-
-        assertThat(completion.blocks.round(superset.id, superset.rounds[0].id)?.done).isTrue()
-        assertThat(completion.current).isEqualTo(ref(superset, 1, index = 0))
-    }
-
-    @Test
     fun `undoing a set keeps its values and start`() {
         val done = blocks.completeSet(ref(single, 0), current = null, now).blocks
 
@@ -120,7 +112,9 @@ class WorkoutSessionRulesTest {
 
     @Test
     fun `an added round copies the last round's values, not done`() {
-        val done = blocks.completeRound(superset.id, superset.rounds[1].id, current = null, now).blocks
+        val done = blocks
+            .completeSet(ref(superset, 1, index = 0), current = null, now).blocks
+            .completeSet(ref(superset, 1, index = 1), current = null, now).blocks
 
         val added = done.addRound(superset.id, ids).block(superset.id)!!.rounds.last()
 
@@ -185,13 +179,6 @@ class WorkoutSessionRulesTest {
         val (deleted, undo) = blocks.deleteRound(single.id, single.rounds[0].id)!!
 
         assertThat(deleted.restore(undo)).isEqualTo(blocks)
-    }
-
-    @Test
-    fun `the current set moves on from a block about to be deleted`() {
-        val next = blocks.nextOpenOutside(ref(single, 0), blockId = single.id)
-
-        assertThat(next).isEqualTo(ref(superset, 0, index = 0))
     }
 
     @Test

@@ -61,7 +61,7 @@ internal fun ELSet.toSessionSet(): WorkoutSet {
     val requiredTime = if (isRequiredTimeEntered()) getRequiredTimeSeconds() else null
     val time = if (isTimeEntered()) getTimeSeconds() else null
     return WorkoutSet(
-        // As the old screen shows it: time when there's a time, or only a target time
+        // Time when there's a time, or only a target time
         mode = if (time != null || (!isRepsEntered() && requiredTime != null)) SetMode.Time else SetMode.Reps,
         reps = getReps().takeIf { it > 0 },
         timeSeconds = time,

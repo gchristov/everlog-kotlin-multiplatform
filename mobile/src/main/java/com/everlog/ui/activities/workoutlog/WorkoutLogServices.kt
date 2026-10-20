@@ -27,19 +27,15 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlinx.coroutines.withContext
 
-/**
- * Where the workout screen's workout is kept: the ongoing copy, which resumes it, and the finished one. As the old
- * screen's PresenterWorkout does it.
- */
 internal interface WorkoutLogStore {
-    // The saved copy of the given workout if it's the ongoing one, with everything done since it started
+    // Null unless it's the ongoing workout
     fun savedCopyOf(workout: ELWorkout): ELWorkout?
 
     fun saveOngoing(workout: ELWorkout)
 
     fun clearOngoing()
 
-    // Saves the finished workout and checks it off the ongoing plan
+    // Also checks it off the ongoing plan
     fun saveFinished(workout: ELWorkout, fromPlan: Boolean)
 }
 
@@ -59,21 +55,21 @@ internal class RealWorkoutLogStore : WorkoutLogStore {
 }
 
 /**
- * Filling sets in from the user's history, through the old screen's WorkoutPrefillController, unchanged: the 1RM
- * target for the muscle goal, or else each set's value from the exercise's last session.
+ * Fills sets in from the user's history with WorkoutPrefillController: the 1RM target for the muscle goal, or else
+ * each set's value from the exercise's last session.
  */
 internal interface WorkoutLogPrefill {
     // Whether the muscle goal in Settings fills sets in at all
     fun fillsSets(): Boolean
 
-    // What each exercise would be filled in from, by its uuid: its last session and its best recent 1RM
+    // By exercise uuid
     suspend fun sources(exercises: List<ELExercise>): Map<String, PrefillSource>
 
-    // Fills a set's empty values from its exercise's source. [index] is the set's place in the exercise.
+    // Fills the set's empty values. [index] is the set's place in the exercise.
     fun fill(source: PrefillSource, set: ELSet, index: Int)
 
-    // A set just added, filled from the last session's set at its place in place of the values it copied. False when
-    // the last session had no such set.
+    // Replaces the values a set just added copied with the last session's set at its place. False when the last
+    // session had no such set.
     fun fillAdded(source: PrefillSource, set: ELSet, index: Int): Boolean
 }
 
@@ -105,12 +101,12 @@ internal class RealWorkoutLogPrefill : WorkoutLogPrefill {
 }
 
 /**
- * The settings the workout screen follows. Read again each time it shows, as they can change in Settings meanwhile.
+ * Read again each time the screen shows, as they can change in Settings meanwhile.
  */
 internal interface WorkoutLogSettings {
     fun weightUnit(): SettingsManager.WeightUnit
 
-    // The keypad's ± for a weight, in the user's unit
+    // In the user's unit
     fun weightIncrease(): Float
 
     fun keepScreenOn(): Boolean
@@ -125,16 +121,14 @@ internal class RealWorkoutLogSettings : WorkoutLogSettings {
 }
 
 /**
- * The ongoing workout's notification, run by WorkoutService while the screen is open, exactly as the old screen
- * drives it: it's sent the workout after every change and a rest's countdown every second, and its buttons come back
- * to the screen as broadcasts (see WorkoutLogActivity).
+ * WorkoutService's notification, while the screen is open. It's sent the workout after every change and a rest's
+ * countdown every second; its buttons come back as broadcasts (WorkoutLogNotificationReceiver).
  */
 internal interface WorkoutLogNotification {
     fun start(workout: ELWorkout)
 
     fun stop()
 
-    // The workout as it is now, with a running set timer's seconds left on its set
     fun update(workout: ELWorkout)
 
     fun showRest(remainingPercent: Int, remainingSeconds: Int)
@@ -153,7 +147,7 @@ internal class RealWorkoutLogNotification(private val navigator: Navigator) : Wo
 
 /**
  * The sound and vibration when a countdown runs out. Called from the view-model rather than the screen, so they
- * play with the phone locked, as the old screen's do.
+ * play with the phone locked.
  */
 internal interface WorkoutLogAlerts {
     fun timerRanOut()
@@ -166,17 +160,13 @@ internal class RealWorkoutLogAlerts(private val context: Context) : WorkoutLogAl
     }
 }
 
-/**
- * The workout screen's events, the same ones the old screen logs.
- */
 internal interface WorkoutLogAnalytics {
     // Logged as the screen shows, before its other events, so they're credited to it
     fun screenViewed()
 
-    // [fromNotification]: completed with the notification's button rather than on the screen
     fun setCompleted(type: ELSetType?, timed: Boolean, fromNotification: Boolean)
 
-    // A superset's round (or another set of several exercises) done
+    // A superset's (or circuit's) round done
     fun setGroupCompleted(type: ELSetType?, exercises: Int, fromNotification: Boolean)
 
     // A done set undone
@@ -188,20 +178,19 @@ internal interface WorkoutLogAnalytics {
 
     fun setDeleted()
 
-    // The rest after each set changed from the workout's options
     fun restChanged(seconds: Int)
 
-    // A set's weight (in the user's unit), reps or time changed, once per value typed or each ± step
+    // Weight in the user's unit
     fun valueChanged(field: ValueField, value: Float?)
 
     fun restStarted()
 
-    // Rest skipped (not run out)
+    // Skipped, not run out
     fun restStopped()
 
     fun setTimerStarted()
 
-    // A set timer stopped early (not run out)
+    // Stopped, not run out
     fun setTimerStopped()
 
     fun workoutCompleted()

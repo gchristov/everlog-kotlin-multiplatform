@@ -74,8 +74,7 @@ import com.everlog.utils.UnitUtils
 import kotlinx.coroutines.android.awaitFrame
 
 /**
- * Renders the view-model's state and forwards what's tapped and typed to it. The keypad's rules (what each key does,
- * where the selection goes) are the view-model's.
+ * Renders the view-model's state and forwards what's tapped and typed to it.
  */
 @Composable
 internal fun WorkoutLogScreen(
@@ -115,7 +114,6 @@ internal fun WorkoutLogScreen(
     AppScreen(
         topBar = { Header(state, viewModel) },
         footer = {
-            // Edit workout: Done and Add exercise, with the tip on how to edit
             if (state.editing) {
                 AppFooter(
                     modifier = Modifier.testTag(WorkoutLogTags.EditFooter),
@@ -137,18 +135,16 @@ internal fun WorkoutLogScreen(
                     onShow = if (empty) null else viewModel::onShowKeypad,
                     actions = if (empty) emptyList() else listOf(addExercise),
                     primaryAction = when {
-                        // The empty workout's only action
                         empty -> addExercise
                         state.target != null -> AppKeypadAction(
                             stringResource(if (state.targetStartsTimer) R.string.workout_log_start_timer else R.string.workout_log_complete_set),
                             viewModel::onCompleteTarget,
                         )
-                        // Every set done: Finish in the header is filled instead
+                        // With every set done, the header's Finish is the main action instead
                         else -> null
                     },
                     strips = {
                         if (empty) AppKeypadNote(text = stringResource(R.string.workout_log_empty_hint))
-                        // Typing into a suggested weight: where it comes from
                         val focused = state.focus?.takeIf { it.field == ValueField.Weight }?.let { state.blocks.set(it.ref) }
                         if (focused?.weightSuggested == true) {
                             AppKeypadNote(text = stringResource(R.string.workout_log_suggested, SuggestedMark), highlighted = true)
@@ -197,7 +193,6 @@ internal fun WorkoutLogScreen(
     WorkoutLogDialogs(state, viewModel)
 }
 
-// "Set deleted" with Undo while the deleted sets can come back, and one-off messages, over the keypad
 @Composable
 private fun Messages(state: WorkoutLogState, viewModel: WorkoutLogViewModel, modifier: Modifier) {
     val snackbar = remember { SnackbarHostState() }
@@ -205,7 +200,7 @@ private fun Messages(state: WorkoutLogState, viewModel: WorkoutLogViewModel, mod
     val undo = stringResource(R.string.workout_log_undo)
     LaunchedEffect(state.deletion) {
         if (state.deletion == null) {
-            // Gone with another change: its Undo can't put the sets back any more
+            // Another change ended the undo
             snackbar.currentSnackbarData?.dismiss()
             return@LaunchedEffect
         }
@@ -225,7 +220,6 @@ private fun Messages(state: WorkoutLogState, viewModel: WorkoutLogViewModel, mod
     AppSnackbarHost(hostState = snackbar, modifier = modifier)
 }
 
-// The running countdown: a rest in amber with Skip, a set timer with Stop
 @Composable
 private fun TimerStrip(timer: WorkoutTimer, remainingSeconds: Int, viewModel: WorkoutLogViewModel) {
     val rest = timer is WorkoutTimer.Rest
@@ -239,7 +233,6 @@ private fun TimerStrip(timer: WorkoutTimer, remainingSeconds: Int, viewModel: Wo
     )
 }
 
-// What the open keypad shows for the focused cell
 @Composable
 private fun keypadEntry(state: WorkoutLogState, viewModel: WorkoutLogViewModel): AppKeypadEntry? {
     val focus = state.focus ?: return null
@@ -268,7 +261,6 @@ private fun keypadEntry(state: WorkoutLogState, viewModel: WorkoutLogViewModel):
     )
 }
 
-// Close, the workout's time with its name under it, and Finish
 @Composable
 private fun Header(state: WorkoutLogState, viewModel: WorkoutLogViewModel) {
     Row(
@@ -287,9 +279,8 @@ private fun Header(state: WorkoutLogState, viewModel: WorkoutLogViewModel) {
                 AppText(text = state.name, style = Theme.typography.small, color = Theme.contentColors.secondary, maxLines = 1)
             }
         }
-        // Neither while editing, which Done in the footer ends
+        // Editing ends with the footer's Done
         if (!state.editing) WorkoutOptionsButton(state, viewModel)
-        // Filled once every set is done: it's what's next
         when {
             state.blocks.isEmpty() || state.editing -> Unit
             state.unfinishedSets == 0 -> AppButton(onClick = viewModel::onFinish, text = stringResource(R.string.workout_finish))
@@ -298,7 +289,7 @@ private fun Header(state: WorkoutLogState, viewModel: WorkoutLogViewModel) {
     }
 }
 
-// The empty workout: a faded example of what the table becomes, which can't be touched. The keypad has Add exercise.
+// A faded example of what the table becomes, which can't be touched
 @Composable
 private fun EmptyTable(contentPadding: PaddingValues, unit: SettingsManager.WeightUnit) {
     val name = stringResource(R.string.workout_log_example_exercise)
@@ -333,7 +324,7 @@ private fun EmptyTable(contentPadding: PaddingValues, unit: SettingsManager.Weig
             color = Theme.contentColors.secondary,
         )
         Box(modifier = Modifier.fillMaxSize()) {
-            // Faded as one, so nothing shows through
+            // Faded as one layer, so overlapping parts don't show through each other
             Box(
                 modifier = Modifier
                     .fillMaxSize()
@@ -363,7 +354,6 @@ private fun EmptyTable(contentPadding: PaddingValues, unit: SettingsManager.Weig
                     onDeleteExercise = {},
                 )
             }
-            // Takes every touch, so the example can't be used
             Box(modifier = Modifier.fillMaxSize().pointerInput(Unit) {
                 awaitEachGesture {
                     awaitFirstDown().consume()
@@ -377,7 +367,6 @@ private fun EmptyTable(contentPadding: PaddingValues, unit: SettingsManager.Weig
     }
 }
 
-// The screen stays on through a workout when Settings says so, as on the old screen
 @Composable
 private fun KeepScreenOn() {
     val view = LocalView.current

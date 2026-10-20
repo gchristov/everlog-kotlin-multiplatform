@@ -3,9 +3,9 @@ package com.everlog.data.controllers.workoutsession
 import com.everlog.data.model.exercise.ELExercise
 import com.everlog.data.model.set.ELSetType
 
-// The ongoing workout as the new workout screen (TAS-455) holds it: immutable, so a view-model's state can hold
-// it, and mapped to and from ELWorkout (WorkoutSessionMapper), which stays what's saved, sent to the notification
-// and stored in Firestore. The rules that change it are in WorkoutSessionRules.
+// The ongoing workout as the workout screen holds it: immutable, so a view-model's state can hold it, and mapped to
+// and from ELWorkout (WorkoutSessionMapper), which stays what's saved, sent to the notification and stored in
+// Firestore. The rules that change it are in WorkoutSessionRules.
 
 enum class SetMode {
     Reps,
@@ -28,7 +28,6 @@ data class WorkoutSet(
     val reps: Int? = null,
     val timeSeconds: Int? = null,
     val weightKg: Float? = null,
-    // The routine's targets
     val requiredReps: Int? = null,
     val requiredTimeSeconds: Int? = null,
     val startedDate: Long? = null,
@@ -36,13 +35,13 @@ data class WorkoutSet(
     // Deleted from one exercise in a superset or circuit's round, which keeps it so each set still lines up
     // with its exercise. It's left out of everything; once every exercise's set is gone, the round goes.
     val removed: Boolean = false,
-    // The weight filled in from history, in kg, while it's still the set's weight
+    // The weight filled in from history
     val suggestedKg: Float? = null,
 ) {
     val done: Boolean
         get() = completedDate != null
 
-    // The weight is the one filled in from history, not changed since, and the set isn't done
+    // Until it's changed or the set is done
     val weightSuggested: Boolean
         get() = !done && suggestedKg != null && suggestedKg == weightKg
 }
@@ -62,7 +61,6 @@ data class WorkoutRound(
     val id: Long,
     val sets: List<WorkoutSet>,
 ) {
-    // Every exercise's set that's still there is done
     val done: Boolean
         get() = sets.all { it.done || it.removed }
 }
@@ -85,7 +83,7 @@ data class WorkoutBlock(
 }
 
 /**
- * One exercise's set ([index] is the exercise's) in one round of a block.
+ * One exercise's set in one round of a block. [index] is the exercise's place in the block.
  */
 data class SetRef(
     val blockId: Long,
