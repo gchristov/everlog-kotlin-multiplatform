@@ -1,5 +1,6 @@
 package com.everlog.ui.activities.workoutlog
 
+import com.everlog.data.controllers.workoutsession.SetMode
 import com.everlog.data.controllers.workoutsession.ValueField
 import com.everlog.data.controllers.workoutsession.WorkoutSet
 import com.everlog.managers.preferences.SettingsManager.WeightUnit
@@ -79,4 +80,14 @@ internal fun rawText(set: WorkoutSet, field: ValueField, unit: WeightUnit): Stri
     ValueField.Weight -> set.weightKg?.let { formatWeight(displayWeight(it, unit)) }.orEmpty()
     ValueField.Reps -> set.reps?.toString().orEmpty()
     ValueField.Time -> set.timeSeconds?.let(::secondsTyped).orEmpty()
+}
+
+/**
+ * A set as its last time column shows it: 15 × 17 kg, 0:30 × 10 kg, 12 or 0:45 without a weight. Null when nothing
+ * was logged.
+ */
+internal fun lastTimeText(set: WorkoutSet, unit: WeightUnit): String? {
+    val count = if (set.mode == SetMode.Time) set.timeSeconds?.let { formatClock(it.toLong()) } else set.reps?.toString()
+    val weight = set.weightKg?.let { "${formatWeight(displayWeight(it, unit))} ${unitLabel(unit).lowercase()}" }
+    return listOfNotNull(count, weight).joinToString(" × ").ifEmpty { null }
 }

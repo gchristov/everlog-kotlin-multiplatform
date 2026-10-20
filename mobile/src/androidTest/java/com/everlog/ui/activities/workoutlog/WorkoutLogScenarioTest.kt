@@ -15,6 +15,7 @@ import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.isDialog
 import androidx.compose.ui.test.isPopup
 import androidx.compose.ui.test.junit4.createComposeRule
+import androidx.compose.ui.test.onAllNodesWithText
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
@@ -26,9 +27,12 @@ import androidx.compose.ui.test.swipeLeft
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
 import com.everlog.constants.ELConstants
+import com.everlog.data.controllers.workoutprefill.BaseWorkoutPrefillController.PrefillSource
+import com.everlog.data.controllers.workoutprefill.WorkoutPrefillController
 import com.everlog.data.model.ELRoutine
 import com.everlog.data.model.exercise.ELExercise
 import com.everlog.data.model.exercise.ELExerciseGroup
+import com.everlog.data.model.exercise.ELExerciseHistory
 import com.everlog.data.model.exercise.ELRoutineExercise
 import com.everlog.data.model.set.ELSet
 import com.everlog.data.model.set.ELSetType
@@ -37,6 +41,7 @@ import com.everlog.managers.WorkoutManager
 import com.everlog.managers.preferences.SettingsManager.WeightUnit
 import com.everlog.services.workout.WorkoutService
 import com.everlog.ui.design.theme.Theme
+import com.everlog.utils.UnitUtils
 import com.google.common.truth.Truth.assertThat
 import java.util.concurrent.TimeUnit
 import kotlinx.coroutines.Dispatchers
@@ -101,11 +106,18 @@ class WorkoutLogScenarioTest {
             }
         }
 
-        // Bench press, set 1: reps typed over the template's 8, Next to the weight in lb, then Complete set
+        // Bench press was last done at 8 × 100 lb: its weights are filled in from that, as suggestions, and its last
+        // time shows beside each set
+        cell(0, 0, 0, "weight").assertTextEquals("100 ✦")
+        compose.onAllNodesWithText("8 × 100 lb")[0].assertExists()
+
+        // Bench press, set 1: reps typed over the template's 8, Next to the suggested weight, which says where it
+        // comes from, typed over in lb, then Complete set
         cell(0, 0, 0, "count").performClick()
         keys("10")
         cell(0, 0, 0, "count").assertTextEquals("10")
         key("Next").performClick()
+        compose.onNodeWithText("✦ Suggested from your history").assertExists()
         keys("135")
         cell(0, 0, 0, "weight").assertTextEquals("135")
         key("Complete set").performClick()
@@ -261,9 +273,12 @@ class WorkoutLogScenarioTest {
         assertThat(exit).isInstanceOf(WorkoutLogExit.Finished::class.java)
     }
 
-    private fun viewModel(launched: ELWorkout) = WorkoutLogViewModel(
+    private fun viewModel(launched: ELWorkout): WorkoutLogViewModel {
+        val loaded = WorkoutLogViewModel.load(launched, store)
+        return WorkoutLogViewModel(
         dispatcher = Dispatchers.Main,
-        workout = WorkoutLogViewModel.load(launched, store),
+        workout = loaded.workout,
+        resumed = loaded.resumed,
         fromPlan = false,
         store = store,
         settings = PoundSettings,
@@ -272,9 +287,11 @@ class WorkoutLogScenarioTest {
             override fun timerRanOut() = Unit
         },
         notification = notification,
+        prefill = BenchHistory,
         clock = { now },
         tickMillis = null,
     )
+    }
 
     // Bench press, 2 sets of 8, then a superset of fly and raise, 2 rounds of 12
     private fun template() = ELWorkout(
@@ -367,6 +384,25 @@ class WorkoutLogScenarioTest {
             val position = workout.getNextIncompleteState() ?: return null
             return workout.getExerciseGroups()[position.groupIndex].getExercisesForSetIndex(position.setIndex)[position.exerciseIndex].getName()
         }
+    }
+
+    /**
+     * The user's history: bench press last done at 8 × 100 lb for two sets. Sets are filled in from it by the old
+     * screen's prefill, as on the device.
+     */
+    private object BenchHistory : WorkoutLogPrefill {
+        override fun fillsSets() = true
+
+        override suspend fun sources(exercises: List<ELExercise>): Map<String, PrefillSource> {
+            val bench = exercises.firstOrNull { it.uuid == "Bench press" } ?: return emptyMap()
+            val sets = MutableList(2) { ELSet(reps = 8, weight = UnitUtils.lbToKg(100f)) }
+            val last = ELExerciseHistory(ELRoutineExercise(bench.uuid, bench, sets), ELWorkout())
+            return mapOf(bench.uuid!! to PrefillSource(last, orm = 0f))
+        }
+
+        override fun fill(source: PrefillSource, set: ELSet, index: Int) = WorkoutPrefillController.prefillSet(source, set, index)
+
+        override fun fillAdded(source: PrefillSource, set: ELSet, index: Int) = WorkoutPrefillController.prefillAddedSet(source, set, index)
     }
 
     private object PoundSettings : WorkoutLogSettings {

@@ -1,7 +1,12 @@
 package com.everlog.ui.activities.workoutlog
 
 import android.content.Context
+import com.everlog.data.controllers.workoutprefill.BaseWorkoutPrefillController.PrefillSource
+import com.everlog.data.controllers.workoutprefill.WorkoutPrefillController
 import com.everlog.data.datastores.ELDatastore
+import com.everlog.data.datastores.base.OnStoreItemsListener
+import com.everlog.data.model.exercise.ELExercise
+import com.everlog.data.model.set.ELSet
 import com.everlog.data.model.set.ELSetType
 import com.everlog.data.model.workout.ELWorkout
 import com.everlog.managers.PlanManager
@@ -15,6 +20,11 @@ import com.everlog.utils.SoundUtils
 import com.everlog.utils.VibrationUtils
 import com.google.firebase.firestore.SetOptions
 import java.util.Date
+import kotlin.coroutines.resume
+import kotlin.coroutines.resumeWithException
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.suspendCancellableCoroutine
+import kotlinx.coroutines.withContext
 
 /**
  * Where the workout screen's workout is kept: the ongoing copy, which resumes it, and the finished one. As the old
@@ -45,6 +55,52 @@ internal class RealWorkoutLogStore : WorkoutLogStore {
         ELDatastore.workoutStore().create(workout, SetOptions.merge())
         PlanManager.manager.checkCompletedWorkout(workout, fromPlan)
     }
+}
+
+/**
+ * Filling sets in from the user's history, through the old screen's WorkoutPrefillController, unchanged: the 1RM
+ * target for the muscle goal, or else each set's value from the exercise's last session.
+ */
+internal interface WorkoutLogPrefill {
+    // Whether the muscle goal in Settings fills sets in at all
+    fun fillsSets(): Boolean
+
+    // What each exercise would be filled in from, by its uuid: its last session and its best recent 1RM
+    suspend fun sources(exercises: List<ELExercise>): Map<String, PrefillSource>
+
+    // Fills a set's empty values from its exercise's source. [index] is the set's place in the exercise.
+    fun fill(source: PrefillSource, set: ELSet, index: Int)
+
+    // A set just added, filled from the last session's set at its place in place of the values it copied. False when
+    // the last session had no such set.
+    fun fillAdded(source: PrefillSource, set: ELSet, index: Int): Boolean
+}
+
+internal class RealWorkoutLogPrefill : WorkoutLogPrefill {
+    override fun fillsSets(): Boolean = SettingsManager.manager.muscleGoal().canPrefill()
+
+    override suspend fun sources(exercises: List<ELExercise>): Map<String, PrefillSource> {
+        val history = suspendCancellableCoroutine { continuation ->
+            ELDatastore.workoutsStore().getItems(object : OnStoreItemsListener<ELWorkout> {
+                override fun onItemsLoaded(items: MutableList<ELWorkout>, fromCache: Boolean) {
+                    // Copied, as the store keeps updating its list
+                    if (continuation.isActive) continuation.resume(ArrayList(items))
+                }
+
+                override fun onItemsLoadingError(throwable: Throwable) {
+                    if (continuation.isActive) continuation.resumeWithException(throwable)
+                }
+            })
+        }
+        return withContext(Dispatchers.Default) {
+            WorkoutPrefillController.buildPrefillSources(exercises, history, System.currentTimeMillis())
+        }
+    }
+
+    override fun fill(source: PrefillSource, set: ELSet, index: Int) = WorkoutPrefillController.prefillSet(source, set, index)
+
+    override fun fillAdded(source: PrefillSource, set: ELSet, index: Int): Boolean =
+        WorkoutPrefillController.prefillAddedSet(source, set, index)
 }
 
 /**

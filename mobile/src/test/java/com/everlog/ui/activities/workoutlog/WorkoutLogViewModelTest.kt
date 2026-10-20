@@ -1,21 +1,27 @@
 package com.everlog.ui.activities.workoutlog
 
+import com.everlog.config.AppConfig
+import com.everlog.data.controllers.workoutprefill.BaseWorkoutPrefillController.PrefillSource
 import com.everlog.data.controllers.workoutsession.SetMode
 import com.everlog.data.controllers.workoutsession.SetRef
 import com.everlog.data.controllers.workoutsession.ValueField
 import com.everlog.data.controllers.workoutsession.set
-import com.everlog.config.AppConfig
 import com.everlog.data.model.ELRoutine
 import com.everlog.data.model.exercise.ELExercise
 import com.everlog.data.model.exercise.ELExerciseGroup
+import com.everlog.data.model.exercise.ELExerciseHistory
 import com.everlog.data.model.exercise.ELRoutineExercise
 import com.everlog.data.model.set.ELSet
 import com.everlog.data.model.set.ELSetType
 import com.everlog.data.model.workout.ELWorkout
 import com.everlog.data.model.workout.ELWorkoutState
+import com.everlog.managers.preferences.SettingsManager
 import com.everlog.managers.preferences.SettingsManager.WeightUnit
 import com.everlog.testutil.FakeCoroutineDispatcher
+import com.everlog.testutil.InMemorySharedPreferences
 import com.google.common.truth.Truth.assertThat
+import org.junit.After
+import org.junit.Before
 import org.junit.Test
 
 class WorkoutLogViewModelTest {
@@ -28,6 +34,7 @@ class WorkoutLogViewModelTest {
     private val analytics = RecordingAnalytics()
     private val alerts = CountingAlerts()
     private val notification = FakeNotification()
+    private val prefill = FakePrefill()
 
     // Bench press, 2 sets of 8, then a superset of fly and raise, 2 rounds of 12
     private fun template() = ELWorkout(
@@ -42,18 +49,35 @@ class WorkoutLogViewModelTest {
         ),
     )
 
-    private fun viewModel(launched: ELWorkout = template()) = WorkoutLogViewModel(
+    private fun viewModel(launched: ELWorkout = template()): WorkoutLogViewModel {
+        val loaded = WorkoutLogViewModel.load(launched, store)
+        return WorkoutLogViewModel(
         dispatcher = FakeCoroutineDispatcher,
-        workout = WorkoutLogViewModel.load(launched, store),
+        workout = loaded.workout,
+        resumed = loaded.resumed,
         fromPlan = false,
         store = store,
         settings = settings,
         analytics = analytics,
         alerts = alerts,
         notification = notification,
+        prefill = prefill,
         clock = { time },
         tickMillis = null,
     )
+    }
+
+    // The fake history fills weights in through ELSet, which reads the weight unit from the preferences
+    @Before
+    fun setUp() {
+        InMemorySharedPreferences.install()
+        SettingsManager.manager.setWeightUnit(WeightUnit.KILOGRAM)
+    }
+
+    @After
+    fun tearDown() {
+        InMemorySharedPreferences.uninstall()
+    }
 
     private val WorkoutLogViewModel.blocks get() = state.value.blocks
 
@@ -554,6 +578,98 @@ class WorkoutLogViewModelTest {
         assertThat(viewModel.state.value.restSeconds).isEqualTo(10)
     }
 
+    // Filling in from history
+
+    @Test
+    fun `a new workout's empty weights are filled in from history, as suggestions`() {
+        prefill.lastWeightKg = 60f
+        val viewModel = viewModel()
+
+        assertThat(viewModel.set(0, 0).weightKg).isEqualTo(60f)
+        assertThat(viewModel.set(0, 0).weightSuggested).isTrue()
+        assertThat(store.ongoing?.getExerciseGroups()?.first()?.exercises?.first()?.sets?.first()?.suggestedWeight).isEqualTo(60f)
+    }
+
+    @Test
+    fun `history shows as each set's last time`() {
+        prefill.lastWeightKg = 60f
+        val viewModel = viewModel()
+
+        assertThat(viewModel.state.value.lastTime["bench"]?.map { it.weightKg }).containsExactly(60f, 60f)
+    }
+
+    @Test
+    fun `a suggestion goes once the weight is changed or the set done`() {
+        prefill.lastWeightKg = 60f
+        val viewModel = viewModel()
+        viewModel.onCellTapped(CellFocus(viewModel.ref(0, 0), ValueField.Weight))
+        viewModel.type("62.5")
+        viewModel.onTick(viewModel.ref(0, 1))
+
+        assertThat(viewModel.set(0, 0).weightSuggested).isFalse()
+        assertThat(viewModel.set(0, 1).weightSuggested).isFalse()
+    }
+
+    @Test
+    fun `a resumed workout isn't filled in again`() {
+        prefill.lastWeightKg = 60f
+        val first = viewModel()
+        first.onCellTapped(CellFocus(first.ref(0, 0), ValueField.Weight))
+        first.onBackspace()
+        first.onBackspace()
+        store.saved = store.ongoing
+
+        val resumed = viewModel()
+
+        assertThat(resumed.set(0, 0).weightKg).isNull()
+        assertThat(resumed.state.value.lastTime).isNotEmpty()
+    }
+
+    @Test
+    fun `a muscle goal that doesn't fill sets in leaves them, with last time still shown`() {
+        prefill.lastWeightKg = 60f
+        prefill.fills = false
+        val viewModel = viewModel()
+
+        assertThat(viewModel.set(0, 0).weightKg).isNull()
+        assertThat(viewModel.state.value.lastTime).isNotEmpty()
+    }
+
+    @Test
+    fun `an added set is filled in from the last session's set at its place`() {
+        prefill.lastWeightKg = 60f
+        prefill.lastSets = 3
+        val viewModel = viewModel()
+        viewModel.onCellTapped(CellFocus(viewModel.ref(0, 1), ValueField.Weight))
+        viewModel.type("70")
+        viewModel.onAddSet(viewModel.blocks[0].id)
+
+        assertThat(viewModel.set(0, 2).weightKg).isEqualTo(60f)
+        assertThat(viewModel.set(0, 2).weightSuggested).isTrue()
+    }
+
+    @Test
+    fun `picked exercises are filled in, the others aren't filled again`() {
+        prefill.lastWeightKg = 60f
+        val viewModel = viewModel()
+        viewModel.onCellTapped(CellFocus(viewModel.ref(0, 0), ValueField.Weight))
+        viewModel.onBackspace()
+        viewModel.onBackspace()
+        viewModel.onExercisesPicked(listOf(group("SINGLE", "squat" to 5, sets = 1)))
+
+        assertThat(viewModel.set(2, 0).weightKg).isEqualTo(60f)
+        assertThat(viewModel.set(0, 0).weightKg).isNull()
+    }
+
+    @Test
+    fun `without history the sets keep their values`() {
+        prefill.fails = true
+        val viewModel = viewModel()
+
+        assertThat(viewModel.set(0, 0).weightKg).isNull()
+        assertThat(viewModel.state.value.lastTime).isEmpty()
+    }
+
     // The notification
 
     @Test
@@ -772,6 +888,39 @@ class WorkoutLogViewModelTest {
         override fun weightIncrease() = step
 
         override fun keepScreenOn() = false
+    }
+
+    /**
+     * History with every exercise last done at [lastWeightKg] for [lastSets] sets, filling in empty weights like the
+     * old screen's history prefill.
+     */
+    private class FakePrefill : WorkoutLogPrefill {
+        var lastWeightKg: Float? = null
+        var lastSets = 2
+        var fills = true
+        var fails = false
+
+        override fun fillsSets() = fills
+
+        override suspend fun sources(exercises: List<ELExercise>): Map<String, PrefillSource> {
+            if (fails) throw IllegalStateException("offline")
+            val weight = lastWeightKg ?: return emptyMap()
+            return exercises.associate { exercise ->
+                val sets = MutableList(lastSets) { ELSet(reps = 8, weight = weight) }
+                exercise.uuid!! to PrefillSource(ELExerciseHistory(ELRoutineExercise(exercise.uuid, exercise, sets), ELWorkout()), orm = 0f)
+            }
+        }
+
+        override fun fill(source: PrefillSource, set: ELSet, index: Int) {
+            val last = source.lastSession?.exercise?.sets?.getOrNull(index) ?: return
+            if (set.getWeightKg() == null) set.updateWeight(last.getWeightKg())
+        }
+
+        override fun fillAdded(source: PrefillSource, set: ELSet, index: Int): Boolean {
+            val last = source.lastSession?.exercise?.sets?.getOrNull(index) ?: return false
+            set.updateWeight(last.getWeightKg())
+            return true
+        }
     }
 
     private class FakeNotification : WorkoutLogNotification {

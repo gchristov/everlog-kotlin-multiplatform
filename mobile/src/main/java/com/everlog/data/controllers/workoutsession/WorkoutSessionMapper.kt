@@ -71,6 +71,7 @@ internal fun ELSet.toSessionSet(): WorkoutSet {
         startedDate = getStartedDate().takeIf { it > 0 },
         completedDate = getCompletedDate().takeIf { it > 0 },
         removed = removed,
+        suggestedKg = suggestedWeight,
     )
 }
 
@@ -86,5 +87,6 @@ internal fun WorkoutSet.toELSet(): ELSet {
         requiredTimeSeconds = requiredTimeSeconds.takeUnless { reps },
         timeSeconds = timeSeconds.takeUnless { reps },
         removed = removed,
+        suggestedWeight = suggestedKg,
     )
 }

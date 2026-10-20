@@ -37,15 +37,18 @@ class WorkoutLogActivity : CommonComposeActivity() {
                 val store = RealWorkoutLogStore()
                 @Suppress("DEPRECATION")
                 val launched = intent.getSerializableExtra(ELConstants.EXTRA_WORKOUT) as ELWorkout
+                val loaded = WorkoutLogViewModel.load(launched, store)
                 WorkoutLogViewModel(
                     dispatcher = Dispatchers.Main,
-                    workout = WorkoutLogViewModel.load(launched, store),
+                    workout = loaded.workout,
+                    resumed = loaded.resumed,
                     fromPlan = intent.getBooleanExtra(ELConstants.EXTRA_WORKOUT_FROM_PLAN, false),
                     store = store,
                     settings = RealWorkoutLogSettings(),
                     analytics = RealWorkoutLogAnalytics(),
                     alerts = RealWorkoutLogAlerts(applicationContext),
                     notification = RealWorkoutLogNotification(ELNavigator(applicationContext)),
+                    prefill = RealWorkoutLogPrefill(),
                 )
             }
         }

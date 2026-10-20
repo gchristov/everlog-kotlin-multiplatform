@@ -148,6 +148,11 @@ internal fun WorkoutLogScreen(
                     },
                     strips = {
                         if (empty) AppKeypadNote(text = stringResource(R.string.workout_log_empty_hint))
+                        // Typing into a suggested weight: where it comes from
+                        val focused = state.focus?.takeIf { it.field == ValueField.Weight }?.let { state.blocks.set(it.ref) }
+                        if (focused?.weightSuggested == true) {
+                            AppKeypadNote(text = stringResource(R.string.workout_log_suggested, SuggestedMark), highlighted = true)
+                        }
                         state.timer?.let { TimerStrip(it, state.timerRemainingSeconds(), viewModel) }
                     },
                 )
@@ -174,6 +179,7 @@ internal fun WorkoutLogScreen(
                     reveal = state.reveal,
                     timing = (state.timer as? WorkoutTimer.SetTimer)?.let { Countdown(it.ref, state.timerRemainingSeconds()) },
                     startsTimer = state::startsTimer,
+                    lastTime = state.lastTime,
                     contentPadding = contentPadding,
                     onCellTapped = viewModel::onCellTapped,
                     onTick = viewModel::onTick,
@@ -346,6 +352,7 @@ private fun EmptyTable(contentPadding: PaddingValues, unit: SettingsManager.Weig
                     reveal = 0,
                     timing = null,
                     startsTimer = { false },
+                    lastTime = emptyMap(),
                     contentPadding = contentPadding,
                     onCellTapped = {},
                     onTick = {},

@@ -1,11 +1,13 @@
 package com.everlog.ui.activities.workoutlog
 
 import com.everlog.config.AppConfig
+import com.everlog.data.controllers.workoutprefill.BaseWorkoutPrefillController.PrefillSource
 import com.everlog.data.controllers.workoutsession.SessionIds
 import com.everlog.data.controllers.workoutsession.SetMode
 import com.everlog.data.controllers.workoutsession.SetRef
 import com.everlog.data.controllers.workoutsession.ValueField
 import com.everlog.data.controllers.workoutsession.WorkoutBlock
+import com.everlog.data.controllers.workoutsession.WorkoutSet
 import com.everlog.data.controllers.workoutsession.addGroups
 import com.everlog.data.controllers.workoutsession.addRound
 import com.everlog.data.controllers.workoutsession.block
@@ -20,12 +22,15 @@ import com.everlog.data.controllers.workoutsession.round
 import com.everlog.data.controllers.workoutsession.set
 import com.everlog.data.controllers.workoutsession.setMode
 import com.everlog.data.controllers.workoutsession.setValue
+import com.everlog.data.controllers.workoutsession.toELSet
 import com.everlog.data.controllers.workoutsession.toSessionBlocks
+import com.everlog.data.controllers.workoutsession.toSessionSet
 import com.everlog.data.controllers.workoutsession.uncompleteSet
 import com.everlog.data.controllers.workoutsession.withRestSeconds
 import com.everlog.data.controllers.workoutsession.withSessionBlocks
 import com.everlog.data.model.exercise.ELExercise
 import com.everlog.data.model.exercise.ELExerciseGroup
+import com.everlog.data.model.set.ELSet
 import com.everlog.data.model.workout.ELWorkout
 import com.everlog.data.model.workout.ELWorkoutState
 import com.everlog.ui.mvvm.CommonViewModel
@@ -34,6 +39,7 @@ import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
+import timber.log.Timber
 
 /**
  * The new workout screen (TAS-455): the ongoing workout as a table, typed into with a docked keypad. It does what
@@ -42,6 +48,7 @@ import kotlinx.coroutines.isActive
  *
  * @param workout The workout as launched or resumed (see [load]), for everything but its exercises, which the state
  * holds
+ * @param resumed Whether [workout] is a saved copy being resumed, whose sets were filled in from history already
  * @param clock The current time, so tests can pin it
  * @param ids Ids for the blocks and rounds, the loaded ones and any added later
  * @param tickMillis How often the workout's time moves on while the screen shows; null stops it, for tests
@@ -49,28 +56,36 @@ import kotlinx.coroutines.isActive
 internal class WorkoutLogViewModel(
     dispatcher: CoroutineDispatcher,
     private val workout: ELWorkout,
+    private val resumed: Boolean,
     private val fromPlan: Boolean,
     private val store: WorkoutLogStore,
     private val settings: WorkoutLogSettings,
     private val analytics: WorkoutLogAnalytics,
     private val alerts: WorkoutLogAlerts,
     private val notification: WorkoutLogNotification,
+    private val prefill: WorkoutLogPrefill,
     private val clock: () -> Long = System::currentTimeMillis,
     private val ids: SessionIds = SessionIds(),
     private val tickMillis: Long? = TickMillis,
 ) : CommonViewModel<WorkoutLogState>(dispatcher, initialState(workout, ids, settings, clock())) {
 
     private var ticking: Job? = null
-    private var resumed = false
+    // Whether the screen is showing, which keeps the time ticking
+    private var showing = false
+
+    // What each exercise is filled in from, by its uuid, once the user's history has loaded
+    private var sources: Map<String, PrefillSource> = emptyMap()
 
     init {
         // So the workout can be resumed from the start, as the old screen does
         save()
+        // A resumed workout was filled in when it started, and the user may have cleared values since
+        loadHistory(state.value.blocks, fill = !resumed)
     }
 
     // A setting may have changed while the screen was away, e.g. the weight unit, which the notification shows too
     fun onResume() {
-        resumed = true
+        showing = true
         analytics.screenViewed()
         setState { withSettings(settings).copy(now = clock()) }
         notifyWorkout()
@@ -80,7 +95,7 @@ internal class WorkoutLogViewModel(
     // The time stops while the screen's away, unless a countdown is running: a rest still sounds with the phone
     // locked, as on the old screen
     fun onPause() {
-        resumed = false
+        showing = false
     }
 
     /**
@@ -110,7 +125,7 @@ internal class WorkoutLogViewModel(
         val tick = tickMillis ?: return
         if (ticking?.isActive == true) return
         ticking = launchCoroutine {
-            while (isActive && (resumed || state.value.timer != null)) {
+            while (isActive && (showing || state.value.timer != null)) {
                 delay(tick)
                 tick()
             }
@@ -383,7 +398,7 @@ internal class WorkoutLogViewModel(
             setState { copy(message = WorkoutLogMessage.TooManySets(MaxSets)) }
             return
         }
-        val blocks = state.value.blocks.addRound(blockId, ids)
+        val blocks = state.value.blocks.addRound(blockId, ids).fillAdded(blockId)
         // Every set was done: the new one is current
         change { copy(blocks = blocks, current = current ?: blocks.nextOpenAfter(null)).followCurrent() }
         analytics.setAdded()
@@ -461,12 +476,64 @@ internal class WorkoutLogViewModel(
 
     fun onExercisesPicked(groups: List<ELExerciseGroup>) {
         if (groups.isEmpty()) return
+        val before = state.value.blocks
         change {
             val blocks = blocks.addGroups(groups, ids)
             // Nothing was current (an empty workout, or every set done): the first new set is
             copy(blocks = blocks, current = current ?: blocks.nextOpenAfter(this.blocks.refs().lastOrNull())).followCurrent()
         }
         analytics.exercisesAdded()
+        // Only the new exercises, so values cleared in the others aren't filled in again
+        loadHistory(state.value.blocks.filter { block -> before.none { it.id == block.id } }, fill = true)
+    }
+
+    // Filling in from history
+
+    /**
+     * Loads what the exercises in [blocks] are filled in from, for their last time and for sets added later. With
+     * [fill], and when the muscle goal fills sets in, it fills their empty values too, as the old screen does. A
+     * weight filled in shows as a suggestion until it's changed.
+     */
+    private fun loadHistory(blocks: List<WorkoutBlock>, fill: Boolean) {
+        val exercises = blocks.flatMap { block -> block.exercises.mapNotNull { it.exercise } }.distinctBy { it.uuid }
+        if (exercises.isEmpty()) return
+        launchCoroutine {
+            val found = try {
+                prefill.sources(exercises)
+            } catch (e: Exception) {
+                // Without history the sets keep the values they have, as on the old screen
+                Timber.tag(TAG).e(e, "Couldn't load history to fill in from")
+                return@launchCoroutine
+            }
+            sources = sources + found
+            setState { copy(lastTime = lastTime + found.mapValues { (_, source) -> source.lastSets() }) }
+            if (fill && prefill.fillsSets()) {
+                val ids = blocks.map { it.id }.toSet()
+                change { copy(blocks = this.blocks.map { if (it.id in ids) it.filled() else it }) }
+            }
+        }
+    }
+
+    // Every set's empty values filled in from its exercise's source
+    private fun WorkoutBlock.filled(): WorkoutBlock = copy(rounds = rounds.mapIndexed { index, round ->
+        round.copy(sets = round.sets.mapIndexed { i, set ->
+            val source = sources[exercises[i].exercise?.uuid]
+            if (set.removed || set.done || source == null) set else set.filledFrom { prefill.fill(source, it, index) }
+        })
+    })
+
+    // A block's set just added filled in from the last session's set at its place, as the old screen does
+    private fun List<WorkoutBlock>.fillAdded(blockId: Long): List<WorkoutBlock> {
+        if (!prefill.fillsSets()) return this
+        return map { block ->
+            if (block.id != blockId) return@map block
+            val index = block.rounds.lastIndex
+            val round = block.rounds[index]
+            block.copy(rounds = block.rounds.dropLast(1) + round.copy(sets = round.sets.mapIndexed { i, set ->
+                val source = sources[block.exercises[i].exercise?.uuid] ?: return@mapIndexed set
+                set.filledFrom { prefill.fillAdded(source, it, index) }
+            }))
+        }
     }
 
     // Finishing
@@ -557,6 +624,7 @@ internal class WorkoutLogViewModel(
         // A countdown's −10s and +10s, AppConfig's offset for the old screen's timer
         private val TimerStepSeconds = AppConfig.configuration.defaultRestTimeOffsetSeconds
         private val MaxSets = AppConfig.configuration.maxExerciseSets
+        private const val TAG = "WorkoutLogViewModel"
         private const val RepsStep = 1f
         private const val TimeStepSeconds = 5f
 
@@ -564,17 +632,17 @@ internal class WorkoutLogViewModel(
          * The workout to show for the one the screen was opened with: its saved copy if it's the ongoing one, with
          * everything done since it started, otherwise the new workout with the routine's targets as its values.
          */
-        fun load(launched: ELWorkout, store: WorkoutLogStore): ELWorkout {
+        fun load(launched: ELWorkout, store: WorkoutLogStore): LoadedWorkout {
             // The launch intent only has the workout as it was when it started. When Android rebuilds this screen
             // after the app was killed, or it's resumed, continue from the saved copy instead.
             val saved = store.savedCopyOf(launched)
             if (saved != null) {
                 saved.clearRemainingTimes()
-                return saved
+                return LoadedWorkout(saved, resumed = true)
             }
             // A new workout starts with the routine's targets as its values
             launched.prefillRequiredMetrics()
-            return launched
+            return LoadedWorkout(launched, resumed = false)
         }
 
         private fun initialState(workout: ELWorkout, ids: SessionIds, settings: WorkoutLogSettings, now: Long): WorkoutLogState {
@@ -650,3 +718,21 @@ private fun WorkoutLogState.withSetsGone(remaining: List<WorkoutBlock>): Workout
         timer = timer.takeUnless { it is WorkoutTimer.SetTimer && !kept(it.ref) },
     ).followCurrent()
 }
+
+/**
+ * The workout the screen shows, and whether it's a saved copy being resumed.
+ */
+internal data class LoadedWorkout(val workout: ELWorkout, val resumed: Boolean)
+
+// The set as the old screen's ELSet, filled in by [fill], and back. A weight filled in where there was none is the
+// set's suggestion.
+private fun WorkoutSet.filledFrom(fill: (ELSet) -> Unit): WorkoutSet {
+    val set = toELSet()
+    fill(set)
+    val filled = set.toSessionSet()
+    val suggested = filled.weightKg?.takeIf { it != weightKg }
+    return filled.copy(suggestedKg = suggested ?: suggestedKg)
+}
+
+// The last session's sets, for the last time column
+private fun PrefillSource.lastSets(): List<WorkoutSet> = lastSession?.exercise?.sets.orEmpty().map { it.toSessionSet() }
