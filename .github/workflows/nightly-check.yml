@@ -124,6 +124,8 @@ jobs:
   test-android:
     needs: [require-master]
     runs-on: ubuntu-24.04
+    # A test that hangs fails the job instead of running for GitHub\'s six hour default
+    timeout-minutes: 30
     concurrency:
       group: ${{ github.workflow }}-${{ github.ref }}-test-android
       cancel-in-progress: true

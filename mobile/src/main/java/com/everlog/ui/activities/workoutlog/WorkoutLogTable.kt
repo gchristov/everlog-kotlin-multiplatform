@@ -45,6 +45,7 @@ import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.layout.positionInWindow
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.style.TextAlign
@@ -136,6 +137,7 @@ internal fun WorkoutTable(
         LazyColumn(
             modifier = Modifier
                 .fillMaxSize()
+                .testTag(WorkoutLogTags.Table)
                 .onGloballyPositioned {
                     val bounds = it.boundsInWindow()
                     listTop = bounds.top
@@ -149,9 +151,9 @@ internal fun WorkoutTable(
                 bottom = contentPadding.calculateBottomPadding() + Theme.spacing.large,
             ),
         ) {
-            blocks.forEach { block ->
+            blocks.forEachIndexed { b, block ->
                 item(key = block.id) {
-                    ExerciseTable(block, unit, focus, selected, typed, onCellTapped, onTick)
+                    ExerciseTable(b, block, unit, focus, selected, typed, onCellTapped, onTick)
                 }
             }
         }
@@ -166,6 +168,8 @@ private val LocalReveal = staticCompositionLocalOf { 0 }
 
 @Composable
 private fun ExerciseTable(
+    // The block's place in the workout, for the rows' test tags
+    index: Int,
     block: WorkoutBlock,
     unit: WeightUnit,
     focus: CellFocus?,
@@ -193,6 +197,7 @@ private fun ExerciseTable(
                     val ref = SetRef(block.id, round.id, i)
                     key(round.id, i) {
                         TableRow(
+                            tag = WorkoutLogTags.set(index, r, i),
                             // A superset or circuit's rows are 1a, 1b, 1c: the letter is the exercise's place
                             number = if (round.sets.size > 1) "${r + 1}${'a' + i}" else if (i == firstShown) "${r + 1}" else null,
                             set = set,
@@ -314,6 +319,7 @@ private fun Label(text: String, modifier: Modifier, align: TextAlign = TextAlign
 // The selected row (the current set, or the set last touched) is tinted and shows its values as boxes to type into
 @Composable
 private fun TableRow(
+    tag: String,
     number: String?,
     set: WorkoutSet,
     weightText: String,
@@ -345,16 +351,16 @@ private fun TableRow(
         )
         Spacer(modifier = Modifier.weight(1f))
         // Reps (or time) first, then weight: 15 × 17 kg
-        Cell(text = countText, focused = countFocused, boxed = selected, onClick = onCount)
-        Cell(text = weightText, focused = weightFocused, boxed = selected, onClick = onWeight)
-        Tick(done = set.done, armed = armed, onClick = onTick)
+        Cell(tag = WorkoutLogTags.count(tag), text = countText, focused = countFocused, boxed = selected, onClick = onCount)
+        Cell(tag = WorkoutLogTags.weight(tag), text = weightText, focused = weightFocused, boxed = selected, onClick = onWeight)
+        Tick(tag = WorkoutLogTags.tick(tag), done = set.done, armed = armed, onClick = onTick)
     }
 }
 
 // A value, boxed to type into on the selected row (the focused one outlined and kept in view above the keypad),
 // plain text on the others
 @Composable
-private fun Cell(text: String, focused: Boolean, boxed: Boolean, onClick: () -> Unit) {
+private fun Cell(tag: String, text: String, focused: Boolean, boxed: Boolean, onClick: () -> Unit) {
     val shape = Theme.shapes.button
     // The whole row's height takes the tap; the press shows on the box
     val interactions = remember { MutableInteractionSource() }
@@ -371,6 +377,7 @@ private fun Cell(text: String, focused: Boolean, boxed: Boolean, onClick: () -> 
     Box(
         modifier = Modifier
             .size(TableSizes.Cell, TableSizes.RowHeight)
+            .testTag(tag)
             .clickable(interactionSource = interactions, indication = null, onClick = onClick),
         contentAlignment = Alignment.Center,
     ) {
@@ -404,13 +411,14 @@ private fun Cell(text: String, focused: Boolean, boxed: Boolean, onClick: () -> 
 }
 
 @Composable
-private fun Tick(done: Boolean, armed: Boolean, onClick: () -> Unit) {
+private fun Tick(tag: String, done: Boolean, armed: Boolean, onClick: () -> Unit) {
     val shape = CircleShape
     // The tap area is the row's height and a little wider than the tick; the press shows on the tick
     val interactions = remember { MutableInteractionSource() }
     Box(
         modifier = Modifier
             .size(TableSizes.CheckTarget, TableSizes.RowHeight)
+            .testTag(tag)
             .clickable(interactionSource = interactions, indication = null, onClick = onClick),
         contentAlignment = Alignment.Center,
     ) {
@@ -455,3 +463,19 @@ private fun cellText(set: WorkoutSet, field: ValueField, unit: WeightUnit, focus
 }
 
 private const val Empty = "–"
+
+/**
+ * Test tags for the table's cells and ticks, by position: the exercise group, the round and the exercise in it.
+ */
+internal object WorkoutLogTags {
+    const val Keypad = "keypad"
+    const val Table = "table"
+
+    fun set(block: Int, round: Int, exercise: Int) = "set:$block:$round:$exercise"
+
+    fun count(set: String) = "$set:count"
+
+    fun weight(set: String) = "$set:weight"
+
+    fun tick(set: String) = "$set:tick"
+}

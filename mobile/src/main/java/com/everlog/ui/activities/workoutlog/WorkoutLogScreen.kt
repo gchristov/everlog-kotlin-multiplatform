@@ -31,6 +31,7 @@ import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalView
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.semantics.clearAndSetSemantics
@@ -103,6 +104,7 @@ internal fun WorkoutLogScreen(viewModel: WorkoutLogViewModel, onAddExercise: () 
         footer = {
             AppKeypad(
                 modifier = Modifier
+                    .testTag(WorkoutLogTags.Keypad)
                     .windowInsetsPadding(WindowInsets.navigationBars)
                     .padding(start = Theme.spacing.large, end = Theme.spacing.large, bottom = Theme.spacing.small),
                 entry = keypadEntry(state, viewModel),
