@@ -15,11 +15,16 @@ import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.everlog.R
 import com.everlog.constants.ELActivityRequestCodes
 import com.everlog.constants.ELConstants
+import com.everlog.data.datastores.exercises.ELExercisesStore
 import com.everlog.data.model.exercise.ELExerciseGroup
 import com.everlog.data.model.workout.ELWorkout
+import com.everlog.ui.activities.home.exercise.details.ExerciseDetailsActivity
 import com.everlog.ui.design.CommonComposeActivity
 import com.everlog.ui.navigator.ELNavigator
 import kotlinx.coroutines.Dispatchers
+import org.greenrobot.eventbus.EventBus
+import org.greenrobot.eventbus.Subscribe
+import org.greenrobot.eventbus.ThreadMode
 
 /**
  * The workout screen in Compose (TAS-455), for workouts started while Remote Config's workout_screen_v2 is on (see
@@ -64,11 +69,19 @@ class WorkoutLogActivity : CommonComposeActivity() {
             LocalBroadcastManager.getInstance(this).sendBroadcast(Intent(ELConstants.BROADCAST_WORKOUT_STARTED))
         }
         LocalBroadcastManager.getInstance(this).registerReceiver(notificationReceiver, WorkoutLogNotificationReceiver.Filter)
+        EventBus.getDefault().register(this)
         startNotification()
+    }
+
+    // An exercise edited meanwhile, e.g. renamed from its details
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    fun onExerciseModified(event: ELExercisesStore.ELColStoreExerciseModifiedEvent) {
+        viewModel.onExerciseChanged(event.item)
     }
 
     override fun onDestroy() {
         LocalBroadcastManager.getInstance(this).unregisterReceiver(notificationReceiver)
+        EventBus.getDefault().unregister(this)
         // The notification stays while the screen is only being rebuilt, e.g. for a dark mode change: the new screen
         // starts it again
         if (!isChangingConfigurations) viewModel.onScreenClosed()
@@ -87,6 +100,7 @@ class WorkoutLogActivity : CommonComposeActivity() {
     override fun Content() = WorkoutLogScreen(
         viewModel = viewModel,
         onAddExercise = { ELNavigator(this).openExercisePicker() },
+        onOpenExercise = { ELNavigator(this).openExerciseDetails(ExerciseDetailsActivity.Companion.Properties().exercise(it)) },
         onExit = ::exit,
     )
 

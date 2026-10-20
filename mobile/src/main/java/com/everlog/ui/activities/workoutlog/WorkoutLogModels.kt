@@ -135,6 +135,9 @@ internal sealed interface WorkoutLogDialog {
     // Leaving the workout. With sets done it offers to finish instead, saying how many unticked sets would be
     // saved as done.
     data class Discard(val setsCompleted: Int, val untickedSaved: Int) : WorkoutLogDialog
+
+    // Deleting an exercise (or a superset) from its menu
+    data class DeleteExercise(val blockId: Long) : WorkoutLogDialog
 }
 
 internal sealed interface WorkoutLogExit {

@@ -470,6 +470,42 @@ class WorkoutLogViewModelTest {
         assertThat(viewModel.state.value.timer).isNull()
     }
 
+    // Exercises
+
+    @Test
+    fun `deleting an exercise asks first, then its sets go and the current set moves on`() {
+        val viewModel = viewModel()
+        val bench = viewModel.blocks[0].id
+        viewModel.onDeleteExercise(bench)
+        assertThat(viewModel.state.value.dialog).isEqualTo(WorkoutLogDialog.DeleteExercise(bench))
+        assertThat(viewModel.blocks).hasSize(2)
+
+        viewModel.onDeleteExerciseConfirmed(bench)
+        assertThat(viewModel.blocks.map { it.uuid }).containsExactly("group-fly")
+        assertThat(viewModel.state.value.current).isEqualTo(viewModel.ref(0, 0, 0))
+        assertThat(viewModel.state.value.dialog).isNull()
+    }
+
+    @Test
+    fun `deleting the last exercise ends the rest`() {
+        val viewModel = viewModel()
+        viewModel.onTick(viewModel.ref(0, 0))
+        viewModel.onDeleteExerciseConfirmed(viewModel.blocks[0].id)
+        assertThat(viewModel.state.value.timer).isNotNull()
+
+        viewModel.onDeleteExerciseConfirmed(viewModel.blocks[0].id)
+        assertThat(viewModel.state.value.timer).isNull()
+    }
+
+    @Test
+    fun `an exercise changed meanwhile shows as it is now, and is saved`() {
+        val viewModel = viewModel()
+        viewModel.onExerciseChanged(ELExercise(uuid = "fly", name = "Cable fly"))
+
+        assertThat(viewModel.blocks[1].exercises.first().exercise?.name).isEqualTo("Cable fly")
+        assertThat(store.ongoing?.getExerciseGroups()?.get(1)?.exercises?.first()?.exercise?.name).isEqualTo("Cable fly")
+    }
+
     // The notification
 
     @Test

@@ -4,12 +4,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import com.everlog.R
+import com.everlog.data.controllers.workoutsession.block
 import com.everlog.ui.design.elements.AppDialog
 import com.everlog.ui.design.elements.AppDialogAction
 
 @Composable
-internal fun WorkoutLogDialogs(dialog: WorkoutLogDialog?, viewModel: WorkoutLogViewModel) {
-    when (dialog) {
+internal fun WorkoutLogDialogs(state: WorkoutLogState, viewModel: WorkoutLogViewModel) {
+    when (val dialog = state.dialog) {
         null -> Unit
         WorkoutLogDialog.Finish -> AppDialog(
             title = stringResource(R.string.workout_log_finish_title),
@@ -18,6 +19,16 @@ internal fun WorkoutLogDialogs(dialog: WorkoutLogDialog?, viewModel: WorkoutLogV
             primaryAction = AppDialogAction(stringResource(R.string.workout_finish), viewModel::onFinishConfirmed),
             secondaryAction = AppDialogAction(stringResource(R.string.cancel), viewModel::onDialogDismissed),
         )
+        is WorkoutLogDialog.DeleteExercise -> {
+            val name = state.blocks.block(dialog.blockId)?.exercises?.joinToString(" + ") { it.exercise?.name.orEmpty() }.orEmpty()
+            AppDialog(
+                title = stringResource(R.string.workout_log_delete_exercise_title, name),
+                body = stringResource(R.string.workout_log_delete_exercise_body),
+                onDismissRequest = viewModel::onDialogDismissed,
+                primaryAction = AppDialogAction(stringResource(R.string.workout_log_delete)) { viewModel.onDeleteExerciseConfirmed(dialog.blockId) },
+                secondaryAction = AppDialogAction(stringResource(R.string.cancel), viewModel::onDialogDismissed),
+            )
+        }
         is WorkoutLogDialog.Discard -> if (dialog.setsCompleted > 0) {
             // Finish instead, so logged sets aren't lost by accident, as on the old screen
             var body = pluralStringResource(R.plurals.workout_discard_sets_logged, dialog.setsCompleted, dialog.setsCompleted)

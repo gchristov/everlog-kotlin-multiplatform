@@ -10,6 +10,7 @@ import com.everlog.data.controllers.workoutsession.addGroups
 import com.everlog.data.controllers.workoutsession.addRound
 import com.everlog.data.controllers.workoutsession.block
 import com.everlog.data.controllers.workoutsession.completeSet
+import com.everlog.data.controllers.workoutsession.deleteBlock
 import com.everlog.data.controllers.workoutsession.deleteSet
 import com.everlog.data.controllers.workoutsession.nextOpenAfter
 import com.everlog.data.controllers.workoutsession.refs
@@ -22,6 +23,7 @@ import com.everlog.data.controllers.workoutsession.toSessionBlocks
 import com.everlog.data.controllers.workoutsession.uncompleteSet
 import com.everlog.data.controllers.workoutsession.withRestSeconds
 import com.everlog.data.controllers.workoutsession.withSessionBlocks
+import com.everlog.data.model.exercise.ELExercise
 import com.everlog.data.model.exercise.ELExerciseGroup
 import com.everlog.data.model.workout.ELWorkout
 import com.everlog.data.model.workout.ELWorkoutState
@@ -389,22 +391,7 @@ internal class WorkoutLogViewModel(
     fun onDeleteSet(ref: SetRef) {
         val before = state.value
         val (blocks, deleted) = before.blocks.deleteSet(ref) ?: return
-        val kept = { it: SetRef? -> it != null && blocks.set(it) != null }
-        // The current set, or the next one not done after it that's still there
-        val refs = before.blocks.refs()
-        val from = refs.indexOf(before.current)
-        val next = (refs.drop(from + 1) + refs.take(from + 1)).firstOrNull { blocks.set(it)?.done == false }
-        change(keepUndo = true) {
-            copy(
-                blocks = blocks,
-                current = before.current.takeIf(kept) ?: next,
-                selected = selected.takeIf(kept),
-                focus = focus?.takeIf { kept(it.ref) },
-                typed = typed.takeIf { kept(focus?.ref) },
-                timer = timer.takeUnless { it is WorkoutTimer.SetTimer && !kept(it.ref) },
-                deletion = Deletion(deleted, before.current),
-            ).followCurrent()
-        }
+        change(keepUndo = true) { withSetsGone(blocks).copy(deletion = Deletion(deleted, before.current)) }
         analytics.setDeleted()
     }
 
@@ -417,6 +404,32 @@ internal class WorkoutLogViewModel(
     fun onUndoGone() = setState { copy(deletion = null) }
 
     fun onMessageShown() = setState { copy(message = null) }
+
+    // Exercises
+
+    // Its menu's Delete, which asks first: its sets go with it
+    fun onDeleteExercise(blockId: Long) = setState { copy(dialog = WorkoutLogDialog.DeleteExercise(blockId)) }
+
+    fun onDeleteExerciseConfirmed(blockId: Long) {
+        change {
+            val remaining = withSetsGone(blocks.deleteBlock(blockId))
+            // No rest without exercises to rest between
+            remaining.copy(timer = remaining.timer.takeIf { remaining.blocks.isNotEmpty() }, dialog = null)
+        }
+    }
+
+    /**
+     * An exercise changed in the library or by the user, e.g. renamed, shown as it is now, as the old screen does.
+     */
+    fun onExerciseChanged(exercise: ELExercise) {
+        val uuid = exercise.uuid ?: return
+        if (state.value.blocks.none { block -> block.exercises.any { it.exercise?.uuid == uuid } }) return
+        change {
+            copy(blocks = blocks.map { block ->
+                block.copy(exercises = block.exercises.map { if (it.exercise?.uuid == uuid) it.copy(exercise = exercise) else it })
+            })
+        }
+    }
 
     // Adding exercises
 
@@ -594,3 +607,20 @@ private fun WorkoutLogState.stopped(timer: WorkoutTimer) = copy(
     timer = null,
     timedSets = if (timer is WorkoutTimer.SetTimer) timedSets + timer.ref else timedSets,
 )
+
+// The workout with some of its sets gone: anything on them goes too (the keypad, a set timer, the selection) and the
+// current set, if it went, moves on to the next one not done after it that's still there
+private fun WorkoutLogState.withSetsGone(remaining: List<WorkoutBlock>): WorkoutLogState {
+    val kept = { it: SetRef? -> it != null && remaining.set(it) != null }
+    val refs = blocks.refs()
+    val from = refs.indexOf(current)
+    val next = (refs.drop(from + 1) + refs.take(from + 1)).firstOrNull { remaining.set(it)?.done == false }
+    return copy(
+        blocks = remaining,
+        current = current.takeIf(kept) ?: next,
+        selected = selected.takeIf(kept),
+        focus = focus?.takeIf { kept(it.ref) },
+        typed = typed.takeIf { kept(focus?.ref) },
+        timer = timer.takeUnless { it is WorkoutTimer.SetTimer && !kept(it.ref) },
+    ).followCurrent()
+}
