@@ -31,8 +31,6 @@ import com.everlog.data.controllers.starterroutines.RealBuildStarterRoutinesUseC
 import com.everlog.data.controllers.starterroutines.RealSaveStarterRoutinesUseCase
 import com.everlog.data.repositories.RealExerciseRepository
 import com.everlog.data.repositories.RealRoutineRepository
-import com.everlog.managers.analytics.AnalyticsConstants
-import com.everlog.managers.analytics.AnalyticsManager
 import com.everlog.managers.preferences.SettingsManager
 import com.everlog.ui.activities.home.routine.create.CreateRoutineActivity
 import com.everlog.ui.design.CommonComposeActivity
@@ -120,7 +118,7 @@ internal fun OnboardingScreen(
 
     // A screen view per step, and again when the screen comes back (e.g. from the routine builder)
     LifecycleResumeEffect(state.step) {
-        AnalyticsManager.manager.screenName(state.step.analyticsScreenName)
+        viewModel.onScreenShown()
         onPauseOrDispose {}
     }
 
@@ -148,7 +146,7 @@ internal fun OnboardingScreen(
         modifier = Modifier.background(Theme.backgrounds.primary),
         contentKey = { step ->
             when (step) {
-                OnboardingViewModel.Step.Welcome, OnboardingViewModel.Step.Questions -> OnboardingViewModel.Step.Questions
+                OnboardingStep.Welcome, OnboardingStep.Questions -> OnboardingStep.Questions
                 else -> step
             }
         },
@@ -159,7 +157,7 @@ internal fun OnboardingScreen(
         label = "screen",
     ) { step ->
         when (step) {
-            OnboardingViewModel.Step.Welcome, OnboardingViewModel.Step.Questions -> OnboardingSetup(
+            OnboardingStep.Welcome, OnboardingStep.Questions -> OnboardingSetup(
                 state = state,
                 viewModel = viewModel,
                 animateWelcomeIn = animateWelcomeIn,
@@ -167,19 +165,19 @@ internal fun OnboardingScreen(
                 appBarScrollBehavior = appBarScrollBehavior,
                 onSkipSetup = viewModel::onSkipSetup,
             )
-            OnboardingViewModel.Step.Building -> OnboardingBuilding(
+            OnboardingStep.Building -> OnboardingBuilding(
                 state = state,
                 onRetry = viewModel::onRetryBuild,
                 onSkip = viewModel::onSkipBuild,
                 onShown = viewModel::onBuildShown,
             )
-            OnboardingViewModel.Step.Reveal -> OnboardingReveal(
+            OnboardingStep.Reveal -> OnboardingReveal(
                 state = state,
                 onRoutineToggle = viewModel::onRoutineToggle,
                 onLooksGood = viewModel::onLooksGood,
                 onBuildOwn = viewModel::onBuildOwn,
             )
-            OnboardingViewModel.Step.Saving -> OnboardingSaving(
+            OnboardingStep.Saving -> OnboardingSaving(
                 state = state,
                 onRetry = viewModel::onRetrySave,
                 onSkip = viewModel::onSkipSave,
@@ -196,26 +194,17 @@ internal fun OnboardingScreen(
     }
 }
 
-private val OnboardingViewModel.Step.analyticsScreenName: String
-    get() = when (this) {
-        OnboardingViewModel.Step.Welcome -> AnalyticsConstants.SCREEN_ONBOARDING_WELCOME
-        OnboardingViewModel.Step.Questions -> AnalyticsConstants.SCREEN_ONBOARDING_QUESTIONS
-        OnboardingViewModel.Step.Building -> AnalyticsConstants.SCREEN_ONBOARDING_BUILDING
-        OnboardingViewModel.Step.Reveal -> AnalyticsConstants.SCREEN_ONBOARDING_REVEAL
-        OnboardingViewModel.Step.Saving -> AnalyticsConstants.SCREEN_ONBOARDING_SAVING
-    }
-
 // The welcome, then the questions, on one AppScreen
 @Composable
 private fun OnboardingSetup(
-    state: OnboardingViewModel.State,
+    state: OnboardingState,
     viewModel: OnboardingViewModel,
     animateWelcomeIn: Boolean,
     welcomeScrollState: ScrollState,
     appBarScrollBehavior: AppBarScrollBehavior,
     onSkipSetup: () -> Unit,
 ) {
-    val welcome = state.step == OnboardingViewModel.Step.Welcome
+    val welcome = state.step == OnboardingStep.Welcome
     AppScreen(
         modifier = Modifier.nestedScroll(appBarScrollBehavior.nestedScrollConnection),
         topBar = {

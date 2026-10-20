@@ -1,5 +1,6 @@
 package com.everlog.ui.activities.onboarding
 
+import com.everlog.managers.analytics.AnalyticsConstants
 import com.everlog.managers.analytics.AnalyticsManager
 
 /**
@@ -7,6 +8,9 @@ import com.everlog.managers.analytics.AnalyticsManager
  * the welcome, a question (by its id), building, the reveal or saving.
  */
 interface OnboardingAnalytics {
+    // Each time a step's screen shows, unlike stepViewed
+    fun screenViewed(step: OnboardingStep)
+
     // The first time a step shows
     fun stepViewed(step: String)
 
@@ -39,6 +43,16 @@ interface OnboardingAnalytics {
 
 class RealOnboardingAnalytics : OnboardingAnalytics {
     private val analytics = AnalyticsManager.manager
+
+    override fun screenViewed(step: OnboardingStep) = analytics.screenName(
+        when (step) {
+            OnboardingStep.Welcome -> AnalyticsConstants.SCREEN_ONBOARDING_WELCOME
+            OnboardingStep.Questions -> AnalyticsConstants.SCREEN_ONBOARDING_QUESTIONS
+            OnboardingStep.Building -> AnalyticsConstants.SCREEN_ONBOARDING_BUILDING
+            OnboardingStep.Reveal -> AnalyticsConstants.SCREEN_ONBOARDING_REVEAL
+            OnboardingStep.Saving -> AnalyticsConstants.SCREEN_ONBOARDING_SAVING
+        },
+    )
 
     override fun stepViewed(step: String) = analytics.onboardingStepViewed(step)
 

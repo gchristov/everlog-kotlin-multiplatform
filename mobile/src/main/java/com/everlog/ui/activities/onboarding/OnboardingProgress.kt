@@ -48,7 +48,6 @@ import com.airbnb.lottie.compose.rememberLottieComposition
 import com.everlog.R
 import com.everlog.data.controllers.starterroutines.StarterProfile
 import com.everlog.data.controllers.starterroutines.StarterWeek
-import com.everlog.ui.activities.onboarding.OnboardingViewModel.Progress
 import com.everlog.ui.design.elements.AppFooter
 import com.everlog.ui.design.elements.AppFooterAction
 import com.everlog.ui.design.elements.AppScreen
@@ -83,7 +82,7 @@ private object ProgressMotion {
 // Build failed artboards. After an error, Try again builds them again and Skip closes the screen.
 @Composable
 internal fun OnboardingBuilding(
-    state: OnboardingViewModel.State,
+    state: OnboardingState,
     onRetry: () -> Unit,
     onSkip: () -> Unit,
     onShown: () -> Unit,
@@ -107,7 +106,7 @@ internal fun OnboardingBuilding(
 // them.
 @Composable
 internal fun OnboardingSaving(
-    state: OnboardingViewModel.State,
+    state: OnboardingState,
     onRetry: () -> Unit,
     onSkip: () -> Unit,
     onShown: () -> Unit,
@@ -142,7 +141,7 @@ internal data class ProgressTexts(
 // an error, Try again starts the animation over from the intro (a new attempt).
 @Composable
 private fun OnboardingProgress(
-    progress: Progress,
+    progress: StarterRoutinesProgress,
     // Counts Try again
     attempt: Int,
     texts: ProgressTexts,
@@ -154,7 +153,7 @@ private fun OnboardingProgress(
     val compositionResult = rememberLottieComposition(LottieCompositionSpec.RawRes(R.raw.everlog_building))
     val animatable = rememberLottieAnimatable()
     // What the screen says, which follows the animation rather than the work
-    var shown by remember { mutableStateOf(Progress.InProgress) }
+    var shown by remember { mutableStateOf(StarterRoutinesProgress.InProgress) }
     var showActions by remember { mutableStateOf(false) }
 
     val current by rememberUpdatedState(progress)
@@ -164,7 +163,7 @@ private fun OnboardingProgress(
         if (!compositionResult.isComplete) return@LaunchedEffect
         // Null if the animation couldn't load, so the screen carries on without it
         val composition = compositionResult.value
-        shown = Progress.InProgress
+        shown = StarterRoutinesProgress.InProgress
         showActions = false
         // Follows the system's animation scale, which Lottie doesn't by itself
         val scale = coroutineContext[MotionDurationScale]?.scaleFactor ?: 1f
@@ -173,17 +172,17 @@ private fun OnboardingProgress(
             animatable.play(composition, ProgressClips.Intro, speed = 1f / scale)
             do {
                 animatable.play(composition, ProgressClips.Loop, speed = 1f / scale)
-            } while (current == Progress.InProgress)
+            } while (current == StarterRoutinesProgress.InProgress)
             current
         } else {
             // The barbell holds still, for as long as the intro and a loop would take
             composition?.let { animatable.snapTo(it, progress = it.markerProgress(ProgressClips.Loop, end = false)) }
             delay(ProgressMotion.ReducedMotionMinimum)
-            snapshotFlow { current }.first { it != Progress.InProgress }
+            snapshotFlow { current }.first { it != StarterRoutinesProgress.InProgress }
         }
 
         shown = result
-        if (result == Progress.Done) haptics.performHapticFeedback(HapticFeedbackType.Confirm)
+        if (result == StarterRoutinesProgress.Done) haptics.performHapticFeedback(HapticFeedbackType.Confirm)
         if (composition != null) {
             if (animate) {
                 animatable.play(composition, result.clip, speed = 1f / scale)
@@ -192,12 +191,12 @@ private fun OnboardingProgress(
             }
         }
         when (result) {
-            Progress.Done -> {
+            StarterRoutinesProgress.Done -> {
                 delay(ProgressMotion.ReadyHold)
                 currentOnShown()
             }
-            Progress.Failed -> showActions = true
-            Progress.InProgress -> Unit
+            StarterRoutinesProgress.Failed -> showActions = true
+            StarterRoutinesProgress.InProgress -> Unit
         }
     }
 
@@ -261,8 +260,8 @@ private object ProgressSizes {
     val Animation = 360.dp
 }
 
-private val Progress.clip: String
-    get() = if (this == Progress.Done) ProgressClips.Success else ProgressClips.Error
+private val StarterRoutinesProgress.clip: String
+    get() = if (this == StarterRoutinesProgress.Done) ProgressClips.Success else ProgressClips.Error
 
 private suspend fun LottieAnimatable.play(composition: LottieComposition, marker: String, speed: Float) = animate(
     composition = composition,
@@ -281,7 +280,7 @@ private fun LottieComposition.markerProgress(marker: String, end: Boolean): Floa
 
 @Composable
 private fun ProgressText(
-    shown: Progress,
+    shown: StarterRoutinesProgress,
     texts: ProgressTexts,
 ) {
     AnimatedContent(
@@ -301,15 +300,15 @@ private fun ProgressText(
         ) {
             AppText(
                 text = when (progress) {
-                    Progress.InProgress -> texts.inProgress
-                    Progress.Done -> texts.done
-                    Progress.Failed -> texts.failed
+                    StarterRoutinesProgress.InProgress -> texts.inProgress
+                    StarterRoutinesProgress.Done -> texts.done
+                    StarterRoutinesProgress.Failed -> texts.failed
                 },
                 style = Theme.typography.title,
                 textAlign = TextAlign.Center,
             )
             AppText(
-                text = if (progress == Progress.Failed) texts.failedBody else texts.summary,
+                text = if (progress == StarterRoutinesProgress.Failed) texts.failedBody else texts.summary,
                 color = Theme.contentColors.secondary,
                 textAlign = TextAlign.Center,
             )

@@ -4,7 +4,6 @@ import arrow.core.Either
 import com.everlog.data.controllers.starterroutines.RealBuildStarterRoutinesUseCase
 import com.everlog.data.controllers.starterroutines.RealSaveStarterRoutinesUseCase
 import com.everlog.data.controllers.starterroutines.StarterRoutineGenerator
-import com.everlog.managers.preferences.SettingsManager
 import com.everlog.testutil.FakeCoroutineDispatcher
 import com.everlog.testutil.FakeExerciseRepository
 import com.everlog.testutil.FakeRoutineRepository
@@ -201,25 +200,4 @@ class OnboardingViewModelAnalyticsTest {
             "finished skipped saving 0",
         ).inOrder()
     }
-}
-
-private class FakeOnboardingAnalytics : OnboardingAnalytics {
-    val events = mutableListOf<String>()
-
-    override fun stepViewed(step: String) { events += "viewed $step" }
-    override fun stepCompleted(step: String, value: String?) { events += "completed $step $value" }
-    override fun stepSkipped(step: String) { events += "skipped $step" }
-    override fun stepFailed(step: String) { events += "failed $step" }
-    override fun stepRetried(step: String) { events += "retried $step" }
-    override fun questionReopened(step: String) { events += "reopened $step" }
-    override fun questionEdited(step: String, value: String?) { events += "edited $step $value" }
-    override fun skipPromptShown(step: String) { events += "prompt shown $step" }
-    override fun skipPromptCancelled(step: String) { events += "prompt cancelled $step" }
-    override fun templateToggled(open: Boolean) { events += "toggled $open" }
-    override fun finished(outcome: String, step: String, routines: Int) { events += "finished $outcome $step $routines" }
-}
-
-private class FakeOnboardingSettings : OnboardingSettings {
-    override fun setWeightUnit(unit: SettingsManager.WeightUnit) = Unit
-    override fun setWeeklyWorkoutsGoal(count: Int) = Unit
 }
