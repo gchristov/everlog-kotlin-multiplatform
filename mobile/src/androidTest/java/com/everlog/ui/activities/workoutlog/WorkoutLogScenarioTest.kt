@@ -12,6 +12,7 @@ import androidx.compose.ui.test.hasContentDescription
 import androidx.compose.ui.test.hasTestTag
 import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.isDialog
+import androidx.compose.ui.test.isPopup
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithTag
@@ -69,6 +70,8 @@ class WorkoutLogScenarioTest {
     private val analytics = RecordingAnalytics()
     private val notification = RecordingNotification()
     private var exit: WorkoutLogExit? = null
+    // The exercise whose details were opened
+    private var opened: String? = null
     private val now = 1_800_000_000_000L
 
     @Before
@@ -91,6 +94,7 @@ class WorkoutLogScenarioTest {
                     viewModel = viewModel,
                     // The picker is another screen, so its picks are handed straight in
                     onAddExercise = { viewModel.onExercisesPicked(listOf(group(ELSetType.SINGLE, "Squat" to 5))) },
+                    onOpenExercise = { opened = it.name },
                     onExit = { exit = it },
                 )
             }
@@ -174,6 +178,16 @@ class WorkoutLogScenarioTest {
         compose.onNodeWithTag(WorkoutLogTags.Table).performScrollToNode(hasText("Squat"))
         compose.onNodeWithText("Squat").assertExists()
 
+        // Its menu opens its details, then deletes it after asking
+        compose.onNodeWithTag(WorkoutLogTags.menu(2)).performClick()
+        compose.onNode(hasText("Squat details") and hasAnyAncestor(isPopup())).performClick()
+        assertThat(opened).isEqualTo("Squat")
+        compose.onNodeWithTag(WorkoutLogTags.menu(2)).performClick()
+        compose.onNode(hasText("Delete") and hasAnyAncestor(isPopup())).performClick()
+        compose.onNodeWithText("Delete Squat?").assertExists()
+        compose.onNode(hasText("Delete") and hasAnyAncestor(isDialog())).performClick()
+        compose.onNodeWithText("Squat").assertDoesNotExist()
+
         // Finish asks, as sets aren't ticked, then saves the workout as it is
         compose.onNode(hasText("Finish") and hasAnyAncestor(isDialog()).not()).performClick()
         compose.onNodeWithText("Finish workout?").assertExists()
@@ -186,7 +200,7 @@ class WorkoutLogScenarioTest {
         assertThat(bench[0].getWeightKg()).isWithin(0.01f).of(61.23f)
         assertThat(bench[0].getCompletedDate()).isEqualTo(now)
         assertThat(bench[1].getTimeSeconds()).isEqualTo(100)
-        assertThat(finished.getExerciseGroups().map { it.exercises.first().exercise?.name }).containsExactly("Bench press", "Fly", "Squat").inOrder()
+        assertThat(finished.getExerciseGroups().map { it.exercises.first().exercise?.name }).containsExactly("Bench press", "Fly").inOrder()
         // Which screen it ran on stays on the device
         assertThat(finished.asMap().keys).doesNotContain("workoutScreenV2")
         assertThat(WorkoutManager.manager.ongoingWorkout()).isNull()
@@ -200,7 +214,7 @@ class WorkoutLogScenarioTest {
         val empty = ELWorkout(uuid = "empty", createdDate = now, routine = ELRoutine(name = "Quick"))
         var viewModel by mutableStateOf(viewModel(empty))
         compose.setContent {
-            Theme { WorkoutLogScreen(viewModel = viewModel, onAddExercise = {}, onExit = { exit = it }) }
+            Theme { WorkoutLogScreen(viewModel = viewModel, onAddExercise = {}, onOpenExercise = {}, onExit = { exit = it }) }
         }
         compose.onNodeWithContentDescription("Close").performClick()
         compose.onNodeWithText("Nothing's been logged yet.").assertExists()

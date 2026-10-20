@@ -76,7 +76,12 @@ import kotlinx.coroutines.android.awaitFrame
  * where the selection goes) are the view-model's.
  */
 @Composable
-internal fun WorkoutLogScreen(viewModel: WorkoutLogViewModel, onAddExercise: () -> Unit, onExit: (WorkoutLogExit) -> Unit) {
+internal fun WorkoutLogScreen(
+    viewModel: WorkoutLogViewModel,
+    onAddExercise: () -> Unit,
+    onOpenExercise: (ELExercise) -> Unit,
+    onExit: (WorkoutLogExit) -> Unit,
+) {
     val state by viewModel.state.collectAsStateWithLifecycle()
 
     LifecycleResumeEffect(Unit) {
@@ -154,13 +159,15 @@ internal fun WorkoutLogScreen(viewModel: WorkoutLogViewModel, onAddExercise: () 
                     onStartTimer = viewModel::onStartSetTimer,
                     onAddSet = viewModel::onAddSet,
                     onDeleteSet = viewModel::onDeleteSet,
+                    onOpenExercise = onOpenExercise,
+                    onDeleteExercise = viewModel::onDeleteExercise,
                 )
             }
             Messages(state, viewModel, Modifier.align(Alignment.BottomCenter).padding(bottom = contentPadding.calculateBottomPadding()))
         }
     }
 
-    WorkoutLogDialogs(state.dialog, viewModel)
+    WorkoutLogDialogs(state, viewModel)
 }
 
 // "Set deleted" with Undo while the deleted sets can come back, and one-off messages, over the keypad
@@ -322,6 +329,8 @@ private fun EmptyTable(contentPadding: PaddingValues, unit: SettingsManager.Weig
                     onStartTimer = {},
                     onAddSet = {},
                     onDeleteSet = {},
+                    onOpenExercise = {},
+                    onDeleteExercise = {},
                 )
             }
             // Takes every touch, so the example can't be used

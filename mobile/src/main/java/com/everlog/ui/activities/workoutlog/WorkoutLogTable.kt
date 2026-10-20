@@ -24,10 +24,9 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.HorizontalDivider
-import com.everlog.ui.design.elements.AppTertiaryButton
-import androidx.compose.material3.rememberSwipeToDismissBoxState
-import androidx.compose.material3.SwipeToDismissBoxValue
 import androidx.compose.material3.SwipeToDismissBox
+import androidx.compose.material3.SwipeToDismissBoxValue
+import androidx.compose.material3.rememberSwipeToDismissBoxState
 import androidx.compose.material3.ripple
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
@@ -61,8 +60,12 @@ import com.everlog.data.controllers.workoutsession.SetRef
 import com.everlog.data.controllers.workoutsession.ValueField
 import com.everlog.data.controllers.workoutsession.WorkoutBlock
 import com.everlog.data.controllers.workoutsession.WorkoutSet
+import com.everlog.data.model.exercise.ELExercise
 import com.everlog.managers.preferences.SettingsManager.WeightUnit
 import com.everlog.ui.design.elements.AppIcon
+import com.everlog.ui.design.elements.AppMenuItem
+import com.everlog.ui.design.elements.AppOverflowMenu
+import com.everlog.ui.design.elements.AppTertiaryButton
 import com.everlog.ui.design.elements.AppText
 import com.everlog.ui.design.elements.AppThumbnail
 import com.everlog.ui.design.theme.Theme
@@ -120,6 +123,8 @@ internal fun WorkoutTable(
     onStartTimer: (SetRef) -> Unit,
     onAddSet: (Long) -> Unit,
     onDeleteSet: (SetRef) -> Unit,
+    onOpenExercise: (ELExercise) -> Unit,
+    onDeleteExercise: (Long) -> Unit,
 ) {
     // The edited cell is kept in view: below the table's top, and above the keypad, which floats over the table
     val listState = rememberLazyListState()
@@ -164,7 +169,7 @@ internal fun WorkoutTable(
         ) {
             blocks.forEachIndexed { b, block ->
                 item(key = block.id) {
-                    ExerciseTable(b, block, unit, focus, selected, typed, timing, startsTimer, onCellTapped, onTick, onStartTimer, onAddSet, onDeleteSet)
+                    ExerciseTable(b, block, unit, focus, selected, typed, timing, startsTimer, onCellTapped, onTick, onStartTimer, onAddSet, onDeleteSet, onOpenExercise, onDeleteExercise)
                 }
             }
         }
@@ -193,9 +198,11 @@ private fun ExerciseTable(
     onStartTimer: (SetRef) -> Unit,
     onAddSet: (Long) -> Unit,
     onDeleteSet: (SetRef) -> Unit,
+    onOpenExercise: (ELExercise) -> Unit,
+    onDeleteExercise: (Long) -> Unit,
 ) {
     Column(modifier = Modifier.padding(bottom = Theme.spacing.extraLarge)) {
-        ExerciseHeader(block)
+        ExerciseHeader(index, block, onOpenExercise, onDeleteExercise)
         Spacer(modifier = Modifier.height(Theme.spacing.medium))
         ColumnLabels(block, unit)
         Spacer(modifier = Modifier.height(Theme.spacing.extraSmall))
@@ -282,9 +289,10 @@ private fun SwipeToDelete(onDelete: () -> Unit, content: @Composable () -> Unit)
     }
 }
 
-// The exercise's image and name, or a group's type over one row per exercise
+// The exercise's image and name, or a group's type over one row per exercise, and its menu: each exercise's details,
+// and deleting it
 @Composable
-private fun ExerciseHeader(block: WorkoutBlock) {
+private fun ExerciseHeader(index: Int, block: WorkoutBlock, onOpenExercise: (ELExercise) -> Unit, onDeleteExercise: (Long) -> Unit) {
     Row(
         modifier = Modifier.padding(horizontal = TableSizes.RowPadding),
         verticalAlignment = Alignment.CenterVertically,
@@ -306,6 +314,13 @@ private fun ExerciseHeader(block: WorkoutBlock) {
         } else {
             GroupHeader(modifier = Modifier.weight(1f), block = block)
         }
+        AppOverflowMenu(
+            modifier = Modifier.testTag(WorkoutLogTags.menu(index)),
+            outlined = true,
+            items = block.exercises.mapNotNull { it.exercise }.map { exercise ->
+                AppMenuItem(text = stringResource(R.string.workout_log_exercise_details, exercise.name.orEmpty()), onClick = { onOpenExercise(exercise) })
+            } + AppMenuItem(text = stringResource(R.string.workout_log_delete), onClick = { onDeleteExercise(block.id) }),
+        )
     }
 }
 
@@ -585,6 +600,8 @@ internal object WorkoutLogTags {
     const val Table = "table"
 
     fun set(block: Int, round: Int, exercise: Int) = "set:$block:$round:$exercise"
+
+    fun menu(block: Int) = "menu:$block"
 
     fun count(set: String) = "$set:count"
 
