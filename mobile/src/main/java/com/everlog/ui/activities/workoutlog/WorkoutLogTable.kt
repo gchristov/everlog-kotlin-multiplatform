@@ -56,12 +56,8 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.everlog.R
 import com.everlog.data.controllers.workoutsession.SetMode
-import com.everlog.data.controllers.workoutsession.SetRef
 import com.everlog.data.controllers.workoutsession.ValueField
 import com.everlog.data.controllers.workoutsession.WorkoutBlock
-import com.everlog.data.controllers.workoutsession.WorkoutSet
-import com.everlog.data.model.exercise.ELExercise
-import com.everlog.managers.preferences.SettingsManager.WeightUnit
 import com.everlog.ui.design.elements.AppIcon
 import com.everlog.ui.design.elements.AppMenuItem
 import com.everlog.ui.design.elements.AppOverflowMenu
@@ -103,23 +99,11 @@ private val Inset = Color.Black.copy(alpha = 0.32f)
 @Composable
 internal fun WorkoutTable(
     blocks: List<WorkoutBlock>,
-    unit: WeightUnit,
-    focus: CellFocus?,
-    selected: SetRef?,
-    typed: String?,
+    view: TableView,
+    // Goes up with every keypad key, to bring the edited cell back into view
     reveal: Int,
-    timing: Countdown?,
-    // Whether a set's row shows a timer button in place of its tick
-    startsTimer: (SetRef) -> Boolean,
-    lastTime: Map<String, List<WorkoutSet>>,
     contentPadding: PaddingValues,
-    onCellTapped: (CellFocus) -> Unit,
-    onTick: (SetRef) -> Unit,
-    onStartTimer: (SetRef) -> Unit,
-    onAddSet: (Long) -> Unit,
-    onDeleteSet: (SetRef) -> Unit,
-    onOpenExercise: (ELExercise) -> Unit,
-    onDeleteExercise: (Long) -> Unit,
+    actions: WorkoutTableActions,
 ) {
     // The edited cell is kept below the table's top and above the keypad, which floats over the table
     val listState = rememberLazyListState()
@@ -137,8 +121,8 @@ internal fun WorkoutTable(
         }
     }
     // An exercise scrolled far enough away isn't laid out at all, so first scroll to it
-    LaunchedEffect(focus?.ref?.blockId, reveal) {
-        val blockId = focus?.ref?.blockId ?: return@LaunchedEffect
+    LaunchedEffect(view.focus?.ref?.blockId, reveal) {
+        val blockId = view.focus?.ref?.blockId ?: return@LaunchedEffect
         val index = blocks.indexOfFirst { it.id == blockId }
         if (index >= 0 && listState.layoutInfo.visibleItemsInfo.none { it.index == index }) {
             listState.animateScrollToItem(index)
@@ -162,26 +146,9 @@ internal fun WorkoutTable(
                 bottom = contentPadding.calculateBottomPadding() + Theme.spacing.large,
             ),
         ) {
-            blocks.forEachIndexed { b, block ->
+            blocks.forEachIndexed { index, block ->
                 item(key = block.id) {
-                    ExerciseTable(
-                        index = b,
-                        block = block,
-                        unit = unit,
-                        focus = focus,
-                        selected = selected,
-                        typed = typed,
-                        timing = timing,
-                        startsTimer = startsTimer,
-                        lastTime = lastTime,
-                        onCellTapped = onCellTapped,
-                        onTick = onTick,
-                        onStartTimer = onStartTimer,
-                        onAddSet = onAddSet,
-                        onDeleteSet = onDeleteSet,
-                        onOpenExercise = onOpenExercise,
-                        onDeleteExercise = onDeleteExercise,
-                    )
+                    ExerciseTable(index = index, block = block, view = view, actions = actions)
                 }
             }
         }
@@ -198,25 +165,13 @@ private fun ExerciseTable(
     // For the rows' test tags
     index: Int,
     block: WorkoutBlock,
-    unit: WeightUnit,
-    focus: CellFocus?,
-    selected: SetRef?,
-    typed: String?,
-    timing: Countdown?,
-    startsTimer: (SetRef) -> Boolean,
-    lastTime: Map<String, List<WorkoutSet>>,
-    onCellTapped: (CellFocus) -> Unit,
-    onTick: (SetRef) -> Unit,
-    onStartTimer: (SetRef) -> Unit,
-    onAddSet: (Long) -> Unit,
-    onDeleteSet: (SetRef) -> Unit,
-    onOpenExercise: (ELExercise) -> Unit,
-    onDeleteExercise: (Long) -> Unit,
+    view: TableView,
+    actions: WorkoutTableActions,
 ) {
     Column(modifier = Modifier.padding(bottom = Theme.spacing.extraLarge)) {
-        ExerciseHeader(index, block, onOpenExercise, onDeleteExercise)
+        ExerciseHeader(index, block, actions)
         Spacer(modifier = Modifier.height(Theme.spacing.medium))
-        ColumnLabels(block, unit)
+        ColumnLabels(block, view.unitLabel)
         Spacer(modifier = Modifier.height(Theme.spacing.extraSmall))
         Column(
             modifier = Modifier
@@ -224,48 +179,21 @@ private fun ExerciseTable(
                 .clip(Theme.shapes.surface)
                 .background(Theme.backgrounds.surface),
         ) {
-            block.rounds.forEachIndexed { r, round ->
-                if (r > 0) HorizontalDivider(thickness = 1.dp, color = Theme.backgrounds.separator)
-                val firstShown = round.sets.indexOfFirst { !it.removed }
-                round.sets.forEachIndexed { i, set ->
-                    if (set.removed) return@forEachIndexed
-                    val ref = SetRef(block.id, round.id, i)
-                    // Keyed, so the next set doesn't take over a swiped one's state once it's gone
-                    key(round.id, i) {
-                        SwipeToDelete(onDelete = { onDeleteSet(ref) }) {
-                            TableRow(
-                                tag = WorkoutLogTags.set(index, r, i),
-                                lastTime = lastTime[block.exercises[i].exercise?.uuid]?.getOrNull(r)?.let { lastTimeText(it, unit) },
-                                // A superset's rows are 1a, 1b, 1c
-                                number = if (round.sets.size > 1) "${r + 1}${'a' + i}" else if (i == firstShown) "${r + 1}" else null,
-                                set = set,
-                                weightText = cellText(set, ValueField.Weight, unit, focus, typed, ref),
-                                countText = timing?.takeIf { it.ref == ref }?.let { formatClock(it.seconds.toLong()) }
-                                    ?: cellText(set, countField(set), unit, focus, typed, ref),
-                                timing = timing?.ref == ref,
-                                // Lit up when the keypad's main key will complete the set
-                                armed = !set.done && (focus == CellFocus(ref, ValueField.Weight) || timing?.ref == ref),
-                                selected = selected == ref,
-                                weightFocused = focus == CellFocus(ref, ValueField.Weight),
-                                countFocused = focus?.ref == ref && focus.field != ValueField.Weight,
-                                onRow = { onCellTapped(CellFocus(ref, countField(set))) },
-                                onWeight = { onCellTapped(CellFocus(ref, ValueField.Weight)) },
-                                onCount = { onCellTapped(CellFocus(ref, countField(set))) },
-                                onTick = { onTick(ref) },
-                                onStart = if (startsTimer(ref)) {
-                                    { onStartTimer(ref) }
-                                } else {
-                                    null
-                                },
-                            )
-                        }
+            block.rows(view).forEach { row ->
+                if (row.round > 0 && row.startsRound) {
+                    HorizontalDivider(thickness = 1.dp, color = Theme.backgrounds.separator)
+                }
+                // Keyed, so the next set doesn't take over a swiped one's state once it's gone
+                key(row.ref.roundId, row.exercise) {
+                    SwipeToDelete(onDelete = { actions.onDeleteSet(row.ref) }) {
+                        TableRow(tag = WorkoutLogTags.set(index, row.round, row.exercise), row = row, actions = actions)
                     }
                 }
             }
         }
         AppTertiaryButton(
             modifier = Modifier.align(Alignment.CenterHorizontally),
-            onClick = { onAddSet(block.id) },
+            onClick = { actions.onAddSet(block.id) },
             text = stringResource(R.string.workout_log_add_set),
         )
     }
@@ -299,7 +227,7 @@ private fun SwipeToDelete(onDelete: () -> Unit, content: @Composable () -> Unit)
 }
 
 @Composable
-private fun ExerciseHeader(index: Int, block: WorkoutBlock, onOpenExercise: (ELExercise) -> Unit, onDeleteExercise: (Long) -> Unit) {
+private fun ExerciseHeader(index: Int, block: WorkoutBlock, actions: WorkoutTableActions) {
     Row(
         modifier = Modifier.padding(horizontal = TableSizes.RowPadding),
         verticalAlignment = Alignment.CenterVertically,
@@ -325,8 +253,8 @@ private fun ExerciseHeader(index: Int, block: WorkoutBlock, onOpenExercise: (ELE
             modifier = Modifier.testTag(WorkoutLogTags.menu(index)),
             outlined = true,
             items = block.exercises.mapNotNull { it.exercise }.map { exercise ->
-                AppMenuItem(text = stringResource(R.string.workout_log_exercise_details, exercise.name.orEmpty()), onClick = { onOpenExercise(exercise) })
-            } + AppMenuItem(text = stringResource(R.string.workout_log_delete), onClick = { onDeleteExercise(block.id) }),
+                AppMenuItem(text = stringResource(R.string.workout_log_exercise_details, exercise.name.orEmpty()), onClick = { actions.onOpenExercise(exercise) })
+            } + AppMenuItem(text = stringResource(R.string.workout_log_delete), onClick = { actions.onDeleteExercise(block.id) }),
         )
     }
 }
@@ -376,7 +304,7 @@ private fun GroupHeader(modifier: Modifier, block: WorkoutBlock) {
 }
 
 @Composable
-private fun ColumnLabels(block: WorkoutBlock, unit: WeightUnit) {
+private fun ColumnLabels(block: WorkoutBlock, unitLabel: String) {
     val modes = block.rounds.flatMap { round -> round.sets.filterNot { it.removed }.map { it.mode } }.toSet()
     val count = when {
         modes == setOf(SetMode.Time) -> stringResource(R.string.workout_log_column_time)
@@ -390,7 +318,7 @@ private fun ColumnLabels(block: WorkoutBlock, unit: WeightUnit) {
         Label(stringResource(R.string.workout_log_column_set), Modifier.width(TableSizes.SetColumn), TextAlign.Center)
         Label(stringResource(R.string.workout_log_column_last_time), Modifier.weight(1f))
         Label(count, Modifier.width(TableSizes.Cell), TextAlign.Center)
-        Label(unitLabel(unit), Modifier.width(TableSizes.Cell), TextAlign.Center)
+        Label(unitLabel, Modifier.width(TableSizes.Cell), TextAlign.Center)
         Spacer(modifier = Modifier.width(TableSizes.CheckTarget))
     }
 }
@@ -402,31 +330,15 @@ private fun Label(text: String, modifier: Modifier, align: TextAlign = TextAlign
 
 // The selected row is tinted and shows its values as boxes to type into
 @Composable
-private fun TableRow(
-    tag: String,
-    lastTime: String?,
-    number: String?,
-    set: WorkoutSet,
-    weightText: String,
-    countText: String,
-    timing: Boolean,
-    armed: Boolean,
-    selected: Boolean,
-    weightFocused: Boolean,
-    countFocused: Boolean,
-    onRow: () -> Unit,
-    onWeight: () -> Unit,
-    onCount: () -> Unit,
-    onTick: () -> Unit,
-    onStart: (() -> Unit)?,
-) {
+private fun TableRow(tag: String, row: SetRow, actions: WorkoutTableActions) {
+    val onCount = { actions.onCellTapped(CellFocus(row.ref, row.countField)) }
     Row(
         modifier = Modifier
             .fillMaxWidth()
             .height(TableSizes.RowHeight)
             .testTag(tag)
-            .background(if (selected) Theme.backgrounds.selected else Color.Transparent)
-            .clickable(onClick = onRow)
+            .background(if (row.selected) Theme.backgrounds.selected else Color.Transparent)
+            .clickable(onClick = onCount)
             .padding(horizontal = TableSizes.RowPadding),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(TableSizes.ColumnGap),
@@ -434,23 +346,30 @@ private fun TableRow(
         AppText(
             modifier = Modifier.width(TableSizes.SetColumn),
             textAlign = TextAlign.Center,
-            text = number.orEmpty(),
+            text = row.number.orEmpty(),
             style = Theme.typography.bodyBold,
         )
         AppText(
             modifier = Modifier.weight(1f),
-            text = lastTime ?: Empty,
+            text = row.lastTime ?: EmptyValue,
             style = Theme.typography.caption.copy(fontFeatureSettings = "tnum"),
             color = Theme.contentColors.secondary,
             maxLines = 1,
         )
         // Reps (or time) first, then weight, as last time reads: 15 × 17 kg
-        Cell(tag = WorkoutLogTags.count(tag), text = countText, focused = countFocused, boxed = selected, onClick = onCount, highlight = timing)
-        Cell(tag = WorkoutLogTags.weight(tag), text = weightText, focused = weightFocused, boxed = selected, onClick = onWeight, suggested = set.weightSuggested)
-        if (onStart != null) {
-            StartButton(tag = WorkoutLogTags.tick(tag), armed = armed, onClick = onStart)
+        Cell(tag = WorkoutLogTags.count(tag), text = row.countText, focused = row.countFocused, boxed = row.selected, onClick = onCount, highlight = row.timing)
+        Cell(
+            tag = WorkoutLogTags.weight(tag),
+            text = row.weightText,
+            focused = row.weightFocused,
+            boxed = row.selected,
+            onClick = { actions.onCellTapped(CellFocus(row.ref, ValueField.Weight)) },
+            suggested = row.suggested,
+        )
+        if (row.startsTimer) {
+            StartButton(tag = WorkoutLogTags.tick(tag), armed = row.armed, onClick = { actions.onStartTimer(row.ref) })
         } else {
-            Tick(tag = WorkoutLogTags.tick(tag), done = set.done, armed = armed, onClick = onTick)
+            Tick(tag = WorkoutLogTags.tick(tag), done = row.done, armed = row.armed, onClick = { actions.onTick(row.ref) })
         }
     }
 }
@@ -595,20 +514,7 @@ private fun Tick(tag: String, done: Boolean, armed: Boolean, onClick: () -> Unit
     }
 }
 
-private fun cellText(set: WorkoutSet, field: ValueField, unit: WeightUnit, focus: CellFocus?, typed: String?, ref: SetRef): String {
-    val typing = typed?.takeIf { focus == CellFocus(ref, field) }
-    return when (field) {
-        ValueField.Weight -> typing ?: set.weightKg?.let { formatWeight(displayWeight(it, unit)) } ?: Empty
-        ValueField.Reps -> typing ?: set.reps?.toString() ?: Empty
-        ValueField.Time -> (typing?.let { typedSeconds(it) } ?: set.timeSeconds)?.let { formatClock(it.toLong()) } ?: Empty
-    }
-}
-
-private const val Empty = "–"
-
 internal const val SuggestedMark = "✦"
-
-internal data class Countdown(val ref: SetRef, val seconds: Int)
 
 /**
  * Rows are tagged by position: the exercise group, the round and the exercise in it.

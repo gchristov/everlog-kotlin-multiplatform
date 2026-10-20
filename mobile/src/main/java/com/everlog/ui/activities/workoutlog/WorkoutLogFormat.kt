@@ -71,8 +71,8 @@ internal fun rawText(set: WorkoutSet, field: ValueField, unit: WeightUnit): Stri
 /**
  * 15 × 17 kg, 0:30 × 10 kg, or 12 and 0:45 without a weight. Null when nothing was logged.
  */
-internal fun lastTimeText(set: WorkoutSet, unit: WeightUnit): String? {
+internal fun lastTimeText(set: WorkoutSet, unit: WeightUnit, unitLabel: String): String? {
     val count = if (set.mode == SetMode.Time) set.timeSeconds?.let { formatClock(it.toLong()) } else set.reps?.toString()
-    val weight = set.weightKg?.let { "${formatWeight(displayWeight(it, unit))} ${unitLabel(unit).lowercase()}" }
+    val weight = set.weightKg?.let { "${formatWeight(displayWeight(it, unit))} ${unitLabel.lowercase()}" }
     return listOfNotNull(count, weight).joinToString(" × ").ifEmpty { null }
 }

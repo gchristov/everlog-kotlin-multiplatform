@@ -15,9 +15,12 @@ import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.everlog.R
 import com.everlog.constants.ELActivityRequestCodes
 import com.everlog.constants.ELConstants
+import com.everlog.data.controllers.workoutprefill.RealLoadPrefillSourcesUseCase
+import com.everlog.data.controllers.workoutsession.RealWorkoutSetPrefill
 import com.everlog.data.datastores.exercises.ELExercisesStore
 import com.everlog.data.model.exercise.ELExerciseGroup
 import com.everlog.data.model.workout.ELWorkout
+import com.everlog.data.repositories.RealOngoingWorkoutRepository
 import com.everlog.ui.activities.home.exercise.details.ExerciseDetailsActivity
 import com.everlog.ui.design.CommonComposeActivity
 import com.everlog.ui.navigator.ELNavigator
@@ -33,21 +36,22 @@ class WorkoutLogActivity : CommonComposeActivity() {
     private val viewModel by viewModels<WorkoutLogViewModel> {
         viewModelFactory {
             initializer {
-                val store = RealWorkoutLogStore()
+                val repository = RealOngoingWorkoutRepository()
                 @Suppress("DEPRECATION")
                 val launched = intent.getSerializableExtra(ELConstants.EXTRA_WORKOUT) as ELWorkout
-                val loaded = WorkoutLogViewModel.load(launched, store)
+                val loaded = WorkoutLogViewModel.load(launched, repository)
                 WorkoutLogViewModel(
                     dispatcher = Dispatchers.Main,
                     workout = loaded.workout,
                     resumed = loaded.resumed,
                     fromPlan = intent.getBooleanExtra(ELConstants.EXTRA_WORKOUT_FROM_PLAN, false),
-                    store = store,
+                    repository = repository,
                     settings = RealWorkoutLogSettings(),
                     analytics = RealWorkoutLogAnalytics(),
                     alerts = RealWorkoutLogAlerts(applicationContext),
                     notification = RealWorkoutLogNotification(ELNavigator(applicationContext)),
-                    prefill = RealWorkoutLogPrefill(),
+                    loadPrefillSources = RealLoadPrefillSourcesUseCase(Dispatchers.Default),
+                    prefill = RealWorkoutSetPrefill(),
                 )
             }
         }

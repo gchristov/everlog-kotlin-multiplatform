@@ -2,12 +2,12 @@ package com.everlog.ui.activities.workoutlog
 
 import com.everlog.config.AppConfig
 import com.everlog.data.controllers.workoutprefill.BaseWorkoutPrefillController.PrefillSource
+import com.everlog.data.controllers.workoutprefill.LoadPrefillSourcesUseCase
 import com.everlog.data.controllers.workoutsession.SessionIds
 import com.everlog.data.controllers.workoutsession.SetMode
 import com.everlog.data.controllers.workoutsession.SetRef
 import com.everlog.data.controllers.workoutsession.ValueField
 import com.everlog.data.controllers.workoutsession.WorkoutBlock
-import com.everlog.data.controllers.workoutsession.WorkoutSet
 import com.everlog.data.controllers.workoutsession.addGroups
 import com.everlog.data.controllers.workoutsession.addRound
 import com.everlog.data.controllers.workoutsession.block
@@ -22,17 +22,18 @@ import com.everlog.data.controllers.workoutsession.round
 import com.everlog.data.controllers.workoutsession.set
 import com.everlog.data.controllers.workoutsession.setMode
 import com.everlog.data.controllers.workoutsession.setValue
-import com.everlog.data.controllers.workoutsession.toELSet
-import com.everlog.data.controllers.workoutsession.toSessionBlocks
-import com.everlog.data.controllers.workoutsession.toSessionSet
 import com.everlog.data.controllers.workoutsession.uncompleteSet
 import com.everlog.data.controllers.workoutsession.withRestSeconds
+import com.everlog.data.controllers.workoutsession.WorkoutSetPrefill
+import com.everlog.data.controllers.workoutsession.filledFromHistory
+import com.everlog.data.controllers.workoutsession.lastSets
+import com.everlog.data.controllers.workoutsession.withAddedRoundFilled
 import com.everlog.data.controllers.workoutsession.withSessionBlocks
 import com.everlog.data.model.exercise.ELExercise
 import com.everlog.data.model.exercise.ELExerciseGroup
-import com.everlog.data.model.set.ELSet
 import com.everlog.data.model.workout.ELWorkout
 import com.everlog.data.model.workout.ELWorkoutState
+import com.everlog.data.repositories.OngoingWorkoutRepository
 import com.everlog.ui.mvvm.CommonViewModel
 import java.util.Date
 import kotlinx.coroutines.CoroutineDispatcher
@@ -55,16 +56,17 @@ internal class WorkoutLogViewModel(
     private val workout: ELWorkout,
     private val resumed: Boolean,
     private val fromPlan: Boolean,
-    private val store: WorkoutLogStore,
+    private val repository: OngoingWorkoutRepository,
     private val settings: WorkoutLogSettings,
     private val analytics: WorkoutLogAnalytics,
     private val alerts: WorkoutLogAlerts,
     private val notification: WorkoutLogNotification,
-    private val prefill: WorkoutLogPrefill,
+    private val loadPrefillSources: LoadPrefillSourcesUseCase,
+    private val prefill: WorkoutSetPrefill,
     private val clock: () -> Long = System::currentTimeMillis,
     private val ids: SessionIds = SessionIds(),
     private val tickMillis: Long? = TickMillis,
-) : CommonViewModel<WorkoutLogState>(dispatcher, initialState(workout, ids, settings, clock())) {
+) : CommonViewModel<WorkoutLogState>(dispatcher, initialWorkoutLogState(workout, ids, settings, clock())) {
 
     private var ticking: Job? = null
     private var showing = false
@@ -265,7 +267,7 @@ internal class WorkoutLogViewModel(
         }
     }
 
-    fun onScreenStarted() = notification.start(notificationWorkout())
+    fun onScreenStarted() = notification.start(workout.forNotification(state.value))
 
     fun onScreenClosed() = notification.stop()
 
@@ -301,16 +303,7 @@ internal class WorkoutLogViewModel(
         if (state.value.timer is WorkoutTimer.Rest) endTimer(fromNotification = true)
     }
 
-    // The notification counts an exercise's place among those with a set in that round, skipping removed ones
-    private fun setAt(position: ELWorkoutState): SetRef? {
-        val blocks = state.value.blocks
-        val block = blocks.getOrNull(position.groupIndex) ?: return null
-        val round = block.rounds.getOrNull(position.setIndex) ?: return null
-        val group = workout.withSessionBlocks(blocks).getExerciseGroups().getOrNull(position.groupIndex) ?: return null
-        val exercise = group.getExercisesForSetIndex(position.setIndex).getOrNull(position.exerciseIndex) ?: return null
-        val index = group.exercises.indexOfFirst { it === exercise }
-        return SetRef(block.id, round.id, index).takeIf { index >= 0 }
-    }
+    private fun setAt(position: ELWorkoutState): SetRef? = workout.setAt(state.value.blocks, position)
 
     private val weightStep: Float
         get() = state.value.weightStep
@@ -387,7 +380,7 @@ internal class WorkoutLogViewModel(
             setState { copy(message = WorkoutLogMessage.TooManySets(MaxSets)) }
             return
         }
-        val blocks = state.value.blocks.addRound(blockId, ids).fillAdded(blockId)
+        val blocks = state.value.blocks.addRound(blockId, ids).map { if (it.id == blockId) it.withAddedRoundFilled(sources, prefill) else it }
         // When every set was done, the new one is current
         change { copy(blocks = blocks, current = current ?: blocks.nextOpenAfter(null)).followCurrent() }
         analytics.setAdded()
@@ -472,39 +465,18 @@ internal class WorkoutLogViewModel(
         val exercises = blocks.flatMap { block -> block.exercises.mapNotNull { it.exercise } }.distinctBy { it.uuid }
         if (exercises.isEmpty()) return
         launchCoroutine {
-            val found = try {
-                prefill.sources(exercises)
-            } catch (e: Exception) {
-                Timber.tag(TAG).e(e, "Couldn't load history to fill in from")
-                return@launchCoroutine
-            }
-            sources = sources + found
-            setState { copy(lastTime = lastTime + found.mapValues { (_, source) -> source.lastSets() }) }
-            if (fill && prefill.fillsSets()) {
-                val ids = blocks.map { it.id }.toSet()
-                change { copy(blocks = this.blocks.map { if (it.id in ids) it.filled() else it }) }
-            }
-        }
-    }
-
-    private fun WorkoutBlock.filled(): WorkoutBlock = copy(rounds = rounds.mapIndexed { index, round ->
-        round.copy(sets = round.sets.mapIndexed { i, set ->
-            val source = sources[exercises[i].exercise?.uuid]
-            if (set.removed || set.done || source == null) set else set.filledFrom { prefill.fill(source, it, index) }
-        })
-    })
-
-    // The set just added takes the last session's set at its place, when there was one
-    private fun List<WorkoutBlock>.fillAdded(blockId: Long): List<WorkoutBlock> {
-        if (!prefill.fillsSets()) return this
-        return map { block ->
-            if (block.id != blockId) return@map block
-            val index = block.rounds.lastIndex
-            val round = block.rounds[index]
-            block.copy(rounds = block.rounds.dropLast(1) + round.copy(sets = round.sets.mapIndexed { i, set ->
-                val source = sources[block.exercises[i].exercise?.uuid] ?: return@mapIndexed set
-                set.filledFrom { prefill.fillAdded(source, it, index) }
-            }))
+            loadPrefillSources(exercises).fold(
+                // Without history the sets keep their values
+                { Timber.tag(TAG).e(it, "Couldn't load history to fill in from") },
+                { found ->
+                    sources = sources + found
+                    setState { copy(lastTime = lastTime + found.mapValues { (_, source) -> source.lastSets() }) }
+                    if (fill && prefill.fillsSets()) {
+                        val ids = blocks.map { it.id }.toSet()
+                        change { copy(blocks = this.blocks.map { if (it.id in ids) it.filledFromHistory(sources, prefill) else it }) }
+                    }
+                },
+            )
         }
     }
 
@@ -523,9 +495,9 @@ internal class WorkoutLogViewModel(
     private fun finish() {
         val finished = workout.withSessionBlocks(state.value.blocks, finished = true)
         finished.setCompletedDateAsDate(Date(clock()))
-        store.clearOngoing()
+        repository.clearOngoing()
         analytics.workoutCompleted()
-        store.saveFinished(finished, fromPlan)
+        repository.saveFinished(finished, fromPlan)
         setState { copy(dialog = null, exit = WorkoutLogExit.Finished(finished)) }
     }
 
@@ -543,7 +515,7 @@ internal class WorkoutLogViewModel(
     }
 
     fun onDiscardConfirmed() {
-        store.clearOngoing()
+        repository.clearOngoing()
         analytics.workoutStopped()
         setState { copy(dialog = null, exit = WorkoutLogExit.Discarded) }
     }
@@ -567,24 +539,12 @@ internal class WorkoutLogViewModel(
 
     private fun save() {
         if (state.value.exit == null) {
-            store.saveOngoing(workout.withSessionBlocks(state.value.blocks))
+            repository.saveOngoing(workout.withSessionBlocks(state.value.blocks))
             notifyWorkout()
         }
     }
 
-    private fun notifyWorkout() = notification.update(notificationWorkout())
-
-    // The notification shows a running set timer's seconds left from its set
-    private fun notificationWorkout(): ELWorkout {
-        val state = state.value
-        val workout = workout.withSessionBlocks(state.blocks)
-        val timer = state.timer as? WorkoutTimer.SetTimer ?: return workout
-        val blockIndex = state.blocks.indexOfFirst { it.id == timer.ref.blockId }
-        val roundIndex = state.blocks.getOrNull(blockIndex)?.rounds?.indexOfFirst { it.id == timer.ref.roundId } ?: -1
-        workout.getExerciseGroups().getOrNull(blockIndex)?.exercises?.getOrNull(timer.ref.index)?.sets?.getOrNull(roundIndex)
-            ?.remainingTimeSeconds = state.timerRemainingSeconds()
-        return workout
-    }
+    private fun notifyWorkout() = notification.update(workout.forNotification(state.value))
 
     companion object {
         private const val TickMillis = 1000L
@@ -598,8 +558,8 @@ internal class WorkoutLogViewModel(
          * The launch intent only has the workout as it was when it started. When it's resumed, or Android rebuilds
          * the screen after the app was killed, the saved copy has everything done since.
          */
-        fun load(launched: ELWorkout, store: WorkoutLogStore): LoadedWorkout {
-            val saved = store.savedCopyOf(launched)
+        fun load(launched: ELWorkout, repository: OngoingWorkoutRepository): LoadedWorkout {
+            val saved = repository.savedCopyOf(launched)
             if (saved != null) {
                 saved.clearRemainingTimes()
                 return LoadedWorkout(saved, resumed = true)
@@ -607,88 +567,7 @@ internal class WorkoutLogViewModel(
             launched.prefillRequiredMetrics()
             return LoadedWorkout(launched, resumed = false)
         }
-
-        private fun initialState(workout: ELWorkout, ids: SessionIds, settings: WorkoutLogSettings, now: Long): WorkoutLogState {
-            val blocks = workout.toSessionBlocks(ids)
-            return WorkoutLogState(
-                name = workout.getName().orEmpty(),
-                startedAt = workout.createdDate,
-                now = now,
-                blocks = blocks,
-                current = blocks.resumeAt(),
-                unit = settings.weightUnit(),
-                weightStep = settings.weightIncrease(),
-                keepScreenOn = settings.keepScreenOn(),
-            )
-        }
-
-        private fun WorkoutLogState.withSettings(settings: WorkoutLogSettings) = copy(
-            unit = settings.weightUnit(),
-            weightStep = settings.weightIncrease(),
-            keepScreenOn = settings.keepScreenOn(),
-        )
-
-        // The notification picks the next set the same way
-        private fun List<WorkoutBlock>.resumeAt(): SetRef? {
-            val last = refs().filter { set(it)?.done == true }.maxByOrNull { set(it)?.completedDate ?: 0 }
-            return nextOpenAfter(last)
-        }
-
     }
 }
 
-// The first key after focusing replaces the value
-private fun WorkoutLogState.focusOn(cell: CellFocus?) = copy(focus = cell, typed = null, selected = cell?.ref ?: selected)
-
-private fun WorkoutLogState.countCell(ref: SetRef): CellFocus? = blocks.set(ref)?.let { CellFocus(ref, countField(it)) }
-
-// A weight is typed in the user's unit and stored in kg
-private fun WorkoutLogState.withValue(cell: CellFocus, value: Float?): WorkoutLogState {
-    val stored = if (cell.field == ValueField.Weight) value?.let { storedWeight(it, unit) } else value
-    return copy(blocks = blocks.setValue(cell.ref, cell.field, stored))
-}
-
-// Once the selected set is done, the selection (and the open keypad) moves on to the current set. So does an empty
-// selection, e.g. in an empty workout that just got its first exercise.
-private fun WorkoutLogState.followCurrent(): WorkoutLogState {
-    val next = current ?: return this
-    val selectedSet = selected?.let { blocks.set(it) }
-    if (selectedSet != null && !selectedSet.done) return this
-    return if (focus != null) focusOn(countCell(next)) else copy(selected = next)
-}
-
-// A timed set whose timer has run is ticked next rather than timed again
-private fun WorkoutLogState.stopped(timer: WorkoutTimer) = copy(
-    timer = null,
-    timedSets = if (timer is WorkoutTimer.SetTimer) timedSets + timer.ref else timedSets,
-)
-
-// Anything on the sets that went goes too (the keypad, a set timer, the selection), and the current set moves on to
-// the next one not done that's still there
-private fun WorkoutLogState.withSetsGone(remaining: List<WorkoutBlock>): WorkoutLogState {
-    val kept = { it: SetRef? -> it != null && remaining.set(it) != null }
-    val refs = blocks.refs()
-    val from = refs.indexOf(current)
-    val next = (refs.drop(from + 1) + refs.take(from + 1)).firstOrNull { remaining.set(it)?.done == false }
-    return copy(
-        blocks = remaining,
-        current = current.takeIf(kept) ?: next,
-        selected = selected.takeIf(kept),
-        focus = focus?.takeIf { kept(it.ref) },
-        typed = typed.takeIf { kept(focus?.ref) },
-        timer = timer.takeUnless { it is WorkoutTimer.SetTimer && !kept(it.ref) },
-    ).followCurrent()
-}
-
 internal data class LoadedWorkout(val workout: ELWorkout, val resumed: Boolean)
-
-// The prefill controller fills an ELSet. A weight it fills in is the set's suggestion.
-private fun WorkoutSet.filledFrom(fill: (ELSet) -> Unit): WorkoutSet {
-    val set = toELSet()
-    fill(set)
-    val filled = set.toSessionSet()
-    val suggested = filled.weightKg?.takeIf { it != weightKg }
-    return filled.copy(suggestedKg = suggested ?: suggestedKg)
-}
-
-private fun PrefillSource.lastSets(): List<WorkoutSet> = lastSession?.exercise?.sets.orEmpty().map { it.toSessionSet() }

@@ -1,10 +1,16 @@
 package com.everlog.ui.activities.workoutlog
 
+import arrow.core.Either
+import arrow.core.left
+import arrow.core.right
 import com.everlog.config.AppConfig
 import com.everlog.data.controllers.workoutprefill.BaseWorkoutPrefillController.PrefillSource
+import com.everlog.data.controllers.workoutprefill.LoadPrefillSourcesUseCase
 import com.everlog.data.controllers.workoutsession.SetMode
 import com.everlog.data.controllers.workoutsession.SetRef
 import com.everlog.data.controllers.workoutsession.ValueField
+import com.everlog.data.controllers.workoutsession.WorkoutSet
+import com.everlog.data.controllers.workoutsession.WorkoutSetPrefill
 import com.everlog.data.controllers.workoutsession.set
 import com.everlog.data.model.ELRoutine
 import com.everlog.data.model.exercise.ELExercise
@@ -15,6 +21,7 @@ import com.everlog.data.model.set.ELSet
 import com.everlog.data.model.set.ELSetType
 import com.everlog.data.model.workout.ELWorkout
 import com.everlog.data.model.workout.ELWorkoutState
+import com.everlog.data.repositories.OngoingWorkoutRepository
 import com.everlog.managers.preferences.SettingsManager
 import com.everlog.managers.preferences.SettingsManager.WeightUnit
 import com.everlog.testutil.FakeCoroutineDispatcher
@@ -52,22 +59,23 @@ class WorkoutLogViewModelTest {
     private fun viewModel(launched: ELWorkout = template()): WorkoutLogViewModel {
         val loaded = WorkoutLogViewModel.load(launched, store)
         return WorkoutLogViewModel(
-        dispatcher = FakeCoroutineDispatcher,
-        workout = loaded.workout,
-        resumed = loaded.resumed,
-        fromPlan = false,
-        store = store,
-        settings = settings,
-        analytics = analytics,
-        alerts = alerts,
-        notification = notification,
-        prefill = prefill,
-        clock = { time },
-        tickMillis = null,
-    )
+            dispatcher = FakeCoroutineDispatcher,
+            workout = loaded.workout,
+            resumed = loaded.resumed,
+            fromPlan = false,
+            repository = store,
+            settings = settings,
+            analytics = analytics,
+            alerts = alerts,
+            notification = notification,
+            loadPrefillSources = prefill,
+            prefill = prefill,
+            clock = { time },
+            tickMillis = null,
+        )
     }
 
-    // The fake history fills weights in through ELSet, which reads the weight unit from the preferences
+    // ELSet reads the weight unit from the preferences
     @Before
     fun setUp() {
         InMemorySharedPreferences.install()
@@ -900,7 +908,7 @@ class WorkoutLogViewModelTest {
         restTimeSeconds = 90,
     )
 
-    private class FakeStore : WorkoutLogStore {
+    private class FakeStore : OngoingWorkoutRepository {
         // The ongoing workout as saved before the screen opened, if it's being resumed
         var saved: ELWorkout? = null
         var ongoing: ELWorkout? = null
@@ -936,7 +944,7 @@ class WorkoutLogViewModelTest {
      * History with every exercise last done at [lastWeightKg] for [lastSets] sets, filling in empty weights like the
      * WorkoutPrefillController's history prefill.
      */
-    private class FakePrefill : WorkoutLogPrefill {
+    private class FakePrefill : LoadPrefillSourcesUseCase, WorkoutSetPrefill {
         var lastWeightKg: Float? = null
         var lastSets = 2
         var fills = true
@@ -944,24 +952,23 @@ class WorkoutLogViewModelTest {
 
         override fun fillsSets() = fills
 
-        override suspend fun sources(exercises: List<ELExercise>): Map<String, PrefillSource> {
-            if (fails) throw IllegalStateException("offline")
-            val weight = lastWeightKg ?: return emptyMap()
+        override suspend fun invoke(exercises: List<ELExercise>): Either<Throwable, Map<String, PrefillSource>> {
+            if (fails) return IllegalStateException("offline").left()
+            val weight = lastWeightKg ?: return emptyMap<String, PrefillSource>().right()
             return exercises.associate { exercise ->
                 val sets = MutableList(lastSets) { ELSet(reps = 8, weight = weight) }
                 exercise.uuid!! to PrefillSource(ELExerciseHistory(ELRoutineExercise(exercise.uuid, exercise, sets), ELWorkout()), orm = 0f)
-            }
+            }.right()
         }
 
-        override fun fill(source: PrefillSource, set: ELSet, index: Int) {
-            val last = source.lastSession?.exercise?.sets?.getOrNull(index) ?: return
-            if (set.getWeightKg() == null) set.updateWeight(last.getWeightKg())
+        override fun fill(source: PrefillSource, set: WorkoutSet, index: Int): WorkoutSet {
+            val last = source.lastSession?.exercise?.sets?.getOrNull(index) ?: return set
+            return if (set.weightKg == null) set.copy(weightKg = last.getWeightKg()) else set
         }
 
-        override fun fillAdded(source: PrefillSource, set: ELSet, index: Int): Boolean {
-            val last = source.lastSession?.exercise?.sets?.getOrNull(index) ?: return false
-            set.updateWeight(last.getWeightKg())
-            return true
+        override fun fillAdded(source: PrefillSource, set: WorkoutSet, index: Int): WorkoutSet {
+            val last = source.lastSession?.exercise?.sets?.getOrNull(index) ?: return set
+            return set.copy(weightKg = last.getWeightKg())
         }
     }
 
