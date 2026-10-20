@@ -23,6 +23,7 @@ fun AppButton(
     onClick: () -> Unit,
     text: String,
     enabled: Boolean = true,
+    contentPadding: PaddingValues = buttonContentPadding(),
 ) {
     androidx.compose.material3.Button(
         onClick = onClick,
@@ -33,7 +34,7 @@ fun AppButton(
             containerColor = Theme.contentColors.action,
             disabledContainerColor = Theme.contentColors.action.copy(alpha = DisabledAlpha),
         ),
-        contentPadding = buttonContentPadding(),
+        contentPadding = contentPadding,
     ) {
         ButtonText(
             text = text,
@@ -50,6 +51,7 @@ fun AppSecondaryButton(
     onClick: () -> Unit,
     text: String,
     enabled: Boolean = true,
+    contentPadding: PaddingValues = buttonContentPadding(),
 ) {
     val color = Theme.contentColors.action
     androidx.compose.material3.OutlinedButton(
@@ -62,7 +64,7 @@ fun AppSecondaryButton(
             width = 1.dp,
             color = if (enabled) color else color.copy(alpha = DisabledAlpha),
         ),
-        contentPadding = buttonContentPadding(),
+        contentPadding = contentPadding,
     ) {
         ButtonText(
             text = text,
