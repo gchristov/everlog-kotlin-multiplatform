@@ -168,6 +168,13 @@ A short message over the bottom of the screen, e.g. "Set deleted" with Undo: `--
 `--radius-surface`, text `--content-primary`, the action in `--content-action`, across the screen inside the
 16px margins, just above the footer.
 
+## AppBottomSheet
+
+A sheet that slides up over the screen from the bottom, on `--background-primary` with Material's rounded top
+corners and drag handle, for a short set of options (e.g. a workout's options): an optional title in
+`--font-heading`, then its content, usually `AppListGroup`s, `--space-lg` apart and from the sides. Picking an option
+slides the sheet away first, then acts; tapping outside it or swiping it down closes it.
+
 ## AppDialog
 
 An alert: background `--background-surface`, radius 28px (Material's dialog default), padding 24px, title in `--font-heading`,
