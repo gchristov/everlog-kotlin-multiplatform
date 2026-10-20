@@ -46,6 +46,8 @@ internal data class SetRow(
     val exercise: Int,
     // The first exercise's row in its round, which a divider goes above
     val startsRound: Boolean,
+    // The exercise whose history its last time opens
+    val historyOf: ELExercise?,
     val number: String?,
     val lastTime: String?,
     val countField: ValueField,
@@ -76,6 +78,7 @@ internal fun WorkoutBlock.rows(view: TableView): List<SetRow> = rounds.flatMapIn
             round = r,
             exercise = i,
             startsRound = i == firstShown,
+            historyOf = exercises[i].exercise,
             // A superset's rows are 1a, 1b, 1c
             number = if (round.sets.size > 1) "${r + 1}${'a' + i}" else if (i == firstShown) "${r + 1}" else null,
             lastTime = view.lastTime[exercises[i].exercise?.uuid]?.getOrNull(r)?.let { lastTimeText(it, view.unit, view.unitLabel) },
@@ -120,7 +123,13 @@ internal interface WorkoutTableActions {
 
     fun onDeleteSet(ref: SetRef) = Unit
 
-    fun onOpenExercise(exercise: ELExercise) = Unit
+    fun onOpenExercise(exercise: ELExercise, tab: ExerciseTab) = Unit
 
     fun onDeleteExercise(blockId: Long) = Unit
+}
+
+// Which of an exercise's details opens
+internal enum class ExerciseTab {
+    Info,
+    History,
 }

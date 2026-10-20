@@ -11,6 +11,7 @@ import androidx.compose.ui.test.hasAnyAncestor
 import androidx.compose.ui.test.hasTestTag
 import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.isDialog
+import androidx.compose.ui.test.isPopup
 import androidx.compose.ui.test.junit4.createEmptyComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
@@ -35,6 +36,7 @@ import com.everlog.managers.WorkoutManager
 import com.everlog.testutil.E2EAccount
 import com.everlog.ui.activities.exercisepicker.ExercisePickerActivity
 import com.everlog.ui.activities.home.exercise.ExercisesActivity
+import com.everlog.ui.activities.home.exercise.details.ExerciseDetailsActivity
 import com.everlog.ui.activities.home.workout.details.WorkoutDetailsActivity
 import com.google.common.truth.Truth.assertThat
 import java.util.concurrent.TimeUnit
@@ -102,6 +104,15 @@ class WorkoutLogActivityTest {
         compose.onNodeWithTag(WorkoutLogTags.tick(WorkoutLogTags.set(0, 0, 0))).performClick()
         compose.waitUntil(TIMEOUT) { ongoingFirstSetDone() }
 
+        // Its name opens its details on Info, and its menu's History on History
+        val details = recordLaunches(ExerciseDetailsActivity::class.java)
+        compose.onNodeWithText("Bench press").performClick()
+        compose.onNodeWithTag(WorkoutLogTags.menu(0)).performClick()
+        compose.onNode(hasText("History") and hasAnyAncestor(isPopup())).performClick()
+        compose.waitUntil(TIMEOUT) { details.intents.size == 2 }
+        assertThat(details.intents.map { it.getSerializableExtra(ELConstants.EXTRA_TYPE) })
+            .containsExactly(ExerciseDetailsActivity.Companion.Type.INFO, ExerciseDetailsActivity.Companion.Type.HISTORY).inOrder()
+
         // Add exercise opens the picker, whose picks come back to the table
         val pickerOpened = returnFromPicker(group("e2e-squat", "Squat"))
         compose.onNode(hasText("Add exercise") and hasAnyAncestor(hasTestTag(WorkoutLogTags.Keypad))).performClick()
@@ -109,10 +120,10 @@ class WorkoutLogActivityTest {
         compose.onNodeWithTag(WorkoutLogTags.Table).performScrollToNode(hasText("Squat"))
 
         // The system back button asks about leaving; Finish instead saves the workout and opens its details
-        val details = interceptLaunch(WorkoutDetailsActivity::class.java)
+        val workoutDetails = interceptLaunch(WorkoutDetailsActivity::class.java)
         Espresso.pressBack()
         compose.onNode(hasText("Finish") and hasAnyAncestor(isDialog())).performClick()
-        compose.waitUntil(TIMEOUT) { details.hits > 0 }
+        compose.waitUntil(TIMEOUT) { workoutDetails.hits > 0 }
         compose.waitUntil(TIMEOUT) { screen.state == Lifecycle.State.DESTROYED }
         assertThat(WorkoutManager.manager.ongoingWorkout()).isNull()
         compose.waitUntil(TIMEOUT) { !workoutNotificationShows() }
@@ -149,6 +160,22 @@ class WorkoutLogActivityTest {
     }
 
     private fun interceptLaunch(activity: Class<out Activity>) = intercept(activity, null)
+
+    // Stops the activity from opening, keeping the intents it was launched with
+    private fun recordLaunches(activity: Class<out Activity>) = LaunchRecorder(activity).also {
+        instrumentation.addMonitor(it)
+        monitors += it
+    }
+
+    private class LaunchRecorder(private val activity: Class<out Activity>) : Instrumentation.ActivityMonitor() {
+        val intents = mutableListOf<Intent>()
+
+        override fun onStartActivity(intent: Intent): Instrumentation.ActivityResult? {
+            if (intent.component?.className != activity.name) return null
+            intents += intent
+            return Instrumentation.ActivityResult(Activity.RESULT_CANCELED, null)
+        }
+    }
 
     // Stops the activity from opening, and answers with [result]
     private fun intercept(activity: Class<out Activity>, result: Instrumentation.ActivityResult?) =

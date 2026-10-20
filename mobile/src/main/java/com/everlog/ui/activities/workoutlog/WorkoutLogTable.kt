@@ -3,15 +3,24 @@ package com.everlog.ui.activities.workoutlog
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.AnchoredDraggableDefaults
+import androidx.compose.foundation.gestures.AnchoredDraggableState
+import androidx.compose.foundation.gestures.DraggableAnchors
+import androidx.compose.foundation.gestures.Orientation
+import androidx.compose.foundation.gestures.anchoredDraggable
 import androidx.compose.foundation.gestures.animateScrollBy
+import androidx.compose.foundation.gestures.animateTo
+import androidx.compose.foundation.gestures.snapTo
 import androidx.compose.foundation.indication
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -24,26 +33,28 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.HorizontalDivider
-import androidx.compose.material3.SwipeToDismissBox
-import androidx.compose.material3.SwipeToDismissBoxValue
-import androidx.compose.material3.rememberSwipeToDismissBoxState
 import androidx.compose.material3.ripple
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.layout.HorizontalAlignmentLine
 import androidx.compose.ui.layout.boundsInWindow
+import androidx.compose.ui.layout.layout
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.layout.positionInWindow
 import androidx.compose.ui.platform.LocalContext
@@ -53,11 +64,16 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.everlog.R
 import com.everlog.data.controllers.workoutsession.SetMode
+import com.everlog.data.controllers.workoutsession.SetRef
 import com.everlog.data.controllers.workoutsession.ValueField
 import com.everlog.data.controllers.workoutsession.WorkoutBlock
+import com.everlog.data.model.exercise.ELExercise
 import com.everlog.ui.design.elements.AppIcon
 import com.everlog.ui.design.elements.AppMenuItem
 import com.everlog.ui.design.elements.AppOverflowMenu
@@ -65,7 +81,9 @@ import com.everlog.ui.design.elements.AppTertiaryButton
 import com.everlog.ui.design.elements.AppText
 import com.everlog.ui.design.elements.AppThumbnail
 import com.everlog.ui.design.theme.Theme
+import kotlin.math.roundToInt
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 private object TableSizes {
     val Thumbnail = 40.dp
@@ -76,6 +94,10 @@ private object TableSizes {
     val Badge = 16.dp
     val BadgeOffset = 3.dp
     val RowHeight = 52.dp
+    val DeleteWidth = 88.dp
+    // The suggestion mark beside a weight, smaller than any text style
+    val Mark = 9.sp
+    val MarkGap = 2.dp
     val RowPadding = 12.dp
     val SetColumn = 32.dp
     val Cell = 72.dp
@@ -128,7 +150,8 @@ internal fun WorkoutTable(
             listState.animateScrollToItem(index)
         }
     }
-    CompositionLocalProvider(LocalEnsureVisible provides ensureVisible, LocalReveal provides reveal) {
+    val openSwipe = remember { mutableStateOf<SetRef?>(null) }
+    CompositionLocalProvider(LocalEnsureVisible provides ensureVisible, LocalReveal provides reveal, LocalOpenSwipe provides openSwipe) {
         LazyColumn(
             modifier = Modifier
                 .fillMaxSize()
@@ -160,6 +183,9 @@ private val LocalEnsureVisible = staticCompositionLocalOf<suspend (Float, Float)
 
 private val LocalReveal = staticCompositionLocalOf { 0 }
 
+// The set whose Delete is showing: one at a time, so opening another closes it
+private val LocalOpenSwipe = staticCompositionLocalOf { mutableStateOf<SetRef?>(null) }
+
 @Composable
 private fun ExerciseTable(
     // For the rows' test tags
@@ -171,7 +197,7 @@ private fun ExerciseTable(
     Column(modifier = Modifier.padding(bottom = Theme.spacing.extraLarge)) {
         ExerciseHeader(index, block, actions)
         Spacer(modifier = Modifier.height(Theme.spacing.medium))
-        ColumnLabels(block, view.unitLabel)
+        ColumnLabels(block, view.unitLabel, actions)
         Spacer(modifier = Modifier.height(Theme.spacing.extraSmall))
         Column(
             modifier = Modifier
@@ -185,8 +211,9 @@ private fun ExerciseTable(
                 }
                 // Keyed, so the next set doesn't take over a swiped one's state once it's gone
                 key(row.ref.roundId, row.exercise) {
-                    SwipeToDelete(onDelete = { actions.onDeleteSet(row.ref) }) {
-                        TableRow(tag = WorkoutLogTags.set(index, row.round, row.exercise), row = row, actions = actions)
+                    val tag = WorkoutLogTags.set(index, row.round, row.exercise)
+                    SwipeToDelete(ref = row.ref, tag = tag, onDelete = { actions.onDeleteSet(row.ref) }) {
+                        TableRow(tag = tag, row = row, actions = actions)
                     }
                 }
             }
@@ -199,30 +226,53 @@ private fun ExerciseTable(
     }
 }
 
+private enum class SwipeReveal { Closed, Open }
+
+// Swiping a set to the left uncovers its Delete button, so a stray swipe can't delete it on its own
 @Composable
-private fun SwipeToDelete(onDelete: () -> Unit, content: @Composable () -> Unit) {
-    val delete by rememberUpdatedState(onDelete)
-    val swipeState = rememberSwipeToDismissBoxState()
-    LaunchedEffect(swipeState.currentValue) {
-        if (swipeState.currentValue == SwipeToDismissBoxValue.EndToStart) delete()
+private fun SwipeToDelete(ref: SetRef, tag: String, onDelete: () -> Unit, content: @Composable () -> Unit) {
+    val revealPx = with(LocalDensity.current) { TableSizes.DeleteWidth.toPx() }
+    val state = remember { AnchoredDraggableState(SwipeReveal.Closed) }
+    SideEffect {
+        state.updateAnchors(DraggableAnchors { SwipeReveal.Closed at 0f; SwipeReveal.Open at -revealPx })
     }
-    SwipeToDismissBox(
-        state = swipeState,
-        enableDismissFromStartToEnd = false,
-        backgroundContent = {
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .background(Theme.contentColors.destructive.copy(alpha = 0.2f))
-                    .padding(horizontal = Theme.spacing.large),
-                contentAlignment = Alignment.CenterEnd,
-            ) {
-                AppText(text = stringResource(R.string.workout_log_delete), style = Theme.typography.bodyBold, color = Theme.contentColors.destructive)
-            }
-        },
-    ) {
-        // So the red behind only shows as it's swiped
-        Box(modifier = Modifier.background(Theme.backgrounds.surface)) { content() }
+    var openSwipe by LocalOpenSwipe.current
+    LaunchedEffect(state) {
+        snapshotFlow { state.targetValue }.collect { if (it == SwipeReveal.Open) openSwipe = ref }
+    }
+    LaunchedEffect(openSwipe) {
+        if (openSwipe != ref && state.targetValue == SwipeReveal.Open) state.animateTo(SwipeReveal.Closed)
+    }
+    val scope = rememberCoroutineScope()
+    Box(modifier = Modifier.height(IntrinsicSize.Min)) {
+        Box(
+            modifier = Modifier
+                .align(Alignment.CenterEnd)
+                .fillMaxHeight()
+                .width(TableSizes.DeleteWidth)
+                .background(Theme.contentColors.destructive.copy(alpha = 0.2f))
+                .testTag(WorkoutLogTags.delete(tag))
+                .clickable {
+                    onDelete()
+                    scope.launch { state.snapTo(SwipeReveal.Closed) }
+                },
+            contentAlignment = Alignment.Center,
+        ) {
+            AppText(text = stringResource(R.string.workout_log_delete), style = Theme.typography.bodyBold, color = Theme.contentColors.destructive)
+        }
+        Box(
+            modifier = Modifier
+                .offset { IntOffset(state.offset.takeIf { !it.isNaN() }?.roundToInt() ?: 0, 0) }
+                .anchoredDraggable(
+                    state = state,
+                    orientation = Orientation.Horizontal,
+                    flingBehavior = AnchoredDraggableDefaults.flingBehavior(state, positionalThreshold = { it / 2 }),
+                )
+                // So the red behind only shows as it's swiped
+                .background(Theme.backgrounds.surface),
+        ) {
+            content()
+        }
     }
 }
 
@@ -235,33 +285,62 @@ private fun ExerciseHeader(index: Int, block: WorkoutBlock, actions: WorkoutTabl
     ) {
         if (block.exercises.size == 1) {
             val exercise = block.exercises.first().exercise
-            AppThumbnail(
-                modifier = Modifier.size(TableSizes.Thumbnail).clip(RoundedCornerShape(TableSizes.ThumbnailCorner)),
-                imageUrl = exercise?.imageUrl,
-            )
-            AppText(
-                modifier = Modifier.weight(1f),
-                text = exercise?.name.orEmpty(),
-                style = Theme.typography.heading,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis,
-            )
+            Row(
+                modifier = Modifier.weight(1f).openingInfo(exercise, actions, TableSizes.ThumbnailCorner),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(Theme.spacing.medium),
+            ) {
+                AppThumbnail(
+                    modifier = Modifier.size(TableSizes.Thumbnail).clip(RoundedCornerShape(TableSizes.ThumbnailCorner)),
+                    imageUrl = exercise?.imageUrl,
+                )
+                AppText(
+                    text = exercise?.name.orEmpty(),
+                    style = Theme.typography.heading,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                )
+            }
         } else {
-            GroupHeader(modifier = Modifier.weight(1f), block = block)
+            GroupHeader(modifier = Modifier.weight(1f).alignBy(LastExerciseCenter), block = block, actions = actions)
         }
+        val exercises = block.exercises.mapNotNull { it.exercise }
         AppOverflowMenu(
-            modifier = Modifier.testTag(WorkoutLogTags.menu(index)),
+            // Beside a group's last exercise, as it's under the group's type
+            modifier = Modifier.testTag(WorkoutLogTags.menu(index)).then(
+                if (block.exercises.size > 1) Modifier.alignBy { it.measuredHeight / 2 } else Modifier,
+            ),
             outlined = true,
-            items = block.exercises.mapNotNull { it.exercise }.map { exercise ->
-                AppMenuItem(text = stringResource(R.string.workout_log_exercise_details, exercise.name.orEmpty()), onClick = { actions.onOpenExercise(exercise) })
+            items = exercises.map { exercise ->
+                val text = if (exercises.size == 1) {
+                    stringResource(R.string.workout_log_history)
+                } else {
+                    stringResource(R.string.workout_log_exercise_history, exercise.name.orEmpty())
+                }
+                AppMenuItem(text = text, onClick = { actions.onOpenExercise(exercise, ExerciseTab.History) })
             } + AppMenuItem(text = stringResource(R.string.workout_log_delete), onClick = { actions.onDeleteExercise(block.id) }),
         )
     }
 }
 
+private fun Modifier.openingHistory(exercise: ELExercise?, actions: WorkoutTableActions) =
+    if (exercise == null) this else clickable { actions.onOpenExercise(exercise, ExerciseTab.History) }
+
+// The press shows with the thumbnail's corners, which a rounder shape would cut into
+private fun Modifier.openingInfo(exercise: ELExercise?, actions: WorkoutTableActions, corner: Dp) =
+    if (exercise == null) this else clip(RoundedCornerShape(corner)).clickable { actions.onOpenExercise(exercise, ExerciseTab.Info) }
+
+// The middle of a group header's last exercise, which the exercise menu lines up with
+private val LastExerciseCenter = HorizontalAlignmentLine(merger = { _, last -> last })
+
+private fun Modifier.providingCenter(line: HorizontalAlignmentLine) = layout { measurable, constraints ->
+    val placeable = measurable.measure(constraints)
+    layout(placeable.width, placeable.height, mapOf(line to placeable.height / 2)) { placeable.place(0, 0) }
+}
+
 // SUPERSET, CIRCUIT and so on over the names, each with its image and letter
 @Composable
-private fun GroupHeader(modifier: Modifier, block: WorkoutBlock) {
+private fun GroupHeader(modifier: Modifier, block: WorkoutBlock, actions: WorkoutTableActions) {
     val context = LocalContext.current
     val type = block.setType
     Column(modifier = modifier, verticalArrangement = Arrangement.spacedBy(TableSizes.GroupRowGap)) {
@@ -274,7 +353,13 @@ private fun GroupHeader(modifier: Modifier, block: WorkoutBlock) {
             )
         }
         block.exercises.forEachIndexed { i, exercise ->
-            Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(Theme.spacing.medium)) {
+            Row(
+                modifier = Modifier
+                    .then(if (i == block.exercises.lastIndex) Modifier.providingCenter(LastExerciseCenter) else Modifier)
+                    .openingInfo(exercise.exercise, actions, TableSizes.GroupThumbnailCorner),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(Theme.spacing.medium),
+            ) {
                 Box {
                     AppThumbnail(
                         modifier = Modifier.size(TableSizes.GroupThumbnail).clip(RoundedCornerShape(TableSizes.GroupThumbnailCorner)),
@@ -304,7 +389,7 @@ private fun GroupHeader(modifier: Modifier, block: WorkoutBlock) {
 }
 
 @Composable
-private fun ColumnLabels(block: WorkoutBlock, unitLabel: String) {
+private fun ColumnLabels(block: WorkoutBlock, unitLabel: String, actions: WorkoutTableActions) {
     val modes = block.rounds.flatMap { round -> round.sets.filterNot { it.removed }.map { it.mode } }.toSet()
     val count = when {
         modes == setOf(SetMode.Time) -> stringResource(R.string.workout_log_column_time)
@@ -316,7 +401,9 @@ private fun ColumnLabels(block: WorkoutBlock, unitLabel: String) {
         horizontalArrangement = Arrangement.spacedBy(TableSizes.ColumnGap),
     ) {
         Label(stringResource(R.string.workout_log_column_set), Modifier.width(TableSizes.SetColumn), TextAlign.Center)
-        Label(stringResource(R.string.workout_log_column_last_time), Modifier.weight(1f))
+        // A group's heading is over several exercises' history, so only their rows open it
+        val exercise = block.exercises.singleOrNull()?.exercise
+        Label(stringResource(R.string.workout_log_column_last_time), Modifier.weight(1f).openingHistory(exercise, actions))
         Label(count, Modifier.width(TableSizes.Cell), TextAlign.Center)
         Label(unitLabel, Modifier.width(TableSizes.Cell), TextAlign.Center)
         Spacer(modifier = Modifier.width(TableSizes.CheckTarget))
@@ -349,13 +436,21 @@ private fun TableRow(tag: String, row: SetRow, actions: WorkoutTableActions) {
             text = row.number.orEmpty(),
             style = Theme.typography.bodyBold,
         )
-        AppText(
-            modifier = Modifier.weight(1f),
-            text = row.lastTime ?: EmptyValue,
-            style = Theme.typography.caption.copy(fontFeatureSettings = "tnum"),
-            color = Theme.contentColors.secondary,
-            maxLines = 1,
-        )
+        Box(
+            modifier = Modifier
+                .weight(1f)
+                .fillMaxHeight()
+                .testTag(WorkoutLogTags.lastTime(tag))
+                .openingHistory(row.historyOf?.takeIf { row.lastTime != null }, actions),
+            contentAlignment = Alignment.CenterStart,
+        ) {
+            AppText(
+                text = row.lastTime ?: EmptyValue,
+                style = Theme.typography.caption.copy(fontFeatureSettings = "tnum"),
+                color = Theme.contentColors.secondary,
+                maxLines = 1,
+            )
+        }
         // Reps (or time) first, then weight, as last time reads: 15 × 17 kg
         Cell(tag = WorkoutLogTags.count(tag), text = row.countText, focused = row.countFocused, boxed = row.selected, onClick = onCount, highlight = row.timing)
         Cell(
@@ -429,12 +524,22 @@ private fun Cell(
                 ),
             contentAlignment = Alignment.Center,
         ) {
-            AppText(
-                text = if (suggested) "$text $SuggestedMark" else text,
-                style = Theme.typography.body.copy(fontFeatureSettings = "tnum"),
-                color = if (highlight || suggested) Theme.contentColors.action else Theme.contentColors.primary,
-                maxLines = 1,
-            )
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                AppText(
+                    text = text,
+                    style = Theme.typography.body.copy(fontFeatureSettings = "tnum"),
+                    color = if (highlight || suggested) Theme.contentColors.action else Theme.contentColors.primary,
+                    maxLines = 1,
+                )
+                if (suggested) {
+                    AppText(
+                        modifier = Modifier.padding(start = TableSizes.MarkGap),
+                        text = SuggestedMark,
+                        style = Theme.typography.small.copy(fontSize = TableSizes.Mark),
+                        color = Theme.contentColors.action,
+                    )
+                }
+            }
         }
     }
 }
@@ -532,6 +637,10 @@ internal object WorkoutLogTags {
     fun set(block: Int, round: Int, exercise: Int) = "set:$block:$round:$exercise"
 
     fun menu(block: Int) = "menu:$block"
+
+    fun delete(set: String) = "$set:delete"
+
+    fun lastTime(set: String) = "$set:last"
 
     fun count(set: String) = "$set:count"
 

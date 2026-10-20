@@ -23,6 +23,7 @@ import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollToIndex
 import androidx.compose.ui.test.performScrollToNode
 import androidx.compose.ui.test.performTouchInput
+import androidx.compose.ui.test.getUnclippedBoundsInRoot
 import androidx.compose.ui.test.swipeLeft
 import androidx.test.espresso.Espresso
 import androidx.test.ext.junit.runners.AndroidJUnit4
@@ -82,8 +83,8 @@ class WorkoutLogScenarioTest {
     private val analytics = RecordingAnalytics()
     private val notification = RecordingNotification()
     private var exit: WorkoutLogExit? = null
-    // The exercise whose details were opened
-    private var opened: String? = null
+    // The exercise whose details were opened, and on which tab
+    private var opened: Pair<String?, ExerciseTab>? = null
     private val now = 1_800_000_000_000L
 
     @Before
@@ -106,7 +107,7 @@ class WorkoutLogScenarioTest {
                     viewModel = viewModel,
                     // The picker is another screen, so its picks are handed straight in
                     onAddExercise = { viewModel.onExercisesPicked(listOf(group(ELSetType.SINGLE, "Squat" to 5))) },
-                    onOpenExercise = { opened = it.name },
+                    onOpenExercise = { exercise, tab -> opened = exercise.name to tab },
                     onExit = { exit = it },
                 )
             }
@@ -114,8 +115,14 @@ class WorkoutLogScenarioTest {
 
         // Bench press was last done at 8 × 100 lb: its weights are filled in from that, as suggestions, and its last
         // time shows beside each set
-        cell(0, 0, 0, "weight").assertTextEquals("100 ✦")
+        cell(0, 0, 0, "weight").assertTextEquals("100", "✦")
         compose.onAllNodesWithText("8 × 100 lb")[0].assertExists()
+        // Its last time, and the column's heading, open its history
+        compose.onNodeWithTag(WorkoutLogTags.lastTime(WorkoutLogTags.set(0, 1, 0))).performClick()
+        assertThat(opened).isEqualTo("Bench press" to ExerciseTab.History)
+        opened = null
+        compose.onAllNodesWithText("LAST TIME")[0].performClick()
+        assertThat(opened).isEqualTo("Bench press" to ExerciseTab.History)
 
         // Bench press, set 1: reps typed over the template's 8, Next to the suggested weight, which says where it
         // comes from, typed over in lb, then Complete set
@@ -129,31 +136,60 @@ class WorkoutLogScenarioTest {
         key("Complete set").performClick()
         tick(0, 0, 0).assertContentDescriptionEquals("Undo set")
 
-        // Set 2 is open on the keypad: switched to time, typed like a microwave
+        // Set 2 is open on the keypad: switched to time, typed like a microwave, and its key starts the timer
         compose.onNodeWithText("SET 2 OF 2 · REPS").assertExists()
         key("Time").performClick()
         keys("130")
         cell(0, 1, 0, "count").assertTextEquals("1:30")
-        compose.onNodeWithContentDescription("Hide keypad").performClick()
+        key("Start timer").performClick()
+        compose.onNodeWithText("SET TIMER").assertExists()
         // Each value is logged once, as the keypad leaves it, in lb
         assertThat(analytics.events.filter { "modified" in it })
             .containsExactly("reps_modified 10.0", "weight_modified 135.0", "time_modified 90.0").inOrder()
 
-        // A timed set starts its timer from its row. +10s adds to its time, and Stop leaves the set to be ticked, which
-        // starts its rest
-        tick(0, 1, 0).assertContentDescriptionEquals("Start timer").performClick()
-        compose.onNodeWithText("SET TIMER").assertExists()
+        // +10s adds to its time, and Stop leaves the set to be completed, which starts its rest
         key("+10s").performClick()
         cell(0, 1, 0, "count").assertTextEquals("1:40")
         key("Stop").performClick()
-        tick(0, 1, 0).assertContentDescriptionEquals("Complete set").performClick()
+        key("Complete set").performClick()
         tick(0, 1, 0).assertContentDescriptionEquals("Undo set")
         compose.onNodeWithText("REST").assertExists()
-        key("Skip").performClick()
-        compose.onNodeWithText("REST").assertDoesNotExist()
+
+        // Edited, the done timed set runs its timer again in place of the rest, and Done stops it and moves on to
+        // the set to complete next
+        cell(0, 1, 0, "count").performClick()
+        key("Start timer").performClick()
+        compose.onNodeWithText("SET TIMER").assertExists()
+        key("Done").performClick()
+        compose.onNodeWithText("SET TIMER").assertDoesNotExist()
+        tick(0, 1, 0).assertContentDescriptionEquals("Undo set")
+        compose.onNodeWithText("SET 1 OF 2 · 1 OF 2 · REPS").assertExists()
+        compose.onNodeWithContentDescription("Hide keypad").performClick()
+
+        // Its weight's key is Done, its time's runs the timer again, and moving on to another set stops it
+        cell(0, 1, 0, "weight").performClick()
+        key("Done").assertExists()
+        cell(0, 1, 0, "count").performClick()
+        key("Start timer").performClick()
+        compose.onNodeWithText("SET TIMER").assertExists()
+        cell(0, 0, 0, "count").performClick()
+        compose.onNodeWithText("SET TIMER").assertDoesNotExist()
+        compose.onNodeWithContentDescription("Hide keypad").performClick()
+        tick(0, 1, 0).assertContentDescriptionEquals("Undo set")
+
+        // The superset's menu, beside its last exercise, has each exercise's history, and each name opens its info
+        showExercise(1)
+        val menu = compose.onNodeWithTag(WorkoutLogTags.menu(1)).getUnclippedBoundsInRoot()
+        val raise = compose.onNode(hasText("Raise") and hasAnyAncestor(hasTestTag(WorkoutLogTags.Table))).getUnclippedBoundsInRoot()
+        assertThat(((menu.top + menu.bottom) / 2).value).isWithin(1f).of(((raise.top + raise.bottom) / 2).value)
+        compose.onNodeWithTag(WorkoutLogTags.menu(1)).performClick()
+        compose.onNode(hasText("Fly history") and hasAnyAncestor(isPopup())).assertExists()
+        compose.onNode(hasText("Raise history") and hasAnyAncestor(isPopup())).performClick()
+        assertThat(opened).isEqualTo("Raise" to ExerciseTab.History)
+        compose.onNode(hasText("Fly") and hasAnyAncestor(hasTestTag(WorkoutLogTags.Table))).performClick()
+        assertThat(opened).isEqualTo("Fly" to ExerciseTab.Info)
 
         // The closed keypad's Complete set goes through the superset exercise by exercise
-        showExercise(1)
         key("Complete set").performClick()
         key("Complete set").performClick()
         tick(1, 0, 0).assertContentDescriptionEquals("Undo set")
@@ -186,13 +222,25 @@ class WorkoutLogScenarioTest {
         tick(0, 0, 0).assertContentDescriptionEquals("Undo set")
         cell(0, 1, 0, "count").assertTextEquals("1:40")
 
-        // A set added to bench press, swiped away, put back with Undo, then swiped away for good
+        // A set added to bench press. A swipe only shows its Delete, which deletes it; Undo puts it back, then it's
+        // deleted for good.
         showExercise(0)
         compose.onAllNodes(hasText("Add set") and hasAnyAncestor(hasTestTag(WorkoutLogTags.Table)))[0].performClick()
         row(0, 2, 0).assertExists().performTouchInput { swipeLeft() }
+        row(0, 2, 0).assertExists()
+        // Opening another set's Delete closes the first
+        val closedLeft = row(0, 0, 0).getUnclippedBoundsInRoot().left
+        assertThat(row(0, 2, 0).getUnclippedBoundsInRoot().left).isLessThan(closedLeft)
+        row(0, 1, 0).performTouchInput { swipeLeft() }
+        assertThat(row(0, 1, 0).getUnclippedBoundsInRoot().left).isLessThan(closedLeft)
+        assertThat(row(0, 2, 0).getUnclippedBoundsInRoot().left).isEqualTo(closedLeft)
+        row(0, 2, 0).performTouchInput { swipeLeft() }
+        assertThat(row(0, 1, 0).getUnclippedBoundsInRoot().left).isEqualTo(closedLeft)
+        deleteSet(0, 2, 0)
         row(0, 2, 0).assertDoesNotExist()
         compose.onNodeWithText("Undo").performClick()
         row(0, 2, 0).assertExists().performTouchInput { swipeLeft() }
+        deleteSet(0, 2, 0)
         row(0, 2, 0).assertDoesNotExist()
         assertThat(analytics.events).containsAtLeast("set_added", "set_deleted", "set_deleted").inOrder()
 
@@ -201,10 +249,24 @@ class WorkoutLogScenarioTest {
         compose.onNodeWithTag(WorkoutLogTags.Table).performScrollToNode(hasText("Squat"))
         compose.onNodeWithText("Squat").assertExists()
 
-        // Its menu opens its details, then deletes it after asking
+        // Deleting its last set takes the exercise with it, and Undo brings it back to stay
+        showExercise(2)
+        row(2, 1, 0).performTouchInput { swipeLeft() }
+        deleteSet(2, 1, 0)
+        row(2, 0, 0).performTouchInput { swipeLeft() }
+        deleteSet(2, 0, 0)
+        compose.onNodeWithText("Squat").assertDoesNotExist()
+        compose.onNodeWithText("Undo").performClick()
+        compose.mainClock.advanceTimeBy(2_000)
+        showExercise(2)
+        row(2, 0, 0).assertExists()
+
+        // Its name opens its info, its menu its history, then deletes it after asking
+        compose.onNodeWithText("Squat").performClick()
+        assertThat(opened).isEqualTo("Squat" to ExerciseTab.Info)
         compose.onNodeWithTag(WorkoutLogTags.menu(2)).performClick()
-        compose.onNode(hasText("Squat details") and hasAnyAncestor(isPopup())).performClick()
-        assertThat(opened).isEqualTo("Squat")
+        compose.onNode(hasText("History") and hasAnyAncestor(isPopup())).performClick()
+        assertThat(opened).isEqualTo("Squat" to ExerciseTab.History)
         compose.onNodeWithTag(WorkoutLogTags.menu(2)).performClick()
         compose.onNode(hasText("Delete") and hasAnyAncestor(isPopup())).performClick()
         compose.onNodeWithText("Delete Squat?").assertExists()
@@ -255,7 +317,7 @@ class WorkoutLogScenarioTest {
         val empty = ELWorkout(uuid = "empty", createdDate = now, routine = ELRoutine(name = "Quick"))
         var viewModel by mutableStateOf(viewModel(empty))
         compose.setContent {
-            Theme { WorkoutLogScreen(viewModel = viewModel, onAddExercise = {}, onOpenExercise = {}, onExit = { exit = it }) }
+            Theme { WorkoutLogScreen(viewModel = viewModel, onAddExercise = {}, onOpenExercise = { _, _ -> }, onExit = { exit = it }) }
         }
         compose.onNodeWithContentDescription("Close").performClick()
         compose.onNodeWithText("Nothing's been logged yet.").assertExists()
@@ -350,6 +412,9 @@ class WorkoutLogScenarioTest {
     }
 
     private fun row(block: Int, round: Int, exercise: Int) = compose.onNodeWithTag(WorkoutLogTags.set(block, round, exercise))
+
+    private fun deleteSet(block: Int, round: Int, exercise: Int) =
+        compose.onNodeWithTag(WorkoutLogTags.delete(WorkoutLogTags.set(block, round, exercise))).performClick()
 
     private fun tick(block: Int, round: Int, exercise: Int) =
         compose.onNodeWithTag(WorkoutLogTags.tick(WorkoutLogTags.set(block, round, exercise)))
