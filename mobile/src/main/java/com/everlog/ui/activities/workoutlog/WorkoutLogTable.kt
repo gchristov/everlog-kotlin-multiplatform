@@ -65,6 +65,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.everlog.R
 import com.everlog.data.controllers.workoutsession.SetMode
 import com.everlog.data.controllers.workoutsession.SetRef
@@ -92,6 +93,9 @@ private object TableSizes {
     val BadgeOffset = 3.dp
     val RowHeight = 52.dp
     val DeleteWidth = 88.dp
+    // The suggestion mark beside a weight, smaller than any text style
+    val Mark = 9.sp
+    val MarkGap = 2.dp
     val RowPadding = 12.dp
     val SetColumn = 32.dp
     val Cell = 72.dp
@@ -505,12 +509,22 @@ private fun Cell(
                 ),
             contentAlignment = Alignment.Center,
         ) {
-            AppText(
-                text = if (suggested) "$text $SuggestedMark" else text,
-                style = Theme.typography.body.copy(fontFeatureSettings = "tnum"),
-                color = if (highlight || suggested) Theme.contentColors.action else Theme.contentColors.primary,
-                maxLines = 1,
-            )
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                AppText(
+                    text = text,
+                    style = Theme.typography.body.copy(fontFeatureSettings = "tnum"),
+                    color = if (highlight || suggested) Theme.contentColors.action else Theme.contentColors.primary,
+                    maxLines = 1,
+                )
+                if (suggested) {
+                    AppText(
+                        modifier = Modifier.padding(start = TableSizes.MarkGap),
+                        text = SuggestedMark,
+                        style = Theme.typography.small.copy(fontSize = TableSizes.Mark),
+                        color = Theme.contentColors.action,
+                    )
+                }
+            }
         }
     }
 }

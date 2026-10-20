@@ -115,7 +115,7 @@ class WorkoutLogScenarioTest {
 
         // Bench press was last done at 8 × 100 lb: its weights are filled in from that, as suggestions, and its last
         // time shows beside each set
-        cell(0, 0, 0, "weight").assertTextEquals("100 ✦")
+        cell(0, 0, 0, "weight").assertTextEquals("100", "✦")
         compose.onAllNodesWithText("8 × 100 lb")[0].assertExists()
         // Its last time, and the column's heading, open its history
         compose.onNodeWithTag(WorkoutLogTags.lastTime(WorkoutLogTags.set(0, 1, 0))).performClick()
