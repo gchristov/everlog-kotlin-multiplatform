@@ -56,7 +56,7 @@ internal sealed interface PickerMessage {
     data class TooMany(val max: Int) : PickerMessage
 }
 
-// SINGLE adds each exercise on its own; any other type links them, like the current picker
+// SINGLE adds each exercise on its own; any other type links them
 internal data class PickerResult(val exercises: List<LibraryExercise>, val setType: ELSetType)
 
 internal class ExercisePickerViewModel(
@@ -95,6 +95,9 @@ internal class ExercisePickerViewModel(
         }
         load()
     }
+
+    // Before any of the screen's events, so they're credited to it
+    fun onResume() = analytics.screenViewed(state.value.mode)
 
     fun onRetry() = load()
 

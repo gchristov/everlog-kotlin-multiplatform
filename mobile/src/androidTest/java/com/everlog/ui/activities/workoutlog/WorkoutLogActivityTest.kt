@@ -22,11 +22,9 @@ import androidx.test.espresso.Espresso
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.rule.GrantPermissionRule
-import com.everlog.BuildConfig
 import com.everlog.constants.ELConstants
 import com.everlog.data.datastores.ELDatastore
 import com.everlog.data.model.ELRoutine
-import com.everlog.data.model.ELUser
 import com.everlog.data.model.exercise.ELExercise
 import com.everlog.data.model.exercise.ELExerciseGroup
 import com.everlog.data.model.exercise.ELRoutineExercise
@@ -34,13 +32,11 @@ import com.everlog.data.model.set.ELSet
 import com.everlog.data.model.set.ELSetType
 import com.everlog.data.model.workout.ELWorkout
 import com.everlog.managers.WorkoutManager
-import com.everlog.managers.auth.AuthManager
-import com.everlog.managers.auth.LocalUserManager
+import com.everlog.testutil.E2EAccount
 import com.everlog.ui.activities.exercisepicker.ExercisePickerActivity
 import com.everlog.ui.activities.home.exercise.ExercisesActivity
 import com.everlog.ui.activities.home.workout.details.WorkoutDetailsActivity
 import com.google.common.truth.Truth.assertThat
-import java.util.concurrent.CountDownLatch
 import java.util.concurrent.TimeUnit
 import org.junit.After
 import org.junit.Before
@@ -81,7 +77,7 @@ class WorkoutLogActivityTest {
 
     @Before
     fun setUp() {
-        signIn()
+        E2EAccount.signIn()
         WorkoutManager.manager.clearOngoingWorkout()
     }
 
@@ -164,24 +160,6 @@ class WorkoutLogActivityTest {
     private fun ongoingFirstSetDone(): Boolean =
         WorkoutManager.manager.ongoingWorkout()?.getExerciseGroups()?.firstOrNull()?.exercises?.firstOrNull()?.sets?.firstOrNull()
             ?.getCompletedDate()?.let { it > 0 } == true
-
-    private fun signIn() {
-        if (LocalUserManager.getUser() != null) return
-        val signedIn = CountDownLatch(1)
-        var error: Throwable? = null
-        instrumentation.runOnMainSync {
-            AuthManager.login(BuildConfig.E2E_TEST_USER_EMAIL, BuildConfig.E2E_TEST_USER_PASSWORD, object : AuthManager.OnAuthActionListener() {
-                override fun onSuccess(user: ELUser, newUser: Boolean) = signedIn.countDown()
-
-                override fun onError(throwable: Throwable) {
-                    error = throwable
-                    signedIn.countDown()
-                }
-            })
-        }
-        assertThat(signedIn.await(30, TimeUnit.SECONDS)).isTrue()
-        error?.let { throw it }
-    }
 
     private companion object {
         const val TIMEOUT = 10_000L

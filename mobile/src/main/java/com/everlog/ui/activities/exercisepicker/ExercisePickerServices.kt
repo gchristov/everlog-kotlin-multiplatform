@@ -1,6 +1,7 @@
 package com.everlog.ui.activities.exercisepicker
 
 import com.everlog.data.model.exercise.picker.StoredFilterToken
+import com.everlog.managers.analytics.AnalyticsConstants
 import com.everlog.managers.analytics.AnalyticsManager
 import com.everlog.managers.preferences.PreferencesManager
 import com.google.gson.Gson
@@ -12,6 +13,8 @@ import timber.log.Timber
  * movement, yours. The screen view (screen_exercises_v2 or screen_exercise_picker_v2) says the mode.
  */
 internal interface ExercisePickerAnalytics {
+    fun screenViewed(mode: PickerMode)
+
     // source: chip, menu, token, typed or recent
     fun filterAdded(filter: String, value: String, source: String)
 
@@ -35,6 +38,10 @@ internal interface ExercisePickerAnalytics {
 
 internal class RealExercisePickerAnalytics : ExercisePickerAnalytics {
     private val analytics = AnalyticsManager.manager
+
+    override fun screenViewed(mode: PickerMode) = analytics.screenName(
+        if (mode == PickerMode.Pick) AnalyticsConstants.SCREEN_EXERCISE_PICKER_V2 else AnalyticsConstants.SCREEN_EXERCISES_V2,
+    )
 
     override fun filterAdded(filter: String, value: String, source: String) = analytics.exercisePickerFilterAdded(filter, value, source)
 
