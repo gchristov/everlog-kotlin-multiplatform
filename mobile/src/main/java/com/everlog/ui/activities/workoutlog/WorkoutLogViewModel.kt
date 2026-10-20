@@ -1,5 +1,6 @@
 package com.everlog.ui.activities.workoutlog
 
+import com.everlog.config.AppConfig
 import com.everlog.data.controllers.workoutsession.SessionIds
 import com.everlog.data.controllers.workoutsession.SetMode
 import com.everlog.data.controllers.workoutsession.SetRef
@@ -16,6 +17,7 @@ import com.everlog.data.controllers.workoutsession.setMode
 import com.everlog.data.controllers.workoutsession.setValue
 import com.everlog.data.controllers.workoutsession.toSessionBlocks
 import com.everlog.data.controllers.workoutsession.uncompleteSet
+import com.everlog.data.controllers.workoutsession.withRestSeconds
 import com.everlog.data.controllers.workoutsession.withSessionBlocks
 import com.everlog.data.model.exercise.ELExerciseGroup
 import com.everlog.data.model.workout.ELWorkout
@@ -44,36 +46,55 @@ internal class WorkoutLogViewModel(
     private val store: WorkoutLogStore,
     private val settings: WorkoutLogSettings,
     private val analytics: WorkoutLogAnalytics,
+    private val alerts: WorkoutLogAlerts,
     private val clock: () -> Long = System::currentTimeMillis,
     private val ids: SessionIds = SessionIds(),
     private val tickMillis: Long? = TickMillis,
 ) : CommonViewModel<WorkoutLogState>(dispatcher, initialState(workout, ids, settings, clock())) {
 
     private var ticking: Job? = null
+    private var resumed = false
 
     init {
         // So the workout can be resumed from the start, as the old screen does
         save()
     }
 
-    // A setting may have changed while the screen was away, e.g. the weight unit. The time only moves on while
-    // the screen shows.
+    // A setting may have changed while the screen was away, e.g. the weight unit
     fun onResume() {
+        resumed = true
         analytics.screenViewed()
         setState { withSettings(settings).copy(now = clock()) }
-        val tick = tickMillis ?: return
-        ticking?.cancel()
-        ticking = launchCoroutine {
-            while (isActive) {
-                delay(tick)
-                setState { copy(now = clock()) }
-            }
-        }
+        keepTicking()
     }
 
+    // The time stops while the screen's away, unless a countdown is running: a rest still sounds with the phone
+    // locked, as on the old screen
     fun onPause() {
-        ticking?.cancel()
-        ticking = null
+        resumed = false
+    }
+
+    /**
+     * Moves the time on, and ends a countdown that has run out, with a sound. A timed set is left to be ticked, as on
+     * the old screen.
+     */
+    fun tick() {
+        setState { copy(now = clock()) }
+        val timer = state.value.timer ?: return
+        if (clock() < timer.endsAt) return
+        setState { stopped(timer) }
+        alerts.timerRanOut()
+    }
+
+    private fun keepTicking() {
+        val tick = tickMillis ?: return
+        if (ticking?.isActive == true) return
+        ticking = launchCoroutine {
+            while (isActive && (resumed || state.value.timer != null)) {
+                delay(tick)
+                tick()
+            }
+        }
     }
 
     // The keypad
@@ -133,13 +154,76 @@ internal class WorkoutLogViewModel(
                 complete(cell.ref)
                 setState { focusOn(current?.let { countCell(it) }) }
             }
+            KeypadMainKey.StartTimer -> onStartSetTimer(cell.ref)
             null -> Unit
         }
     }
 
-    // The closed keypad's Complete set
+    // The closed keypad's main action: a timed set's timer starts first, then Complete set completes it
     fun onCompleteTarget() {
-        state.value.target?.let(::complete)
+        val state = state.value
+        val target = state.target ?: return
+        if (state.targetStartsTimer) onStartSetTimer(target) else complete(target)
+    }
+
+    // Timers
+
+    /**
+     * Runs a timed set's timer for its time, making it the current set. Without a time there's nothing to count down,
+     * so the keypad opens on it instead.
+     */
+    fun onStartSetTimer(ref: SetRef) {
+        val set = state.value.blocks.set(ref) ?: return
+        val seconds = set.timeSeconds ?: return setState { focusOn(CellFocus(ref, ValueField.Time)) }
+        change {
+            copy(
+                current = ref,
+                selected = ref,
+                timer = WorkoutTimer.SetTimer(ref, endsAt = clock() + seconds * 1000L, totalSeconds = seconds),
+                now = clock(),
+            )
+        }
+        analytics.setTimerStarted()
+        keepTicking()
+    }
+
+    /**
+     * −10s or +10s on the running countdown. A rest's change carries on to every rest after it, a set timer's to
+     * the set's time, as on the old screen.
+     */
+    fun onTimerStep(direction: Int) {
+        val timer = state.value.timer ?: return
+        val offset = direction * TimerStepSeconds
+        val total = (timer.totalSeconds + offset).coerceAtLeast(0)
+        when (timer) {
+            // Taken down to nothing, it only ends this rest: the ones after keep theirs, as on the old screen
+            is WorkoutTimer.Rest -> change {
+                copy(
+                    timer = timer.copy(endsAt = timer.endsAt + offset * 1000L, totalSeconds = total),
+                    blocks = if (total > 0) blocks.withRestSeconds(total) else blocks,
+                )
+            }
+            is WorkoutTimer.SetTimer -> change {
+                copy(
+                    timer = timer.copy(endsAt = timer.endsAt + offset * 1000L, totalSeconds = total),
+                    blocks = blocks.setValue(timer.ref, ValueField.Time, total.toFloat()),
+                )
+            }
+        }
+        // Taking the last seconds off ends it
+        tick()
+    }
+
+    /**
+     * Skip on a rest, Stop on a set timer: stops it early, without a sound. The set is left to be ticked.
+     */
+    fun onTimerEnd() {
+        val timer = state.value.timer ?: return
+        setState { stopped(timer) }
+        when (timer) {
+            is WorkoutTimer.Rest -> analytics.restStopped()
+            is WorkoutTimer.SetTimer -> analytics.setTimerStopped()
+        }
     }
 
     private fun type(key: Char) {
@@ -177,7 +261,22 @@ internal class WorkoutLogViewModel(
         val set = before.blocks.set(ref) ?: return
         if (set.done) return
         val completion = before.blocks.completeSet(ref, before.current, clock())
-        change { copy(blocks = completion.blocks, current = completion.current).followCurrent() }
+        // The workout's rest starts once a set (or a superset's round) is done, replacing any countdown running.
+        // Completing another set ends a running set timer.
+        val restSeconds = completion.blocks.block(ref.blockId)?.restSeconds ?: 0
+        val rest = if (completion.startsRest && restSeconds > 0) {
+            WorkoutTimer.Rest(endsAt = clock() + restSeconds * 1000L, totalSeconds = restSeconds)
+        } else {
+            null
+        }
+        change {
+            copy(
+                blocks = completion.blocks,
+                current = completion.current,
+                timer = rest ?: timer.takeUnless { it is WorkoutTimer.SetTimer },
+                now = clock(),
+            ).followCurrent()
+        }
         val type = completion.blocks.block(ref.blockId)?.setType
         analytics.setCompleted(type, set.mode == SetMode.Time)
         // A superset's round (or another set of several exercises) done with this set
@@ -185,6 +284,10 @@ internal class WorkoutLogViewModel(
         val exercises = round?.sets?.count { !it.removed } ?: 0
         if (round?.done == true && exercises > 1) {
             analytics.setGroupCompleted(type, exercises)
+        }
+        if (rest != null) {
+            analytics.restStarted()
+            keepTicking()
         }
     }
 
@@ -269,6 +372,8 @@ internal class WorkoutLogViewModel(
 
     companion object {
         private const val TickMillis = 1000L
+        // A countdown's −10s and +10s, AppConfig's offset for the old screen's timer
+        private val TimerStepSeconds = AppConfig.configuration.defaultRestTimeOffsetSeconds
         private const val RepsStep = 1f
         private const val TimeStepSeconds = 5f
 
@@ -339,3 +444,9 @@ private fun WorkoutLogState.followCurrent(): WorkoutLogState {
     if (selectedSet != null && !selectedSet.done) return this
     return if (focus != null) focusOn(countCell(next)) else copy(selected = next)
 }
+
+// A countdown gone: a timed set's is remembered, so the set is ticked next rather than timed again
+private fun WorkoutLogState.stopped(timer: WorkoutTimer) = copy(
+    timer = null,
+    timedSets = if (timer is WorkoutTimer.SetTimer) timedSets + timer.ref else timedSets,
+)

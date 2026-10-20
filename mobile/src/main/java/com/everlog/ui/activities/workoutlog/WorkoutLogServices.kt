@@ -1,5 +1,6 @@
 package com.everlog.ui.activities.workoutlog
 
+import android.content.Context
 import com.everlog.data.datastores.ELDatastore
 import com.everlog.data.model.set.ELSetType
 import com.everlog.data.model.workout.ELWorkout
@@ -9,6 +10,8 @@ import com.everlog.managers.analytics.AnalyticsConstants
 import com.everlog.managers.analytics.AnalyticsManager
 import com.everlog.managers.apprate.AppLaunchManager
 import com.everlog.managers.preferences.SettingsManager
+import com.everlog.utils.SoundUtils
+import com.everlog.utils.VibrationUtils
 import com.google.firebase.firestore.SetOptions
 import java.util.Date
 
@@ -64,6 +67,21 @@ internal class RealWorkoutLogSettings : WorkoutLogSettings {
 }
 
 /**
+ * The sound and vibration when a countdown runs out. Called from the view-model rather than the screen, so they
+ * play with the phone locked, as the old screen's do.
+ */
+internal interface WorkoutLogAlerts {
+    fun timerRanOut()
+}
+
+internal class RealWorkoutLogAlerts(private val context: Context) : WorkoutLogAlerts {
+    override fun timerRanOut() {
+        SoundUtils.playTimerSound(context)
+        VibrationUtils.vibrate(context)
+    }
+}
+
+/**
  * The workout screen's events, the same ones the old screen logs.
  */
 internal interface WorkoutLogAnalytics {
@@ -79,6 +97,16 @@ internal interface WorkoutLogAnalytics {
     fun setEdited(type: ELSetType?, timed: Boolean)
 
     fun exercisesAdded()
+
+    fun restStarted()
+
+    // Rest skipped (not run out)
+    fun restStopped()
+
+    fun setTimerStarted()
+
+    // A set timer stopped early (not run out)
+    fun setTimerStopped()
 
     fun workoutCompleted()
 
@@ -105,6 +133,14 @@ internal class RealWorkoutLogAnalytics : WorkoutLogAnalytics {
     override fun setEdited(type: ELSetType?, timed: Boolean) = analytics.setEdited(type, timed)
 
     override fun exercisesAdded() = analytics.routineExerciseGroupAdded()
+
+    override fun restStarted() = analytics.workoutTimerStartedRest()
+
+    override fun restStopped() = analytics.workoutTimerStoppedRest()
+
+    override fun setTimerStarted() = analytics.workoutTimerStartedExercise()
+
+    override fun setTimerStopped() = analytics.workoutTimerStoppedExercise()
 
     override fun workoutCompleted() = analytics.workoutCompleted()
 

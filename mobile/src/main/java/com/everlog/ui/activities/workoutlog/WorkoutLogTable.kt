@@ -106,9 +106,14 @@ internal fun WorkoutTable(
     typed: String?,
     // Goes up with every keypad key, to bring the edited cell back into view
     reveal: Int,
+    // A set timer's countdown, shown in its set's time cell
+    timing: Countdown?,
+    // Whether a set's row shows a timer button in place of its tick
+    startsTimer: (SetRef) -> Boolean,
     contentPadding: PaddingValues,
     onCellTapped: (CellFocus) -> Unit,
     onTick: (SetRef) -> Unit,
+    onStartTimer: (SetRef) -> Unit,
 ) {
     // The edited cell is kept in view: below the table's top, and above the keypad, which floats over the table
     val listState = rememberLazyListState()
@@ -153,7 +158,7 @@ internal fun WorkoutTable(
         ) {
             blocks.forEachIndexed { b, block ->
                 item(key = block.id) {
-                    ExerciseTable(b, block, unit, focus, selected, typed, onCellTapped, onTick)
+                    ExerciseTable(b, block, unit, focus, selected, typed, timing, startsTimer, onCellTapped, onTick, onStartTimer)
                 }
             }
         }
@@ -175,8 +180,11 @@ private fun ExerciseTable(
     focus: CellFocus?,
     selected: SetRef?,
     typed: String?,
+    timing: Countdown?,
+    startsTimer: (SetRef) -> Boolean,
     onCellTapped: (CellFocus) -> Unit,
     onTick: (SetRef) -> Unit,
+    onStartTimer: (SetRef) -> Unit,
 ) {
     Column(modifier = Modifier.padding(bottom = Theme.spacing.extraLarge)) {
         ExerciseHeader(block)
@@ -202,9 +210,13 @@ private fun ExerciseTable(
                             number = if (round.sets.size > 1) "${r + 1}${'a' + i}" else if (i == firstShown) "${r + 1}" else null,
                             set = set,
                             weightText = cellText(set, ValueField.Weight, unit, focus, typed, ref),
-                            countText = cellText(set, countField(set), unit, focus, typed, ref),
-                            // The keypad's main key will complete the set: its tick lights up to show what's next
-                            armed = !set.done && focus == CellFocus(ref, ValueField.Weight),
+                            // A running set timer counts down in its time cell
+                            countText = timing?.takeIf { it.ref == ref }?.let { formatClock(it.seconds.toLong()) }
+                                ?: cellText(set, countField(set), unit, focus, typed, ref),
+                            timing = timing?.ref == ref,
+                            // The keypad's main key will complete the set (or start its timer): it lights up to show
+                            // what's next
+                            armed = !set.done && (focus == CellFocus(ref, ValueField.Weight) || timing?.ref == ref),
                             selected = selected == ref,
                             weightFocused = focus == CellFocus(ref, ValueField.Weight),
                             countFocused = focus?.ref == ref && focus.field != ValueField.Weight,
@@ -212,6 +224,12 @@ private fun ExerciseTable(
                             onWeight = { onCellTapped(CellFocus(ref, ValueField.Weight)) },
                             onCount = { onCellTapped(CellFocus(ref, countField(set))) },
                             onTick = { onTick(ref) },
+                            // A timed set starts its timer from the row; once the timer runs, the tick completes it
+                            onStart = if (startsTimer(ref)) {
+                                { onStartTimer(ref) }
+                            } else {
+                                null
+                            },
                         )
                     }
                 }
@@ -324,6 +342,7 @@ private fun TableRow(
     set: WorkoutSet,
     weightText: String,
     countText: String,
+    timing: Boolean,
     armed: Boolean,
     selected: Boolean,
     weightFocused: Boolean,
@@ -332,6 +351,7 @@ private fun TableRow(
     onWeight: () -> Unit,
     onCount: () -> Unit,
     onTick: () -> Unit,
+    onStart: (() -> Unit)?,
 ) {
     Row(
         modifier = Modifier
@@ -351,16 +371,20 @@ private fun TableRow(
         )
         Spacer(modifier = Modifier.weight(1f))
         // Reps (or time) first, then weight: 15 × 17 kg
-        Cell(tag = WorkoutLogTags.count(tag), text = countText, focused = countFocused, boxed = selected, onClick = onCount)
+        Cell(tag = WorkoutLogTags.count(tag), text = countText, focused = countFocused, boxed = selected, onClick = onCount, highlight = timing)
         Cell(tag = WorkoutLogTags.weight(tag), text = weightText, focused = weightFocused, boxed = selected, onClick = onWeight)
-        Tick(tag = WorkoutLogTags.tick(tag), done = set.done, armed = armed, onClick = onTick)
+        if (onStart != null) {
+            StartButton(tag = WorkoutLogTags.tick(tag), armed = armed, onClick = onStart)
+        } else {
+            Tick(tag = WorkoutLogTags.tick(tag), done = set.done, armed = armed, onClick = onTick)
+        }
     }
 }
 
 // A value, boxed to type into on the selected row (the focused one outlined and kept in view above the keypad),
 // plain text on the others
 @Composable
-private fun Cell(tag: String, text: String, focused: Boolean, boxed: Boolean, onClick: () -> Unit) {
+private fun Cell(tag: String, text: String, focused: Boolean, boxed: Boolean, onClick: () -> Unit, highlight: Boolean = false) {
     val shape = Theme.shapes.button
     // The whole row's height takes the tap; the press shows on the box
     val interactions = remember { MutableInteractionSource() }
@@ -405,7 +429,46 @@ private fun Cell(tag: String, text: String, focused: Boolean, boxed: Boolean, on
                 ),
             contentAlignment = Alignment.Center,
         ) {
-            AppText(text = text, style = Theme.typography.body.copy(fontFeatureSettings = "tnum"), maxLines = 1)
+            AppText(
+                text = text,
+                style = Theme.typography.body.copy(fontFeatureSettings = "tnum"),
+                color = if (highlight) Theme.contentColors.action else Theme.contentColors.primary,
+                maxLines = 1,
+            )
+        }
+    }
+}
+
+// In place of the tick on a timed set: runs its timer
+@Composable
+private fun StartButton(tag: String, armed: Boolean, onClick: () -> Unit) {
+    val interactions = remember { MutableInteractionSource() }
+    Box(
+        modifier = Modifier
+            .size(TableSizes.CheckTarget, TableSizes.RowHeight)
+            .testTag(tag)
+            .clickable(interactionSource = interactions, indication = null, onClick = onClick),
+        contentAlignment = Alignment.Center,
+    ) {
+        Box(
+            modifier = Modifier
+                .size(TableSizes.Check)
+                .clip(CircleShape)
+                .indication(interactions, ripple())
+                .background(Inset)
+                .border(
+                    if (armed) TableSizes.FocusOutline else 1.dp,
+                    if (armed) Theme.contentColors.action else Theme.backgrounds.separator,
+                    CircleShape,
+                ),
+            contentAlignment = Alignment.Center,
+        ) {
+            AppIcon(
+                modifier = Modifier.size(TableSizes.CheckIcon),
+                imageVector = ImageVector.vectorResource(R.drawable.ic_timer),
+                tint = if (armed) Theme.contentColors.action else Theme.contentColors.secondary,
+                contentDescription = stringResource(R.string.workout_log_start_timer),
+            )
         }
     }
 }
@@ -463,6 +526,11 @@ private fun cellText(set: WorkoutSet, field: ValueField, unit: WeightUnit, focus
 }
 
 private const val Empty = "–"
+
+/**
+ * A set timer's seconds left, for its set's time cell.
+ */
+internal data class Countdown(val ref: SetRef, val seconds: Int)
 
 /**
  * Test tags for the table's cells and ticks, by position: the exercise group, the round and the exercise in it.
