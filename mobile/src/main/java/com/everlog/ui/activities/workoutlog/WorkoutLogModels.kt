@@ -1,5 +1,6 @@
 package com.everlog.ui.activities.workoutlog
 
+import com.everlog.data.controllers.workoutsession.DeletedSets
 import com.everlog.data.controllers.workoutsession.SetMode
 import com.everlog.data.controllers.workoutsession.SetRef
 import com.everlog.data.controllers.workoutsession.ValueField
@@ -37,6 +38,10 @@ internal data class WorkoutLogState(
     val timer: WorkoutTimer? = null,
     // Timed sets whose timer has run out or been stopped, which are then ticked rather than timed again
     val timedSets: Set<SetRef> = emptySet(),
+    // The sets just deleted, which Undo puts back until anything else changes
+    val deletion: Deletion? = null,
+    // A short message to show once, then clear (onMessageShown)
+    val message: WorkoutLogMessage? = null,
     val dialog: WorkoutLogDialog? = null,
     // Set once the workout is finished or discarded, for the screen to close
     val exit: WorkoutLogExit? = null,
@@ -111,6 +116,16 @@ internal enum class KeypadMainKey {
     // A timed set's timer, before Complete set
     StartTimer,
     Done,
+}
+
+/**
+ * Sets deleted, as they were, and the set that was current then, for Undo.
+ */
+internal data class Deletion(val sets: DeletedSets, val current: SetRef?)
+
+internal sealed interface WorkoutLogMessage {
+    // The old screen's limit on sets per exercise
+    data class TooManySets(val max: Int) : WorkoutLogMessage
 }
 
 internal sealed interface WorkoutLogDialog {

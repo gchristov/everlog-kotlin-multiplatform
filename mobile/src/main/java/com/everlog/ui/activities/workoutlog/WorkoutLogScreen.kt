@@ -17,6 +17,9 @@ import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.layout.windowInsetsPadding
+import androidx.compose.material3.SnackbarDuration
+import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.SnackbarResult
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
@@ -54,6 +57,7 @@ import com.everlog.ui.design.elements.AppButton
 import com.everlog.ui.design.elements.AppIconButton
 import com.everlog.ui.design.elements.AppScreen
 import com.everlog.ui.design.elements.AppSecondaryButton
+import com.everlog.ui.design.elements.AppSnackbarHost
 import com.everlog.ui.design.elements.AppText
 import com.everlog.ui.design.elements.keypad.AppKeypad
 import com.everlog.ui.design.elements.keypad.AppKeypadAction
@@ -131,27 +135,60 @@ internal fun WorkoutLogScreen(viewModel: WorkoutLogViewModel, onAddExercise: () 
             )
         },
     ) { contentPadding ->
-        if (empty) {
-            EmptyTable(contentPadding, state.unit)
-        } else {
-            WorkoutTable(
-                blocks = state.blocks,
-                unit = state.unit,
-                focus = state.focus,
-                selected = state.selected,
-                typed = state.typed,
-                reveal = state.reveal,
-                timing = (state.timer as? WorkoutTimer.SetTimer)?.let { Countdown(it.ref, state.timerRemainingSeconds()) },
-                startsTimer = state::startsTimer,
-                contentPadding = contentPadding,
-                onCellTapped = viewModel::onCellTapped,
-                onTick = viewModel::onTick,
-                onStartTimer = viewModel::onStartSetTimer,
-            )
+        Box(modifier = Modifier.fillMaxSize()) {
+            if (empty) {
+                EmptyTable(contentPadding, state.unit)
+            } else {
+                WorkoutTable(
+                    blocks = state.blocks,
+                    unit = state.unit,
+                    focus = state.focus,
+                    selected = state.selected,
+                    typed = state.typed,
+                    reveal = state.reveal,
+                    timing = (state.timer as? WorkoutTimer.SetTimer)?.let { Countdown(it.ref, state.timerRemainingSeconds()) },
+                    startsTimer = state::startsTimer,
+                    contentPadding = contentPadding,
+                    onCellTapped = viewModel::onCellTapped,
+                    onTick = viewModel::onTick,
+                    onStartTimer = viewModel::onStartSetTimer,
+                    onAddSet = viewModel::onAddSet,
+                    onDeleteSet = viewModel::onDeleteSet,
+                )
+            }
+            Messages(state, viewModel, Modifier.align(Alignment.BottomCenter).padding(bottom = contentPadding.calculateBottomPadding()))
         }
     }
 
     WorkoutLogDialogs(state.dialog, viewModel)
+}
+
+// "Set deleted" with Undo while the deleted sets can come back, and one-off messages, over the keypad
+@Composable
+private fun Messages(state: WorkoutLogState, viewModel: WorkoutLogViewModel, modifier: Modifier) {
+    val snackbar = remember { SnackbarHostState() }
+    val deleted = stringResource(R.string.workout_log_set_deleted)
+    val undo = stringResource(R.string.workout_log_undo)
+    LaunchedEffect(state.deletion) {
+        if (state.deletion == null) {
+            // Gone with another change: its Undo can't put the sets back any more
+            snackbar.currentSnackbarData?.dismiss()
+            return@LaunchedEffect
+        }
+        val result = snackbar.showSnackbar(message = deleted, actionLabel = undo, duration = SnackbarDuration.Long)
+        if (result == SnackbarResult.ActionPerformed) viewModel.onUndoDelete() else viewModel.onUndoGone()
+    }
+    val message = when (val it = state.message) {
+        is WorkoutLogMessage.TooManySets -> stringResource(R.string.exercises_max_sets, it.max)
+        null -> null
+    }
+    LaunchedEffect(message) {
+        if (message == null) return@LaunchedEffect
+        viewModel.onMessageShown()
+        snackbar.currentSnackbarData?.dismiss()
+        snackbar.showSnackbar(message)
+    }
+    AppSnackbarHost(hostState = snackbar, modifier = modifier)
 }
 
 // The running countdown: a rest in amber with Skip, a set timer with Stop
@@ -283,6 +320,8 @@ private fun EmptyTable(contentPadding: PaddingValues, unit: SettingsManager.Weig
                     onCellTapped = {},
                     onTick = {},
                     onStartTimer = {},
+                    onAddSet = {},
+                    onDeleteSet = {},
                 )
             }
             // Takes every touch, so the example can't be used

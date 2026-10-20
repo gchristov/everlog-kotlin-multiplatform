@@ -4,6 +4,7 @@ import com.everlog.data.controllers.workoutsession.SetMode
 import com.everlog.data.controllers.workoutsession.SetRef
 import com.everlog.data.controllers.workoutsession.ValueField
 import com.everlog.data.controllers.workoutsession.set
+import com.everlog.config.AppConfig
 import com.everlog.data.model.ELRoutine
 import com.everlog.data.model.exercise.ELExercise
 import com.everlog.data.model.exercise.ELExerciseGroup
@@ -390,6 +391,85 @@ class WorkoutLogViewModelTest {
         assertThat(viewModel.state.value.focus).isEqualTo(CellFocus(viewModel.ref(0, 0), ValueField.Time))
     }
 
+    // Adding and deleting sets
+
+    @Test
+    fun `an added set copies the last set's values, not done`() {
+        val viewModel = viewModel()
+        viewModel.onTick(viewModel.ref(0, 1))
+        viewModel.onAddSet(viewModel.blocks[0].id)
+
+        assertThat(viewModel.blocks[0].rounds).hasSize(3)
+        assertThat(viewModel.set(0, 2).reps).isEqualTo(8)
+        assertThat(viewModel.set(0, 2).done).isFalse()
+        assertThat(analytics.events).contains("set_added")
+    }
+
+    @Test
+    fun `no more sets than the old screen's limit`() {
+        val viewModel = viewModel()
+        repeat(20) { viewModel.onAddSet(viewModel.blocks[0].id) }
+
+        assertThat(viewModel.blocks[0].rounds).hasSize(AppConfig.configuration.maxExerciseSets)
+        assertThat(viewModel.state.value.message).isEqualTo(WorkoutLogMessage.TooManySets(AppConfig.configuration.maxExerciseSets))
+    }
+
+    @Test
+    fun `a deleted set goes, the current set moves on, and undo puts both back`() {
+        val viewModel = viewModel()
+        val first = viewModel.ref(0, 0)
+        viewModel.onDeleteSet(first)
+
+        assertThat(viewModel.blocks[0].rounds).hasSize(1)
+        assertThat(viewModel.state.value.current).isEqualTo(viewModel.ref(0, 0))
+        assertThat(analytics.events).contains("set_deleted")
+
+        viewModel.onUndoDelete()
+        assertThat(viewModel.blocks[0].rounds).hasSize(2)
+        assertThat(viewModel.state.value.current).isEqualTo(first)
+        assertThat(viewModel.state.value.deletion).isNull()
+    }
+
+    @Test
+    fun `deleting an exercise's last set deletes the exercise, and undo puts it back`() {
+        val viewModel = viewModel()
+        viewModel.onDeleteSet(viewModel.ref(0, 1))
+        viewModel.onDeleteSet(viewModel.ref(0, 0))
+        assertThat(viewModel.blocks.map { it.uuid }).containsExactly("group-fly")
+
+        viewModel.onUndoDelete()
+        assertThat(viewModel.blocks.map { it.uuid }).containsExactly("group-bench", "group-fly").inOrder()
+    }
+
+    @Test
+    fun `deleting one exercise's set in a superset keeps the other's`() {
+        val viewModel = viewModel()
+        viewModel.onDeleteSet(viewModel.ref(1, 0, 1))
+
+        assertThat(viewModel.blocks[1].rounds).hasSize(2)
+        assertThat(viewModel.set(1, 0, 1).removed).isTrue()
+        assertThat(viewModel.set(1, 0, 0).removed).isFalse()
+    }
+
+    @Test
+    fun `any other change ends the undo`() {
+        val viewModel = viewModel()
+        viewModel.onDeleteSet(viewModel.ref(0, 0))
+        viewModel.onTick(viewModel.ref(1, 0, 0))
+
+        assertThat(viewModel.state.value.deletion).isNull()
+    }
+
+    @Test
+    fun `deleting a set closes the keypad on it and stops its timer`() {
+        val viewModel = timedSetRunning(seconds = "30")
+        viewModel.onCellTapped(CellFocus(viewModel.ref(0, 0), ValueField.Weight))
+        viewModel.onDeleteSet(viewModel.ref(0, 0))
+
+        assertThat(viewModel.state.value.focus).isNull()
+        assertThat(viewModel.state.value.timer).isNull()
+    }
+
     // The notification
 
     @Test
@@ -664,6 +744,14 @@ class WorkoutLogViewModelTest {
 
         override fun exercisesAdded() {
             events += "exercises_added"
+        }
+
+        override fun setAdded() {
+            events += "set_added"
+        }
+
+        override fun setDeleted() {
+            events += "set_deleted"
         }
 
         override fun restStarted() {

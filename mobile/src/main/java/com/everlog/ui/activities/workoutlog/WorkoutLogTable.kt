@@ -24,6 +24,10 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.HorizontalDivider
+import com.everlog.ui.design.elements.AppTertiaryButton
+import androidx.compose.material3.rememberSwipeToDismissBoxState
+import androidx.compose.material3.SwipeToDismissBoxValue
+import androidx.compose.material3.SwipeToDismissBox
 import androidx.compose.material3.ripple
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
@@ -114,6 +118,8 @@ internal fun WorkoutTable(
     onCellTapped: (CellFocus) -> Unit,
     onTick: (SetRef) -> Unit,
     onStartTimer: (SetRef) -> Unit,
+    onAddSet: (Long) -> Unit,
+    onDeleteSet: (SetRef) -> Unit,
 ) {
     // The edited cell is kept in view: below the table's top, and above the keypad, which floats over the table
     val listState = rememberLazyListState()
@@ -158,7 +164,7 @@ internal fun WorkoutTable(
         ) {
             blocks.forEachIndexed { b, block ->
                 item(key = block.id) {
-                    ExerciseTable(b, block, unit, focus, selected, typed, timing, startsTimer, onCellTapped, onTick, onStartTimer)
+                    ExerciseTable(b, block, unit, focus, selected, typed, timing, startsTimer, onCellTapped, onTick, onStartTimer, onAddSet, onDeleteSet)
                 }
             }
         }
@@ -185,6 +191,8 @@ private fun ExerciseTable(
     onCellTapped: (CellFocus) -> Unit,
     onTick: (SetRef) -> Unit,
     onStartTimer: (SetRef) -> Unit,
+    onAddSet: (Long) -> Unit,
+    onDeleteSet: (SetRef) -> Unit,
 ) {
     Column(modifier = Modifier.padding(bottom = Theme.spacing.extraLarge)) {
         ExerciseHeader(block)
@@ -203,38 +211,74 @@ private fun ExerciseTable(
                 round.sets.forEachIndexed { i, set ->
                     if (set.removed) return@forEachIndexed
                     val ref = SetRef(block.id, round.id, i)
+                    // Keyed, so the next set doesn't take over a swiped one's state once it's gone
                     key(round.id, i) {
-                        TableRow(
-                            tag = WorkoutLogTags.set(index, r, i),
-                            // A superset or circuit's rows are 1a, 1b, 1c: the letter is the exercise's place
-                            number = if (round.sets.size > 1) "${r + 1}${'a' + i}" else if (i == firstShown) "${r + 1}" else null,
-                            set = set,
-                            weightText = cellText(set, ValueField.Weight, unit, focus, typed, ref),
-                            // A running set timer counts down in its time cell
-                            countText = timing?.takeIf { it.ref == ref }?.let { formatClock(it.seconds.toLong()) }
-                                ?: cellText(set, countField(set), unit, focus, typed, ref),
-                            timing = timing?.ref == ref,
-                            // The keypad's main key will complete the set (or start its timer): it lights up to show
-                            // what's next
-                            armed = !set.done && (focus == CellFocus(ref, ValueField.Weight) || timing?.ref == ref),
-                            selected = selected == ref,
-                            weightFocused = focus == CellFocus(ref, ValueField.Weight),
-                            countFocused = focus?.ref == ref && focus.field != ValueField.Weight,
-                            onRow = { onCellTapped(CellFocus(ref, countField(set))) },
-                            onWeight = { onCellTapped(CellFocus(ref, ValueField.Weight)) },
-                            onCount = { onCellTapped(CellFocus(ref, countField(set))) },
-                            onTick = { onTick(ref) },
-                            // A timed set starts its timer from the row; once the timer runs, the tick completes it
-                            onStart = if (startsTimer(ref)) {
-                                { onStartTimer(ref) }
-                            } else {
-                                null
-                            },
-                        )
+                        // Swiping a set left deletes it: in a superset just that exercise's set, with Undo
+                        SwipeToDelete(onDelete = { onDeleteSet(ref) }) {
+                            TableRow(
+                                tag = WorkoutLogTags.set(index, r, i),
+                                // A superset or circuit's rows are 1a, 1b, 1c: the letter is the exercise's place
+                                number = if (round.sets.size > 1) "${r + 1}${'a' + i}" else if (i == firstShown) "${r + 1}" else null,
+                                set = set,
+                                weightText = cellText(set, ValueField.Weight, unit, focus, typed, ref),
+                                // A running set timer counts down in its time cell
+                                countText = timing?.takeIf { it.ref == ref }?.let { formatClock(it.seconds.toLong()) }
+                                    ?: cellText(set, countField(set), unit, focus, typed, ref),
+                                timing = timing?.ref == ref,
+                                // The keypad's main key will complete the set (or start its timer): it lights up to show
+                                // what's next
+                                armed = !set.done && (focus == CellFocus(ref, ValueField.Weight) || timing?.ref == ref),
+                                selected = selected == ref,
+                                weightFocused = focus == CellFocus(ref, ValueField.Weight),
+                                countFocused = focus?.ref == ref && focus.field != ValueField.Weight,
+                                onRow = { onCellTapped(CellFocus(ref, countField(set))) },
+                                onWeight = { onCellTapped(CellFocus(ref, ValueField.Weight)) },
+                                onCount = { onCellTapped(CellFocus(ref, countField(set))) },
+                                onTick = { onTick(ref) },
+                                // A timed set starts its timer from the row; once the timer runs, the tick completes it
+                                onStart = if (startsTimer(ref)) {
+                                    { onStartTimer(ref) }
+                                } else {
+                                    null
+                                },
+                            )
+                        }
                     }
                 }
             }
         }
+        AppTertiaryButton(
+            modifier = Modifier.align(Alignment.CenterHorizontally),
+            onClick = { onAddSet(block.id) },
+            text = stringResource(R.string.workout_log_add_set),
+        )
+    }
+}
+
+@Composable
+private fun SwipeToDelete(onDelete: () -> Unit, content: @Composable () -> Unit) {
+    val delete by rememberUpdatedState(onDelete)
+    val swipeState = rememberSwipeToDismissBoxState()
+    LaunchedEffect(swipeState.currentValue) {
+        if (swipeState.currentValue == SwipeToDismissBoxValue.EndToStart) delete()
+    }
+    SwipeToDismissBox(
+        state = swipeState,
+        enableDismissFromStartToEnd = false,
+        backgroundContent = {
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(Theme.contentColors.destructive.copy(alpha = 0.2f))
+                    .padding(horizontal = Theme.spacing.large),
+                contentAlignment = Alignment.CenterEnd,
+            ) {
+                AppText(text = stringResource(R.string.workout_log_delete), style = Theme.typography.bodyBold, color = Theme.contentColors.destructive)
+            }
+        },
+    ) {
+        // On the card's background, so the red behind only shows as it's swiped
+        Box(modifier = Modifier.background(Theme.backgrounds.surface)) { content() }
     }
 }
 
@@ -357,6 +401,7 @@ private fun TableRow(
         modifier = Modifier
             .fillMaxWidth()
             .height(TableSizes.RowHeight)
+            .testTag(tag)
             .background(if (selected) Theme.backgrounds.selected else Color.Transparent)
             .clickable(onClick = onRow)
             .padding(horizontal = TableSizes.RowPadding),
