@@ -42,6 +42,8 @@ internal data class WorkoutLogState(
     val deletion: Deletion? = null,
     // A short message to show once, then clear (onMessageShown)
     val message: WorkoutLogMessage? = null,
+    // Each exercise's last session's sets, by its uuid, once history has loaded: the table's last time column
+    val lastTime: Map<String, List<WorkoutSet>> = emptyMap(),
     // Edit workout: the exercises as cards to reorder or delete, in place of the table and keypad
     val editing: Boolean = false,
     val dialog: WorkoutLogDialog? = null,

@@ -117,6 +117,8 @@ internal fun WorkoutTable(
     timing: Countdown?,
     // Whether a set's row shows a timer button in place of its tick
     startsTimer: (SetRef) -> Boolean,
+    // Each exercise's last session's sets, by its uuid
+    lastTime: Map<String, List<WorkoutSet>>,
     contentPadding: PaddingValues,
     onCellTapped: (CellFocus) -> Unit,
     onTick: (SetRef) -> Unit,
@@ -178,6 +180,7 @@ internal fun WorkoutTable(
                         typed = typed,
                         timing = timing,
                         startsTimer = startsTimer,
+                        lastTime = lastTime,
                         onCellTapped = onCellTapped,
                         onTick = onTick,
                         onStartTimer = onStartTimer,
@@ -209,6 +212,8 @@ private fun ExerciseTable(
     typed: String?,
     timing: Countdown?,
     startsTimer: (SetRef) -> Boolean,
+    // Each exercise's last session's sets, by its uuid
+    lastTime: Map<String, List<WorkoutSet>>,
     onCellTapped: (CellFocus) -> Unit,
     onTick: (SetRef) -> Unit,
     onStartTimer: (SetRef) -> Unit,
@@ -240,6 +245,7 @@ private fun ExerciseTable(
                         SwipeToDelete(onDelete = { onDeleteSet(ref) }) {
                             TableRow(
                                 tag = WorkoutLogTags.set(index, r, i),
+                                lastTime = lastTime[block.exercises[i].exercise?.uuid]?.getOrNull(r)?.let { lastTimeText(it, unit) },
                                 // A superset or circuit's rows are 1a, 1b, 1c: the letter is the exercise's place
                                 number = if (round.sets.size > 1) "${r + 1}${'a' + i}" else if (i == firstShown) "${r + 1}" else null,
                                 set = set,
@@ -397,7 +403,7 @@ private fun ColumnLabels(block: WorkoutBlock, unit: WeightUnit) {
         horizontalArrangement = Arrangement.spacedBy(TableSizes.ColumnGap),
     ) {
         Label(stringResource(R.string.workout_log_column_set), Modifier.width(TableSizes.SetColumn), TextAlign.Center)
-        Spacer(modifier = Modifier.weight(1f))
+        Label(stringResource(R.string.workout_log_column_last_time), Modifier.weight(1f))
         Label(count, Modifier.width(TableSizes.Cell), TextAlign.Center)
         Label(unitLabel(unit), Modifier.width(TableSizes.Cell), TextAlign.Center)
         Spacer(modifier = Modifier.width(TableSizes.CheckTarget))
@@ -413,6 +419,8 @@ private fun Label(text: String, modifier: Modifier, align: TextAlign = TextAlign
 @Composable
 private fun TableRow(
     tag: String,
+    // What the same set was last time, if it was done
+    lastTime: String?,
     number: String?,
     set: WorkoutSet,
     weightText: String,
@@ -445,10 +453,17 @@ private fun TableRow(
             text = number.orEmpty(),
             style = Theme.typography.bodyBold,
         )
-        Spacer(modifier = Modifier.weight(1f))
-        // Reps (or time) first, then weight: 15 × 17 kg
+        AppText(
+            modifier = Modifier.weight(1f),
+            text = lastTime ?: Empty,
+            style = Theme.typography.caption.copy(fontFeatureSettings = "tnum"),
+            color = Theme.contentColors.secondary,
+            maxLines = 1,
+        )
+        // Reps (or time) first, then weight, as last time reads: 15 × 17 kg
         Cell(tag = WorkoutLogTags.count(tag), text = countText, focused = countFocused, boxed = selected, onClick = onCount, highlight = timing)
-        Cell(tag = WorkoutLogTags.weight(tag), text = weightText, focused = weightFocused, boxed = selected, onClick = onWeight)
+        // A weight filled in from history shows as a suggestion until it's changed
+        Cell(tag = WorkoutLogTags.weight(tag), text = weightText, focused = weightFocused, boxed = selected, onClick = onWeight, suggested = set.weightSuggested)
         if (onStart != null) {
             StartButton(tag = WorkoutLogTags.tick(tag), armed = armed, onClick = onStart)
         } else {
@@ -460,7 +475,15 @@ private fun TableRow(
 // A value, boxed to type into on the selected row (the focused one outlined and kept in view above the keypad),
 // plain text on the others
 @Composable
-private fun Cell(tag: String, text: String, focused: Boolean, boxed: Boolean, onClick: () -> Unit, highlight: Boolean = false) {
+private fun Cell(
+    tag: String,
+    text: String,
+    focused: Boolean,
+    boxed: Boolean,
+    onClick: () -> Unit,
+    highlight: Boolean = false,
+    suggested: Boolean = false,
+) {
     val shape = Theme.shapes.button
     // The whole row's height takes the tap; the press shows on the box
     val interactions = remember { MutableInteractionSource() }
@@ -506,9 +529,9 @@ private fun Cell(tag: String, text: String, focused: Boolean, boxed: Boolean, on
             contentAlignment = Alignment.Center,
         ) {
             AppText(
-                text = text,
+                text = if (suggested) "$text $SuggestedMark" else text,
                 style = Theme.typography.body.copy(fontFeatureSettings = "tnum"),
-                color = if (highlight) Theme.contentColors.action else Theme.contentColors.primary,
+                color = if (highlight || suggested) Theme.contentColors.action else Theme.contentColors.primary,
                 maxLines = 1,
             )
         }
@@ -602,6 +625,9 @@ private fun cellText(set: WorkoutSet, field: ValueField, unit: WeightUnit, focus
 }
 
 private const val Empty = "–"
+
+// Marks a weight the app suggests
+internal const val SuggestedMark = "✦"
 
 /**
  * A set timer's seconds left, for its set's time cell.

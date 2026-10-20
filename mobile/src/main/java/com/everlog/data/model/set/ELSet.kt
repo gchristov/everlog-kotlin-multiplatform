@@ -31,7 +31,11 @@ data class ELSet (
         // Deleted from one exercise in a superset or circuit's round during a workout, kept so the round's other
         // sets still line up with their exercises. Only the ongoing workout has these; finishing drops them.
         @get:Exclude @set:Exclude
-        var removed: Boolean = false
+        var removed: Boolean = false,
+        // The weight the Compose workout screen (TAS-455) filled in from history, in kg, until it's changed or the set
+        // done: it shows as a suggestion. Only the ongoing workout has it.
+        @get:Exclude @set:Exclude
+        var suggestedWeight: Float? = null
 
 ) : Serializable, ELFirestoreModel {
 
