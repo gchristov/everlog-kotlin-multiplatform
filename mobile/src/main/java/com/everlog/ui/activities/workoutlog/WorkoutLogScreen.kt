@@ -142,6 +142,7 @@ internal fun WorkoutLogScreen(viewModel: WorkoutLogViewModel, onAddExercise: () 
                 typed = state.typed,
                 reveal = state.reveal,
                 timing = (state.timer as? WorkoutTimer.SetTimer)?.let { Countdown(it.ref, state.timerRemainingSeconds()) },
+                startsTimer = state::startsTimer,
                 contentPadding = contentPadding,
                 onCellTapped = viewModel::onCellTapped,
                 onTick = viewModel::onTick,
@@ -153,7 +154,7 @@ internal fun WorkoutLogScreen(viewModel: WorkoutLogViewModel, onAddExercise: () 
     WorkoutLogDialogs(state.dialog, viewModel)
 }
 
-// The running countdown: a rest in amber with Skip, a set timer with Done
+// The running countdown: a rest in amber with Skip, a set timer with Stop
 @Composable
 private fun TimerStrip(timer: WorkoutTimer, remainingSeconds: Int, viewModel: WorkoutLogViewModel) {
     val rest = timer is WorkoutTimer.Rest
@@ -163,7 +164,7 @@ private fun TimerStrip(timer: WorkoutTimer, remainingSeconds: Int, viewModel: Wo
         style = if (rest) AppKeypadTimerStyle.Rest else AppKeypadTimerStyle.Active,
         less = AppKeypadAction(stringResource(R.string.workout_log_timer_less)) { viewModel.onTimerStep(-1) },
         more = AppKeypadAction(stringResource(R.string.workout_log_timer_more)) { viewModel.onTimerStep(1) },
-        end = AppKeypadAction(stringResource(if (rest) R.string.workout_log_skip else R.string.workout_log_done), viewModel::onTimerEnd),
+        end = AppKeypadAction(stringResource(if (rest) R.string.workout_log_skip else R.string.workout_log_stop), viewModel::onTimerEnd),
     )
 }
 
@@ -277,6 +278,7 @@ private fun EmptyTable(contentPadding: PaddingValues, unit: SettingsManager.Weig
                     typed = null,
                     reveal = 0,
                     timing = null,
+                    startsTimer = { false },
                     contentPadding = contentPadding,
                     onCellTapped = {},
                     onTick = {},

@@ -108,6 +108,8 @@ internal fun WorkoutTable(
     reveal: Int,
     // A set timer's countdown, shown in its set's time cell
     timing: Countdown?,
+    // Whether a set's row shows a timer button in place of its tick
+    startsTimer: (SetRef) -> Boolean,
     contentPadding: PaddingValues,
     onCellTapped: (CellFocus) -> Unit,
     onTick: (SetRef) -> Unit,
@@ -156,7 +158,7 @@ internal fun WorkoutTable(
         ) {
             blocks.forEachIndexed { b, block ->
                 item(key = block.id) {
-                    ExerciseTable(b, block, unit, focus, selected, typed, timing, onCellTapped, onTick, onStartTimer)
+                    ExerciseTable(b, block, unit, focus, selected, typed, timing, startsTimer, onCellTapped, onTick, onStartTimer)
                 }
             }
         }
@@ -179,6 +181,7 @@ private fun ExerciseTable(
     selected: SetRef?,
     typed: String?,
     timing: Countdown?,
+    startsTimer: (SetRef) -> Boolean,
     onCellTapped: (CellFocus) -> Unit,
     onTick: (SetRef) -> Unit,
     onStartTimer: (SetRef) -> Unit,
@@ -221,8 +224,8 @@ private fun ExerciseTable(
                             onWeight = { onCellTapped(CellFocus(ref, ValueField.Weight)) },
                             onCount = { onCellTapped(CellFocus(ref, countField(set))) },
                             onTick = { onTick(ref) },
-                            // A timed set not done yet starts its timer from the row; once it runs, the tick completes it
-                            onStart = if (set.mode == SetMode.Time && !set.done && timing?.ref != ref) {
+                            // A timed set starts its timer from the row; once the timer runs, the tick completes it
+                            onStart = if (startsTimer(ref)) {
                                 { onStartTimer(ref) }
                             } else {
                                 null

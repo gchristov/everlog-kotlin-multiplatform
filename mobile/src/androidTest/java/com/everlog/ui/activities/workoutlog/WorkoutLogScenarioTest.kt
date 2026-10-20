@@ -105,13 +105,14 @@ class WorkoutLogScenarioTest {
         cell(0, 1, 0, "count").assertTextEquals("1:30")
         compose.onNodeWithContentDescription("Hide keypad").performClick()
 
-        // A timed set starts its timer from its row. +10s adds to its time, and Done completes it early, which starts
-        // the rest (set 1's rest was replaced by the set timer)
+        // A timed set starts its timer from its row. +10s adds to its time, and Stop leaves the set to be ticked, which
+        // starts its rest
         tick(0, 1, 0).assertContentDescriptionEquals("Start timer").performClick()
         compose.onNodeWithText("SET TIMER").assertExists()
         key("+10s").performClick()
         cell(0, 1, 0, "count").assertTextEquals("1:40")
-        key("Done").performClick()
+        key("Stop").performClick()
+        tick(0, 1, 0).assertContentDescriptionEquals("Complete set").performClick()
         tick(0, 1, 0).assertContentDescriptionEquals("Undo set")
         compose.onNodeWithText("REST").assertExists()
         key("Skip").performClick()

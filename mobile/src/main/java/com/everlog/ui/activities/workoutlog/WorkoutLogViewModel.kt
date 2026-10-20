@@ -75,16 +75,15 @@ internal class WorkoutLogViewModel(
     }
 
     /**
-     * Moves the time on, and ends a countdown that has run out: a rest just ends, a timed set is completed (and its
-     * rest starts). Either sounds.
+     * Moves the time on, and ends a countdown that has run out, with a sound. A timed set is left to be ticked, as on
+     * the old screen.
      */
     fun tick() {
         setState { copy(now = clock()) }
         val timer = state.value.timer ?: return
         if (clock() < timer.endsAt) return
-        setState { copy(timer = null) }
+        setState { stopped(timer) }
         alerts.timerRanOut()
-        if (timer is WorkoutTimer.SetTimer) complete(timer.ref)
     }
 
     private fun keepTicking() {
@@ -170,15 +169,14 @@ internal class WorkoutLogViewModel(
     // Timers
 
     /**
-     * Runs a timed set's timer for its time, making it the current set. A done set is run again, not done. Without a
-     * time there's nothing to count down, so the keypad opens on it instead.
+     * Runs a timed set's timer for its time, making it the current set. Without a time there's nothing to count down,
+     * so the keypad opens on it instead.
      */
     fun onStartSetTimer(ref: SetRef) {
         val set = state.value.blocks.set(ref) ?: return
         val seconds = set.timeSeconds ?: return setState { focusOn(CellFocus(ref, ValueField.Time)) }
         change {
             copy(
-                blocks = if (set.done) blocks.uncompleteSet(ref) else blocks,
                 current = ref,
                 selected = ref,
                 timer = WorkoutTimer.SetTimer(ref, endsAt = clock() + seconds * 1000L, totalSeconds = seconds),
@@ -217,19 +215,14 @@ internal class WorkoutLogViewModel(
     }
 
     /**
-     * Skip on a rest, Done on a set timer: stops it early. A timed set done early is completed, keeping its time.
+     * Skip on a rest, Stop on a set timer: stops it early, without a sound. The set is left to be ticked.
      */
     fun onTimerEnd() {
-        when (val timer = state.value.timer ?: return) {
-            is WorkoutTimer.Rest -> {
-                setState { copy(timer = null) }
-                analytics.restStopped()
-            }
-            is WorkoutTimer.SetTimer -> {
-                setState { copy(timer = null) }
-                analytics.setTimerStopped()
-                complete(timer.ref)
-            }
+        val timer = state.value.timer ?: return
+        setState { stopped(timer) }
+        when (timer) {
+            is WorkoutTimer.Rest -> analytics.restStopped()
+            is WorkoutTimer.SetTimer -> analytics.setTimerStopped()
         }
     }
 
@@ -451,3 +444,9 @@ private fun WorkoutLogState.followCurrent(): WorkoutLogState {
     if (selectedSet != null && !selectedSet.done) return this
     return if (focus != null) focusOn(countCell(next)) else copy(selected = next)
 }
+
+// A countdown gone: a timed set's is remembered, so the set is ticked next rather than timed again
+private fun WorkoutLogState.stopped(timer: WorkoutTimer) = copy(
+    timer = null,
+    timedSets = if (timer is WorkoutTimer.SetTimer) timedSets + timer.ref else timedSets,
+)

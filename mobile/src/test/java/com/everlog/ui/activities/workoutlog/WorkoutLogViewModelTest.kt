@@ -319,7 +319,7 @@ class WorkoutLogViewModelTest {
     }
 
     @Test
-    fun `a timed set's key starts its timer, and running out completes it and starts the rest`() {
+    fun `a timed set's key starts its timer, which sounds when it runs out and leaves the set to be ticked`() {
         val viewModel = viewModel()
         viewModel.onCellTapped(CellFocus(viewModel.ref(0, 0), ValueField.Reps))
         viewModel.onModeSelected(SetMode.Time)
@@ -333,9 +333,15 @@ class WorkoutLogViewModelTest {
 
         time = now + 45_000
         viewModel.tick()
+        assertThat(viewModel.set(0, 0).done).isFalse()
+        assertThat(viewModel.state.value.timer).isNull()
+        assertThat(alerts.count).isEqualTo(1)
+        assertThat(viewModel.state.value.startsTimer(viewModel.ref(0, 0))).isFalse()
+        assertThat(viewModel.state.value.mainKey).isEqualTo(KeypadMainKey.CompleteSet)
+
+        viewModel.onMainKey()
         assertThat(viewModel.set(0, 0).done).isTrue()
         assertThat(viewModel.state.value.timer).isInstanceOf(WorkoutTimer.Rest::class.java)
-        assertThat(alerts.count).isEqualTo(1)
     }
 
     @Test
@@ -348,13 +354,15 @@ class WorkoutLogViewModelTest {
     }
 
     @Test
-    fun `done on a set timer completes the set early, keeping its time`() {
+    fun `stopping a set timer leaves the set to be ticked, without a sound`() {
         val viewModel = timedSetRunning(seconds = "30")
         viewModel.onTimerEnd()
 
-        assertThat(viewModel.set(0, 0).done).isTrue()
+        assertThat(viewModel.set(0, 0).done).isFalse()
         assertThat(viewModel.set(0, 0).timeSeconds).isEqualTo(30)
-        assertThat(analytics.events).containsAtLeast("set_timer_started", "set_timer_stopped", "set_completed SINGLE").inOrder()
+        assertThat(viewModel.state.value.targetStartsTimer).isFalse()
+        assertThat(alerts.count).isEqualTo(0)
+        assertThat(analytics.events).containsAtLeast("set_timer_started", "set_timer_stopped").inOrder()
     }
 
     @Test
