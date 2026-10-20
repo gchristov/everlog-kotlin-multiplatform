@@ -26,9 +26,12 @@ import androidx.compose.ui.test.performTouchInput
 import androidx.compose.ui.test.swipeLeft
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
+import arrow.core.Either
+import arrow.core.right
 import com.everlog.constants.ELConstants
 import com.everlog.data.controllers.workoutprefill.BaseWorkoutPrefillController.PrefillSource
-import com.everlog.data.controllers.workoutprefill.WorkoutPrefillController
+import com.everlog.data.controllers.workoutprefill.LoadPrefillSourcesUseCase
+import com.everlog.data.controllers.workoutsession.RealWorkoutSetPrefill
 import com.everlog.data.controllers.workoutsession.ValueField
 import com.everlog.data.model.ELRoutine
 import com.everlog.data.model.exercise.ELExercise
@@ -38,6 +41,7 @@ import com.everlog.data.model.exercise.ELRoutineExercise
 import com.everlog.data.model.set.ELSet
 import com.everlog.data.model.set.ELSetType
 import com.everlog.data.model.workout.ELWorkout
+import com.everlog.data.repositories.OngoingWorkoutRepository
 import com.everlog.managers.WorkoutManager
 import com.everlog.managers.preferences.SettingsManager.WeightUnit
 import com.everlog.services.workout.WorkoutService
@@ -285,14 +289,15 @@ class WorkoutLogScenarioTest {
             workout = loaded.workout,
             resumed = loaded.resumed,
             fromPlan = false,
-            store = store,
+            repository = store,
             settings = PoundSettings,
             analytics = analytics,
             alerts = object : WorkoutLogAlerts {
                 override fun timerRanOut() = Unit
             },
             notification = notification,
-            prefill = BenchHistory,
+            loadPrefillSources = BenchHistory,
+            prefill = RealWorkoutSetPrefill { true },
             clock = { now },
             tickMillis = null,
         )
@@ -350,7 +355,7 @@ class WorkoutLogScenarioTest {
     /**
      * The ongoing workout as the app keeps it, on this device. The finished one is kept here instead of Firestore.
      */
-    private class DeviceStore : WorkoutLogStore {
+    private class DeviceStore : OngoingWorkoutRepository {
         var finished: ELWorkout? = null
 
         override fun savedCopyOf(workout: ELWorkout): ELWorkout? = WorkoutManager.manager.savedCopyOf(workout)
@@ -395,19 +400,13 @@ class WorkoutLogScenarioTest {
      * The user's history: bench press last done at 8 × 100 lb for two sets. Sets are filled in from it by the old
      * screen's prefill, as on the device.
      */
-    private object BenchHistory : WorkoutLogPrefill {
-        override fun fillsSets() = true
-
-        override suspend fun sources(exercises: List<ELExercise>): Map<String, PrefillSource> {
-            val bench = exercises.firstOrNull { it.uuid == "Bench press" } ?: return emptyMap()
+    private object BenchHistory : LoadPrefillSourcesUseCase {
+        override suspend fun invoke(exercises: List<ELExercise>): Either<Throwable, Map<String, PrefillSource>> {
+            val bench = exercises.firstOrNull { it.uuid == "Bench press" } ?: return emptyMap<String, PrefillSource>().right()
             val sets = MutableList(2) { ELSet(reps = 8, weight = UnitUtils.lbToKg(100f)) }
             val last = ELExerciseHistory(ELRoutineExercise(bench.uuid, bench, sets), ELWorkout())
-            return mapOf(bench.uuid!! to PrefillSource(last, orm = 0f))
+            return mapOf(bench.uuid!! to PrefillSource(last, orm = 0f)).right()
         }
-
-        override fun fill(source: PrefillSource, set: ELSet, index: Int) = WorkoutPrefillController.prefillSet(source, set, index)
-
-        override fun fillAdded(source: PrefillSource, set: ELSet, index: Int) = WorkoutPrefillController.prefillAddedSet(source, set, index)
     }
 
     private object PoundSettings : WorkoutLogSettings {

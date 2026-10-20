@@ -108,6 +108,17 @@ internal fun WorkoutLogScreen(
             override fun onStep(direction: Int) = viewModel.onStep(direction)
         }
     }
+    val tableActions = remember(viewModel, onOpenExercise) {
+        object : WorkoutTableActions {
+            override fun onCellTapped(cell: CellFocus) = viewModel.onCellTapped(cell)
+            override fun onTick(ref: SetRef) = viewModel.onTick(ref)
+            override fun onStartTimer(ref: SetRef) = viewModel.onStartSetTimer(ref)
+            override fun onAddSet(blockId: Long) = viewModel.onAddSet(blockId)
+            override fun onDeleteSet(ref: SetRef) = viewModel.onDeleteSet(ref)
+            override fun onOpenExercise(exercise: ELExercise) = onOpenExercise(exercise)
+            override fun onDeleteExercise(blockId: Long) = viewModel.onDeleteExercise(blockId)
+        }
+    }
     val addExercise = AppKeypadAction(stringResource(R.string.workout_log_add_exercise), onAddExercise)
     val empty = state.blocks.isEmpty()
 
@@ -168,22 +179,10 @@ internal fun WorkoutLogScreen(
             } else {
                 WorkoutTable(
                     blocks = state.blocks,
-                    unit = state.unit,
-                    focus = state.focus,
-                    selected = state.selected,
-                    typed = state.typed,
+                    view = state.tableView(unitLabel(state.unit)),
                     reveal = state.reveal,
-                    timing = (state.timer as? WorkoutTimer.SetTimer)?.let { Countdown(it.ref, state.timerRemainingSeconds()) },
-                    startsTimer = state::startsTimer,
-                    lastTime = state.lastTime,
                     contentPadding = contentPadding,
-                    onCellTapped = viewModel::onCellTapped,
-                    onTick = viewModel::onTick,
-                    onStartTimer = viewModel::onStartSetTimer,
-                    onAddSet = viewModel::onAddSet,
-                    onDeleteSet = viewModel::onDeleteSet,
-                    onOpenExercise = onOpenExercise,
-                    onDeleteExercise = viewModel::onDeleteExercise,
+                    actions = tableActions,
                 )
             }
             Messages(state, viewModel, Modifier.align(Alignment.BottomCenter).padding(bottom = contentPadding.calculateBottomPadding()))
@@ -336,22 +335,10 @@ private fun EmptyTable(contentPadding: PaddingValues, unit: SettingsManager.Weig
             ) {
                 WorkoutTable(
                     blocks = example,
-                    unit = unit,
-                    focus = null,
-                    selected = SetRef(-1, -3, 0),
-                    typed = null,
+                    view = TableView(unit = unit, unitLabel = unitLabel(unit), selected = SetRef(-1, -3, 0)),
                     reveal = 0,
-                    timing = null,
-                    startsTimer = { false },
-                    lastTime = emptyMap(),
                     contentPadding = contentPadding,
-                    onCellTapped = {},
-                    onTick = {},
-                    onStartTimer = {},
-                    onAddSet = {},
-                    onDeleteSet = {},
-                    onOpenExercise = {},
-                    onDeleteExercise = {},
+                    actions = object : WorkoutTableActions {},
                 )
             }
             Box(modifier = Modifier.fillMaxSize().pointerInput(Unit) {
