@@ -309,6 +309,10 @@
     <string name="workout_log_timer_less">−10s</string>
     <string name="workout_log_timer_more">+10s</string>
     <string name="workout_log_skip">Skip</string>
+    <string name="workout_log_add_set">Add set</string>
+    <string name="workout_log_delete">Delete</string>
+    <string name="workout_log_set_deleted">Set deleted</string>
+    <string name="workout_log_undo">Undo</string>
     <string name="workout_log_stop">Stop</string>
     <string name="workout_log_empty_hint">Add an exercise to start</string>
     <string name="workout_log_example">EXAMPLE · NOT YOUR DATA</string>

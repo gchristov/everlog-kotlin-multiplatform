@@ -145,12 +145,13 @@ fun List<WorkoutBlock>.addRound(blockId: Long, ids: SessionIds): List<WorkoutBlo
 }
 
 /**
- * Deletes a round. Returns null if there's no such round, otherwise the blocks and what to put back to undo it.
+ * Deletes a round, and its block with it if it was the last. Returns null if there's no such round, otherwise the
+ * blocks and what to put back to undo it.
  */
 fun List<WorkoutBlock>.deleteRound(blockId: Long, roundId: Long): Pair<List<WorkoutBlock>, DeletedSets>? {
     val block = block(blockId) ?: return null
     if (block.rounds.none { it.id == roundId }) return null
-    return replace(block.copy(rounds = block.rounds.filterNot { it.id == roundId })) to DeletedSets(block)
+    return replace(block.copy(rounds = block.rounds.filterNot { it.id == roundId })) to DeletedSets(block, indexOf(block))
 }
 
 /**
@@ -168,7 +169,7 @@ fun List<WorkoutBlock>.deleteSet(ref: SetRef): Pair<List<WorkoutBlock>, DeletedS
         if (r.id != ref.roundId) r else r.copy(sets = r.sets.mapIndexed { i, set -> if (i == ref.index) set.copy(removed = true) else set })
     })
     val exerciseLeft = removed.rounds.any { !it.sets[ref.index].removed }
-    return replace(if (exerciseLeft) removed else removed.withoutExercise(ref.index)) to DeletedSets(block)
+    return replace(if (exerciseLeft) removed else removed.withoutExercise(ref.index)) to DeletedSets(block, indexOf(block))
 }
 
 private fun WorkoutBlock.withoutExercise(index: Int): WorkoutBlock {
@@ -180,13 +181,20 @@ private fun WorkoutBlock.withoutExercise(index: Int): WorkoutBlock {
     )
 }
 
-private fun List<WorkoutBlock>.replace(block: WorkoutBlock): List<WorkoutBlock> = map { if (it.id == block.id) block else it }
+// A block left without sets goes, as on the old screen
+private fun List<WorkoutBlock>.replace(block: WorkoutBlock): List<WorkoutBlock> =
+    if (block.rounds.isEmpty()) filterNot { it.id == block.id } else map { if (it.id == block.id) block else it }
 
 /**
- * Puts a block back as it was before its sets were deleted. Changes made to the block since are lost too, so the
- * undo should go once anything else changes.
+ * Puts a block back as it was before its sets were deleted, where it was if it went. Changes made to the block since
+ * are lost too, so the undo should go once anything else changes.
  */
-fun List<WorkoutBlock>.restore(deleted: DeletedSets): List<WorkoutBlock> = replace(deleted.block)
+fun List<WorkoutBlock>.restore(deleted: DeletedSets): List<WorkoutBlock> =
+    if (any { it.id == deleted.block.id }) {
+        replace(deleted.block)
+    } else {
+        toMutableList().apply { add(deleted.position.coerceIn(0, size), deleted.block) }
+    }
 
 fun List<WorkoutBlock>.deleteBlock(blockId: Long): List<WorkoutBlock> = filterNot { it.id == blockId }
 

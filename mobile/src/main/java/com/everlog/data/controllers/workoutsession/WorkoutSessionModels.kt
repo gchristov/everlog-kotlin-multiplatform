@@ -88,10 +88,11 @@ data class SetRef(
 )
 
 /**
- * A block as it was before some of its sets were deleted, so the delete can be undone.
+ * A block as it was before some of its sets were deleted, and where it was, so the delete can be undone.
  */
 data class DeletedSets(
     val block: WorkoutBlock,
+    val position: Int,
 )
 
 /**

@@ -17,7 +17,10 @@ import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
+import androidx.compose.ui.test.performScrollToIndex
 import androidx.compose.ui.test.performScrollToNode
+import androidx.compose.ui.test.performTouchInput
+import androidx.compose.ui.test.swipeLeft
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
 import com.everlog.constants.ELConstants
@@ -124,6 +127,7 @@ class WorkoutLogScenarioTest {
         compose.onNodeWithText("REST").assertDoesNotExist()
 
         // The closed keypad's Complete set goes through the superset exercise by exercise
+        showExercise(1)
         key("Complete set").performClick()
         key("Complete set").performClick()
         tick(1, 0, 0).assertContentDescriptionEquals("Undo set")
@@ -154,6 +158,16 @@ class WorkoutLogScenarioTest {
         cell(0, 0, 0, "weight").assertTextEquals("135")
         tick(0, 0, 0).assertContentDescriptionEquals("Undo set")
         cell(0, 1, 0, "count").assertTextEquals("1:40")
+
+        // A set added to bench press, swiped away, put back with Undo, then swiped away for good
+        showExercise(0)
+        compose.onAllNodes(hasText("Add set") and hasAnyAncestor(hasTestTag(WorkoutLogTags.Table)))[0].performClick()
+        row(0, 2, 0).assertExists().performTouchInput { swipeLeft() }
+        row(0, 2, 0).assertDoesNotExist()
+        compose.onNodeWithText("Undo").performClick()
+        row(0, 2, 0).assertExists().performTouchInput { swipeLeft() }
+        row(0, 2, 0).assertDoesNotExist()
+        assertThat(analytics.events).containsAtLeast("set_added", "set_deleted", "set_deleted").inOrder()
 
         // An exercise added at the end, which may be below the screen
         key("Add exercise").performClick()
@@ -255,6 +269,13 @@ class WorkoutLogScenarioTest {
         return compose.onNodeWithTag(if (field == "count") WorkoutLogTags.count(set) else WorkoutLogTags.weight(set))
     }
 
+    // Scrolls an exercise to the top of the table, clear of the keypad over its bottom, on any screen size
+    private fun showExercise(block: Int) {
+        compose.onNodeWithTag(WorkoutLogTags.Table).performScrollToIndex(block)
+    }
+
+    private fun row(block: Int, round: Int, exercise: Int) = compose.onNodeWithTag(WorkoutLogTags.set(block, round, exercise))
+
     private fun tick(block: Int, round: Int, exercise: Int) =
         compose.onNodeWithTag(WorkoutLogTags.tick(WorkoutLogTags.set(block, round, exercise)))
 
@@ -342,6 +363,14 @@ class WorkoutLogScenarioTest {
 
         override fun exercisesAdded() {
             events += "exercises_added"
+        }
+
+        override fun setAdded() {
+            events += "set_added"
+        }
+
+        override fun setDeleted() {
+            events += "set_deleted"
         }
 
         override fun restStarted() {

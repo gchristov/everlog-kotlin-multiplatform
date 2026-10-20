@@ -127,6 +127,10 @@ internal interface WorkoutLogAnalytics {
 
     fun exercisesAdded()
 
+    fun setAdded()
+
+    fun setDeleted()
+
     fun restStarted()
 
     // Rest skipped (not run out)
@@ -165,6 +169,10 @@ internal class RealWorkoutLogAnalytics : WorkoutLogAnalytics {
     override fun setEdited(type: ELSetType?, timed: Boolean) = analytics.setEdited(type, timed)
 
     override fun exercisesAdded() = analytics.routineExerciseGroupAdded()
+
+    override fun setAdded() = analytics.setAdded()
+
+    override fun setDeleted() = analytics.setDeleted()
 
     override fun restStarted() = analytics.workoutTimerStartedRest()
 

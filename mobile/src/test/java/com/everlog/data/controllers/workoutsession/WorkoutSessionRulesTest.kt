@@ -171,6 +171,16 @@ class WorkoutSessionRulesTest {
     }
 
     @Test
+    fun `deleting an exercise's last set deletes it, and undo puts it back where it was`() {
+        val (oneRound, _) = blocks.deleteRound(single.id, single.rounds[1].id)!!
+
+        val (deleted, undo) = oneRound.deleteRound(single.id, single.rounds[0].id)!!
+
+        assertThat(deleted).containsExactly(superset)
+        assertThat(deleted.restore(undo)).isEqualTo(oneRound)
+    }
+
+    @Test
     fun `a deleted round goes back where it was`() {
         val (deleted, undo) = blocks.deleteRound(single.id, single.rounds[0].id)!!
 

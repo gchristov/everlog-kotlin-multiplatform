@@ -7,10 +7,13 @@ import com.everlog.data.controllers.workoutsession.SetRef
 import com.everlog.data.controllers.workoutsession.ValueField
 import com.everlog.data.controllers.workoutsession.WorkoutBlock
 import com.everlog.data.controllers.workoutsession.addGroups
+import com.everlog.data.controllers.workoutsession.addRound
 import com.everlog.data.controllers.workoutsession.block
 import com.everlog.data.controllers.workoutsession.completeSet
+import com.everlog.data.controllers.workoutsession.deleteSet
 import com.everlog.data.controllers.workoutsession.nextOpenAfter
 import com.everlog.data.controllers.workoutsession.refs
+import com.everlog.data.controllers.workoutsession.restore
 import com.everlog.data.controllers.workoutsession.round
 import com.everlog.data.controllers.workoutsession.set
 import com.everlog.data.controllers.workoutsession.setMode
@@ -361,7 +364,61 @@ internal class WorkoutLogViewModel(
         }
     }
 
-    // Adding
+    // Adding and deleting sets
+
+    /**
+     * A new set at the end of an exercise (or a new round of a superset), with the last set's values, up to the old
+     * screen's limit.
+     */
+    fun onAddSet(blockId: Long) {
+        val block = state.value.blocks.block(blockId) ?: return
+        if (block.rounds.size >= MaxSets) {
+            setState { copy(message = WorkoutLogMessage.TooManySets(MaxSets)) }
+            return
+        }
+        val blocks = state.value.blocks.addRound(blockId, ids)
+        // Every set was done: the new one is current
+        change { copy(blocks = blocks, current = current ?: blocks.nextOpenAfter(null)).followCurrent() }
+        analytics.setAdded()
+    }
+
+    /**
+     * Deletes one exercise's set, the whole exercise with its last set, until Undo. A countdown or the keypad on it
+     * goes, and the current set moves on.
+     */
+    fun onDeleteSet(ref: SetRef) {
+        val before = state.value
+        val (blocks, deleted) = before.blocks.deleteSet(ref) ?: return
+        val kept = { it: SetRef? -> it != null && blocks.set(it) != null }
+        // The current set, or the next one not done after it that's still there
+        val refs = before.blocks.refs()
+        val from = refs.indexOf(before.current)
+        val next = (refs.drop(from + 1) + refs.take(from + 1)).firstOrNull { blocks.set(it)?.done == false }
+        change(keepUndo = true) {
+            copy(
+                blocks = blocks,
+                current = before.current.takeIf(kept) ?: next,
+                selected = selected.takeIf(kept),
+                focus = focus?.takeIf { kept(it.ref) },
+                typed = typed.takeIf { kept(focus?.ref) },
+                timer = timer.takeUnless { it is WorkoutTimer.SetTimer && !kept(it.ref) },
+                deletion = Deletion(deleted, before.current),
+            ).followCurrent()
+        }
+        analytics.setDeleted()
+    }
+
+    fun onUndoDelete() {
+        val deletion = state.value.deletion ?: return
+        change { copy(blocks = blocks.restore(deletion.sets), current = deletion.current ?: current) }
+    }
+
+    // The undo's message went without Undo
+    fun onUndoGone() = setState { copy(deletion = null) }
+
+    fun onMessageShown() = setState { copy(message = null) }
+
+    // Adding exercises
 
     fun onExercisesPicked(groups: List<ELExerciseGroup>) {
         if (groups.isEmpty()) return
@@ -428,9 +485,10 @@ internal class WorkoutLogViewModel(
 
     // Saving
 
-    // A change to the workout, saved as the ongoing one straight away
-    private fun change(reducer: WorkoutLogState.() -> WorkoutLogState) {
-        setState(reducer)
+    // A change to the workout, saved as the ongoing one straight away. Any change but a delete ends the undo of the
+    // last delete, which puts its sets back as they were.
+    private fun change(keepUndo: Boolean = false, reducer: WorkoutLogState.() -> WorkoutLogState) {
+        setState { (if (keepUndo) this else copy(deletion = null)).reducer() }
         save()
     }
 
@@ -459,6 +517,7 @@ internal class WorkoutLogViewModel(
         private const val TickMillis = 1000L
         // A countdown's −10s and +10s, AppConfig's offset for the old screen's timer
         private val TimerStepSeconds = AppConfig.configuration.defaultRestTimeOffsetSeconds
+        private val MaxSets = AppConfig.configuration.maxExerciseSets
         private const val RepsStep = 1f
         private const val TimeStepSeconds = 5f
 
