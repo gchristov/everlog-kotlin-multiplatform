@@ -463,6 +463,7 @@ internal class WorkoutLogViewModel(
     fun onDeleteExercise(blockId: Long) = setState { copy(dialog = WorkoutLogDialog.DeleteExercise(blockId)) }
 
     fun onDeleteExerciseConfirmed(blockId: Long) {
+        logTypedValue()
         change {
             val remaining = withSetsGone(blocks.deleteBlock(blockId))
             // No rest without exercises to rest between, nor anything left to edit
