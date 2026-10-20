@@ -17,6 +17,7 @@ import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
+import androidx.compose.ui.test.performScrollToIndex
 import androidx.compose.ui.test.performScrollToNode
 import androidx.compose.ui.test.performTouchInput
 import androidx.compose.ui.test.swipeLeft
@@ -126,6 +127,7 @@ class WorkoutLogScenarioTest {
         compose.onNodeWithText("REST").assertDoesNotExist()
 
         // The closed keypad's Complete set goes through the superset exercise by exercise
+        showExercise(1)
         key("Complete set").performClick()
         key("Complete set").performClick()
         tick(1, 0, 0).assertContentDescriptionEquals("Undo set")
@@ -158,6 +160,7 @@ class WorkoutLogScenarioTest {
         cell(0, 1, 0, "count").assertTextEquals("1:40")
 
         // A set added to bench press, swiped away, put back with Undo, then swiped away for good
+        showExercise(0)
         compose.onAllNodes(hasText("Add set") and hasAnyAncestor(hasTestTag(WorkoutLogTags.Table)))[0].performClick()
         row(0, 2, 0).assertExists().performTouchInput { swipeLeft() }
         row(0, 2, 0).assertDoesNotExist()
@@ -264,6 +267,11 @@ class WorkoutLogScenarioTest {
     private fun cell(block: Int, round: Int, exercise: Int, field: String): SemanticsNodeInteraction {
         val set = WorkoutLogTags.set(block, round, exercise)
         return compose.onNodeWithTag(if (field == "count") WorkoutLogTags.count(set) else WorkoutLogTags.weight(set))
+    }
+
+    // Scrolls an exercise to the top of the table, clear of the keypad over its bottom, on any screen size
+    private fun showExercise(block: Int) {
+        compose.onNodeWithTag(WorkoutLogTags.Table).performScrollToIndex(block)
     }
 
     private fun row(block: Int, round: Int, exercise: Int) = compose.onNodeWithTag(WorkoutLogTags.set(block, round, exercise))
