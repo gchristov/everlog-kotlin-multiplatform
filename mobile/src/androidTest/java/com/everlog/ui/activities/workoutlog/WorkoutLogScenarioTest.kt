@@ -177,8 +177,11 @@ class WorkoutLogScenarioTest {
         compose.onNodeWithContentDescription("Hide keypad").performClick()
         tick(0, 1, 0).assertContentDescriptionEquals("Undo set")
 
-        // The superset's menu has each exercise's history, and each name opens its info
+        // The superset's menu, beside its last exercise, has each exercise's history, and each name opens its info
         showExercise(1)
+        val menu = compose.onNodeWithTag(WorkoutLogTags.menu(1)).getUnclippedBoundsInRoot()
+        val raise = compose.onNode(hasText("Raise") and hasAnyAncestor(hasTestTag(WorkoutLogTags.Table))).getUnclippedBoundsInRoot()
+        assertThat(((menu.top + menu.bottom) / 2).value).isWithin(1f).of(((raise.top + raise.bottom) / 2).value)
         compose.onNodeWithTag(WorkoutLogTags.menu(1)).performClick()
         compose.onNode(hasText("Fly history") and hasAnyAncestor(isPopup())).assertExists()
         compose.onNode(hasText("Raise history") and hasAnyAncestor(isPopup())).performClick()

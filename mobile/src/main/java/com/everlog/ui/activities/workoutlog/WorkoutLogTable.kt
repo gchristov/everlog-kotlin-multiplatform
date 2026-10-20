@@ -52,7 +52,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.layout.HorizontalAlignmentLine
 import androidx.compose.ui.layout.boundsInWindow
+import androidx.compose.ui.layout.layout
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.layout.positionInWindow
 import androidx.compose.ui.platform.LocalContext
@@ -300,11 +302,14 @@ private fun ExerciseHeader(index: Int, block: WorkoutBlock, actions: WorkoutTabl
                 )
             }
         } else {
-            GroupHeader(modifier = Modifier.weight(1f), block = block, actions = actions)
+            GroupHeader(modifier = Modifier.weight(1f).alignBy(LastExerciseCenter), block = block, actions = actions)
         }
         val exercises = block.exercises.mapNotNull { it.exercise }
         AppOverflowMenu(
-            modifier = Modifier.testTag(WorkoutLogTags.menu(index)),
+            // Beside a group's last exercise, as it's under the group's type
+            modifier = Modifier.testTag(WorkoutLogTags.menu(index)).then(
+                if (block.exercises.size > 1) Modifier.alignBy { it.measuredHeight / 2 } else Modifier,
+            ),
             outlined = true,
             items = exercises.map { exercise ->
                 val text = if (exercises.size == 1) {
@@ -325,6 +330,14 @@ private fun Modifier.openingHistory(exercise: ELExercise?, actions: WorkoutTable
 private fun Modifier.openingInfo(exercise: ELExercise?, actions: WorkoutTableActions, corner: Dp) =
     if (exercise == null) this else clip(RoundedCornerShape(corner)).clickable { actions.onOpenExercise(exercise, ExerciseTab.Info) }
 
+// The middle of a group header's last exercise, which the exercise menu lines up with
+private val LastExerciseCenter = HorizontalAlignmentLine(merger = { _, last -> last })
+
+private fun Modifier.providingCenter(line: HorizontalAlignmentLine) = layout { measurable, constraints ->
+    val placeable = measurable.measure(constraints)
+    layout(placeable.width, placeable.height, mapOf(line to placeable.height / 2)) { placeable.place(0, 0) }
+}
+
 // SUPERSET, CIRCUIT and so on over the names, each with its image and letter
 @Composable
 private fun GroupHeader(modifier: Modifier, block: WorkoutBlock, actions: WorkoutTableActions) {
@@ -341,7 +354,9 @@ private fun GroupHeader(modifier: Modifier, block: WorkoutBlock, actions: Workou
         }
         block.exercises.forEachIndexed { i, exercise ->
             Row(
-                modifier = Modifier.openingInfo(exercise.exercise, actions, TableSizes.GroupThumbnailCorner),
+                modifier = Modifier
+                    .then(if (i == block.exercises.lastIndex) Modifier.providingCenter(LastExerciseCenter) else Modifier)
+                    .openingInfo(exercise.exercise, actions, TableSizes.GroupThumbnailCorner),
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(Theme.spacing.medium),
             ) {
