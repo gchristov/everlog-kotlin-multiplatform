@@ -313,6 +313,21 @@
     <string name="workout_log_delete">Delete</string>
     <string name="workout_log_set_deleted">Set deleted</string>
     <string name="workout_log_undo">Undo</string>
+    <string name="workout_log_options">Workout options</string>
+    <string name="workout_log_rest_timer">Rest timer</string>
+    <string name="workout_log_rest_timer_subtitle">%1$s after each set</string>
+    <string name="workout_log_rest_timer_body">The rest after each set, for every exercise.</string>
+    <string name="workout_log_rest_less">Less rest</string>
+    <string name="workout_log_rest_more">More rest</string>
+    <string name="workout_log_edit">Edit workout</string>
+    <string name="workout_log_edit_subtitle">Reorder or delete exercises</string>
+    <string name="workout_log_edit_hint">Drag the grip to move an exercise. Tap the bin to delete it.</string>
+    <string name="workout_log_discard">Discard workout</string>
+    <string name="workout_log_move">Move</string>
+    <plurals name="workout_log_sets">
+        <item quantity="one">%1$d set</item>
+        <item quantity="other">%1$d sets</item>
+    </plurals>
     <string name="workout_log_exercise_details">%1$s details</string>
     <string name="workout_log_delete_exercise_title">Delete %1$s?</string>
     <string name="workout_log_delete_exercise_body">Its sets go with it.</string>

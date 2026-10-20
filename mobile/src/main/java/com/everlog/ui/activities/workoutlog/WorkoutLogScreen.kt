@@ -54,6 +54,8 @@ import com.everlog.data.controllers.workoutsession.set
 import com.everlog.data.model.exercise.ELExercise
 import com.everlog.managers.preferences.SettingsManager
 import com.everlog.ui.design.elements.AppButton
+import com.everlog.ui.design.elements.AppFooter
+import com.everlog.ui.design.elements.AppFooterAction
 import com.everlog.ui.design.elements.AppIconButton
 import com.everlog.ui.design.elements.AppScreen
 import com.everlog.ui.design.elements.AppSecondaryButton
@@ -111,37 +113,56 @@ internal fun WorkoutLogScreen(
     val empty = state.blocks.isEmpty()
 
     AppScreen(
-        topBar = { Header(state, onClose = viewModel::onClose, onFinish = viewModel::onFinish) },
+        topBar = { Header(state, viewModel) },
         footer = {
-            AppKeypad(
-                modifier = Modifier
-                    .testTag(WorkoutLogTags.Keypad)
-                    .windowInsetsPadding(WindowInsets.navigationBars)
-                    .padding(start = Theme.spacing.large, end = Theme.spacing.large, bottom = Theme.spacing.small),
-                entry = keypadEntry(state, viewModel),
-                input = input,
-                onHide = viewModel::onHideKeypad,
-                onShow = if (empty) null else viewModel::onShowKeypad,
-                actions = if (empty) emptyList() else listOf(addExercise),
-                primaryAction = when {
-                    // The empty workout's only action
-                    empty -> addExercise
-                    state.target != null -> AppKeypadAction(
-                        stringResource(if (state.targetStartsTimer) R.string.workout_log_start_timer else R.string.workout_log_complete_set),
-                        viewModel::onCompleteTarget,
-                    )
-                    // Every set done: Finish in the header is filled instead
-                    else -> null
-                },
-                strips = {
-                    if (empty) AppKeypadNote(text = stringResource(R.string.workout_log_empty_hint))
-                    state.timer?.let { TimerStrip(it, state.timerRemainingSeconds(), viewModel) }
-                },
-            )
+            // Edit workout: Done and Add exercise, with the tip on how to edit
+            if (state.editing) {
+                AppFooter(
+                    modifier = Modifier.testTag(WorkoutLogTags.EditFooter),
+                    header = stringResource(R.string.workout_log_edit_hint),
+                    actions = listOf(
+                        AppFooterAction(text = stringResource(R.string.workout_log_done), onClick = viewModel::onEditDone),
+                        AppFooterAction(text = stringResource(R.string.workout_log_add_exercise), onClick = onAddExercise, style = AppFooterAction.Style.Secondary),
+                    ),
+                )
+            } else {
+                AppKeypad(
+                    modifier = Modifier
+                        .testTag(WorkoutLogTags.Keypad)
+                        .windowInsetsPadding(WindowInsets.navigationBars)
+                        .padding(start = Theme.spacing.large, end = Theme.spacing.large, bottom = Theme.spacing.small),
+                    entry = keypadEntry(state, viewModel),
+                    input = input,
+                    onHide = viewModel::onHideKeypad,
+                    onShow = if (empty) null else viewModel::onShowKeypad,
+                    actions = if (empty) emptyList() else listOf(addExercise),
+                    primaryAction = when {
+                        // The empty workout's only action
+                        empty -> addExercise
+                        state.target != null -> AppKeypadAction(
+                            stringResource(if (state.targetStartsTimer) R.string.workout_log_start_timer else R.string.workout_log_complete_set),
+                            viewModel::onCompleteTarget,
+                        )
+                        // Every set done: Finish in the header is filled instead
+                        else -> null
+                    },
+                    strips = {
+                        if (empty) AppKeypadNote(text = stringResource(R.string.workout_log_empty_hint))
+                        state.timer?.let { TimerStrip(it, state.timerRemainingSeconds(), viewModel) }
+                    },
+                )
+            }
         },
     ) { contentPadding ->
         Box(modifier = Modifier.fillMaxSize()) {
-            if (empty) {
+            if (state.editing) {
+                EditList(
+                    blocks = state.blocks,
+                    contentPadding = contentPadding,
+                    onMove = viewModel::onMoveExercise,
+                    onDelete = viewModel::onDeleteExercise,
+                )
+            } else if (empty) {
                 EmptyTable(contentPadding, state.unit)
             } else {
                 WorkoutTable(
@@ -243,7 +264,7 @@ private fun keypadEntry(state: WorkoutLogState, viewModel: WorkoutLogViewModel):
 
 // Close, the workout's time with its name under it, and Finish
 @Composable
-private fun Header(state: WorkoutLogState, onClose: () -> Unit, onFinish: () -> Unit) {
+private fun Header(state: WorkoutLogState, viewModel: WorkoutLogViewModel) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -253,18 +274,20 @@ private fun Header(state: WorkoutLogState, onClose: () -> Unit, onFinish: () -> 
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(Theme.spacing.small),
     ) {
-        AppIconButton(onClick = onClose, icon = ImageVector.vectorResource(R.drawable.ic_remove), contentDescription = stringResource(R.string.workout_log_close))
+        AppIconButton(onClick = viewModel::onClose, icon = ImageVector.vectorResource(R.drawable.ic_remove), contentDescription = stringResource(R.string.workout_log_close))
         Column(modifier = Modifier.weight(1f)) {
             AppText(text = formatClock(state.elapsedSeconds), style = Theme.typography.heading.copy(fontFeatureSettings = "tnum"), maxLines = 1)
             if (state.name.isNotEmpty()) {
                 AppText(text = state.name, style = Theme.typography.small, color = Theme.contentColors.secondary, maxLines = 1)
             }
         }
+        // Neither while editing, which Done in the footer ends
+        if (!state.editing) WorkoutOptionsButton(state, viewModel)
         // Filled once every set is done: it's what's next
         when {
-            state.blocks.isEmpty() -> Unit
-            state.unfinishedSets == 0 -> AppButton(onClick = onFinish, text = stringResource(R.string.workout_finish))
-            else -> AppSecondaryButton(onClick = onFinish, text = stringResource(R.string.workout_finish))
+            state.blocks.isEmpty() || state.editing -> Unit
+            state.unfinishedSets == 0 -> AppButton(onClick = viewModel::onFinish, text = stringResource(R.string.workout_finish))
+            else -> AppSecondaryButton(onClick = viewModel::onFinish, text = stringResource(R.string.workout_finish))
         }
     }
 }

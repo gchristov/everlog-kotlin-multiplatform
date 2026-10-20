@@ -19,6 +19,14 @@ internal fun WorkoutLogDialogs(state: WorkoutLogState, viewModel: WorkoutLogView
             primaryAction = AppDialogAction(stringResource(R.string.workout_finish), viewModel::onFinishConfirmed),
             secondaryAction = AppDialogAction(stringResource(R.string.cancel), viewModel::onDialogDismissed),
         )
+        WorkoutLogDialog.RestTimer -> AppDialog(
+            title = stringResource(R.string.workout_log_rest_timer),
+            body = stringResource(R.string.workout_log_rest_timer_body),
+            onDismissRequest = viewModel::onDialogDismissed,
+            primaryAction = AppDialogAction(stringResource(R.string.workout_log_done), viewModel::onDialogDismissed),
+        ) {
+            RestStepper(seconds = state.restSeconds, onStep = viewModel::onRestStep)
+        }
         is WorkoutLogDialog.DeleteExercise -> {
             val name = state.blocks.block(dialog.blockId)?.exercises?.joinToString(" + ") { it.exercise?.name.orEmpty() }.orEmpty()
             AppDialog(

@@ -131,6 +131,9 @@ internal interface WorkoutLogAnalytics {
 
     fun setDeleted()
 
+    // The rest after each set changed from the workout's options
+    fun restChanged(seconds: Int)
+
     fun restStarted()
 
     // Rest skipped (not run out)
@@ -173,6 +176,8 @@ internal class RealWorkoutLogAnalytics : WorkoutLogAnalytics {
     override fun setAdded() = analytics.setAdded()
 
     override fun setDeleted() = analytics.setDeleted()
+
+    override fun restChanged(seconds: Int) = analytics.setRestTimeModified(seconds)
 
     override fun restStarted() = analytics.workoutTimerStartedRest()
 

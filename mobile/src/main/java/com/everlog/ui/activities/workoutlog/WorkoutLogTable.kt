@@ -614,6 +614,12 @@ internal data class Countdown(val ref: SetRef, val seconds: Int)
 internal object WorkoutLogTags {
     const val Keypad = "keypad"
     const val Table = "table"
+    const val EditList = "edit"
+    const val EditFooter = "edit:footer"
+
+    fun editCard(block: Int) = "edit:$block"
+
+    fun editGrip(block: Int) = "edit:$block:grip"
 
     fun set(block: Int, round: Int, exercise: Int) = "set:$block:$round:$exercise"
 

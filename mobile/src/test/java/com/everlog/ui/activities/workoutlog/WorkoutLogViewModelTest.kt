@@ -506,6 +506,54 @@ class WorkoutLogViewModelTest {
         assertThat(store.ongoing?.getExerciseGroups()?.get(1)?.exercises?.first()?.exercise?.name).isEqualTo("Cable fly")
     }
 
+    // Edit workout and the workout's options
+
+    @Test
+    fun `edit workout closes the keypad, and back ends it before anything else`() {
+        val viewModel = viewModel()
+        viewModel.onShowKeypad()
+        viewModel.onEditWorkout()
+        assertThat(viewModel.state.value.editing).isTrue()
+        assertThat(viewModel.state.value.focus).isNull()
+
+        viewModel.onBack()
+        assertThat(viewModel.state.value.editing).isFalse()
+        assertThat(viewModel.state.value.dialog).isNull()
+    }
+
+    @Test
+    fun `an exercise moved keeps its sets, and the order is saved`() {
+        val viewModel = viewModel()
+        viewModel.onMoveExercise(0, 1)
+
+        assertThat(viewModel.blocks.map { it.uuid }).containsExactly("group-fly", "group-bench").inOrder()
+        assertThat(store.ongoing?.getExerciseGroups()?.map { it.uuid }).containsExactly("group-fly", "group-bench").inOrder()
+    }
+
+    @Test
+    fun `deleting the last exercise while editing ends editing`() {
+        val viewModel = viewModel()
+        viewModel.onEditWorkout()
+        viewModel.onDeleteExerciseConfirmed(viewModel.blocks[0].id)
+        assertThat(viewModel.state.value.editing).isTrue()
+
+        viewModel.onDeleteExerciseConfirmed(viewModel.blocks[0].id)
+        assertThat(viewModel.state.value.editing).isFalse()
+    }
+
+    @Test
+    fun `the rest from the options changes every exercise's by 10s, not below 10s`() {
+        val viewModel = viewModel()
+        viewModel.onRestTimerSettings()
+        viewModel.onRestStep(1)
+        assertThat(viewModel.state.value.restSeconds).isEqualTo(100)
+        assertThat(viewModel.blocks.map { it.restSeconds }).containsExactly(100, 100)
+        assertThat(analytics.events.last()).isEqualTo("rest_changed 100")
+
+        repeat(20) { viewModel.onRestStep(-1) }
+        assertThat(viewModel.state.value.restSeconds).isEqualTo(10)
+    }
+
     // The notification
 
     @Test
@@ -788,6 +836,10 @@ class WorkoutLogViewModelTest {
 
         override fun setDeleted() {
             events += "set_deleted"
+        }
+
+        override fun restChanged(seconds: Int) {
+            events += "rest_changed $seconds"
         }
 
         override fun restStarted() {
