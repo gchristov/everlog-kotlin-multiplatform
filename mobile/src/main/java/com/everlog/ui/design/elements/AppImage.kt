@@ -13,6 +13,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.everlog.R
@@ -37,20 +38,23 @@ fun AppImage(
 /**
  * A row's small square image, e.g. an exercise's illustration as an [com.everlog.ui.design.elements.list.AppListItem]'s
  * leading content. The illustrations are drawn on white, so it has a white background. Without an
- * image it shows [placeholder] on a raised card instead.
+ * image it shows [placeholder] on a raised card instead. A smaller [size] needs a smaller [corner],
+ * as the default one would round it into a circle.
  */
 @Composable
 fun AppThumbnail(
     imageUrl: String?,
     modifier: Modifier = Modifier,
+    size: Dp = ThumbnailSizes.Size,
+    corner: Dp = ThumbnailSizes.Corner,
     contentDescription: String? = null,
     placeholder: ImageVector = ImageVector.vectorResource(R.drawable.ic_barbell),
 ) {
-    val shape = RoundedCornerShape(ThumbnailSizes.Corner)
+    val shape = RoundedCornerShape(corner)
     if (imageUrl != null) {
         AppImage(
             modifier = modifier
-                .size(ThumbnailSizes.Size)
+                .size(size)
                 .clip(shape)
                 .background(Color.White),
             imageUrl = imageUrl,
@@ -60,7 +64,7 @@ fun AppThumbnail(
     } else {
         Box(
             modifier = modifier
-                .size(ThumbnailSizes.Size)
+                .size(size)
                 .clip(shape)
                 .background(Theme.backgrounds.surfaceRaised),
             contentAlignment = Alignment.Center,

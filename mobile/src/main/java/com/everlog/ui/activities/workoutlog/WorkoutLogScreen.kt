@@ -119,7 +119,7 @@ internal fun WorkoutLogScreen(
             override fun onDeleteExercise(blockId: Long) = viewModel.onDeleteExercise(blockId)
         }
     }
-    val addExercise = AppKeypadAction(stringResource(R.string.workout_log_add_exercise), onAddExercise)
+    val addExercise = AppKeypadAction(stringResource(R.string.workout_log_add_exercise), onClick = onAddExercise)
     val empty = state.blocks.isEmpty()
 
     AppScreen(
@@ -148,8 +148,8 @@ internal fun WorkoutLogScreen(
                     primaryAction = when {
                         empty -> addExercise
                         state.target != null -> AppKeypadAction(
-                            stringResource(if (state.targetStartsTimer) R.string.workout_log_start_timer else R.string.workout_log_complete_set),
-                            viewModel::onCompleteTarget,
+                            text = stringResource(if (state.targetStartsTimer) R.string.workout_log_start_timer else R.string.workout_log_complete_set),
+                            onClick = viewModel::onCompleteTarget,
                         )
                         // With every set done, the header's Finish is the main action instead
                         else -> null
@@ -228,7 +228,7 @@ private fun TimerStrip(timer: WorkoutTimer, remainingSeconds: Int, viewModel: Wo
         style = if (rest) AppKeypadTimerStyle.Rest else AppKeypadTimerStyle.Active,
         less = AppKeypadAction(stringResource(R.string.workout_log_timer_less)) { viewModel.onTimerStep(-1) },
         more = AppKeypadAction(stringResource(R.string.workout_log_timer_more)) { viewModel.onTimerStep(1) },
-        end = AppKeypadAction(stringResource(if (rest) R.string.workout_log_skip else R.string.workout_log_stop), viewModel::onTimerEnd),
+        end = AppKeypadAction(stringResource(if (rest) R.string.workout_log_skip else R.string.workout_log_stop), onClick = viewModel::onTimerEnd),
     )
 }
 

@@ -4,8 +4,10 @@ import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.runtime.Composable
@@ -23,6 +25,8 @@ fun AppButton(
     onClick: () -> Unit,
     text: String,
     enabled: Boolean = true,
+    // Before the text, to say what the button does at a glance, e.g. a tick for completing
+    icon: ImageVector? = null,
     contentPadding: PaddingValues = buttonContentPadding(),
 ) {
     androidx.compose.material3.Button(
@@ -36,6 +40,15 @@ fun AppButton(
         ),
         contentPadding = contentPadding,
     ) {
+        icon?.let {
+            val color = Theme.contentColors.onAction
+            AppIcon(
+                modifier = Modifier.size(ButtonIconSize),
+                imageVector = it,
+                tint = if (enabled) color else color.copy(alpha = DisabledAlpha),
+            )
+            Spacer(modifier = Modifier.width(Theme.spacing.small))
+        }
         ButtonText(
             text = text,
             color = Theme.contentColors.onAction,
@@ -147,6 +160,7 @@ private fun buttonContentPadding() = PaddingValues(
 )
 
 private val ButtonMinHeight = 42.dp
+private val ButtonIconSize = 18.dp
 private const val DisabledAlpha = 0.4f
 
 @Preview
