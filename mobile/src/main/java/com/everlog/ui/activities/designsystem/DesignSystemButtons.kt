@@ -6,7 +6,10 @@ import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
+import com.everlog.R
 import com.everlog.ui.design.elements.AppButton
 import com.everlog.ui.design.elements.AppSecondaryButton
 import com.everlog.ui.design.elements.AppTertiaryButton
@@ -45,6 +48,12 @@ internal fun DesignSystemButtons(
                     modifier = Modifier.fillMaxWidth(),
                     onClick = onButtonClick,
                     text = "Primary",
+                )
+                AppButton(
+                    modifier = Modifier.fillMaxWidth(),
+                    onClick = onButtonClick,
+                    text = "With an icon",
+                    icon = ImageVector.vectorResource(R.drawable.ic_check),
                 )
                 AppSecondaryButton(
                     modifier = Modifier.fillMaxWidth(),

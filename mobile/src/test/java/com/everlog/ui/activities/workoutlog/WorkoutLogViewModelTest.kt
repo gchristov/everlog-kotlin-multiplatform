@@ -23,6 +23,7 @@ import com.everlog.data.model.workout.ELWorkout
 import com.everlog.data.model.workout.ELWorkoutState
 import com.everlog.data.repositories.OngoingWorkoutRepository
 import com.everlog.managers.preferences.SettingsManager
+import com.everlog.services.workout.ShownSet
 import com.everlog.managers.preferences.SettingsManager.WeightUnit
 import com.everlog.testutil.FakeCoroutineDispatcher
 import com.everlog.testutil.InMemorySharedPreferences
@@ -454,6 +455,22 @@ class WorkoutLogViewModelTest {
         viewModel.onMainKey()
         assertThat(viewModel.set(0, 0).done).isTrue()
         assertThat(viewModel.state.value.timer).isInstanceOf(WorkoutTimer.Rest::class.java)
+    }
+
+    @Test
+    fun `the tick lights up with the key that presses it, a reps set's on its weight and a timed set's timer on its time`() {
+        val viewModel = viewModel()
+        viewModel.onCellTapped(CellFocus(viewModel.ref(0, 0), ValueField.Reps))
+        assertThat(viewModel.state.value.tableView("KG").armed).isNull()
+        viewModel.onCellTapped(CellFocus(viewModel.ref(0, 0), ValueField.Weight))
+        assertThat(viewModel.state.value.tableView("KG").armed).isEqualTo(viewModel.ref(0, 0))
+
+        viewModel.onCellTapped(CellFocus(viewModel.ref(0, 1), ValueField.Reps))
+        viewModel.onModeSelected(SetMode.Time)
+        viewModel.type("45")
+        assertThat(viewModel.state.value.tableView("KG").armed).isEqualTo(viewModel.ref(0, 1))
+        viewModel.onCellTapped(CellFocus(viewModel.ref(0, 1), ValueField.Weight))
+        assertThat(viewModel.state.value.tableView("KG").armed).isNull()
     }
 
     @Test
@@ -967,6 +984,15 @@ class WorkoutLogViewModelTest {
     }
 
     @Test
+    fun `the notification shows a value as it's typed, before the keypad moves on`() {
+        val viewModel = viewModel()
+        viewModel.onCellTapped(CellFocus(viewModel.ref(0, 0), ValueField.Reps))
+        viewModel.type("12")
+
+        assertThat(notification.shown?.getExerciseGroups()?.first()?.exercises?.first()?.sets?.first()?.getReps()).isEqualTo(12)
+    }
+
+    @Test
     fun `the notification is sent the workout again when the screen comes back, as a setting may have changed`() {
         val viewModel = viewModel()
         notification.shown = null
@@ -995,9 +1021,53 @@ class WorkoutLogViewModelTest {
     }
 
     @Test
+    fun `the notification shows the set selected on the screen, and the next one once it's done`() {
+        val viewModel = viewModel()
+        viewModel.onScreenStarted()
+        assertThat(notification.shownSet?.position).isEqualTo(position(0, 0, 0, exercises = 1))
+
+        viewModel.onCellTapped(CellFocus(viewModel.ref(1, 1, 1), ValueField.Weight))
+        viewModel.onHideKeypad()
+        assertThat(notification.shownSet?.position).isEqualTo(position(1, 1, 1, exercises = 2))
+
+        viewModel.onNotificationMainAction(notification.shownSet!!.position)
+        assertThat(viewModel.set(1, 1, 1).done).isTrue()
+        assertThat(notification.shownSet?.position).isEqualTo(position(0, 0, 0, exercises = 1))
+    }
+
+    @Test
+    fun `the notification's main button starts a timed set's timer first, as the screen's does`() {
+        val viewModel = viewModel()
+        viewModel.onCellTapped(CellFocus(viewModel.ref(0, 0), ValueField.Reps))
+        viewModel.onModeSelected(SetMode.Time)
+        viewModel.type("30")
+        viewModel.onHideKeypad()
+        assertThat(notification.shownSet?.startsTimer).isTrue()
+
+        viewModel.onNotificationMainAction(position(0, 0, 0))
+        assertThat(viewModel.state.value.isTiming(viewModel.ref(0, 0))).isTrue()
+        assertThat(viewModel.set(0, 0).done).isFalse()
+        assertThat(notification.shownSet?.startsTimer).isFalse()
+
+        viewModel.onNotificationMainAction(position(0, 0, 0))
+        assertThat(viewModel.set(0, 0).done).isTrue()
+    }
+
+    @Test
+    fun `a superset's last round with an exercise removed shows the others by their place in the round`() {
+        val viewModel = viewModel()
+        viewModel.onDeleteSet(viewModel.ref(1, 1, 0))
+        viewModel.onCellTapped(CellFocus(viewModel.ref(1, 1, 1), ValueField.Reps))
+
+        assertThat(notification.shownSet?.position).isEqualTo(position(1, 1, 0, exercises = 1))
+        viewModel.onNotificationReps(notification.shownSet!!.position, 1)
+        assertThat(viewModel.set(1, 1, 1).reps).isEqualTo(13)
+    }
+
+    @Test
     fun `the notification's button completes its set, logged as from the notification`() {
         val viewModel = viewModel()
-        viewModel.onNotificationCompleteSet(position(group = 0, set = 0, exercise = 0))
+        viewModel.onNotificationMainAction(position(group = 0, set = 0, exercise = 0))
 
         assertThat(viewModel.set(0, 0).done).isTrue()
         assertThat(viewModel.state.value.timer).isInstanceOf(WorkoutTimer.Rest::class.java)
@@ -1007,7 +1077,7 @@ class WorkoutLogViewModelTest {
     @Test
     fun `the notification's buttons point at a superset exercise by its place in the round`() {
         val viewModel = viewModel()
-        viewModel.onNotificationCompleteSet(position(group = 1, set = 1, exercise = 1))
+        viewModel.onNotificationMainAction(position(group = 1, set = 1, exercise = 1))
 
         assertThat(viewModel.set(1, 1, 1).done).isTrue()
     }
@@ -1025,12 +1095,25 @@ class WorkoutLogViewModelTest {
     }
 
     @Test
+    fun `the notification's time ± step it by 10s as the keypad's do, and change a running timer the same`() {
+        val viewModel = timedSetRunning(seconds = "30")
+        viewModel.onNotificationTime(position(0, 0, 0), 1)
+        assertThat(viewModel.set(0, 0).timeSeconds).isEqualTo(40)
+        assertThat(viewModel.state.value.timer?.endsAt).isEqualTo(now + 40_000)
+
+        viewModel.onNotificationSetTimer(position(0, 0, 0), start = false)
+        viewModel.onNotificationTime(position(0, 0, 0), -1)
+        assertThat(viewModel.set(0, 0).timeSeconds).isEqualTo(30)
+        assertThat(analytics.events.last()).isEqualTo("time_modified 30.0")
+    }
+
+    @Test
     fun `a notification button for a set that's gone since does nothing`() {
         val viewModel = viewModel()
         viewModel.onDeleteSet(viewModel.ref(0, 1))
         val saved = store.ongoing
 
-        viewModel.onNotificationCompleteSet(position(0, 1, 0))
+        viewModel.onNotificationMainAction(position(0, 1, 0))
         viewModel.onNotificationReps(position(0, 1, 0), 1)
         viewModel.onNotificationWeight(position(5, 0, 0), 1)
 
@@ -1158,8 +1241,8 @@ class WorkoutLogViewModelTest {
         assertThat(store.savedReps()).isEqualTo(7)
     }
 
-    private fun position(group: Int, set: Int, exercise: Int) =
-        ELWorkoutState(groupIndex = group, setIndex = set, exerciseIndex = exercise)
+    private fun position(group: Int, set: Int, exercise: Int, exercises: Int = 0) =
+        ELWorkoutState(groupIndex = group, setIndex = set, exerciseIndex = exercise, exercisesInGroup = exercises)
 
     // Bench press's first set switched to time and its timer running
     private fun timedSetRunning(seconds: String): WorkoutLogViewModel {
@@ -1252,20 +1335,23 @@ class WorkoutLogViewModelTest {
     private class FakeNotification : WorkoutLogNotification {
         var started: ELWorkout? = null
         var stopped = false
-        // The workout it was last sent
+        // The workout it was last sent, and the set in it to show
         var shown: ELWorkout? = null
+        var shownSet: ShownSet? = null
         var rest: Pair<Int, Int>? = null
 
-        override fun start(workout: ELWorkout) {
+        override fun start(workout: ELWorkout, shown: ShownSet?) {
             started = workout
+            shownSet = shown
         }
 
         override fun stop() {
             stopped = true
         }
 
-        override fun update(workout: ELWorkout) {
-            shown = workout
+        override fun update(workout: ELWorkout, shown: ShownSet?) {
+            this.shown = workout
+            shownSet = shown
             rest = null
         }
 

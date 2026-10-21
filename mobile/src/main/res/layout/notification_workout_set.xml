@@ -21,6 +21,7 @@
             android:layout_height="wrap_content"
             android:ellipsize="end"
             android:singleLine="true"
+            android:fontFamily="sans-serif-medium"
             android:textAppearance="@style/TextAppearance.Compat.Notification.Title"
             tools:text="Barbell bench press" />
 
@@ -34,16 +35,10 @@
             tools:text="Super set 3/4  •  60 kg  •  10 reps" />
     </LinearLayout>
 
-    <!-- Icon pinned to the end, matching the expanded view. The tap target stays 48dp wide. -->
-    <ImageView
+    <!-- The main button, which the expanded view and the heads-up have as an action. A collapsed
+         notification in the shade shows no actions. -->
+    <TextView
         android:id="@+id/nextBtn"
-        style="@style/WorkoutNotificationButton"
-        android:layout_width="48dp"
-        android:layout_height="40dp"
-        android:layout_marginEnd="-3dp"
-        android:contentDescription="@string/workout_notification_complete_set"
-        android:paddingStart="24dp"
-        android:paddingEnd="0dp"
-        android:scaleType="center"
-        android:src="@drawable/ic_check" />
+        style="@style/WorkoutNotificationAction"
+        tools:text="@string/workout_notification_complete_set" />
 </LinearLayout>

@@ -12,7 +12,10 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
+import com.everlog.R
 import com.everlog.ui.design.elements.keypad.AppKeypad
 import com.everlog.ui.design.elements.keypad.AppKeypadAction
 import com.everlog.ui.design.elements.keypad.AppKeypadEntry
@@ -82,7 +85,7 @@ internal fun DesignSystemKeypad(onButtonClick: () -> Unit) {
                                 typing = false
                             }
                         } else {
-                            AppKeypadAction("Complete set") {
+                            AppKeypadAction(if (timed) "Start timer" else "Complete set", icon = ImageVector.vectorResource(if (timed) R.drawable.ic_timer else R.drawable.ic_check)) {
                                 onButtonClick()
                                 focused = null
                             }
@@ -96,11 +99,11 @@ internal fun DesignSystemKeypad(onButtonClick: () -> Unit) {
                     focused = Field.Count
                     typing = false
                 },
-                actions = listOf(AppKeypadAction("Add exercise", onButtonClick)),
-                primaryAction = AppKeypadAction("Complete set", onButtonClick),
+                actions = listOf(AppKeypadAction("Add exercise", onClick = onButtonClick)),
+                primaryAction = AppKeypadAction("Complete set", icon = ImageVector.vectorResource(R.drawable.ic_check), onClick = onButtonClick),
                 strips = {
                     if (note) {
-                        AppKeypadNote(text = "Suggested 62.5 kg, up 2.5 kg on last time", highlighted = true, action = AppKeypadAction("Why?", onButtonClick))
+                        AppKeypadNote(text = "Suggested 62.5 kg, up 2.5 kg on last time", highlighted = true, action = AppKeypadAction("Why?", onClick = onButtonClick))
                     }
                     if (rest) {
                         AppKeypadTimer(

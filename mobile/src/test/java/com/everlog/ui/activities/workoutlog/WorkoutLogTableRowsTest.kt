@@ -60,13 +60,19 @@ class WorkoutLogTableRowsTest {
         val typedWeight = single.rows(view.copy(focus = CellFocus(ref(single, 0), ValueField.Weight), typed = "62.")).first()
         assertThat(typedWeight.weightText).isEqualTo("62.")
         assertThat(typedWeight.weightFocused).isTrue()
-        assertThat(typedWeight.armed).isTrue()
 
         val timed = single.copy(rounds = single.rounds.map { round -> round.copy(sets = round.sets.map { it.copy(mode = SetMode.Time) }) })
         val typedTime = timed.rows(view.copy(focus = CellFocus(ref(timed, 0), ValueField.Time), typed = "130")).first()
         assertThat(typedTime.countText).isEqualTo("1:30")
         assertThat(typedTime.countFocused).isTrue()
         assertThat(typedTime.countField).isEqualTo(ValueField.Time)
+    }
+
+    @Test
+    fun `the set the keypad's main key completes or times lights its tick`() {
+        val rows = single.rows(view.copy(armed = ref(single, 0)))
+
+        assertThat(rows.map { it.armed }).containsExactly(true, false).inOrder()
     }
 
     @Test
@@ -85,11 +91,6 @@ class WorkoutLogTableRowsTest {
         val rows = single.rows(view.copy(lastTime = lastTime))
 
         assertThat(rows.map { it.lastTime }).containsExactly("10 × 55 kg", null).inOrder()
-    }
-
-    @Test
-    fun `each row's last time opens its own exercise's history`() {
-        assertThat(superset.rows(view).map { it.historyOf?.name }).containsExactly("fly", "raise", "raise").inOrder()
     }
 
     @Test

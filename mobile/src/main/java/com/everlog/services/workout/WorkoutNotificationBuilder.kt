@@ -17,10 +17,13 @@ import com.everlog.services.workout.WorkoutNotificationState.Done
 import com.everlog.services.workout.WorkoutNotificationState.NextSet
 import com.everlog.services.workout.WorkoutNotificationState.NoExercises
 import com.everlog.services.workout.WorkoutNotificationState.Rest
+import com.everlog.ui.activities.workoutlog.EmptyValue
+import com.everlog.ui.activities.workoutlog.displayWeight
+import com.everlog.ui.activities.workoutlog.formatClock
+import com.everlog.ui.activities.workoutlog.formatWeight
+import com.everlog.ui.activities.workoutlog.unitLabel
 import com.everlog.ui.navigator.ELNavigator
 import com.everlog.utils.ArrayResourceTypeUtils
-import com.everlog.utils.format.FormatUtils
-import java.util.concurrent.TimeUnit
 
 /**
  * Renders a [WorkoutNotificationState] as the ongoing workout notification.
@@ -45,7 +48,9 @@ class WorkoutNotificationBuilder(private val context: Context) {
                 WorkoutService.ACTION_TIMER_EXERCISE_START,
                 WorkoutService.ACTION_TIMER_EXERCISE_STOP,
                 WorkoutService.ACTION_TIMER_REST_STOP,
-                WorkoutService.ACTION_NEXT)
+                WorkoutService.ACTION_NEXT,
+                WorkoutService.ACTION_DECREASE_TIME,
+                WorkoutService.ACTION_INCREASE_TIME)
     }
 
     fun build(channelId: String, state: WorkoutNotificationState, workout: ELWorkout?): Notification {
@@ -84,12 +89,24 @@ class WorkoutNotificationBuilder(private val context: Context) {
                 .setStyle(NotificationCompat.DecoratedCustomViewStyle())
                 .setCustomContentView(buildNextSetCollapsed(state))
                 .setCustomBigContentView(buildNextSetExpanded(state))
+                // The heads-up shows the action under it, so it leaves out its own main button
+                .setCustomHeadsUpContentView(buildNextSetCollapsed(state, withMainButton = false))
+                .addAction(0, mainAction(state), actionIntent(WorkoutService.ACTION_NEXT))
+        if (state.timerRunning) {
+            builder.addAction(0, context.getString(R.string.workout_notification_stop_timer), actionIntent(WorkoutService.ACTION_TIMER_EXERCISE_STOP))
+        }
     }
 
-    private fun buildNextSetCollapsed(state: NextSet): RemoteViews {
+    // The same as the workout screen's main button
+    private fun mainAction(state: NextSet): String = context.getString(
+            if (state.startsTimer) R.string.workout_notification_start_timer else R.string.workout_notification_complete_set)
+
+    private fun buildNextSetCollapsed(state: NextSet, withMainButton: Boolean = true): RemoteViews {
         val layout = RemoteViews(context.packageName, R.layout.notification_workout_set)
         layout.setTextViewText(R.id.exerciseName, exerciseName(state))
         layout.setTextViewText(R.id.setSummary, setSummary(state))
+        layout.setViewVisibility(R.id.nextBtn, if (withMainButton) View.VISIBLE else View.GONE)
+        layout.setTextViewText(R.id.nextBtn, mainAction(state))
         layout.setOnClickPendingIntent(R.id.nextBtn, actionIntent(WorkoutService.ACTION_NEXT))
         return layout
     }
@@ -99,24 +116,20 @@ class WorkoutNotificationBuilder(private val context: Context) {
         layout.setTextViewText(R.id.exerciseName, exerciseName(state))
         layout.setTextViewText(R.id.setSummary, setLabel(state))
         // Weight
-        layout.setTextViewText(R.id.weightField, FormatUtils.formatSetWeight(state.weight))
-        layout.setTextViewText(R.id.weightUnit, SettingsManager.weightUnitAbbreviation())
+        layout.setTextViewText(R.id.weightField, state.weightKg?.let { formatWeight(displayWeight(it, SettingsManager.manager.weightUnit())) } ?: EmptyValue)
+        layout.setTextViewText(R.id.weightUnit, unitLabel(SettingsManager.manager.weightUnit()))
         layout.setOnClickPendingIntent(R.id.reduceWeightBtn, actionIntent(WorkoutService.ACTION_DECREASE_WEIGHT))
         layout.setOnClickPendingIntent(R.id.increaseWeightBtn, actionIntent(WorkoutService.ACTION_INCREASE_WEIGHT))
         // Reps
-        layout.setViewVisibility(R.id.repsPanel, if (state.reps != null) View.VISIBLE else View.GONE)
-        layout.setTextViewText(R.id.repsField, (state.reps ?: 0).toString())
+        layout.setViewVisibility(R.id.repsPanel, if (state.timed) View.GONE else View.VISIBLE)
+        layout.setTextViewText(R.id.repsField, state.reps?.toString() ?: EmptyValue)
         layout.setOnClickPendingIntent(R.id.reduceRepsBtn, actionIntent(WorkoutService.ACTION_DECREASE_REPS))
         layout.setOnClickPendingIntent(R.id.increaseRepsBtn, actionIntent(WorkoutService.ACTION_INCREASE_REPS))
         // Time
-        layout.setViewVisibility(R.id.timePanel, if (state.timeSeconds != null) View.VISIBLE else View.GONE)
-        layout.setTextViewText(R.id.timeField, formatTime(state.timeSeconds ?: 0))
-        layout.setViewVisibility(R.id.startTimerBtn, if (state.timerRunning) View.GONE else View.VISIBLE)
-        layout.setViewVisibility(R.id.stopTimerBtn, if (state.timerRunning) View.VISIBLE else View.GONE)
-        layout.setOnClickPendingIntent(R.id.startTimerBtn, actionIntent(WorkoutService.ACTION_TIMER_EXERCISE_START))
-        layout.setOnClickPendingIntent(R.id.stopTimerBtn, actionIntent(WorkoutService.ACTION_TIMER_EXERCISE_STOP))
-        // Next
-        layout.setOnClickPendingIntent(R.id.nextBtn, actionIntent(WorkoutService.ACTION_NEXT))
+        layout.setViewVisibility(R.id.timePanel, if (state.timed) View.VISIBLE else View.GONE)
+        layout.setTextViewText(R.id.timeField, state.timeSeconds?.let { formatClock(it.toLong()) } ?: EmptyValue)
+        layout.setOnClickPendingIntent(R.id.reduceTimeBtn, actionIntent(WorkoutService.ACTION_DECREASE_TIME))
+        layout.setOnClickPendingIntent(R.id.increaseTimeBtn, actionIntent(WorkoutService.ACTION_INCREASE_TIME))
         return layout
     }
 
@@ -124,7 +137,7 @@ class WorkoutNotificationBuilder(private val context: Context) {
 
     private fun renderRest(builder: NotificationCompat.Builder, state: Rest) {
         val title = if (state.remainingSeconds > 0) {
-            context.getString(R.string.workout_rest_time, formatTime(state.remainingSeconds))
+            context.getString(R.string.workout_rest_time, formatClock(state.remainingSeconds.toLong()))
         } else {
             context.getString(R.string.workout_notification_rest)
         }
@@ -183,10 +196,6 @@ class WorkoutNotificationBuilder(private val context: Context) {
         val values = set.getExerciseSetSummary(context, true)
                 ?: if (promptIfEmpty) context.getString(R.string.workout_notification_tap_to_edit) else null
         return listOfNotNull(setLabel(state), values).joinToString(" • ")
-    }
-
-    private fun formatTime(seconds: Int): String {
-        return FormatUtils.formatDurationShort(TimeUnit.SECONDS.toMillis(seconds.toLong()), "mm:ss")
     }
 
     // Intents

@@ -46,6 +46,7 @@ import com.everlog.data.model.workout.ELWorkout
 import com.everlog.data.repositories.OngoingWorkoutRepository
 import com.everlog.managers.WorkoutManager
 import com.everlog.managers.preferences.SettingsManager.WeightUnit
+import com.everlog.services.workout.ShownSet
 import com.everlog.services.workout.WorkoutService
 import com.everlog.ui.design.theme.Theme
 import com.everlog.utils.UnitUtils
@@ -118,10 +119,7 @@ class WorkoutLogScenarioTest {
         cell(0, 0, 0, "count").assertTextEquals("8", "✦")
         cell(0, 0, 0, "weight").assertTextEquals("100", "✦")
         compose.onAllNodesWithText("8 × 100 lb")[0].assertExists()
-        // Its last time, and the column's heading, open its history
-        compose.onNodeWithTag(WorkoutLogTags.lastTime(WorkoutLogTags.set(0, 1, 0))).performClick()
-        assertThat(opened).isEqualTo("Bench press" to ExerciseTab.History)
-        opened = null
+        // The column's heading opens its history
         compose.onAllNodesWithText("LAST TIME")[0].performClick()
         assertThat(opened).isEqualTo("Bench press" to ExerciseTab.History)
 
@@ -149,9 +147,14 @@ class WorkoutLogScenarioTest {
         assertThat(analytics.events.filter { "modified" in it })
             .containsExactly("reps_modified 10.0", "weight_modified 135.0", "time_modified 90.0").inOrder()
 
-        // +10s adds to its time, and Stop leaves the set to be completed, which starts its rest
+        // +10s adds to its time, as does the notification's +, and Stop leaves the set to be completed, which starts
+        // its rest
         key("+10s").performClick()
         cell(0, 1, 0, "count").assertTextEquals("1:40")
+        val receiver = WorkoutLogNotificationReceiver(viewModel)
+        assertThat(notification.shownSetName()).isEqualTo("Bench press")
+        notificationButton(receiver, WorkoutService.BROADCAST_REQUEST_INCREASE_TIME)
+        cell(0, 1, 0, "count").assertTextEquals("1:50")
         key("Stop").performClick()
         key("Complete set").performClick()
         tick(0, 1, 0).assertContentDescriptionEquals("Undo set")
@@ -204,7 +207,6 @@ class WorkoutLogScenarioTest {
 
         // The notification's buttons, sent as WorkoutService sends them, for the set it shows: the one just undone.
         // + reps, then Complete set, which starts the rest, and Skip rest.
-        val receiver = WorkoutLogNotificationReceiver(viewModel)
         assertThat(notification.shownSetName()).isEqualTo("Raise")
         notificationButton(receiver, WorkoutService.BROADCAST_REQUEST_INCREASE_REPS)
         cell(1, 0, 1, "count").assertTextEquals("13")
@@ -216,13 +218,24 @@ class WorkoutLogScenarioTest {
         notificationButton(receiver, WorkoutService.BROADCAST_REQUEST_TIMER_REST_STOP)
         compose.onNodeWithText("REST").assertDoesNotExist()
 
+        // The notification follows the set selected on the screen, and its buttons act on that one
+        showExercise(1)
+        cell(1, 1, 0, "count").performClick()
+        compose.waitForIdle()
+        assertThat(notification.shownSetName()).isEqualTo("Fly")
+        cell(1, 1, 1, "count").performClick()
+        compose.onNodeWithContentDescription("Hide keypad").performClick()
+        assertThat(notification.shownSetName()).isEqualTo("Raise")
+        notificationButton(receiver, WorkoutService.BROADCAST_REQUEST_DECREASE_REPS)
+        cell(1, 1, 1, "count").assertTextEquals("11")
+
         // The app is killed: the screen comes back from the saved workout with everything done so far
         viewModel = viewModel(template)
         compose.waitForIdle()
         cell(0, 0, 0, "count").assertTextEquals("10")
         cell(0, 0, 0, "weight").assertTextEquals("135")
         tick(0, 0, 0).assertContentDescriptionEquals("Undo set")
-        cell(0, 1, 0, "count").assertTextEquals("1:40")
+        cell(0, 1, 0, "count").assertTextEquals("1:50")
 
         // A set added to bench press. A swipe only shows its Delete, which deletes it; Undo puts it back, then it's
         // deleted for good.
@@ -304,7 +317,7 @@ class WorkoutLogScenarioTest {
         assertThat(bench[0].getReps()).isEqualTo(10)
         assertThat(bench[0].getWeightKg()).isWithin(0.01f).of(61.23f)
         assertThat(bench[0].getCompletedDate()).isEqualTo(now)
-        assertThat(bench[1].getTimeSeconds()).isEqualTo(100)
+        assertThat(bench[1].getTimeSeconds()).isEqualTo(110)
         assertThat(finished.getExerciseGroups().map { it.exercises.first().exercise?.name }).containsExactly("Fly", "Bench press").inOrder()
         // Which screen it ran on stays on the device
         assertThat(finished.asMap().keys).doesNotContain("workoutScreenV2")
@@ -425,9 +438,9 @@ class WorkoutLogScenarioTest {
     private fun key(text: String) = compose.onNode(hasText(text) and hasAnyAncestor(hasTestTag(WorkoutLogTags.Keypad)))
 
     // A notification button, delivered on the main thread like WorkoutService's local broadcast, with the set the
-    // notification shows (the next one not done in the workout it was last sent)
+    // notification shows
     private fun notificationButton(receiver: WorkoutLogNotificationReceiver, action: String) {
-        val intent = Intent(action).putExtra(ELConstants.EXTRA_WORKOUT_STATE, notification.shown?.getNextIncompleteState())
+        val intent = Intent(action).putExtra(ELConstants.EXTRA_WORKOUT_STATE, notification.shownSet?.position)
         compose.runOnUiThread { receiver.onReceive(InstrumentationRegistry.getInstrumentation().targetContext, intent) }
         compose.waitForIdle()
     }
@@ -455,17 +468,20 @@ class WorkoutLogScenarioTest {
      * What the notification is sent, in place of WorkoutService.
      */
     private class RecordingNotification : WorkoutLogNotification {
-        // The workout it was last sent
+        // The workout it was last sent, and the set in it to show
         var shown: ELWorkout? = null
+        var shownSet: ShownSet? = null
 
-        override fun start(workout: ELWorkout) {
-            shown = workout
+        override fun start(workout: ELWorkout, shown: ShownSet?) {
+            this.shown = workout
+            shownSet = shown
         }
 
         override fun stop() = Unit
 
-        override fun update(workout: ELWorkout) {
-            shown = workout
+        override fun update(workout: ELWorkout, shown: ShownSet?) {
+            this.shown = workout
+            shownSet = shown
         }
 
         override fun showRest(remainingPercent: Int, remainingSeconds: Int) = Unit
@@ -473,7 +489,7 @@ class WorkoutLogScenarioTest {
         // The exercise of the set it shows
         fun shownSetName(): String? {
             val workout = shown ?: return null
-            val position = workout.getNextIncompleteState() ?: return null
+            val position = shownSet?.position ?: return null
             return workout.getExerciseGroups()[position.groupIndex].getExercisesForSetIndex(position.setIndex)[position.exerciseIndex].getName()
         }
     }

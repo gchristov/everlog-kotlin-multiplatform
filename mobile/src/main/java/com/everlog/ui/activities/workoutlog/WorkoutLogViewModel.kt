@@ -34,11 +34,14 @@ import com.everlog.data.model.exercise.ELExerciseGroup
 import com.everlog.data.model.workout.ELWorkout
 import com.everlog.data.model.workout.ELWorkoutState
 import com.everlog.data.repositories.OngoingWorkoutRepository
+import com.everlog.services.workout.ShownSet
 import com.everlog.ui.mvvm.CommonViewModel
 import java.util.Date
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.isActive
 import timber.log.Timber
 
@@ -71,6 +74,9 @@ internal class WorkoutLogViewModel(
     private var ticking: Job? = null
     private var showing = false
 
+    // What the notification was last sent to show
+    private var notified: Pair<SetRef?, Boolean>? = null
+
     // By exercise uuid, once the user's history has loaded
     private var sources: Map<String, PrefillSource> = emptyMap()
 
@@ -78,6 +84,12 @@ internal class WorkoutLogViewModel(
         save()
         // A resumed workout was filled in when it started, and the user may have cleared values since
         loadHistory(state.value.blocks, fill = !resumed)
+        // The notification shows the set the screen has selected, which changes without the workout changing
+        launchCoroutine {
+            state.map(::shownTarget).distinctUntilChanged().collect { shown ->
+                if (shown != notified) notifyWorkout()
+            }
+        }
     }
 
     // A setting such as the weight unit may have changed while the screen was away, and the notification shows it too
@@ -171,8 +183,13 @@ internal class WorkoutLogViewModel(
 
     fun onStep(direction: Int) {
         finishTyping()
+        val cell = state.value.focus ?: return
+        step(cell, direction) { copy(typed = null, reveal = reveal + 1) }
+    }
+
+    // The keypad's ± and the notification's
+    private fun step(cell: CellFocus, direction: Int, then: WorkoutLogState.() -> WorkoutLogState = { this }) {
         val state = state.value
-        val cell = state.focus ?: return
         val set = state.blocks.set(cell.ref) ?: return
         val (value, step) = when (cell.field) {
             ValueField.Weight -> (set.weightKg?.let { displayWeight(it, state.unit) } ?: 0f) to state.weightStep
@@ -180,7 +197,7 @@ internal class WorkoutLogViewModel(
             ValueField.Time -> (set.timeSeconds ?: 0).toFloat() to TimeStepSeconds
         }
         val stepped = (value + direction * step).coerceAtLeast(0f)
-        change { withValue(cell, stepped).copy(typed = null, reveal = reveal + 1) }
+        change { withValue(cell, stepped).then() }
         analytics.valueChanged(cell.field, stepped)
     }
 
@@ -283,31 +300,35 @@ internal class WorkoutLogViewModel(
         }
     }
 
-    fun onScreenStarted() = notification.start(workout.forNotification(state.value))
+    fun onScreenStarted() {
+        val state = state.value
+        notified = shownTarget(state)
+        notification.start(workout.forNotification(state), shownSet(state))
+    }
 
     fun onScreenClosed() = notification.stop()
 
     // The notification's buttons. [position] is the set it shows, in the workout it was last sent.
 
-    fun onNotificationCompleteSet(position: ELWorkoutState) {
-        setAt(position)?.let { complete(it, fromNotification = true) }
+    // The main button, which does what the screen's does for the set
+    fun onNotificationMainAction(position: ELWorkoutState) {
+        val ref = setAt(position) ?: return
+        finishTyping()
+        if (state.value.startsTimer(ref)) startSetTimer(ref, fromNotification = true) else complete(ref, fromNotification = true)
     }
 
     fun onNotificationWeight(position: ELWorkoutState, direction: Int) {
-        val ref = setAt(position) ?: return
-        val set = state.value.blocks.set(ref) ?: return
-        val weight = set.weightKg?.let { displayWeight(it, state.value.unit) } ?: 0f
-        val stepped = (weight + direction * weightStep).coerceAtLeast(0f)
-        change { withValue(CellFocus(ref, ValueField.Weight), stepped) }
-        analytics.valueChanged(ValueField.Weight, stepped)
+        setAt(position)?.let { step(CellFocus(it, ValueField.Weight), direction) }
     }
 
     fun onNotificationReps(position: ELWorkoutState, direction: Int) {
+        setAt(position)?.let { step(CellFocus(it, ValueField.Reps), direction) }
+    }
+
+    // While the set's timer runs, the keypad's ± change the timer instead
+    fun onNotificationTime(position: ELWorkoutState, direction: Int) {
         val ref = setAt(position) ?: return
-        val reps = state.value.blocks.set(ref)?.reps ?: 0
-        val stepped = (reps + direction * RepsStep).coerceAtLeast(0f)
-        change { withValue(CellFocus(ref, ValueField.Reps), stepped) }
-        analytics.valueChanged(ValueField.Reps, stepped)
+        if (state.value.isTiming(ref)) onTimerStep(direction) else step(CellFocus(ref, ValueField.Time), direction)
     }
 
     fun onNotificationSetTimer(position: ELWorkoutState, start: Boolean) {
@@ -321,9 +342,6 @@ internal class WorkoutLogViewModel(
 
     private fun setAt(position: ELWorkoutState): SetRef? = workout.setAt(state.value.blocks, position)
 
-    private val weightStep: Float
-        get() = state.value.weightStep
-
     private fun type(key: Char) {
         val state = state.value
         val cell = state.focus ?: return
@@ -332,9 +350,12 @@ internal class WorkoutLogViewModel(
         enter(cell, (base + key).take(maxLength(cell.field)))
     }
 
-    // Saving the whole workout on every key is slow on long workouts, so a typed value is saved by finishTyping
-    private fun enter(cell: CellFocus, text: String) =
+    // Saving the whole workout on every key is slow on long workouts, so a typed value is saved by finishTyping. The
+    // notification follows each key.
+    private fun enter(cell: CellFocus, text: String) {
         setState { copy(deletion = null).withValue(cell, parse(cell.field, text)).copy(typed = text, reveal = reveal + 1) }
+        notifyWorkout()
+    }
 
     // Every event that moves the keypad on from the cell calls this first, so a typed value is saved and logged once.
     // It's logged as typed, in the user's unit, rather than converted back from kg.
@@ -566,7 +587,18 @@ internal class WorkoutLogViewModel(
         }
     }
 
-    private fun notifyWorkout() = notification.update(workout.forNotification(state.value))
+    private fun notifyWorkout() {
+        val state = state.value
+        notified = shownTarget(state)
+        notification.update(workout.forNotification(state), shownSet(state))
+    }
+
+    private fun shownTarget(state: WorkoutLogState) = state.target to state.targetStartsTimer
+
+    private fun shownSet(state: WorkoutLogState): ShownSet? {
+        val position = state.target?.let { workout.positionOf(state.blocks, it) } ?: return null
+        return ShownSet(position, state.targetStartsTimer)
+    }
 
     companion object {
         private const val TickMillis = 1000L
@@ -574,7 +606,8 @@ internal class WorkoutLogViewModel(
         private val MaxSets = AppConfig.configuration.maxExerciseSets
         private const val TAG = "WorkoutLogViewModel"
         private const val RepsStep = 1f
-        private const val TimeStepSeconds = 5f
+        // The same as a running timer's −/+
+        private val TimeStepSeconds = TimerStepSeconds.toFloat()
 
         /**
          * The launch intent only has the workout as it was when it started. When it's resumed, or Android rebuilds

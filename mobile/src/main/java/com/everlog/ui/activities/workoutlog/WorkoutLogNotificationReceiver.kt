@@ -21,11 +21,13 @@ internal class WorkoutLogNotificationReceiver(private val viewModel: WorkoutLogV
         @Suppress("DEPRECATION")
         val position = intent?.getSerializableExtra(ELConstants.EXTRA_WORKOUT_STATE) as? ELWorkoutState ?: return
         when (intent.action) {
-            WorkoutService.BROADCAST_REQUEST_COMPLETE_SET -> viewModel.onNotificationCompleteSet(position)
+            WorkoutService.BROADCAST_REQUEST_COMPLETE_SET -> viewModel.onNotificationMainAction(position)
             WorkoutService.BROADCAST_REQUEST_INCREASE_WEIGHT -> viewModel.onNotificationWeight(position, 1)
             WorkoutService.BROADCAST_REQUEST_DECREASE_WEIGHT -> viewModel.onNotificationWeight(position, -1)
             WorkoutService.BROADCAST_REQUEST_INCREASE_REPS -> viewModel.onNotificationReps(position, 1)
             WorkoutService.BROADCAST_REQUEST_DECREASE_REPS -> viewModel.onNotificationReps(position, -1)
+            WorkoutService.BROADCAST_REQUEST_INCREASE_TIME -> viewModel.onNotificationTime(position, 1)
+            WorkoutService.BROADCAST_REQUEST_DECREASE_TIME -> viewModel.onNotificationTime(position, -1)
             WorkoutService.BROADCAST_REQUEST_TIMER_EXERCISE_START -> viewModel.onNotificationSetTimer(position, start = true)
             WorkoutService.BROADCAST_REQUEST_TIMER_EXERCISE_STOP -> viewModel.onNotificationSetTimer(position, start = false)
         }
@@ -38,6 +40,8 @@ internal class WorkoutLogNotificationReceiver(private val viewModel: WorkoutLogV
             addAction(WorkoutService.BROADCAST_REQUEST_DECREASE_WEIGHT)
             addAction(WorkoutService.BROADCAST_REQUEST_INCREASE_REPS)
             addAction(WorkoutService.BROADCAST_REQUEST_DECREASE_REPS)
+            addAction(WorkoutService.BROADCAST_REQUEST_INCREASE_TIME)
+            addAction(WorkoutService.BROADCAST_REQUEST_DECREASE_TIME)
             addAction(WorkoutService.BROADCAST_REQUEST_TIMER_REST_STOP)
             addAction(WorkoutService.BROADCAST_REQUEST_TIMER_EXERCISE_START)
             addAction(WorkoutService.BROADCAST_REQUEST_TIMER_EXERCISE_STOP)

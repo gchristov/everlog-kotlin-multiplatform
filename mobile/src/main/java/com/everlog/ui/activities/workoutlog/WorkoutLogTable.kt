@@ -291,8 +291,9 @@ private fun ExerciseHeader(index: Int, block: WorkoutBlock, actions: WorkoutTabl
                 horizontalArrangement = Arrangement.spacedBy(Theme.spacing.medium),
             ) {
                 AppThumbnail(
-                    modifier = Modifier.size(TableSizes.Thumbnail).clip(RoundedCornerShape(TableSizes.ThumbnailCorner)),
                     imageUrl = exercise?.imageUrl,
+                    size = TableSizes.Thumbnail,
+                    corner = TableSizes.ThumbnailCorner,
                 )
                 AppText(
                     text = exercise?.name.orEmpty(),
@@ -362,8 +363,9 @@ private fun GroupHeader(modifier: Modifier, block: WorkoutBlock, actions: Workou
             ) {
                 Box {
                     AppThumbnail(
-                        modifier = Modifier.size(TableSizes.GroupThumbnail).clip(RoundedCornerShape(TableSizes.GroupThumbnailCorner)),
                         imageUrl = exercise.exercise?.imageUrl,
+                        size = TableSizes.GroupThumbnail,
+                        corner = TableSizes.GroupThumbnailCorner,
                     )
                     Box(
                         modifier = Modifier
@@ -401,7 +403,7 @@ private fun ColumnLabels(block: WorkoutBlock, unitLabel: String, actions: Workou
         horizontalArrangement = Arrangement.spacedBy(TableSizes.ColumnGap),
     ) {
         Label(stringResource(R.string.workout_log_column_set), Modifier.width(TableSizes.SetColumn), TextAlign.Center)
-        // A group's heading is over several exercises' history, so only their rows open it
+        // A group's heading is over several exercises, whose history is in the group's menu
         val exercise = block.exercises.singleOrNull()?.exercise
         Label(stringResource(R.string.workout_log_column_last_time), Modifier.weight(1f).openingHistory(exercise, actions))
         Label(count, Modifier.width(TableSizes.Cell), TextAlign.Center)
@@ -439,9 +441,7 @@ private fun TableRow(tag: String, row: SetRow, actions: WorkoutTableActions) {
         Box(
             modifier = Modifier
                 .weight(1f)
-                .fillMaxHeight()
-                .testTag(WorkoutLogTags.lastTime(tag))
-                .openingHistory(row.historyOf?.takeIf { row.lastTime != null }, actions),
+                .fillMaxHeight(),
             contentAlignment = Alignment.CenterStart,
         ) {
             AppText(
@@ -647,8 +647,6 @@ internal object WorkoutLogTags {
     fun menu(block: Int) = "menu:$block"
 
     fun delete(set: String) = "$set:delete"
-
-    fun lastTime(set: String) = "$set:last"
 
     fun count(set: String) = "$set:count"
 

@@ -7,6 +7,7 @@ import com.everlog.data.model.workout.ELWorkout
 import com.everlog.managers.analytics.AnalyticsConstants
 import com.everlog.managers.analytics.AnalyticsManager
 import com.everlog.managers.preferences.SettingsManager
+import com.everlog.services.workout.ShownSet
 import com.everlog.ui.navigator.Navigator
 import com.everlog.utils.SoundUtils
 import com.everlog.utils.VibrationUtils
@@ -32,25 +33,25 @@ internal class RealWorkoutLogSettings : WorkoutLogSettings {
 }
 
 /**
- * WorkoutService's notification, while the screen is open. It's sent the workout after every change and a rest's
- * countdown every second; its buttons come back as broadcasts (WorkoutLogNotificationReceiver).
+ * WorkoutService's notification, while the screen is open. It's sent the workout and the set it shows after every
+ * change and a rest's countdown every second; its buttons come back as broadcasts (WorkoutLogNotificationReceiver).
  */
 internal interface WorkoutLogNotification {
-    fun start(workout: ELWorkout)
+    fun start(workout: ELWorkout, shown: ShownSet?)
 
     fun stop()
 
-    fun update(workout: ELWorkout)
+    fun update(workout: ELWorkout, shown: ShownSet?)
 
     fun showRest(remainingPercent: Int, remainingSeconds: Int)
 }
 
 internal class RealWorkoutLogNotification(private val navigator: Navigator) : WorkoutLogNotification {
-    override fun start(workout: ELWorkout) = navigator.startWorkoutService(workout)
+    override fun start(workout: ELWorkout, shown: ShownSet?) = navigator.startWorkoutService(workout, shown)
 
     override fun stop() = navigator.stopWorkoutService()
 
-    override fun update(workout: ELWorkout) = navigator.notifyWorkoutServiceSetUpdated(workout)
+    override fun update(workout: ELWorkout, shown: ShownSet?) = navigator.notifyWorkoutServiceSetUpdated(workout, shown)
 
     override fun showRest(remainingPercent: Int, remainingSeconds: Int) =
         navigator.notifyWorkoutServiceShowRestTimer(remainingPercent, remainingSeconds)

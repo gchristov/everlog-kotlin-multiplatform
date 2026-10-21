@@ -96,6 +96,28 @@ class WorkoutNotificationBuilderTest {
                 .isEqualTo(Notification.DecoratedCustomViewStyle::class.java.name)
         assertThat(notification.contentView.layoutId).isEqualTo(R.layout.notification_workout_set)
         assertThat(notification.bigContentView.layoutId).isEqualTo(R.layout.notification_workout_set_big)
+        assertThat(notification.headsUpContentView.layoutId).isEqualTo(R.layout.notification_workout_set)
+    }
+
+    @Test
+    fun next_set_main_button_is_an_action_that_says_what_the_screen_s_does() {
+        assertThat(build(nextSet()).actions.single().title.toString()).isEqualTo("Complete set")
+        assertThat(build(nextSet().copy(startsTimer = true)).actions.single().title.toString()).isEqualTo("Start timer")
+    }
+
+    @Test
+    fun next_set_with_its_timer_running_can_stop_it_after_the_main_button() {
+        val titles = build(nextSet(reps = null, timeSeconds = 40, remainingSeconds = 12)).actions.map { it.title.toString() }
+
+        assertThat(titles).containsExactly("Complete set", "Stop timer").inOrder()
+    }
+
+    @Test
+    fun next_set_values_read_as_the_workout_table_shows_them() {
+        assertThat(expandedText(build(nextSet(weight = 0f, reps = null)), R.id.weightField)).isEqualTo("–")
+        assertThat(expandedText(build(nextSet(weight = 0f, reps = null)), R.id.repsField)).isEqualTo("–")
+        assertThat(expandedText(build(nextSet(weight = 62.5f)), R.id.weightField)).isEqualTo("62.5")
+        assertThat(expandedText(build(nextSet(reps = null, timeSeconds = 40)), R.id.timeField)).isEqualTo("0:40")
     }
 
     @Test
@@ -178,7 +200,7 @@ class WorkoutNotificationBuilderTest {
         val notification = build(rest(remainingSeconds = 45, remainingPercent = 75))
 
         assertThat(notification.contentView).isNull()
-        assertThat(title(notification)).isEqualTo("Rest • 00:45")
+        assertThat(title(notification)).isEqualTo("Rest • 0:45")
         assertThat(notification.extras.getInt(NotificationCompat.EXTRA_PROGRESS_MAX)).isEqualTo(100)
         assertThat(notification.extras.getInt(NotificationCompat.EXTRA_PROGRESS)).isEqualTo(75)
     }
@@ -254,6 +276,13 @@ class WorkoutNotificationBuilderTest {
 
     private fun build(state: WorkoutNotificationState) = builder.build(channelId, state, null)
 
+    // A value as the expanded view shows it
+    @Suppress("DEPRECATION")
+    private fun expandedText(notification: Notification, id: Int): String {
+        val view = notification.bigContentView.apply(context, android.widget.FrameLayout(context))
+        return view.findViewById<android.widget.TextView>(id).text.toString()
+    }
+
     private fun title(notification: Notification) = notification.extras.getCharSequence(Notification.EXTRA_TITLE).toString()
 
     private fun text(notification: Notification) = notification.extras.getCharSequence(Notification.EXTRA_TEXT).toString()
@@ -274,9 +303,10 @@ class WorkoutNotificationBuilderTest {
             setType = setType,
             setNumber = setNumber,
             totalSets = totalSets,
-            weight = weight,
+            timed = timeSeconds != null,
             reps = reps,
             timeSeconds = remainingSeconds ?: timeSeconds,
+            weightKg = weight.takeIf { it > 0 },
             timerRunning = remainingSeconds != null,
             set = ELSet(requiredReps = reps, reps = reps, weight = weight, requiredTimeSeconds = timeSeconds, timeSeconds = timeSeconds)
                     .apply { remainingTimeSeconds = remainingSeconds })

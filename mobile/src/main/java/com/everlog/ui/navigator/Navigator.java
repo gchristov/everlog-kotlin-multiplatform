@@ -9,6 +9,7 @@ import com.everlog.data.model.exercise.ELExercise;
 import com.everlog.data.model.plan.ELPlan;
 import com.everlog.data.model.workout.ELWorkout;
 import com.everlog.managers.apprate.RatePromptTrigger;
+import com.everlog.services.workout.ShownSet;
 import com.everlog.ui.activities.home.congratulate.CongratulateActivity;
 import com.everlog.ui.activities.home.exercise.details.ExerciseDetailsActivity;
 import com.everlog.ui.activities.home.exercisegroup.DefaultCreateExerciseGroupsActivity;
@@ -81,9 +82,14 @@ public interface Navigator {
 
     void startWorkoutService(ELWorkout workout);
 
+    // shown is the set the notification shows, or null for the next one not done
+    void startWorkoutService(ELWorkout workout, @Nullable ShownSet shown);
+
     void stopWorkoutService();
 
     void notifyWorkoutServiceSetUpdated(ELWorkout workout);
+
+    void notifyWorkoutServiceSetUpdated(ELWorkout workout, @Nullable ShownSet shown);
 
     void notifyWorkoutServiceShowRestTimer(int remainingTimePercent, int remainingTimeSeconds);
 

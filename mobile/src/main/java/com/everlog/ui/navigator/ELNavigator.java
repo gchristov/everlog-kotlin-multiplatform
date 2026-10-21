@@ -31,6 +31,7 @@ import com.everlog.managers.apprate.RatePromptController;
 import com.everlog.managers.apprate.RatePromptTrigger;
 import com.everlog.managers.auth.LocalUserManager;
 import com.everlog.managers.preferences.SettingsManager;
+import com.everlog.services.workout.ShownSet;
 import com.everlog.services.workout.WorkoutService;
 import com.everlog.ui.activities.designsystem.DesignSystemActivity;
 import com.everlog.ui.activities.exercisepicker.ExercisePickerActivity;
@@ -286,9 +287,15 @@ public class ELNavigator implements Navigator {
 
     @Override
     public void startWorkoutService(ELWorkout workout) {
+        startWorkoutService(workout, null);
+    }
+
+    @Override
+    public void startWorkoutService(ELWorkout workout, @Nullable ShownSet shown) {
         Intent i = new Intent(mContext, WorkoutService.class);
         i.setAction(WorkoutService.ACTION_SERVICE_START);
         i.putExtra(ELConstants.EXTRA_WORKOUT, workout);
+        i.putExtra(ELConstants.EXTRA_SHOWN_SET, shown);
         startService(i);
     }
 
@@ -301,8 +308,14 @@ public class ELNavigator implements Navigator {
 
     @Override
     public void notifyWorkoutServiceSetUpdated(ELWorkout workout) {
+        notifyWorkoutServiceSetUpdated(workout, null);
+    }
+
+    @Override
+    public void notifyWorkoutServiceSetUpdated(ELWorkout workout, @Nullable ShownSet shown) {
         Intent i = new Intent(WorkoutService.BROADCAST_SERVICE_SET_UPDATED);
         i.putExtra(ELConstants.EXTRA_WORKOUT, workout);
+        i.putExtra(ELConstants.EXTRA_SHOWN_SET, shown);
         sendBroadcast(i);
     }
 

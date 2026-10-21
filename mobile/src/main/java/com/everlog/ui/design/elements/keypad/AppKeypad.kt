@@ -69,8 +69,12 @@ data class AppKeypadEntry(
     val toggle: AppKeypadToggle? = null,
 )
 
+/**
+ * @param icon Before the text on the main key and the primary button, e.g. a tick for completing
+ */
 data class AppKeypadAction(
     val text: String,
+    val icon: ImageVector? = null,
     val onClick: () -> Unit,
 )
 
@@ -199,6 +203,8 @@ internal object KeypadSizes {
     val Chip = 36.dp
     val ToggleInset = 3.dp
     val KeyIcon = 22.dp
+    // Beside a key's text, as on AppButton
+    val TextKeyIcon = 18.dp
 }
 
 // ⌄, what's being typed into, and its toggle
@@ -239,7 +245,7 @@ private fun Controls(onShow: (() -> Unit)?, actions: List<AppKeypadAction>, prim
         }
         actions.forEach { KeypadPill(text = it.text, onClick = it.onClick, height = KeypadSizes.Button) }
         Spacer(modifier = Modifier.weight(1f))
-        primaryAction?.let { AppButton(onClick = it.onClick, text = it.text) }
+        primaryAction?.let { AppButton(onClick = it.onClick, text = it.text, icon = it.icon) }
     }
 }
 
@@ -320,7 +326,7 @@ private fun Keys(entry: AppKeypadEntry, input: AppKeypadInput) {
             DigitKey('0', input)
             // Keeps the row's gaps the same as the rows above, so "." and "0" line up with their columns
             Spacer(modifier = Modifier.width(0.dp))
-            Key(text = entry.mainKey.text, primary = true, weight = 2f, onClick = entry.mainKey.onClick)
+            Key(text = entry.mainKey.text, icon = entry.mainKey.icon, primary = true, weight = 2f, onClick = entry.mainKey.onClick)
         }
     }
 }
@@ -373,6 +379,11 @@ private fun RowScope.Key(
     ) {
         val color = if (enabled) content else content.copy(alpha = 0.3f)
         when {
+            icon != null && text != null -> Row(verticalAlignment = Alignment.CenterVertically) {
+                AppIcon(modifier = Modifier.size(KeypadSizes.TextKeyIcon), imageVector = icon, tint = color)
+                Spacer(modifier = Modifier.width(Theme.spacing.small))
+                AppText(text = text, style = Theme.typography.button, color = color)
+            }
             icon != null -> AppIcon(modifier = Modifier.size(KeypadSizes.KeyIcon), imageVector = icon, tint = color, contentDescription = contentDescription)
             text != null && text.length == 1 -> AppText(text = text, style = keypadNumberStyle(), color = color)
             text != null -> AppText(text = text, style = Theme.typography.button, color = color)
@@ -419,7 +430,7 @@ private fun AppKeypadPreview() {
             entry = AppKeypadEntry(
                 label = "SET 2 OF 4 · KG",
                 title = "Bench Press",
-                mainKey = AppKeypadAction("Complete set") {},
+                mainKey = AppKeypadAction("Complete set", icon = ImageVector.vectorResource(R.drawable.ic_check)) {},
                 decimal = true,
                 toggle = AppKeypadToggle(listOf("Reps", "Time"), selected = 0) {},
             ),
@@ -439,7 +450,7 @@ private fun AppKeypadClosedPreview() {
             onHide = {},
             onShow = {},
             actions = listOf(AppKeypadAction("Add exercise") {}),
-            primaryAction = AppKeypadAction("Complete set") {},
+            primaryAction = AppKeypadAction("Complete set", icon = ImageVector.vectorResource(R.drawable.ic_check)) {},
         )
     }
 }

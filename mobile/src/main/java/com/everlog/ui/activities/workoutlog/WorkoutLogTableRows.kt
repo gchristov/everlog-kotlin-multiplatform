@@ -20,6 +20,8 @@ internal data class TableView(
     val selected: SetRef? = null,
     val typed: String? = null,
     val timing: Countdown? = null,
+    // The set whose tick (or timer button) the keypad's main key presses
+    val armed: SetRef? = null,
     val startsTimer: (SetRef) -> Boolean = { false },
     val lastTime: Map<String, List<WorkoutSet>> = emptyMap(),
 )
@@ -31,6 +33,7 @@ internal fun WorkoutLogState.tableView(unitLabel: String) = TableView(
     selected = selected,
     typed = typed,
     timing = (timer as? WorkoutTimer.SetTimer)?.let { Countdown(it.ref, timerRemainingSeconds()) },
+    armed = focus?.ref.takeIf { mainKey == KeypadMainKey.CompleteSet || mainKey == KeypadMainKey.StartTimer },
     startsTimer = ::startsTimer,
     lastTime = lastTime,
 )
@@ -46,8 +49,6 @@ internal data class SetRow(
     val exercise: Int,
     // The first exercise's row in its round, which a divider goes above
     val startsRound: Boolean,
-    // The exercise whose history its last time opens
-    val historyOf: ELExercise?,
     val number: String?,
     val lastTime: String?,
     val countField: ValueField,
@@ -79,7 +80,6 @@ internal fun WorkoutBlock.rows(view: TableView): List<SetRow> = rounds.flatMapIn
             round = r,
             exercise = i,
             startsRound = i == firstShown,
-            historyOf = exercises[i].exercise,
             // A superset's rows are 1a, 1b, 1c
             number = if (round.sets.size > 1) "${r + 1}${'a' + i}" else if (i == firstShown) "${r + 1}" else null,
             lastTime = view.lastTime[exercises[i].exercise?.uuid]?.getOrNull(r)?.let { lastTimeText(it, view.unit, view.unitLabel) },
@@ -91,7 +91,7 @@ internal fun WorkoutBlock.rows(view: TableView): List<SetRow> = rounds.flatMapIn
             countFocused = view.focus?.ref == ref && view.focus.field != ValueField.Weight,
             weightFocused = weightFocused,
             timing = countdown != null,
-            armed = !set.done && (weightFocused || countdown != null),
+            armed = !set.done && (view.armed == ref || countdown != null),
             countSuggested = countdown == null && set.isSuggested(countField),
             weightSuggested = set.isSuggested(ValueField.Weight),
             startsTimer = view.startsTimer(ref),
