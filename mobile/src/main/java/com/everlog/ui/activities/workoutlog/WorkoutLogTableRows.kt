@@ -6,6 +6,11 @@ import com.everlog.data.controllers.workoutsession.WorkoutBlock
 import com.everlog.data.controllers.workoutsession.WorkoutSet
 import com.everlog.data.model.exercise.ELExercise
 import com.everlog.managers.preferences.SettingsManager.WeightUnit
+import com.everlog.utils.format.EmptyValue
+import com.everlog.utils.format.displayWeight
+import com.everlog.utils.format.formatClock
+import com.everlog.utils.format.formatWeight
+import com.everlog.utils.format.lastTimeText
 
 /**
  * What the table shows on top of the workout's sets.
@@ -108,8 +113,6 @@ private fun cellText(set: WorkoutSet, field: ValueField, ref: SetRef, view: Tabl
         ValueField.Time -> (typing?.let { typedSeconds(it) } ?: set.timeSeconds)?.let { formatClock(it.toLong()) } ?: EmptyValue
     }
 }
-
-internal const val EmptyValue = "–"
 
 /**
  * What tapping the table does. Every action does nothing unless overridden, for a table that can't be used.

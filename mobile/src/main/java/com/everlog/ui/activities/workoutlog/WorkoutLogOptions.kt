@@ -18,6 +18,7 @@ import com.everlog.ui.design.elements.AppText
 import com.everlog.ui.design.elements.list.AppListGroup
 import com.everlog.ui.design.elements.list.AppListItem
 import com.everlog.ui.design.theme.Theme
+import com.everlog.utils.format.formatClock
 
 /**
  * The cog in the header, with the rest after each set, Edit workout and Discard.

@@ -10,6 +10,7 @@ import com.everlog.data.controllers.workoutsession.set
 import com.everlog.data.controllers.workoutsession.setValue
 import com.everlog.data.controllers.workoutsession.toSessionBlocks
 import com.everlog.data.model.workout.ELWorkout
+import com.everlog.utils.format.storedWeight
 
 // How the workout screen's state changes, as plain functions the view-model builds its events from
 

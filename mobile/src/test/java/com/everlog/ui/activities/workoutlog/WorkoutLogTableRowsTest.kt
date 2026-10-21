@@ -9,6 +9,7 @@ import com.everlog.data.controllers.workoutsession.WorkoutRound
 import com.everlog.data.controllers.workoutsession.WorkoutSet
 import com.everlog.data.model.exercise.ELExercise
 import com.everlog.managers.preferences.SettingsManager.WeightUnit
+import com.everlog.utils.format.EmptyValue
 import com.google.common.truth.Truth.assertThat
 import org.junit.Test
 
