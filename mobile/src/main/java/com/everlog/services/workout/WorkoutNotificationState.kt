@@ -1,8 +1,17 @@
 package com.everlog.services.workout
 
+import com.everlog.data.controllers.workoutsession.SetMode
+import com.everlog.data.controllers.workoutsession.toSessionSet
 import com.everlog.data.model.set.ELSet
 import com.everlog.data.model.workout.ELWorkout
-import kotlin.math.max
+import com.everlog.data.model.workout.ELWorkoutState
+import java.io.Serializable
+
+/**
+ * The set the workout screen has selected, which the notification shows, and whether its main button starts the
+ * set's timer rather than completing it.
+ */
+data class ShownSet(val position: ELWorkoutState, val startsTimer: Boolean) : Serializable
 
 /**
  * What the ongoing workout notification should show, independent of how it's rendered or which
@@ -23,13 +32,16 @@ sealed class WorkoutNotificationState {
             // 1-based
             val setNumber: Int,
             val totalSets: Int,
-            val weight: Float,
-            // Null when the set isn't rep based, so the reps controls are hidden.
+            // Time rather than reps, as the workout table decides. The values are null when they're empty.
+            val timed: Boolean,
             val reps: Int?,
-            // Null when the set isn't time based, so the time controls are hidden.
+            // A running timer's seconds left
             val timeSeconds: Int?,
+            val weightKg: Float?,
             val timerRunning: Boolean,
-            val set: ELSet
+            val set: ELSet,
+            // The main button starts the set's timer rather than completing it
+            val startsTimer: Boolean = false
     ) : WorkoutNotificationState()
 
     /**
@@ -56,8 +68,9 @@ sealed class WorkoutNotificationState {
 
     companion object {
 
-        fun from(workout: ELWorkout?, restTimer: RestTimer?): WorkoutNotificationState {
-            val nextSet = nextSet(workout)
+        // [shown] is the set to show, the next one not done if it's null
+        fun from(workout: ELWorkout?, restTimer: RestTimer?, shown: ShownSet? = null): WorkoutNotificationState {
+            val nextSet = nextSet(workout, shown)
             return when {
                 restTimer != null -> Rest(restTimer.remainingSeconds, restTimer.remainingPercent, nextSet)
                 workout == null || !workout.hasExercises() -> NoExercises
@@ -66,12 +79,19 @@ sealed class WorkoutNotificationState {
             }
         }
 
-        private fun nextSet(workout: ELWorkout?): NextSet? {
-            val state = workout?.getNextIncompleteState() ?: return null
-            val group = workout.getExerciseGroups()[state.groupIndex]
-            val exercise = group.getExercisesForSetIndex(state.setIndex)[state.exerciseIndex]
-            val set = exercise.sets[state.setIndex]
+        // A shown set that's no longer in the workout falls back to the next one not done
+        private fun nextSet(workout: ELWorkout?, shown: ShownSet?): NextSet? {
+            workout ?: return null
+            return shown?.let { setAt(workout, it.position)?.copy(startsTimer = it.startsTimer) }
+                    ?: workout.getNextIncompleteState()?.let { setAt(workout, it) }
+        }
+
+        private fun setAt(workout: ELWorkout, state: ELWorkoutState): NextSet? {
+            val group = workout.getExerciseGroups().getOrNull(state.groupIndex) ?: return null
+            val exercise = group.getExercisesForSetIndex(state.setIndex).getOrNull(state.exerciseIndex) ?: return null
+            val set = exercise.sets.getOrNull(state.setIndex) ?: return null
             val timerRunning = set.remainingTimeSeconds != null
+            val values = set.toSessionSet()
             return NextSet(
                     exerciseName = exercise.getName() ?: "",
                     exercisePosition = state.exerciseIndex + 1,
@@ -79,13 +99,10 @@ sealed class WorkoutNotificationState {
                     setType = group.type ?: "",
                     setNumber = state.setIndex + 1,
                     totalSets = group.getTotalSetsCount(),
-                    weight = if (set.isWeightEntered()) set.getWeight() else 0f,
-                    reps = if (set.canShowRepOptions()) max(0, set.getReps()) else null,
-                    timeSeconds = when {
-                        !set.canShowTimeOptions() -> null
-                        timerRunning -> set.remainingTimeSeconds
-                        else -> set.getTimeSeconds()
-                    },
+                    timed = values.mode == SetMode.Time,
+                    reps = values.reps,
+                    timeSeconds = set.remainingTimeSeconds ?: values.timeSeconds,
+                    weightKg = values.weightKg,
                     timerRunning = timerRunning,
                     set = set)
         }

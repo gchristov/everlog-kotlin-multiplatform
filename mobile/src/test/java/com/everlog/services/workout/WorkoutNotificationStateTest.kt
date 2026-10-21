@@ -6,6 +6,7 @@ import com.everlog.data.model.exercise.ELExerciseGroup
 import com.everlog.data.model.exercise.ELRoutineExercise
 import com.everlog.data.model.set.ELSet
 import com.everlog.data.model.workout.ELWorkout
+import com.everlog.data.model.workout.ELWorkoutState
 import com.everlog.managers.preferences.SettingsManager
 import com.everlog.managers.preferences.SettingsManager.WeightUnit
 import com.everlog.services.workout.WorkoutNotificationState.Done
@@ -92,8 +93,31 @@ class WorkoutNotificationStateTest {
         assertThat(state.exerciseName).isEqualTo("Squat")
         assertThat(state.setNumber).isEqualTo(2)
         assertThat(state.totalSets).isEqualTo(3)
-        assertThat(state.weight).isEqualTo(100f)
+        assertThat(state.weightKg).isEqualTo(100f)
         assertThat(state.reps).isEqualTo(5)
+    }
+
+    @Test
+    fun `a set chosen on the screen shows rather than the next one`() {
+        val workout = workout(0, bench to listOf(plannedSet(), plannedSet()), squat to listOf(plannedSet()))
+
+        val shown = ShownSet(ELWorkoutState(groupIndex = 1, setIndex = 0, exerciseIndex = 0), startsTimer = true)
+        val state = WorkoutNotificationState.from(workout, null, shown) as NextSet
+
+        assertThat(state.exerciseName).isEqualTo("Squat")
+        assertThat(state.startsTimer).isTrue()
+    }
+
+    @Test
+    fun `a chosen set that's no longer in the workout shows the next one`() {
+        val workout = workout(0, bench to listOf(plannedSet(), plannedSet()))
+
+        val shown = ShownSet(ELWorkoutState(groupIndex = 3, setIndex = 0, exerciseIndex = 0), startsTimer = true)
+        val state = WorkoutNotificationState.from(workout, null, shown) as NextSet
+
+        assertThat(state.exerciseName).isEqualTo("Bench press")
+        assertThat(state.setNumber).isEqualTo(1)
+        assertThat(state.startsTimer).isFalse()
     }
 
     @Test
@@ -131,23 +155,35 @@ class WorkoutNotificationStateTest {
     }
 
     @Test
-    fun `rep based set hides time`() {
+    fun `rep based set shows reps, with no weight as empty`() {
         val workout = workout(0, bench to listOf(ELSet(requiredReps = 8, reps = 8)))
 
         val state = WorkoutNotificationState.from(workout, null) as NextSet
 
+        assertThat(state.timed).isFalse()
         assertThat(state.reps).isEqualTo(8)
-        assertThat(state.timeSeconds).isNull()
-        assertThat(state.weight).isEqualTo(0f)
+        assertThat(state.weightKg).isNull()
     }
 
     @Test
-    fun `time based set hides reps`() {
+    fun `values not entered are empty, as the workout table shows them`() {
+        // Older app versions saved a missing weight as -1
+        val workout = workout(0, bench to listOf(ELSet(weight = -1f)))
+
+        val state = WorkoutNotificationState.from(workout, null) as NextSet
+
+        assertThat(state.timed).isFalse()
+        assertThat(state.reps).isNull()
+        assertThat(state.weightKg).isNull()
+    }
+
+    @Test
+    fun `time based set shows time`() {
         val workout = workout(0, plank to listOf(ELSet(requiredTimeSeconds = 40, timeSeconds = 40)))
 
         val state = WorkoutNotificationState.from(workout, null) as NextSet
 
-        assertThat(state.reps).isNull()
+        assertThat(state.timed).isTrue()
         assertThat(state.timeSeconds).isEqualTo(40)
         assertThat(state.timerRunning).isFalse()
     }

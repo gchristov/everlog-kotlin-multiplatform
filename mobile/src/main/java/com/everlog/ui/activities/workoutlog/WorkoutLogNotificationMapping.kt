@@ -22,6 +22,20 @@ internal fun ELWorkout.setAt(blocks: List<WorkoutBlock>, position: ELWorkoutStat
 }
 
 /**
+ * The position of a set as the notification takes it, the inverse of [setAt].
+ */
+internal fun ELWorkout.positionOf(blocks: List<WorkoutBlock>, ref: SetRef): ELWorkoutState? {
+    val groupIndex = blocks.indexOfFirst { it.id == ref.blockId }
+    val setIndex = blocks.getOrNull(groupIndex)?.rounds?.indexOfFirst { it.id == ref.roundId } ?: return null
+    val group = withSessionBlocks(blocks).getExerciseGroups().getOrNull(groupIndex) ?: return null
+    val exercise = group.exercises.getOrNull(ref.index) ?: return null
+    val inRound = group.getExercisesForSetIndex(setIndex)
+    val exerciseIndex = inRound.indexOfFirst { it === exercise }
+    if (setIndex < 0 || exerciseIndex < 0) return null
+    return ELWorkoutState(groupIndex, setIndex, exerciseIndex, inRound.size)
+}
+
+/**
  * The workout as the notification shows it, with a running set timer's seconds left on its set.
  */
 internal fun ELWorkout.forNotification(state: WorkoutLogState): ELWorkout {

@@ -32,6 +32,10 @@ class WorkoutService : BaseService() {
     private var mStarted = false
 
     private var mWorkout: ELWorkout? = null
+    // What the workout screen has selected, if it says
+    private var mShown: ShownSet? = null
+
+    // The set the notification shows, which its buttons act on
     private var mNextState: ELWorkoutState? = null
     private var mRestTimer: WorkoutNotificationState.RestTimer? = null
 
@@ -46,6 +50,8 @@ class WorkoutService : BaseService() {
         internal const val ACTION_INCREASE_WEIGHT = "ACTION_INCREASE_WEIGHT"
         internal const val ACTION_DECREASE_REPS = "ACTION_DECREASE_REPS"
         internal const val ACTION_INCREASE_REPS = "ACTION_INCREASE_REPS"
+        internal const val ACTION_DECREASE_TIME = "ACTION_DECREASE_TIME"
+        internal const val ACTION_INCREASE_TIME = "ACTION_INCREASE_TIME"
         internal const val ACTION_TIMER_EXERCISE_START = "ACTION_TIMER_EXERCISE_START"
         internal const val ACTION_TIMER_EXERCISE_STOP = "ACTION_TIMER_EXERCISE_STOP"
         internal const val ACTION_TIMER_REST_STOP = "ACTION_TIMER_REST_STOP"
@@ -64,6 +70,8 @@ class WorkoutService : BaseService() {
         const val BROADCAST_REQUEST_DECREASE_WEIGHT = BuildConfig.APPLICATION_ID + ".BROADCAST_REQUEST_DECREASE_WEIGHT"
         const val BROADCAST_REQUEST_INCREASE_REPS = BuildConfig.APPLICATION_ID + ".BROADCAST_REQUEST_INCREASE_REPS"
         const val BROADCAST_REQUEST_DECREASE_REPS = BuildConfig.APPLICATION_ID + ".BROADCAST_REQUEST_DECREASE_REPS"
+        const val BROADCAST_REQUEST_INCREASE_TIME = BuildConfig.APPLICATION_ID + ".BROADCAST_REQUEST_INCREASE_TIME"
+        const val BROADCAST_REQUEST_DECREASE_TIME = BuildConfig.APPLICATION_ID + ".BROADCAST_REQUEST_DECREASE_TIME"
         const val BROADCAST_REQUEST_TIMER_EXERCISE_START = BuildConfig.APPLICATION_ID + ".BROADCAST_REQUEST_TIMER_EXERCISE_START"
         const val BROADCAST_REQUEST_TIMER_EXERCISE_STOP = BuildConfig.APPLICATION_ID + ".BROADCAST_REQUEST_TIMER_EXERCISE_STOP"
         const val BROADCAST_REQUEST_TIMER_REST_STOP = BuildConfig.APPLICATION_ID + ".BROADCAST_REQUEST_TIMER_REST_STOP"
@@ -99,6 +107,8 @@ class WorkoutService : BaseService() {
             intent?.action.equals(ACTION_INCREASE_WEIGHT) -> handleWeightChange(true)
             intent?.action.equals(ACTION_DECREASE_REPS) -> handleRepsChange(false)
             intent?.action.equals(ACTION_INCREASE_REPS) -> handleRepsChange(true)
+            intent?.action.equals(ACTION_DECREASE_TIME) -> handleTimeChange(false)
+            intent?.action.equals(ACTION_INCREASE_TIME) -> handleTimeChange(true)
             intent?.action.equals(ACTION_TIMER_REST_STOP) -> handleStopRestTimer()
             intent?.action.equals(ACTION_TIMER_EXERCISE_START) -> handleExerciseTimer(true)
             intent?.action.equals(ACTION_TIMER_EXERCISE_STOP) -> handleExerciseTimer(false)
@@ -150,6 +160,13 @@ class WorkoutService : BaseService() {
         LocalBroadcastManager.getInstance(this).sendBroadcast(intent)
     }
 
+    // Only the new workout screen shows these, and logs them itself
+    private fun handleTimeChange(increase: Boolean) {
+        val intent = Intent(if (increase) BROADCAST_REQUEST_INCREASE_TIME else BROADCAST_REQUEST_DECREASE_TIME)
+        intent.putExtra(ELConstants.EXTRA_WORKOUT_STATE, mNextState)
+        LocalBroadcastManager.getInstance(this).sendBroadcast(intent)
+    }
+
     private fun handleExerciseTimer(start: Boolean) {
         if (start) {
             AnalyticsManager.manager.workoutServiceTimerStartedExercise()
@@ -161,8 +178,13 @@ class WorkoutService : BaseService() {
         LocalBroadcastManager.getInstance(this).sendBroadcast(intent)
     }
 
+    // The main button, which starts a timed set's timer first, like the workout screen's
     private fun handleComplete() {
-        AnalyticsManager.manager.workoutServiceNextExercise()
+        if (mShown?.startsTimer == true) {
+            AnalyticsManager.manager.workoutServiceTimerStartedExercise()
+        } else {
+            AnalyticsManager.manager.workoutServiceNextExercise()
+        }
         val intent = Intent(BROADCAST_REQUEST_COMPLETE_SET)
         intent.putExtra(ELConstants.EXTRA_WORKOUT_STATE, mNextState)
         LocalBroadcastManager.getInstance(this).sendBroadcast(intent)
@@ -184,7 +206,7 @@ class WorkoutService : BaseService() {
     }
 
     private fun buildNotification(): Notification {
-        val state = WorkoutNotificationState.from(mWorkout, mRestTimer)
+        val state = WorkoutNotificationState.from(mWorkout, mRestTimer, mShown)
         return WorkoutNotificationBuilder(this).build(notificationChannelId(), state, mWorkout)
     }
 
@@ -229,7 +251,9 @@ class WorkoutService : BaseService() {
         } else {
             mRestTimer = null
             mWorkout = intent?.getSerializableExtra(ELConstants.EXTRA_WORKOUT) as? ELWorkout
-            mNextState = mWorkout?.getNextIncompleteState()
+            // The old workout screen doesn't say which set to show
+            mShown = intent?.getSerializableExtra(ELConstants.EXTRA_SHOWN_SET) as? ShownSet
+            mNextState = mShown?.position ?: mWorkout?.getNextIncompleteState()
         }
     }
 }
