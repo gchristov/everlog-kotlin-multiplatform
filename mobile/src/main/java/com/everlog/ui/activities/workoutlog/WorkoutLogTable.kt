@@ -296,8 +296,8 @@ private fun ExerciseHeader(index: Int, block: WorkoutBlock, actions: WorkoutTabl
                 )
                 AppText(
                     text = exercise?.name.orEmpty(),
-                    style = Theme.typography.heading,
-                    maxLines = 1,
+                    style = Theme.typography.bodyBold,
+                    maxLines = 2,
                     overflow = TextOverflow.Ellipsis,
                 )
             }
@@ -379,7 +379,7 @@ private fun GroupHeader(modifier: Modifier, block: WorkoutBlock, actions: Workou
                 }
                 AppText(
                     text = exercise.exercise?.name.orEmpty(),
-                    style = Theme.typography.heading,
+                    style = Theme.typography.bodyBold,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
                 )
