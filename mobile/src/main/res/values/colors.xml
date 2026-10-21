@@ -42,6 +42,9 @@
     <color name="pie_chart_8">#b1ff6d</color>
 
     <color name="remove">#FE3824</color>
+    <color name="warning">#F2B84B</color>
+    <color name="warning_faded_1">#2A2210</color>
+    <color name="warning_faded_2">#6B5420</color>
 
     <color name="konfetti_lt_yellow">#fce18a</color>
     <color name="konfetti_lt_orange">#ff726d</color>

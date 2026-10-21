@@ -20,6 +20,9 @@ data class Backgrounds(
     val selected: Color,
     // Stronger action tint, e.g. the current step of a progress bar
     val actionMuted: Color,
+    // The warning colour's faint and stronger tints, like selected and actionMuted
+    val warningFaint: Color,
+    val warningMuted: Color,
 )
 
 internal val LocalBackgrounds = staticCompositionLocalOf {
@@ -31,6 +34,8 @@ internal val LocalBackgrounds = staticCompositionLocalOf {
         separator = Color.Unspecified,
         selected = Color.Unspecified,
         actionMuted = Color.Unspecified,
+        warningFaint = Color.Unspecified,
+        warningMuted = Color.Unspecified,
     )
 }
 
@@ -43,4 +48,6 @@ internal fun backgrounds() = Backgrounds(
     separator = colorResource(R.color.separator),
     selected = colorResource(R.color.main_accent_faded_1),
     actionMuted = colorResource(R.color.main_accent_faded_2),
+    warningFaint = colorResource(R.color.warning_faded_1),
+    warningMuted = colorResource(R.color.warning_faded_2),
 )

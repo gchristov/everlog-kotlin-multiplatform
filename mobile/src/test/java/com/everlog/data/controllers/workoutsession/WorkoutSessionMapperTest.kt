@@ -72,11 +72,21 @@ class WorkoutSessionMapperTest {
     }
 
     @Test
+    fun `a weight saved as -1 has no weight`() {
+        val workout = workout(group("SINGLE", bench to listOf(ELSet(reps = 10, weight = -1f))))
+
+        val set = workout.toSessionBlocks(SessionIds()).single().rounds.single().sets.single()
+
+        assertThat(set.weightKg).isNull()
+    }
+
+    @Test
     fun `mapping back gives the same workout`() {
         val workout = workout(
             group("SINGLE", bench to listOf(
                 ELSet(startedDate = 100, completedDate = 200, requiredReps = 8, reps = 10, weight = 60f),
-                ELSet(requiredTimeSeconds = 45, timeSeconds = 40, weight = 12.5f, suggestedWeight = 12.5f))),
+                ELSet(reps = 10, suggestedReps = 10),
+                ELSet(requiredTimeSeconds = 45, timeSeconds = 40, weight = 12.5f, suggestedWeight = 12.5f, suggestedTimeSeconds = 40))),
             group("SUPER",
                 fly to listOf(ELSet(reps = 15), ELSet(reps = 14), ELSet(reps = 13)),
                 raise to listOf(ELSet(reps = 12))))

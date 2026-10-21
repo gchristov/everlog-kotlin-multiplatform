@@ -84,8 +84,9 @@ fun WorkoutBlock.withAddedRoundFilled(sources: Map<String, PrefillSource>, prefi
 
 fun PrefillSource.lastSets(): List<WorkoutSet> = lastSession?.exercise?.sets.orEmpty().map { it.toSessionSet() }
 
-// A weight the history changed is the set's suggestion
-private fun WorkoutSet.suggesting(filled: WorkoutSet): WorkoutSet {
-    val suggested = filled.weightKg?.takeIf { it != weightKg }
-    return filled.copy(suggestedKg = suggested ?: suggestedKg)
-}
+// A value the history changed is the set's suggestion
+private fun WorkoutSet.suggesting(filled: WorkoutSet): WorkoutSet = filled.copy(
+    suggestedKg = filled.weightKg?.takeIf { it != weightKg } ?: suggestedKg,
+    suggestedReps = filled.reps?.takeIf { it != reps } ?: suggestedReps,
+    suggestedTimeSeconds = filled.timeSeconds?.takeIf { it != timeSeconds } ?: suggestedTimeSeconds,
+)

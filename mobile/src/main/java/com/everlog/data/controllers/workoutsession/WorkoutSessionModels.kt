@@ -35,15 +35,23 @@ data class WorkoutSet(
     // Deleted from one exercise in a superset or circuit's round, which keeps it so each set still lines up
     // with its exercise. It's left out of everything; once every exercise's set is gone, the round goes.
     val removed: Boolean = false,
-    // The weight filled in from history
+    // The values filled in from history
     val suggestedKg: Float? = null,
+    val suggestedReps: Int? = null,
+    val suggestedTimeSeconds: Int? = null,
 ) {
     val done: Boolean
         get() = completedDate != null
 
-    // Until it's changed or the set is done
-    val weightSuggested: Boolean
-        get() = !done && suggestedKg != null && suggestedKg == weightKg
+    // A value filled in from history, until it's changed or the set is done
+    fun isSuggested(field: ValueField): Boolean {
+        val (suggested, value) = when (field) {
+            ValueField.Reps -> suggestedReps to reps
+            ValueField.Time -> suggestedTimeSeconds to timeSeconds
+            ValueField.Weight -> suggestedKg to weightKg
+        }
+        return !done && suggested != null && suggested == value
+    }
 }
 
 /**

@@ -156,8 +156,8 @@ internal fun WorkoutLogScreen(
                     },
                     strips = {
                         if (empty) AppKeypadNote(text = stringResource(R.string.workout_log_empty_hint))
-                        val focused = state.focus?.takeIf { it.field == ValueField.Weight }?.let { state.blocks.set(it.ref) }
-                        if (focused?.weightSuggested == true) {
+                        val focus = state.focus
+                        if (focus != null && state.blocks.set(focus.ref)?.isSuggested(focus.field) == true) {
                             AppKeypadNote(text = stringResource(R.string.workout_log_suggested, SuggestedMark), highlighted = true)
                         }
                         state.timer?.let { TimerStrip(it, state.timerRemainingSeconds(), viewModel) }
