@@ -67,7 +67,6 @@ class PresenterWorkout : PresenterCreateExerciseGroups<MvpViewWorkout>() {
         observeServiceDecreaseWeightClick()
         observeServiceIncreaseRepsClick()
         observeServiceDecreaseRepsClick()
-        observeServiceTimerExerciseStartClick()
         observeServiceTimerExerciseStopClick()
         observeServiceTimerRestStopClick()
         observeServiceCompleteSetClick()
@@ -190,21 +189,12 @@ class PresenterWorkout : PresenterCreateExerciseGroups<MvpViewWorkout>() {
                 { throwable: Throwable? -> handleError(throwable) })
     }
 
-    private fun observeServiceTimerExerciseStartClick() {
-        subscriptions.add(mvpView.onClickServiceTimerExerciseStart()
-                .onBackpressureDrop()
-                .throttleFirst(SERVICE_INTERACTION_DELAY.toLong(), TimeUnit.MILLISECONDS)
-                .compose(applyUISchedulers())
-                .subscribe({ handleServiceSetModifyTime(it, true) })
-                { throwable: Throwable? -> handleError(throwable) })
-    }
-
     private fun observeServiceTimerExerciseStopClick() {
         subscriptions.add(mvpView.onClickServiceTimerExerciseStop()
                 .onBackpressureDrop()
                 .throttleFirst(SERVICE_INTERACTION_DELAY.toLong(), TimeUnit.MILLISECONDS)
                 .compose(applyUISchedulers())
-                .subscribe({ handleServiceSetModifyTime(it, false) })
+                .subscribe({ handleServiceStopSetTimer(it) })
                 { throwable: Throwable? -> handleError(throwable) })
     }
 
@@ -416,12 +406,12 @@ class PresenterWorkout : PresenterCreateExerciseGroups<MvpViewWorkout>() {
         saveOngoingWorkout()
     }
 
-    private fun handleServiceSetModifyTime(state: ELWorkoutState, start: Boolean) {
+    private fun handleServiceStopSetTimer(state: ELWorkoutState) {
         val group = mWorkout?.getExerciseGroups()?.get(state.groupIndex)
         val exercise = group?.getExercisesForSetIndex(state.setIndex)?.get(state.exerciseIndex)
         val set = exercise?.sets?.get(state.setIndex)
         // WorkoutService logs the notification's actions
-        toggleSetTimer(exercise!!, set!!, start, logAnalytics = false)
+        toggleSetTimer(exercise!!, set!!, start = false, logAnalytics = false)
     }
 
     // Workout service

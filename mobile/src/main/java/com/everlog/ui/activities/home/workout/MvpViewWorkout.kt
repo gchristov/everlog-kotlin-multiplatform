@@ -30,8 +30,6 @@ interface MvpViewWorkout : MvpViewCreateExerciseGroups {
 
     fun onClickServiceDecreaseReps(): Observable<ELWorkoutState>
 
-    fun onClickServiceTimerExerciseStart(): Observable<ELWorkoutState>
-
     fun onClickServiceTimerExerciseStop(): Observable<ELWorkoutState>
 
     fun onClickServiceTimerRestStop(): Observable<Void>

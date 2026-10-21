@@ -23,10 +23,11 @@ import com.everlog.data.model.workout.ELWorkout
 import com.everlog.data.model.workout.ELWorkoutState
 import com.everlog.data.repositories.OngoingWorkoutRepository
 import com.everlog.managers.preferences.SettingsManager
-import com.everlog.services.workout.ShownSet
 import com.everlog.managers.preferences.SettingsManager.WeightUnit
+import com.everlog.services.workout.ShownSet
 import com.everlog.testutil.FakeCoroutineDispatcher
 import com.everlog.testutil.InMemorySharedPreferences
+import com.everlog.utils.format.displayWeight
 import com.google.common.truth.Truth.assertThat
 import kotlinx.coroutines.CompletableDeferred
 import org.junit.After
@@ -1101,7 +1102,7 @@ class WorkoutLogViewModelTest {
         assertThat(viewModel.set(0, 0).timeSeconds).isEqualTo(40)
         assertThat(viewModel.state.value.timer?.endsAt).isEqualTo(now + 40_000)
 
-        viewModel.onNotificationSetTimer(position(0, 0, 0), start = false)
+        viewModel.onNotificationStopTimer(position(0, 0, 0))
         viewModel.onNotificationTime(position(0, 0, 0), -1)
         assertThat(viewModel.set(0, 0).timeSeconds).isEqualTo(30)
         assertThat(analytics.events.last()).isEqualTo("time_modified 30.0")
@@ -1122,16 +1123,16 @@ class WorkoutLogViewModelTest {
     }
 
     @Test
-    fun `the notification starts and stops a set timer and stops a rest, which it logs itself`() {
+    fun `the notification stops a set timer and a rest, which it logs itself`() {
         val viewModel = viewModel()
         viewModel.onCellTapped(CellFocus(viewModel.ref(0, 0), ValueField.Reps))
         viewModel.onModeSelected(SetMode.Time)
         viewModel.type("30")
         viewModel.onHideKeypad()
 
-        viewModel.onNotificationSetTimer(position(0, 0, 0), start = true)
+        viewModel.onNotificationMainAction(position(0, 0, 0))
         assertThat(viewModel.state.value.isTiming(viewModel.ref(0, 0))).isTrue()
-        viewModel.onNotificationSetTimer(position(0, 0, 0), start = false)
+        viewModel.onNotificationStopTimer(position(0, 0, 0))
         assertThat(viewModel.state.value.timer).isNull()
 
         viewModel.onTick(viewModel.ref(0, 1))

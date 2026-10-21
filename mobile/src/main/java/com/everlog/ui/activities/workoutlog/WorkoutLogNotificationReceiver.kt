@@ -28,8 +28,7 @@ internal class WorkoutLogNotificationReceiver(private val viewModel: WorkoutLogV
             WorkoutService.BROADCAST_REQUEST_DECREASE_REPS -> viewModel.onNotificationReps(position, -1)
             WorkoutService.BROADCAST_REQUEST_INCREASE_TIME -> viewModel.onNotificationTime(position, 1)
             WorkoutService.BROADCAST_REQUEST_DECREASE_TIME -> viewModel.onNotificationTime(position, -1)
-            WorkoutService.BROADCAST_REQUEST_TIMER_EXERCISE_START -> viewModel.onNotificationSetTimer(position, start = true)
-            WorkoutService.BROADCAST_REQUEST_TIMER_EXERCISE_STOP -> viewModel.onNotificationSetTimer(position, start = false)
+            WorkoutService.BROADCAST_REQUEST_TIMER_EXERCISE_STOP -> viewModel.onNotificationStopTimer(position)
         }
     }
 
@@ -43,7 +42,6 @@ internal class WorkoutLogNotificationReceiver(private val viewModel: WorkoutLogV
             addAction(WorkoutService.BROADCAST_REQUEST_INCREASE_TIME)
             addAction(WorkoutService.BROADCAST_REQUEST_DECREASE_TIME)
             addAction(WorkoutService.BROADCAST_REQUEST_TIMER_REST_STOP)
-            addAction(WorkoutService.BROADCAST_REQUEST_TIMER_EXERCISE_START)
             addAction(WorkoutService.BROADCAST_REQUEST_TIMER_EXERCISE_STOP)
         }
     }

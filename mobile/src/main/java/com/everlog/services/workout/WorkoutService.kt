@@ -52,7 +52,6 @@ class WorkoutService : BaseService() {
         internal const val ACTION_INCREASE_REPS = "ACTION_INCREASE_REPS"
         internal const val ACTION_DECREASE_TIME = "ACTION_DECREASE_TIME"
         internal const val ACTION_INCREASE_TIME = "ACTION_INCREASE_TIME"
-        internal const val ACTION_TIMER_EXERCISE_START = "ACTION_TIMER_EXERCISE_START"
         internal const val ACTION_TIMER_EXERCISE_STOP = "ACTION_TIMER_EXERCISE_STOP"
         internal const val ACTION_TIMER_REST_STOP = "ACTION_TIMER_REST_STOP"
         internal const val ACTION_NEXT = "ACTION_NEXT"
@@ -72,7 +71,6 @@ class WorkoutService : BaseService() {
         const val BROADCAST_REQUEST_DECREASE_REPS = BuildConfig.APPLICATION_ID + ".BROADCAST_REQUEST_DECREASE_REPS"
         const val BROADCAST_REQUEST_INCREASE_TIME = BuildConfig.APPLICATION_ID + ".BROADCAST_REQUEST_INCREASE_TIME"
         const val BROADCAST_REQUEST_DECREASE_TIME = BuildConfig.APPLICATION_ID + ".BROADCAST_REQUEST_DECREASE_TIME"
-        const val BROADCAST_REQUEST_TIMER_EXERCISE_START = BuildConfig.APPLICATION_ID + ".BROADCAST_REQUEST_TIMER_EXERCISE_START"
         const val BROADCAST_REQUEST_TIMER_EXERCISE_STOP = BuildConfig.APPLICATION_ID + ".BROADCAST_REQUEST_TIMER_EXERCISE_STOP"
         const val BROADCAST_REQUEST_TIMER_REST_STOP = BuildConfig.APPLICATION_ID + ".BROADCAST_REQUEST_TIMER_REST_STOP"
     }
@@ -110,8 +108,7 @@ class WorkoutService : BaseService() {
             intent?.action.equals(ACTION_DECREASE_TIME) -> handleTimeChange(false)
             intent?.action.equals(ACTION_INCREASE_TIME) -> handleTimeChange(true)
             intent?.action.equals(ACTION_TIMER_REST_STOP) -> handleStopRestTimer()
-            intent?.action.equals(ACTION_TIMER_EXERCISE_START) -> handleExerciseTimer(true)
-            intent?.action.equals(ACTION_TIMER_EXERCISE_STOP) -> handleExerciseTimer(false)
+            intent?.action.equals(ACTION_TIMER_EXERCISE_STOP) -> handleStopExerciseTimer()
             intent?.action.equals(ACTION_NEXT) -> handleComplete()
         }
         return START_STICKY
@@ -167,13 +164,9 @@ class WorkoutService : BaseService() {
         LocalBroadcastManager.getInstance(this).sendBroadcast(intent)
     }
 
-    private fun handleExerciseTimer(start: Boolean) {
-        if (start) {
-            AnalyticsManager.manager.workoutServiceTimerStartedExercise()
-        } else {
-            AnalyticsManager.manager.workoutServiceTimerStoppedExercise()
-        }
-        val intent = Intent(if (start) BROADCAST_REQUEST_TIMER_EXERCISE_START else BROADCAST_REQUEST_TIMER_EXERCISE_STOP)
+    private fun handleStopExerciseTimer() {
+        AnalyticsManager.manager.workoutServiceTimerStoppedExercise()
+        val intent = Intent(BROADCAST_REQUEST_TIMER_EXERCISE_STOP)
         intent.putExtra(ELConstants.EXTRA_WORKOUT_STATE, mNextState)
         LocalBroadcastManager.getInstance(this).sendBroadcast(intent)
     }

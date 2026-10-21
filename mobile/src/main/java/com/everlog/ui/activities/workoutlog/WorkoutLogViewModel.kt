@@ -8,12 +8,15 @@ import com.everlog.data.controllers.workoutsession.SetMode
 import com.everlog.data.controllers.workoutsession.SetRef
 import com.everlog.data.controllers.workoutsession.ValueField
 import com.everlog.data.controllers.workoutsession.WorkoutBlock
+import com.everlog.data.controllers.workoutsession.WorkoutSetPrefill
 import com.everlog.data.controllers.workoutsession.addGroups
 import com.everlog.data.controllers.workoutsession.addRound
 import com.everlog.data.controllers.workoutsession.block
 import com.everlog.data.controllers.workoutsession.completeSet
 import com.everlog.data.controllers.workoutsession.deleteBlock
 import com.everlog.data.controllers.workoutsession.deleteSet
+import com.everlog.data.controllers.workoutsession.filledFromHistory
+import com.everlog.data.controllers.workoutsession.lastSets
 import com.everlog.data.controllers.workoutsession.moveBlock
 import com.everlog.data.controllers.workoutsession.nextOpenAfter
 import com.everlog.data.controllers.workoutsession.refs
@@ -23,11 +26,8 @@ import com.everlog.data.controllers.workoutsession.set
 import com.everlog.data.controllers.workoutsession.setMode
 import com.everlog.data.controllers.workoutsession.setValue
 import com.everlog.data.controllers.workoutsession.uncompleteSet
-import com.everlog.data.controllers.workoutsession.withRestSeconds
-import com.everlog.data.controllers.workoutsession.WorkoutSetPrefill
-import com.everlog.data.controllers.workoutsession.filledFromHistory
-import com.everlog.data.controllers.workoutsession.lastSets
 import com.everlog.data.controllers.workoutsession.withAddedRoundFilled
+import com.everlog.data.controllers.workoutsession.withRestSeconds
 import com.everlog.data.controllers.workoutsession.withSessionBlocks
 import com.everlog.data.model.exercise.ELExercise
 import com.everlog.data.model.exercise.ELExerciseGroup
@@ -36,6 +36,7 @@ import com.everlog.data.model.workout.ELWorkoutState
 import com.everlog.data.repositories.OngoingWorkoutRepository
 import com.everlog.services.workout.ShownSet
 import com.everlog.ui.mvvm.CommonViewModel
+import com.everlog.utils.format.displayWeight
 import java.util.Date
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Job
@@ -331,9 +332,9 @@ internal class WorkoutLogViewModel(
         if (state.value.isTiming(ref)) onTimerStep(direction) else step(CellFocus(ref, ValueField.Time), direction)
     }
 
-    fun onNotificationSetTimer(position: ELWorkoutState, start: Boolean) {
+    fun onNotificationStopTimer(position: ELWorkoutState) {
         val ref = setAt(position) ?: return
-        if (start) startSetTimer(ref, fromNotification = true) else if (state.value.isTiming(ref)) endTimer(fromNotification = true)
+        if (state.value.isTiming(ref)) endTimer(fromNotification = true)
     }
 
     fun onNotificationRestStop() {
