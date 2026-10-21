@@ -83,7 +83,7 @@ fun AppKeypadNote(
         modifier = modifier
             .fillMaxWidth()
             .clip(shape)
-            .background(if (highlighted) KeypadColors.Inset else Theme.backgrounds.primary)
+            .background(if (highlighted) Theme.backgrounds.inset else Theme.backgrounds.primary)
             .border(1.dp, if (highlighted) Theme.backgrounds.separator else Color.Transparent, shape)
             .padding(start = 14.dp, end = if (action != null) 6.dp else 14.dp, top = 6.dp, bottom = 6.dp)
             // As tall as a pill even without one, so a note doesn't look squashed
