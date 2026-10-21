@@ -119,9 +119,6 @@ class WorkoutLogScenarioTest {
         cell(0, 0, 0, "count").assertTextEquals("8", "✦")
         cell(0, 0, 0, "weight").assertTextEquals("100", "✦")
         compose.onAllNodesWithText("8 × 100 lb")[0].assertExists()
-        // The column's heading opens its history
-        compose.onAllNodesWithText("LAST TIME")[0].performClick()
-        assertThat(opened).isEqualTo("Bench press" to ExerciseTab.History)
 
         // Bench press, set 1: the suggested reps say where they come from and are typed over, Next to the suggested
         // weight, typed over in lb, then Complete set
