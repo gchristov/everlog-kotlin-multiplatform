@@ -133,49 +133,42 @@ class WorkoutNotificationBuilderTest {
     fun next_set_text_summarises_reps_and_weight() {
         val notification = build(nextSet())
 
-        assertThat(text(notification)).isEqualTo("Set 2/3 • 8 x 60 kg")
+        assertThat(text(notification)).isEqualTo("Set 2/3 • 8 × 60 kg")
     }
 
     @Test
     fun next_set_text_shows_reps_without_weight() {
         val notification = build(nextSet(weight = 0f))
 
-        assertThat(text(notification)).isEqualTo("Set 2/3 • 8 reps")
-    }
-
-    @Test
-    fun next_set_text_uses_singular_rep() {
-        val notification = build(nextSet(weight = 0f, reps = 1))
-
-        assertThat(text(notification)).isEqualTo("Set 2/3 • 1 rep")
+        assertThat(text(notification)).isEqualTo("Set 2/3 • 8")
     }
 
     @Test
     fun next_set_text_shows_time_for_timed_sets() {
         val notification = build(nextSet(weight = 0f, reps = null, timeSeconds = 40))
 
-        assertThat(text(notification)).isEqualTo("Set 2/3 • 40 sec")
+        assertThat(text(notification)).isEqualTo("Set 2/3 • 0:40")
     }
 
     @Test
     fun next_set_text_shows_time_and_weight_for_weighted_timed_sets() {
         val notification = build(nextSet(weight = 20f, reps = null, timeSeconds = 90))
 
-        assertThat(text(notification)).isEqualTo("Set 2/3 • 1 min 30 sec • 20 kg")
+        assertThat(text(notification)).isEqualTo("Set 2/3 • 1:30 × 20 kg")
     }
 
     @Test
     fun next_set_text_counts_down_while_the_exercise_timer_runs() {
         val notification = build(nextSet(weight = 0f, reps = null, timeSeconds = 40, remainingSeconds = 12))
 
-        assertThat(text(notification)).isEqualTo("Set 2/3 • 12 sec")
+        assertThat(text(notification)).isEqualTo("Set 2/3 • 0:12")
     }
 
     @Test
     fun next_set_shows_the_total_for_a_single_set() {
         val notification = build(nextSet(setNumber = 1, totalSets = 1, weight = 0f))
 
-        assertThat(text(notification)).isEqualTo("Set 1/1 • 8 reps")
+        assertThat(text(notification)).isEqualTo("Set 1/1 • 8")
     }
 
     @Test
@@ -190,7 +183,7 @@ class WorkoutNotificationBuilderTest {
         val notification = build(nextSet(exerciseName = "Squat", exercisePosition = 2, exercisesInGroup = 2, setType = "SUPER"))
 
         assertThat(title(notification)).isEqualTo("2/2 Squat")
-        assertThat(text(notification)).isEqualTo("${context.getString(R.string.set_super)} 2/3 • 8 x 60 kg")
+        assertThat(text(notification)).isEqualTo("${context.getString(R.string.set_super)} 2/3 • 8 × 60 kg")
     }
 
     // Rest
@@ -224,7 +217,7 @@ class WorkoutNotificationBuilderTest {
     fun rest_shows_the_next_set() {
         val notification = build(rest())
 
-        assertThat(text(notification)).isEqualTo("Next: Bench press • Set 2/3 • 8 x 60 kg")
+        assertThat(text(notification)).isEqualTo("Next: Bench press • Set 2/3 • 8 × 60 kg")
     }
 
     @Test
@@ -235,7 +228,7 @@ class WorkoutNotificationBuilderTest {
         assertThat(notification.extras.getString(Notification.EXTRA_TEMPLATE))
                 .isEqualTo(Notification.BigTextStyle::class.java.name)
         assertThat(notification.extras.getCharSequence(Notification.EXTRA_BIG_TEXT).toString())
-                .isEqualTo("Next: Bench press • Set 2/3 • 8 x 60 kg")
+                .isEqualTo("Next: Bench press • Set 2/3 • 8 × 60 kg")
     }
 
     @Test

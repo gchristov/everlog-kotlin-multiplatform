@@ -10,6 +10,7 @@ import androidx.core.app.NotificationCompat
 import androidx.core.content.ContextCompat
 import com.everlog.R
 import com.everlog.constants.ELConstants
+import com.everlog.data.controllers.workoutsession.toSessionSet
 import com.everlog.data.model.set.ELSetType
 import com.everlog.data.model.workout.ELWorkout
 import com.everlog.managers.preferences.SettingsManager
@@ -21,6 +22,7 @@ import com.everlog.ui.activities.workoutlog.EmptyValue
 import com.everlog.ui.activities.workoutlog.displayWeight
 import com.everlog.ui.activities.workoutlog.formatClock
 import com.everlog.ui.activities.workoutlog.formatWeight
+import com.everlog.ui.activities.workoutlog.lastTimeText
 import com.everlog.ui.activities.workoutlog.unitLabel
 import com.everlog.ui.navigator.ELNavigator
 import com.everlog.utils.ArrayResourceTypeUtils
@@ -182,18 +184,14 @@ class WorkoutNotificationBuilder(private val context: Context) {
     }
 
     /**
-     * E.g. "Set 2/3 • 8 x 60 kg" or "Set 1/3 • 40 sec • 20 kg". The values use the same wording as
-     * a completed set's row in the workout screen (ELSet.getExerciseSetSummary). A set with nothing
-     * entered yet gets a prompt to open the workout and fill it in, e.g. "Set 1/1 • Tap to edit".
+     * E.g. "Set 2/3 • 8 × 60 kg" or "Set 1/3 • 0:40 × 20 kg", as the workout table's last time reads, with a
+     * running timer's seconds left. A set with nothing entered yet gets a prompt to open the workout and fill it in,
+     * e.g. "Set 1/1 • Tap to edit".
      */
     private fun setSummary(state: NextSet, promptIfEmpty: Boolean = true): String {
-        // Show the countdown while the exercise timer runs
-        val set = if (state.timerRunning && state.timeSeconds != null) {
-            state.set.copy(timeSeconds = state.timeSeconds)
-        } else {
-            state.set
-        }
-        val values = set.getExerciseSetSummary(context, true)
+        val unit = SettingsManager.manager.weightUnit()
+        val set = state.set.toSessionSet().copy(timeSeconds = state.timeSeconds)
+        val values = lastTimeText(set, unit, unitLabel(unit))
                 ?: if (promptIfEmpty) context.getString(R.string.workout_notification_tap_to_edit) else null
         return listOfNotNull(setLabel(state), values).joinToString(" • ")
     }

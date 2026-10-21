@@ -197,7 +197,7 @@ private fun ExerciseTable(
     Column(modifier = Modifier.padding(bottom = Theme.spacing.extraLarge)) {
         ExerciseHeader(index, block, actions)
         Spacer(modifier = Modifier.height(Theme.spacing.medium))
-        ColumnLabels(block, view.unitLabel, actions)
+        ColumnLabels(block, view.unitLabel)
         Spacer(modifier = Modifier.height(Theme.spacing.extraSmall))
         Column(
             modifier = Modifier
@@ -324,9 +324,6 @@ private fun ExerciseHeader(index: Int, block: WorkoutBlock, actions: WorkoutTabl
     }
 }
 
-private fun Modifier.openingHistory(exercise: ELExercise?, actions: WorkoutTableActions) =
-    if (exercise == null) this else clickable { actions.onOpenExercise(exercise, ExerciseTab.History) }
-
 // The press shows with the thumbnail's corners, which a rounder shape would cut into
 private fun Modifier.openingInfo(exercise: ELExercise?, actions: WorkoutTableActions, corner: Dp) =
     if (exercise == null) this else clip(RoundedCornerShape(corner)).clickable { actions.onOpenExercise(exercise, ExerciseTab.Info) }
@@ -391,7 +388,7 @@ private fun GroupHeader(modifier: Modifier, block: WorkoutBlock, actions: Workou
 }
 
 @Composable
-private fun ColumnLabels(block: WorkoutBlock, unitLabel: String, actions: WorkoutTableActions) {
+private fun ColumnLabels(block: WorkoutBlock, unitLabel: String) {
     val modes = block.rounds.flatMap { round -> round.sets.filterNot { it.removed }.map { it.mode } }.toSet()
     val count = when {
         modes == setOf(SetMode.Time) -> stringResource(R.string.workout_log_column_time)
@@ -403,9 +400,7 @@ private fun ColumnLabels(block: WorkoutBlock, unitLabel: String, actions: Workou
         horizontalArrangement = Arrangement.spacedBy(TableSizes.ColumnGap),
     ) {
         Label(stringResource(R.string.workout_log_column_set), Modifier.width(TableSizes.SetColumn), TextAlign.Center)
-        // A group's heading is over several exercises, whose history is in the group's menu
-        val exercise = block.exercises.singleOrNull()?.exercise
-        Label(stringResource(R.string.workout_log_column_last_time), Modifier.weight(1f).openingHistory(exercise, actions))
+        Label(stringResource(R.string.workout_log_column_last_time), Modifier.weight(1f))
         Label(count, Modifier.width(TableSizes.Cell), TextAlign.Center)
         Label(unitLabel, Modifier.width(TableSizes.Cell), TextAlign.Center)
         Spacer(modifier = Modifier.width(TableSizes.CheckTarget))
