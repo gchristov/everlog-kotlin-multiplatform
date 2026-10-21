@@ -8,6 +8,7 @@
     <!-- A near-black with a green cast, and cards one step lighter in the same hue -->
     <color name="background_base">#0A0E09</color>
     <color name="background_card">#151D13</color>
+    <color name="background_inset">#52000000</color>
     <color name="background_card_lighter">@color/black_lighter</color>
     <color name="background_toolbar">#0A0E09</color>
     <color name="background_blur">#700A0E09</color>

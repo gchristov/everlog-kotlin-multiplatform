@@ -44,7 +44,6 @@ class WorkoutActivity : CreateExerciseGroupsActivity(), MvpViewWorkout {
     private val mOnRequestWeightDecrease = PublishSubject.create<ELWorkoutState>()
     private val mOnRequestRepsIncrease = PublishSubject.create<ELWorkoutState>()
     private val mOnRequestRepsDecrease = PublishSubject.create<ELWorkoutState>()
-    private val mOnRequestTimerExerciseStart = PublishSubject.create<ELWorkoutState>()
     private val mOnRequestTimerExerciseStop = PublishSubject.create<ELWorkoutState>()
     private val mOnRequestTimerRestStop = PublishSubject.create<Void>()
     private val mOnRequestCompleteSet = PublishSubject.create<ELWorkoutState>()
@@ -141,10 +140,6 @@ class WorkoutActivity : CreateExerciseGroupsActivity(), MvpViewWorkout {
         return mOnRequestRepsDecrease
     }
 
-    override fun onClickServiceTimerExerciseStart(): Observable<ELWorkoutState> {
-        return mOnRequestTimerExerciseStart
-    }
-
     override fun onClickServiceTimerExerciseStop(): Observable<ELWorkoutState> {
         return mOnRequestTimerExerciseStop
     }
@@ -206,7 +201,6 @@ class WorkoutActivity : CreateExerciseGroupsActivity(), MvpViewWorkout {
         filter.addAction(WorkoutService.BROADCAST_REQUEST_INCREASE_REPS)
         filter.addAction(WorkoutService.BROADCAST_REQUEST_DECREASE_REPS)
         filter.addAction(WorkoutService.BROADCAST_REQUEST_TIMER_REST_STOP)
-        filter.addAction(WorkoutService.BROADCAST_REQUEST_TIMER_EXERCISE_START)
         filter.addAction(WorkoutService.BROADCAST_REQUEST_TIMER_EXERCISE_STOP)
         mReceiver = WorkoutServiceBroadcastReceiver()
         LocalBroadcastManager.getInstance(this).registerReceiver(mReceiver!!, filter)
@@ -237,11 +231,6 @@ class WorkoutActivity : CreateExerciseGroupsActivity(), MvpViewWorkout {
                 val state = intent.getSerializableExtra(ELConstants.EXTRA_WORKOUT_STATE) as? ELWorkoutState
                 if (state != null) {
                     mOnRequestRepsDecrease.onNext(state)
-                }
-            } else if (WorkoutService.BROADCAST_REQUEST_TIMER_EXERCISE_START == intent?.action) {
-                val state = intent.getSerializableExtra(ELConstants.EXTRA_WORKOUT_STATE) as? ELWorkoutState
-                if (state != null) {
-                    mOnRequestTimerExerciseStart.onNext(state)
                 }
             } else if (WorkoutService.BROADCAST_REQUEST_TIMER_EXERCISE_STOP == intent?.action) {
                 val state = intent.getSerializableExtra(ELConstants.EXTRA_WORKOUT_STATE) as? ELWorkoutState

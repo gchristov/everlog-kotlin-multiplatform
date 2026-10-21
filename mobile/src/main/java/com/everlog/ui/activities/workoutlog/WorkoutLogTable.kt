@@ -81,6 +81,7 @@ import com.everlog.ui.design.elements.AppTertiaryButton
 import com.everlog.ui.design.elements.AppText
 import com.everlog.ui.design.elements.AppThumbnail
 import com.everlog.ui.design.theme.Theme
+import com.everlog.utils.format.EmptyValue
 import kotlin.math.roundToInt
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -110,9 +111,6 @@ private object TableSizes {
     val CheckIcon = 18.dp
     const val KeypadOpenMillis = 350L
 }
-
-// The keypad's inset, for the selected row's boxes and the ticks, so they read as what the keypad types into
-private val Inset = Color.Black.copy(alpha = 0.32f)
 
 /**
  * Per exercise its header, then a card of rows: SET · LAST TIME · REPS (or TIME) · KG · tick. A superset or circuit
@@ -515,7 +513,7 @@ private fun Cell(
                 .then(
                     if (boxed) {
                         Modifier
-                            .background(Inset)
+                            .background(Theme.backgrounds.inset)
                             .border(
                                 if (focused) TableSizes.FocusOutline else 1.dp,
                                 if (focused) Theme.contentColors.action else Theme.backgrounds.separator,
@@ -562,7 +560,7 @@ private fun StartButton(tag: String, armed: Boolean, onClick: () -> Unit) {
                 .size(TableSizes.Check)
                 .clip(CircleShape)
                 .indication(interactions, ripple())
-                .background(Inset)
+                .background(Theme.backgrounds.inset)
                 .border(
                     if (armed) TableSizes.FocusOutline else 1.dp,
                     if (armed) Theme.contentColors.action else Theme.backgrounds.separator,
@@ -598,7 +596,7 @@ private fun Tick(tag: String, done: Boolean, armed: Boolean, onClick: () -> Unit
                 .size(if (done) TableSizes.CheckDone else TableSizes.Check)
                 .clip(shape)
                 .indication(interactions, ripple())
-                .background(if (done) Theme.contentColors.action else Inset)
+                .background(if (done) Theme.contentColors.action else Theme.backgrounds.inset)
                 .then(
                     when {
                         done -> Modifier

@@ -1,6 +1,5 @@
 package com.everlog.ui.activities.workoutlog
 
-import com.everlog.data.controllers.workoutsession.SetMode
 import com.everlog.data.controllers.workoutsession.ValueField
 import com.everlog.data.controllers.workoutsession.WorkoutSet
 import com.everlog.managers.preferences.SettingsManager.WeightUnit
@@ -8,21 +7,6 @@ import com.google.common.truth.Truth.assertThat
 import org.junit.Test
 
 class WorkoutLogFormatTest {
-
-    @Test
-    fun `a weight has at most two decimals, without trailing zeros`() {
-        assertThat(formatWeight(62.5f)).isEqualTo("62.5")
-        assertThat(formatWeight(60f)).isEqualTo("60")
-        assertThat(formatWeight(137.7889f)).isEqualTo("137.79")
-        assertThat(formatWeight(0.005f)).isEqualTo("0.01")
-    }
-
-    @Test
-    fun `a clock shows hours only when there are some`() {
-        assertThat(formatClock(0)).isEqualTo("0:00")
-        assertThat(formatClock(65)).isEqualTo("1:05")
-        assertThat(formatClock(3723)).isEqualTo("1:02:03")
-    }
 
     @Test
     fun `a time is typed like a microwave's, its last two digits seconds`() {
@@ -52,15 +36,6 @@ class WorkoutLogFormatTest {
     }
 
     @Test
-    fun `a weight in pounds is stored in kg and shows as it was typed`() {
-        val kg = storedWeight(135f, WeightUnit.POUND)
-
-        assertThat(kg).isWithin(0.01f).of(61.23f)
-        assertThat(formatWeight(displayWeight(kg, WeightUnit.POUND))).isEqualTo("135")
-        assertThat(storedWeight(60f, WeightUnit.KILOGRAM)).isEqualTo(60f)
-    }
-
-    @Test
     fun `a value backspaces from what it shows`() {
         val set = WorkoutSet(reps = 12, timeSeconds = 90, weightKg = 62.5f)
 
@@ -68,14 +43,5 @@ class WorkoutLogFormatTest {
         assertThat(rawText(set, ValueField.Time, WeightUnit.KILOGRAM)).isEqualTo("130")
         assertThat(rawText(set, ValueField.Weight, WeightUnit.KILOGRAM)).isEqualTo("62.5")
         assertThat(rawText(WorkoutSet(), ValueField.Weight, WeightUnit.KILOGRAM)).isEmpty()
-    }
-
-    @Test
-    fun `last time reads count then weight, and is empty when nothing was logged`() {
-        assertThat(lastTimeText(WorkoutSet(reps = 15, weightKg = 17f), WeightUnit.KILOGRAM, "KG")).isEqualTo("15 × 17 kg")
-        assertThat(lastTimeText(WorkoutSet(mode = SetMode.Time, timeSeconds = 30, weightKg = 10f), WeightUnit.KILOGRAM, "KG"))
-            .isEqualTo("0:30 × 10 kg")
-        assertThat(lastTimeText(WorkoutSet(reps = 12), WeightUnit.KILOGRAM, "KG")).isEqualTo("12")
-        assertThat(lastTimeText(WorkoutSet(), WeightUnit.KILOGRAM, "KG")).isNull()
     }
 }

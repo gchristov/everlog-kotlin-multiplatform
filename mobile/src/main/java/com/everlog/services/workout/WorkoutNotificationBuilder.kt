@@ -18,14 +18,14 @@ import com.everlog.services.workout.WorkoutNotificationState.Done
 import com.everlog.services.workout.WorkoutNotificationState.NextSet
 import com.everlog.services.workout.WorkoutNotificationState.NoExercises
 import com.everlog.services.workout.WorkoutNotificationState.Rest
-import com.everlog.ui.activities.workoutlog.EmptyValue
-import com.everlog.ui.activities.workoutlog.displayWeight
-import com.everlog.ui.activities.workoutlog.formatClock
-import com.everlog.ui.activities.workoutlog.formatWeight
-import com.everlog.ui.activities.workoutlog.lastTimeText
-import com.everlog.ui.activities.workoutlog.unitLabel
 import com.everlog.ui.navigator.ELNavigator
 import com.everlog.utils.ArrayResourceTypeUtils
+import com.everlog.utils.format.EmptyValue
+import com.everlog.utils.format.displayWeight
+import com.everlog.utils.format.formatClock
+import com.everlog.utils.format.formatWeight
+import com.everlog.utils.format.lastTimeText
+import com.everlog.utils.format.unitLabel
 
 /**
  * Renders a [WorkoutNotificationState] as the ongoing workout notification.
@@ -47,7 +47,6 @@ class WorkoutNotificationBuilder(private val context: Context) {
                 WorkoutService.ACTION_INCREASE_WEIGHT,
                 WorkoutService.ACTION_DECREASE_REPS,
                 WorkoutService.ACTION_INCREASE_REPS,
-                WorkoutService.ACTION_TIMER_EXERCISE_START,
                 WorkoutService.ACTION_TIMER_EXERCISE_STOP,
                 WorkoutService.ACTION_TIMER_REST_STOP,
                 WorkoutService.ACTION_NEXT,

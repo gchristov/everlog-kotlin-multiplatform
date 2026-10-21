@@ -175,7 +175,7 @@ internal fun KeypadPill(
         modifier = Modifier
             .height(height)
             .clip(Theme.shapes.button)
-            .background(KeypadColors.Inset)
+            .background(Theme.backgrounds.inset)
             .border(1.dp, Theme.backgrounds.separator, Theme.shapes.button)
             .clickable(onClick = onClick)
             .padding(horizontal = Theme.spacing.medium),
@@ -185,13 +185,8 @@ internal fun KeypadPill(
     }
 }
 
-// The keypad's own colours and sizes, which only it uses for now. Its keys, toggle, pills and strips are all
-// fully rounded, like the app's buttons.
-internal object KeypadColors {
-    // The keys, toggle and pills sit darker than the card's tint
-    val Inset = Color.Black.copy(alpha = 0.32f)
-}
-
+// The keypad's own sizes, which only it uses for now. Its keys, toggle, pills and strips are all fully rounded,
+// like the app's buttons.
 internal object KeypadSizes {
     val Corner = 30.dp
     val Padding = 14.dp
@@ -255,7 +250,7 @@ private fun CircleButton(icon: ImageVector, contentDescription: String, onClick:
         modifier = Modifier
             .size(KeypadSizes.Button)
             .clip(CircleShape)
-            .background(KeypadColors.Inset)
+            .background(Theme.backgrounds.inset)
             .border(1.dp, Theme.backgrounds.separator, CircleShape),
         contentAlignment = Alignment.Center,
     ) {
@@ -270,7 +265,7 @@ private fun Toggle(toggle: AppKeypadToggle) {
         modifier = Modifier
             .height(KeypadSizes.Button)
             .clip(shape)
-            .background(KeypadColors.Inset)
+            .background(Theme.backgrounds.inset)
             .border(1.dp, Theme.backgrounds.separator, shape)
             .padding(KeypadSizes.ToggleInset),
     ) {
@@ -372,7 +367,7 @@ private fun RowScope.Key(
             )
             .height(KeypadSizes.Key)
             .clip(shape)
-            .background(if (primary) Theme.contentColors.action else KeypadColors.Inset)
+            .background(if (primary) Theme.contentColors.action else Theme.backgrounds.inset)
             .border(1.dp, if (primary) Theme.contentColors.action else Theme.backgrounds.separator, shape)
             .clickable(enabled = enabled, onClick = onClick),
         contentAlignment = Alignment.Center,

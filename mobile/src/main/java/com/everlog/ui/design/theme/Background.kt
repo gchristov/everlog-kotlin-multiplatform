@@ -12,6 +12,8 @@ data class Backgrounds(
     val primary: Color,
     val surface: Color,
     val surfaceRaised: Color,
+    // Darker than the surface it sits on, for boxes typed into or pressed, e.g. the keypad's keys
+    val inset: Color,
     // Tint over blurred content behind bars, e.g. the footer
     val blurOverlay: Color,
     // Divider between rows in a card
@@ -30,6 +32,7 @@ internal val LocalBackgrounds = staticCompositionLocalOf {
         primary = Color.Unspecified,
         surface = Color.Unspecified,
         surfaceRaised = Color.Unspecified,
+        inset = Color.Unspecified,
         blurOverlay = Color.Unspecified,
         separator = Color.Unspecified,
         selected = Color.Unspecified,
@@ -44,6 +47,7 @@ internal fun backgrounds() = Backgrounds(
     primary = colorResource(R.color.background_base),
     surface = colorResource(R.color.background_card),
     surfaceRaised = colorResource(R.color.background_card_lighter),
+    inset = colorResource(R.color.background_inset),
     blurOverlay = colorResource(R.color.background_blur),
     separator = colorResource(R.color.separator),
     selected = colorResource(R.color.main_accent_faded_1),

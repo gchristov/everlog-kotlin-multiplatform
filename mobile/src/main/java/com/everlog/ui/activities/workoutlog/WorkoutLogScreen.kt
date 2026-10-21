@@ -71,6 +71,8 @@ import com.everlog.ui.design.elements.keypad.AppKeypadTimerStyle
 import com.everlog.ui.design.elements.keypad.AppKeypadToggle
 import com.everlog.ui.design.theme.Theme
 import com.everlog.utils.UnitUtils
+import com.everlog.utils.format.formatClock
+import com.everlog.utils.format.unitLabel
 import kotlinx.coroutines.android.awaitFrame
 
 /**
