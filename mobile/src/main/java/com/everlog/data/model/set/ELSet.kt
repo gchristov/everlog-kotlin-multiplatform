@@ -32,10 +32,14 @@ data class ELSet (
         // sets still line up with their exercises. Only the ongoing workout has these; finishing drops them.
         @get:Exclude @set:Exclude
         var removed: Boolean = false,
-        // The weight the Compose workout screen (TAS-455) filled in from history, in kg, until it's changed or the set
-        // done: it shows as a suggestion. Only the ongoing workout has it.
+        // The values the Compose workout screen (TAS-455) filled in from history, weight in kg, until they're changed or
+        // the set done: they show as suggestions. Only the ongoing workout has them.
         @get:Exclude @set:Exclude
-        var suggestedWeight: Float? = null
+        var suggestedWeight: Float? = null,
+        @get:Exclude @set:Exclude
+        var suggestedReps: Int? = null,
+        @get:Exclude @set:Exclude
+        var suggestedTimeSeconds: Int? = null
 
 ) : Serializable, ELFirestoreModel {
 

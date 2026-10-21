@@ -811,8 +811,32 @@ class WorkoutLogViewModelTest {
         val viewModel = viewModel()
 
         assertThat(viewModel.set(0, 0).weightKg).isEqualTo(60f)
-        assertThat(viewModel.set(0, 0).weightSuggested).isTrue()
+        assertThat(viewModel.set(0, 0).isSuggested(ValueField.Weight)).isTrue()
         assertThat(store.ongoing?.getExerciseGroups()?.first()?.exercises?.first()?.sets?.first()?.suggestedWeight).isEqualTo(60f)
+    }
+
+    @Test
+    fun `reps without a target are filled in from history, as suggestions, targets stay as they are`() {
+        prefill.lastWeightKg = 60f
+        val viewModel = viewModel(template().apply { routine?.exerciseGroups?.set(0, group("SINGLE", "bench" to 0, sets = 2)) })
+
+        assertThat(viewModel.set(0, 0).reps).isEqualTo(8)
+        assertThat(viewModel.set(0, 0).isSuggested(ValueField.Reps)).isTrue()
+        assertThat(viewModel.set(1, 0).reps).isEqualTo(12)
+        assertThat(viewModel.set(1, 0).isSuggested(ValueField.Reps)).isFalse()
+        assertThat(store.ongoing?.getExerciseGroups()?.first()?.exercises?.first()?.sets?.first()?.suggestedReps).isEqualTo(8)
+    }
+
+    @Test
+    fun `a reps suggestion goes once the reps are changed or the set done`() {
+        prefill.lastWeightKg = 60f
+        val viewModel = viewModel(template().apply { routine?.exerciseGroups?.set(0, group("SINGLE", "bench" to 0, sets = 2)) })
+        viewModel.onCellTapped(CellFocus(viewModel.ref(0, 0), ValueField.Reps))
+        viewModel.type("10")
+        viewModel.onTick(viewModel.ref(0, 1))
+
+        assertThat(viewModel.set(0, 0).isSuggested(ValueField.Reps)).isFalse()
+        assertThat(viewModel.set(0, 1).isSuggested(ValueField.Reps)).isFalse()
     }
 
     @Test
@@ -831,8 +855,8 @@ class WorkoutLogViewModelTest {
         viewModel.type("62.5")
         viewModel.onTick(viewModel.ref(0, 1))
 
-        assertThat(viewModel.set(0, 0).weightSuggested).isFalse()
-        assertThat(viewModel.set(0, 1).weightSuggested).isFalse()
+        assertThat(viewModel.set(0, 0).isSuggested(ValueField.Weight)).isFalse()
+        assertThat(viewModel.set(0, 1).isSuggested(ValueField.Weight)).isFalse()
     }
 
     @Test
@@ -871,7 +895,7 @@ class WorkoutLogViewModelTest {
         viewModel.onAddSet(viewModel.blocks[0].id)
 
         assertThat(viewModel.set(0, 2).weightKg).isEqualTo(60f)
-        assertThat(viewModel.set(0, 2).weightSuggested).isTrue()
+        assertThat(viewModel.set(0, 2).isSuggested(ValueField.Weight)).isTrue()
     }
 
     @Test
@@ -909,7 +933,7 @@ class WorkoutLogViewModelTest {
         loading.complete(Unit)
 
         assertThat(viewModel.set(0, 0).weightKg).isEqualTo(40f)
-        assertThat(viewModel.set(0, 0).weightSuggested).isFalse()
+        assertThat(viewModel.set(0, 0).isSuggested(ValueField.Weight)).isFalse()
         assertThat(viewModel.set(0, 1).weightKg).isEqualTo(60f)
     }
 
@@ -1189,8 +1213,8 @@ class WorkoutLogViewModelTest {
     }
 
     /**
-     * History with every exercise last done at [lastWeightKg] for [lastSets] sets, filling in empty weights like the
-     * WorkoutPrefillController's history prefill.
+     * History with every exercise last done at 8 × [lastWeightKg] for [lastSets] sets, filling in empty weights, and reps
+     * where there's no target, like the WorkoutPrefillController's history prefill.
      */
     private class FakePrefill : LoadPrefillSourcesUseCase, WorkoutSetPrefill {
         var lastWeightKg: Float? = null
@@ -1214,12 +1238,14 @@ class WorkoutLogViewModelTest {
 
         override fun fill(source: PrefillSource, set: WorkoutSet, index: Int): WorkoutSet {
             val last = source.lastSession?.exercise?.sets?.getOrNull(index) ?: return set
-            return if (set.weightKg == null) set.copy(weightKg = last.getWeightKg()) else set
+            val weighed = if (set.weightKg == null) set.copy(weightKg = last.getWeightKg()) else set
+            val empty = set.reps == null && set.timeSeconds == null && set.requiredReps == null && set.requiredTimeSeconds == null
+            return if (empty) weighed.copy(reps = last.getReps()) else weighed
         }
 
         override fun fillAdded(source: PrefillSource, set: WorkoutSet, index: Int): WorkoutSet {
             val last = source.lastSession?.exercise?.sets?.getOrNull(index) ?: return set
-            return set.copy(weightKg = last.getWeightKg())
+            return set.copy(weightKg = last.getWeightKg(), reps = last.getReps())
         }
     }
 

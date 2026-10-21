@@ -113,8 +113,9 @@ class WorkoutLogScenarioTest {
             }
         }
 
-        // Bench press was last done at 8 × 100 lb: its weights are filled in from that, as suggestions, and its last
-        // time shows beside each set
+        // Bench press was last done at 8 × 100 lb: its reps and weights are filled in from that, as suggestions, and
+        // its last time shows beside each set
+        cell(0, 0, 0, "count").assertTextEquals("8", "✦")
         cell(0, 0, 0, "weight").assertTextEquals("100", "✦")
         compose.onAllNodesWithText("8 × 100 lb")[0].assertExists()
         // Its last time, and the column's heading, open its history
@@ -124,9 +125,10 @@ class WorkoutLogScenarioTest {
         compose.onAllNodesWithText("LAST TIME")[0].performClick()
         assertThat(opened).isEqualTo("Bench press" to ExerciseTab.History)
 
-        // Bench press, set 1: reps typed over the template's 8, Next to the suggested weight, which says where it
-        // comes from, typed over in lb, then Complete set
+        // Bench press, set 1: the suggested reps say where they come from and are typed over, Next to the suggested
+        // weight, typed over in lb, then Complete set
         cell(0, 0, 0, "count").performClick()
+        compose.onNodeWithText("✦ Suggested from your history").assertExists()
         keys("10")
         cell(0, 0, 0, "count").assertTextEquals("10")
         key("Next").performClick()
@@ -380,14 +382,14 @@ class WorkoutLogScenarioTest {
         )
     }
 
-    // Bench press, 2 sets of 8, then a superset of fly and raise, 2 rounds of 12
+    // Bench press, 2 sets with no reps target, then a superset of fly and raise, 2 rounds of 12
     private fun template() = ELWorkout(
         uuid = "workout",
         createdDate = now,
         routine = ELRoutine(
             name = "Push",
             exerciseGroups = mutableListOf(
-                group(ELSetType.SINGLE, "Bench press" to 8),
+                group(ELSetType.SINGLE, "Bench press" to 0),
                 group(ELSetType.SUPER, "Fly" to 12, "Raise" to 12),
             ),
         ),

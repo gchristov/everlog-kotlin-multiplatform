@@ -61,7 +61,8 @@ internal data class SetRow(
     val timing: Boolean,
     // Lit up when the keypad's main key will complete the set
     val armed: Boolean,
-    val suggested: Boolean,
+    val countSuggested: Boolean,
+    val weightSuggested: Boolean,
     val startsTimer: Boolean,
 )
 
@@ -91,7 +92,8 @@ internal fun WorkoutBlock.rows(view: TableView): List<SetRow> = rounds.flatMapIn
             weightFocused = weightFocused,
             timing = countdown != null,
             armed = !set.done && (weightFocused || countdown != null),
-            suggested = set.weightSuggested,
+            countSuggested = countdown == null && set.isSuggested(countField),
+            weightSuggested = set.isSuggested(ValueField.Weight),
             startsTimer = view.startsTimer(ref),
         )
     }

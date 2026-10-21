@@ -96,8 +96,22 @@ class WorkoutLogTableRowsTest {
     fun `a weight filled in from history is marked as a suggestion`() {
         val suggested = single.copy(rounds = listOf(WorkoutRound(10, listOf(WorkoutSet(weightKg = 60f, suggestedKg = 60f)))))
 
-        assertThat(suggested.rows(view).single().suggested).isTrue()
-        assertThat(single.rows(view).first().suggested).isFalse()
+        assertThat(suggested.rows(view).single().weightSuggested).isTrue()
+        assertThat(single.rows(view).first().weightSuggested).isFalse()
+    }
+
+    @Test
+    fun `reps or a time filled in from history are marked as a suggestion, except while counting down`() {
+        val suggested = single.copy(
+            rounds = listOf(
+                WorkoutRound(10, listOf(WorkoutSet(reps = 8, suggestedReps = 8))),
+                WorkoutRound(11, listOf(WorkoutSet(mode = SetMode.Time, timeSeconds = 60, suggestedTimeSeconds = 60))),
+            ),
+        )
+
+        assertThat(suggested.rows(view).map { it.countSuggested }).containsExactly(true, true).inOrder()
+        assertThat(suggested.rows(view.copy(timing = Countdown(ref(suggested, 1), seconds = 30))).last().countSuggested).isFalse()
+        assertThat(single.rows(view).first().countSuggested).isFalse()
     }
 
     @Test

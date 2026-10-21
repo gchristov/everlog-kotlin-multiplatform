@@ -452,14 +452,22 @@ private fun TableRow(tag: String, row: SetRow, actions: WorkoutTableActions) {
             )
         }
         // Reps (or time) first, then weight, as last time reads: 15 × 17 kg
-        Cell(tag = WorkoutLogTags.count(tag), text = row.countText, focused = row.countFocused, boxed = row.selected, onClick = onCount, highlight = row.timing)
+        Cell(
+            tag = WorkoutLogTags.count(tag),
+            text = row.countText,
+            focused = row.countFocused,
+            boxed = row.selected,
+            onClick = onCount,
+            highlight = row.timing,
+            suggested = row.countSuggested,
+        )
         Cell(
             tag = WorkoutLogTags.weight(tag),
             text = row.weightText,
             focused = row.weightFocused,
             boxed = row.selected,
             onClick = { actions.onCellTapped(CellFocus(row.ref, ValueField.Weight)) },
-            suggested = row.suggested,
+            suggested = row.weightSuggested,
         )
         if (row.startsTimer) {
             StartButton(tag = WorkoutLogTags.tick(tag), armed = row.armed, onClick = { actions.onStartTimer(row.ref) })

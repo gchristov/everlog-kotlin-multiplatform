@@ -65,13 +65,16 @@ internal fun ELSet.toSessionSet(): WorkoutSet {
         mode = if (time != null || (!isRepsEntered() && requiredTime != null)) SetMode.Time else SetMode.Reps,
         reps = getReps().takeIf { it > 0 },
         timeSeconds = time,
-        weightKg = getWeightKg(),
+        // Older app versions saved a missing weight as -1
+        weightKg = getWeightKg()?.takeIf { it > 0 },
         requiredReps = getRequiredReps().takeIf { it > 0 },
         requiredTimeSeconds = requiredTime,
         startedDate = getStartedDate().takeIf { it > 0 },
         completedDate = getCompletedDate().takeIf { it > 0 },
         removed = removed,
         suggestedKg = suggestedWeight,
+        suggestedReps = suggestedReps,
+        suggestedTimeSeconds = suggestedTimeSeconds,
     )
 }
 
@@ -88,5 +91,7 @@ internal fun WorkoutSet.toELSet(): ELSet {
         timeSeconds = timeSeconds.takeUnless { reps },
         removed = removed,
         suggestedWeight = suggestedKg,
+        suggestedReps = suggestedReps.takeIf { reps },
+        suggestedTimeSeconds = suggestedTimeSeconds.takeUnless { reps },
     )
 }
