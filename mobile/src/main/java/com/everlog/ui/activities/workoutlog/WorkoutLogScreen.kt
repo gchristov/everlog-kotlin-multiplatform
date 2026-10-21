@@ -149,6 +149,7 @@ internal fun WorkoutLogScreen(
                         empty -> addExercise
                         state.target != null -> AppKeypadAction(
                             text = stringResource(if (state.targetStartsTimer) R.string.workout_log_start_timer else R.string.workout_log_complete_set),
+                            icon = ImageVector.vectorResource(if (state.targetStartsTimer) R.drawable.ic_timer else R.drawable.ic_check),
                             onClick = viewModel::onCompleteTarget,
                         )
                         // With every set done, the header's Finish is the main action instead
@@ -255,6 +256,12 @@ private fun keypadEntry(state: WorkoutLogState, viewModel: WorkoutLogViewModel):
                     KeypadMainKey.Done -> R.string.workout_log_done
                 },
             ),
+            // The tick's and the timer button's icons, for the keys that press them
+            icon = when (mainKey) {
+                KeypadMainKey.CompleteSet -> ImageVector.vectorResource(R.drawable.ic_check)
+                KeypadMainKey.StartTimer -> ImageVector.vectorResource(R.drawable.ic_timer)
+                KeypadMainKey.Next, KeypadMainKey.Done -> null
+            },
             onClick = viewModel::onMainKey,
         ),
     )
