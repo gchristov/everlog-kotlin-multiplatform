@@ -25,7 +25,7 @@ enum class AppKeypadTimerStyle {
     // Something being timed, e.g. a timed set: in the action colour
     Active,
 
-    // A rest: in amber
+    // A rest: in the warning colour
     Rest,
 }
 
@@ -45,7 +45,7 @@ fun AppKeypadTimer(
 ) {
     val (color, background, border) = when (style) {
         AppKeypadTimerStyle.Active -> Triple(Theme.contentColors.action, Theme.backgrounds.selected, Theme.backgrounds.actionMuted)
-        AppKeypadTimerStyle.Rest -> Triple(KeypadColors.Rest, KeypadColors.RestMuted, KeypadColors.RestBorder)
+        AppKeypadTimerStyle.Rest -> Triple(Theme.contentColors.warning, Theme.backgrounds.warningFaint, Theme.backgrounds.warningMuted)
     }
     val shape = Theme.shapes.button
     Row(

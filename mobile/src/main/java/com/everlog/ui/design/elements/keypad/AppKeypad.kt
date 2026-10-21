@@ -186,10 +186,6 @@ internal fun KeypadPill(
 internal object KeypadColors {
     // The keys, toggle and pills sit darker than the card's tint
     val Inset = Color.Black.copy(alpha = 0.32f)
-    // A rest's countdown
-    val Rest = Color(0xFFF2B84B)
-    val RestMuted = Color(0xFF2A2210)
-    val RestBorder = Color(0xFF6B5420)
 }
 
 internal object KeypadSizes {
