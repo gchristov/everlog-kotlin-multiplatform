@@ -41,6 +41,7 @@ import com.everlog.ui.activities.home.workout.details.WorkoutDetailsActivity
 import com.google.common.truth.Truth.assertThat
 import java.util.concurrent.TimeUnit
 import org.junit.After
+import org.junit.Assume.assumeTrue
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -93,6 +94,9 @@ class WorkoutLogActivityTest {
 
     @Test
     fun aWorkoutFromLaunchToItsDetails() {
+        // recordLaunches needs ActivityMonitor.onStartActivity, which Android only calls from API 26: below that the
+        // details really open over the workout
+        assumeTrue(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
         val screen = ActivityScenario.launch<WorkoutLogActivity>(
             Intent(context, WorkoutLogActivity::class.java).putExtra(ELConstants.EXTRA_WORKOUT, workout),
         )
