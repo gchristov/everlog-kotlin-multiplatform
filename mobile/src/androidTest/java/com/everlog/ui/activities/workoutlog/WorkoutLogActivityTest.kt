@@ -41,7 +41,6 @@ import com.everlog.ui.activities.home.workout.details.WorkoutDetailsActivity
 import com.google.common.truth.Truth.assertThat
 import java.util.concurrent.TimeUnit
 import org.junit.After
-import org.junit.Assume.assumeTrue
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -55,7 +54,8 @@ import org.junit.runner.RunWith
  * covers what happens on the screen itself.
  *
  * Finishing saves to Firestore, so it signs in with the E2E test account (as LoginActivityTest does) and deletes the
- * workout afterwards. The picker and workout details aren't opened: their launches are intercepted. Run it on an
+ * workout afterwards. The picker and workout details aren't opened: their launches are intercepted. Exercise details
+ * open and are closed again, which works on every API level, unlike recording a blocked launch. Run it on an
  * emulator, not on a phone mid-workout, as it clears the app's ongoing workout.
  */
 @RunWith(AndroidJUnit4::class)
@@ -72,6 +72,7 @@ class WorkoutLogActivityTest {
     private val instrumentation = InstrumentationRegistry.getInstrumentation()
     private val context: Context = instrumentation.targetContext
     private val monitors = mutableListOf<Instrumentation.ActivityMonitor>()
+    private val closed = mutableListOf<Activity>()
     private val workout = ELWorkout(
         uuid = "e2e-workout-${System.currentTimeMillis()}",
         createdDate = System.currentTimeMillis(),
@@ -94,9 +95,6 @@ class WorkoutLogActivityTest {
 
     @Test
     fun aWorkoutFromLaunchToItsDetails() {
-        // recordLaunches needs ActivityMonitor.onStartActivity, which Android only calls from API 26: below that the
-        // details really open over the workout
-        assumeTrue(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
         val screen = ActivityScenario.launch<WorkoutLogActivity>(
             Intent(context, WorkoutLogActivity::class.java).putExtra(ELConstants.EXTRA_WORKOUT, workout),
         )
@@ -109,12 +107,13 @@ class WorkoutLogActivityTest {
         compose.waitUntil(TIMEOUT) { ongoingFirstSetDone() }
 
         // Its name opens its details on Info, and its menu's History on History
-        val details = recordLaunches(ExerciseDetailsActivity::class.java)
+        val details = watchLaunches(ExerciseDetailsActivity::class.java)
         compose.onNodeWithText("Bench press").performClick()
+        val info = openedAndClosed(details)
         compose.onNodeWithTag(WorkoutLogTags.menu(0)).performClick()
         compose.onNode(hasText("History") and hasAnyAncestor(isPopup())).performClick()
-        compose.waitUntil(TIMEOUT) { details.intents.size == 2 }
-        assertThat(details.intents.map { it.getSerializableExtra(ELConstants.EXTRA_TYPE) })
+        val history = openedAndClosed(details)
+        assertThat(listOf(info, history).map { it.getSerializableExtra(ELConstants.EXTRA_TYPE) })
             .containsExactly(ExerciseDetailsActivity.Companion.Type.INFO, ExerciseDetailsActivity.Companion.Type.HISTORY).inOrder()
 
         // Add exercise opens the picker, whose picks come back to the table
@@ -165,20 +164,19 @@ class WorkoutLogActivityTest {
 
     private fun interceptLaunch(activity: Class<out Activity>) = intercept(activity, null)
 
-    // Stops the activity from opening, keeping the intents it was launched with
-    private fun recordLaunches(activity: Class<out Activity>) = LaunchRecorder(activity).also {
-        instrumentation.addMonitor(it)
-        monitors += it
-    }
+    // Lets the activity open, unlike intercept, as some screens are checked by what they were opened with
+    private fun watchLaunches(activity: Class<out Activity>) =
+        instrumentation.addMonitor(activity.name, null, false).also { monitors += it }
 
-    private class LaunchRecorder(private val activity: Class<out Activity>) : Instrumentation.ActivityMonitor() {
-        val intents = mutableListOf<Intent>()
-
-        override fun onStartActivity(intent: Intent): Instrumentation.ActivityResult? {
-            if (intent.component?.className != activity.name) return null
-            intents += intent
-            return Instrumentation.ActivityResult(Activity.RESULT_CANCELED, null)
-        }
+    // The intent the watched activity opened with, once it has. It's then closed, so the test goes on from the screen
+    // under it. The monitor keeps the last activity it saw, so one already closed doesn't count.
+    private fun openedAndClosed(monitor: Instrumentation.ActivityMonitor): Intent {
+        compose.waitUntil(TIMEOUT) { monitor.lastActivity?.let { it !in closed } == true }
+        val opened = monitor.lastActivity
+        closed += opened
+        instrumentation.runOnMainSync { opened.finish() }
+        compose.waitUntil(TIMEOUT) { opened.isDestroyed }
+        return opened.intent
     }
 
     // Stops the activity from opening, and answers with [result]
