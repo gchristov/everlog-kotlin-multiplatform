@@ -2,9 +2,7 @@ package com.everlog.data.controllers.workoutprefill
 
 import com.everlog.data.model.set.ELSet
 import com.everlog.managers.preferences.SettingsManager
-import com.everlog.managers.preferences.SettingsManager.MuscleGoal
 import timber.log.Timber
-import kotlin.math.ceil
 
 class WorkoutPrefill1RMController: BaseWorkoutPrefillController() {
 
@@ -24,16 +22,10 @@ class WorkoutPrefill1RMController: BaseWorkoutPrefillController() {
             return
         }
         // Compute 1RM goal for all eligible sets
-        val targetWeight = calculate1RMPercentage(source.orm, SettingsManager.manager.muscleGoal())
+        val targetWeight = goalWeight(source.orm, SettingsManager.manager.muscleGoal())
         if (!setToPrefill.isWeightEntered()) {
             printExerciseMessage(setIndex, String.format("1RM calculated: 1RM=%f, target=%f", source.orm, targetWeight))
             setToPrefill.updateWeight(targetWeight)
         }
-    }
-
-    private fun calculate1RMPercentage(orm: Float, goal: MuscleGoal): Float {
-        val targetWeight = goal.percent1RM() * orm
-        // Round up decimal points, ignoring float noise so e.g. 80.00001 stays 80
-        return ceil(targetWeight.toDouble() - 0.001).toFloat()
     }
 }

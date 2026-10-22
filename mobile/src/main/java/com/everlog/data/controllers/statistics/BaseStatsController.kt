@@ -47,12 +47,14 @@ abstract class BaseStatsController {
         }
 
         private fun calculate1RM(maxWeightSet: ELSet?): Float {
-            // Brzycki - https://en.wikipedia.org/wiki/One-repetition_maximum
-            val w = maxWeightSet?.getWeight() ?: 0f
-            val r = maxWeightSet?.getReps()?.toFloat() ?: 0f
             // w and r could be -1, depending on set, as they are the default values
-            return max(0f, w / (1.0278f - 0.0278f * r))
+            return estimate1RM(maxWeightSet?.getWeight() ?: 0f, maxWeightSet?.getReps() ?: 0)
         }
+
+        /**
+         * Brzycki's estimate, in the unit of [weight] - https://en.wikipedia.org/wiki/One-repetition_maximum
+         */
+        fun estimate1RM(weight: Float, reps: Int): Float = max(0f, weight / (1.0278f - 0.0278f * reps))
     }
 
     protected fun calculateCategoryCounts(currentValues: MutableMap<String, PieEntry>, newValues: Map<String, Int>) {
