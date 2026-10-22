@@ -23,6 +23,7 @@ import com.everlog.data.model.workout.ELWorkout
 import com.everlog.data.model.workout.ELWorkoutState
 import com.everlog.data.repositories.OngoingWorkoutRepository
 import com.everlog.managers.preferences.SettingsManager
+import com.everlog.managers.preferences.SettingsManager.MuscleGoal
 import com.everlog.managers.preferences.SettingsManager.WeightUnit
 import com.everlog.services.workout.ShownSet
 import com.everlog.testutil.FakeCoroutineDispatcher
@@ -857,6 +858,122 @@ class WorkoutLogViewModelTest {
         assertThat(viewModel.set(0, 1).isSuggested(ValueField.Reps)).isFalse()
     }
 
+    // Set suggestions
+
+    @Test
+    fun `a suggested value says it's from last time`() {
+        prefill.lastWeightKg = 60f
+        val viewModel = viewModel()
+
+        viewModel.onCellTapped(CellFocus(viewModel.ref(0, 0), ValueField.Weight))
+
+        assertThat(viewModel.state.value.suggestionNote).isEqualTo(SuggestionNote.LastTime)
+    }
+
+    @Test
+    fun `a goal's weight says which goal it's for`() {
+        settings.goal = MuscleGoal.GROWTH
+        prefill.lastWeightKg = 60f
+        prefill.oneRepMax = 90f
+        prefill.goalWeightKg = 72f
+        val viewModel = viewModel()
+
+        viewModel.onCellTapped(CellFocus(viewModel.ref(0, 0), ValueField.Weight))
+
+        assertThat(viewModel.state.value.suggestionNote).isEqualTo(SuggestionNote.Goal(MuscleGoal.GROWTH, 72f))
+    }
+
+    @Test
+    fun `with a goal, reps still say they're from last time`() {
+        settings.goal = MuscleGoal.GROWTH
+        prefill.lastWeightKg = 60f
+        prefill.oneRepMax = 90f
+        val viewModel = viewModel(template().apply { routine?.exerciseGroups?.set(0, group("SINGLE", "bench" to 0, sets = 2)) })
+
+        viewModel.onCellTapped(CellFocus(viewModel.ref(0, 0), ValueField.Reps))
+
+        assertThat(viewModel.state.value.suggestionNote).isEqualTo(SuggestionNote.LastTime)
+    }
+
+    @Test
+    fun `a goal without a 1RM for the exercise says the weight is from last time`() {
+        settings.goal = MuscleGoal.GROWTH
+        prefill.lastWeightKg = 60f
+        val viewModel = viewModel()
+
+        viewModel.onCellTapped(CellFocus(viewModel.ref(0, 0), ValueField.Weight))
+
+        assertThat(viewModel.state.value.suggestionNote).isEqualTo(SuggestionNote.LastTime)
+    }
+
+    @Test
+    fun `a value typed over has no note`() {
+        prefill.lastWeightKg = 60f
+        val viewModel = viewModel()
+        viewModel.onCellTapped(CellFocus(viewModel.ref(0, 0), ValueField.Weight))
+        viewModel.type("62.5")
+        viewModel.onCellTapped(CellFocus(viewModel.ref(0, 0), ValueField.Weight))
+
+        assertThat(viewModel.state.value.suggestionNote).isNull()
+    }
+
+    @Test
+    fun `a new setting fills the suggested values in again on coming back`() {
+        prefill.lastWeightKg = 60f
+        val viewModel = viewModel()
+        viewModel.onCellTapped(CellFocus(viewModel.ref(0, 1), ValueField.Weight))
+        viewModel.type("65")
+        viewModel.onHideKeypad()
+
+        settings.goal = MuscleGoal.GROWTH
+        prefill.goalWeightKg = 72f
+        viewModel.onResume()
+
+        assertThat(viewModel.set(0, 0).weightKg).isEqualTo(72f)
+        assertThat(viewModel.set(0, 0).isSuggested(ValueField.Weight)).isTrue()
+        // Typed over, so it stays
+        assertThat(viewModel.set(0, 1).weightKg).isEqualTo(65f)
+        assertThat(store.ongoing?.getExerciseGroups()?.first()?.exercises?.first()?.sets?.first()?.getWeightKg()).isEqualTo(72f)
+    }
+
+    @Test
+    fun `turning suggestions off empties the suggested values on coming back`() {
+        prefill.lastWeightKg = 60f
+        val viewModel = viewModel()
+
+        settings.goal = MuscleGoal.NONE
+        prefill.fills = false
+        viewModel.onResume()
+
+        assertThat(viewModel.set(0, 0).weightKg).isNull()
+        // Its target reps came from the template, not history
+        assertThat(viewModel.set(0, 0).requiredReps).isEqualTo(8)
+    }
+
+    @Test
+    fun `coming back with the same setting changes nothing`() {
+        prefill.lastWeightKg = 60f
+        val viewModel = viewModel()
+
+        prefill.goalWeightKg = 72f
+        viewModel.onResume()
+
+        assertThat(viewModel.set(0, 0).weightKg).isEqualTo(60f)
+    }
+
+    @Test
+    fun `opening set suggestions logs it and keeps what was typed`() {
+        val viewModel = viewModel()
+        viewModel.onCellTapped(CellFocus(viewModel.ref(0, 0), ValueField.Weight))
+        viewModel.type("50")
+
+        viewModel.onSetSuggestionsTapped()
+
+        assertThat(analytics.events).contains("set_suggestions")
+        assertThat(viewModel.state.value.typed).isNull()
+        assertThat(viewModel.set(0, 0).weightKg).isEqualTo(50f)
+    }
+
     @Test
     fun `history shows as each set's last time`() {
         prefill.lastWeightKg = 60f
@@ -1288,12 +1405,15 @@ class WorkoutLogViewModelTest {
     private class FakeSettings : WorkoutLogSettings {
         var unit = WeightUnit.KILOGRAM
         var step = 2.5f
+        var goal = MuscleGoal.HISTORY
 
         override fun weightUnit() = unit
 
         override fun weightIncrease() = step
 
         override fun keepScreenOn() = false
+
+        override fun muscleGoal() = goal
     }
 
     /**
@@ -1303,6 +1423,9 @@ class WorkoutLogViewModelTest {
     private class FakePrefill : LoadPrefillSourcesUseCase, WorkoutSetPrefill {
         var lastWeightKg: Float? = null
         var lastSets = 2
+        var oneRepMax = 0f
+        // A 1RM goal's weight, filled in instead of the last weight
+        var goalWeightKg: Float? = null
         var fills = true
         var fails = false
         // History arrives once this completes, if set
@@ -1316,13 +1439,13 @@ class WorkoutLogViewModelTest {
             val weight = lastWeightKg ?: return emptyMap<String, PrefillSource>().right()
             return exercises.associate { exercise ->
                 val sets = MutableList(lastSets) { ELSet(reps = 8, weight = weight) }
-                exercise.uuid!! to PrefillSource(ELExerciseHistory(ELRoutineExercise(exercise.uuid, exercise, sets), ELWorkout()), orm = 0f)
+                exercise.uuid!! to PrefillSource(ELExerciseHistory(ELRoutineExercise(exercise.uuid, exercise, sets), ELWorkout()), orm = oneRepMax)
             }.right()
         }
 
         override fun fill(source: PrefillSource, set: WorkoutSet, index: Int): WorkoutSet {
             val last = source.lastSession?.exercise?.sets?.getOrNull(index) ?: return set
-            val weighed = if (set.weightKg == null) set.copy(weightKg = last.getWeightKg()) else set
+            val weighed = if (set.weightKg == null) set.copy(weightKg = goalWeightKg ?: last.getWeightKg()) else set
             val empty = set.reps == null && set.timeSeconds == null && set.requiredReps == null && set.requiredTimeSeconds == null
             return if (empty) weighed.copy(reps = last.getReps()) else weighed
         }
@@ -1374,6 +1497,10 @@ class WorkoutLogViewModelTest {
 
         override fun screenViewed() {
             events += "screen"
+        }
+
+        override fun setSuggestionsOpened() {
+            events += "set_suggestions"
         }
 
         override fun setCompleted(type: ELSetType?, timed: Boolean, fromNotification: Boolean) {

@@ -22,6 +22,9 @@ internal interface WorkoutLogSettings {
     fun weightIncrease(): Float
 
     fun keepScreenOn(): Boolean
+
+    // What fills sets in: off, last time or a 1RM goal
+    fun muscleGoal(): SettingsManager.MuscleGoal
 }
 
 internal class RealWorkoutLogSettings : WorkoutLogSettings {
@@ -30,6 +33,8 @@ internal class RealWorkoutLogSettings : WorkoutLogSettings {
     override fun weightIncrease(): Float = SettingsManager.manager.weightIncrease()
 
     override fun keepScreenOn(): Boolean = SettingsManager.manager.keepScreenOn()
+
+    override fun muscleGoal(): SettingsManager.MuscleGoal = SettingsManager.manager.muscleGoal()
 }
 
 /**
@@ -114,6 +119,9 @@ internal interface WorkoutLogAnalytics {
     fun discardPromptFinished()
 
     fun discardPromptCancelled()
+
+    // From Workout options or the keypad note
+    fun setSuggestionsOpened()
 }
 
 internal class RealWorkoutLogAnalytics : WorkoutLogAnalytics {
@@ -164,4 +172,7 @@ internal class RealWorkoutLogAnalytics : WorkoutLogAnalytics {
     override fun discardPromptFinished() = analytics.workoutDiscardPromptFinished()
 
     override fun discardPromptCancelled() = analytics.workoutDiscardPromptCancelled(AnalyticsConstants.DISCARD_PROMPT_SOURCE_WORKOUT)
+
+    // The old workout screen's event for its muscle goal button
+    override fun setSuggestionsOpened() = analytics.workoutChangeMuscleGoal()
 }

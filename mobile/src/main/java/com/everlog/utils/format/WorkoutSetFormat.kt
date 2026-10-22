@@ -30,6 +30,10 @@ fun formatClock(totalSeconds: Long): String {
 fun unitLabel(unit: WeightUnit): String =
     ArrayResourceTypeUtils.withWeightAbbreviations().getTitle(unit.name, "--").orEmpty().uppercase()
 
+// kg or lb, as in sentences
+fun unitName(unit: WeightUnit): String =
+    ArrayResourceTypeUtils.withWeightAbbreviations().getTitle(unit.name, "").orEmpty()
+
 fun displayWeight(kg: Float, unit: WeightUnit): Float = if (unit == WeightUnit.POUND) UnitUtils.kgToLb(kg) else kg
 
 fun storedWeight(value: Float, unit: WeightUnit): Float = if (unit == WeightUnit.POUND) UnitUtils.lbToKg(value) else value

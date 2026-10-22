@@ -113,6 +113,7 @@ class WorkoutLogActivity : CommonComposeActivity() {
             }
             ELNavigator(this).openExerciseDetails(ExerciseDetailsActivity.Companion.Properties().exercise(exercise).type(type))
         },
+        onOpenSetSuggestions = { ELNavigator(this).openMuscleGoal() },
         onExit = ::exit,
     )
 

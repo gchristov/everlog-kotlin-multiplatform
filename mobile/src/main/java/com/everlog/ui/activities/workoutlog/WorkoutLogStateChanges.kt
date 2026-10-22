@@ -25,6 +25,7 @@ internal fun initialWorkoutLogState(workout: ELWorkout, ids: SessionIds, setting
         unit = settings.weightUnit(),
         weightStep = settings.weightIncrease(),
         keepScreenOn = settings.keepScreenOn(),
+        suggestions = settings.muscleGoal(),
     )
 }
 
@@ -32,6 +33,7 @@ internal fun WorkoutLogState.withSettings(settings: WorkoutLogSettings) = copy(
     unit = settings.weightUnit(),
     weightStep = settings.weightIncrease(),
     keepScreenOn = settings.keepScreenOn(),
+    suggestions = settings.muscleGoal(),
 )
 
 // The notification picks the next set the same way
