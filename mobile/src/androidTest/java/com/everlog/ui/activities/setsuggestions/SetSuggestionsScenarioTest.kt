@@ -9,7 +9,6 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.everlog.managers.preferences.SettingsManager.MuscleGoal
 import com.everlog.managers.preferences.SettingsManager.WeightUnit
 import com.everlog.ui.design.theme.Theme
-import com.google.common.truth.Truth.assertThat
 import java.util.concurrent.TimeUnit
 import kotlinx.coroutines.Dispatchers
 import org.junit.Rule
@@ -44,8 +43,6 @@ class SetSuggestionsScenarioTest {
 
         override fun weightUnit() = unit
     }
-    private var pro = false
-    private var proOpened = 0
 
     @Test
     fun pickingAnOptionAndReadingHowGoalsWork() {
@@ -66,24 +63,12 @@ class SetSuggestionsScenarioTest {
     }
 
     @Test
-    fun aGoalWithoutProOpensThePro() {
-        show()
-
-        compose.onNodeWithTag(SetSuggestionsTags.option(SetSuggestion.BuildMuscle)).performClick()
-
-        compose.waitUntil(WaitMillis) { proOpened == 1 }
-        assertThat(settings.goal).isEqualTo(MuscleGoal.HISTORY)
-    }
-
-    @Test
-    fun aProUserPicksAGoal() {
-        pro = true
+    fun pickingAGoal() {
         show()
 
         compose.onNodeWithTag(SetSuggestionsTags.option(SetSuggestion.GetStronger)).performClick()
 
         compose.waitUntil(WaitMillis) { settings.goal == MuscleGoal.POWER }
-        assertThat(proOpened).isEqualTo(0)
     }
 
     @Test
@@ -102,9 +87,6 @@ class SetSuggestionsScenarioTest {
         val viewModel = SetSuggestionsViewModel(
             dispatcher = Dispatchers.Main,
             settings = settings,
-            account = object : SetSuggestionsAccount {
-                override fun isPro() = pro
-            },
             analytics = object : SetSuggestionsAnalytics {
                 override fun screenViewed() = Unit
 
@@ -113,7 +95,7 @@ class SetSuggestionsScenarioTest {
         )
         compose.setContent {
             Theme {
-                SetSuggestionsScreen(viewModel = viewModel, onOpenPro = { proOpened++ })
+                SetSuggestionsScreen(viewModel = viewModel)
             }
         }
     }

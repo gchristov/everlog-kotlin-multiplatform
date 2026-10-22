@@ -9,10 +9,9 @@ import org.junit.Test
 class SetSuggestionsViewModelTest {
 
     private val settings = FakeSetSuggestionsSettings()
-    private val account = FakeSetSuggestionsAccount()
     private val analytics = FakeSetSuggestionsAnalytics()
 
-    private fun viewModel() = SetSuggestionsViewModel(FakeCoroutineDispatcher, settings, account, analytics)
+    private fun viewModel() = SetSuggestionsViewModel(FakeCoroutineDispatcher, settings, analytics)
 
     private val SetSuggestionsViewModel.current get() = state.value
 
@@ -29,18 +28,17 @@ class SetSuggestionsViewModelTest {
     fun `picking an option sets it`() {
         val viewModel = viewModel()
 
-        assertThat(viewModel.onPick(SetSuggestion.Off)).isTrue()
+        viewModel.onPick(SetSuggestion.Off)
 
         assertThat(viewModel.current.selected).isEqualTo(SetSuggestion.Off)
         assertThat(settings.changes).containsExactly(MuscleGoal.NONE)
     }
 
     @Test
-    fun `a Pro user picks a goal straight away`() {
-        account.pro = true
+    fun `picking a goal sets it`() {
         val viewModel = viewModel()
 
-        assertThat(viewModel.onPick(SetSuggestion.GetStronger)).isTrue()
+        viewModel.onPick(SetSuggestion.GetStronger)
 
         assertThat(viewModel.current.selected).isEqualTo(SetSuggestion.GetStronger)
         assertThat(settings.changes).containsExactly(MuscleGoal.POWER)
@@ -68,61 +66,13 @@ class SetSuggestionsViewModelTest {
         assertThat(analytics.screenViews).isEqualTo(2)
     }
 
-    // Pro
-
-    @Test
-    fun `a goal without Pro asks for Pro and changes nothing yet`() {
-        val viewModel = viewModel()
-
-        assertThat(viewModel.onPick(SetSuggestion.BuildMuscle)).isFalse()
-
-        assertThat(viewModel.current.selected).isEqualTo(SetSuggestion.LastTime)
-        assertThat(settings.changes).isEmpty()
-    }
-
-    @Test
-    fun `a goal picked without Pro is set on coming back as Pro`() {
-        val viewModel = viewModel()
-        viewModel.onPick(SetSuggestion.BuildMuscle)
-
-        account.pro = true
-        viewModel.onResume()
-
-        assertThat(viewModel.current.selected).isEqualTo(SetSuggestion.BuildMuscle)
-        assertThat(settings.changes).containsExactly(MuscleGoal.GROWTH)
-    }
-
-    @Test
-    fun `coming back without upgrading keeps the option and forgets the goal`() {
-        val viewModel = viewModel()
-        viewModel.onPick(SetSuggestion.BuildMuscle)
-
-        viewModel.onResume()
-        account.pro = true
-        viewModel.onResume()
-
-        assertThat(viewModel.current.selected).isEqualTo(SetSuggestion.LastTime)
-        assertThat(settings.changes).isEmpty()
-    }
-
-    @Test
-    fun `Off and last time never need Pro`() {
-        settings.goal = MuscleGoal.GROWTH
-        val viewModel = viewModel()
-
-        assertThat(viewModel.onPick(SetSuggestion.LastTime)).isTrue()
-        assertThat(viewModel.onPick(SetSuggestion.Off)).isTrue()
-
-        assertThat(settings.changes).containsExactly(MuscleGoal.HISTORY, MuscleGoal.NONE).inOrder()
-    }
-
     // Edge cases
 
     @Test
     fun `picking the option that's already set changes nothing`() {
         val viewModel = viewModel()
 
-        assertThat(viewModel.onPick(SetSuggestion.LastTime)).isTrue()
+        viewModel.onPick(SetSuggestion.LastTime)
 
         assertThat(settings.changes).isEmpty()
     }
@@ -170,12 +120,6 @@ private class FakeSetSuggestionsSettings : SetSuggestionsSettings {
     }
 
     override fun weightUnit() = unit
-}
-
-private class FakeSetSuggestionsAccount : SetSuggestionsAccount {
-    var pro = false
-
-    override fun isPro() = pro
 }
 
 private class FakeSetSuggestionsAnalytics : SetSuggestionsAnalytics {

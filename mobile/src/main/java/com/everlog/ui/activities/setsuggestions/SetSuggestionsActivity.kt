@@ -7,7 +7,6 @@ import androidx.compose.runtime.Composable
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import com.everlog.ui.design.CommonComposeActivity
-import com.everlog.ui.navigator.ELNavigator
 import kotlinx.coroutines.Dispatchers
 
 /**
@@ -21,7 +20,6 @@ class SetSuggestionsActivity : CommonComposeActivity() {
                 SetSuggestionsViewModel(
                     dispatcher = Dispatchers.Main,
                     settings = RealSetSuggestionsSettings(this@SetSuggestionsActivity),
-                    account = RealSetSuggestionsAccount(),
                     analytics = RealSetSuggestionsAnalytics(),
                 )
             }
@@ -29,11 +27,7 @@ class SetSuggestionsActivity : CommonComposeActivity() {
     }
 
     @Composable
-    override fun Content() = SetSuggestionsScreen(
-        viewModel = viewModel,
-        // The view-model already knows the user isn't Pro; this opens the Pro screen, or says why it can't
-        onOpenPro = { ELNavigator(this).runProFeature {} },
-    )
+    override fun Content() = SetSuggestionsScreen(viewModel = viewModel)
 
     companion object {
         @JvmStatic

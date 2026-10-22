@@ -27,7 +27,7 @@ import com.everlog.ui.design.theme.Theme
  * Off or last time on top, the 1RM goals below them with a sheet on how their weights are worked out.
  */
 @Composable
-internal fun SetSuggestionsScreen(viewModel: SetSuggestionsViewModel, onOpenPro: () -> Unit) {
+internal fun SetSuggestionsScreen(viewModel: SetSuggestionsViewModel) {
     val state by viewModel.state.collectAsStateWithLifecycle()
     LifecycleResumeEffect(Unit) {
         viewModel.onResume()
@@ -35,7 +35,7 @@ internal fun SetSuggestionsScreen(viewModel: SetSuggestionsViewModel, onOpenPro:
     }
     SetSuggestionsContent(
         state = state,
-        onPick = { if (!viewModel.onPick(it)) onOpenPro() },
+        onPick = viewModel::onPick,
         onShowHow = viewModel::onShowHow,
     )
     if (state.showingHow) {

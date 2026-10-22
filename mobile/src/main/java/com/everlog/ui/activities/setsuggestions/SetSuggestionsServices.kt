@@ -6,7 +6,6 @@ import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.everlog.constants.ELConstants
 import com.everlog.managers.analytics.AnalyticsConstants
 import com.everlog.managers.analytics.AnalyticsManager
-import com.everlog.managers.auth.LocalUserManager
 import com.everlog.managers.preferences.SettingsManager
 import com.everlog.managers.preferences.SettingsManager.MuscleGoal
 import com.everlog.managers.preferences.SettingsManager.WeightUnit
@@ -35,15 +34,6 @@ class RealSetSuggestionsSettings(context: Context) : SetSuggestionsSettings {
     }
 
     override fun weightUnit(): WeightUnit = SettingsManager.manager.weightUnit()
-}
-
-// Whether the user can pick a goal, which needs Pro
-interface SetSuggestionsAccount {
-    fun isPro(): Boolean
-}
-
-class RealSetSuggestionsAccount : SetSuggestionsAccount {
-    override fun isPro(): Boolean = LocalUserManager.getUser()?.isPro() == true
 }
 
 interface SetSuggestionsAnalytics {
