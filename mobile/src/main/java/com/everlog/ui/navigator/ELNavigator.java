@@ -58,6 +58,7 @@ import com.everlog.ui.activities.home.workout.WorkoutActivity;
 import com.everlog.ui.activities.home.workout.details.WorkoutDetailsActivity;
 import com.everlog.ui.activities.login.LoginActivity;
 import com.everlog.ui.activities.login.resetpassword.ResetPasswordActivity;
+import com.everlog.ui.activities.setsuggestions.SetSuggestionsActivity;
 import com.everlog.ui.activities.workoutlog.WorkoutLogActivity;
 import com.everlog.ui.dialog.DialogBuilder;
 import com.everlog.ui.dialog.ToastBuilder;
@@ -269,6 +270,10 @@ public class ELNavigator implements Navigator {
 
     @Override
     public void openMuscleGoal() {
+        if (RemoteConfigManager.manager.setSuggestionsV2()) {
+            startActivity(SetSuggestionsActivity.launchIntent(mContext));
+            return;
+        }
         Intent i = new Intent(mContext, MuscleGoalActivity.class);
         startActivity(i);
     }

@@ -915,4 +915,11 @@ class AnalyticsManager : Analytic {
             it.exercisePickerAdded(count, setType, filters, hadText)
         }
     }
+
+    override fun setSuggestionsHowOpened() {
+        Timber.tag(TAG).i("Set suggestions how opened")
+        mAnalytics?.forEach {
+            it.setSuggestionsHowOpened()
+        }
+    }
 }

@@ -12,8 +12,10 @@ import com.everlog.R
 import com.everlog.data.model.ELIntegration
 import com.everlog.data.model.ELUser
 import com.everlog.databinding.FragmentHomeSettingsBinding
+import com.everlog.managers.RemoteConfigManager
 import com.everlog.managers.analytics.AnalyticsConstants
 import com.everlog.managers.preferences.SettingsManager
+import com.everlog.ui.activities.setsuggestions.SetSuggestion
 import com.everlog.ui.dialog.DialogBuilder
 import com.everlog.ui.fragments.base.BaseFragmentMvpView
 import com.everlog.ui.fragments.base.BaseFragmentPresenter
@@ -134,8 +136,7 @@ class SettingsHomeFragment : BaseTabFragment(), MvpViewSettingsHome {
     }
 
     override fun showSettings(viewModel: SettingsViewModel) {
-        binding.root.findViewById<TextView>(R.id.muscleGoalField).text = viewModel.muscleGoal?.valueName(activity)
-        binding.root.findViewById<TextView>(R.id.muscleGoalSubtitle).text = viewModel.muscleGoal?.valueSettingsSummary(activity, false)
+        showMuscleGoal(viewModel.muscleGoal)
         binding.root.findViewById<TextView>(R.id.weightIncreaseField).text = String.format("%s %s", FormatUtils.formatSetWeight(viewModel.weightIncrease!!), SettingsManager.weightUnitAbbreviation())
         binding.root.findViewById<TextView>(R.id.weeklyGoalField).text = String.format("%d", viewModel.weeklyGoals)
         binding.root.findViewById<CheckBoxTriStates>(R.id.keepScreenOnCheckbox).setChecked(viewModel.keepScreenOn)
@@ -150,6 +151,15 @@ class SettingsHomeFragment : BaseTabFragment(), MvpViewSettingsHome {
         binding.root.findViewById<TextView>(R.id.googleFitField).text = getString(if (viewModel.integrationGoogleFitEnabled == true) R.string.integrations_connected else R.string.integrations_connected_prompt)
         // Notifications
         binding.root.findViewById<CheckBoxTriStates>(R.id.newsletterCheckbox).setChecked(viewModel.notificationNewsletterEnabled)
+    }
+
+    private fun showMuscleGoal(goal: SettingsManager.MuscleGoal?) {
+        val v2 = RemoteConfigManager.manager.setSuggestionsV2()
+        // Goals the new screen doesn't offer, which older versions could set, keep their old names
+        val suggestion = goal?.let { SetSuggestion.of(it) }.takeIf { v2 }
+        binding.root.findViewById<TextView>(R.id.muscleGoalTitle).setText(if (v2) R.string.set_suggestions_title else R.string.muscle_goal_title)
+        binding.root.findViewById<TextView>(R.id.muscleGoalField).text = suggestion?.let { getString(it.title) } ?: goal?.valueName(activity)
+        binding.root.findViewById<TextView>(R.id.muscleGoalSubtitle).text = suggestion?.subtitle(requireContext()) ?: goal?.valueSettingsSummary(activity, false)
     }
 
     override fun showUserInfo(user: ELUser) {

@@ -667,6 +667,10 @@ abstract class BaseAnalytic : Analytic {
         ))
     }
 
+    override fun setSuggestionsHowOpened() {
+        logEvent(AnalyticsConstants.EVENT_SET_SUGGESTIONS_HOW_OPENED)
+    }
+
     private fun logOnboardingStep(eventName: String, step: String, value: String? = null) {
         val map = HashMap<String, Any?>()
         map[AnalyticsConstants.PROPERTY_STEP] = step

@@ -20,4 +20,8 @@
         <key>workout_screen_v2</key>
         <value>false</value>
     </entry>
+    <entry>
+        <key>set_suggestions_v2</key>
+        <value>false</value>
+    </entry>
 </defaultsMap>

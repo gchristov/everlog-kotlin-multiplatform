@@ -76,6 +76,12 @@ public class RemoteConfigManager extends PreferencesManager {
         return localConfig != null && localConfig.getWorkoutScreenV2();
     }
 
+    // The Set suggestions screen in Compose; off until Remote Config says otherwise
+    public boolean setSuggestionsV2() {
+        RemoteConfig localConfig = loadLocalRemoteConfig();
+        return localConfig != null && localConfig.getSetSuggestionsV2();
+    }
+
     // Config refresh
 
     public void refreshAppConfig() {
