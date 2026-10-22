@@ -292,7 +292,9 @@
     <string name="workout_log_finish_body">Some sets aren\'t ticked off yet. Sets with reps or a time are saved as done.</string>
     <string name="workout_log_column_set">SET</string>
     <string name="workout_log_column_last_time">LAST TIME</string>
-    <string name="workout_log_suggested">%1$s Suggested from your history</string>
+    <string name="workout_log_suggested">%1$s Suggested from last time</string>
+    <string name="workout_log_suggested_goal">%1$s %2$s %3$s for %4$s, %5$d%% of your 1RM</string>
+    <string name="workout_log_suggestions_change">Change</string>
     <string name="workout_log_column_reps">REPS</string>
     <string name="workout_log_column_time">TIME</string>
     <string name="workout_log_column_reps_time">REPS/TIME</string>

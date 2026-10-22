@@ -55,6 +55,7 @@ import java.util.concurrent.TimeUnit
 import kotlinx.coroutines.Dispatchers
 import org.junit.After
 import org.junit.Before
+import com.everlog.managers.preferences.SettingsManager.MuscleGoal
 import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.RuleChain
@@ -86,6 +87,8 @@ class WorkoutLogScenarioTest {
     private var exit: WorkoutLogExit? = null
     // The exercise whose details were opened, and on which tab
     private var opened: Pair<String?, ExerciseTab>? = null
+    private var setSuggestionsOpened = 0
+    private val settings = PoundSettings()
     private val now = 1_800_000_000_000L
 
     @Before
@@ -109,6 +112,7 @@ class WorkoutLogScenarioTest {
                     // The picker is another screen, so its picks are handed straight in
                     onAddExercise = { viewModel.onExercisesPicked(listOf(group(ELSetType.SINGLE, "Squat" to 5))) },
                     onOpenExercise = { exercise, tab -> opened = exercise.name to tab },
+                    onOpenSetSuggestions = { setSuggestionsOpened++ },
                     onExit = { exit = it },
                 )
             }
@@ -123,11 +127,11 @@ class WorkoutLogScenarioTest {
         // Bench press, set 1: the suggested reps say where they come from and are typed over, Next to the suggested
         // weight, typed over in lb, then Complete set
         cell(0, 0, 0, "count").performClick()
-        compose.onNodeWithText("✦ Suggested from your history").assertExists()
+        compose.onNodeWithText("✦ Suggested from last time").assertExists()
         keys("10")
         cell(0, 0, 0, "count").assertTextEquals("10")
         key("Next").performClick()
-        compose.onNodeWithText("✦ Suggested from your history").assertExists()
+        compose.onNodeWithText("✦ Suggested from last time").assertExists()
         keys("135")
         cell(0, 0, 0, "weight").assertTextEquals("135")
         key("Complete set").performClick()
@@ -324,12 +328,48 @@ class WorkoutLogScenarioTest {
     }
 
     @Test
+    fun changingSetSuggestionsMidWorkout() {
+        val viewModel = viewModel(template())
+        compose.setContent {
+            Theme {
+                WorkoutLogScreen(
+                    viewModel = viewModel,
+                    onAddExercise = {},
+                    onOpenExercise = { _, _ -> },
+                    onOpenSetSuggestions = { setSuggestionsOpened++ },
+                    onExit = { exit = it },
+                )
+            }
+        }
+
+        // The suggested weight's note opens Set suggestions with Change
+        cell(0, 0, 0, "weight").performClick()
+        compose.onNodeWithTag(WorkoutLogTags.SuggestionNote).assertExists()
+        compose.onNodeWithText("✦ Suggested from last time").assertExists()
+        compose.onNode(hasText("Change") and hasAnyAncestor(hasTestTag(WorkoutLogTags.SuggestionNote))).performClick()
+        assertThat(setSuggestionsOpened).isEqualTo(1)
+        assertThat(analytics.events).contains("set_suggestions_opened")
+        compose.onNodeWithContentDescription("Hide keypad").performClick()
+
+        // So does Workout options, which shows what fills sets in
+        compose.onNodeWithContentDescription("Workout options").performClick()
+        compose.onNode(hasTestTag(WorkoutLogTags.SetSuggestionsOption) and hasText("From last time", substring = true)).performClick()
+        compose.waitUntil(5_000L) { setSuggestionsOpened == 2 }
+
+        // Turned off there, the suggested values go once the workout shows again; the targets stay
+        settings.goal = MuscleGoal.NONE
+        InstrumentationRegistry.getInstrumentation().runOnMainSync { viewModel.onResume() }
+        compose.waitUntil(5_000L) { compose.onAllNodes(hasText("✦")).fetchSemanticsNodes().isEmpty() }
+        cell(1, 0, 0, "count").assertTextEquals("12")
+    }
+
+    @Test
     fun leavingAWorkout() {
         // An empty workout: nothing to lose, so Discard just goes
         val empty = ELWorkout(uuid = "empty", createdDate = now, routine = ELRoutine(name = "Quick"))
         var viewModel by mutableStateOf(viewModel(empty))
         compose.setContent {
-            Theme { WorkoutLogScreen(viewModel = viewModel, onAddExercise = {}, onOpenExercise = { _, _ -> }, onExit = { exit = it }) }
+            Theme { WorkoutLogScreen(viewModel = viewModel, onAddExercise = {}, onOpenExercise = { _, _ -> }, onOpenSetSuggestions = {}, onExit = { exit = it }) }
         }
         compose.onNodeWithContentDescription("Close").performClick()
         compose.onNodeWithText("Nothing's been logged yet.").assertExists()
@@ -379,14 +419,14 @@ class WorkoutLogScenarioTest {
             resumed = loaded.resumed,
             fromPlan = false,
             repository = store,
-            settings = PoundSettings,
+            settings = settings,
             analytics = analytics,
             alerts = object : WorkoutLogAlerts {
                 override fun timerRanOut() = Unit
             },
             notification = notification,
             loadPrefillSources = BenchHistory,
-            prefill = RealWorkoutSetPrefill { true },
+            prefill = RealWorkoutSetPrefill { settings.goal.canPrefill() },
             clock = { now },
             tickMillis = null,
         )
@@ -504,13 +544,18 @@ class WorkoutLogScenarioTest {
         }
     }
 
-    private object PoundSettings : WorkoutLogSettings {
+    private class PoundSettings : WorkoutLogSettings {
+        var goal = MuscleGoal.HISTORY
+
         override fun weightUnit() = WeightUnit.POUND
 
         override fun weightIncrease() = 5f
 
         override fun keepScreenOn() = false
+
+        override fun muscleGoal() = goal
     }
+
 
     private class RecordingAnalytics : WorkoutLogAnalytics {
         val events = mutableListOf<String>()
@@ -543,6 +588,10 @@ class WorkoutLogScenarioTest {
 
         override fun restChanged(seconds: Int) {
             events += "rest_changed $seconds"
+        }
+
+        override fun setSuggestionsOpened() {
+            events += "set_suggestions_opened"
         }
 
         override fun valueChanged(field: ValueField, value: Float?) {

@@ -33,6 +33,7 @@ import androidx.compose.ui.graphics.CompositingStrategy
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
@@ -53,6 +54,7 @@ import com.everlog.data.controllers.workoutsession.block
 import com.everlog.data.controllers.workoutsession.set
 import com.everlog.data.model.exercise.ELExercise
 import com.everlog.managers.preferences.SettingsManager
+import com.everlog.ui.activities.setsuggestions.SetSuggestion
 import com.everlog.ui.design.elements.AppButton
 import com.everlog.ui.design.elements.AppFooter
 import com.everlog.ui.design.elements.AppFooterAction
@@ -72,8 +74,12 @@ import com.everlog.ui.design.elements.keypad.AppKeypadToggle
 import com.everlog.ui.design.theme.Theme
 import com.everlog.utils.UnitUtils
 import com.everlog.utils.format.formatClock
+import com.everlog.utils.format.displayWeight
+import com.everlog.utils.format.formatWeight
 import com.everlog.utils.format.unitLabel
+import com.everlog.utils.format.unitName
 import kotlinx.coroutines.android.awaitFrame
+import kotlin.math.roundToInt
 
 /**
  * Renders the view-model's state and forwards what's tapped and typed to it.
@@ -83,6 +89,7 @@ internal fun WorkoutLogScreen(
     viewModel: WorkoutLogViewModel,
     onAddExercise: () -> Unit,
     onOpenExercise: (ELExercise, ExerciseTab) -> Unit,
+    onOpenSetSuggestions: () -> Unit,
     onExit: (WorkoutLogExit) -> Unit,
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
@@ -121,11 +128,15 @@ internal fun WorkoutLogScreen(
             override fun onDeleteExercise(blockId: Long) = viewModel.onDeleteExercise(blockId)
         }
     }
+    val openSetSuggestions = {
+        viewModel.onSetSuggestionsTapped()
+        onOpenSetSuggestions()
+    }
     val addExercise = AppKeypadAction(stringResource(R.string.workout_log_add_exercise), onClick = onAddExercise)
     val empty = state.blocks.isEmpty()
 
     AppScreen(
-        topBar = { Header(state, viewModel) },
+        topBar = { Header(state, viewModel, openSetSuggestions) },
         footer = {
             if (state.editing) {
                 AppFooter(
@@ -159,9 +170,13 @@ internal fun WorkoutLogScreen(
                     },
                     strips = {
                         if (empty) AppKeypadNote(text = stringResource(R.string.workout_log_empty_hint))
-                        val focus = state.focus
-                        if (focus != null && state.blocks.set(focus.ref)?.isSuggested(focus.field) == true) {
-                            AppKeypadNote(text = stringResource(R.string.workout_log_suggested, SuggestedMark), highlighted = true)
+                        state.suggestionNote?.let { note ->
+                            AppKeypadNote(
+                                modifier = Modifier.testTag(WorkoutLogTags.SuggestionNote),
+                                text = suggestionNoteText(note, state.unit),
+                                highlighted = true,
+                                action = AppKeypadAction(stringResource(R.string.workout_log_suggestions_change), onClick = openSetSuggestions),
+                            )
                         }
                         state.timer?.let { TimerStrip(it, state.timerRemainingSeconds(), viewModel) }
                     },
@@ -270,7 +285,7 @@ private fun keypadEntry(state: WorkoutLogState, viewModel: WorkoutLogViewModel):
 }
 
 @Composable
-private fun Header(state: WorkoutLogState, viewModel: WorkoutLogViewModel) {
+private fun Header(state: WorkoutLogState, viewModel: WorkoutLogViewModel, onOpenSetSuggestions: () -> Unit) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -288,7 +303,7 @@ private fun Header(state: WorkoutLogState, viewModel: WorkoutLogViewModel) {
             }
         }
         // Editing ends with the footer's Done
-        if (!state.editing) WorkoutOptionsButton(state, viewModel)
+        if (!state.editing) WorkoutOptionsButton(state, viewModel, onOpenSetSuggestions)
         when {
             state.blocks.isEmpty() || state.editing -> Unit
             state.unfinishedSets == 0 -> AppButton(onClick = viewModel::onFinish, text = stringResource(R.string.workout_finish))
@@ -391,3 +406,16 @@ private fun focusLabel(blocks: List<WorkoutBlock>, focus: CellFocus, unit: Setti
 
 private fun exerciseName(blocks: List<WorkoutBlock>, ref: SetRef): String =
     blocks.block(ref.blockId)?.exercises?.getOrNull(ref.index)?.exercise?.name.orEmpty()
+
+@Composable
+private fun suggestionNoteText(note: SuggestionNote, unit: SettingsManager.WeightUnit): String = when (note) {
+    SuggestionNote.LastTime -> stringResource(R.string.workout_log_suggested, SuggestedMark)
+    is SuggestionNote.Goal -> stringResource(
+        R.string.workout_log_suggested_goal,
+        SuggestedMark,
+        formatWeight(displayWeight(note.weightKg, unit)),
+        unitName(unit),
+        SetSuggestion.of(note.goal)?.let { stringResource(it.title) } ?: note.goal.valueName(LocalContext.current),
+        (note.goal.percent1RM() * 100).roundToInt(),
+    )
+}

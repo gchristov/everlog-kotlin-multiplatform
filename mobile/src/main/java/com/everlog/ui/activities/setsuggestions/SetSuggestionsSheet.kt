@@ -15,15 +15,15 @@ import com.everlog.ui.design.elements.AppText
 import com.everlog.ui.design.elements.list.AppListGroup
 import com.everlog.ui.design.elements.list.AppListItem
 import com.everlog.ui.design.theme.Theme
-import com.everlog.utils.ArrayResourceTypeUtils
 import com.everlog.utils.format.formatWeight
+import com.everlog.utils.format.unitName
 
 /**
  * What a 1RM is, how it's estimated and what a goal does with it, with [example] in the user's unit.
  */
 @Composable
 internal fun HowGoalWeightsSheet(example: GoalWeightExample, unit: WeightUnit, onDismiss: () -> Unit) {
-    val unitName = unitAbbreviation(unit)
+    val unitName = unitName(unit)
     val set = stringResource(R.string.set_suggestions_how_set_value, formatWeight(example.weight), unitName, example.reps)
     val oneRepMax = stringResource(R.string.set_suggestions_how_weight_value, formatWeight(example.oneRepMax), unitName)
     val goalWeight = stringResource(R.string.set_suggestions_how_weight_value, formatWeight(example.goalWeight), unitName)
@@ -61,7 +61,3 @@ private fun Value(text: String, highlighted: Boolean = false) = AppText(
     style = if (highlighted) Theme.typography.bodyBold else Theme.typography.body,
     color = if (highlighted) Theme.contentColors.action else Theme.contentColors.primary,
 )
-
-// kg or lb, as in sentences
-private fun unitAbbreviation(unit: WeightUnit): String =
-    ArrayResourceTypeUtils.withWeightAbbreviations().getTitle(unit.name, "").orEmpty()

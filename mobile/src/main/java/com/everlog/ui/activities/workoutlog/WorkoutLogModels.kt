@@ -9,6 +9,7 @@ import com.everlog.data.controllers.workoutsession.WorkoutSet
 import com.everlog.data.controllers.workoutsession.set
 import com.everlog.data.controllers.workoutsession.unfinishedSets
 import com.everlog.data.model.workout.ELWorkout
+import com.everlog.managers.preferences.SettingsManager.MuscleGoal
 import com.everlog.managers.preferences.SettingsManager.WeightUnit
 
 internal data class WorkoutLogState(
@@ -22,6 +23,8 @@ internal data class WorkoutLogState(
     val unit: WeightUnit,
     val weightStep: Float,
     val keepScreenOn: Boolean,
+    // What fills sets in, as the sets were last filled
+    val suggestions: MuscleGoal,
     // The highlighted set: the current one as the workout starts, then the last one touched. Once it's completed,
     // the next one.
     val selected: SetRef? = current,
@@ -41,6 +44,8 @@ internal data class WorkoutLogState(
     val message: WorkoutLogMessage? = null,
     // Each exercise's last session's sets, by its uuid
     val lastTime: Map<String, List<WorkoutSet>> = emptyMap(),
+    // Each exercise's estimated 1RM in the user's unit, by its uuid; 0 without recent sets to estimate it from
+    val oneRepMaxes: Map<String, Float> = emptyMap(),
     val editing: Boolean = false,
     val dialog: WorkoutLogDialog? = null,
     val exit: WorkoutLogExit? = null,
@@ -84,6 +89,17 @@ internal data class WorkoutLogState(
         return set.mode == SetMode.Time && !set.done && !isTiming(ref) && ref !in timedSets
     }
 
+    // Where the focused value came from, while it's still the suggestion. A 1RM goal sets only weights, and only
+    // for exercises with a 1RM; everything else comes from last time.
+    val suggestionNote: SuggestionNote?
+        get() {
+            val focus = focus ?: return null
+            val set = blocks.set(focus.ref)?.takeIf { it.isSuggested(focus.field) } ?: return null
+            val uuid = blocks.firstOrNull { it.id == focus.ref.blockId }?.exercises?.getOrNull(focus.ref.index)?.exercise?.uuid
+            val fromGoal = focus.field == ValueField.Weight && suggestions.is1RMBased() && (oneRepMaxes[uuid] ?: 0f) > 0f
+            return if (fromGoal) SuggestionNote.Goal(suggestions, set.weightKg ?: 0f) else SuggestionNote.LastTime
+        }
+
     // Every exercise has the same rest, as the options change them all at once
     val restSeconds: Int
         get() = blocks.firstOrNull()?.restSeconds ?: 0
@@ -104,6 +120,12 @@ internal sealed interface WorkoutTimer {
     data class Rest(override val endsAt: Long, override val totalSeconds: Int) : WorkoutTimer
 
     data class SetTimer(val ref: SetRef, override val endsAt: Long, override val totalSeconds: Int) : WorkoutTimer
+}
+
+internal sealed interface SuggestionNote {
+    data object LastTime : SuggestionNote
+
+    data class Goal(val goal: MuscleGoal, val weightKg: Float) : SuggestionNote
 }
 
 internal data class CellFocus(val ref: SetRef, val field: ValueField)

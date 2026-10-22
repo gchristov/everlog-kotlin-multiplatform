@@ -8,10 +8,14 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import com.everlog.R
+import com.everlog.ui.activities.setsuggestions.SetSuggestion
 import com.everlog.ui.design.elements.AppBottomSheet
 import com.everlog.ui.design.elements.AppIconButton
 import com.everlog.ui.design.elements.AppText
@@ -21,10 +25,10 @@ import com.everlog.ui.design.theme.Theme
 import com.everlog.utils.format.formatClock
 
 /**
- * The cog in the header, with the rest after each set, Edit workout and Discard.
+ * The cog in the header, with the rest after each set, Set suggestions, Edit workout and Discard.
  */
 @Composable
-internal fun WorkoutOptionsButton(state: WorkoutLogState, viewModel: WorkoutLogViewModel) {
+internal fun WorkoutOptionsButton(state: WorkoutLogState, viewModel: WorkoutLogViewModel, onOpenSetSuggestions: () -> Unit) {
     var open by remember { mutableStateOf(false) }
     AppIconButton(
         onClick = { open = true },
@@ -40,6 +44,14 @@ internal fun WorkoutOptionsButton(state: WorkoutLogState, viewModel: WorkoutLogV
                     title = stringResource(R.string.workout_log_rest_timer),
                     subtitle = stringResource(R.string.workout_log_rest_timer_subtitle, formatClock(state.restSeconds.toLong())),
                     onClick = { dismiss(viewModel::onRestTimerSettings) },
+                )
+            }
+            row {
+                AppListItem(
+                    modifier = Modifier.testTag(WorkoutLogTags.SetSuggestionsOption),
+                    title = stringResource(R.string.set_suggestions_title),
+                    subtitle = SetSuggestion.of(state.suggestions)?.let { stringResource(it.title) } ?: state.suggestions.valueName(LocalContext.current),
+                    onClick = { dismiss(onOpenSetSuggestions) },
                 )
             }
             if (state.blocks.isNotEmpty()) {

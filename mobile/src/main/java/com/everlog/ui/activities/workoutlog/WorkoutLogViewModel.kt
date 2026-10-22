@@ -16,6 +16,7 @@ import com.everlog.data.controllers.workoutsession.completeSet
 import com.everlog.data.controllers.workoutsession.deleteBlock
 import com.everlog.data.controllers.workoutsession.deleteSet
 import com.everlog.data.controllers.workoutsession.filledFromHistory
+import com.everlog.data.controllers.workoutsession.withSuggestionsRefilled
 import com.everlog.data.controllers.workoutsession.lastSets
 import com.everlog.data.controllers.workoutsession.moveBlock
 import com.everlog.data.controllers.workoutsession.nextOpenAfter
@@ -97,7 +98,9 @@ internal class WorkoutLogViewModel(
     fun onResume() {
         showing = true
         analytics.screenViewed()
+        val suggestions = state.value.suggestions
         setState { withSettings(settings).copy(now = clock()) }
+        if (state.value.suggestions != suggestions) refillSuggestions()
         notifyWorkout()
         keepTicking()
     }
@@ -512,7 +515,12 @@ internal class WorkoutLogViewModel(
                 { Timber.tag(TAG).e(it, "Couldn't load history to fill in from") },
                 { found ->
                     sources = sources + found
-                    setState { copy(lastTime = lastTime + found.mapValues { (_, source) -> source.lastSets() }) }
+                    setState {
+                        copy(
+                            lastTime = lastTime + found.mapValues { (_, source) -> source.lastSets() },
+                            oneRepMaxes = oneRepMaxes + found.mapValues { (_, source) -> source.orm },
+                        )
+                    }
                     if (fill && prefill.fillsSets()) {
                         val before = blocks.associateBy { it.id }
                         change {
@@ -522,6 +530,14 @@ internal class WorkoutLogViewModel(
                 },
             )
         }
+    }
+
+    // Set suggestions changed while the screen was away, e.g. from the keypad note's Change
+    private fun refillSuggestions() = change { copy(blocks = blocks.map { it.withSuggestionsRefilled(sources, prefill) }) }
+
+    fun onSetSuggestionsTapped() {
+        finishTyping()
+        analytics.setSuggestionsOpened()
     }
 
     // Unticked sets are saved as they are, those with reps or a time as done, so it asks first

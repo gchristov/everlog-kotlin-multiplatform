@@ -82,6 +82,22 @@ fun WorkoutBlock.withAddedRoundFilled(sources: Map<String, PrefillSource>, prefi
     return copy(rounds = rounds.dropLast(1) + filled)
 }
 
+/**
+ * The values that still hold their suggestion filled in again, once the suggestions setting has changed: from the
+ * new setting, or emptied when it no longer fills sets in. Values typed over, and empty ones, stay as they are.
+ */
+fun WorkoutBlock.withSuggestionsRefilled(sources: Map<String, PrefillSource>, prefill: WorkoutSetPrefill): WorkoutBlock =
+    copy(rounds = rounds.mapIndexed { index, round ->
+        round.copy(sets = round.sets.mapIndexed { i, set ->
+            val fields = if (set.removed) emptyList() else ValueField.entries.filter(set::isSuggested)
+            val cleared = fields.fold(set) { emptied, field -> emptied.without(field) }
+            val source = sources[exercises[i].exercise?.uuid]
+            if (fields.isEmpty() || source == null || !prefill.fillsSets()) return@mapIndexed cleared
+            val filled = cleared.suggesting(prefill.fill(source, cleared, index))
+            fields.fold(cleared) { refilled, field -> refilled.withValueOf(filled, field) }
+        })
+    })
+
 fun PrefillSource.lastSets(): List<WorkoutSet> = lastSession?.exercise?.sets.orEmpty().map { it.toSessionSet() }
 
 // A value the history changed is the set's suggestion
@@ -90,3 +106,15 @@ private fun WorkoutSet.suggesting(filled: WorkoutSet): WorkoutSet = filled.copy(
     suggestedReps = filled.reps?.takeIf { it != reps } ?: suggestedReps,
     suggestedTimeSeconds = filled.timeSeconds?.takeIf { it != timeSeconds } ?: suggestedTimeSeconds,
 )
+
+private fun WorkoutSet.without(field: ValueField): WorkoutSet = when (field) {
+    ValueField.Reps -> copy(reps = null, suggestedReps = null)
+    ValueField.Time -> copy(timeSeconds = null, suggestedTimeSeconds = null)
+    ValueField.Weight -> copy(weightKg = null, suggestedKg = null)
+}
+
+private fun WorkoutSet.withValueOf(other: WorkoutSet, field: ValueField): WorkoutSet = when (field) {
+    ValueField.Reps -> copy(reps = other.reps, suggestedReps = other.suggestedReps)
+    ValueField.Time -> copy(timeSeconds = other.timeSeconds, suggestedTimeSeconds = other.suggestedTimeSeconds)
+    ValueField.Weight -> copy(weightKg = other.weightKg, suggestedKg = other.suggestedKg)
+}
