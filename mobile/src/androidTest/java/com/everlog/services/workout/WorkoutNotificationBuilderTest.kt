@@ -74,6 +74,7 @@ class WorkoutNotificationBuilderTest {
 
     @Test
     fun pending_intents_are_immutable() {
+        // PendingIntent.isImmutable only exists from API 31, so there's nothing to check below it
         assumeTrue(Build.VERSION.SDK_INT >= Build.VERSION_CODES.S)
 
         val notification = build(rest())
@@ -86,10 +87,6 @@ class WorkoutNotificationBuilderTest {
 
     @Test
     fun next_set_uses_the_decorated_custom_layouts() {
-        // Below API 24 NotificationCompat builds the decoration itself, so the layouts are nested
-        // inside its own template rather than set directly.
-        assumeTrue(Build.VERSION.SDK_INT >= Build.VERSION_CODES.N)
-
         val notification = build(nextSet())
 
         assertThat(notification.extras.getString(Notification.EXTRA_TEMPLATE))

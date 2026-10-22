@@ -183,6 +183,8 @@ class OnboardingScenarioTest {
     }
 
     private companion object {
-        const val WaitMillis = 15_000L
+        // The building and saving animations play through in test time, one frame at a time, so they take ~35s
+        // where frames are slow to draw (the API 37 tablet emulator)
+        const val WaitMillis = 60_000L
     }
 }
