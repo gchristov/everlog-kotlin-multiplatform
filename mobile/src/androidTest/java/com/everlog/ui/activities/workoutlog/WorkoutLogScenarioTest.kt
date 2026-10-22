@@ -75,10 +75,11 @@ class WorkoutLogScenarioTest {
 
     val compose = createComposeRule()
 
-    // A scenario that hangs (e.g. the screen never settles) fails with where it was stuck, rather than holding up CI
+    // A scenario that hangs (e.g. the screen never settles) fails with where it was stuck, rather than holding up CI.
+    // The longest takes over 2 minutes on a slow emulator (the API 37 tablet).
     @get:Rule
     val rules: RuleChain = RuleChain
-        .outerRule(Timeout.builder().withTimeout(2, TimeUnit.MINUTES).withLookingForStuckThread(true).build())
+        .outerRule(Timeout.builder().withTimeout(4, TimeUnit.MINUTES).withLookingForStuckThread(true).build())
         .around(compose)
 
     private val store = DeviceStore()
@@ -354,7 +355,8 @@ class WorkoutLogScenarioTest {
         // So does Workout options, which shows what fills sets in
         compose.onNodeWithContentDescription("Workout options").performClick()
         compose.onNode(hasTestTag(WorkoutLogTags.SetSuggestionsOption) and hasText("From last time", substring = true)).performClick()
-        compose.waitUntil(5_000L) { setSuggestionsOpened == 2 }
+        // It opens once the sheet has slid away, which can take a while on a slow emulator
+        compose.waitUntil(10_000L) { setSuggestionsOpened == 2 }
 
         // Turned off there, the suggested values go once the workout shows again; the targets stay
         settings.goal = MuscleGoal.NONE
