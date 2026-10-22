@@ -50,6 +50,8 @@ class AnalyticsConstants {
         // can be compared while exercise_picker_v2 rolls out
         const val SCREEN_EXERCISES_V2 = "screen_exercises_v2"
         const val SCREEN_EXERCISE_PICKER_V2 = "screen_exercise_picker_v2"
+        // The Compose screen that replaces SCREEN_MUSCLE_GOAL while set_suggestions_v2 rolls out
+        const val SCREEN_SET_SUGGESTIONS = "screen_settings_set_suggestions"
 
         // Events
 
@@ -232,6 +234,7 @@ class AnalyticsConstants {
         const val EVENT_EXERCISE_PICKER_EXERCISE_PICKED = "exercise_picker_exercise_picked"
         const val EVENT_EXERCISE_PICKER_CREATE_TAPPED = "exercise_picker_create_tapped"
         const val EVENT_EXERCISE_PICKER_ADDED = "exercise_picker_added"
+        const val EVENT_SET_SUGGESTIONS_HOW_OPENED = "set_suggestions_how_opened"
 
         // Properties
 

@@ -157,4 +157,6 @@ interface Analytic {
     fun exercisePickerExercisePicked(section: String, position: Int)
     fun exercisePickerCreateTapped(source: String)
     fun exercisePickerAdded(count: Int, setType: String, filters: Int, hadText: Boolean)
+
+    fun setSuggestionsHowOpened()
 }
