@@ -60,14 +60,6 @@ class IntegrationActivity : BaseActivity(), MvpViewIntegration {
         return mPresenter as? BaseActivityPresenter<T>
     }
 
-    override fun onClickSync(): Observable<Void> {
-        return RxView.clicks(binding.syncBtn)
-    }
-
-    override fun onClickUnsync(): Observable<Void> {
-        return RxView.clicks(binding.unsyncBtn)
-    }
-
     override fun onClickDisconnect(): Observable<Void> {
         return RxView.clicks(binding.disconnectBtn)
     }

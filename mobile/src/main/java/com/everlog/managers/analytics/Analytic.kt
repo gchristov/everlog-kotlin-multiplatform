@@ -18,6 +18,7 @@ interface Analytic {
     fun appUsageReminderOpened(attempt: Int, title: String?)
 
     fun ratePromptTriggered(source: String, promptNumber: Int)
+    fun feedbackOpened(source: String)
 
     fun screenName(screenName: String?)
 
@@ -130,8 +131,6 @@ interface Analytic {
     fun integrationAccessRequested()
     fun integrationConnected()
     fun integrationDisconnected()
-    fun integrationSyncRequested()
-    fun integrationUnsyncRequested()
 
     fun consentNewsletterGranted()
     fun consentNewsletterDenied()

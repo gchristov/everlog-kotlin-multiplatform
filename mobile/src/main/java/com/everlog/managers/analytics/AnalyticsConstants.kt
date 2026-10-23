@@ -72,6 +72,7 @@ class AnalyticsConstants {
         // Rating
 
         const val EVENT_APP_RATE_PROMPT_TRIGGERED = "app_rate_prompt_triggered"
+        const val EVENT_FEEDBACK_OPENED = "feedback_opened"
 
         // Login
 
@@ -205,8 +206,6 @@ class AnalyticsConstants {
         const val EVENT_INTEGRATION_ACCESS_REQUESTED = "integration_access_requested"
         const val EVENT_INTEGRATION_CONNECTED = "integration_connected"
         const val EVENT_INTEGRATION_DISCONNECTED = "integration_disconnected"
-        const val EVENT_INTEGRATION_SYNC_REQUESTED = "integration_sync_requested"
-        const val EVENT_INTEGRATION_UNSYNC_REQUESTED = "integration_unsync_requested"
 
         // Consent
 

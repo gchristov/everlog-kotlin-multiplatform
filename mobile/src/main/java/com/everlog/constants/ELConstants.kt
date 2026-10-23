@@ -8,8 +8,6 @@ object ELConstants {
 
     const val URL_TERMS = "https://www.termsfeed.com/terms-conditions/ab88f4b9d47638276ae7284d4a7ed3f8"
     const val URL_PRIVACY = "https://www.termsfeed.com/privacy-policy/68420a39232d3fc1b3e6d56275fed431"
-    const val URL_FACEBOOK = "https://www.facebook.com/everlogapp"
-    const val URL_TWITTER = "https://twitter.com/everlogapp"
     const val URL_PING = "https://google.com"
 
     const val FIELD_CREATED_DATE = "createdDate"

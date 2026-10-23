@@ -47,14 +47,6 @@
                     android:textStyle="bold" />
 
                 <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="1"
-                    android:textColor="@color/white_darker"
-                    android:textSize="20sp"
-                    android:textStyle="bold" />
-
-                <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/activity_margin_half"
@@ -62,56 +54,6 @@
                     android:text="@string/integrations_1"
                     android:textColor="@color/gray_2"
                     android:textSize="15sp" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/activity_margin"
-                    android:text="2"
-                    android:textColor="@color/white_darker"
-                    android:textSize="20sp"
-                    android:textStyle="bold" />
-
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/activity_margin_half"
-                    android:gravity="center"
-                    android:text="@string/integrations_2"
-                    android:textColor="@color/gray_2"
-                    android:textSize="15sp" />
-
-                <Button
-                    android:id="@+id/syncBtn"
-                    style="@style/Button"
-                    android:layout_width="wrap_content"
-                    android:layout_marginTop="@dimen/activity_margin"
-                    android:text="@string/integrations_sync" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/activity_margin"
-                    android:text="3"
-                    android:textColor="@color/white_darker"
-                    android:textSize="20sp"
-                    android:textStyle="bold" />
-
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/activity_margin_half"
-                    android:gravity="center"
-                    android:text="@string/integrations_3"
-                    android:textColor="@color/gray_2"
-                    android:textSize="15sp" />
-
-                <Button
-                    android:id="@+id/unsyncBtn"
-                    style="@style/Button.Three"
-                    android:layout_width="wrap_content"
-                    android:layout_marginTop="@dimen/activity_margin"
-                    android:text="@string/integrations_sync_delete" />
 
                 <Button
                     android:id="@+id/disconnectBtn"

@@ -6,10 +6,6 @@ import rx.Observable
 
 interface MvpViewIntegration : BaseActivityMvpView {
 
-    fun onClickSync(): Observable<Void>
-
-    fun onClickUnsync(): Observable<Void>
-
     fun onClickDisconnect(): Observable<Void>
 
     fun getItemToEdit(): ELIntegration

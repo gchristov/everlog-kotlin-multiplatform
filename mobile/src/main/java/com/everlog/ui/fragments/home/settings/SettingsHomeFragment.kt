@@ -83,20 +83,12 @@ class SettingsHomeFragment : BaseTabFragment(), MvpViewSettingsHome {
         return RxView.clicks(binding.root.findViewById(R.id.playStoreBtn))
     }
 
-    override fun onClickFacebook(): Observable<Void> {
-        return RxView.clicks(binding.root.findViewById(R.id.facebookBtn))
-    }
-
-    override fun onClickTwitter(): Observable<Void> {
-        return RxView.clicks(binding.root.findViewById(R.id.twitterBtn))
-    }
-
     override fun onClickLogout(): Observable<Void> {
         return RxView.clicks(binding.root.findViewById(R.id.logoutBtn))
     }
 
-    override fun onClickReportProblem(): Observable<Void> {
-        return RxView.clicks(binding.root.findViewById(R.id.reportProblemBtn))
+    override fun onClickFeedback(): Observable<Void> {
+        return RxView.clicks(binding.root.findViewById(R.id.feedbackBtn))
     }
 
     override fun onClickWeightUnit(): Observable<Void> {
@@ -133,6 +125,10 @@ class SettingsHomeFragment : BaseTabFragment(), MvpViewSettingsHome {
 
     override fun showAppInfo(appInfo: String) {
         binding.root.findViewById<TextView>(R.id.versionLbl).text = appInfo
+    }
+
+    override fun showFeedback(visible: Boolean) {
+        binding.root.findViewById<View>(R.id.feedbackBtn).visibility = if (visible) View.VISIBLE else View.GONE
     }
 
     override fun showSettings(viewModel: SettingsViewModel) {

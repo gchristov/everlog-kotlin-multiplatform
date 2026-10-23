@@ -24,4 +24,8 @@
         <key>set_suggestions_v2</key>
         <value>false</value>
     </entry>
+    <entry>
+        <key>feedback_forms</key>
+        <value>{}</value>
+    </entry>
 </defaultsMap>
