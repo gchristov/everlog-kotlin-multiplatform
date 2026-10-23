@@ -75,6 +75,7 @@ internal fun WorkoutOptionsButton(
                     AppListItem(
                         modifier = Modifier.testTag(WorkoutLogTags.SendFeedbackOption),
                         title = stringResource(R.string.feedback_send),
+                        subtitle = stringResource(R.string.feedback_workout_subtitle),
                         onClick = { dismiss(onSendFeedback) },
                     )
                 }

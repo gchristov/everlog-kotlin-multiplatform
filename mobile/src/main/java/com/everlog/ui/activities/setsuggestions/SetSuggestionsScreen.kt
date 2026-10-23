@@ -68,6 +68,7 @@ private fun SetSuggestionsContent(
                         AppListItem(
                             modifier = Modifier.testTag(SetSuggestionsTags.SendFeedback),
                             title = stringResource(R.string.feedback_send),
+                            subtitle = stringResource(R.string.feedback_set_suggestions_subtitle),
                             leading = { AppIcon(imageVector = ImageVector.vectorResource(R.drawable.ic_feedback), tint = Theme.contentColors.action) },
                             onClick = onSendFeedback,
                         )
