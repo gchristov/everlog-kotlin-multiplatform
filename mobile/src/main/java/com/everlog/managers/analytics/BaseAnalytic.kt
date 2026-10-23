@@ -104,6 +104,10 @@ abstract class BaseAnalytic : Analytic {
         logEvent(AnalyticsConstants.EVENT_APP_RATE_PROMPT_TRIGGERED, map)
     }
 
+    override fun feedbackOpened(source: String) {
+        logEvent(AnalyticsConstants.EVENT_FEEDBACK_OPENED, mapOf(AnalyticsConstants.PROPERTY_SOURCE to source))
+    }
+
     override fun screenName(screenName: String?) {
         logScreenName(AnalyticsConstants.EVENT_SCREEN_VIEW, screenName)
     }
@@ -544,14 +548,6 @@ abstract class BaseAnalytic : Analytic {
 
     override fun integrationDisconnected() {
         logEvent(AnalyticsConstants.EVENT_INTEGRATION_DISCONNECTED)
-    }
-
-    override fun integrationSyncRequested() {
-        logEvent(AnalyticsConstants.EVENT_INTEGRATION_SYNC_REQUESTED)
-    }
-
-    override fun integrationUnsyncRequested() {
-        logEvent(AnalyticsConstants.EVENT_INTEGRATION_UNSYNC_REQUESTED)
     }
 
     override fun consentNewsletterGranted() {

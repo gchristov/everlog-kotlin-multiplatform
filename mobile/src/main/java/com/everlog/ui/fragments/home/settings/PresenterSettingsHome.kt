@@ -2,8 +2,8 @@ package com.everlog.ui.fragments.home.settings
 
 import android.content.DialogInterface
 import android.content.Intent
-import android.net.Uri
 import com.everlog.R
+import com.everlog.config.FeedbackSource
 import com.everlog.constants.ELConstants
 import com.everlog.data.datastores.ELDatastore
 import com.everlog.data.datastores.ELUserConsentStore
@@ -11,24 +11,21 @@ import com.everlog.data.datastores.ELUserIntegrationStore
 import com.everlog.data.datastores.ELUserStore
 import com.everlog.data.model.ELConsent
 import com.everlog.data.model.ELIntegration
+import com.everlog.managers.RemoteConfigManager
 import com.everlog.managers.analytics.AnalyticsManager
 import com.everlog.managers.auth.AuthManager
 import com.everlog.managers.integrations.GoogleFitIntegrationManager
 import com.everlog.managers.preferences.SettingsManager
 import com.everlog.ui.dialog.DialogBuilder
 import com.everlog.ui.fragments.base.BaseFragmentPresenter
-import com.everlog.ui.navigator.Navigator
 import com.everlog.utils.ArrayResourceTypeUtils
 import com.everlog.utils.device.DeviceInfo
 import com.google.firebase.firestore.SetOptions
-import com.hypertrack.hyperlog.HyperLog
-import com.imagepick.utils.UriUtils
 // import icepick.State
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
 import org.threeten.bp.DayOfWeek
 import org.threeten.bp.format.TextStyle
-import rx.Observable
 import java.util.*
 
 class PresenterSettingsHome : BaseFragmentPresenter<MvpViewSettingsHome>() {
@@ -46,10 +43,8 @@ class PresenterSettingsHome : BaseFragmentPresenter<MvpViewSettingsHome>() {
         observeWeeklyGoalClick()
         observeKeepScreenOnCheckChange()
         observeGooglePlayClick()
-        observeFacebookClick()
-        observeTwitterClick()
         observeLogoutClick()
-        observeReportProblemClick()
+        observeFeedbackClick()
         observeWeightUnitClick()
         observeFirstWeekDayClick()
         observeShareClick()
@@ -149,18 +144,6 @@ class PresenterSettingsHome : BaseFragmentPresenter<MvpViewSettingsHome>() {
                 .subscribe({ navigator.openPlayStoreAppDetails() }, { throwable -> handleError(throwable) }))
     }
 
-    private fun observeFacebookClick() {
-        subscriptions.add(mvpView.onClickFacebook()
-                .compose(applyUISchedulers())
-                .subscribe({ navigator.openUrl(ELConstants.URL_FACEBOOK) }, { throwable -> handleError(throwable) }))
-    }
-
-    private fun observeTwitterClick() {
-        subscriptions.add(mvpView.onClickTwitter()
-                .compose(applyUISchedulers())
-                .subscribe({ navigator.openUrl(ELConstants.URL_TWITTER) }, { throwable -> handleError(throwable) }))
-    }
-
     private fun observeLogoutClick() {
         subscriptions.add(mvpView.onClickLogout()
                 .compose(applyUISchedulers())
@@ -177,11 +160,14 @@ class PresenterSettingsHome : BaseFragmentPresenter<MvpViewSettingsHome>() {
                 }, { throwable -> handleError(throwable) }))
     }
 
-    private fun observeReportProblemClick() {
-        subscriptions.add(mvpView.onClickReportProblem()
+    private fun observeFeedbackClick() {
+        subscriptions.add(mvpView.onClickFeedback()
                 .compose(applyUISchedulers())
                 .subscribe({
-                    handleReportProblem()
+                    RemoteConfigManager.manager.feedbackFormUrl(FeedbackSource.SETTINGS)?.let { url ->
+                        AnalyticsManager.manager.feedbackOpened(FeedbackSource.SETTINGS.id)
+                        navigator.openUrl(url)
+                    }
                 }, { throwable -> handleError(throwable) }))
     }
 
@@ -281,6 +267,7 @@ class PresenterSettingsHome : BaseFragmentPresenter<MvpViewSettingsHome>() {
     private fun loadData() {
         mvpView?.showUserInfo(getUserAccount()!!)
         mvpView?.showAppInfo(DeviceInfo.Builder().build().appInfo)
+        mvpView?.showFeedback(RemoteConfigManager.manager.feedbackFormUrl(FeedbackSource.SETTINGS) != null)
         mvpView?.showSettings(
                 SettingsHomeFragment.SettingsViewModel()
                         .muscleGoal(SettingsManager.manager.muscleGoal())
@@ -361,30 +348,6 @@ class PresenterSettingsHome : BaseFragmentPresenter<MvpViewSettingsHome>() {
         loadData()
         notifyPreferencesChanged()
         AnalyticsManager.manager.settingsFirstWeekDayModified(day.name)
-    }
-
-    private fun handleReportProblem() {
-        mvpView.toggleLoadingOverlay(true)
-        subscriptions.add(Observable.fromCallable<Uri> {
-                    var log: Uri? = null
-                    val file = HyperLog.getDeviceLogsInFile(mvpView.context)
-                    if (file != null) {
-                        log = UriUtils.getUriForFile(mvpView.context, file)
-                    }
-                    log
-                }.compose(applySchedulers())
-                .subscribe ({ logFile ->
-                    if (isAttachedToView) {
-                        mvpView.toggleLoadingOverlay(false)
-                        navigator.sendEmail(Navigator.ContactType.REPORT_PROBLEM, logFile)
-                    }
-                }, { throwable ->
-                    handleError(throwable)
-                    if (isAttachedToView) {
-                        mvpView.toggleLoadingOverlay(false)
-                        navigator.sendEmail(Navigator.ContactType.REPORT_PROBLEM, null)
-                    }
-                }))
     }
 
     private fun notifyPreferencesChanged() {

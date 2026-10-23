@@ -16,7 +16,8 @@ data class RemoteConfig (
         // The workout screen in Compose (TAS-455), for workouts started while it's on
         var workoutScreenV2: Boolean = false,
         // The Set suggestions screen in Compose instead of MuscleGoalActivity, from every entry point
-        var setSuggestionsV2: Boolean = false
+        var setSuggestionsV2: Boolean = false,
+        var feedbackForms: FeedbackForms? = null
 
 ) : Serializable {
 
@@ -26,6 +27,7 @@ data class RemoteConfig (
     private val EXERCISE_DETAILS_V2 = "exercise_details_v2"
     private val WORKOUT_SCREEN_V2 = "workout_screen_v2"
     private val SET_SUGGESTIONS_V2 = "set_suggestions_v2"
+    private val FEEDBACK_FORMS = "feedback_forms"
 
     fun populateFromSource(config: FirebaseRemoteConfig): RemoteConfig {
         notificationHome = getObjectFromRemoteConfig(NOTIFICATION_HOME, HomeNotification::class.java, config)
@@ -34,6 +36,7 @@ data class RemoteConfig (
         exerciseDetailsV2 = config.getBoolean(EXERCISE_DETAILS_V2)
         workoutScreenV2 = config.getBoolean(WORKOUT_SCREEN_V2)
         setSuggestionsV2 = config.getBoolean(SET_SUGGESTIONS_V2)
+        feedbackForms = getObjectFromRemoteConfig(FEEDBACK_FORMS, FeedbackForms::class.java, config)
         return this
     }
 

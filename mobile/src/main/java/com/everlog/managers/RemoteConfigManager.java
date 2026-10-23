@@ -3,12 +3,15 @@ package com.everlog.managers;
 import android.content.Intent;
 import android.text.TextUtils;
 
+import androidx.annotation.Nullable;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import com.everlog.BuildConfig;
 import com.everlog.R;
 import com.everlog.application.ELApplication;
 import com.everlog.config.AppUsageNotification;
+import com.everlog.config.FeedbackForms;
+import com.everlog.config.FeedbackSource;
 import com.everlog.config.HomeNotification;
 import com.everlog.config.RemoteConfig;
 import com.everlog.constants.ELConstants;
@@ -80,6 +83,14 @@ public class RemoteConfigManager extends PreferencesManager {
     public boolean setSuggestionsV2() {
         RemoteConfig localConfig = loadLocalRemoteConfig();
         return localConfig != null && localConfig.getSetSuggestionsV2();
+    }
+
+    // The feedback form to open from a source, or null when there's none and the entry point is hidden
+    @Nullable
+    public String feedbackFormUrl(FeedbackSource source) {
+        RemoteConfig localConfig = loadLocalRemoteConfig();
+        FeedbackForms forms = localConfig != null ? localConfig.getFeedbackForms() : null;
+        return forms != null ? forms.url(source, BuildConfig.VERSION_NAME) : null;
     }
 
     // Config refresh

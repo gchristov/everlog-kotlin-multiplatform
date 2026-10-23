@@ -7,7 +7,7 @@
     android:orientation="vertical">
 
     <LinearLayout
-        android:id="@+id/reportProblemBtn"
+        android:id="@+id/feedbackBtn"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="?android:attr/selectableItemBackground"
@@ -18,18 +18,18 @@
         android:paddingTop="@dimen/margin_12"
         android:paddingRight="@dimen/settings_row_padding_right"
         android:paddingBottom="@dimen/margin_12"
-        android:visibility="visible">
+        android:visibility="gone">
 
         <ImageView
             style="@style/SettingsIcon"
-            android:src="@drawable/ic_report_problem" />
+            android:src="@drawable/ic_feedback" />
 
         <TextView
             style="@style/SettingsTitle"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="@string/settings_report_problem" />
+            android:text="@string/settings_send_feedback" />
     </LinearLayout>
 
     <LinearLayout
@@ -55,62 +55,6 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="@string/settings_play_store_prompt" />
-    </LinearLayout>
-
-    <LinearLayout
-        android:id="@+id/facebookBtn"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="?android:attr/selectableItemBackground"
-        android:clickable="true"
-        android:gravity="center"
-        android:orientation="horizontal"
-        android:paddingLeft="@dimen/settings_card_content_margin_left"
-        android:paddingTop="@dimen/margin_12"
-        android:paddingRight="@dimen/settings_row_padding_right"
-        android:paddingBottom="@dimen/margin_12"
-        android:visibility="gone">
-
-        <ImageView
-            style="@style/SettingsIcon"
-            android:padding="@dimen/activity_margin_half_half"
-            android:src="@drawable/ic_facebook" />
-
-        <TextView
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="@string/settings_facebook_prompt"
-            android:textColor="@color/white_base"
-            android:textSize="@dimen/settings_row_text_size" />
-    </LinearLayout>
-
-    <LinearLayout
-        android:id="@+id/twitterBtn"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="?android:attr/selectableItemBackground"
-        android:clickable="true"
-        android:gravity="center"
-        android:orientation="horizontal"
-        android:paddingLeft="@dimen/settings_card_content_margin_left"
-        android:paddingTop="@dimen/margin_12"
-        android:paddingRight="@dimen/settings_row_padding_right"
-        android:paddingBottom="@dimen/margin_12"
-        android:visibility="gone">
-
-        <ImageView
-            style="@style/SettingsIcon"
-            android:padding="@dimen/activity_margin_half_half"
-            android:src="@drawable/ic_twitter" />
-
-        <TextView
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="@string/settings_twitter_prompt"
-            android:textColor="@color/white_base"
-            android:textSize="@dimen/settings_row_text_size" />
     </LinearLayout>
 
     <LinearLayout

@@ -1,6 +1,5 @@
 package com.everlog.ui.activities.home.pro
 
-import android.content.DialogInterface
 import android.content.Intent
 import androidx.recyclerview.widget.RecyclerView
 import com.ahamed.multiviewadapter.DataListManager
@@ -20,7 +19,6 @@ import com.everlog.managers.billing.BillingManager
 import com.everlog.ui.activities.base.BaseActivityPresenter
 import com.everlog.ui.activities.home.congratulate.CongratulateActivity
 import com.everlog.ui.adapters.ProUpgradeAdapter
-import com.everlog.ui.navigator.Navigator
 import timber.log.Timber
 
 class PresenterPro : BaseActivityPresenter<MvpViewPro>() {
@@ -137,14 +135,8 @@ class PresenterPro : BaseActivityPresenter<MvpViewPro>() {
                 }, { throwable -> handleError(throwable) }))
     }
 
-    private fun observeRestoreNoMembershipFoundPrompt() {
-        subscriptions.add(mvpView.showPrompt(R.string.pro_title, R.string.pro_error_restore, R.string.settings_contact_us, R.string.cancel)
-                .compose(applyUISchedulers())
-                .subscribe({ action ->
-                    if (action == DialogInterface.BUTTON_POSITIVE) {
-                        navigator.sendEmail(Navigator.ContactType.RESTORE_PRO, null)
-                    }
-                }, { throwable -> handleError(throwable) }))
+    private fun showNoMembershipFound() {
+        mvpView.showOK(R.string.pro_title, R.string.pro_error_restore)
     }
 
     // Loading
@@ -214,7 +206,7 @@ class PresenterPro : BaseActivityPresenter<MvpViewPro>() {
                         mvpView?.showLongToast(R.string.pro_restore_success)
                         mvpView?.closeScreen()
                     } else {
-                        observeRestoreNoMembershipFoundPrompt()
+                        showNoMembershipFound()
                     }
                 }
             }

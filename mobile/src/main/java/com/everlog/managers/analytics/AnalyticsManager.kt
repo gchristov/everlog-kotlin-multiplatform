@@ -90,6 +90,13 @@ class AnalyticsManager : Analytic {
         }
     }
 
+    override fun feedbackOpened(source: String) {
+        Timber.tag(TAG).i("Feedback opened: source=%s", source)
+        mAnalytics?.forEach {
+            it.feedbackOpened(source)
+        }
+    }
+
     override fun screenName(screenName: String?) {
         Timber.tag(TAG).i("Screen name: screenName=%s", screenName)
         mAnalytics?.forEach {
@@ -752,20 +759,6 @@ class AnalyticsManager : Analytic {
         Timber.tag(TAG).i("Integration disconnected")
         mAnalytics?.forEach {
             it.integrationDisconnected()
-        }
-    }
-
-    override fun integrationSyncRequested() {
-        Timber.tag(TAG).i("Integration sync requested")
-        mAnalytics?.forEach {
-            it.integrationSyncRequested()
-        }
-    }
-
-    override fun integrationUnsyncRequested() {
-        Timber.tag(TAG).i("Integration unsync requested")
-        mAnalytics?.forEach {
-            it.integrationUnsyncRequested()
         }
     }
 

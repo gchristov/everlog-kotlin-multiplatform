@@ -15,13 +15,9 @@ interface MvpViewSettingsHome : BaseFragmentMvpView {
 
     fun onClickGooglePlay(): Observable<Void>
 
-    fun onClickFacebook(): Observable<Void>
-
-    fun onClickTwitter(): Observable<Void>
-
     fun onClickLogout(): Observable<Void>
 
-    fun onClickReportProblem(): Observable<Void>
+    fun onClickFeedback(): Observable<Void>
 
     fun onClickWeightUnit(): Observable<Void>
 
@@ -44,6 +40,8 @@ interface MvpViewSettingsHome : BaseFragmentMvpView {
     fun onCheckChangeKeepScreenOn(): Observable<Boolean>
 
     fun showAppInfo(appInfo: String)
+
+    fun showFeedback(visible: Boolean)
 
     fun showUserInfo(user: ELUser)
 

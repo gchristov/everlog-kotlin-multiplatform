@@ -3,39 +3,17 @@ package com.everlog.ui.activities.home.integration
 import android.content.DialogInterface
 import com.everlog.R
 import com.everlog.data.model.ELIntegration
-import com.everlog.managers.analytics.AnalyticsManager
 import com.everlog.managers.integrations.GoogleFitIntegrationManager
 import com.everlog.ui.activities.base.BaseActivityPresenter
-import com.everlog.ui.navigator.Navigator
 
 class PresenterIntegration : BaseActivityPresenter<MvpViewIntegration>() {
 
     override fun onReady() {
-        observeSyncClick()
-        observeUnsyncClick()
         observeDisconnectClick()
         loadData()
     }
 
     // Observers
-
-    private fun observeSyncClick() {
-        subscriptions.add(mvpView.onClickSync()
-                .compose(applyUISchedulers())
-                .subscribe({
-                    AnalyticsManager.manager.integrationSyncRequested()
-                    navigator.sendEmail(Navigator.ContactType.INTEGRATION_SYNC, null)
-                }, { throwable -> handleError(throwable) }))
-    }
-
-    private fun observeUnsyncClick() {
-        subscriptions.add(mvpView.onClickUnsync()
-                .compose(applyUISchedulers())
-                .subscribe({
-                    AnalyticsManager.manager.integrationUnsyncRequested()
-                    navigator.sendEmail(Navigator.ContactType.INTEGRATION_UNSYNC, null)
-                }, { throwable -> handleError(throwable) }))
-    }
 
     private fun observeDisconnectClick() {
         subscriptions.add(mvpView.onClickDisconnect()
