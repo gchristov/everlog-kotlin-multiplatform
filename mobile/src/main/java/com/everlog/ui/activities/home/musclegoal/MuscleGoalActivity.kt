@@ -70,6 +70,10 @@ class MuscleGoalActivity : BaseActivity(), MvpViewMuscleGoal {
         return RxView.clicks(binding.footerView)
     }
 
+    override fun showFeedback(visible: Boolean) {
+        binding.footerView.visibility = if (visible) View.VISIBLE else View.GONE
+    }
+
     override fun showData() {
         binding.proUpgradePrompt.setType(WarningNotificationView.WarningType.PRO_MUSCLE_GOALS)
         binding.proUpgradePrompt.visibility = if (LocalUserManager.getUser()?.isPro() == true) View.GONE else View.VISIBLE

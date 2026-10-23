@@ -5,14 +5,15 @@ import android.content.Intent
 import com.ahamed.multiviewadapter.DataListManager
 import com.ahamed.multiviewadapter.RecyclerAdapter
 import com.everlog.R
+import com.everlog.config.FeedbackSource
 import com.everlog.constants.ELConstants.EXTRA_SET_TYPE
 import com.everlog.data.model.set.ELSetType
 import com.everlog.data.model.util.Footer
+import com.everlog.managers.RemoteConfigManager
 import com.everlog.managers.analytics.AnalyticsManager
 import com.everlog.ui.activities.base.BaseActivityPresenter
 import com.everlog.ui.adapters.FooterAdapter
 import com.everlog.ui.adapters.SetTypeAdapter
-import com.everlog.ui.navigator.Navigator
 import com.everlog.utils.ArrayResourceTypeUtils
 
 class PresenterSetTypePicker : BaseActivityPresenter<MvpViewSetTypePicker>() {
@@ -41,8 +42,9 @@ class PresenterSetTypePicker : BaseActivityPresenter<MvpViewSetTypePicker>() {
         for (typeString in ArrayResourceTypeUtils.withSetTypes().types) {
             items.add(ELSetType.valueOf(typeString))
         }
-        val footer = Footer(R.string.select_set_type_footer, R.string.exercises_footer_link)
-        items.add(footer)
+        if (RemoteConfigManager.manager.feedbackFormUrl(FeedbackSource.SET_TYPES) != null) {
+            items.add(Footer(R.string.select_set_type_footer, R.string.exercises_footer_link))
+        }
         mDataListManager.addAll(items)
     }
 
@@ -61,7 +63,7 @@ class PresenterSetTypePicker : BaseActivityPresenter<MvpViewSetTypePicker>() {
     }
 
     private fun handleFooterClick() {
-        navigator.sendEmail(Navigator.ContactType.SETS, null)
+        navigator.openFeedbackForm(FeedbackSource.SET_TYPES)
     }
 
     // Setup

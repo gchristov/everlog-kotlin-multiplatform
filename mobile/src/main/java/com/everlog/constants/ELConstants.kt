@@ -4,7 +4,6 @@ import com.everlog.BuildConfig
 
 object ELConstants {
 
-    const val SUPPORT_EMAIL = "support@everlogapp.com"
 
     const val URL_TERMS = "https://www.termsfeed.com/terms-conditions/ab88f4b9d47638276ae7284d4a7ed3f8"
     const val URL_PRIVACY = "https://www.termsfeed.com/privacy-policy/68420a39232d3fc1b3e6d56275fed431"

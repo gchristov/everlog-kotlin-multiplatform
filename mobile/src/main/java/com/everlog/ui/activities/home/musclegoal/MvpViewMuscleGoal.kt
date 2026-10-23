@@ -7,5 +7,7 @@ interface MvpViewMuscleGoal : BaseActivityMvpView {
 
     fun onClickFooter(): Observable<Void>
 
+    fun showFeedback(visible: Boolean)
+
     fun showData()
 }

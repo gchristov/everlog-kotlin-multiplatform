@@ -163,12 +163,7 @@ class PresenterSettingsHome : BaseFragmentPresenter<MvpViewSettingsHome>() {
     private fun observeFeedbackClick() {
         subscriptions.add(mvpView.onClickFeedback()
                 .compose(applyUISchedulers())
-                .subscribe({
-                    RemoteConfigManager.manager.feedbackFormUrl(FeedbackSource.SETTINGS)?.let { url ->
-                        AnalyticsManager.manager.feedbackOpened(FeedbackSource.SETTINGS.id)
-                        navigator.openUrl(url)
-                    }
-                }, { throwable -> handleError(throwable) }))
+                .subscribe({ navigator.openFeedbackForm(FeedbackSource.SETTINGS) }, { throwable -> handleError(throwable) }))
     }
 
     private fun observeWeightUnitClick() {
@@ -266,7 +261,7 @@ class PresenterSettingsHome : BaseFragmentPresenter<MvpViewSettingsHome>() {
 
     private fun loadData() {
         mvpView?.showUserInfo(getUserAccount()!!)
-        mvpView?.showAppInfo(DeviceInfo.Builder().build().appInfo)
+        mvpView?.showAppInfo(DeviceInfo.appInfo)
         mvpView?.showFeedback(RemoteConfigManager.manager.feedbackFormUrl(FeedbackSource.SETTINGS) != null)
         mvpView?.showSettings(
                 SettingsHomeFragment.SettingsViewModel()

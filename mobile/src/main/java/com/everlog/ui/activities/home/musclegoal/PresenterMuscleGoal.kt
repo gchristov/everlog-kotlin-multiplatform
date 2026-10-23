@@ -3,12 +3,13 @@ package com.everlog.ui.activities.home.musclegoal
 import android.content.Intent
 import com.ahamed.multiviewadapter.DataListManager
 import com.ahamed.multiviewadapter.RecyclerAdapter
+import com.everlog.config.FeedbackSource
 import com.everlog.constants.ELConstants
+import com.everlog.managers.RemoteConfigManager
 import com.everlog.managers.analytics.AnalyticsManager
 import com.everlog.managers.preferences.SettingsManager
 import com.everlog.ui.activities.base.BaseActivityPresenter
 import com.everlog.ui.adapters.MuscleGoalAdapter
-import com.everlog.ui.navigator.Navigator
 import com.everlog.utils.Utils
 
 class PresenterMuscleGoal : BaseActivityPresenter<MvpViewMuscleGoal>() {
@@ -23,6 +24,7 @@ class PresenterMuscleGoal : BaseActivityPresenter<MvpViewMuscleGoal>() {
 
     override fun onReady() {
         observeFooterClick()
+        mvpView.showFeedback(RemoteConfigManager.manager.feedbackFormUrl(FeedbackSource.MUSCLE_GOAL) != null)
         loadData()
     }
 
@@ -40,7 +42,7 @@ class PresenterMuscleGoal : BaseActivityPresenter<MvpViewMuscleGoal>() {
     private fun observeFooterClick() {
         subscriptions.add(mvpView.onClickFooter()
                 .compose(applyUISchedulers())
-                .subscribe({ navigator.sendEmail(Navigator.ContactType.MUSCLE_GOAL, null) }, { throwable -> handleError(throwable) }))
+                .subscribe({ navigator.openFeedbackForm(FeedbackSource.MUSCLE_GOAL) }, { throwable -> handleError(throwable) }))
     }
 
     // Loading

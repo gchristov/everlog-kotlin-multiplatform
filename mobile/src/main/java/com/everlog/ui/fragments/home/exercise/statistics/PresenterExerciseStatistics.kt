@@ -1,13 +1,15 @@
 package com.everlog.ui.fragments.home.exercise.statistics
 
+import com.everlog.config.FeedbackSource
+import com.everlog.managers.RemoteConfigManager
 import com.everlog.ui.fragments.home.exercise.BasePresenterExerciseTab
-import com.everlog.ui.navigator.Navigator
 
 class PresenterExerciseStatistics : BasePresenterExerciseTab<MvpViewExerciseStatistics>() {
 
     override fun onReady() {
         super.onReady()
         observeFooterClick()
+        mvpView.showFeedback(RemoteConfigManager.manager.feedbackFormUrl(FeedbackSource.EXERCISE_STATISTICS) != null)
     }
 
     override fun onProChanged() {
@@ -21,7 +23,7 @@ class PresenterExerciseStatistics : BasePresenterExerciseTab<MvpViewExerciseStat
         subscriptions.add(mvpView.onClickFooter()
                 .compose(applyUISchedulers())
                 .subscribe {
-                    navigator.sendEmail(Navigator.ContactType.STATISTICS, null)
+                    navigator.openFeedbackForm(FeedbackSource.EXERCISE_STATISTICS)
                 })
     }
 

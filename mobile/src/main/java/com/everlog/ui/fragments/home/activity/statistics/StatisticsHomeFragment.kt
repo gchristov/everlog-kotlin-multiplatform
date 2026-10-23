@@ -83,6 +83,10 @@ class StatisticsHomeFragment : BaseTabFragment(), MvpViewStatisticsHome {
         return RxView.clicks(binding.footerView)
     }
 
+    override fun showFeedback(visible: Boolean) {
+        binding.footerView.visibility = if (visible) View.VISIBLE else View.GONE
+    }
+
     override fun onRangeChanged(): Observable<RangeType> {
         return mOnRangeChanged
     }

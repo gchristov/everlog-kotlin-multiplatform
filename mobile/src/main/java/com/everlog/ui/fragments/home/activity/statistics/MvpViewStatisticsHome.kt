@@ -8,6 +8,8 @@ interface MvpViewStatisticsHome : BaseFragmentMvpView {
 
     fun onClickFooter(): Observable<Void>
 
+    fun showFeedback(visible: Boolean)
+
     fun onRangeChanged(): Observable<StatisticsHomeFragment.RangeType>
 
     fun setStatsData(stats: UserStatsController.StatsResult)
