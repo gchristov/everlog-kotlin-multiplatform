@@ -5,10 +5,12 @@ import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
+import androidx.compose.ui.test.performScrollTo
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.everlog.managers.preferences.SettingsManager.MuscleGoal
 import com.everlog.managers.preferences.SettingsManager.WeightUnit
 import com.everlog.ui.design.theme.Theme
+import com.google.common.truth.Truth.assertThat
 import java.util.concurrent.TimeUnit
 import kotlinx.coroutines.Dispatchers
 import org.junit.Rule
@@ -48,6 +50,9 @@ class SetSuggestionsScenarioTest {
     fun pickingAnOptionAndReadingHowGoalsWork() {
         show()
 
+        // With no feedback form, there's no Send feedback
+        compose.onNodeWithTag(SetSuggestionsTags.SendFeedback).assertDoesNotExist()
+
         // Off is a tap away
         compose.onNodeWithTag(SetSuggestionsTags.option(SetSuggestion.Off)).performClick()
         compose.waitUntil(WaitMillis) { settings.goal == MuscleGoal.NONE }
@@ -72,6 +77,16 @@ class SetSuggestionsScenarioTest {
     }
 
     @Test
+    fun sendingFeedback() {
+        var feedbackSent = 0
+        show(onSendFeedback = { feedbackSent++ })
+
+        compose.onNodeWithTag(SetSuggestionsTags.SendFeedback).performScrollTo().performClick()
+
+        assertThat(feedbackSent).isEqualTo(1)
+    }
+
+    @Test
     fun theExampleFollowsTheWeightUnit() {
         settings.unit = WeightUnit.POUND
         show()
@@ -83,7 +98,7 @@ class SetSuggestionsScenarioTest {
         compose.onNodeWithText("162 lb").assertExists()
     }
 
-    private fun show() {
+    private fun show(onSendFeedback: (() -> Unit)? = null) {
         val viewModel = SetSuggestionsViewModel(
             dispatcher = Dispatchers.Main,
             settings = settings,
@@ -95,7 +110,7 @@ class SetSuggestionsScenarioTest {
         )
         compose.setContent {
             Theme {
-                SetSuggestionsScreen(viewModel = viewModel)
+                SetSuggestionsScreen(viewModel = viewModel, onSendFeedback = onSendFeedback)
             }
         }
     }

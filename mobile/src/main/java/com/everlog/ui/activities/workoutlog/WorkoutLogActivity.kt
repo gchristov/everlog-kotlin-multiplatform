@@ -13,6 +13,7 @@ import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.everlog.R
+import com.everlog.config.FeedbackSource
 import com.everlog.constants.ELActivityRequestCodes
 import com.everlog.constants.ELConstants
 import com.everlog.data.controllers.workoutprefill.RealLoadPrefillSourcesUseCase
@@ -25,6 +26,7 @@ import com.everlog.ui.activities.home.exercise.details.ExerciseDetailsActivity
 import com.everlog.ui.design.CommonComposeActivity
 import com.everlog.ui.navigator.ELNavigator
 import kotlinx.coroutines.Dispatchers
+import com.everlog.ui.navigator.feedbackFormLauncher
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
@@ -102,6 +104,8 @@ class WorkoutLogActivity : CommonComposeActivity() {
         if (missing.isEmpty()) viewModel.onScreenStarted() else permissions.launch(missing.toTypedArray())
     }
 
+    private val sendFeedback by lazy { feedbackFormLauncher(FeedbackSource.WORKOUT_MENU) }
+
     @Composable
     override fun Content() = WorkoutLogScreen(
         viewModel = viewModel,
@@ -114,6 +118,7 @@ class WorkoutLogActivity : CommonComposeActivity() {
             ELNavigator(this).openExerciseDetails(ExerciseDetailsActivity.Companion.Properties().exercise(exercise).type(type))
         },
         onOpenSetSuggestions = { ELNavigator(this).openMuscleGoal() },
+        onSendFeedback = sendFeedback,
         onExit = ::exit,
     )
 

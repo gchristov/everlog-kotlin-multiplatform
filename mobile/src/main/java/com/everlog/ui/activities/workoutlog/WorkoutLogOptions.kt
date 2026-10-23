@@ -25,10 +25,15 @@ import com.everlog.ui.design.theme.Theme
 import com.everlog.utils.format.formatClock
 
 /**
- * The cog in the header, with the rest after each set, Set suggestions, Edit workout and Discard.
+ * The cog in the header, with the rest after each set, Set suggestions, Edit workout, Send feedback and Discard.
  */
 @Composable
-internal fun WorkoutOptionsButton(state: WorkoutLogState, viewModel: WorkoutLogViewModel, onOpenSetSuggestions: () -> Unit) {
+internal fun WorkoutOptionsButton(
+    state: WorkoutLogState,
+    viewModel: WorkoutLogViewModel,
+    onOpenSetSuggestions: () -> Unit,
+    onSendFeedback: (() -> Unit)?,
+) {
     var open by remember { mutableStateOf(false) }
     AppIconButton(
         onClick = { open = true },
@@ -60,6 +65,17 @@ internal fun WorkoutOptionsButton(state: WorkoutLogState, viewModel: WorkoutLogV
                         title = stringResource(R.string.workout_log_edit),
                         subtitle = stringResource(R.string.workout_log_edit_subtitle),
                         onClick = { dismiss(viewModel::onEditWorkout) },
+                    )
+                }
+            }
+        }
+        if (onSendFeedback != null) {
+            AppListGroup {
+                row {
+                    AppListItem(
+                        modifier = Modifier.testTag(WorkoutLogTags.SendFeedbackOption),
+                        title = stringResource(R.string.feedback_send),
+                        onClick = { dismiss(onSendFeedback) },
                     )
                 }
             }

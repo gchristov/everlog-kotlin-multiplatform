@@ -352,8 +352,9 @@ class WorkoutLogScenarioTest {
         assertThat(analytics.events).contains("set_suggestions_opened")
         compose.onNodeWithContentDescription("Hide keypad").performClick()
 
-        // So does Workout options, which shows what fills sets in
+        // So does Workout options, which shows what fills sets in. With no feedback form, it has no Send feedback
         compose.onNodeWithContentDescription("Workout options").performClick()
+        compose.onNodeWithTag(WorkoutLogTags.SendFeedbackOption).assertDoesNotExist()
         compose.onNode(hasTestTag(WorkoutLogTags.SetSuggestionsOption) and hasText("From last time", substring = true)).performClick()
         // It opens once the sheet has slid away, which can take a while on a slow emulator
         compose.waitUntil(10_000L) { setSuggestionsOpened == 2 }
@@ -363,6 +364,31 @@ class WorkoutLogScenarioTest {
         InstrumentationRegistry.getInstrumentation().runOnMainSync { viewModel.onResume() }
         compose.waitUntil(5_000L) { compose.onAllNodes(hasText("✦")).fetchSemanticsNodes().isEmpty() }
         cell(1, 0, 0, "count").assertTextEquals("12")
+    }
+
+    @Test
+    fun sendingFeedbackFromWorkoutOptions() {
+        var feedbackSent = 0
+        val viewModel = viewModel(template())
+        compose.setContent {
+            Theme {
+                WorkoutLogScreen(
+                    viewModel = viewModel,
+                    onAddExercise = {},
+                    onOpenExercise = { _, _ -> },
+                    onOpenSetSuggestions = {},
+                    onExit = { exit = it },
+                    onSendFeedback = { feedbackSent++ },
+                )
+            }
+        }
+
+        compose.onNodeWithContentDescription("Workout options").performClick()
+        compose.onNodeWithTag(WorkoutLogTags.SendFeedbackOption).performClick()
+
+        // It opens once the sheet has slid away, which can take a while on a slow emulator
+        compose.waitUntil(10_000L) { feedbackSent == 1 }
+        assertThat(exit).isNull()
     }
 
     @Test

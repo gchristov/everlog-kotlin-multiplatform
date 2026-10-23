@@ -54,6 +54,7 @@ import com.everlog.ui.design.elements.AppOverflowMenu
 import com.everlog.ui.design.elements.AppScreen
 import com.everlog.ui.design.elements.AppSecondaryButton
 import com.everlog.ui.design.elements.AppSurface
+import com.everlog.ui.design.elements.AppTertiaryButton
 import com.everlog.ui.design.elements.AppText
 import com.everlog.ui.design.elements.AppThumbnail
 import com.everlog.ui.design.elements.list.AppGroupedList
@@ -71,6 +72,9 @@ internal fun ExercisePickerScreen(
     onCreateExercise: (String?) -> Unit,
     // Superset, giant set and so on, for this many exercises
     onPickSetType: (Int) -> Unit,
+    // Null when there's no feedback form, which leaves out the menu item and the no-results link
+    onSendFeedback: (() -> Unit)? = null,
+    onReportMissing: (() -> Unit)? = null,
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
     val content = state.content
@@ -98,7 +102,7 @@ internal fun ExercisePickerScreen(
                 // Create opens the create screen; the new exercise then shows up in the list by itself.
                 actions = {
                     AppOverflowMenu(
-                        items = listOf(
+                        items = listOfNotNull(
                             AppMenuItem(
                                 text = stringResource(R.string.exercise_picker_create_exercise),
                                 icon = ImageVector.vectorResource(R.drawable.ic_add),
@@ -107,6 +111,13 @@ internal fun ExercisePickerScreen(
                                     onCreateExercise(null)
                                 },
                             ),
+                            onSendFeedback?.let {
+                                AppMenuItem(
+                                    text = stringResource(R.string.feedback_send),
+                                    icon = ImageVector.vectorResource(R.drawable.ic_feedback),
+                                    onClick = it,
+                                )
+                            },
                         ),
                     )
                 },
@@ -204,6 +215,7 @@ internal fun ExercisePickerScreen(
                                 viewModel.onCreateTapped("search")
                                 onCreateExercise(state.text.trim())
                             },
+                            onReportMissing = onReportMissing,
                         )
                     }
                     content.menu?.let { menu ->
@@ -248,6 +260,7 @@ private fun PickerList(
     onLongPress: (PickerRow) -> Unit,
     onToggleShowAll: () -> Unit,
     onCreate: () -> Unit,
+    onReportMissing: (() -> Unit)?,
 ) {
     val mostUsedTitle = stringResource(R.string.exercise_picker_most_used)
     val recentTitle = stringResource(R.string.exercise_picker_recently_done)
@@ -323,6 +336,13 @@ private fun PickerList(
                                 modifier = Modifier.fillMaxWidth(),
                                 onClick = onCreate,
                                 text = stringResource(R.string.exercise_picker_create, text),
+                            )
+                        }
+                        if (onReportMissing != null) {
+                            AppTertiaryButton(
+                                modifier = Modifier.fillMaxWidth(),
+                                onClick = onReportMissing,
+                                text = stringResource(R.string.exercise_picker_missing),
                             )
                         }
                     }
