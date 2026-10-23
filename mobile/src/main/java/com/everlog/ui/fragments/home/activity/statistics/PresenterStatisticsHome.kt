@@ -1,13 +1,14 @@
 package com.everlog.ui.fragments.home.activity.statistics
 
 import com.everlog.config.AppConfig
+import com.everlog.config.FeedbackSource
 import com.everlog.data.controllers.statistics.UserStatsController
 import com.everlog.data.datastores.ELDatastore
 import com.everlog.data.datastores.history.ELColStoreWorkoutsLoadedEvent
 import com.everlog.data.model.workout.ELWorkout
+import com.everlog.managers.RemoteConfigManager
 import com.everlog.managers.analytics.AnalyticsManager
 import com.everlog.ui.fragments.base.BaseFragmentPresenter
-import com.everlog.ui.navigator.Navigator
 import com.everlog.utils.Utils
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
@@ -21,6 +22,7 @@ class PresenterStatisticsHome : BaseFragmentPresenter<MvpViewStatisticsHome>() {
     override fun onReady() {
         observeRangeChanged()
         observeFooterClick()
+        mvpView.showFeedback(RemoteConfigManager.manager.feedbackFormUrl(FeedbackSource.ACTIVITY_STATISTICS) != null)
         loadHistory()
     }
 
@@ -61,7 +63,7 @@ class PresenterStatisticsHome : BaseFragmentPresenter<MvpViewStatisticsHome>() {
         subscriptions.add(mvpView.onClickFooter()
                 .compose(applyUISchedulers())
                 .subscribe {
-                    navigator.sendEmail(Navigator.ContactType.STATISTICS, null)
+                    navigator.openFeedbackForm(FeedbackSource.ACTIVITY_STATISTICS)
                 })
     }
 

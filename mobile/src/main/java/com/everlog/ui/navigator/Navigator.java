@@ -1,8 +1,8 @@
 package com.everlog.ui.navigator;
 
 import androidx.annotation.Nullable;
-import android.net.Uri;
 
+import com.everlog.config.FeedbackSource;
 import com.everlog.data.model.ELIntegration;
 import com.everlog.data.model.ELRoutine;
 import com.everlog.data.model.exercise.ELExercise;
@@ -19,17 +19,6 @@ import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import androidx.annotation.NonNull;
 
 public interface Navigator {
-
-    enum ContactType {
-        SETS,
-        STATISTICS,
-        REPORT_PROBLEM,
-        FEEDBACK,
-        MUSCLE_GOAL,
-        RESTORE_PRO,
-        INTEGRATION_SYNC,
-        INTEGRATION_UNSYNC
-    }
 
     void openLoginWithGoogle(GoogleSignInClient client);
 
@@ -104,7 +93,11 @@ public interface Navigator {
 
     void openSetTypePicker(int selectedExercisesCount);
 
-    void sendEmail(ContactType type, Uri logFile);
+    /**
+     * Opens the feedback form for {@code source} from Remote Config. Does nothing when there's none, as the
+     * entry point is then hidden.
+     */
+    void openFeedbackForm(FeedbackSource source);
 
     void runProFeature(Runnable runnable);
 

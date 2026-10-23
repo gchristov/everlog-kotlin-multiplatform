@@ -76,6 +76,10 @@ class ExerciseStatisticsFragment(exercise: ELExercise,
         return RxView.clicks(binding.footerView)
     }
 
+    override fun showFeedback(visible: Boolean) {
+        binding.footerView.visibility = if (visible) View.VISIBLE else View.GONE
+    }
+
     override fun toggleLoadingOverlay(show: Boolean) {
         binding.scrollView.visibility = if (show) View.GONE else View.VISIBLE
         BaseActivity.toggleShimmerLayout(binding.root.findViewById(R.id.shimmerView), show, true)

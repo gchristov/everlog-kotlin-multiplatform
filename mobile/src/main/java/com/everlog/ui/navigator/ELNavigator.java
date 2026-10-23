@@ -15,6 +15,7 @@ import android.widget.TextView;
 
 import com.everlog.BuildConfig;
 import com.everlog.R;
+import com.everlog.config.FeedbackSource;
 import com.everlog.constants.ELActivityRequestCodes;
 import com.everlog.constants.ELConstants;
 import com.everlog.data.model.ELIntegration;
@@ -63,7 +64,6 @@ import com.everlog.ui.activities.workoutlog.WorkoutLogActivity;
 import com.everlog.ui.dialog.DialogBuilder;
 import com.everlog.ui.dialog.ToastBuilder;
 import com.everlog.utils.ViewUtils;
-import com.everlog.utils.device.DeviceInfo;
 import com.everlog.utils.format.StatsFormatUtils;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
@@ -72,7 +72,6 @@ import com.imagepick.share.ELImageShare;
 import org.jetbrains.annotations.NotNull;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.ShareCompat;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import rx.Observable;
@@ -97,7 +96,6 @@ public class ELNavigator implements Navigator {
     private static final String URL_SUBSCRIPTION = "https://play.google.com/store/account/subscriptions?sku=%s&package=%s";
 
     private static final String APP_PACKAGE = "com.everlog";
-    private static final String INTENT_TYPE_EMAIL = "message/rfc822";
     private static final String INTENT_TYPE_TEXT = "text/plain";
 
     private static final String SHARE_APP_TEXT = "Track and plan your workouts like a pro with Everlog!\n\n%s";
@@ -366,59 +364,12 @@ public class ELNavigator implements Navigator {
     }
 
     @Override
-    public void sendEmail(ContactType type, Uri logFile) {
-        String title = "Send mail";
-        String subject = "Hello";
-        String body = "I would like to leave the following feedback:";
-        switch (type) {
-            case REPORT_PROBLEM:
-                subject = "Report Problem";
-                body = "I have the following problem with the app:";
-                break;
-            case SETS:
-                subject = "Sets Request";
-                body = "I would like the following set types:";
-                break;
-            case STATISTICS:
-                subject = "Statistics Request";
-                body = "I would like the following statistics:";
-                break;
-            case FEEDBACK:
-                subject = "Feedback Request";
-                body = "I would like to leave the following feedback:";
-                break;
-            case MUSCLE_GOAL:
-                subject = "Muscle Goal Request";
-                body = "I would like the following muscle goals:";
-                break;
-            case RESTORE_PRO:
-                subject = "Restore Membership";
-                body = "I would like to restore my membership.";
-                break;
-            case INTEGRATION_SYNC:
-                subject = "Integration Sync Request";
-                body = "I would like to sync my existing history with my integrations.";
-                break;
-            case INTEGRATION_UNSYNC:
-                subject = "Integration Un-sync Request";
-                body = "I would like to un-sync my existing history with my integrations.";
-                break;
+    public void openFeedbackForm(FeedbackSource source) {
+        String url = RemoteConfigManager.manager.feedbackFormUrl(source);
+        if (url != null) {
+            AnalyticsManager.manager.feedbackOpened(source.getId());
+            openUrl(url);
         }
-        String textBody = body
-                .concat("\n\n\n")
-                .concat("Account: ").concat(LocalUserManager.getUser().getId())
-                .concat("\n\n")
-                .concat("Device: ").concat(new DeviceInfo.Builder().build().getDeviceInfo()).concat("\n");
-        Intent intent = ShareCompat.IntentBuilder.from((Activity) mContext)
-                .setStream(logFile)
-                .setType(INTENT_TYPE_EMAIL)
-                .getIntent()
-                .setAction(Intent.ACTION_SEND)
-                .addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
-                .putExtra(Intent.EXTRA_EMAIL, new String[]{ELConstants.SUPPORT_EMAIL})
-                .putExtra(Intent.EXTRA_SUBJECT, subject)
-                .putExtra(Intent.EXTRA_TEXT, textBody);
-        startActivity(Intent.createChooser(intent, title));
     }
 
     @Override

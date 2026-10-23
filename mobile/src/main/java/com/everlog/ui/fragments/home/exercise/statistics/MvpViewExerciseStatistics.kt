@@ -6,4 +6,6 @@ import rx.Observable
 interface MvpViewExerciseStatistics : BaseMvpViewExerciseTab {
 
     fun onClickFooter(): Observable<Void>
+
+    fun showFeedback(visible: Boolean)
 }
