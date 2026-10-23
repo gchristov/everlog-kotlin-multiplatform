@@ -322,10 +322,11 @@ def search(args):
     pack = Pack(args.pack)
     for query in args.items:
         hits = pack.search(query)
-        print(f'## {query}: {len(hits)} found' + (', first 20' if len(hits) > 20 else ''))
-        for hit in hits[:20]:
+        print(f'## {query}: {len(hits)} found' + (', first 30' if len(hits) > 30 else ''))
+        for hit in hits[:30]:
             has = ', '.join(k for k in ('image', 'data', 'video') if hit[k]) or 'nothing usable'
-            print(f'- {hit["name"]} ({has})')
+            close = f', close: no "{hit["missing"]}"' if hit['missing'] else ''
+            print(f'- {hit["name"]} ({has}{close})')
         print()
     print('Use a name with an image in `import propose`. One without data has only a name in the spreadsheet: its '
           'instructions, tips and muscles get written in the review.')
