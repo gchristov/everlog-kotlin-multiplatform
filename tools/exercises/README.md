@@ -128,7 +128,10 @@ so find them first:
 ```
 
 It looks through every spreadsheet row and illustration, including common other ways of saying a word ("hip raise",
-"pushup", "db"), and says what the pack has for each: an image, muscle data, a video. Then propose the ones you want:
+"pushup", "db", "seal row"), and says what the pack has for each: an image, muscle data, a video. A query of three
+words or more also lists close hits missing one word ("smith machine bench press" finds "Smith machine press flat"),
+after the exact ones. About 150 exercises are only drawn with a female model; their illustrations count as images and
+can be imported. Then propose the ones you want:
 
 ```
 ./tools/exercises/run.sh import propose --env dev "Cable lateral raises" "Leg press machine normal stance"

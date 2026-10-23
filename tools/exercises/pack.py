@@ -54,14 +54,17 @@ class Pack:
 
     def _index_images(self):
         """Normalised name -> {pose: path}. Pose '' is the start (X.jpg), '1' the other (X1.jpg); some have 2 and 3."""
-        index = defaultdict(dict)
+        index, female = defaultdict(dict), defaultdict(dict)
         for folder, _, files in os.walk(os.path.join(self.root, ILLUSTRATIONS)):
             for file in files:
-                if not re.search(r'\.(jpe?g|png)$', file, re.I) or re.search(r'female', file, re.I):
+                if not re.search(r'\.(jpe?g|png)$', file, re.I):
                     continue
-                key = normalise(file)
-                match = re.match(r'(.*?)\s*(\d)?$', key)
-                index[match.group(1)][match.group(2) or ''] = os.path.join(folder, file)
+                match = re.match(r'(.*?)\s*(\d)?$', normalise(file))
+                poses = female if re.search(r'female', file, re.I) else index
+                poses[match.group(1)][match.group(2) or ''] = os.path.join(folder, file)
+        # About 150 exercises are only drawn with a female model
+        for key, poses in female.items():
+            index.setdefault(key, poses)
         return index
 
     def row(self, name):
@@ -84,34 +87,50 @@ class Pack:
 
     def search(self, query):
         """Every spreadsheet row and illustration whose name has all the words of `query`, or of a common other way
-        of saying it ("knee push-up" finds "Kneeling Push-up", "hip raise" finds glute bridges), closest first. Each hit
-        says what the pack has for it: muscle data, an illustration, a video."""
-        queries = {query.lower()}
+        of saying it ("knee push-up" finds "Kneeling Push-up", "hip raise" finds glute bridges), closest first. A query
+        of three words or more also finds names missing one of them, as close hits ("smith machine bench press" finds
+        "Smith machine press flat"), since the pack often leaves out a word lifters use. Each hit says what the pack
+        has for it: muscle data, an illustration, a video, and the word a close hit is missing."""
+        queries = [query.lower()]
         for one, other in SYNONYMS:
             for q in list(queries):
                 for a, b in [(one, other), (other, one)]:
-                    if re.search(rf'\b{re.escape(a)}\b', q):
-                        queries.add(re.sub(rf'\b{re.escape(a)}\b', b, q))
+                    variant = re.sub(rf'\b{re.escape(a)}\b', b, q)
+                    if variant not in queries:
+                        queries.append(variant)
         names = {key: row['name'] for key, row in self.rows.items()}
         names.update({key: key for key in self.images if key not in names})
         hits = []
         for key, name in names.items():
             have = words(key)
+            # "pulldown" finds "pull down"
+            have += [a + b for a, b in zip(have, have[1:])]
+            best = None
             for q in queries:
                 wanted = words(q)
-                if wanted and all(any(h.startswith(w) for h in have) for w in wanted):
-                    row = self.rows.get(key)
-                    hits.append(dict(name=name, data=bool(row and row['data']), image=bool(self.images.get(key)),
-                                     video=key in self.videos(), extra=len(have) - len(wanted)))
-                    break
-        return sorted(hits, key=lambda h: (not h['image'], h['extra'], not h['data'], h['name'].lower()))
+                missing = [w for w in wanted if not any(h.startswith(w) for h in have)]
+                if wanted and (not missing or (len(missing) == 1 and len(wanted) >= 3)) and \
+                        (best is None or len(missing) < len(best[1])):
+                    best = (wanted, missing)
+            if best:
+                row = self.rows.get(key)
+                hits.append(dict(name=name, data=bool(row and row['data']), image=bool(self.images.get(key)),
+                                 video=key in self.videos(), missing=best[1][0] if best[1] else None,
+                                 extra=len(words(key)) - len(best[0])))
+        return sorted(hits, key=lambda h: (h['missing'] is not None, not h['image'], h['extra'], not h['data'], h['name'].lower()))
 
 
 # Other ways people write the same thing, for search. Each side finds the other.
 SYNONYMS = [('knee', 'kneeling'), ('pushup', 'push up'), ('press up', 'push up'), ('situp', 'sit up'),
             ('pullup', 'pull up'), ('chinup', 'chin up'), ('hip raise', 'glute bridge'), ('hip lift', 'glute bridge'),
             ('one arm', 'single arm'), ('one leg', 'single leg'), ('stiff leg', 'straight leg'), ('rdl', 'romanian deadlift'),
-            ('db', 'dumbbell'), ('bb', 'barbell'), ('kb', 'kettlebell'), ('ohp', 'overhead press'), ('skull crusher', 'lying triceps extension')]
+            ('db', 'dumbbell'), ('bb', 'barbell'), ('kb', 'kettlebell'), ('ohp', 'overhead press'), ('skull crusher', 'lying triceps extension'),
+            ('pulldown', 'pull down'), ('pushdown', 'push down'), ('pushdown', 'press down'), ('pushdown', 'extension'),
+            ('stepup', 'step up'), ('hex bar', 'trap bar'), ('rear delt', 'reverse'), ('pec deck', 'machine fly'),
+            ('hyperextension', 'back extension'), ('standing leg curl', 'kneeling leg curl'), ('hamstring curl', 'leg curl'),
+            ('woodchop', 'chop'), ('wood chop', 'chop'), ('seal row', 'prone bench row'), ('assault bike', 'airbike'),
+            ('ab machine', 'abdominal crunches machine'), ('hanging leg raise', 'captains chair leg raise'),
+            ('bench press', 'chest press'), ('overhead press', 'shoulder press'), ('military press', 'shoulder press')]
 
 
 def words(text):
