@@ -22,7 +22,7 @@ class PresenterStatisticsHome : BaseFragmentPresenter<MvpViewStatisticsHome>() {
     override fun onReady() {
         observeRangeChanged()
         observeFooterClick()
-        mvpView.showFeedback(RemoteConfigManager.manager.feedbackFormUrl(FeedbackSource.ACTIVITY_STATISTICS) != null)
+        showFeedback()
         loadHistory()
     }
 
@@ -40,9 +40,19 @@ class PresenterStatisticsHome : BaseFragmentPresenter<MvpViewStatisticsHome>() {
         }
     }
 
+    // The tab is built at launch, often before the first Remote Config refresh brings the form
+    override fun onRemoteConfigChanged() {
+        super.onRemoteConfigChanged()
+        showFeedback()
+    }
+
     override fun onPreferencesChanged() {
         super.onPreferencesChanged()
         handleHistoryReady(mRange, mHistory)
+    }
+
+    private fun showFeedback() {
+        mvpView?.showFeedback(RemoteConfigManager.manager.feedbackFormUrl(FeedbackSource.ACTIVITY_STATISTICS) != null)
     }
 
     // Observers
