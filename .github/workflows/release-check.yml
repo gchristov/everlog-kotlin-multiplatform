@@ -23,17 +23,17 @@ env:
   KEYSTORE_RELEASE_ALIAS_PASSWORD: ${{ secrets.KEYSTORE_RELEASE_ALIAS_PASSWORD }}
 
 jobs:
-  require-master:
+  require-release-branch:
     runs-on: ubuntu-24.04
     steps:
-      - name: Only allow master
-        if: github.ref != 'refs/heads/master'
+      - name: Only allow master and hotfix branches
+        if: github.ref != 'refs/heads/master' && !startsWith(github.ref, 'refs/heads/hotfix-')
         run: |
-          echo "::error::This workflow can only run on master (got ${{ github.ref_name }})"
+          echo "::error::This workflow can only run on master or a hotfix-* branch (got ${{ github.ref_name }})"
           exit 1
 
   unit-test:
-    needs: [require-master]
+    needs: [require-release-branch]
     runs-on: ubuntu-24.04
     permissions:
       checks: write
@@ -57,7 +57,7 @@ jobs:
           webhook-type: incoming-webhook
 
   build-android:
-    needs: [require-master]
+    needs: [require-release-branch]
     runs-on: ubuntu-24.04
     concurrency:
       group: ${{ github.workflow }}-${{ github.ref }}-build-android
@@ -160,7 +160,7 @@ jobs:
           webhook-type: incoming-webhook
 
   test-android:
-    needs: [require-master]
+    needs: [require-release-branch]
     runs-on: ubuntu-24.04
     # A test that hangs fails the job instead of running for GitHub\'s six hour default
     timeout-minutes: 30

@@ -42,9 +42,9 @@ There's no `bq`/`gcloud` CLI installed. Query the GA4 export (`everlog-prod.anal
 ## CI/CD
 
 Three workflows in `.github/workflows/`, all built from shared composite actions in `.github/actions/`:
-- `staging-check.yml` — runs on push/PR to `master`: unit tests, debug build, instrumented tests, and deploys the debug APK to Firebase App Distribution (`everlog-staging-testers` group).
+- `staging-check.yml` — runs on pushes to `master` and PRs into `master` or a `hotfix-*` branch: unit tests, debug build, instrumented tests, and deploys the debug APK to Firebase App Distribution (`everlog-staging-testers` group).
 - `nightly-check.yml` — cron daily (can also be run manually, but only on `master`): same checks plus a **release** build uploaded to the Play Store internal track, with Slack status reporting to `MONITORING_SLACK_URL`.
-- `release-check.yml` — manual (`workflow_dispatch`, requires a changelog input, only on `master`): full release build deployed to the Play Store production track via `fastlane android deploy_play_release`, then tags the released commit with `tools/versioning/version.txt` and creates a GitHub release listing the PRs since the previous tag (`tools/versioning/release_notes.sh`). Bumping the version for the next release is still a manual PR.
+- `release-check.yml` — manual (`workflow_dispatch`, requires a changelog input, only on `master` or a `hotfix-*` branch): full release build deployed to the Play Store production track via `fastlane android deploy_play_release`, then tags the released commit with `tools/versioning/version.txt` and creates a GitHub release listing the PRs since the previous tag (`tools/versioning/release_notes.sh`). Bumping the version for the next release is still a manual PR. Hotfixes (patch releases) always go through a `hotfix-<version>` branch off the release tag, released from that branch and then merged back into `master`: see "Hotfixes" in `tools/versioning/README.md`.
 
 Fastlane lanes (`fastlane/Fastfile`): `deploy_firebase`, `deploy_play_internal`, `deploy_play_release`. Changelogs are auto-generated from `git log` since the last tag.
 

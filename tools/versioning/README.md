@@ -50,26 +50,17 @@ When building via Gradle, the suffix can be passed as:
 
 ## Hotfixes
 
-A hotfix is a patch release (`2.21.0` → `2.21.1`) that ships only a fix on top of a released version. The patch is the `P` digit of the version code, so `version_code.txt` goes up by `1000` (`2210000` → `2211000`). Every build of the patch then has a higher version code than any build of the release it fixes, and a lower one than the next minor version.
+A hotfix is a patch release (`2.21.0` → `2.21.1`) that ships only fixes on top of a released version. It always goes through a `hotfix-<version>` branch off the release tag, whether or not `master` has moved on, so `master` never has to be frozen.
 
-`release-check.yml` only runs on `master` and releases whatever `master` holds, so which steps to take depends on whether `master` has moved on since the release tag (`git log --oneline <tag>..master`).
+The patch is the `P` digit of the version code, so `version_code.txt` goes up by `1000` (`2210000` → `2211000`). Every build of the patch then has a higher version code than any build of the release it fixes, and a lower one than the next minor version.
 
-### `master` still holds the released version
+1. **Branch** from the release tag and push it: `git switch -c hotfix-2.21.1 2.21.0`, `git push -u origin hotfix-2.21.1`.
+2. **Version bump** in a PR into the hotfix branch: `version.txt` to `2.21.1`, `version_code.txt` to `2211000`.
+3. **Fixes** in PRs into the hotfix branch, from branches named after their tickets as usual. `staging-check.yml` runs on PRs into `hotfix-*` branches like it does for `master`. When a fix is already on `master`, cherry-pick it.
+4. **Release:** run the release job on the hotfix branch (`release-check.yml` allows `master` and `hotfix-*`). It tags `2.21.1` on the hotfix branch, and the GitHub release lists only the commits since `2.21.0`.
+5. **Roll out** once Play's pre-launch report on the production upload is clean. The nightly only runs on `master`, so this is the hotfix's only run on Play's test devices. If the release being fixed hasn't been rolled out yet, roll out the patch instead and skip it.
+6. **Merge back** into `master` with a PR from the hotfix branch, squash merged like any other, so the next release has the fixes. If `master` is already on the next minor version, keep `master`'s side of `version.txt` and `version_code.txt` in the conflict. Delete the hotfix branch afterwards: the tag keeps the released commit.
 
-`version.txt` still says the released version, e.g. `2.21.0`, and there's nothing on `master` after its tag that shouldn't ship.
+The squash merge leaves the `2.21.1` tag off `master`'s history, so the next minor release's GitHub notes count from `2.21.0` and list the hotfix's commits again. They're part of that release too.
 
-1. Merge the fix into `master`.
-2. Merge a version bump PR: `version.txt` to `2.21.1`, `version_code.txt` to `2211000`.
-3. Merge nothing else until the patch is out, or it ships too.
-4. Let a nightly pass with the fix, then run the release job as usual. It tags `2.21.1`, and the GitHub release lists only the commits since `2.21.0`.
-5. If the release being fixed hasn't been rolled out on Play yet, roll out the patch instead and skip it.
-
-### `master` has moved on
-
-`master` has commits after the release tag that aren't ready to ship, or `version.txt` is already bumped for the next minor version, e.g. `2.22.0`.
-
-The release job can't ship a patch from here: running it would release all of `master`. The choices:
-
-- **Ship the fix with the next minor version** if it can wait. Merge it into `master` as usual.
-- **Hotfix branch:** branch from the release tag (`git switch -c hotfix-2.21.1 2.21.0`), cherry-pick the fix, and bump `version.txt` to `2.21.1` and `version_code.txt` to `2211000` there. `release-check.yml`'s `require-master` job must first allow that branch (e.g. `refs/heads/hotfix-*`), since it refuses everything but `master` today. Run the release job on the hotfix branch, then merge the fix (not the version bump) into `master` too, so the next minor version has it.
-- **Turn the feature off** with its Remote Config flag, if the crash is behind one, until either of the above is out.
+If the crash is behind a Remote Config flag, turning the flag off stops it straight away while the hotfix is on its way.
