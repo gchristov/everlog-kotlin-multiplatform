@@ -13,7 +13,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.everlog.ui.design.elements.AppText
@@ -84,7 +83,8 @@ fun AppKeypadNote(
             .fillMaxWidth()
             .clip(shape)
             .background(if (highlighted) Theme.backgrounds.inset else Theme.backgrounds.primary)
-            .border(1.dp, if (highlighted) Theme.backgrounds.separator else Color.Transparent, shape)
+            // Also shows a plain note where there's nothing behind the keypad, as its blur is then the note's colour
+            .border(1.dp, Theme.backgrounds.separator, shape)
             .padding(start = 14.dp, end = if (action != null) 6.dp else 14.dp, top = 6.dp, bottom = 6.dp)
             // As tall as a pill even without one, so a note doesn't look squashed
             .heightIn(min = KeypadSizes.Chip),

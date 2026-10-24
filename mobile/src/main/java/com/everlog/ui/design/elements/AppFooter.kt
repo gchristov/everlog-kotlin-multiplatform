@@ -101,7 +101,8 @@ private object FooterMotion {
     const val Resize = 250
 }
 
-// A note on the actions, in a card on the screen's background so it stands out from the blur behind
+// A note on the actions, in a card on the screen's background so it stands out from the blur behind. The hairline
+// keeps it visible when there's nothing behind, as the blur is then the same colour.
 @Composable
 private fun FooterHeader(text: String) {
     AppText(
@@ -109,6 +110,7 @@ private fun FooterHeader(text: String) {
             .fillMaxWidth()
             .clip(Theme.shapes.surface)
             .background(Theme.backgrounds.primary)
+            .border(1.dp, Theme.backgrounds.separator, Theme.shapes.surface)
             .padding(Theme.spacing.large),
         text = text,
         style = Theme.typography.caption,

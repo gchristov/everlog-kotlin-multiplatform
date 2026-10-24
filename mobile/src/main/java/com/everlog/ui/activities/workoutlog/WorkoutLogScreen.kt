@@ -91,6 +91,8 @@ internal fun WorkoutLogScreen(
     onOpenExercise: (ELExercise, ExerciseTab) -> Unit,
     onOpenSetSuggestions: () -> Unit,
     onExit: (WorkoutLogExit) -> Unit,
+    // Null when there's no feedback form, which leaves it out of the options
+    onSendFeedback: (() -> Unit)? = null,
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
 
@@ -136,7 +138,7 @@ internal fun WorkoutLogScreen(
     val empty = state.blocks.isEmpty()
 
     AppScreen(
-        topBar = { Header(state, viewModel, openSetSuggestions) },
+        topBar = { Header(state, viewModel, openSetSuggestions, onSendFeedback) },
         footer = {
             if (state.editing) {
                 AppFooter(
@@ -285,7 +287,7 @@ private fun keypadEntry(state: WorkoutLogState, viewModel: WorkoutLogViewModel):
 }
 
 @Composable
-private fun Header(state: WorkoutLogState, viewModel: WorkoutLogViewModel, onOpenSetSuggestions: () -> Unit) {
+private fun Header(state: WorkoutLogState, viewModel: WorkoutLogViewModel, onOpenSetSuggestions: () -> Unit, onSendFeedback: (() -> Unit)?) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -303,7 +305,7 @@ private fun Header(state: WorkoutLogState, viewModel: WorkoutLogViewModel, onOpe
             }
         }
         // Editing ends with the footer's Done
-        if (!state.editing) WorkoutOptionsButton(state, viewModel, onOpenSetSuggestions)
+        if (!state.editing) WorkoutOptionsButton(state, viewModel, onOpenSetSuggestions, onSendFeedback)
         when {
             state.blocks.isEmpty() || state.editing -> Unit
             state.unfinishedSets == 0 -> AppButton(onClick = viewModel::onFinish, text = stringResource(R.string.workout_finish))

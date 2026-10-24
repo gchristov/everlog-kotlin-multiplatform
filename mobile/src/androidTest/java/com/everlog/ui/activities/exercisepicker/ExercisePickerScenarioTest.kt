@@ -4,12 +4,14 @@ import androidx.compose.ui.test.hasSetTextAction
 import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onAllNodesWithText
+import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performImeAction
 import androidx.compose.ui.test.performTextClearance
 import androidx.compose.ui.test.performTextInput
 import androidx.lifecycle.SavedStateHandle
+import androidx.test.espresso.Espresso
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import arrow.core.Either
 import com.everlog.data.controllers.exerciselibrary.LoadExerciseLibraryUseCase
@@ -46,10 +48,18 @@ class ExercisePickerScenarioTest {
     private var opened: String? = null
     private var setTypeFor: Int? = null
     private var created: String? = null
+    private var feedbackSent = 0
+    private var missingReported = 0
 
     @Test
     fun pickingExercisesForAWorkout() {
         val viewModel = show(PickerMode.Pick)
+
+        // With no feedback form, the menu only creates
+        compose.onNodeWithContentDescription("More options").performClick()
+        compose.onNodeWithText("Create an exercise").assertExists()
+        compose.onNodeWithText("Send feedback").assertDoesNotExist()
+        Espresso.pressBack()
 
         // Typing searches names and aliases, and the keyboard's search key closes the menu over the list
         searchBar().performTextInput("bent over")
@@ -87,7 +97,7 @@ class ExercisePickerScenarioTest {
 
     @Test
     fun browsingAndSearchingForWhatIsMissing() {
-        show(PickerMode.Browse)
+        show(PickerMode.Browse, feedbackForm = true)
 
         // A tap opens the exercise, and nothing is picked
         compose.onNodeWithText("Barbell Row").performClick()
@@ -100,6 +110,15 @@ class ExercisePickerScenarioTest {
         compose.waitUntil(WaitMillis) { exists("Create “zercher”", substring = true) }
         compose.onNodeWithText("Create “zercher”", substring = true).performClick()
         assertThat(created).isEqualTo("zercher")
+
+        // Or tells us it's missing from the library
+        compose.onNodeWithText("Tell us which exercise is missing").performClick()
+        assertThat(missingReported).isEqualTo(1)
+
+        // The menu sends any other feedback
+        compose.onNodeWithContentDescription("More options").performClick()
+        compose.onNodeWithText("Send feedback").performClick()
+        assertThat(feedbackSent).isEqualTo(1)
     }
 
     @Test
@@ -112,7 +131,7 @@ class ExercisePickerScenarioTest {
         compose.waitUntil(WaitMillis) { exists("Barbell Row") }
     }
 
-    private fun show(mode: PickerMode, failures: Int = 0): ExercisePickerViewModel {
+    private fun show(mode: PickerMode, failures: Int = 0, feedbackForm: Boolean = false): ExercisePickerViewModel {
         var failing = failures
         val viewModel = ExercisePickerViewModel(
             dispatcher = Dispatchers.Main,
@@ -149,6 +168,8 @@ class ExercisePickerScenarioTest {
                     onOpenExercise = { opened = it.name },
                     onCreateExercise = { created = it },
                     onPickSetType = { setTypeFor = it },
+                    onSendFeedback = if (feedbackForm) ({ feedbackSent++ }) else null,
+                    onReportMissing = if (feedbackForm) ({ missingReported++ }) else null,
                 )
             }
         }

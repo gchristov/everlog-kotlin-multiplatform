@@ -6,7 +6,9 @@ import androidx.activity.viewModels
 import androidx.compose.runtime.Composable
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
+import com.everlog.config.FeedbackSource
 import com.everlog.ui.design.CommonComposeActivity
+import com.everlog.ui.navigator.feedbackFormLauncher
 import kotlinx.coroutines.Dispatchers
 
 /**
@@ -26,8 +28,10 @@ class SetSuggestionsActivity : CommonComposeActivity() {
         }
     }
 
+    private val sendFeedback by lazy { feedbackFormLauncher(FeedbackSource.SET_SUGGESTIONS) }
+
     @Composable
-    override fun Content() = SetSuggestionsScreen(viewModel = viewModel)
+    override fun Content() = SetSuggestionsScreen(viewModel = viewModel, onSendFeedback = sendFeedback)
 
     companion object {
         @JvmStatic

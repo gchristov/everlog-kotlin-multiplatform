@@ -10,6 +10,7 @@ import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import com.everlog.R
 import com.everlog.config.AppConfig
+import com.everlog.config.FeedbackSource
 import com.everlog.constants.ELActivityRequestCodes
 import com.everlog.constants.ELConstants
 import com.everlog.data.controllers.exerciselibrary.RealLoadExerciseLibraryUseCase
@@ -20,6 +21,7 @@ import com.everlog.data.repositories.RealWorkoutRepository
 import com.everlog.ui.activities.home.exercise.details.ExerciseDetailsActivity
 import com.everlog.ui.design.CommonComposeActivity
 import com.everlog.ui.navigator.ELNavigator
+import com.everlog.ui.navigator.feedbackFormLauncher
 import kotlinx.coroutines.Dispatchers
 
 /**
@@ -52,6 +54,9 @@ class ExercisePickerActivity : CommonComposeActivity() {
         }
     }
 
+    private val sendFeedback by lazy { feedbackFormLauncher(FeedbackSource.EXERCISE_PICKER_MENU) }
+    private val reportMissing by lazy { feedbackFormLauncher(FeedbackSource.EXERCISE_PICKER_NO_RESULTS) }
+
     @Composable
     override fun Content() = ExercisePickerScreen(
         viewModel = viewModel,
@@ -59,6 +64,8 @@ class ExercisePickerActivity : CommonComposeActivity() {
         onOpenExercise = { ELNavigator(this).openExerciseDetails(ExerciseDetailsActivity.Companion.Properties().exercise(it.toELExercise())) },
         onCreateExercise = { name -> ELNavigator(this).openCreateExercise(name) },
         onPickSetType = { count -> ELNavigator(this).openSetTypePicker(count) },
+        onSendFeedback = sendFeedback,
+        onReportMissing = reportMissing,
     )
 
     // A superset goes through the set type picker first

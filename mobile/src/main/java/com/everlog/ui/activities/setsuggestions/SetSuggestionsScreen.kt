@@ -27,7 +27,7 @@ import com.everlog.ui.design.theme.Theme
  * Off or last time on top, the 1RM goals below them with a sheet on how their weights are worked out.
  */
 @Composable
-internal fun SetSuggestionsScreen(viewModel: SetSuggestionsViewModel) {
+internal fun SetSuggestionsScreen(viewModel: SetSuggestionsViewModel, onSendFeedback: (() -> Unit)? = null) {
     val state by viewModel.state.collectAsStateWithLifecycle()
     LifecycleResumeEffect(Unit) {
         viewModel.onResume()
@@ -37,6 +37,7 @@ internal fun SetSuggestionsScreen(viewModel: SetSuggestionsViewModel) {
         state = state,
         onPick = viewModel::onPick,
         onShowHow = viewModel::onShowHow,
+        onSendFeedback = onSendFeedback,
     )
     if (state.showingHow) {
         HowGoalWeightsSheet(example = state.example, unit = state.unit, onDismiss = viewModel::onHideHow)
@@ -44,7 +45,12 @@ internal fun SetSuggestionsScreen(viewModel: SetSuggestionsViewModel) {
 }
 
 @Composable
-private fun SetSuggestionsContent(state: SetSuggestionsState, onPick: (SetSuggestion) -> Unit, onShowHow: () -> Unit) {
+private fun SetSuggestionsContent(
+    state: SetSuggestionsState,
+    onPick: (SetSuggestion) -> Unit,
+    onShowHow: () -> Unit,
+    onSendFeedback: (() -> Unit)?,
+) {
     AppScreen(topBar = { AppBar(title = stringResource(R.string.set_suggestions_title), showBack = true) }) { contentPadding ->
         AppGroupedList(contentPadding = contentPadding) {
             options(key = "simple", header = null, options = SetSuggestion.simple, selected = state.selected, onPick = onPick)
@@ -55,6 +61,19 @@ private fun SetSuggestionsContent(state: SetSuggestionsState, onPick: (SetSugges
                     leading = { AppIcon(imageVector = ImageVector.vectorResource(R.drawable.ic_info), tint = Theme.contentColors.action) },
                     onClick = onShowHow,
                 )
+            }
+            if (onSendFeedback != null) {
+                group(key = "feedback") {
+                    items(count = 1, key = { "send_feedback" }) {
+                        AppListItem(
+                            modifier = Modifier.testTag(SetSuggestionsTags.SendFeedback),
+                            title = stringResource(R.string.feedback_send),
+                            subtitle = stringResource(R.string.feedback_set_suggestions_subtitle),
+                            leading = { AppIcon(imageVector = ImageVector.vectorResource(R.drawable.ic_feedback), tint = Theme.contentColors.action) },
+                            onClick = onSendFeedback,
+                        )
+                    }
+                }
             }
         }
     }
@@ -85,6 +104,7 @@ private fun AppGroupedListScope.options(
 object SetSuggestionsTags {
     const val How = "set_suggestions_how"
     const val HowDone = "set_suggestions_how_done"
+    const val SendFeedback = "set_suggestions_send_feedback"
 
     fun option(option: SetSuggestion) = "set_suggestions_${option.name}"
 }
@@ -97,6 +117,7 @@ private fun SetSuggestionsPreview() {
             state = SetSuggestionsState(selected = SetSuggestion.LastTime, unit = WeightUnit.KILOGRAM),
             onPick = {},
             onShowHow = {},
+            onSendFeedback = {},
         )
     }
 }

@@ -377,7 +377,9 @@
         <item quantity="one">Your free trial ends tomorrow</item>
         <item quantity="other">Your free trial ends in %1$d days</item>
     </plurals>
-    <string name="settings_send_feedback">Send feedback</string>
+    <string name="feedback_send">Send feedback</string>
+    <string name="feedback_workout_subtitle">What works, what gets in the way</string>
+    <string name="feedback_set_suggestions_subtitle">Were the weights right for you? Tell us</string>
     <string name="settings_play_store_prompt">Review us on Google Play</string>
     <string name="settings_logout">Logout</string>
     <string name="settings_share">Share Everlog</string>
@@ -707,6 +709,7 @@
     <string name="exercise_picker_empty_text">Nothing matches “%1$s”.</string>
     <string name="exercise_picker_create">Create “%1$s”</string>
     <string name="exercise_picker_create_exercise">Create an exercise</string>
+    <string name="exercise_picker_missing">Tell us which exercise is missing</string>
     <string name="exercise_picker_load_failed">Couldn\'t load the exercises.</string>
     <string name="exercise_picker_retry">Try again</string>
 </resources>

@@ -29,7 +29,8 @@ import com.everlog.ui.design.theme.Theme
 import kotlinx.coroutines.delay
 
 // The keypad docked at the bottom, as the workout screen has it. Tap a value to type into it; Next moves to the
-// other. The strips can be switched on to see them above the keys or the closed controls.
+// other. The strips can be switched on to see them above the keys or the closed controls, and Empty shows it with
+// nothing to log yet, where the main action fills the row.
 @Composable
 internal fun DesignSystemKeypad(onButtonClick: () -> Unit) {
     var focused by remember { mutableStateOf<Field?>(null) }
@@ -39,6 +40,7 @@ internal fun DesignSystemKeypad(onButtonClick: () -> Unit) {
     var timed by remember { mutableStateOf(false) }
     var rest by remember { mutableStateOf(false) }
     var note by remember { mutableStateOf(false) }
+    var empty by remember { mutableStateOf(false) }
     var restLeft by remember { mutableIntStateOf(RestSeconds) }
 
     LaunchedEffect(rest) {
@@ -95,13 +97,22 @@ internal fun DesignSystemKeypad(onButtonClick: () -> Unit) {
                 },
                 input = input,
                 onHide = { focused = null },
-                onShow = {
-                    focused = Field.Count
-                    typing = false
+                onShow = if (empty) {
+                    null
+                } else {
+                    {
+                        focused = Field.Count
+                        typing = false
+                    }
                 },
-                actions = listOf(AppKeypadAction("Add exercise", onClick = onButtonClick)),
-                primaryAction = AppKeypadAction("Complete set", icon = ImageVector.vectorResource(R.drawable.ic_check), onClick = onButtonClick),
+                actions = if (empty) emptyList() else listOf(AppKeypadAction("Add exercise", onClick = onButtonClick)),
+                primaryAction = if (empty) {
+                    AppKeypadAction("Add exercise", onClick = onButtonClick)
+                } else {
+                    AppKeypadAction("Complete set", icon = ImageVector.vectorResource(R.drawable.ic_check), onClick = onButtonClick)
+                },
                 strips = {
+                    if (empty) AppKeypadNote(text = "Add an exercise to start")
                     if (note) {
                         AppKeypadNote(text = "Suggested 62.5 kg, up 2.5 kg on last time", highlighted = true, action = AppKeypadAction("Why?", onClick = onButtonClick))
                     }
@@ -132,12 +143,15 @@ internal fun DesignSystemKeypad(onButtonClick: () -> Unit) {
                 )
             }
         }
-        group(key = "strips", header = { "Strips above the keys" }) {
-            items(count = 2, key = { it }) { index ->
-                if (index == 0) {
-                    AppListItem(title = "Rest timer", subtitle = if (rest) "Counting down, tap to stop" else "Tap to start a 1:30 rest", onClick = { rest = !rest })
-                } else {
-                    AppListItem(title = "Note", subtitle = if (note) "Shown, tap to hide" else "Tap to show a suggestion", onClick = { note = !note })
+        group(key = "strips", header = { "Strips and states" }) {
+            items(count = 3, key = { it }) { index ->
+                when (index) {
+                    0 -> AppListItem(title = "Rest timer", subtitle = if (rest) "Counting down, tap to stop" else "Tap to start a 1:30 rest", onClick = { rest = !rest })
+                    1 -> AppListItem(title = "Note", subtitle = if (note) "Shown, tap to hide" else "Tap to show a suggestion", onClick = { note = !note })
+                    else -> AppListItem(title = "Empty", subtitle = if (empty) "Nothing to log, tap to go back" else "Tap to show it with nothing to log yet", onClick = {
+                        empty = !empty
+                        focused = null
+                    })
                 }
             }
         }

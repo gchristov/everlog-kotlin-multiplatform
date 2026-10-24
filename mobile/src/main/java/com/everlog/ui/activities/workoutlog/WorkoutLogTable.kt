@@ -632,6 +632,7 @@ internal object WorkoutLogTags {
     const val EditFooter = "edit:footer"
     const val SuggestionNote = "suggestion_note"
     const val SetSuggestionsOption = "options:set_suggestions"
+    const val SendFeedbackOption = "options:send_feedback"
 
     fun editCard(block: Int) = "edit:$block"
 
