@@ -1,5 +1,7 @@
 package com.everlog.data.model.exercise.library
 
+import com.everlog.data.model.exercise.ELExercise
+
 /**
  * An exercise as the library describes it, with the fields `ELExercise` doesn't read: its family,
  * equipment, set-up, grip, muscles and so on. Ids point at the [ExerciseRegistry].
@@ -38,4 +40,16 @@ data class LibraryExercise(
     val splitSides: Boolean = false,
     val createdByUserId: String? = null,
     val createdDate: Long = 0,
+)
+
+// The exercise as the rest of the app knows it
+fun LibraryExercise.toELExercise() = ELExercise(
+    uuid = uuid,
+    name = name,
+    category = category,
+    splitSides = splitSides,
+    createdDate = createdDate,
+    imageUrl = imageUrl,
+    createdByUserId = createdByUserId,
+    privateToUser = own,
 )
