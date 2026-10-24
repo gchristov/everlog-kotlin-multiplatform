@@ -17,6 +17,7 @@ import com.everlog.data.model.exercise.ELExercise
 import com.everlog.data.model.exercise.ELExerciseGroup
 import com.everlog.data.model.exercise.ELExerciseHistory
 import com.everlog.data.model.exercise.ELRoutineExercise
+import com.everlog.data.model.exercise.library.LibraryExercise
 import com.everlog.data.model.set.ELSet
 import com.everlog.data.model.set.ELSetType
 import com.everlog.data.model.workout.ELWorkout
@@ -31,6 +32,7 @@ import com.everlog.testutil.InMemorySharedPreferences
 import com.everlog.utils.format.displayWeight
 import com.google.common.truth.Truth.assertThat
 import kotlinx.coroutines.CompletableDeferred
+import kotlinx.coroutines.flow.MutableSharedFlow
 import org.junit.After
 import org.junit.Before
 import org.junit.Test
@@ -46,6 +48,7 @@ class WorkoutLogViewModelTest {
     private val alerts = CountingAlerts()
     private val notification = FakeNotification()
     private val prefill = FakePrefill()
+    private val ownUpdates = MutableSharedFlow<List<LibraryExercise>>(extraBufferCapacity = 1)
 
     // Bench press, 2 sets of 8, then a superset of fly and raise, 2 rounds of 12
     private fun template() = ELWorkout(
@@ -74,6 +77,7 @@ class WorkoutLogViewModelTest {
             notification = notification,
             loadPrefillSources = prefill,
             prefill = prefill,
+            ownExerciseUpdates = { ownUpdates },
             clock = { time },
             tickMillis = null,
         )
@@ -766,12 +770,33 @@ class WorkoutLogViewModelTest {
     }
 
     @Test
-    fun `an exercise changed meanwhile shows as it is now, and is saved`() {
+    fun `an own exercise renamed meanwhile shows its new name, and is saved`() {
         val viewModel = viewModel()
-        viewModel.onExerciseChanged(ELExercise(uuid = "fly", name = "Cable fly"))
+        ownUpdates.tryEmit(listOf(LibraryExercise(uuid = "fly", name = "Cable fly", own = true)))
 
-        assertThat(viewModel.blocks[1].exercises.first().exercise?.name).isEqualTo("Cable fly")
+        assertThat(viewModel.blocks[1].exercises.map { it.exercise?.name }).containsExactly("Cable fly", "raise").inOrder()
+        assertThat(viewModel.blocks[0].exercises.first().exercise?.name).isEqualTo("bench")
         assertThat(store.ongoing?.getExerciseGroups()?.get(1)?.exercises?.first()?.exercise?.name).isEqualTo("Cable fly")
+    }
+
+    @Test
+    fun `own exercises that haven't changed leave the workout as it is`() {
+        viewModel()
+        store.ongoing = null
+        ownUpdates.tryEmit(listOf(LibraryExercise(uuid = "fly", name = "fly"), LibraryExercise(uuid = "squat", name = "Squat", own = true)))
+
+        assertThat(store.ongoing).isNull()
+    }
+
+    // Undo puts the block back as it was, so it would bring back the old name
+    @Test
+    fun `a rename ends a deleted set's undo, like any other change`() {
+        val viewModel = viewModel()
+        viewModel.onDeleteSet(viewModel.ref(0, 0))
+        ownUpdates.tryEmit(listOf(LibraryExercise(uuid = "bench", name = "Barbell bench press", own = true)))
+
+        assertThat(viewModel.state.value.deletion).isNull()
+        assertThat(viewModel.blocks[0].exercises.first().exercise?.name).isEqualTo("Barbell bench press")
     }
 
     // Edit workout and the workout's options

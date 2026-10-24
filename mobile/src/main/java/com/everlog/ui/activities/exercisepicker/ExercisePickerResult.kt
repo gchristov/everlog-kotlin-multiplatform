@@ -1,9 +1,9 @@
 package com.everlog.ui.activities.exercisepicker
 
-import com.everlog.data.model.exercise.ELExercise
 import com.everlog.data.model.exercise.ELExerciseGroup
 import com.everlog.data.model.exercise.ELRoutineExercise
 import com.everlog.data.model.exercise.library.LibraryExercise
+import com.everlog.data.model.exercise.library.toELExercise
 import com.everlog.data.model.set.ELSetType
 
 /**
@@ -20,15 +20,3 @@ internal fun PickerResult.toExerciseGroups(): List<ELExerciseGroup> {
         ELExerciseGroup.buildDefault(setType).apply { this.exercises.add(ELRoutineExercise.buildRoutineExercise(exercise.toELExercise())) }
     }
 }
-
-// The exercise as the rest of the app knows it
-internal fun LibraryExercise.toELExercise() = ELExercise(
-    uuid = uuid,
-    name = name,
-    category = category,
-    splitSides = splitSides,
-    createdDate = createdDate,
-    imageUrl = imageUrl,
-    createdByUserId = createdByUserId,
-    privateToUser = own,
-)

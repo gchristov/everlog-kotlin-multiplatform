@@ -1,5 +1,6 @@
 package com.everlog.data.controllers.workoutsession
 
+import com.everlog.data.model.exercise.ELExercise
 import com.everlog.data.model.exercise.ELExerciseGroup
 import com.everlog.data.model.set.ELSetType
 
@@ -175,3 +176,11 @@ fun List<WorkoutBlock>.moveBlock(from: Int, to: Int): List<WorkoutBlock> {
 }
 
 fun List<WorkoutBlock>.withRestSeconds(seconds: Int): List<WorkoutBlock> = map { it.copy(restSeconds = seconds) }
+
+/**
+ * The exercises as they are now, e.g. renamed since the workout started, by uuid. Exercises not in [current] stay as
+ * they are, and equal blocks come back when nothing differs.
+ */
+fun List<WorkoutBlock>.withExercises(current: Map<String, ELExercise>): List<WorkoutBlock> = map { block ->
+    block.copy(exercises = block.exercises.map { item -> current[item.exercise?.uuid]?.let { item.copy(exercise = it) } ?: item })
+}
