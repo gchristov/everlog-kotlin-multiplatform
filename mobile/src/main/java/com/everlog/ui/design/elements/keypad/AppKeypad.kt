@@ -106,7 +106,8 @@ interface AppKeypadInput {
 /**
  * A number keypad in a card, blurring what's behind it like [com.everlog.ui.design.elements.AppFooter], so it can be
  * docked over the bottom of a screen's content (place it in AppScreen's footer with the screen's margins). Closed,
- * it's a row of controls: a keyboard button to open it, small pill [actions] and a [primaryAction]. Open ([entry]
+ * it's a row of controls: a keyboard button to open it, small pill [actions] and a [primaryAction], which fills the
+ * row when it's the only control. Open ([entry]
  * not null), the keys grow out of it with the entry's title over them and a ⌄ to close it again. [strips] sit
  * above either, e.g. [AppKeypadTimer] and [AppKeypadNote].
  *
@@ -226,6 +227,7 @@ private fun EntryHeader(entry: AppKeypadEntry, onHide: () -> Unit) {
 // The keyboard, the pills, and the main action at the end
 @Composable
 private fun Controls(onShow: (() -> Unit)?, actions: List<AppKeypadAction>, primaryAction: AppKeypadAction?) {
+    val alone = onShow == null && actions.isEmpty()
     Row(
         modifier = Modifier.fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically,
@@ -239,8 +241,8 @@ private fun Controls(onShow: (() -> Unit)?, actions: List<AppKeypadAction>, prim
             )
         }
         actions.forEach { KeypadPill(text = it.text, onClick = it.onClick, height = KeypadSizes.Button) }
-        Spacer(modifier = Modifier.weight(1f))
-        primaryAction?.let { AppButton(onClick = it.onClick, text = it.text, icon = it.icon) }
+        if (!alone) Spacer(modifier = Modifier.weight(1f))
+        primaryAction?.let { AppButton(modifier = if (alone) Modifier.weight(1f) else Modifier, onClick = it.onClick, text = it.text, icon = it.icon) }
     }
 }
 
