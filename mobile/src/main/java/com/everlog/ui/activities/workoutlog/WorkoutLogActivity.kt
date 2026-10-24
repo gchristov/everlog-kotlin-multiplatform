@@ -18,7 +18,6 @@ import com.everlog.constants.ELActivityRequestCodes
 import com.everlog.constants.ELConstants
 import com.everlog.data.controllers.workoutprefill.RealLoadPrefillSourcesUseCase
 import com.everlog.data.controllers.workoutsession.RealWorkoutSetPrefill
-import com.everlog.data.datastores.exercises.ELExercisesStore
 import com.everlog.data.model.exercise.ELExerciseGroup
 import com.everlog.data.model.workout.ELWorkout
 import com.everlog.data.repositories.RealOngoingWorkoutRepository
@@ -28,8 +27,6 @@ import com.everlog.ui.navigator.ELNavigator
 import kotlinx.coroutines.Dispatchers
 import com.everlog.ui.navigator.feedbackFormLauncher
 import org.greenrobot.eventbus.EventBus
-import org.greenrobot.eventbus.Subscribe
-import org.greenrobot.eventbus.ThreadMode
 
 /**
  * For workouts started while Remote Config's workout_screen_v2 is on (ELNavigator.workoutActivity).
@@ -61,6 +58,8 @@ class WorkoutLogActivity : CommonComposeActivity() {
 
     private val notificationReceiver by lazy { WorkoutLogNotificationReceiver(viewModel) }
 
+    private val exerciseSubscriber by lazy { WorkoutLogExerciseSubscriber(viewModel) }
+
     // The notification needs these
     private val permissions = registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { granted ->
         if (granted.values.all { it }) {
@@ -77,19 +76,13 @@ class WorkoutLogActivity : CommonComposeActivity() {
             LocalBroadcastManager.getInstance(this).sendBroadcast(Intent(ELConstants.BROADCAST_WORKOUT_STARTED))
         }
         LocalBroadcastManager.getInstance(this).registerReceiver(notificationReceiver, WorkoutLogNotificationReceiver.Filter)
-        EventBus.getDefault().register(this)
+        EventBus.getDefault().register(exerciseSubscriber)
         startNotification()
-    }
-
-    // E.g. renamed from its details
-    @Subscribe(threadMode = ThreadMode.MAIN)
-    fun onExerciseModified(event: ELExercisesStore.ELColStoreExerciseModifiedEvent) {
-        viewModel.onExerciseChanged(event.item)
     }
 
     override fun onDestroy() {
         LocalBroadcastManager.getInstance(this).unregisterReceiver(notificationReceiver)
-        EventBus.getDefault().unregister(this)
+        EventBus.getDefault().unregister(exerciseSubscriber)
         // The notification stays while the screen is only being rebuilt, e.g. for a dark mode change: the new screen
         // starts it again
         if (!isChangingConfigurations) viewModel.onScreenClosed()
