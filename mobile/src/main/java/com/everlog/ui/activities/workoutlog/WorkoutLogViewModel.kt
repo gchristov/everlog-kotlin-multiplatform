@@ -28,10 +28,12 @@ import com.everlog.data.controllers.workoutsession.setMode
 import com.everlog.data.controllers.workoutsession.setValue
 import com.everlog.data.controllers.workoutsession.uncompleteSet
 import com.everlog.data.controllers.workoutsession.withAddedRoundFilled
+import com.everlog.data.controllers.workoutsession.withExercises
 import com.everlog.data.controllers.workoutsession.withRestSeconds
 import com.everlog.data.controllers.workoutsession.withSessionBlocks
-import com.everlog.data.model.exercise.ELExercise
 import com.everlog.data.model.exercise.ELExerciseGroup
+import com.everlog.data.model.exercise.library.LibraryExercise
+import com.everlog.data.model.exercise.library.toELExercise
 import com.everlog.data.model.workout.ELWorkout
 import com.everlog.data.model.workout.ELWorkoutState
 import com.everlog.data.repositories.OngoingWorkoutRepository
@@ -42,6 +44,7 @@ import java.util.Date
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.isActive
@@ -68,6 +71,7 @@ internal class WorkoutLogViewModel(
     private val notification: WorkoutLogNotification,
     private val loadPrefillSources: LoadPrefillSourcesUseCase,
     private val prefill: WorkoutSetPrefill,
+    private val ownExerciseUpdates: () -> Flow<List<LibraryExercise>>,
     private val clock: () -> Long = System::currentTimeMillis,
     private val ids: SessionIds = SessionIds(),
     private val tickMillis: Long? = TickMillis,
@@ -86,6 +90,7 @@ internal class WorkoutLogViewModel(
         save()
         // A resumed workout was filled in when it started, and the user may have cleared values since
         loadHistory(state.value.blocks, fill = !resumed)
+        followOwnExercises()
         // The notification shows the set the screen has selected, which changes without the workout changing
         launchCoroutine {
             state.map(::shownTarget).distinctUntilChanged().collect { shown ->
@@ -460,17 +465,6 @@ internal class WorkoutLogViewModel(
         }
     }
 
-    // Renamed in the library or by the user, for example
-    fun onExerciseChanged(exercise: ELExercise) {
-        val uuid = exercise.uuid ?: return
-        if (state.value.blocks.none { block -> block.exercises.any { it.exercise?.uuid == uuid } }) return
-        change {
-            copy(blocks = blocks.map { block ->
-                block.copy(exercises = block.exercises.map { if (it.exercise?.uuid == uuid) it.copy(exercise = exercise) else it })
-            })
-        }
-    }
-
     fun onEditWorkout() {
         finishTyping()
         setState { focusOn(null).copy(editing = true) }
@@ -589,6 +583,19 @@ internal class WorkoutLogViewModel(
     fun onDialogDismissed() {
         if (state.value.dialog is WorkoutLogDialog.Discard) analytics.discardPromptCancelled()
         setState { copy(dialog = null) }
+    }
+
+    // The user's own exercises follow Firestore while the screen is open, so one renamed from its details shows straight
+    // away, and a resumed workout shows the names they have now
+    private fun followOwnExercises() {
+        launchCoroutine {
+            ownExerciseUpdates().collect { own ->
+                val current = own.associate { it.uuid to it.toELExercise() }
+                if (state.value.blocks.withExercises(current) != state.value.blocks) {
+                    change { copy(blocks = blocks.withExercises(current)) }
+                }
+            }
+        }
     }
 
     // Undo puts the deleted block back as it was, so any other change ends it

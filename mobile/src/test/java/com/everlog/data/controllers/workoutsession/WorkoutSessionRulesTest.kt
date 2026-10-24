@@ -203,6 +203,30 @@ class WorkoutSessionRulesTest {
         assertThat(blocks.withRestSeconds(90).map { it.restSeconds }).containsExactly(90, 90)
     }
 
+    // Exercises as they are now
+
+    @Test
+    fun `exercises as they are now replace the workout's copies with the same uuid, wherever they are`() {
+        val fly = ELExercise(uuid = "fly", name = "Fly")
+        val raise = ELExercise(uuid = "raise", name = "Raise")
+        val superset = block(exercises = 2, rounds = 1).copy(exercises = listOf(WorkoutExercise("a", fly), WorkoutExercise("b", raise)))
+        val workout = listOf(single, superset)
+
+        val updated = workout.withExercises(mapOf("fly" to ELExercise(uuid = "fly", name = "Cable fly")))
+
+        assertThat(updated[1].exercises.map { it.exercise?.name }).containsExactly("Cable fly", "Raise").inOrder()
+        assertThat(updated[0]).isEqualTo(single)
+        assertThat(updated[1].rounds).isEqualTo(superset.rounds)
+    }
+
+    @Test
+    fun `exercises that are the same as the workout's leave equal blocks`() {
+        val fly = ELExercise(uuid = "fly", name = "Fly")
+        val workout = listOf(single.copy(exercises = listOf(WorkoutExercise("a", fly))))
+
+        assertThat(workout.withExercises(mapOf("fly" to fly.copy(), "other" to ELExercise(uuid = "other")))).isEqualTo(workout)
+    }
+
     private fun block(exercises: Int, rounds: Int) = WorkoutBlock(
         id = ids.next(),
         uuid = null,
