@@ -69,6 +69,12 @@ class PresenterSettingsHome : BaseFragmentPresenter<MvpViewSettingsHome>() {
         loadData()
     }
 
+    // The tab is built at launch, often before the first Remote Config refresh brings the form
+    override fun onRemoteConfigChanged() {
+        super.onRemoteConfigChanged()
+        showFeedback()
+    }
+
     override fun onProChanged() {
         super.onProChanged()
         loadData()
@@ -262,7 +268,7 @@ class PresenterSettingsHome : BaseFragmentPresenter<MvpViewSettingsHome>() {
     private fun loadData() {
         mvpView?.showUserInfo(getUserAccount()!!)
         mvpView?.showAppInfo(DeviceInfo.appInfo)
-        mvpView?.showFeedback(RemoteConfigManager.manager.feedbackFormUrl(FeedbackSource.SETTINGS) != null)
+        showFeedback()
         mvpView?.showSettings(
                 SettingsHomeFragment.SettingsViewModel()
                         .muscleGoal(SettingsManager.manager.muscleGoal())
@@ -274,6 +280,10 @@ class PresenterSettingsHome : BaseFragmentPresenter<MvpViewSettingsHome>() {
                         .integrationGoogleFitEnabled(mIntegrationGoogleFit != null)
                         .notificationNewsletterEnabled(mConsent?.getNewsletter())
         )
+    }
+
+    private fun showFeedback() {
+        mvpView?.showFeedback(RemoteConfigManager.manager.feedbackFormUrl(FeedbackSource.SETTINGS) != null)
     }
 
     private fun loadIntegrationsData() {
