@@ -14,6 +14,7 @@ import com.everlog.config.FeedbackSource
 import com.everlog.constants.ELActivityRequestCodes
 import com.everlog.constants.ELConstants
 import com.everlog.data.controllers.exerciselibrary.RealLoadExerciseLibraryUseCase
+import com.everlog.data.model.exercise.library.toELExercise
 import com.everlog.data.model.set.ELSetType
 import com.everlog.data.repositories.RealExerciseRepository
 import com.everlog.data.repositories.RealRoutineRepository

@@ -40,6 +40,7 @@ import com.everlog.data.model.exercise.ELExercise
 import com.everlog.data.model.exercise.ELExerciseGroup
 import com.everlog.data.model.exercise.ELExerciseHistory
 import com.everlog.data.model.exercise.ELRoutineExercise
+import com.everlog.data.model.exercise.library.LibraryExercise
 import com.everlog.data.model.set.ELSet
 import com.everlog.data.model.set.ELSetType
 import com.everlog.data.model.workout.ELWorkout
@@ -53,6 +54,7 @@ import com.everlog.utils.UnitUtils
 import com.google.common.truth.Truth.assertThat
 import java.util.concurrent.TimeUnit
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.MutableSharedFlow
 import org.junit.After
 import org.junit.Before
 import com.everlog.managers.preferences.SettingsManager.MuscleGoal
@@ -90,6 +92,7 @@ class WorkoutLogScenarioTest {
     private var opened: Pair<String?, ExerciseTab>? = null
     private var setSuggestionsOpened = 0
     private val settings = PoundSettings()
+    private val ownUpdates = MutableSharedFlow<List<LibraryExercise>>(extraBufferCapacity = 1)
     private val now = 1_800_000_000_000L
 
     @Before
@@ -196,6 +199,10 @@ class WorkoutLogScenarioTest {
         compose.onNode(hasText("Fly") and hasAnyAncestor(hasTestTag(WorkoutLogTags.Table))).performClick()
         assertThat(opened).isEqualTo("Fly" to ExerciseTab.Info)
 
+        // Renamed from its details (the user's own exercises follow Firestore), the new name shows
+        ownUpdates.tryEmit(listOf(LibraryExercise(uuid = "Fly", name = "Cable fly", own = true)))
+        compose.onNode(hasText("Cable fly") and hasAnyAncestor(hasTestTag(WorkoutLogTags.Table))).assertExists()
+
         // The closed keypad's Complete set goes through the superset exercise by exercise
         key("Complete set").performClick()
         key("Complete set").performClick()
@@ -224,7 +231,7 @@ class WorkoutLogScenarioTest {
         showExercise(1)
         cell(1, 1, 0, "count").performClick()
         compose.waitForIdle()
-        assertThat(notification.shownSetName()).isEqualTo("Fly")
+        assertThat(notification.shownSetName()).isEqualTo("Cable fly")
         cell(1, 1, 1, "count").performClick()
         compose.onNodeWithContentDescription("Hide keypad").performClick()
         assertThat(notification.shownSetName()).isEqualTo("Raise")
@@ -304,7 +311,7 @@ class WorkoutLogScenarioTest {
             moveBy(Offset(0f, height * 4f), delayMillis = 200)
             up()
         }
-        compose.onNode(hasText("Fly", substring = true) and hasAnyAncestor(hasTestTag(WorkoutLogTags.editCard(0)))).assertExists()
+        compose.onNode(hasText("Cable fly", substring = true) and hasAnyAncestor(hasTestTag(WorkoutLogTags.editCard(0)))).assertExists()
         compose.onNode(hasText("Done") and hasAnyAncestor(hasTestTag(WorkoutLogTags.EditFooter))).performClick()
         compose.onNodeWithTag(WorkoutLogTags.EditList).assertDoesNotExist()
 
@@ -320,7 +327,7 @@ class WorkoutLogScenarioTest {
         assertThat(bench[0].getWeightKg()).isWithin(0.01f).of(61.23f)
         assertThat(bench[0].getCompletedDate()).isEqualTo(now)
         assertThat(bench[1].getTimeSeconds()).isEqualTo(110)
-        assertThat(finished.getExerciseGroups().map { it.exercises.first().exercise?.name }).containsExactly("Fly", "Bench press").inOrder()
+        assertThat(finished.getExerciseGroups().map { it.exercises.first().exercise?.name }).containsExactly("Cable fly", "Bench press").inOrder()
         // Which screen it ran on stays on the device
         assertThat(finished.asMap().keys).doesNotContain("workoutScreenV2")
         assertThat(WorkoutManager.manager.ongoingWorkout()).isNull()
@@ -455,6 +462,7 @@ class WorkoutLogScenarioTest {
             notification = notification,
             loadPrefillSources = BenchHistory,
             prefill = RealWorkoutSetPrefill { settings.goal.canPrefill() },
+            ownExerciseUpdates = { ownUpdates },
             clock = { now },
             tickMillis = null,
         )
