@@ -147,6 +147,16 @@ class WorkoutLogActivityTest {
         compose.waitUntil(TIMEOUT) { !workoutNotificationShows() }
     }
 
+    @Test
+    fun openedWithoutAWorkoutCloses() {
+        // As Play's pre-launch robots open it
+        val screen = ActivityScenario.launch<WorkoutLogActivity>(Intent(context, WorkoutLogActivity::class.java))
+
+        compose.waitUntil(TIMEOUT) { screen.state == Lifecycle.State.DESTROYED }
+        assertThat(WorkoutManager.manager.ongoingWorkout()).isNull()
+        assertThat(workoutNotificationShows()).isFalse()
+    }
+
     private fun group(uuid: String, name: String) = ELExerciseGroup(
         uuid = "group-$uuid",
         type = ELSetType.SINGLE.name,

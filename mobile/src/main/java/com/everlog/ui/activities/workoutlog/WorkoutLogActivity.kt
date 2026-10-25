@@ -57,6 +57,9 @@ class WorkoutLogActivity : CommonComposeActivity() {
         }
     }
 
+    override val requiredExtras = listOf(ELConstants.EXTRA_WORKOUT)
+    override val requiresUser = true
+
     private val notificationReceiver by lazy { WorkoutLogNotificationReceiver(viewModel) }
 
     // The notification needs these
@@ -70,6 +73,7 @@ class WorkoutLogActivity : CommonComposeActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        if (!isOpened) return
         if (savedInstanceState == null) {
             // Closes screens that shouldn't stay under a workout
             LocalBroadcastManager.getInstance(this).sendBroadcast(Intent(ELConstants.BROADCAST_WORKOUT_STARTED))
@@ -79,6 +83,10 @@ class WorkoutLogActivity : CommonComposeActivity() {
     }
 
     override fun onDestroy() {
+        if (!isOpened) {
+            super.onDestroy()
+            return
+        }
         LocalBroadcastManager.getInstance(this).unregisterReceiver(notificationReceiver)
         // The notification stays while the screen is only being rebuilt, e.g. for a dark mode change: the new screen
         // starts it again
