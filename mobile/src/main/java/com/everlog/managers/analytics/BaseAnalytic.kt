@@ -402,6 +402,14 @@ abstract class BaseAnalytic : Analytic {
         logEvent(AnalyticsConstants.EVENT_WORKOUT_CHANGE_MUSCLE_GOAL)
     }
 
+    override fun workoutKeypadShown(source: String) {
+        logEvent(AnalyticsConstants.EVENT_WORKOUT_KEYPAD_SHOWN, mapOf(AnalyticsConstants.PROPERTY_SOURCE to source))
+    }
+
+    override fun workoutKeypadHidden(source: String) {
+        logEvent(AnalyticsConstants.EVENT_WORKOUT_KEYPAD_HIDDEN, mapOf(AnalyticsConstants.PROPERTY_SOURCE to source))
+    }
+
     override fun workoutTimerStartedExercise() {
         logEvent(AnalyticsConstants.EVENT_WORKOUT_TIMER_STARTED_EXERCISE)
     }

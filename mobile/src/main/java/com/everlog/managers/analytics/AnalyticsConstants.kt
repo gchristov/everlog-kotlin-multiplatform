@@ -161,6 +161,8 @@ class AnalyticsConstants {
         const val EVENT_WORKOUT_SERVICE_TIMER_STOPPED_EXERCISE = "workout_service_timer_stopped_exercise"
         const val EVENT_WORKOUT_SERVICE_TIMER_STOPPED_REST = "workout_service_timer_stopped_rest"
         const val EVENT_WORKOUT_CHANGE_MUSCLE_GOAL = "workout_change_muscle_goal"
+        const val EVENT_WORKOUT_KEYPAD_SHOWN = "workout_keypad_shown"
+        const val EVENT_WORKOUT_KEYPAD_HIDDEN = "workout_keypad_hidden"
         const val EVENT_WORKOUT_TIMER_STARTED_EXERCISE = "workout_timer_started_exercise"
         const val EVENT_WORKOUT_TIMER_STOPPED_EXERCISE = "workout_timer_stopped_exercise"
         const val EVENT_WORKOUT_TIMER_STARTED_REST = "workout_timer_started_rest"

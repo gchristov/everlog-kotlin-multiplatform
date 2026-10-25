@@ -630,6 +630,14 @@ class WorkoutLogScenarioTest {
             events += "set_suggestions_opened"
         }
 
+        override fun keypadShown(source: KeypadShownFrom) {
+            events += "keypad_shown ${source.id}"
+        }
+
+        override fun keypadHidden(source: KeypadHiddenBy) {
+            events += "keypad_hidden ${source.id}"
+        }
+
         override fun valueChanged(field: ValueField, value: Float?) {
             events += "${field.name.lowercase()}_modified $value"
         }
