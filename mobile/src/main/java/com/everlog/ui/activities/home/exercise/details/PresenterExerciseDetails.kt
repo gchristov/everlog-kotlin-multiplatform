@@ -94,8 +94,10 @@ class PresenterExerciseDetails : BaseActivityPresenter<MvpViewExerciseDetails>()
     private fun loadExercise() {
         // Show exercise immediately
         loadViewData()
-        // Listen for item changes
-        ELDatastore.exerciseStore().getItem(toEdit!!.uuid)
+        // Only the user's own exercises live in their exercises collection
+        if (toEdit!!.isEditable()) {
+            ELDatastore.exerciseStore().getItem(toEdit!!.uuid)
+        }
         // Load stats
         Utils.runWithDelay({
             if (isAttachedToView) {
