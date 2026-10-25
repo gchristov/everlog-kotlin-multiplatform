@@ -13,7 +13,6 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import com.everlog.R
 import com.everlog.managers.analytics.AnalyticsManager
-import com.everlog.managers.auth.LocalUserManager
 import com.everlog.ui.dialog.DialogBuilder
 import com.everlog.ui.dialog.DialogBuilder.AppBlockerDialogType
 import com.everlog.ui.dialog.TaskDialog
@@ -23,7 +22,6 @@ import com.everlog.utils.input.KeyboardUtils
 import com.facebook.shimmer.Shimmer.ColorHighlightBuilder
 import com.facebook.shimmer.ShimmerFrameLayout
 import rx.Observable
-import timber.log.Timber
 
 abstract class BaseActivity : AppCompatActivity(), BaseActivityMvpView {
 
@@ -41,13 +39,13 @@ abstract class BaseActivity : AppCompatActivity(), BaseActivityMvpView {
 
     /**
      * Intent extras the screen can't work without. The app always passes them, so a screen opened
-     * without them closes instead of crashing (see [canOpen]).
+     * without them closes instead of crashing (see [com.everlog.ui.activities.base.canOpen]).
      */
     protected open fun getRequiredExtras(): List<String> = emptyList()
 
     /**
      * Whether the screen needs a logged in user. The app only opens these screens after login, so
-     * one opened without a user closes instead of crashing (see [canOpen]).
+     * one opened without a user closes instead of crashing (see [com.everlog.ui.activities.base.canOpen]).
      */
     protected open fun requiresUser(): Boolean = false
 
@@ -94,7 +92,7 @@ abstract class BaseActivity : AppCompatActivity(), BaseActivityMvpView {
         )
         // Do NOT use activity instance state because that messes up with the ViewPager on the home screen
         super.onCreate(null)
-        if (!canOpen()) {
+        if (!canOpen(getRequiredExtras(), requiresUser())) {
             finish()
             return
         }
@@ -145,21 +143,6 @@ abstract class BaseActivity : AppCompatActivity(), BaseActivityMvpView {
                 isEnabled = true
             }
         }
-    }
-
-    // Play pre-launch robots open screens directly, without what the app would pass them. Errors are
-    // recorded as non-fatals, so a bug that opens a screen this way still shows up.
-    private fun canOpen(): Boolean {
-        val missingExtras = getRequiredExtras().filter { intent?.extras?.get(it) == null }
-        if (missingExtras.isNotEmpty()) {
-            Timber.tag(javaClass.simpleName).e("Closing screen opened without required extras: %s", missingExtras)
-            return false
-        }
-        if (requiresUser() && !LocalUserManager.hasUser()) {
-            Timber.tag(javaClass.simpleName).e("Closing screen opened without a logged in user")
-            return false
-        }
-        return true
     }
 
     override fun onDestroy() {
