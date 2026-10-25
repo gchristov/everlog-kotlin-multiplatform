@@ -122,6 +122,21 @@ internal interface WorkoutLogAnalytics {
 
     // From Workout options or the keypad note
     fun setSuggestionsOpened()
+
+    // Opened or closed by the user, not as sets are completed or the workout is edited
+    fun keypadShown(source: KeypadShownFrom)
+
+    fun keypadHidden(source: KeypadHiddenBy)
+}
+
+internal enum class KeypadShownFrom(val id: String) {
+    Cell("cell"),
+    Button("button"),
+}
+
+internal enum class KeypadHiddenBy(val id: String) {
+    Collapse("collapse"),
+    Back("back"),
 }
 
 internal class RealWorkoutLogAnalytics : WorkoutLogAnalytics {
@@ -175,4 +190,8 @@ internal class RealWorkoutLogAnalytics : WorkoutLogAnalytics {
 
     // The old workout screen's event for its muscle goal button
     override fun setSuggestionsOpened() = analytics.workoutChangeMuscleGoal()
+
+    override fun keypadShown(source: KeypadShownFrom) = analytics.workoutKeypadShown(source.id)
+
+    override fun keypadHidden(source: KeypadHiddenBy) = analytics.workoutKeypadHidden(source.id)
 }

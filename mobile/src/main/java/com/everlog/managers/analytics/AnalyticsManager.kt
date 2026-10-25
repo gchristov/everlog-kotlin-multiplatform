@@ -503,6 +503,20 @@ class AnalyticsManager : Analytic {
         }
     }
 
+    override fun workoutKeypadShown(source: String) {
+        Timber.tag(TAG).i("Workout keypad shown: source=%s", source)
+        mAnalytics?.forEach {
+            it.workoutKeypadShown(source)
+        }
+    }
+
+    override fun workoutKeypadHidden(source: String) {
+        Timber.tag(TAG).i("Workout keypad hidden: source=%s", source)
+        mAnalytics?.forEach {
+            it.workoutKeypadHidden(source)
+        }
+    }
+
     override fun workoutTimerStartedExercise() {
         Timber.tag(TAG).i("Workout timer started exercise")
         mAnalytics?.forEach {

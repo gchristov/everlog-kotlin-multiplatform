@@ -89,6 +89,8 @@ interface Analytic {
     fun workoutServiceTimerStoppedExercise()
     fun workoutServiceTimerStoppedRest()
     fun workoutChangeMuscleGoal()
+    fun workoutKeypadShown(source: String)
+    fun workoutKeypadHidden(source: String)
     fun workoutTimerStartedExercise()
     fun workoutTimerStoppedExercise()
     fun workoutTimerStartedRest()

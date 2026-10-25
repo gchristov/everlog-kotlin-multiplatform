@@ -264,6 +264,48 @@ class WorkoutLogViewModelTest {
         assertThat(viewModel.set(0, 0).timeSeconds).isEqualTo(90)
     }
 
+    // Opening and closing the keypad
+
+    @Test
+    fun `the keypad logs how it was opened and closed, once each time`() {
+        val viewModel = viewModel()
+
+        viewModel.onCellTapped(CellFocus(viewModel.ref(0, 0), ValueField.Reps))
+        // Moving between cells keeps it open
+        viewModel.onCellTapped(CellFocus(viewModel.ref(0, 0), ValueField.Weight))
+        viewModel.onHideKeypad()
+        viewModel.onShowKeypad()
+        viewModel.onBack()
+
+        assertThat(analytics.events.filter { it.startsWith("keypad") })
+            .containsExactly("keypad_shown cell", "keypad_hidden collapse", "keypad_shown button", "keypad_hidden back").inOrder()
+        assertThat(viewModel.state.value.focus).isNull()
+    }
+
+    @Test
+    fun `the keypad closing by itself isn't logged`() {
+        val viewModel = viewModel()
+        viewModel.onShowKeypad()
+
+        viewModel.onEditWorkout()
+
+        assertThat(viewModel.state.value.focus).isNull()
+        assertThat(analytics.events.filter { it.startsWith("keypad") }).containsExactly("keypad_shown button")
+    }
+
+    @Test
+    fun `hiding a closed keypad or showing an open one logs nothing`() {
+        val viewModel = viewModel()
+        viewModel.onHideKeypad()
+        viewModel.onShowKeypad()
+        val focus = viewModel.state.value.focus
+
+        viewModel.onShowKeypad()
+
+        assertThat(viewModel.state.value.focus).isEqualTo(focus)
+        assertThat(analytics.events.filter { it.startsWith("keypad") }).containsExactly("keypad_shown button")
+    }
+
     // The keypad's main key
 
     @Test
@@ -1526,6 +1568,14 @@ class WorkoutLogViewModelTest {
 
         override fun setSuggestionsOpened() {
             events += "set_suggestions"
+        }
+
+        override fun keypadShown(source: KeypadShownFrom) {
+            events += "keypad_shown ${source.id}"
+        }
+
+        override fun keypadHidden(source: KeypadHiddenBy) {
+            events += "keypad_hidden ${source.id}"
         }
 
         override fun setCompleted(type: ELSetType?, timed: Boolean, fromNotification: Boolean) {

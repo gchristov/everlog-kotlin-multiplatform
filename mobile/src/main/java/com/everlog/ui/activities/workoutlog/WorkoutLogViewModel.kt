@@ -150,9 +150,11 @@ internal class WorkoutLogViewModel(
     }
 
     fun onCellTapped(cell: CellFocus) {
+        val opening = state.value.focus == null
         finishTyping()
         leaveSetTimer(cell.ref)
         setState { focusOn(cell) }
+        if (opening) analytics.keypadShown(KeypadShownFrom.Cell)
     }
 
     // Moving on to another set stops a timer left running on the last, so it can be started again rather than ticked
@@ -164,17 +166,25 @@ internal class WorkoutLogViewModel(
         analytics.setTimerStopped()
     }
 
-    fun onShowKeypad() = setState { (selected ?: current)?.let { focusOn(countCell(it)) } ?: this }
+    fun onShowKeypad() {
+        if (state.value.focus != null) return
+        setState { (selected ?: current)?.let { focusOn(countCell(it)) } ?: this }
+        if (state.value.focus != null) analytics.keypadShown(KeypadShownFrom.Button)
+    }
 
-    fun onHideKeypad() {
+    fun onHideKeypad() = hideKeypad(KeypadHiddenBy.Collapse)
+
+    private fun hideKeypad(by: KeypadHiddenBy) {
+        if (state.value.focus == null) return
         finishTyping()
         setState { focusOn(null) }
+        analytics.keypadHidden(by)
     }
 
     fun onBack() {
         when {
             state.value.editing -> onEditDone()
-            state.value.focus != null -> onHideKeypad()
+            state.value.focus != null -> hideKeypad(KeypadHiddenBy.Back)
             else -> onClose()
         }
     }
