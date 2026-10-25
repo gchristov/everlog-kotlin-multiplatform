@@ -49,7 +49,9 @@ open class ELFragmentPagerAdapter : FragmentStatePagerAdapter {
                 try {
                     val trans: FragmentTransaction = mFragmentManager!!.beginTransaction()
                     trans.remove((`object` as Fragment))
-                    trans.commit()
+                    // Plan details rebuilds its pager on plan updates, which can arrive while it's stopped. Losing
+                    // this removal from saved state is fine: BaseActivity screens never restore fragments.
+                    trans.commitAllowingStateLoss()
                 } catch (e: Exception) {
                     e.printStackTrace()
                     Timber.tag(TAG).e(e)
