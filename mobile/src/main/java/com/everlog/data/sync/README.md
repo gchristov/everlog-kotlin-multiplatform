@@ -41,6 +41,13 @@ After the full history has synced, each due sync of a `Recent` collection also c
 with the server's (one read per 1,000 documents). A difference means something older changed elsewhere
 or went missing from the cache, so the full history syncs again.
 
+Long lists (the history) read in pages with `DataSync.pages(source, pageSize)`, newest first, for a
+`Recent` collection. Its cache listener grows a page at a time (`loadMore()`), so workouts added or
+deleted anywhere don't make rows skip or repeat. Pages come from the cache, which the recent sync fills.
+Past what's cached, before the full history has synced, the next page comes from the server (`Page.loadingMore`
+for a footer spinner) until it has nothing older (`Page.endReached`). A page that fails is retried by the
+next `loadMore()`.
+
 A source's backend is a `FirestoreCollection` or `FirestoreDocument`. Give it every document of the
 source (e.g. a user's workouts), the order screens show them in, and how to parse one. A document that
 doesn't parse is left out and logged.

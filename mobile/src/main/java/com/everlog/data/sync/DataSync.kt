@@ -71,6 +71,24 @@ class DataSync(
         }
     }
 
+    /**
+     * Newest first, a page at a time, for long lists like the history. Pages come from the cache, which the
+     * recent sync fills; past what's cached, before the full history has synced, from the server.
+     */
+    fun <T> pages(source: CollectionSource<T>, pageSize: Int): PagedRead<T> {
+        val plan = requireNotNull(source.plan as? SyncPlan.Recent) { "Paging needs a SyncPlan.Recent collection" }
+        val session = sessions.value
+        return PagedRead(
+            backend = source.backend,
+            pageSize = pageSize,
+            scope = scope,
+            status = statusOf(source.key),
+            sync = { requestSync(source, Range.Last(plan.months)) },
+            fetchPage = { after -> withSyncTimeout(source.name) { source.backend.fetchPage(after, pageSize) } },
+            endsWithSession = { it.endsWith(session) },
+        )
+    }
+
     // Ready(null) once the server has said the document doesn't exist
     fun <T> observe(source: DocumentSource<T>): Flow<Load<T?>> =
         observe(source.key, "document", sync = { requestSync(source) }) { status ->

@@ -115,6 +115,17 @@ class FirestoreBackendsTest {
     }
 
     @Test
+    fun aPageFollowsTheCachedOnesInTheScreensOrder() = runBlocking<Unit> {
+        (1..5L).forEach { otherPhone.document("w$it").set(mapOf("date" to it)).await() }
+        backend.fetchSince(since = 4)
+
+        assertThat(backend.fetchPage(after = 2, size = 2)).isEqualTo(2)
+
+        assertThat(backend.cached(since = null, limit = 3).within()).containsExactly(Entry("w5", 5), Entry("w4", 4), Entry("w3", 3)).inOrder()
+        assertThat(backend.cached(since = null).within().map { it.id }).containsExactly("w5", "w4", "w3", "w2").inOrder()
+    }
+
+    @Test
     fun countsOnTheServerAndInTheCache() = runBlocking<Unit> {
         otherPhone.document("bench").set(mapOf("date" to 2L)).await()
         otherPhone.document("squat").set(mapOf("date" to 1L)).await()
