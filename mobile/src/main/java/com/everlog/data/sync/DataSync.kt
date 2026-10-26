@@ -10,7 +10,6 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.map
@@ -65,8 +64,8 @@ class DataSync(
         val fullHistory = needsFullHistory(source.plan, range)
         return observe(source.key, range.toString(), sync = { requestSync(source, range) }) { status ->
             val since = (range as? Range.Last)?.let { windowStart(clock(), it.months) }
-            combine(source.backend.cached(since), status) { cached, syncStatus ->
-                loadOf(cached, cached.isEmpty(), covers(syncStatus, source.plan, range), fullHistory, syncStatus)
+            source.backend.cached(since).withSyncStatus(status) { currentStatus(source.key) }.map { view ->
+                loadOf(view.cached, view.cached.isEmpty(), covers(view.status, source.plan, range), fullHistory, view.status, view.cacheBehind)
             }
         }
     }
@@ -83,6 +82,7 @@ class DataSync(
             pageSize = pageSize,
             scope = scope,
             status = statusOf(source.key),
+            currentStatus = { currentStatus(source.key) },
             sync = { requestSync(source, Range.Last(plan.months)) },
             fetchPage = { after -> withSyncTimeout(source.name) { source.backend.fetchPage(after, pageSize) } },
             endsWithSession = { it.endsWith(session) },
@@ -92,8 +92,8 @@ class DataSync(
     // Ready(null) once the server has said the document doesn't exist
     fun <T> observe(source: DocumentSource<T>): Flow<Load<T?>> =
         observe(source.key, "document", sync = { requestSync(source) }) { status ->
-            combine(source.backend.cached(), status) { cached, syncStatus ->
-                loadOf(cached, cached == null, syncStatus.lastSynced != null, needsFullHistory = false, syncStatus)
+            source.backend.cached().withSyncStatus(status) { currentStatus(source.key) }.map { view ->
+                loadOf(view.cached, view.cached == null, view.status.lastSynced != null, needsFullHistory = false, view.status, view.cacheBehind)
             }
         }
 
@@ -133,8 +133,8 @@ class DataSync(
         if (!isDue(currentStatus(source.key).lastSynced, clock(), settings.maxAgeMillis())) return
         start(source.key, SyncWork.Whole) {
             syncing(source.key, source.name, SyncWork.Whole) {
-                withSyncTimeout(source.name) { source.backend.fetch() }
-                SyncResult(documents = 1)
+                val exists = withSyncTimeout(source.name) { source.backend.fetch() }
+                SyncResult(documents = if (exists) 1 else 0)
             }
         }
     }
@@ -205,7 +205,13 @@ class DataSync(
             records.setLastSynced(key, startedAt)
             if (result.fullHistory) records.setFullHistorySynced(key, startedAt)
             updateStatus(key) {
-                it.copy(lastSynced = startedAt, fullHistorySynced = if (result.fullHistory) startedAt else it.fullHistorySynced, syncing = false)
+                it.copy(
+                    lastSynced = startedAt,
+                    fullHistorySynced = if (result.fullHistory) startedAt else it.fullHistorySynced,
+                    syncing = false,
+                    syncs = it.syncs + 1,
+                    lastFetched = result.documents,
+                )
             }
             Timber.tag(TAG).i("Synced %s (%s): %d documents in %d ms", name, work, result.documents, clock() - startedAt)
         } catch (e: CancellationException) {

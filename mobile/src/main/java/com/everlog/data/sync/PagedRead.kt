@@ -30,6 +30,7 @@ class PagedRead<T> internal constructor(
     private val pageSize: Int,
     private val scope: CoroutineScope,
     status: Flow<SyncStatus>,
+    currentStatus: () -> SyncStatus,
     sync: () -> Unit,
     private val fetchPage: suspend (after: Int) -> Int,
     endsWithSession: (Flow<Load<Page<T>>>) -> Flow<Load<Page<T>>>,
@@ -44,12 +45,14 @@ class PagedRead<T> internal constructor(
 
     @OptIn(ExperimentalCoroutinesApi::class)
     val loads: Flow<Load<Page<T>>> = endsWithSession(
-        combine(limit.flatMapLatest { limit -> backend.cached(since = null, limit).map { Shown(it, limit) } }, status, paging) { shown, status, paging ->
+        combine(limit.flatMapLatest { limit -> backend.cached(since = null, limit).map { Shown(it, limit) } }.withSyncStatus(status, currentStatus), paging) { view, paging ->
+            val shown = view.cached
+            val status = view.status
             this.shown = shown.items.size
             fetchFromServerWhenShort(shown, status, paging)
             val short = shown.items.size < shown.limit
             val page = Page(shown.items, paging.loadingMore, endReached = short && (status.fullHistorySynced != null || paging.serverExhausted))
-            loadOf(page, shown.items.isEmpty(), covered = status.lastSynced != null, needsFullHistory = false, status)
+            loadOf(page, shown.items.isEmpty(), covered = status.lastSynced != null, needsFullHistory = false, status, view.cacheBehind)
         }
             .catch { emit(Load.Unavailable(it)) }
             .distinctUntilChanged()

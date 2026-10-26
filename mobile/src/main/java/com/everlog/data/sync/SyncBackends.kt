@@ -40,6 +40,6 @@ interface DocumentBackend<T> {
     // The cached document as it changes, or null when it isn't cached, doesn't exist or doesn't parse
     fun cached(): Flow<T?>
 
-    // The document from the server into the cache, including that it doesn't exist
-    suspend fun fetch()
+    // The document from the server into the cache, including that it doesn't exist. Returns whether it does.
+    suspend fun fetch(): Boolean
 }

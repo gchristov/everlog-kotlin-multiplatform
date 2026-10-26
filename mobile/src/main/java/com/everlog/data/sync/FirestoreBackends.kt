@@ -94,9 +94,7 @@ class FirestoreDocument<T : Any>(
         .map { snapshot -> if (snapshot.exists()) snapshot.parseOrNull(parse) else null }
         .flowOn(dispatcher)
 
-    override suspend fun fetch() {
-        document.get(Source.SERVER).await()
-    }
+    override suspend fun fetch(): Boolean = document.get(Source.SERVER).await().exists()
 }
 
 // Firestore puts local writes in the cache straight away, so this follows the user's own edits for free

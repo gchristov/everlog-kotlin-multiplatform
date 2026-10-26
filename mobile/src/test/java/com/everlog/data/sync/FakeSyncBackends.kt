@@ -26,6 +26,19 @@ abstract class FakeServer {
 
     var hang = false
 
+    // Syncs finish before the cache shows what they brought, as Firestore's can, until delivered
+    var cacheLate = false
+    private val late = mutableListOf<() -> Unit>()
+
+    fun deliverCache() {
+        late.forEach { it() }
+        late.clear()
+    }
+
+    protected fun land(update: () -> Unit) {
+        if (cacheLate) late += update else update()
+    }
+
     protected suspend fun serverCall(call: String) {
         calls += call
         gate?.await()
@@ -49,27 +62,28 @@ class FakeCollectionBackend(server: List<Doc> = emptyList(), cached: List<Doc> =
         serverCall("page:$after")
         val last = cache.value.sortedByDescending { it.date }.take(after).lastOrNull()
         val page = server.sortedByDescending { it.date }.filter { last == null || it.date < last.date }.take(size)
-        cache.value = cache.value.filterNot { cached -> page.any { it.id == cached.id } } + page
+        land { cache.value = cache.value.filterNot { cached -> page.any { it.id == cached.id } } + page }
         return page.size
     }
 
     override suspend fun fetchAll(): Int {
         serverCall("all")
-        cache.value = server.filter { it.id !in pending } + cache.value.filter { it.id in pending }
+        val landed = server.filter { it.id !in pending }
+        land { cache.value = landed + cache.value.filter { it.id in pending } }
         return server.size
     }
 
     override suspend fun fetchSince(since: Long): Int {
         serverCall("since")
         val recent = server.filter { it.date >= since && it.id !in pending }
-        cache.value = cache.value.filter { it.date < since || it.id in pending } + recent
+        land { cache.value = cache.value.filter { it.date < since || it.id in pending } + recent }
         return recent.size
     }
 
     override suspend fun fetchChunk(afterId: String?, size: Int): Chunk {
         serverCall("chunk:$afterId")
         val chunk = server.sortedBy { it.id }.filter { afterId == null || it.id > afterId }.take(size)
-        cache.value = cache.value.filterNot { cached -> chunk.any { it.id == cached.id } } + chunk
+        land { cache.value = cache.value.filterNot { cached -> chunk.any { it.id == cached.id } } + chunk }
         return Chunk(chunk.size, chunk.lastOrNull()?.id)
     }
 
@@ -93,9 +107,11 @@ class FakeDocumentBackend(var server: Doc? = null, cached: Doc? = null) : FakeSe
 
     override fun cached(): Flow<Doc?> = cache
 
-    override suspend fun fetch() {
+    override suspend fun fetch(): Boolean {
         serverCall("document")
-        cache.value = server
+        val landed = server
+        land { cache.value = landed }
+        return landed != null
     }
 }
 
