@@ -41,10 +41,18 @@ class AppConfig {
     // after which it drops the least recently used documents
     val firestoreCacheSizeBytes = 1024L * 1024 * 1024
 
+    // Per server read: a weak signal shows the cache, or Unavailable when nothing is cached, rather than loading for long
+    val dataSyncTimeoutSeconds = 20L
+    // Workouts per server read when syncing a full history
+    val dataSyncChunkSize = 200
+
     companion object {
 
         @JvmField
         val configuration = AppConfig()
+
+        // Remote Config's data_sync_max_age_minutes when it has none
+        const val DATA_SYNC_MAX_AGE_MINUTES = 60L
     }
 
     fun configureApp() {

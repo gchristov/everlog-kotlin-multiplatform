@@ -1,0 +1,29 @@
+package com.everlog.data.sync
+
+import android.content.Context
+import com.everlog.BuildConfig
+import com.everlog.application.ELApplication
+import com.everlog.config.AppConfig
+import com.everlog.managers.RemoteConfigManager
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
+import java.util.concurrent.TimeUnit
+
+// The app's one DataSync. Its syncs run in their own scope, so one finishes after the screen that started it closes.
+object AppDataSync {
+
+    val instance: DataSync by lazy {
+        val config = AppConfig.configuration
+        DataSync(
+            records = PreferencesSyncRecords(ELApplication.getInstance().getSharedPreferences(PreferencesSyncRecords.FILE, Context.MODE_PRIVATE)),
+            settings = SyncSettings(
+                maxAgeMillis = { maxAgeMillis(BuildConfig.DEBUG, RemoteConfigManager.manager.dataSyncMaxAgeMinutes(), AppConfig.DATA_SYNC_MAX_AGE_MINUTES) },
+                timeoutMillis = TimeUnit.SECONDS.toMillis(config.dataSyncTimeoutSeconds),
+                chunkSize = config.dataSyncChunkSize,
+            ),
+            clock = System::currentTimeMillis,
+            scope = CoroutineScope(SupervisorJob() + Dispatchers.IO),
+        )
+    }
+}

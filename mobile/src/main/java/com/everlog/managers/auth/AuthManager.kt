@@ -11,6 +11,7 @@ import com.everlog.data.datastores.ELDatastore
 import com.everlog.data.datastores.base.OnStoreItemListener
 import com.everlog.data.model.ELConsent.Companion.newConsent
 import com.everlog.data.model.ELUser
+import com.everlog.data.sync.AppDataSync
 import com.everlog.utils.device.DeviceUtils
 import com.everlog.managers.PlanManager
 import com.everlog.managers.analytics.AnalyticsConstants
@@ -164,6 +165,7 @@ object AuthManager : PreferencesManager() {
         Timber.tag(TAG).i("Logging out")
         // Stores
         ELDatastore.destroy()
+        AppDataSync.instance.signOut()
         // Integrations
         GoogleFitIntegrationManager.signOut()
         // Local state

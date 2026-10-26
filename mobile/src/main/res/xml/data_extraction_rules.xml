@@ -4,8 +4,12 @@
 <data-extraction-rules>
     <cloud-backup>
         <exclude domain="database" path="." />
+        <!-- DataSync's records of what's synced, which would be wrong without the cache -->
+        <exclude domain="sharedpref" path="DataSync.xml" />
     </cloud-backup>
     <device-transfer>
         <exclude domain="database" path="." />
+        <!-- DataSync's records of what's synced, which would be wrong without the cache -->
+        <exclude domain="sharedpref" path="DataSync.xml" />
     </device-transfer>
 </data-extraction-rules>
