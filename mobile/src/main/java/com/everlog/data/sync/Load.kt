@@ -15,3 +15,9 @@ sealed interface Load<out T> {
     // Nothing cached, never synced, and the server can't be reached. Collecting again tries again.
     data class Unavailable(val error: Throwable) : Load<Nothing>
 }
+
+fun <T, R> Load<T>.map(transform: (T) -> R): Load<R> = when (this) {
+    is Load.Ready -> Load.Ready(transform(value))
+    Load.Loading -> Load.Loading
+    is Load.Unavailable -> this
+}

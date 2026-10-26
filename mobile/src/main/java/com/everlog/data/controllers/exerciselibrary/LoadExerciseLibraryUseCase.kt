@@ -1,35 +1,38 @@
 package com.everlog.data.controllers.exerciselibrary
 
-import arrow.core.Either
 import arrow.core.getOrElse
-import arrow.core.raise.either
-import arrow.core.raise.ensure
 import com.everlog.data.controllers.starterroutines.ExerciseLibraryEmptyException
 import com.everlog.data.model.exercise.library.ExerciseLibrary
 import com.everlog.data.model.exercise.library.ExerciseRegistry
+import com.everlog.data.model.exercise.library.LibraryExercise
 import com.everlog.data.repositories.ExerciseRepository
 import com.everlog.data.repositories.RoutineRepository
 import com.everlog.data.repositories.WorkoutRepository
+import com.everlog.data.sync.Load
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
-import kotlinx.coroutines.withContext
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.emitAll
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.flowOn
 import timber.log.Timber
 
 /**
- * Loads the [ExerciseLibrary]: the global exercises, the user's own, the registry, how often the
- * user's templates use each exercise and when they last did it, all at once.
+ * The [ExerciseLibrary] as it changes: the global exercises, the user's own, the registry, and how
+ * often the user's templates use each exercise and when they last did it, read once.
  *
  * Follows the rules for apps reading the library in tools/exercises/README.md: hidden exercises are
  * left out, and a family the registry doesn't know counts as none. The global exercises are the only
  * part it needs: without the registry it names nothing (exercises still show), and without the
  * user's own exercises, templates or workouts it leaves those out.
  *
- * Fails with the global exercises' load error, or [ExerciseLibraryEmptyException] when they load
- * empty (most likely offline with nothing cached).
+ * Unavailable with the global exercises' sync error, or [ExerciseLibraryEmptyException] when the
+ * server has none, which would mean they stopped parsing.
  */
 interface LoadExerciseLibraryUseCase {
-    suspend operator fun invoke(): Either<Throwable, ExerciseLibrary>
+    operator fun invoke(): Flow<Load<ExerciseLibrary>>
 }
 
 class RealLoadExerciseLibraryUseCase(
@@ -39,32 +42,19 @@ class RealLoadExerciseLibraryUseCase(
     private val workoutRepository: WorkoutRepository,
 ) : LoadExerciseLibraryUseCase {
 
-    override suspend operator fun invoke(): Either<Throwable, ExerciseLibrary> = withContext(dispatcher) {
-        coroutineScope {
-            val registryRead = async { exerciseRepository.registry() }
-            val globalRead = async { exerciseRepository.libraryExercises() }
-            val ownRead = async { exerciseRepository.ownExercises() }
+    override operator fun invoke(): Flow<Load<ExerciseLibrary>> = flow {
+        val (counts, lastDone) = coroutineScope {
             val countsRead = async { routineRepository.exerciseTemplateCounts() }
             val lastDoneRead = async { workoutRepository.exerciseLastDone() }
-            either {
-                val global = globalRead.await().bind()
-                ensure(global.isNotEmpty()) { ExerciseLibraryEmptyException() }
-                val registry = registryRead.await().getOrElse { warn("registry", it); ExerciseRegistry() }
-                val own = ownRead.await().getOrElse { warn("own exercises", it); emptyList() }
-                val counts = countsRead.await().getOrElse { warn("template counts", it); emptyMap() }
-                val lastDone = lastDoneRead.await().getOrElse { warn("recent workouts", it); emptyMap() }
-                ExerciseLibrary(
-                    exercises = (global + own).map { exercise ->
-                        val unknownFamily = exercise.family != null && registry.families.isNotEmpty() && registry.family(exercise.family) == null
-                        if (unknownFamily) exercise.copy(family = null) else exercise
-                    },
-                    registry = registry,
-                    templateCounts = counts,
-                    lastDone = lastDone,
-                )
-            }
+            countsRead.await().getOrElse { warn("template counts", it); emptyMap() } to
+                lastDoneRead.await().getOrElse { warn("recent workouts", it); emptyMap() }
         }
-    }
+        emitAll(
+            combine(exerciseRepository.libraryExercises(), exerciseRepository.ownExercises(), exerciseRepository.registry()) { global, own, registry ->
+                exerciseLibraryOf(global, own, registry, counts, lastDone)
+            }
+        )
+    }.flowOn(dispatcher)
 
     private fun warn(what: String, error: Throwable) {
         Timber.tag(TAG).w(error, "Loaded the exercise library without its %s", what)
@@ -72,5 +62,33 @@ class RealLoadExerciseLibraryUseCase(
 
     private companion object {
         const val TAG = "LoadExerciseLibrary"
+    }
+}
+
+// Waits for the optional parts until they've answered, so the library doesn't show unnamed and then jump
+internal fun exerciseLibraryOf(
+    global: Load<List<LibraryExercise>>,
+    own: Load<List<LibraryExercise>>,
+    registry: Load<ExerciseRegistry?>,
+    templateCounts: Map<String, Int>,
+    lastDone: Map<String, Long>,
+): Load<ExerciseLibrary> = when {
+    global is Load.Unavailable -> global
+    global == Load.Loading || own == Load.Loading || registry == Load.Loading -> Load.Loading
+    (global as Load.Ready).value.isEmpty() -> Load.Unavailable(ExerciseLibraryEmptyException())
+    else -> {
+        val knownRegistry = (registry as? Load.Ready)?.value ?: ExerciseRegistry()
+        val ownExercises = (own as? Load.Ready)?.value.orEmpty()
+        Load.Ready(
+            ExerciseLibrary(
+                exercises = (global.value + ownExercises).map { exercise ->
+                    val unknownFamily = exercise.family != null && knownRegistry.families.isNotEmpty() && knownRegistry.family(exercise.family) == null
+                    if (unknownFamily) exercise.copy(family = null) else exercise
+                },
+                registry = knownRegistry,
+                templateCounts = templateCounts,
+                lastDone = lastDone,
+            )
+        )
     }
 }

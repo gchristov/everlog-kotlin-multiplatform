@@ -30,6 +30,7 @@ import com.everlog.R
 import com.everlog.data.controllers.starterroutines.RealBuildStarterRoutinesUseCase
 import com.everlog.data.controllers.starterroutines.RealSaveStarterRoutinesUseCase
 import com.everlog.data.repositories.RealExerciseRepository
+import com.everlog.data.sync.AppDataSync
 import com.everlog.data.repositories.RealRoutineRepository
 import com.everlog.managers.preferences.SettingsManager
 import com.everlog.ui.activities.home.routine.create.CreateRoutineActivity
@@ -60,7 +61,7 @@ class OnboardingActivity : CommonComposeActivity() {
                 dispatcher = Dispatchers.Main,
                 buildStarterRoutinesUseCase = RealBuildStarterRoutinesUseCase(
                     dispatcher = Dispatchers.Default,
-                    exerciseRepository = RealExerciseRepository(dispatcher = Dispatchers.IO),
+                    exerciseRepository = RealExerciseRepository(dispatcher = Dispatchers.IO, dataSync = AppDataSync.instance),
                 ),
                 saveStarterRoutinesUseCase = RealSaveStarterRoutinesUseCase(
                     dispatcher = Dispatchers.Default,

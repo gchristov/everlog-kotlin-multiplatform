@@ -8,8 +8,10 @@ import com.everlog.data.model.exercise.library.ExerciseRegistry
 import com.everlog.data.model.exercise.library.LibraryExercise
 import com.everlog.data.repositories.ExerciseRepository
 import com.everlog.data.repositories.RoutineRepository
+import com.everlog.data.sync.Load
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.emptyFlow
+import kotlinx.coroutines.flow.flowOf
 
 /**
  * The week's exercises as they'd come from the exercise library.
@@ -20,7 +22,7 @@ fun exerciseLibrary(week: StarterWeek): List<ELExercise> = week.routines.flatMap
 
 class FakeExerciseRepository(
     var globalExercises: Either<Throwable, List<ELExercise>> = Either.Right(emptyList()),
-    var libraryExercise: Either<Throwable, LibraryExercise?> = Either.Right(null),
+    var libraryExercise: Load<LibraryExercise?> = Load.Ready(null),
 ) : ExerciseRepository {
     var globalExercisesCalls = 0
         private set
@@ -30,19 +32,19 @@ class FakeExerciseRepository(
         return globalExercises
     }
 
-    override suspend fun libraryExercises(): Either<Throwable, List<LibraryExercise>> = Either.Right(emptyList())
+    override fun libraryExercises(): Flow<Load<List<LibraryExercise>>> = flowOf(Load.Ready(emptyList()))
 
     // The uuids asked for, in order
     val libraryExerciseReads = mutableListOf<String>()
 
-    override suspend fun libraryExercise(uuid: String): Either<Throwable, LibraryExercise?> {
+    override fun libraryExercise(uuid: String): Flow<Load<LibraryExercise?>> {
         libraryExerciseReads += uuid
-        return libraryExercise
+        return flowOf(libraryExercise)
     }
 
-    override suspend fun ownExercises(): Either<Throwable, List<LibraryExercise>> = Either.Right(emptyList())
+    override fun ownExercises(): Flow<Load<List<LibraryExercise>>> = flowOf(Load.Ready(emptyList()))
 
-    override suspend fun registry(): Either<Throwable, ExerciseRegistry> = Either.Right(ExerciseRegistry())
+    override fun registry(): Flow<Load<ExerciseRegistry?>> = flowOf(Load.Ready(ExerciseRegistry()))
 
     override fun ownExerciseUpdates(): Flow<List<LibraryExercise>> = emptyFlow()
 }

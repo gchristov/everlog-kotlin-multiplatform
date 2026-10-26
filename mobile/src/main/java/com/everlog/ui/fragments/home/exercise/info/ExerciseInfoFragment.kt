@@ -13,6 +13,7 @@ import com.everlog.data.controllers.exerciseguide.RealLoadExerciseGuideUseCase
 import com.everlog.data.controllers.statistics.ExerciseStatsController
 import com.everlog.data.model.exercise.ELExercise
 import com.everlog.data.repositories.RealExerciseRepository
+import com.everlog.data.sync.AppDataSync
 import com.everlog.managers.analytics.AnalyticsConstants
 import com.everlog.ui.design.theme.Theme
 import com.everlog.ui.fragments.home.exercise.BaseExerciseTabFragment
@@ -32,7 +33,7 @@ class ExerciseInfoFragment(exercise: ELExercise, stats: ExerciseStatsController.
                 val io = Dispatchers.IO
                 ExerciseInfoViewModel(
                     dispatcher = Dispatchers.Main,
-                    loadGuide = RealLoadExerciseGuideUseCase(io, RealExerciseRepository(io)),
+                    loadGuide = RealLoadExerciseGuideUseCase(io, RealExerciseRepository(io, AppDataSync.instance)),
                     exercise = exercise.toInfoExercise(),
                 )
             }

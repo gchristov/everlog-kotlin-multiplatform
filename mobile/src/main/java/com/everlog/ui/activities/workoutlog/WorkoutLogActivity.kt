@@ -21,6 +21,7 @@ import com.everlog.data.controllers.workoutsession.RealWorkoutSetPrefill
 import com.everlog.data.model.exercise.ELExerciseGroup
 import com.everlog.data.model.workout.ELWorkout
 import com.everlog.data.repositories.RealExerciseRepository
+import com.everlog.data.sync.AppDataSync
 import com.everlog.data.repositories.RealOngoingWorkoutRepository
 import com.everlog.ui.activities.home.exercise.details.ExerciseDetailsActivity
 import com.everlog.ui.design.CommonComposeActivity
@@ -51,7 +52,7 @@ class WorkoutLogActivity : CommonComposeActivity() {
                     notification = RealWorkoutLogNotification(ELNavigator(applicationContext)),
                     loadPrefillSources = RealLoadPrefillSourcesUseCase(Dispatchers.Default),
                     prefill = RealWorkoutSetPrefill(),
-                    ownExerciseUpdates = RealExerciseRepository(Dispatchers.IO)::ownExerciseUpdates,
+                    ownExerciseUpdates = RealExerciseRepository(Dispatchers.IO, AppDataSync.instance)::ownExerciseUpdates,
                 )
             }
         }
