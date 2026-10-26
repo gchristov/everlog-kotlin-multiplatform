@@ -10,15 +10,19 @@ interface CollectionBackend<T> {
 
     /**
      * What's cached, in the order screens show it, as it changes: local writes straight away, a sync once
-     * it lands. Only from [since] by the plan's date field when given. Documents that don't parse are left out.
+     * it lands. Only from [since] by the plan's date field, and the first [limit], when given. Documents
+     * that don't parse are left out.
      */
-    fun cached(since: Long?): Flow<List<T>>
+    fun cached(since: Long?, limit: Int? = null): Flow<List<T>>
 
     // The whole collection from the server into the cache. Returns how many documents it read.
     suspend fun fetchAll(): Int
 
     // The documents from [since] by the plan's date field. Returns how many it read.
     suspend fun fetchSince(since: Long): Int
+
+    // The [size] documents from the server that follow the first [after] cached ones, in the order screens show them
+    suspend fun fetchPage(after: Int, size: Int): Int
 
     // One chunk of the whole collection by document id, after [afterId]
     suspend fun fetchChunk(afterId: String?, size: Int): Chunk

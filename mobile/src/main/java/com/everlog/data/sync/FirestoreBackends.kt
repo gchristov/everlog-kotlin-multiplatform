@@ -39,8 +39,9 @@ class FirestoreCollection<T : Any>(
     private val parse: (DocumentSnapshot) -> T?,
 ) : CollectionBackend<T> {
 
-    override fun cached(since: Long?): Flow<List<T>> {
-        val query = order(if (since == null) documents else documents.whereGreaterThanOrEqualTo(requireDateField(), since))
+    override fun cached(since: Long?, limit: Int?): Flow<List<T>> {
+        val ordered = order(if (since == null) documents else documents.whereGreaterThanOrEqualTo(requireDateField(), since))
+        val query = if (limit == null) ordered else ordered.limit(limit.toLong())
         return flow {
             // Per listener: a new one starts with every document added
             val parsed = ParsedDocuments<DocumentSnapshot, T> { it.parseOrNull(parse) }
@@ -57,6 +58,12 @@ class FirestoreCollection<T : Any>(
 
     override suspend fun fetchSince(since: Long): Int =
         documents.whereGreaterThanOrEqualTo(requireDateField(), since).get(Source.SERVER).await().size()
+
+    override suspend fun fetchPage(after: Int, size: Int): Int {
+        val ordered = order(documents)
+        val last = if (after == 0) null else ordered.limit(after.toLong()).get(Source.CACHE).await().documents.lastOrNull()
+        return (if (last == null) ordered else ordered.startAfter(last)).limit(size.toLong()).get(Source.SERVER).await().size()
+    }
 
     override suspend fun fetchChunk(afterId: String?, size: Int): Chunk {
         val byId = documents.orderBy(FieldPath.documentId())
