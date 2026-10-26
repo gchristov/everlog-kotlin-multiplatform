@@ -137,7 +137,8 @@ function syncItems(form, spec, store, apply, change) {
       syncFields(typed(current), item, change, apply);
     } else {
       change(`add the ${item.type} "${item.title}"`, () => {
-        current = addItem(form, item);
+        // Looked up again as a plain Item, like the ones findItem returns: typed() only works on those.
+        current = form.getItemById(addItem(form, item).getId());
         store.setProperty(itemKey(spec, item), String(current.getId()));
         syncFields(typed(current), item, (message, action) => action(), apply);
       });
