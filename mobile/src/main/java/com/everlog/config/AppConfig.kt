@@ -8,6 +8,9 @@ import com.everlog.managers.ErrorManager
 import com.everlog.managers.analytics.AnalyticsManager
 import com.everlog.ui.fragments.home.activity.history.HistoryHomeFragment
 import com.everlog.ui.fragments.home.activity.statistics.StatisticsHomeFragment
+import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.firestoreSettings
+import com.google.firebase.firestore.persistentCacheSettings
 
 class AppConfig {
 
@@ -34,6 +37,10 @@ class AppConfig {
 
     val appUpdateRepromptDelayDays = 7
 
+    // All-time history is read from the cache, so nothing may be evicted: Firestore's default is 100 MB,
+    // after which it drops the least recently used documents
+    val firestoreCacheSizeBytes = 1024L * 1024 * 1024
+
     companion object {
 
         @JvmField
@@ -41,8 +48,16 @@ class AppConfig {
     }
 
     fun configureApp() {
+        configureFirestore()
         configureAnalyticsManager()
         configureErrorManager()
+    }
+
+    // Settings only apply before Firestore's first use, so this runs first
+    private fun configureFirestore() {
+        FirebaseFirestore.getInstance().firestoreSettings = firestoreSettings {
+            setLocalCacheSettings(persistentCacheSettings { setSizeBytes(firestoreCacheSizeBytes) })
+        }
     }
 
     private fun configureErrorManager() {
