@@ -3,4 +3,6 @@
 <!-- Databases are caches and logs: a restored Firestore cache would be as old as the backup, so the app syncs from the server instead -->
 <full-backup-content>
     <exclude domain="database" path="." />
+    <!-- DataSync's records of what's synced, which would be wrong without the cache -->
+    <exclude domain="sharedpref" path="DataSync.xml" />
 </full-backup-content>

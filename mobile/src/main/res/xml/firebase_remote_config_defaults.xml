@@ -28,4 +28,8 @@
         <key>feedback_forms</key>
         <value>{}</value>
     </entry>
+    <entry>
+        <key>data_sync_max_age_minutes</key>
+        <value>60</value>
+    </entry>
 </defaultsMap>
