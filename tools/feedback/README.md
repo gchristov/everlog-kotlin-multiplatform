@@ -36,7 +36,8 @@ place whose link is missing or empty shows no feedback link.
   see, optional and in the first section, which every path goes through. "App version" gets `{appVersion}`, and
   "Place" gets `{source}` on forms with more than one way in. The link in Remote Config is a Google Forms pre-filled
   link with those placeholders in it, braces as written (Google encodes them, `Sync.gs` puts them back), and the
-  app fills them in when it opens the form. A `forms.gle` short link can't carry them.
+  app fills them in when it opens the form. A `forms.gle` short link can't carry them. Google Forms drops them from
+  the address bar once the form opens, so reloading the page empties the fields: open the form from the app again.
 - **The rest** is set on every form: the outro (`CONFIRMATION_MESSAGE`), a "Submit another response" link so
   people can send more than one, no limit on responses per person, published and accepting responses. New forms
   don't ask people to sign in.
@@ -63,7 +64,8 @@ Once, signed in with the Google account that owns the forms:
 ## Changing a form
 
 1. Change `Forms.gs` in a PR.
-2. Paste the changed files into the Apps Script project.
+2. Paste the changed files into the Apps Script project. The editor re-indents what's pasted, which doesn't change
+   what the code does.
 3. Run `previewSync` and read the log. It lists every change without making it. Look out for deletions: they lose
    answers.
 4. Run `syncForms`. The log ends with each form's edit link and the `feedback_forms` value, and says which links
