@@ -13,7 +13,9 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withTimeout
@@ -22,6 +24,7 @@ import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
 import java.util.UUID
+import java.util.concurrent.CopyOnWriteArrayList
 
 /**
  * The Firestore backends against dev Firestore, as the E2E account. A second Firebase app signed in as the
@@ -80,6 +83,54 @@ class FirestoreBackendsTest {
         backend.fetchAll()
 
         assertThat(backend.cached(since = null).within()).containsExactly(Entry("bench", 3))
+    }
+
+    @Test
+    fun aSyncWhileTheCacheIsFollowedReachesTheServer() = runBlocking<Unit> {
+        // Unordered, so the cache listener and the sync are the same query, as for the exercise library
+        val backend = FirestoreCollection(collection, dispatcher = Dispatchers.IO) { Entry(it.id, it.getLong("date")!!) }
+        otherPhone.document("bench").set(mapOf("date" to 1L)).await()
+        val followed = CopyOnWriteArrayList<List<Entry>>()
+        val following = launch(Dispatchers.IO) { backend.cached(since = null).collect { followed += it } }
+        backend.fetchAll()
+        withTimeout(TIMEOUT) { while (followed.lastOrNull() != listOf(Entry("bench", 1))) delay(50) }
+
+        otherPhone.document("bench").set(mapOf("date" to 2L)).await()
+        backend.fetchAll()
+
+        withTimeout(TIMEOUT) { while (followed.last() != listOf(Entry("bench", 2))) delay(50) }
+        following.cancel()
+    }
+
+    @Test
+    fun aDocumentSyncWhileTheDocumentIsFollowedReachesTheServer() = runBlocking<Unit> {
+        val document = FirestoreDocument(collection.document("profile"), Dispatchers.IO) { Entry(it.id, it.getLong("date")!!) }
+        otherPhone.document("profile").set(mapOf("date" to 1L)).await()
+        val followed = CopyOnWriteArrayList<Entry?>()
+        val following = launch(Dispatchers.IO) { document.cached().collect { followed += it } }
+        document.fetch()
+        withTimeout(TIMEOUT) { while (followed.lastOrNull() != Entry("profile", 1)) delay(50) }
+
+        otherPhone.document("profile").set(mapOf("date" to 2L)).await()
+        document.fetch()
+
+        withTimeout(TIMEOUT) { while (followed.last() != Entry("profile", 2)) delay(50) }
+        following.cancel()
+    }
+
+    @Test
+    fun aFirstPageWhileThePagesAreFollowedReachesTheServer() = runBlocking<Unit> {
+        val followed = CopyOnWriteArrayList<List<Entry>>()
+        val following = launch(Dispatchers.IO) { backend.cached(since = null, limit = 2).collect { followed += it } }
+        withTimeout(TIMEOUT) { while (followed.isEmpty()) delay(50) }
+        backend.fetchPage(after = 0, size = 2)
+
+        otherPhone.document("w1").set(mapOf("date" to 1L)).await()
+        otherPhone.document("w2").set(mapOf("date" to 2L)).await()
+
+        assertThat(backend.fetchPage(after = 0, size = 2)).isEqualTo(2)
+        withTimeout(TIMEOUT) { while (followed.last() != listOf(Entry("w2", 2), Entry("w1", 1))) delay(50) }
+        following.cancel()
     }
 
     @Test
