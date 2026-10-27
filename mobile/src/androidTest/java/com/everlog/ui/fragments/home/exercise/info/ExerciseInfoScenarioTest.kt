@@ -4,15 +4,16 @@ import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithText
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import arrow.core.Either
-import arrow.core.left
 import com.everlog.data.controllers.exerciseguide.LoadExerciseGuideUseCase
 import com.everlog.data.model.exercise.library.ExerciseGuide
+import com.everlog.data.sync.Load
 import com.everlog.ui.design.theme.Theme
 import java.io.IOException
 import java.util.concurrent.TimeUnit
-import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.flowOf
 import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.RuleChain
@@ -35,12 +36,12 @@ class ExerciseInfoScenarioTest {
 
     @Test
     fun aLibraryExerciseShowsItsGuideOnceItLoads() {
-        val guide = CompletableDeferred<Either<Throwable, ExerciseGuide>>()
-        show(Bench, loadGuide = { guide.await() })
+        val guide = MutableStateFlow<Load<ExerciseGuide>>(Load.Loading)
+        show(Bench, loadGuide = guide)
         compose.onNodeWithText("B").assertExists()
         compose.onNodeWithText("How to do it").assertDoesNotExist()
 
-        guide.complete(Either.Right(ExerciseGuide(instructions = listOf("Lie on the bench", "Press the bar up"), tips = listOf("Keep your feet down"))))
+        guide.value = Load.Ready(ExerciseGuide(instructions = listOf("Lie on the bench", "Press the bar up"), tips = listOf("Keep your feet down")))
 
         compose.waitUntil(WaitMillis) { exists("Press the bar up") }
         compose.onNodeWithText("How to do it").assertExists()
@@ -51,7 +52,7 @@ class ExerciseInfoScenarioTest {
 
     @Test
     fun aGuideThatDoesNotLoadLeavesTheExercise() {
-        val viewModel = show(Bench, loadGuide = { IOException("Offline").left() })
+        val viewModel = show(Bench, loadGuide = flowOf(Load.Unavailable(IOException("Offline"))))
 
         compose.onNodeWithText("B").assertExists()
         compose.onNodeWithText("How to do it").assertDoesNotExist()
@@ -62,11 +63,11 @@ class ExerciseInfoScenarioTest {
         compose.waitUntil(WaitMillis) { exists("P") }
     }
 
-    private fun show(exercise: ExerciseInfoViewModel.Exercise, loadGuide: suspend () -> Either<Throwable, ExerciseGuide>): ExerciseInfoViewModel {
+    private fun show(exercise: ExerciseInfoViewModel.Exercise, loadGuide: Flow<Load<ExerciseGuide>>): ExerciseInfoViewModel {
         val viewModel = ExerciseInfoViewModel(
             dispatcher = Dispatchers.Main,
             loadGuide = object : LoadExerciseGuideUseCase {
-                override suspend fun invoke(uuid: String) = loadGuide()
+                override fun invoke(uuid: String) = loadGuide
             },
             exercise = exercise,
         )
