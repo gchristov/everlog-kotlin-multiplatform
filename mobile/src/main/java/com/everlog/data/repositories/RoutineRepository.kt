@@ -3,17 +3,33 @@ package com.everlog.data.repositories
 import arrow.core.Either
 import com.everlog.data.datastores.ELDatastore
 import com.everlog.data.model.ELRoutine
+import com.everlog.data.sync.CollectionSource
+import com.everlog.data.sync.DataSync
+import com.everlog.data.sync.FirestoreCollection
+import com.everlog.data.sync.Load
+import com.everlog.data.sync.SyncPlan
+import com.everlog.data.sync.map
+import com.everlog.managers.auth.LocalUserManager
 import com.everlog.managers.firebase.FirestorePathManager
 import com.everlog.utils.device.DeviceUtils
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.SetOptions
 import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
 import kotlinx.coroutines.withTimeoutOrNull
 import timber.log.Timber
 
 interface RoutineRepository {
+    /**
+     * One of the user's routines as it changes, read from the cache, or null once it's known not to exist, e.g.
+     * deleted on another phone. Null without a signed-in user.
+     */
+    fun routine(uuid: String): Flow<Load<ELRoutine?>>
+
     /**
      * Saves the routines to the user's routines in one write, so either all of them are saved or
      * none are. Saving a routine again overwrites it, as routines are saved by their uuid.
@@ -37,7 +53,19 @@ interface RoutineRepository {
 
 class RealRoutineRepository(
     private val dispatcher: CoroutineDispatcher,
+    private val dataSync: DataSync,
 ) : RoutineRepository {
+
+    override fun routine(uuid: String): Flow<Load<ELRoutine?>> = routines().map { load -> load.map { routines -> routines.firstOrNull { it.uuid == uuid } } }
+
+    private fun routines(): Flow<Load<List<ELRoutine>>> {
+        val userId = LocalUserManager.getUser()?.id ?: return flowOf(Load.Ready(emptyList()))
+        return dataSync.observe(
+            CollectionSource("routines", userId, SyncPlan.Whole, FirestoreCollection(FirestorePathManager.routinesCollection, dispatcher = dispatcher) {
+                it.toObject(ELRoutine::class.java)
+            }),
+        )
+    }
 
     override suspend fun saveRoutines(routines: List<ELRoutine>): Either<Throwable, Unit> = withContext(dispatcher) {
         Either.catch {

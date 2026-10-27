@@ -6,7 +6,8 @@ screen. Background and plan: TAS-462 in Notion.
 
 In use so far: the exercise library, the user's own exercises and the registry (`ExerciseRepository`: the
 exercise picker, the exercise detail's Info tab, the names of the user's own exercises on the workout screen), and workouts
-(`WorkoutRepository`: the workout screen's set suggestions, the picker's Recently done). The other screens
+(`WorkoutRepository`: the workout screen's set suggestions, the picker's Recently done), and routines
+(`RoutineRepository.routine`, through `LoadTemplateUseCase` for the template editor). The other screens
 still read through the old stores, which share the same Firestore cache.
 
 ## Rules
@@ -89,9 +90,8 @@ piece when the feature that needs it arrives.
   uuids: a plans repository combines the user's plans, their routines (both `SyncPlan.Whole`) and the
   exercise lookup, the way `exerciseLibraryOf` does. That costs no reads beyond the syncs, and a rename
   anywhere reaches every open screen. This replaces `ELPlanDecorator` and `ELRoutineDecorator`, which read
-  each reference one at a time. Before the second join, add a `combineLoads` helper, so each repository
-  doesn't rewrite the rules for combining `Load`s: wait for required parts, fall back for optional ones,
-  pass on `Unavailable`.
+  each reference one at a time. Combine `Load`s with `zip` (wait for both, pass on `Unavailable`) and
+  `optional()` for a part the join can do without, as `LoadTemplateUseCase` does.
 - **Hydrating on the backend.** Keeping joins as pure functions in repositories means they can move to
   the server: a Cloud Function writes the joined or summarised fields onto the document. The repository
   then reads one source instead of combining several, and screens don't change. A backend that isn't

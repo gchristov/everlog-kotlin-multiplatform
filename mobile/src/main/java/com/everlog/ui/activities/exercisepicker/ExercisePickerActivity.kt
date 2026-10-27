@@ -41,7 +41,7 @@ class ExercisePickerActivity : CommonComposeActivity() {
                     dispatcher = Dispatchers.Main,
                     mode = if (intent.getBooleanExtra(ExtraPick, false)) PickerMode.Pick else PickerMode.Browse,
                     savedState = createSavedStateHandle(),
-                    loadLibrary = RealLoadExerciseLibraryUseCase(io, exercises, RealRoutineRepository(io), RealWorkoutRepository(io, AppDataSync.instance)),
+                    loadLibrary = RealLoadExerciseLibraryUseCase(io, exercises, RealRoutineRepository(io, AppDataSync.instance), RealWorkoutRepository(io, AppDataSync.instance)),
                     recentSearches = RealExercisePickerRecentSearches(),
                     analytics = RealExercisePickerAnalytics(),
                     me = FilterValue(
