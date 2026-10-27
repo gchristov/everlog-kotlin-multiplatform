@@ -65,7 +65,7 @@ class OnboardingActivity : CommonComposeActivity() {
                 ),
                 saveStarterRoutinesUseCase = RealSaveStarterRoutinesUseCase(
                     dispatcher = Dispatchers.Default,
-                    routineRepository = RealRoutineRepository(dispatcher = Dispatchers.IO),
+                    routineRepository = RealRoutineRepository(dispatcher = Dispatchers.IO, dataSync = AppDataSync.instance),
                 ),
                 settings = RealOnboardingSettings(this),
                 analytics = RealOnboardingAnalytics(),

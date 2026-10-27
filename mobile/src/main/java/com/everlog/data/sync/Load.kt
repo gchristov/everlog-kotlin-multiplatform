@@ -21,3 +21,17 @@ fun <T, R> Load<T>.map(transform: (T) -> R): Load<R> = when (this) {
     Load.Loading -> Load.Loading
     is Load.Unavailable -> this
 }
+
+/**
+ * Joins two loads: both values once both are ready, unavailable as soon as either is, and loading otherwise.
+ */
+fun <A, B, R> Load<A>.zip(other: Load<B>, transform: (A, B) -> R): Load<R> = when (this) {
+    is Load.Unavailable -> this
+    Load.Loading -> if (other is Load.Unavailable) other else Load.Loading
+    is Load.Ready -> other.map { transform(value, it) }
+}
+
+/**
+ * For a part a join can do without: null once it's answered without data, so it neither holds the join up nor fails it.
+ */
+fun <T> Load<T>.optional(): Load<T?> = if (this is Load.Unavailable) Load.Ready(null) else this
