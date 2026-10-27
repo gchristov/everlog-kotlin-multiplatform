@@ -21,8 +21,8 @@ import kotlinx.coroutines.flow.flowOf
 interface WorkoutRepository {
     /**
      * The user's workouts, newest first, as they change. [Range.All] waits for the full history the first time
-     * (once per install); a range within the last [AppConfig.workoutSyncMonths] never does. None without a
-     * signed-in user.
+     * after an install, then shows the cache while it syncs again weekly; a range within the last
+     * [AppConfig.workoutSyncMonths] never waits for it. None without a signed-in user.
      */
     fun workouts(range: Range): Flow<Load<List<ELWorkout>>>
 

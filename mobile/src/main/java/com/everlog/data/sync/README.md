@@ -34,7 +34,7 @@ screen. Background and plan: TAS-462 in Notion.
 | `DocumentSource` | the document when due | one document: the registry, the user |
 
 Each read picks its `Range`: `All`, or `Last(months)` for a `Recent` collection. A read further back than
-the plan's window waits for the full history (the shimmer, once per install), rather than showing part
+the plan's window waits for the full history (the shimmer, the first time after an install), rather than showing part
 of it. Others show what's cached straight away.
 
 After the full history has synced, each due sync of a `Recent` collection also compares the cached count

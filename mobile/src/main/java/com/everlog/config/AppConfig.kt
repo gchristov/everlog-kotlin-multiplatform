@@ -45,7 +45,7 @@ class AppConfig {
     val dataSyncTimeoutSeconds = 20L
     // Workouts per server read when syncing a full history
     val dataSyncChunkSize = 200
-    // The workouts each due sync reads again: the 1RM window set suggestions use (90 days). Older ones sync once per install.
+    // The workouts each due sync reads again: the 1RM window set suggestions use (90 days). Older ones sync with the full history, weekly.
     val workoutSyncMonths = 3
 
     companion object {
