@@ -25,6 +25,10 @@
         <value>false</value>
     </entry>
     <entry>
+        <key>template_editor_v2</key>
+        <value>false</value>
+    </entry>
+    <entry>
         <key>feedback_forms</key>
         <value>{}</value>
     </entry>

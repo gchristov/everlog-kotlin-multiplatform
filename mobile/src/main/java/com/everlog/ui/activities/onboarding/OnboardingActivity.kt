@@ -34,6 +34,7 @@ import com.everlog.data.sync.AppDataSync
 import com.everlog.data.repositories.RealRoutineRepository
 import com.everlog.managers.preferences.SettingsManager
 import com.everlog.ui.activities.home.routine.create.CreateRoutineActivity
+import com.everlog.ui.activities.templateeditor.TemplateEditorActivity
 import com.everlog.ui.design.CommonComposeActivity
 import com.everlog.ui.design.elements.AppBarScrollBehavior
 import com.everlog.ui.design.elements.AppDialog
@@ -84,7 +85,7 @@ class OnboardingActivity : CommonComposeActivity() {
         viewModel = viewModel,
         onOpenRoutineBuilder = {
             // Not the routine's details after saving: the screen decides what comes next
-            routineBuilder.launch(CreateRoutineActivity.launchIntent(this, CreateRoutineActivity.Companion.Properties().showDetailsOnSuccess(false)))
+            routineBuilder.launch(TemplateEditorActivity.editIntent(this, CreateRoutineActivity.Companion.Properties().showDetailsOnSuccess(false)))
         },
         onClose = {
             setResult(RESULT_OK)

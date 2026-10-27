@@ -340,6 +340,24 @@
     <string name="workout_log_empty_hint">Add an exercise to start</string>
     <string name="workout_log_example">EXAMPLE · NOT YOUR DATA</string>
     <string name="workout_log_example_exercise">Example exercise</string>
+    <!-- Template editor -->
+    <string name="template_editor_new">New template</string>
+    <string name="template_editor_edit">Edit template</string>
+    <string name="template_editor_close">Close</string>
+    <string name="template_editor_name">Name</string>
+    <string name="template_editor_default_name">My template</string>
+    <string name="template_editor_rest">Rest after each set</string>
+    <string name="template_editor_rest_body">How long the rest timer counts down after each set, in workouts started from this template.</string>
+    <string name="template_editor_next_set">Next set</string>
+    <string name="template_editor_same_time">Use %1$s for every set</string>
+    <string name="template_editor_same_time_apply">Apply</string>
+    <string name="template_editor_empty_hint">Add the exercises you want in this template</string>
+    <string name="template_editor_leave_title">Save your changes?</string>
+    <string name="template_editor_keep_editing">Keep editing</string>
+    <string name="template_editor_load_failed">Couldn\'t load this template.</string>
+    <string name="template_editor_retry">Try again</string>
+    <string name="template_editor_not_found">This template has been deleted.</string>
+    <string name="template_editor_save_failed">Couldn\'t save the template. Try again.</string>
     <string name="workout_discard_keep_going">Keep going</string>
     <string name="workout_metric_prompt_missing">Please enter a value</string>
     <string name="workout_rest_time">"Rest • %1$s"</string>

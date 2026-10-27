@@ -85,6 +85,12 @@ public class RemoteConfigManager extends PreferencesManager {
         return localConfig != null && localConfig.getSetSuggestionsV2();
     }
 
+    // The template editor in Compose; off until Remote Config says otherwise
+    public boolean templateEditorV2() {
+        RemoteConfig localConfig = loadLocalRemoteConfig();
+        return localConfig != null && localConfig.getTemplateEditorV2();
+    }
+
     // The feedback form to open from a source, or null when there's none and the entry point is hidden
     @Nullable
     public String feedbackFormUrl(FeedbackSource source) {

@@ -60,6 +60,7 @@ import com.everlog.ui.activities.home.workout.details.WorkoutDetailsActivity;
 import com.everlog.ui.activities.login.LoginActivity;
 import com.everlog.ui.activities.login.resetpassword.ResetPasswordActivity;
 import com.everlog.ui.activities.setsuggestions.SetSuggestionsActivity;
+import com.everlog.ui.activities.templateeditor.TemplateEditorActivity;
 import com.everlog.ui.activities.workoutlog.WorkoutLogActivity;
 import com.everlog.ui.dialog.DialogBuilder;
 import com.everlog.ui.dialog.ToastBuilder;
@@ -199,7 +200,7 @@ public class ELNavigator implements Navigator {
 
     @Override
     public void openEditRoutine(CreateRoutineActivity.Companion.@NotNull Properties properties) {
-        startActivityForResult(CreateRoutineActivity.launchIntent(mContext, properties), ELActivityRequestCodes.REQUEST_EDIT_ROUTINE);
+        startActivityForResult(TemplateEditorActivity.editIntent(mContext, properties), ELActivityRequestCodes.REQUEST_EDIT_ROUTINE);
     }
 
     @Override
