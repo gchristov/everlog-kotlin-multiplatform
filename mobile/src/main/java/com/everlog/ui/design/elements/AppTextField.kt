@@ -38,7 +38,7 @@ import com.everlog.ui.design.theme.Theme
 /**
  * A one-line text field in an inset box, outlined in the action colour while it has focus, e.g. a name in a dialog.
  *
- * @param maxLength Typing past it is ignored
+ * @param maxLength Typing past it is ignored; text already longer can still be shortened
  * @param autoFocus Takes focus, which opens the keyboard, as soon as it shows
  * @param selectAllOnFocus Selects the text when it takes focus, so typing replaces it, e.g. renaming
  * @param onDone The keyboard's done key
@@ -75,7 +75,8 @@ fun AppTextField(
                 .focusRequester(focusRequester),
             value = value,
             onValueChange = { value ->
-                if (maxLength != null && value.text.length > maxLength) return@BasicTextField
+                // Text already longer (e.g. saved before there was a limit) can still be shortened
+                if (maxLength != null && value.text.length > maxLength && value.text.length > text.length) return@BasicTextField
                 field = value
                 if (value.text != text) onTextChange(value.text)
             },
