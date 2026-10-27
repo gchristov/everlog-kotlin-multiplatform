@@ -1,7 +1,6 @@
 package com.everlog.ui.activities.exercisepicker
 
 import androidx.lifecycle.SavedStateHandle
-import arrow.core.Either
 import com.everlog.data.controllers.exerciselibrary.LoadExerciseLibraryUseCase
 import com.everlog.data.model.exercise.library.ExerciseLibrary
 import com.everlog.data.model.exercise.library.LibraryExercise
@@ -13,14 +12,15 @@ import com.everlog.testutil.LibraryFixtures.barbellRow
 import com.everlog.testutil.LibraryFixtures.dumbbellBench
 import com.everlog.testutil.LibraryFixtures.own
 import com.google.common.truth.Truth.assertThat
-import kotlinx.coroutines.CompletableDeferred
-import kotlinx.coroutines.flow.MutableSharedFlow
+import com.everlog.data.sync.Load
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.flowOf
 import org.junit.Test
 
 class ExercisePickerViewModelTest {
 
-    private val library = CompletableDeferred<ExerciseLibrary>()
-    private val ownUpdates = MutableSharedFlow<List<LibraryExercise>>(extraBufferCapacity = 1)
+    private val library = MutableStateFlow<Load<ExerciseLibrary>>(Load.Loading)
     private val recent = FakeRecentSearches()
     private val analytics = RecordingAnalytics()
     // Loads that fail before one succeeds
@@ -31,16 +31,15 @@ class ExercisePickerViewModelTest {
         loaded: Boolean = true,
         savedState: SavedStateHandle = SavedStateHandle(),
     ): ExercisePickerViewModel {
-        if (loaded) library.complete(LibraryFixtures.library())
+        if (loaded) library.value = Load.Ready(LibraryFixtures.library())
         return ExercisePickerViewModel(
             dispatcher = FakeCoroutineDispatcher,
             mode = mode,
             savedState = savedState,
             loadLibrary = object : LoadExerciseLibraryUseCase {
-                override suspend fun invoke(): Either<Throwable, ExerciseLibrary> =
-                    if (failures-- > 0) Either.Left(IllegalStateException("offline")) else Either.Right(library.await())
+                override fun invoke(): Flow<Load<ExerciseLibrary>> =
+                    if (failures-- > 0) flowOf(Load.Unavailable(IllegalStateException("offline"))) else library
             },
-            ownExerciseUpdates = { ownUpdates },
             recentSearches = recent,
             analytics = analytics,
             me = FilterValue(id = CreatedByMe, name = "Me"),
@@ -77,7 +76,7 @@ class ExercisePickerViewModelTest {
         viewModel.onAdd(ELSetType.SINGLE)
         assertThat(viewModel.state.value.result).isNull()
 
-        library.complete(LibraryFixtures.library())
+        library.value = Load.Ready(LibraryFixtures.library())
         assertThat(viewModel.state.value.result).isEqualTo(PickerResult(listOf(barbellBench), ELSetType.SINGLE))
     }
 
@@ -98,8 +97,30 @@ class ExercisePickerViewModelTest {
         viewModel.tap(own)
         viewModel.onExerciseCreated("new")
 
-        ownUpdates.tryEmit(emptyList())
+        val withoutOwn = LibraryFixtures.library().let { it.copy(exercises = it.exercises.filterNot { exercise -> exercise.own }) }
+        library.value = Load.Ready(withoutOwn)
         assertThat(viewModel.state.value.picked).containsExactly("new")
+    }
+
+    @Test
+    fun `a library that changes while the picker is open shows the change`() {
+        val viewModel = viewModel()
+        val renamed = barbellRow.copy(name = "Bent-over Row")
+
+        library.value = Load.Ready(LibraryFixtures.library().let { it.copy(exercises = it.exercises.map { exercise -> if (exercise.uuid == barbellRow.uuid) renamed else exercise }) })
+
+        assertThat(viewModel.state.value.index!!.library.exercises).contains(renamed)
+    }
+
+    @Test
+    fun `the shimmer shows until the library arrives`() {
+        val viewModel = viewModel(loaded = false)
+        assertThat(viewModel.state.value.loading).isTrue()
+
+        library.value = Load.Ready(LibraryFixtures.library())
+
+        assertThat(viewModel.state.value.loading).isFalse()
+        assertThat(viewModel.state.value.content).isNotNull()
     }
 
     @Test

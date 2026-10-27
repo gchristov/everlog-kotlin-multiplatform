@@ -17,6 +17,7 @@ import com.everlog.data.controllers.exerciselibrary.RealLoadExerciseLibraryUseCa
 import com.everlog.data.model.exercise.library.toELExercise
 import com.everlog.data.model.set.ELSetType
 import com.everlog.data.repositories.RealExerciseRepository
+import com.everlog.data.sync.AppDataSync
 import com.everlog.data.repositories.RealRoutineRepository
 import com.everlog.data.repositories.RealWorkoutRepository
 import com.everlog.ui.activities.home.exercise.details.ExerciseDetailsActivity
@@ -35,13 +36,12 @@ class ExercisePickerActivity : CommonComposeActivity() {
         viewModelFactory {
             initializer {
                 val io = Dispatchers.IO
-                val exercises = RealExerciseRepository(io)
+                val exercises = RealExerciseRepository(io, AppDataSync.instance)
                 ExercisePickerViewModel(
                     dispatcher = Dispatchers.Main,
                     mode = if (intent.getBooleanExtra(ExtraPick, false)) PickerMode.Pick else PickerMode.Browse,
                     savedState = createSavedStateHandle(),
                     loadLibrary = RealLoadExerciseLibraryUseCase(io, exercises, RealRoutineRepository(io), RealWorkoutRepository(io)),
-                    ownExerciseUpdates = exercises::ownExerciseUpdates,
                     recentSearches = RealExercisePickerRecentSearches(),
                     analytics = RealExercisePickerAnalytics(),
                     me = FilterValue(

@@ -13,17 +13,18 @@ import androidx.compose.ui.test.performTextInput
 import androidx.lifecycle.SavedStateHandle
 import androidx.test.espresso.Espresso
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import arrow.core.Either
 import com.everlog.data.controllers.exerciselibrary.LoadExerciseLibraryUseCase
 import com.everlog.data.model.exercise.library.ExerciseLibrary
 import com.everlog.data.model.exercise.library.ExerciseRegistry
 import com.everlog.data.model.exercise.library.LibraryExercise
 import com.everlog.data.model.set.ELSetType
+import com.everlog.data.sync.Load
 import com.everlog.ui.design.theme.Theme
 import com.google.common.truth.Truth.assertThat
 import java.util.concurrent.TimeUnit
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.emptyFlow
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flowOf
 import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.RuleChain
@@ -138,10 +139,9 @@ class ExercisePickerScenarioTest {
             mode = mode,
             savedState = SavedStateHandle(),
             loadLibrary = object : LoadExerciseLibraryUseCase {
-                override suspend fun invoke(): Either<Throwable, ExerciseLibrary> =
-                    if (failing-- > 0) Either.Left(IllegalStateException("offline")) else Either.Right(Library)
+                override fun invoke(): Flow<Load<ExerciseLibrary>> =
+                    flowOf(if (failing-- > 0) Load.Unavailable(IllegalStateException("offline")) else Load.Ready(Library))
             },
-            ownExerciseUpdates = { emptyFlow() },
             recentSearches = object : ExercisePickerRecentSearches {
                 override fun load(): List<List<FilterToken>> = emptyList()
                 override fun save(searches: List<List<FilterToken>>) = Unit

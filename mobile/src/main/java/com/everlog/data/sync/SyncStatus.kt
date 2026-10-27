@@ -6,4 +6,7 @@ data class SyncStatus(
     val fullHistorySynced: Long? = null,
     val syncing: Boolean = false,
     val lastFailure: Throwable? = null,
+    // Syncs finished since the app started, and how many documents the last one brought
+    val syncs: Int = 0,
+    val lastFetched: Int = 0,
 )

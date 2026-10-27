@@ -61,6 +61,19 @@ class PagedReadTest {
     }
 
     @Test
+    fun `a recent sync that finishes before the cache shows it keeps the shimmer`() {
+        val backend = FakeCollectionBackend(server = workouts).apply { cacheLate = true; gate = CompletableDeferred() }
+        val loads = read(dataSync.pages(source(backend), pageSize = 10).loads)
+        backend.gate!!.complete(Unit)
+
+        assertThat(loads).containsExactly(Load.Loading)
+
+        backend.deliverCache()
+
+        assertThat(loads.last()).isEqualTo(ready(workouts.take(10)))
+    }
+
+    @Test
     fun `more pages come from the cache while it has them`() {
         val backend = FakeCollectionBackend(server = workouts)
         val pages = dataSync.pages(source(backend), pageSize = 10)

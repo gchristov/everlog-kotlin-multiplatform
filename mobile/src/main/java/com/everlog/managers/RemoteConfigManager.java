@@ -93,7 +93,7 @@ public class RemoteConfigManager extends PreferencesManager {
         return forms != null ? forms.url(source, BuildConfig.VERSION_NAME) : null;
     }
 
-    // Null until a config has been saved, then DataSync falls back to its default
+    // Null when Remote Config has none, then DataSync falls back to its default
     @Nullable
     public Long dataSyncMaxAgeMinutes() {
         RemoteConfig localConfig = loadLocalRemoteConfig();

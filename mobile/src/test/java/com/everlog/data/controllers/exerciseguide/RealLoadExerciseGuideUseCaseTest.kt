@@ -1,11 +1,12 @@
 package com.everlog.data.controllers.exerciseguide
 
-import arrow.core.Either
 import com.everlog.data.model.exercise.library.ExerciseGuide
 import com.everlog.data.model.exercise.library.LibraryExercise
+import com.everlog.data.sync.Load
 import com.everlog.testutil.FakeCoroutineDispatcher
 import com.everlog.testutil.FakeExerciseRepository
 import com.google.common.truth.Truth.assertThat
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
 import org.junit.Test
 import java.io.IOException
@@ -17,21 +18,21 @@ class RealLoadExerciseGuideUseCaseTest {
 
     @Test
     fun `the guide is the library exercise's steps and tips, in order`() = runBlocking<Unit> {
-        repository.libraryExercise = Either.Right(
+        repository.libraryExercise = Load.Ready(
             LibraryExercise(uuid = "bench", name = "Barbell Bench Press", instructions = listOf("Lie on the bench.", "Press."), tips = listOf("Feet flat.")),
         )
 
-        assertThat(useCase("bench").getOrNull()).isEqualTo(ExerciseGuide(instructions = listOf("Lie on the bench.", "Press."), tips = listOf("Feet flat.")))
+        assertThat(guide("bench")).isEqualTo(ExerciseGuide(instructions = listOf("Lie on the bench.", "Press."), tips = listOf("Feet flat.")))
         assertThat(repository.libraryExerciseReads).containsExactly("bench")
     }
 
     @Test
     fun `blank steps and tips are left out and the rest trimmed`() = runBlocking<Unit> {
-        repository.libraryExercise = Either.Right(
+        repository.libraryExercise = Load.Ready(
             LibraryExercise(uuid = "bench", name = "Barbell Bench Press", instructions = listOf(" Lie on the bench. ", "", "  "), tips = listOf("")),
         )
 
-        val guide = useCase("bench").getOrNull()!!
+        val guide = guide("bench")
 
         assertThat(guide.instructions).containsExactly("Lie on the bench.")
         assertThat(guide.tips).isEmpty()
@@ -39,23 +40,25 @@ class RealLoadExerciseGuideUseCaseTest {
 
     @Test
     fun `an exercise the library doesn't have, like a user's own, has an empty guide`() = runBlocking<Unit> {
-        repository.libraryExercise = Either.Right(null)
+        repository.libraryExercise = Load.Ready(null)
 
-        assertThat(useCase("own").getOrNull()!!.isEmpty).isTrue()
+        assertThat(guide("own").isEmpty).isTrue()
     }
 
     @Test
     fun `an exercise without instructions or tips has an empty guide`() = runBlocking<Unit> {
-        repository.libraryExercise = Either.Right(LibraryExercise(uuid = "old", name = "Cable Crunch"))
+        repository.libraryExercise = Load.Ready(LibraryExercise(uuid = "old", name = "Cable Crunch"))
 
-        assertThat(useCase("old").getOrNull()!!.isEmpty).isTrue()
+        assertThat(guide("old").isEmpty).isTrue()
     }
 
     @Test
-    fun `fails when the library read fails`() = runBlocking<Unit> {
-        val error = IOException("offline")
-        repository.libraryExercise = Either.Left(error)
+    fun `unavailable when the library is`() = runBlocking<Unit> {
+        val unavailable = Load.Unavailable(IOException("offline"))
+        repository.libraryExercise = unavailable
 
-        assertThat(useCase("bench").leftOrNull()).isSameInstanceAs(error)
+        assertThat(useCase("bench").first()).isEqualTo(unavailable)
     }
+
+    private suspend fun guide(uuid: String) = (useCase(uuid).first() as Load.Ready).value
 }

@@ -2,15 +2,16 @@ package com.everlog.ui.activities.exercisepicker
 
 import androidx.lifecycle.SavedStateHandle
 import com.everlog.data.controllers.exerciselibrary.LoadExerciseLibraryUseCase
+import com.everlog.data.controllers.starterroutines.ExerciseLibraryEmptyException
 import com.everlog.data.model.exercise.library.ExerciseLibrary
 import com.everlog.data.model.exercise.library.LibraryExercise
 import com.everlog.data.model.set.ELSetType
+import com.everlog.data.sync.Load
 import com.everlog.ui.mvvm.CommonViewModel
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.withContext
 import timber.log.Timber
 
@@ -63,9 +64,8 @@ internal class ExercisePickerViewModel(
     dispatcher: CoroutineDispatcher,
     mode: PickerMode,
     private val savedState: SavedStateHandle,
+    // As it changes while the picker is open, e.g. an exercise of the user's just created
     private val loadLibrary: LoadExerciseLibraryUseCase,
-    // The user's own exercises as they change, e.g. one just created
-    private val ownExerciseUpdates: () -> Flow<List<LibraryExercise>>,
     private val recentSearches: ExercisePickerRecentSearches,
     private val analytics: ExercisePickerAnalytics,
     // Created by's only value, named for the screen
@@ -75,7 +75,7 @@ internal class ExercisePickerViewModel(
     private val contentDispatcher: CoroutineDispatcher = Dispatchers.Default,
 ) : CommonViewModel<ExercisePickerState>(dispatcher, ExercisePickerState(mode = mode)) {
     private var contentJob: Job? = null
-    private var ownJob: Job? = null
+    private var loadJob: Job? = null
     private var library: ExerciseLibrary? = null
     private var lastSearchLogged: String? = null
     private var lastNoResultsLogged: Pair<List<FilterToken>, String>? = null
@@ -209,45 +209,45 @@ internal class ExercisePickerViewModel(
 
     fun onMessageShown() = setState { copy(message = null) }
 
+    // Collecting again retries a library that couldn't sync
     private fun load() {
-        update { copy(loading = true, failed = false) }
-        launchCoroutine {
-            loadLibrary().fold(
-                ifLeft = {
-                    Timber.tag(TAG).e(it, "Couldn't load the exercise library")
-                    update { copy(loading = false, failed = true) }
-                },
-                ifRight = { loaded ->
-                    library = loaded
-                    val index = withContext(contentDispatcher) { PickerIndex(loaded, me) }
-                    update { copy(index = index, loading = false, failed = false) }
-                    watchOwn()
-                    pendingAdd?.let {
-                        pendingAdd = null
-                        onAdd(it)
+        loadJob?.cancel()
+        if (library == null) update { copy(loading = true, failed = false) }
+        loadJob = launchCoroutine {
+            loadLibrary().collect { load ->
+                when (load) {
+                    Load.Loading -> Unit
+                    is Load.Unavailable -> {
+                        logUnavailable(load.error)
+                        if (library == null) update { copy(loading = false, failed = true) }
                     }
-                },
-            )
+                    is Load.Ready -> show(load.value)
+                }
+            }
         }
     }
 
-    // The user's own exercises follow Firestore while the picker is open, so one created or deleted
-    // elsewhere shows straight away
-    private fun watchOwn() {
-        ownJob?.cancel()
-        ownJob = launchCoroutine {
-            ownExerciseUpdates().collect { own ->
-                val current = library ?: return@collect
-                val updated = current.copy(exercises = current.exercises.filter { !it.own } + own)
-                if (updated == current) return@collect
-                library = updated
-                val index = withContext(contentDispatcher) { PickerIndex(updated, me) }
-                // An exercise deleted elsewhere can't stay picked
-                // (one just created and still on its way stays)
-                val uuids = updated.exercises.map { it.uuid }.toSet()
-                val before = current.exercises.map { it.uuid }.toSet()
-                update { copy(index = index, picked = picked.filter { it in uuids || it !in before }) }
-            }
+    private suspend fun show(loaded: ExerciseLibrary) {
+        val current = library
+        if (loaded == current) return
+        library = loaded
+        val index = withContext(contentDispatcher) { PickerIndex(loaded, me) }
+        // An exercise deleted elsewhere can't stay picked (one just created and still on its way stays)
+        val uuids = loaded.exercises.map { it.uuid }.toSet()
+        val before = current?.exercises.orEmpty().map { it.uuid }.toSet()
+        update { copy(index = index, loading = false, failed = false, picked = picked.filter { it in uuids || it !in before }) }
+        pendingAdd?.let {
+            pendingAdd = null
+            onAdd(it)
+        }
+    }
+
+    // Offline is expected; an empty library means it stopped parsing, which Crashlytics should hear about
+    private fun logUnavailable(error: Throwable) {
+        if (error is ExerciseLibraryEmptyException) {
+            Timber.tag(TAG).e(error, "The exercise library is empty")
+        } else {
+            Timber.tag(TAG).w("Couldn't load the exercise library: %s", error.message)
         }
     }
 

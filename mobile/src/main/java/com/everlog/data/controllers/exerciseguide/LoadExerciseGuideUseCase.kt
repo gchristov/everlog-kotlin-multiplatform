@@ -1,19 +1,22 @@
 package com.everlog.data.controllers.exerciseguide
 
-import arrow.core.Either
 import com.everlog.data.model.exercise.library.ExerciseGuide
 import com.everlog.data.repositories.ExerciseRepository
+import com.everlog.data.sync.Load
+import com.everlog.data.sync.map
 import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.withContext
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.flow.map
 
 /**
- * Loads an exercise's [ExerciseGuide] from the library: empty when the library doesn't have the
- * exercise (a user's own), with blank steps and tips left out.
+ * An exercise's [ExerciseGuide] from the library as it changes: empty when the library doesn't have
+ * the exercise (a user's own), with blank steps and tips left out.
  *
- * Fails with the library's read error, e.g. offline with the exercise never read before.
+ * Unavailable when the exercise was never synced and the server can't be reached.
  */
 interface LoadExerciseGuideUseCase {
-    suspend operator fun invoke(uuid: String): Either<Throwable, ExerciseGuide>
+    operator fun invoke(uuid: String): Flow<Load<ExerciseGuide>>
 }
 
 class RealLoadExerciseGuideUseCase(
@@ -21,14 +24,17 @@ class RealLoadExerciseGuideUseCase(
     private val exerciseRepository: ExerciseRepository,
 ) : LoadExerciseGuideUseCase {
 
-    override suspend operator fun invoke(uuid: String): Either<Throwable, ExerciseGuide> = withContext(dispatcher) {
-        exerciseRepository.libraryExercise(uuid).map { exercise ->
-            ExerciseGuide(
-                instructions = exercise?.instructions.orEmpty().cleaned(),
-                tips = exercise?.tips.orEmpty().cleaned(),
-            )
-        }
-    }
+    override operator fun invoke(uuid: String): Flow<Load<ExerciseGuide>> =
+        exerciseRepository.libraryExercise(uuid)
+            .map { load ->
+                load.map { exercise ->
+                    ExerciseGuide(
+                        instructions = exercise?.instructions.orEmpty().cleaned(),
+                        tips = exercise?.tips.orEmpty().cleaned(),
+                    )
+                }
+            }
+            .flowOn(dispatcher)
 
     private fun List<String>.cleaned() = map { it.trim() }.filter { it.isNotEmpty() }
 }

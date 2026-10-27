@@ -42,8 +42,12 @@ internal fun covers(status: SyncStatus, plan: SyncPlan, range: Range): Boolean =
 /**
  * The cache once it's covered. Before that, what's cached when there's any, unless the read needs the full
  * history, which a part of would show wrong totals. Otherwise the shimmer, until a sync fails.
+ *
+ * @param cacheBehind The cache hasn't shown anything since the last sync finished. Firestore can report a
+ * read done before its listeners show what it brought, so an empty cache then isn't the server's answer.
  */
-internal fun <T> loadOf(cached: T, isEmpty: Boolean, covered: Boolean, needsFullHistory: Boolean, status: SyncStatus): Load<T> = when {
+internal fun <T> loadOf(cached: T, isEmpty: Boolean, covered: Boolean, needsFullHistory: Boolean, status: SyncStatus, cacheBehind: Boolean = false): Load<T> = when {
+    covered && isEmpty && cacheBehind && status.lastFetched > 0 -> Load.Loading
     covered -> Load.Ready(cached)
     !isEmpty && !needsFullHistory -> Load.Ready(cached)
     status.lastFailure != null && !status.syncing -> Load.Unavailable(status.lastFailure)

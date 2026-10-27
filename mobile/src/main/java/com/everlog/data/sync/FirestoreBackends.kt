@@ -41,7 +41,9 @@ class FirestoreCollection<T : Any>(
 
     override fun cached(since: Long?, limit: Int?): Flow<List<T>> {
         val ordered = order(if (since == null) documents else documents.whereGreaterThanOrEqualTo(requireDateField(), since))
-        val query = if (limit == null) ordered else ordered.limit(limit.toLong())
+        // Never the same query as a server read (see cacheOnly): every listener has a limit no read uses,
+        // and a page one more than it shows. Cache reads are free and need no index.
+        val query = ordered.limit(limit?.let { it + 1L } ?: Int.MAX_VALUE.toLong())
         return flow {
             // Per listener: a new one starts with every document added
             val parsed = ParsedDocuments<DocumentSnapshot, T> { it.parseOrNull(parse) }
@@ -49,7 +51,8 @@ class FirestoreCollection<T : Any>(
                 val changes = snapshot.documentChanges.map { change ->
                     ParsedDocuments.Change<DocumentSnapshot>(change.document.id, change.document.takeUnless { change.type == DocumentChange.Type.REMOVED })
                 }
-                parsed.update(changes, snapshot.documents.map { it.id })
+                val shown = parsed.update(changes, snapshot.documents.map { it.id })
+                if (limit == null) shown else shown.take(limit)
             })
         }.flowOn(dispatcher)
     }
@@ -85,21 +88,21 @@ class FirestoreDocument<T : Any>(
     private val parse: (DocumentSnapshot) -> T?,
 ) : DocumentBackend<T> {
 
-    override fun cached(): Flow<T?> = callbackFlow {
-        val registration = document.addSnapshotListener(cacheOnly) { snapshot, error ->
-            if (error != null) close(error) else if (snapshot != null) trySend(snapshot)
-        }
-        awaitClose { registration.remove() }
-    }
-        .map { snapshot -> if (snapshot.exists()) snapshot.parseOrNull(parse) else null }
+    // Through a query, so it's never the same target as fetch()'s read of the document (see cacheOnly)
+    override fun cached(): Flow<T?> = document.parent.whereEqualTo(FieldPath.documentId(), document.id).cacheSnapshots()
+        .map { snapshot -> snapshot.documents.firstOrNull()?.parseOrNull(parse) }
         .flowOn(dispatcher)
 
-    override suspend fun fetch() {
-        document.get(Source.SERVER).await()
-    }
+    override suspend fun fetch(): Boolean = document.get(Source.SERVER).await().exists()
 }
 
-// Firestore puts local writes in the cache straight away, so this follows the user's own edits for free
+/**
+ * Firestore puts local writes in the cache straight away, so this follows the user's own edits for free.
+ *
+ * A server read of the very query a cache-only listener follows is answered from that listener's view, with
+ * the cache's data marked as the server's, once the listener has seen one server read: a sync that
+ * reads nothing. So listeners never use the same query as a server read (FirestoreBackendsTest).
+ */
 private val cacheOnly = SnapshotListenOptions.Builder().setSource(ListenSource.CACHE).build()
 
 // Unbuffered snapshots would be dropped when parsing falls behind, losing their changes

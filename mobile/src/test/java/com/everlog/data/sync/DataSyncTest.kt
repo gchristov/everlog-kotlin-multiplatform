@@ -125,6 +125,42 @@ class DataSyncTest {
         assertThat(second.last()).isEqualTo(Load.Ready(listOf(bench)))
     }
 
+    @Test
+    fun `a sync that finishes before the cache shows what it brought doesn't show empty`() {
+        val backend = FakeCollectionBackend(server = listOf(bench, squat)).holdingServer().apply { cacheLate = true }
+        val loads = read(dataSync.observe(whole(backend)))
+        backend.gate!!.complete(Unit)
+
+        assertThat(loads).containsExactly(Load.Loading)
+
+        backend.deliverCache()
+
+        assertThat(loads).containsExactly(Load.Loading, Load.Ready(listOf(bench, squat))).inOrder()
+    }
+
+    @Test
+    fun `an empty collection is ready as soon as its sync finishes, without waiting for the cache`() {
+        val backend = FakeCollectionBackend().holdingServer().apply { cacheLate = true }
+        val loads = read(dataSync.observe(whole(backend)))
+
+        backend.gate!!.complete(Unit)
+
+        assertThat(loads.last()).isEqualTo(Load.Ready(emptyList<Doc>()))
+    }
+
+    @Test
+    fun `a new reader isn't held back by syncs its cache already shows`() {
+        val backend = FakeCollectionBackend(server = listOf(bench))
+        read(dataSync.observe(whole(backend)))
+        backend.server.clear()
+        backend.cache.value = emptyList()
+        now += TimeUnit.MINUTES.toMillis(1)
+
+        val loads = read(dataSync.observe(whole(backend)))
+
+        assertThat(loads.last()).isEqualTo(Load.Ready(emptyList<Doc>()))
+    }
+
     // Workouts: recent syncs, full history and ranges
 
     @Test
@@ -319,6 +355,19 @@ class DataSyncTest {
     }
 
     @Test
+    fun `a document whose sync finishes before the cache shows it isn't reported missing`() {
+        val backend = FakeDocumentBackend(server = bench).holdingServer().apply { cacheLate = true }
+        val loads = read(dataSync.observe(document(backend)))
+        backend.gate!!.complete(Unit)
+
+        assertThat(loads).containsExactly(Load.Loading)
+
+        backend.deliverCache()
+
+        assertThat(loads.last()).isEqualTo(Load.Ready(bench))
+    }
+
+    @Test
     fun `a cached document shows straight away, then the server's copy`() {
         val renamed = bench.copy(name = "Bench press")
         val backend = FakeDocumentBackend(server = renamed, cached = bench).holdingServer()
@@ -342,7 +391,7 @@ class DataSyncTest {
 
         backend.gate!!.complete(Unit)
 
-        assertThat(dataSync.status.value["user/routines"]).isEqualTo(SyncStatus(lastSynced = now))
+        assertThat(dataSync.status.value["user/routines"]).isEqualTo(SyncStatus(lastSynced = now, syncs = 1, lastFetched = 1))
     }
 
     @Test

@@ -2,14 +2,15 @@ package com.everlog.ui.fragments.home.exercise.info
 
 import com.everlog.data.controllers.exerciseguide.LoadExerciseGuideUseCase
 import com.everlog.data.model.exercise.library.ExerciseGuide
+import com.everlog.data.sync.Load
 import com.everlog.ui.mvvm.CommonViewModel
 import kotlinx.coroutines.CoroutineDispatcher
 import timber.log.Timber
 
 /**
  * The exercise detail's Info tab: the exercise's image, then the library's steps and tips once they
- * load. Users' own exercises aren't in the library, so they skip the read and show only the image,
- * as does a read that fails (e.g. offline with the exercise never read before).
+ * load, and again when the library changes them. Users' own exercises aren't in the library, so they
+ * skip the read and show only the image, as does a read that fails (offline with the exercise never synced).
  */
 class ExerciseInfoViewModel(
     dispatcher: CoroutineDispatcher,
@@ -33,10 +34,13 @@ class ExerciseInfoViewModel(
     init {
         if (!exercise.own) {
             launchCoroutine {
-                loadGuide(exercise.uuid).fold(
-                    ifLeft = { Timber.tag(TAG).w(it, "Couldn't load the guide for %s", exercise.uuid) },
-                    ifRight = { guide -> setState { copy(guide = guide) } },
-                )
+                loadGuide(exercise.uuid).collect { load ->
+                    when (load) {
+                        is Load.Ready -> setState { copy(guide = load.value) }
+                        is Load.Unavailable -> Timber.tag(TAG).w("Couldn't load the guide for %s: %s", exercise.uuid, load.error.message)
+                        Load.Loading -> Unit
+                    }
+                }
             }
         }
     }

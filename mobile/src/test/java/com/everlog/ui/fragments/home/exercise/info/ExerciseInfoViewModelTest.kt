@@ -1,10 +1,12 @@
 package com.everlog.ui.fragments.home.exercise.info
 
-import arrow.core.Either
 import com.everlog.data.controllers.exerciseguide.LoadExerciseGuideUseCase
 import com.everlog.data.model.exercise.library.ExerciseGuide
+import com.everlog.data.sync.Load
 import com.everlog.testutil.FakeCoroutineDispatcher
 import com.google.common.truth.Truth.assertThat
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
 import org.junit.Test
 import java.io.IOException
 
@@ -15,7 +17,7 @@ class ExerciseInfoViewModelTest {
 
     @Test
     fun `a library exercise shows its guide once it loads`() {
-        val loadGuide = FakeLoadExerciseGuideUseCase(Either.Right(guide))
+        val loadGuide = FakeLoadExerciseGuideUseCase(Load.Ready(guide))
 
         val state = viewModel(bench, loadGuide).state.value
 
@@ -26,7 +28,7 @@ class ExerciseInfoViewModelTest {
 
     @Test
     fun `a user's own exercise doesn't read the library and shows only its image`() {
-        val loadGuide = FakeLoadExerciseGuideUseCase(Either.Right(guide))
+        val loadGuide = FakeLoadExerciseGuideUseCase(Load.Ready(guide))
 
         val state = viewModel(bench.copy(own = true), loadGuide).state.value
 
@@ -36,14 +38,25 @@ class ExerciseInfoViewModelTest {
 
     @Test
     fun `a guide that doesn't load leaves only the image`() {
-        val state = viewModel(bench, FakeLoadExerciseGuideUseCase(Either.Left(IOException("offline")))).state.value
+        val state = viewModel(bench, FakeLoadExerciseGuideUseCase(Load.Unavailable(IOException("offline")))).state.value
 
         assertThat(state.guide.isEmpty).isTrue()
     }
 
     @Test
+    fun `a guide changed in the library while the tab is open shows the change`() {
+        val loadGuide = FakeLoadExerciseGuideUseCase(Load.Loading)
+        val viewModel = viewModel(bench, loadGuide)
+        assertThat(viewModel.state.value.guide.isEmpty).isTrue()
+
+        loadGuide.guide.value = Load.Ready(guide)
+
+        assertThat(viewModel.state.value.guide).isEqualTo(guide)
+    }
+
+    @Test
     fun `an edited exercise keeps its guide without reading it again`() {
-        val loadGuide = FakeLoadExerciseGuideUseCase(Either.Right(guide))
+        val loadGuide = FakeLoadExerciseGuideUseCase(Load.Ready(guide))
         val viewModel = viewModel(bench, loadGuide)
 
         viewModel.updateExercise(bench.copy(name = "Bench Press"))
@@ -56,12 +69,13 @@ class ExerciseInfoViewModelTest {
     private fun viewModel(exercise: ExerciseInfoViewModel.Exercise, loadGuide: LoadExerciseGuideUseCase) =
         ExerciseInfoViewModel(dispatcher = FakeCoroutineDispatcher, loadGuide = loadGuide, exercise = exercise)
 
-    private class FakeLoadExerciseGuideUseCase(private val result: Either<Throwable, ExerciseGuide>) : LoadExerciseGuideUseCase {
+    private class FakeLoadExerciseGuideUseCase(load: Load<ExerciseGuide>) : LoadExerciseGuideUseCase {
         val reads = mutableListOf<String>()
+        val guide = MutableStateFlow(load)
 
-        override suspend fun invoke(uuid: String): Either<Throwable, ExerciseGuide> {
+        override fun invoke(uuid: String): Flow<Load<ExerciseGuide>> {
             reads += uuid
-            return result
+            return guide
         }
     }
 }
