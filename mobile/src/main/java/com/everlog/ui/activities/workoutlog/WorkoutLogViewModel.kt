@@ -595,7 +595,7 @@ internal class WorkoutLogViewModel(
         setState { copy(dialog = null) }
     }
 
-    // The user's own exercises follow Firestore while the screen is open, so one renamed from its details shows straight
+    // The user's own exercises follow the cache while the screen is open, so one renamed from its details shows straight
     // away, and a resumed workout shows the names they have now
     private fun followOwnExercises() {
         launchCoroutine {

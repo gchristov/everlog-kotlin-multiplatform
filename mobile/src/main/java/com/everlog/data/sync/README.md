@@ -4,6 +4,11 @@ How screens get Firestore data: always from the cache, which syncs with the serv
 This replaces the old stores (`ELCollectionStore`, `ELDocumentStore`) and their EventBus events, screen by
 screen. Background and plan: TAS-462 in Notion.
 
+In use so far: the exercise library, the user's own exercises and the registry (`ExerciseRepository`: the
+exercise picker, the exercise detail's Info tab, the names of the user's own exercises on the workout screen), and workouts
+(`WorkoutRepository`: the workout screen's set suggestions, the picker's Recently done). The other screens
+still read through the old stores, which share the same Firestore cache.
+
 ## Rules
 
 - **Screens read the cache, always.** `DataSync.observe` gives a stream of `Load` states:
@@ -19,7 +24,8 @@ screen. Background and plan: TAS-462 in Notion.
   listener passes it on.
 - **Own changes are live for free.** Readers follow a cache-only listener. Firestore puts local writes in
   the cache straight away, so every open screen shows an edit made on any other, without EventBus or
-  reads. Repositories `combine` streams for joined data (e.g. exercise names in workouts).
+  reads. Repositories `combine` streams for joined data (e.g. `LoadExerciseLibraryUseCase` joins the
+  library, the user's own exercises and the registry).
 - **Writes go straight to Firestore** through repositories, and never wait for the server without a
   timeout: an offline write only finishes once back online.
 - **Due** means the last sync is older than the max age: Remote Config `data_sync_max_age_minutes`
@@ -30,7 +36,7 @@ screen. Background and plan: TAS-462 in Notion.
 | Plan | Syncs | For |
 |---|---|---|
 | `SyncPlan.Whole` | the whole collection when due | small collections: routines, plans, exercises, the library |
-| `SyncPlan.Recent(dateField, months)` | the last months when due; the full history once, in chunks, the first time a read needs it | big collections: workouts |
+| `SyncPlan.Recent(dateField, months)` | the last months when due; the full history, in chunks, the first time a read needs it, then weekly and when the count check finds a difference | big collections: workouts (3 months, `AppConfig.workoutSyncMonths`) |
 | `DocumentSource` | the document when due | one document: the registry, the user |
 
 Each read picks its `Range`: `All`, or `Last(months)` for a `Recent` collection. A read further back than
@@ -63,6 +69,14 @@ doesn't parse is left out and logged.
 - **Backups.** The sync records (`DataSync.xml`) and Firestore's cache are left out of backups, so a restored phone syncs instead of trusting an old cache.
 - **Signing out.** `AuthManager.logout` calls `signOut()`, which stops syncs, forgets the records and ends every read.
 - **Clock moved back.** A sync time in the future counts as due.
+- **A sync finishing before the cache shows it.** Firestore can finish a server read before its open listeners
+  show what it brought. Each sync records how many documents it brought, and a read whose cache hasn't shown
+  anything since then stays where it was rather than showing empty (`withSyncStatus` in `CacheView.kt`).
+- **A server read answered from the cache.** Once a cache-only listener has seen a server read of its query,
+  Firestore answers the next server read of that exact query from the listener's view, marked as the
+  server's. Listeners never use the same query as a server read (see `cacheOnly` in `FirestoreBackends.kt`).
+- **Remote Config without a value.** Its `getLong` gives 0 for a key the console doesn't have until the
+  defaults load, which would mean syncing on every read, so a value with no source falls back to the default.
 
 ## Extending it
 
