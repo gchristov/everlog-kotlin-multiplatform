@@ -27,10 +27,13 @@ internal fun needsFullHistory(plan: SyncPlan, range: Range): Boolean = when (pla
     is SyncPlan.Recent -> range == Range.All || (range is Range.Last && range.months > plan.months)
 }
 
-// Null when the cache is fresh enough for this read
-internal fun syncWork(plan: SyncPlan, range: Range, status: SyncStatus, now: Long, maxAgeMillis: Long): SyncWork? = when {
+/**
+ * Null when the cache is fresh enough for this read. The full history syncs again every [fullHistoryMaxAgeMillis],
+ * for older documents edited on another phone, which neither the recent sync nor the count check sees.
+ */
+internal fun syncWork(plan: SyncPlan, range: Range, status: SyncStatus, now: Long, maxAgeMillis: Long, fullHistoryMaxAgeMillis: Long): SyncWork? = when {
     plan == SyncPlan.Whole -> SyncWork.Whole.takeIf { isDue(status.lastSynced, now, maxAgeMillis) }
-    needsFullHistory(plan, range) && status.fullHistorySynced == null -> SyncWork.FullHistory
+    needsFullHistory(plan, range) && isDue(status.fullHistorySynced, now, fullHistoryMaxAgeMillis) -> SyncWork.FullHistory
     isDue(status.lastSynced, now, maxAgeMillis) -> SyncWork.Recent
     else -> null
 }
@@ -60,6 +63,10 @@ internal fun windowStart(now: Long, months: Int): Long = Calendar.getInstance().
     add(Calendar.MONTH, -months)
     timeInMillis
 }
+
+// A missing or invalid value falls back to the default. Debug builds too: a full history on every read is too much.
+internal fun fullHistoryMaxAgeMillis(remoteDays: Long?, defaultDays: Long): Long =
+    TimeUnit.DAYS.toMillis(if (remoteDays == null || remoteDays <= 0) defaultDays else remoteDays)
 
 // Debug builds sync on every read, like Remote Config. A missing or invalid value falls back to the default.
 internal fun maxAgeMillis(debug: Boolean, remoteMinutes: Long?, defaultMinutes: Long): Long = when {
