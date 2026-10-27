@@ -49,9 +49,24 @@ object AuthManager : PreferencesManager() {
     fun initialize(listener: OnAuthActionListener) {
         when {
             isLoggedIn -> {
+                val uid = mAuth!!.currentUser!!.uid
+                val saved = savedUserFor(uid, LocalUserManager.getUser())
+                if (saved != null) {
+                    Timber.tag(TAG).i("Initializing with the saved user")
+                    // The store updates the saved user when the document arrives
+                    ELDatastore.userStore().getItem(uid, object : OnStoreItemListener<ELUser> {
+                        override fun onItemLoaded(item: ELUser, fromCache: Boolean) = Unit
+
+                        override fun onItemLoadingError(throwable: Throwable) {
+                            Timber.tag(TAG).w("Couldn't refresh the saved user: %s", throwable.message)
+                        }
+                    })
+                    listener.onSuccess(saved)
+                    return
+                }
                 Timber.tag(TAG).i("Initializing with logged in user")
                 // Initialize LocalUserManager with latest local account
-                ELDatastore.userStore().getItem(ELUser.buildUser(mAuth!!.currentUser!!).id, object : OnStoreItemListener<ELUser> {
+                ELDatastore.userStore().getItem(uid, object : OnStoreItemListener<ELUser> {
                     override fun onItemLoaded(item: ELUser, fromCache: Boolean) {
                         listener.onSuccess(item)
                     }
