@@ -38,8 +38,11 @@ the plan's window waits for the full history (the shimmer, once per install), ra
 of it. Others show what's cached straight away.
 
 After the full history has synced, each due sync of a `Recent` collection also compares the cached count
-with the server's (one read per 1,000 documents). A difference means something older changed elsewhere
-or went missing from the cache, so the full history syncs again.
+with the server's (one read per 1,000 documents). A difference means something older was added or deleted
+elsewhere, or went missing from the cache, so the full history syncs again. An older document edited on
+another phone keeps the count, so an all-time read also syncs the full history again once it's a week old
+(Remote Config `data_sync_full_history_max_age_days`, 7 by default, debug builds too), showing the cache
+meanwhile.
 
 Long lists (the history) read in pages with `DataSync.pages(source, pageSize)`, newest first, for a
 `Recent` collection. Its cache listener grows a page at a time (`loadMore()`), so workouts added or

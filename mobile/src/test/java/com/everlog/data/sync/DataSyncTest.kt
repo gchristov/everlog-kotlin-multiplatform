@@ -17,12 +17,13 @@ class DataSyncTest {
 
     private var now = 1_790_000_000_000L
     private var maxAge = TimeUnit.HOURS.toMillis(1)
+    private val fullHistoryMaxAge = TimeUnit.DAYS.toMillis(7)
     private val records = InMemorySyncRecords()
     private val syncScope = CoroutineScope(SupervisorJob() + Dispatchers.Unconfined)
     private val readers = CoroutineScope(SupervisorJob() + Dispatchers.Unconfined)
     private val dataSync = DataSync(
         records = records,
-        settings = SyncSettings(maxAgeMillis = { maxAge }, timeoutMillis = 100, chunkSize = 2),
+        settings = SyncSettings(maxAgeMillis = { maxAge }, fullHistoryMaxAgeMillis = { fullHistoryMaxAge }, timeoutMillis = 100, chunkSize = 2),
         clock = { now },
         scope = syncScope,
         stopTimeoutMillis = 0,
@@ -236,6 +237,33 @@ class DataSyncTest {
 
         assertThat(backend.calls).containsExactly("since", "count").inOrder()
         assertThat(records.fullHistorySynced["user/workouts"]).isEqualTo(now - TimeUnit.HOURS.toMillis(2))
+    }
+
+    @Test
+    fun `a week after the full history, an all-time read syncs it again, showing the cache meanwhile`() {
+        synced("user/workouts", fullHistory = true, at = now - TimeUnit.DAYS.toMillis(7))
+        // Edited on another phone months ago: same count, outside the window
+        val edited = press.copy(name = "Overhead press")
+        val backend = FakeCollectionBackend(server = listOf(bench, edited), cached = listOf(bench, press)).holdingServer()
+        val loads = read(dataSync.observe(recent(backend), Range.All))
+
+        assertThat(loads).containsExactly(Load.Ready(listOf(bench, press)))
+
+        backend.gate!!.complete(Unit)
+
+        assertThat(backend.calls).containsExactly("chunk:null", "chunk:press").inOrder()
+        assertThat(loads.last()).isEqualTo(Load.Ready(listOf(bench, edited)))
+        assertThat(records.fullHistorySynced["user/workouts"]).isEqualTo(now)
+    }
+
+    @Test
+    fun `within a week of the full history, a due sync reads only the window`() {
+        synced("user/workouts", fullHistory = true, at = now - TimeUnit.DAYS.toMillis(6))
+        val backend = FakeCollectionBackend(server = listOf(bench, press), cached = listOf(bench, press))
+
+        read(dataSync.observe(recent(backend), Range.All))
+
+        assertThat(backend.calls).containsExactly("since", "count").inOrder()
     }
 
     @Test

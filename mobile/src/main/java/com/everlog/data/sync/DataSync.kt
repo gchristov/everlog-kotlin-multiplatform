@@ -23,8 +23,13 @@ import kotlinx.coroutines.withTimeoutOrNull
 import timber.log.Timber
 import kotlin.coroutines.cancellation.CancellationException
 
+/**
+ * @param fullHistoryMaxAgeMillis How old a SyncPlan.Recent collection's full history may get before an all-time
+ * read syncs it again. Never, by default.
+ */
 class SyncSettings(
     val maxAgeMillis: () -> Long,
+    val fullHistoryMaxAgeMillis: () -> Long = { Long.MAX_VALUE },
     val timeoutMillis: Long,
     val chunkSize: Int,
 )
@@ -125,7 +130,7 @@ class DataSync(
     }
 
     private fun requestSync(source: CollectionSource<*>, range: Range) {
-        val work = syncWork(source.plan, range, currentStatus(source.key), clock(), settings.maxAgeMillis()) ?: return
+        val work = syncWork(source.plan, range, currentStatus(source.key), clock(), settings.maxAgeMillis(), settings.fullHistoryMaxAgeMillis()) ?: return
         start(source.key, work) { sync(source, work) }
     }
 

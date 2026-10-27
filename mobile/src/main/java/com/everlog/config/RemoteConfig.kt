@@ -19,7 +19,9 @@ data class RemoteConfig (
         var setSuggestionsV2: Boolean = false,
         var feedbackForms: FeedbackForms? = null,
         // How old synced data may get before reading it asks the server again (DataSync); null for the default
-        var dataSyncMaxAgeMinutes: Long? = null
+        var dataSyncMaxAgeMinutes: Long? = null,
+        // How old a full workout history may get before reading all of it syncs it again (DataSync); null for the default
+        var dataSyncFullHistoryMaxAgeDays: Long? = null
 
 ) : Serializable {
 
@@ -31,6 +33,7 @@ data class RemoteConfig (
     private val SET_SUGGESTIONS_V2 = "set_suggestions_v2"
     private val FEEDBACK_FORMS = "feedback_forms"
     private val DATA_SYNC_MAX_AGE_MINUTES = "data_sync_max_age_minutes"
+    private val DATA_SYNC_FULL_HISTORY_MAX_AGE_DAYS = "data_sync_full_history_max_age_days"
 
     fun populateFromSource(config: FirebaseRemoteConfig): RemoteConfig {
         notificationHome = getObjectFromRemoteConfig(NOTIFICATION_HOME, HomeNotification::class.java, config)
@@ -40,12 +43,14 @@ data class RemoteConfig (
         workoutScreenV2 = config.getBoolean(WORKOUT_SCREEN_V2)
         setSuggestionsV2 = config.getBoolean(SET_SUGGESTIONS_V2)
         feedbackForms = getObjectFromRemoteConfig(FEEDBACK_FORMS, FeedbackForms::class.java, config)
-        // Without a value from the console or the defaults (which load asynchronously), getLong gives 0: always sync
-        dataSyncMaxAgeMinutes = config.getValue(DATA_SYNC_MAX_AGE_MINUTES)
-            .takeIf { it.source != FirebaseRemoteConfig.VALUE_SOURCE_STATIC }
-            ?.asLong()
+        dataSyncMaxAgeMinutes = config.longOrNull(DATA_SYNC_MAX_AGE_MINUTES)
+        dataSyncFullHistoryMaxAgeDays = config.longOrNull(DATA_SYNC_FULL_HISTORY_MAX_AGE_DAYS)
         return this
     }
+
+    // Without a value from the console or the defaults (which load asynchronously), getLong gives 0
+    private fun FirebaseRemoteConfig.longOrNull(key: String): Long? =
+        getValue(key).takeIf { it.source != FirebaseRemoteConfig.VALUE_SOURCE_STATIC }?.asLong()
 
     private fun <T> getObjectFromRemoteConfig(key: String,
                                               clazz: Class<T>,

@@ -19,6 +19,9 @@ object AppDataSync {
             records = PreferencesSyncRecords(ELApplication.getInstance().getSharedPreferences(PreferencesSyncRecords.FILE, Context.MODE_PRIVATE)),
             settings = SyncSettings(
                 maxAgeMillis = { maxAgeMillis(BuildConfig.DEBUG, RemoteConfigManager.manager.dataSyncMaxAgeMinutes(), AppConfig.DATA_SYNC_MAX_AGE_MINUTES) },
+                fullHistoryMaxAgeMillis = {
+                    fullHistoryMaxAgeMillis(RemoteConfigManager.manager.dataSyncFullHistoryMaxAgeDays(), AppConfig.DATA_SYNC_FULL_HISTORY_MAX_AGE_DAYS)
+                },
                 timeoutMillis = TimeUnit.SECONDS.toMillis(config.dataSyncTimeoutSeconds),
                 chunkSize = config.dataSyncChunkSize,
             ),
