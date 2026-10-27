@@ -515,8 +515,8 @@ internal class WorkoutLogViewModel(
         if (exercises.isEmpty()) return
         launchCoroutine {
             loadPrefillSources(exercises).fold(
-                // Without history the sets keep their values
-                { Timber.tag(TAG).e(it, "Couldn't load history to fill in from") },
+                // Without history (offline before it ever synced) the sets keep their values
+                { Timber.tag(TAG).w("Couldn't load history to fill in from: %s", it.message) },
                 { found ->
                     sources = sources + found
                     setState {

@@ -18,15 +18,12 @@ import com.everlog.managers.auth.LocalUserManager
 import com.everlog.managers.firebase.FirestorePathManager
 import com.google.firebase.firestore.DocumentSnapshot
 import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.flowOf
-import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.transform
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
-import timber.log.Timber
 
 interface ExerciseRepository {
     /**
@@ -51,10 +48,9 @@ interface ExerciseRepository {
     fun ownExercises(): Flow<Load<List<LibraryExercise>>>
 
     /**
-     * The user's own exercises as they change, for as long as it's collected, like ELExercisesStore's
-     * listener: one created, edited or deleted elsewhere (e.g. the create exercise screen) arrives
-     * straight away, as Firestore reports local writes before the server confirms them. Errors are
-     * skipped, keeping the last list.
+     * The user's own exercises as they change, for as long as it's collected, once they've loaded: one created,
+     * edited or deleted on this phone (e.g. the create exercise screen) arrives straight away, as Firestore puts
+     * local writes in the cache; other phones' changes at the next sync.
      */
     fun ownExerciseUpdates(): Flow<List<LibraryExercise>>
 
@@ -99,26 +95,8 @@ class RealExerciseRepository(
         ).map { load -> load.map { it.visible() } }
     }
 
-    override fun ownExerciseUpdates(): Flow<List<LibraryExercise>> = callbackFlow {
-        // Throws without a signed-in user: then there's nothing to follow
-        val collection = runCatching { FirestorePathManager.exercisesCollection }
-            .onFailure { Timber.tag(TAG).w(it, "No user's exercises to follow") }
-            .getOrNull()
-        if (collection == null) {
-            close()
-            return@callbackFlow
-        }
-        val registration = collection.addSnapshotListener { snapshot, error ->
-            if (error != null || snapshot == null) {
-                Timber.tag(TAG).w(error, "Couldn't follow the user's exercises")
-                return@addSnapshotListener
-            }
-            trySend(snapshot.documents)
-        }
-        awaitClose { registration.remove() }
-    }
-        .map { documents -> documents.mapNotNull { it.toVisibleOwnExerciseOrNull() } }
-        .flowOn(dispatcher)
+    override fun ownExerciseUpdates(): Flow<List<LibraryExercise>> =
+        ownExercises().transform { load -> if (load is Load.Ready) emit(load.value) }
 
     override fun registry(): Flow<Load<ExerciseRegistry?>> = dataSync.observe(
         DocumentSource("exerciseRegistry", userId = null, FirestoreDocument(FirestorePathManager.exerciseRegistryDocument, dispatcher) {
@@ -132,16 +110,7 @@ class RealExerciseRepository(
 
     private fun List<StoredExercise>.visible() = filterNot { it.hidden }.map { it.exercise }
 
-    // The listener's for the workout screen, which follows the user's own exercises live
-    private fun DocumentSnapshot.toVisibleOwnExerciseOrNull(): LibraryExercise? =
-        runCatching { toStoredExercise(own = true) }
-            .onFailure { Timber.tag(TAG).w(it, "Skipped exercise %s, which doesn't parse", id) }
-            .getOrNull()
-            ?.takeUnless { it.hidden }
-            ?.exercise
-
     // Hidden ones leave the library but stay readable by history
     private data class StoredExercise(val exercise: LibraryExercise, val hidden: Boolean)
 }
 
-private const val TAG = "ExerciseRepository"

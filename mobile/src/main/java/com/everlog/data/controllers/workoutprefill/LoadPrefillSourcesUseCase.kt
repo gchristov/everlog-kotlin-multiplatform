@@ -2,14 +2,12 @@ package com.everlog.data.controllers.workoutprefill
 
 import arrow.core.Either
 import com.everlog.data.controllers.workoutprefill.BaseWorkoutPrefillController.PrefillSource
-import com.everlog.data.datastores.ELDatastore
-import com.everlog.data.datastores.base.OnStoreItemsListener
 import com.everlog.data.model.exercise.ELExercise
-import com.everlog.data.model.workout.ELWorkout
-import kotlin.coroutines.resume
-import kotlin.coroutines.resumeWithException
+import com.everlog.data.repositories.WorkoutRepository
+import com.everlog.data.sync.Load
+import com.everlog.data.sync.Range
 import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.suspendCancellableCoroutine
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.withContext
 
 /**
@@ -22,25 +20,16 @@ interface LoadPrefillSourcesUseCase {
 
 class RealLoadPrefillSourcesUseCase(
     private val dispatcher: CoroutineDispatcher,
+    private val workoutRepository: WorkoutRepository,
     private val clock: () -> Long = System::currentTimeMillis,
 ) : LoadPrefillSourcesUseCase {
 
+    // An exercise's last session can be from any time, so this reads the whole history: the first time after an
+    // install, once it has synced
     override suspend operator fun invoke(exercises: List<ELExercise>): Either<Throwable, Map<String, PrefillSource>> =
-        Either.catch {
-            val history = history()
-            withContext(dispatcher) { WorkoutPrefillController.buildPrefillSources(exercises, history, clock()) }
+        when (val history = workoutRepository.workouts(Range.All).first { it != Load.Loading }) {
+            is Load.Ready -> Either.Right(withContext(dispatcher) { WorkoutPrefillController.buildPrefillSources(exercises, history.value, clock()) })
+            is Load.Unavailable -> Either.Left(history.error)
+            Load.Loading -> error("Filtered out")
         }
-
-    private suspend fun history(): List<ELWorkout> = suspendCancellableCoroutine { continuation ->
-        ELDatastore.workoutsStore().getItems(object : OnStoreItemsListener<ELWorkout> {
-            override fun onItemsLoaded(items: MutableList<ELWorkout>, fromCache: Boolean) {
-                // Copied, as the store keeps updating its list
-                if (continuation.isActive) continuation.resume(ArrayList(items))
-            }
-
-            override fun onItemsLoadingError(throwable: Throwable) {
-                if (continuation.isActive) continuation.resumeWithException(throwable)
-            }
-        })
-    }
 }
