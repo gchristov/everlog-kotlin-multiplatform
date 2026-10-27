@@ -61,6 +61,44 @@ doesn't parse is left out and logged.
 - **Signing out.** `AuthManager.logout` calls `signOut()`, which stops syncs, forgets the records and ends every read.
 - **Clock moved back.** A sync time in the future counts as due.
 
+## Extending it
+
+A rough guide for what's coming, so each addition fits the split above: `DataSync` keeps the cache in
+step and says what a screen can show; repositories join sources into what screens need. Build each
+piece when the feature that needs it arrives.
+
+- **Joining (hydration).** Data that points at other data by uuid joins in the repository, with a pure
+  function over the sources' flows, not in `DataSync` or a decorator. For example, plans hold routine
+  uuids: a plans repository combines the user's plans, their routines (both `SyncPlan.Whole`) and the
+  exercise lookup, the way `exerciseLibraryOf` does. That costs no reads beyond the syncs, and a rename
+  anywhere reaches every open screen. This replaces `ELPlanDecorator` and `ELRoutineDecorator`, which read
+  each reference one at a time. Before the second join, add a `combineLoads` helper, so each repository
+  doesn't rewrite the rules for combining `Load`s: wait for required parts, fall back for optional ones,
+  pass on `Unavailable`.
+- **Hydrating on the backend.** Keeping joins as pure functions in repositories means they can move to
+  the server: a Cloud Function writes the joined or summarised fields onto the document. The repository
+  then reads one source instead of combining several, and screens don't change. A backend that isn't
+  Firestore (e.g. a REST API) is a bigger step: `CollectionBackend` is an interface, but reading offline
+  and showing edits live rely on Firestore's cache, so such a backend needs a local store of its own.
+- **Shared collections** (workouts and plans for everyone, like the exercise library). A shared source
+  has `userId = null`, so its records are kept once per device. Plans already live in a top-level `plans`
+  collection with `createdByUserId` and `privateToUser`, so public plans are a query on it. Joins work
+  across shared and the user's own sources the same way. What a big shared catalogue would need:
+  - **Refreshing only what changed.** A `Whole` sync costs every document, for every active user, each
+    max age. A `SyncPlan.Since(updatedAt)` reads only what changed since the last sync. It needs every
+    write to set `updatedAt` (we write shared collections through our own tools, so that can be
+    enforced), and deletions as hidden documents rather than removed ones, as the exercise library does.
+    The library itself would get cheaper too.
+  - **Paging by something other than date.** `Recent` and `PagedRead` page by a date field. A catalogue
+    sorted by name or popularity needs paging by any order.
+  - **A source per query.** A source's key is its name and user. Browsing a category or a search needs the
+    query's parameters in the key, so each one has its own sync records and max age.
+  - **References outside what's synced.** A shared plan pointing at routines no synced collection holds
+    needs a "these ids" source. Firestore's `in` queries take at most 30 ids, so it reads in batches.
+- **Queries and server reads.** A new kind of server read must never be the same query as a cache
+  listener. Firestore answers it from the listener's view (see `cacheOnly` in `FirestoreBackends.kt`).
+  Add a case to `FirestoreBackendsTest` that follows the data while syncing it.
+
 ## Tests
 
 `DataSyncTest` drives every rule against fake backends (`FakeSyncBackends.kt`), and `SyncRulesTest`
