@@ -11,6 +11,7 @@ import com.everlog.data.controllers.workoutsession.unfinishedSets
 import com.everlog.data.model.workout.ELWorkout
 import com.everlog.managers.preferences.SettingsManager.MuscleGoal
 import com.everlog.managers.preferences.SettingsManager.WeightUnit
+import com.everlog.ui.components.exercisetable.CellFocus
 
 internal data class WorkoutLogState(
     val name: String,
@@ -127,10 +128,6 @@ internal sealed interface SuggestionNote {
 
     data class Goal(val goal: MuscleGoal, val weightKg: Float) : SuggestionNote
 }
-
-internal data class CellFocus(val ref: SetRef, val field: ValueField)
-
-internal fun countField(set: WorkoutSet) = if (set.mode == SetMode.Time) ValueField.Time else ValueField.Reps
 
 // Reps, then the weight, whose key completes the set. A timed set's time starts its timer instead, then completes the
 // set once the timer has run. A done set's values save as they're typed, so its key just moves on to the set to

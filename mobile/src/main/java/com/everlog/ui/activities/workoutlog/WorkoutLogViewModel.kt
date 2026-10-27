@@ -38,8 +38,12 @@ import com.everlog.data.model.workout.ELWorkout
 import com.everlog.data.model.workout.ELWorkoutState
 import com.everlog.data.repositories.OngoingWorkoutRepository
 import com.everlog.services.workout.ShownSet
+import com.everlog.ui.components.exercisetable.CellFocus
+import com.everlog.ui.components.exercisetable.parse
+import com.everlog.ui.components.exercisetable.steppedValue
+import com.everlog.ui.components.exercisetable.typedAfterBackspace
+import com.everlog.ui.components.exercisetable.typedAfterKey
 import com.everlog.ui.mvvm.CommonViewModel
-import com.everlog.utils.format.displayWeight
 import java.util.Date
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Job
@@ -197,7 +201,7 @@ internal class WorkoutLogViewModel(
         val state = state.value
         val cell = state.focus ?: return
         val set = state.blocks.set(cell.ref) ?: return
-        enter(cell, (state.typed ?: rawText(set, cell.field, state.unit)).dropLast(1))
+        enter(cell, typedAfterBackspace(state.typed, set, cell.field, state.unit))
     }
 
     fun onStep(direction: Int) {
@@ -210,12 +214,7 @@ internal class WorkoutLogViewModel(
     private fun step(cell: CellFocus, direction: Int, then: WorkoutLogState.() -> WorkoutLogState = { this }) {
         val state = state.value
         val set = state.blocks.set(cell.ref) ?: return
-        val (value, step) = when (cell.field) {
-            ValueField.Weight -> (set.weightKg?.let { displayWeight(it, state.unit) } ?: 0f) to state.weightStep
-            ValueField.Reps -> (set.reps ?: 0).toFloat() to RepsStep
-            ValueField.Time -> (set.timeSeconds ?: 0).toFloat() to TimeStepSeconds
-        }
-        val stepped = (value + direction * step).coerceAtLeast(0f)
+        val stepped = steppedValue(set, cell.field, state.unit, state.weightStep, direction)
         change { withValue(cell, stepped).then() }
         analytics.valueChanged(cell.field, stepped)
     }
@@ -364,9 +363,7 @@ internal class WorkoutLogViewModel(
     private fun type(key: Char) {
         val state = state.value
         val cell = state.focus ?: return
-        val base = state.typed.orEmpty()
-        if (key == '.' && (cell.field != ValueField.Weight || base.contains('.'))) return
-        enter(cell, (base + key).take(maxLength(cell.field)))
+        enter(cell, typedAfterKey(state.typed, cell.field, key) ?: return)
     }
 
     // Saving the whole workout on every key is slow on long workouts, so a typed value is saved by finishTyping. The
@@ -639,9 +636,6 @@ internal class WorkoutLogViewModel(
         private val TimerStepSeconds = AppConfig.configuration.defaultRestTimeOffsetSeconds
         private val MaxSets = AppConfig.configuration.maxExerciseSets
         private const val TAG = "WorkoutLogViewModel"
-        private const val RepsStep = 1f
-        // The same as a running timer's −/+
-        private val TimeStepSeconds = TimerStepSeconds.toFloat()
 
         /**
          * The launch intent only has the workout as it was when it started. When it's resumed, or Android rebuilds

@@ -58,6 +58,8 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 import org.junit.After
 import org.junit.Before
 import com.everlog.managers.preferences.SettingsManager.MuscleGoal
+import com.everlog.ui.components.exercisetable.ExerciseTab
+import com.everlog.ui.components.exercisetable.ExerciseTableTags
 import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.RuleChain
@@ -189,19 +191,19 @@ class WorkoutLogScenarioTest {
 
         // The superset's menu, beside its last exercise, has each exercise's history, and each name opens its info
         showExercise(1)
-        val menu = compose.onNodeWithTag(WorkoutLogTags.menu(1)).getUnclippedBoundsInRoot()
-        val raise = compose.onNode(hasText("Raise") and hasAnyAncestor(hasTestTag(WorkoutLogTags.Table))).getUnclippedBoundsInRoot()
+        val menu = compose.onNodeWithTag(ExerciseTableTags.menu(1)).getUnclippedBoundsInRoot()
+        val raise = compose.onNode(hasText("Raise") and hasAnyAncestor(hasTestTag(ExerciseTableTags.Table))).getUnclippedBoundsInRoot()
         assertThat(((menu.top + menu.bottom) / 2).value).isWithin(1f).of(((raise.top + raise.bottom) / 2).value)
-        compose.onNodeWithTag(WorkoutLogTags.menu(1)).performClick()
+        compose.onNodeWithTag(ExerciseTableTags.menu(1)).performClick()
         compose.onNode(hasText("Fly history") and hasAnyAncestor(isPopup())).assertExists()
         compose.onNode(hasText("Raise history") and hasAnyAncestor(isPopup())).performClick()
         assertThat(opened).isEqualTo("Raise" to ExerciseTab.History)
-        compose.onNode(hasText("Fly") and hasAnyAncestor(hasTestTag(WorkoutLogTags.Table))).performClick()
+        compose.onNode(hasText("Fly") and hasAnyAncestor(hasTestTag(ExerciseTableTags.Table))).performClick()
         assertThat(opened).isEqualTo("Fly" to ExerciseTab.Info)
 
         // Renamed from its details (the user's own exercises follow Firestore), the new name shows
         ownUpdates.tryEmit(listOf(LibraryExercise(uuid = "Fly", name = "Cable fly", own = true)))
-        compose.onNode(hasText("Cable fly") and hasAnyAncestor(hasTestTag(WorkoutLogTags.Table))).assertExists()
+        compose.onNode(hasText("Cable fly") and hasAnyAncestor(hasTestTag(ExerciseTableTags.Table))).assertExists()
 
         // The closed keypad's Complete set goes through the superset exercise by exercise
         key("Complete set").performClick()
@@ -249,7 +251,7 @@ class WorkoutLogScenarioTest {
         // A set added to bench press. A swipe only shows its Delete, which deletes it; Undo puts it back, then it's
         // deleted for good.
         showExercise(0)
-        compose.onAllNodes(hasText("Add set") and hasAnyAncestor(hasTestTag(WorkoutLogTags.Table)))[0].performClick()
+        compose.onAllNodes(hasText("Add set") and hasAnyAncestor(hasTestTag(ExerciseTableTags.Table)))[0].performClick()
         row(0, 2, 0).assertExists().performTouchInput { swipeLeft() }
         row(0, 2, 0).assertExists()
         // Opening another set's Delete closes the first
@@ -270,7 +272,7 @@ class WorkoutLogScenarioTest {
 
         // An exercise added at the end, which may be below the screen
         key("Add exercise").performClick()
-        compose.onNodeWithTag(WorkoutLogTags.Table).performScrollToNode(hasText("Squat"))
+        compose.onNodeWithTag(ExerciseTableTags.Table).performScrollToNode(hasText("Squat"))
         compose.onNodeWithText("Squat").assertExists()
 
         // Deleting its last set takes the exercise with it, and Undo brings it back to stay
@@ -288,10 +290,10 @@ class WorkoutLogScenarioTest {
         // Its name opens its info, its menu its history, then deletes it after asking
         compose.onNodeWithText("Squat").performClick()
         assertThat(opened).isEqualTo("Squat" to ExerciseTab.Info)
-        compose.onNodeWithTag(WorkoutLogTags.menu(2)).performClick()
+        compose.onNodeWithTag(ExerciseTableTags.menu(2)).performClick()
         compose.onNode(hasText("History") and hasAnyAncestor(isPopup())).performClick()
         assertThat(opened).isEqualTo("Squat" to ExerciseTab.History)
-        compose.onNodeWithTag(WorkoutLogTags.menu(2)).performClick()
+        compose.onNodeWithTag(ExerciseTableTags.menu(2)).performClick()
         compose.onNode(hasText("Delete") and hasAnyAncestor(isPopup())).performClick()
         compose.onNodeWithText("Delete Squat?").assertExists()
         compose.onNode(hasText("Delete") and hasAnyAncestor(isDialog())).performClick()
@@ -306,14 +308,14 @@ class WorkoutLogScenarioTest {
         assertThat(analytics.events).contains("rest_changed 70")
         compose.onNodeWithContentDescription("Workout options").performClick()
         compose.onNodeWithText("Edit workout").performClick()
-        compose.onNodeWithTag(WorkoutLogTags.editGrip(0)).performTouchInput {
+        compose.onNodeWithTag(ExerciseTableTags.editGrip(0)).performTouchInput {
             down(center)
             moveBy(Offset(0f, height * 4f), delayMillis = 200)
             up()
         }
-        compose.onNode(hasText("Cable fly", substring = true) and hasAnyAncestor(hasTestTag(WorkoutLogTags.editCard(0)))).assertExists()
+        compose.onNode(hasText("Cable fly", substring = true) and hasAnyAncestor(hasTestTag(ExerciseTableTags.editCard(0)))).assertExists()
         compose.onNode(hasText("Done") and hasAnyAncestor(hasTestTag(WorkoutLogTags.EditFooter))).performClick()
-        compose.onNodeWithTag(WorkoutLogTags.EditList).assertDoesNotExist()
+        compose.onNodeWithTag(ExerciseTableTags.EditList).assertDoesNotExist()
 
         // Finish asks, as sets aren't ticked, then saves the workout as it is
         compose.onNode(hasText("Finish") and hasAnyAncestor(isDialog()).not()).performClick()
@@ -490,22 +492,22 @@ class WorkoutLogScenarioTest {
     )
 
     private fun cell(block: Int, round: Int, exercise: Int, field: String): SemanticsNodeInteraction {
-        val set = WorkoutLogTags.set(block, round, exercise)
-        return compose.onNodeWithTag(if (field == "count") WorkoutLogTags.count(set) else WorkoutLogTags.weight(set))
+        val set = ExerciseTableTags.set(block, round, exercise)
+        return compose.onNodeWithTag(if (field == "count") ExerciseTableTags.count(set) else ExerciseTableTags.weight(set))
     }
 
     // Scrolls an exercise to the top of the table, clear of the keypad over its bottom, on any screen size
     private fun showExercise(block: Int) {
-        compose.onNodeWithTag(WorkoutLogTags.Table).performScrollToIndex(block)
+        compose.onNodeWithTag(ExerciseTableTags.Table).performScrollToIndex(block)
     }
 
-    private fun row(block: Int, round: Int, exercise: Int) = compose.onNodeWithTag(WorkoutLogTags.set(block, round, exercise))
+    private fun row(block: Int, round: Int, exercise: Int) = compose.onNodeWithTag(ExerciseTableTags.set(block, round, exercise))
 
     private fun deleteSet(block: Int, round: Int, exercise: Int) =
-        compose.onNodeWithTag(WorkoutLogTags.delete(WorkoutLogTags.set(block, round, exercise))).performClick()
+        compose.onNodeWithTag(ExerciseTableTags.delete(ExerciseTableTags.set(block, round, exercise))).performClick()
 
     private fun tick(block: Int, round: Int, exercise: Int) =
-        compose.onNodeWithTag(WorkoutLogTags.tick(WorkoutLogTags.set(block, round, exercise)))
+        compose.onNodeWithTag(ExerciseTableTags.tick(ExerciseTableTags.set(block, round, exercise)))
 
     // A key or button on the docked keypad, rather than the same text in the table
     private fun key(text: String) = compose.onNode(hasText(text) and hasAnyAncestor(hasTestTag(WorkoutLogTags.Keypad)))

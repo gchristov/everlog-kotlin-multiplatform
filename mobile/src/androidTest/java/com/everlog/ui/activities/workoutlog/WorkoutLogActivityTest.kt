@@ -38,6 +38,7 @@ import com.everlog.ui.activities.exercisepicker.ExercisePickerActivity
 import com.everlog.ui.activities.home.exercise.ExercisesActivity
 import com.everlog.ui.activities.home.exercise.details.ExerciseDetailsActivity
 import com.everlog.ui.activities.home.workout.details.WorkoutDetailsActivity
+import com.everlog.ui.components.exercisetable.ExerciseTableTags
 import com.google.common.truth.Truth.assertThat
 import java.util.concurrent.TimeUnit
 import org.junit.After
@@ -103,14 +104,14 @@ class WorkoutLogActivityTest {
         compose.waitUntil(TIMEOUT) { workoutNotificationShows() }
 
         // A set ticked is saved as the ongoing workout, which resumes it
-        compose.onNodeWithTag(WorkoutLogTags.tick(WorkoutLogTags.set(0, 0, 0))).performClick()
+        compose.onNodeWithTag(ExerciseTableTags.tick(ExerciseTableTags.set(0, 0, 0))).performClick()
         compose.waitUntil(TIMEOUT) { ongoingFirstSetDone() }
 
         // Its name opens its details on Info, and its menu's History on History
         val details = watchLaunches(ExerciseDetailsActivity::class.java)
         compose.onNodeWithText("Bench press").performClick()
         val info = openedAndClosed(details)
-        compose.onNodeWithTag(WorkoutLogTags.menu(0)).performClick()
+        compose.onNodeWithTag(ExerciseTableTags.menu(0)).performClick()
         compose.onNode(hasText("History") and hasAnyAncestor(isPopup())).performClick()
         val history = openedAndClosed(details)
         assertThat(listOf(info, history).map { it.getSerializableExtra(ELConstants.EXTRA_TYPE) })
@@ -120,7 +121,7 @@ class WorkoutLogActivityTest {
         val pickerOpened = returnFromPicker(group("e2e-squat", "Squat"))
         compose.onNode(hasText("Add exercise") and hasAnyAncestor(hasTestTag(WorkoutLogTags.Keypad))).performClick()
         compose.waitUntil(TIMEOUT) { pickerOpened() }
-        compose.onNodeWithTag(WorkoutLogTags.Table).performScrollToNode(hasText("Squat"))
+        compose.onNodeWithTag(ExerciseTableTags.Table).performScrollToNode(hasText("Squat"))
 
         // The system back button asks about leaving; Finish instead saves the workout and opens its details
         val workoutDetails = interceptLaunch(WorkoutDetailsActivity::class.java)
