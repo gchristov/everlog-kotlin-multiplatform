@@ -1,4 +1,4 @@
-package com.everlog.ui.activities.workoutlog
+package com.everlog.ui.components.exercisetable
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -117,13 +117,13 @@ private object TableSizes {
  * has a row per exercise in each round, in its header's order.
  */
 @Composable
-internal fun WorkoutTable(
+internal fun ExerciseTable(
     blocks: List<WorkoutBlock>,
     view: TableView,
     // Goes up with every keypad key, to bring the edited cell back into view
     reveal: Int,
     contentPadding: PaddingValues,
-    actions: WorkoutTableActions,
+    actions: ExerciseTableActions,
 ) {
     // The edited cell is kept below the table's top and above the keypad, which floats over the table
     val listState = rememberLazyListState()
@@ -153,7 +153,7 @@ internal fun WorkoutTable(
         LazyColumn(
             modifier = Modifier
                 .fillMaxSize()
-                .testTag(WorkoutLogTags.Table)
+                .testTag(ExerciseTableTags.Table)
                 .onGloballyPositioned {
                     val bounds = it.boundsInWindow()
                     listTop = bounds.top
@@ -169,7 +169,7 @@ internal fun WorkoutTable(
         ) {
             blocks.forEachIndexed { index, block ->
                 item(key = block.id) {
-                    ExerciseTable(index = index, block = block, view = view, actions = actions)
+                    BlockTable(index = index, block = block, view = view, actions = actions)
                 }
             }
         }
@@ -185,12 +185,12 @@ private val LocalReveal = staticCompositionLocalOf { 0 }
 private val LocalOpenSwipe = staticCompositionLocalOf { mutableStateOf<SetRef?>(null) }
 
 @Composable
-private fun ExerciseTable(
+private fun BlockTable(
     // For the rows' test tags
     index: Int,
     block: WorkoutBlock,
     view: TableView,
-    actions: WorkoutTableActions,
+    actions: ExerciseTableActions,
 ) {
     Column(modifier = Modifier.padding(bottom = Theme.spacing.extraLarge)) {
         ExerciseHeader(index, block, actions)
@@ -209,7 +209,7 @@ private fun ExerciseTable(
                 }
                 // Keyed, so the next set doesn't take over a swiped one's state once it's gone
                 key(row.ref.roundId, row.exercise) {
-                    val tag = WorkoutLogTags.set(index, row.round, row.exercise)
+                    val tag = ExerciseTableTags.set(index, row.round, row.exercise)
                     SwipeToDelete(ref = row.ref, tag = tag, onDelete = { actions.onDeleteSet(row.ref) }) {
                         TableRow(tag = tag, row = row, actions = actions)
                     }
@@ -249,7 +249,7 @@ private fun SwipeToDelete(ref: SetRef, tag: String, onDelete: () -> Unit, conten
                 .fillMaxHeight()
                 .width(TableSizes.DeleteWidth)
                 .background(Theme.contentColors.destructive.copy(alpha = 0.2f))
-                .testTag(WorkoutLogTags.delete(tag))
+                .testTag(ExerciseTableTags.delete(tag))
                 .clickable {
                     onDelete()
                     scope.launch { state.snapTo(SwipeReveal.Closed) }
@@ -275,7 +275,7 @@ private fun SwipeToDelete(ref: SetRef, tag: String, onDelete: () -> Unit, conten
 }
 
 @Composable
-private fun ExerciseHeader(index: Int, block: WorkoutBlock, actions: WorkoutTableActions) {
+private fun ExerciseHeader(index: Int, block: WorkoutBlock, actions: ExerciseTableActions) {
     Row(
         modifier = Modifier.padding(horizontal = TableSizes.RowPadding),
         verticalAlignment = Alignment.CenterVertically,
@@ -306,7 +306,7 @@ private fun ExerciseHeader(index: Int, block: WorkoutBlock, actions: WorkoutTabl
         val exercises = block.exercises.mapNotNull { it.exercise }
         AppOverflowMenu(
             // Beside a group's last exercise, as it's under the group's type
-            modifier = Modifier.testTag(WorkoutLogTags.menu(index)).then(
+            modifier = Modifier.testTag(ExerciseTableTags.menu(index)).then(
                 if (block.exercises.size > 1) Modifier.alignBy { it.measuredHeight / 2 } else Modifier,
             ),
             outlined = true,
@@ -323,7 +323,7 @@ private fun ExerciseHeader(index: Int, block: WorkoutBlock, actions: WorkoutTabl
 }
 
 // The press shows with the thumbnail's corners, which a rounder shape would cut into
-private fun Modifier.openingInfo(exercise: ELExercise?, actions: WorkoutTableActions, corner: Dp) =
+private fun Modifier.openingInfo(exercise: ELExercise?, actions: ExerciseTableActions, corner: Dp) =
     if (exercise == null) this else clip(RoundedCornerShape(corner)).clickable { actions.onOpenExercise(exercise, ExerciseTab.Info) }
 
 // The middle of a group header's last exercise, which the exercise menu lines up with
@@ -336,7 +336,7 @@ private fun Modifier.providingCenter(line: HorizontalAlignmentLine) = layout { m
 
 // SUPERSET, CIRCUIT and so on over the names, each with its image and letter
 @Composable
-private fun GroupHeader(modifier: Modifier, block: WorkoutBlock, actions: WorkoutTableActions) {
+private fun GroupHeader(modifier: Modifier, block: WorkoutBlock, actions: ExerciseTableActions) {
     val context = LocalContext.current
     val type = block.setType
     Column(modifier = modifier, verticalArrangement = Arrangement.spacedBy(TableSizes.GroupRowGap)) {
@@ -412,7 +412,7 @@ private fun Label(text: String, modifier: Modifier, align: TextAlign = TextAlign
 
 // The selected row is tinted and shows its values as boxes to type into
 @Composable
-private fun TableRow(tag: String, row: SetRow, actions: WorkoutTableActions) {
+private fun TableRow(tag: String, row: SetRow, actions: ExerciseTableActions) {
     val onCount = { actions.onCellTapped(CellFocus(row.ref, row.countField)) }
     Row(
         modifier = Modifier
@@ -446,7 +446,7 @@ private fun TableRow(tag: String, row: SetRow, actions: WorkoutTableActions) {
         }
         // Reps (or time) first, then weight, as last time reads: 15 × 17 kg
         Cell(
-            tag = WorkoutLogTags.count(tag),
+            tag = ExerciseTableTags.count(tag),
             text = row.countText,
             focused = row.countFocused,
             boxed = row.selected,
@@ -455,7 +455,7 @@ private fun TableRow(tag: String, row: SetRow, actions: WorkoutTableActions) {
             suggested = row.countSuggested,
         )
         Cell(
-            tag = WorkoutLogTags.weight(tag),
+            tag = ExerciseTableTags.weight(tag),
             text = row.weightText,
             focused = row.weightFocused,
             boxed = row.selected,
@@ -463,9 +463,9 @@ private fun TableRow(tag: String, row: SetRow, actions: WorkoutTableActions) {
             suggested = row.weightSuggested,
         )
         if (row.startsTimer) {
-            StartButton(tag = WorkoutLogTags.tick(tag), armed = row.armed, onClick = { actions.onStartTimer(row.ref) })
+            StartButton(tag = ExerciseTableTags.tick(tag), armed = row.armed, onClick = { actions.onStartTimer(row.ref) })
         } else {
-            Tick(tag = WorkoutLogTags.tick(tag), done = row.done, armed = row.armed, onClick = { actions.onTick(row.ref) })
+            Tick(tag = ExerciseTableTags.tick(tag), done = row.done, armed = row.armed, onClick = { actions.onTick(row.ref) })
         }
     }
 }
@@ -625,14 +625,9 @@ internal const val SuggestedMark = "✦"
 /**
  * Rows are tagged by position: the exercise group, the round and the exercise in it.
  */
-internal object WorkoutLogTags {
-    const val Keypad = "keypad"
+internal object ExerciseTableTags {
     const val Table = "table"
     const val EditList = "edit"
-    const val EditFooter = "edit:footer"
-    const val SuggestionNote = "suggestion_note"
-    const val SetSuggestionsOption = "options:set_suggestions"
-    const val SendFeedbackOption = "options:send_feedback"
 
     fun editCard(block: Int) = "edit:$block"
 

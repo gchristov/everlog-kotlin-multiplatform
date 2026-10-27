@@ -1,5 +1,6 @@
-package com.everlog.ui.activities.workoutlog
+package com.everlog.ui.components.exercisetable
 
+import com.everlog.data.controllers.workoutsession.SetMode
 import com.everlog.data.controllers.workoutsession.SetRef
 import com.everlog.data.controllers.workoutsession.ValueField
 import com.everlog.data.controllers.workoutsession.WorkoutBlock
@@ -13,7 +14,7 @@ import com.everlog.utils.format.formatWeight
 import com.everlog.utils.format.lastTimeText
 
 /**
- * What the table shows on top of the workout's sets.
+ * What the table shows on top of the sets.
  *
  * @param unitLabel KG or LB
  * @param startsTimer Whether a set's row shows a timer button in place of its tick
@@ -31,19 +32,12 @@ internal data class TableView(
     val lastTime: Map<String, List<WorkoutSet>> = emptyMap(),
 )
 
-internal fun WorkoutLogState.tableView(unitLabel: String) = TableView(
-    unit = unit,
-    unitLabel = unitLabel,
-    focus = focus,
-    selected = selected,
-    typed = typed,
-    timing = (timer as? WorkoutTimer.SetTimer)?.let { Countdown(it.ref, timerRemainingSeconds()) },
-    armed = focus?.ref.takeIf { mainKey == KeypadMainKey.CompleteSet || mainKey == KeypadMainKey.StartTimer },
-    startsTimer = ::startsTimer,
-    lastTime = lastTime,
-)
-
 internal data class Countdown(val ref: SetRef, val seconds: Int)
+
+// The cell the keypad types into
+internal data class CellFocus(val ref: SetRef, val field: ValueField)
+
+internal fun countField(set: WorkoutSet) = if (set.mode == SetMode.Time) ValueField.Time else ValueField.Reps
 
 /**
  * One exercise's set in a round, as its row shows it. [round] and [exercise] are its place, for test tags.
@@ -117,7 +111,7 @@ private fun cellText(set: WorkoutSet, field: ValueField, ref: SetRef, view: Tabl
 /**
  * What tapping the table does. Every action does nothing unless overridden, for a table that can't be used.
  */
-internal interface WorkoutTableActions {
+internal interface ExerciseTableActions {
     fun onCellTapped(cell: CellFocus) = Unit
 
     fun onTick(ref: SetRef) = Unit

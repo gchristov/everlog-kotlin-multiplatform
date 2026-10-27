@@ -55,6 +55,13 @@ import com.everlog.data.controllers.workoutsession.set
 import com.everlog.data.model.exercise.ELExercise
 import com.everlog.managers.preferences.SettingsManager
 import com.everlog.ui.activities.setsuggestions.SetSuggestion
+import com.everlog.ui.components.exercisetable.CellFocus
+import com.everlog.ui.components.exercisetable.ExerciseEditList
+import com.everlog.ui.components.exercisetable.ExerciseTab
+import com.everlog.ui.components.exercisetable.ExerciseTable
+import com.everlog.ui.components.exercisetable.ExerciseTableActions
+import com.everlog.ui.components.exercisetable.SuggestedMark
+import com.everlog.ui.components.exercisetable.TableView
 import com.everlog.ui.design.elements.AppButton
 import com.everlog.ui.design.elements.AppFooter
 import com.everlog.ui.design.elements.AppFooterAction
@@ -120,7 +127,7 @@ internal fun WorkoutLogScreen(
         }
     }
     val tableActions = remember(viewModel, onOpenExercise) {
-        object : WorkoutTableActions {
+        object : ExerciseTableActions {
             override fun onCellTapped(cell: CellFocus) = viewModel.onCellTapped(cell)
             override fun onTick(ref: SetRef) = viewModel.onTick(ref)
             override fun onStartTimer(ref: SetRef) = viewModel.onStartSetTimer(ref)
@@ -188,7 +195,7 @@ internal fun WorkoutLogScreen(
     ) { contentPadding ->
         Box(modifier = Modifier.fillMaxSize()) {
             if (state.editing) {
-                EditList(
+                ExerciseEditList(
                     blocks = state.blocks,
                     contentPadding = contentPadding,
                     onMove = viewModel::onMoveExercise,
@@ -197,7 +204,7 @@ internal fun WorkoutLogScreen(
             } else if (empty) {
                 EmptyTable(contentPadding, state.unit)
             } else {
-                WorkoutTable(
+                ExerciseTable(
                     blocks = state.blocks,
                     view = state.tableView(unitLabel(state.unit)),
                     reveal = state.reveal,
@@ -359,12 +366,12 @@ private fun EmptyTable(contentPadding: PaddingValues, unit: SettingsManager.Weig
                     }
                     .clearAndSetSemantics {},
             ) {
-                WorkoutTable(
+                ExerciseTable(
                     blocks = example,
                     view = TableView(unit = unit, unitLabel = unitLabel(unit), selected = SetRef(-1, -3, 0)),
                     reveal = 0,
                     contentPadding = contentPadding,
-                    actions = object : WorkoutTableActions {},
+                    actions = object : ExerciseTableActions {},
                 )
             }
             Box(modifier = Modifier.fillMaxSize().pointerInput(Unit) {

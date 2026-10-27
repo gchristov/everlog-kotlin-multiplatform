@@ -29,6 +29,7 @@ import com.everlog.managers.preferences.SettingsManager.WeightUnit
 import com.everlog.services.workout.ShownSet
 import com.everlog.testutil.FakeCoroutineDispatcher
 import com.everlog.testutil.InMemorySharedPreferences
+import com.everlog.ui.components.exercisetable.CellFocus
 import com.everlog.utils.format.displayWeight
 import com.google.common.truth.Truth.assertThat
 import kotlinx.coroutines.CompletableDeferred

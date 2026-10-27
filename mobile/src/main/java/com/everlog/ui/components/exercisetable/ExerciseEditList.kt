@@ -1,4 +1,4 @@
-package com.everlog.ui.activities.workoutlog
+package com.everlog.ui.components.exercisetable
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -43,7 +43,6 @@ import com.everlog.ui.design.elements.AppIconButton
 import com.everlog.ui.design.elements.list.AppListItem
 import com.everlog.ui.design.theme.Theme
 
-// The edit list's sizes, local to the workout screen
 private object EditSizes {
     val CardGap = 8.dp
     // Bigger than the icon, so the grip is easy to catch
@@ -52,11 +51,11 @@ private object EditSizes {
 }
 
 /**
- * Edit workout: the exercises as cards to drag into a new order by their grip (a superset moves as one), or delete
- * with the bin, which asks first.
+ * The exercises as cards to drag into a new order by their grip (a superset moves as one), or delete with the bin,
+ * which asks first.
  */
 @Composable
-internal fun EditList(
+internal fun ExerciseEditList(
     blocks: List<WorkoutBlock>,
     contentPadding: PaddingValues,
     onMove: (from: Int, to: Int) -> Unit,
@@ -71,7 +70,7 @@ internal fun EditList(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .testTag(WorkoutLogTags.EditList)
+            .testTag(ExerciseTableTags.EditList)
             .verticalScroll(rememberScrollState())
             .padding(horizontal = Theme.spacing.large)
             .padding(top = Theme.spacing.medium, bottom = contentPadding.calculateBottomPadding() + Theme.spacing.large),
@@ -82,7 +81,7 @@ internal fun EditList(
                 val lifted = dragging == block.id
                 EditCard(
                     modifier = Modifier
-                        .testTag(WorkoutLogTags.editCard(index))
+                        .testTag(ExerciseTableTags.editCard(index))
                         .onSizeChanged { heights[block.id] = it.height }
                         .zIndex(if (lifted) 1f else 0f)
                         .graphicsLayer {
@@ -94,7 +93,7 @@ internal fun EditList(
                     block = block,
                     lifted = lifted,
                     gripModifier = Modifier
-                        .testTag(WorkoutLogTags.editGrip(index))
+                        .testTag(ExerciseTableTags.editGrip(index))
                         .pointerInput(block.id) {
                             detectDragGestures(
                                 onDragStart = {

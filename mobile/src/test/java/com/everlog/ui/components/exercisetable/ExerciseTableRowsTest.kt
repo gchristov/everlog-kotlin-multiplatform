@@ -1,4 +1,4 @@
-package com.everlog.ui.activities.workoutlog
+package com.everlog.ui.components.exercisetable
 
 import com.everlog.data.controllers.workoutsession.SetMode
 import com.everlog.data.controllers.workoutsession.SetRef
@@ -13,7 +13,7 @@ import com.everlog.utils.format.EmptyValue
 import com.google.common.truth.Truth.assertThat
 import org.junit.Test
 
-class WorkoutLogTableRowsTest {
+class ExerciseTableRowsTest {
 
     private val single = block(1, "bench", rounds = listOf(listOf(WorkoutSet(reps = 8, weightKg = 60f)), listOf(WorkoutSet(reps = 8))))
     private val superset = block(
