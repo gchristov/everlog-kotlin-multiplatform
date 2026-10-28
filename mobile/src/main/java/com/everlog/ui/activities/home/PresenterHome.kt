@@ -46,6 +46,8 @@ class PresenterHome : BaseActivityPresenter<MvpViewHome>() {
 
     private var mAppUpdateController: AppUpdateController? = null
 
+    private val mOngoingWorkoutReopen = OngoingWorkoutReopen()
+
     // The prompt to resume or discard an ongoing workout, shown on resume, so it isn't shown twice
     private var mOngoingWorkoutPromptShowing = false
 
@@ -189,12 +191,18 @@ class PresenterHome : BaseActivityPresenter<MvpViewHome>() {
         refreshAppConfig()
         refreshProPurchases()
         updateStartWorkoutButtonVisibility()
-        if (WorkoutManager.manager.hasOngoingWorkout()) {
-            observeDiscardOngoingWorkoutConfirm(WorkoutManager.manager.ongoingWorkout()!!)
-        } else {
-            // Don't prompt over the ongoing workout dialog, or offer a restart that would end the workout
-            mAppUpdateController?.checkForUpdate()
+        val workout = WorkoutManager.manager.ongoingWorkout()
+        when (mOngoingWorkoutReopen.onHomeShown(workout != null)) {
+            OngoingWorkoutAction.Reopen -> reopenOngoingWorkout(workout!!)
+            OngoingWorkoutAction.Prompt -> observeDiscardOngoingWorkoutConfirm(workout!!)
+            // Don't offer a restart that would end the workout
+            OngoingWorkoutAction.None -> mAppUpdateController?.checkForUpdate()
         }
+    }
+
+    private fun reopenOngoingWorkout(workout: ELWorkout) {
+        AnalyticsManager.manager.workoutResumed(AnalyticsConstants.WORKOUT_RESUMED_SOURCE_LAUNCH, workout.getCompletedSetsCount())
+        navigator.resumeWorkout(workout)
     }
 
     private fun handleActivityPaused() {
