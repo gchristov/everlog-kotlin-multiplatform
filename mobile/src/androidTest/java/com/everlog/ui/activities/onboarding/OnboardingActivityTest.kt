@@ -16,6 +16,7 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
 import com.everlog.testutil.E2EAccount
 import com.everlog.ui.activities.home.routine.create.CreateRoutineActivity
+import com.everlog.ui.activities.templateeditor.TemplateEditorActivity
 import com.google.common.truth.Truth.assertThat
 import java.util.concurrent.TimeUnit
 import org.junit.After
@@ -44,21 +45,20 @@ class OnboardingActivityTest {
         .around(compose)
 
     private val instrumentation = InstrumentationRegistry.getInstrumentation()
-    private var routineBuilder: Instrumentation.ActivityMonitor? = null
+    // The template editor is whichever one Remote Config has on
+    private val routineBuilders = mutableListOf<Instrumentation.ActivityMonitor>()
 
     @Before
     fun setUp() {
         E2EAccount.signIn()
-        routineBuilder = instrumentation.addMonitor(
-            CreateRoutineActivity::class.java.name,
-            Instrumentation.ActivityResult(Activity.RESULT_OK, Intent()),
-            true,
-        )
+        listOf(CreateRoutineActivity::class.java, TemplateEditorActivity::class.java).forEach { editor ->
+            routineBuilders += instrumentation.addMonitor(editor.name, Instrumentation.ActivityResult(Activity.RESULT_OK, Intent()), true)
+        }
     }
 
     @After
     fun tearDown() {
-        routineBuilder?.let(instrumentation::removeMonitor)
+        routineBuilders.forEach(instrumentation::removeMonitor)
     }
 
     @Test
@@ -71,7 +71,7 @@ class OnboardingActivityTest {
         compose.waitUntil(LoadMillis) { exists("Build my own template") }
 
         compose.onNodeWithText("Build my own template").performClick()
-        compose.waitUntil(WaitMillis) { routineBuilder!!.hits > 0 }
+        compose.waitUntil(WaitMillis) { routineBuilders.sumOf { it.hits } > 0 }
 
         compose.waitUntil(WaitMillis) { screen.state == Lifecycle.State.DESTROYED }
         assertThat(screen.result.resultCode).isEqualTo(Activity.RESULT_OK)
