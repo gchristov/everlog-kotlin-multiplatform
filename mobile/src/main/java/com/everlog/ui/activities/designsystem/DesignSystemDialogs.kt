@@ -11,12 +11,16 @@ import androidx.compose.ui.tooling.preview.Preview
 import com.everlog.ui.design.elements.AppDialog
 import com.everlog.ui.design.elements.AppDialogAction
 import com.everlog.ui.design.elements.AppSecondaryButton
+import com.everlog.ui.design.elements.AppTextField
 import com.everlog.ui.design.theme.Theme
 
 @Composable
 internal fun DesignSystemDialogs() {
     var showDialog by rememberSaveable { mutableStateOf(false) }
     var showThreeActions by rememberSaveable { mutableStateOf(false) }
+    var showRename by rememberSaveable { mutableStateOf(false) }
+    var name by rememberSaveable { mutableStateOf("Push day") }
+    var field by rememberSaveable { mutableStateOf("") }
 
     ShowcasePage(title = "Dialogs") {
         group(key = "dialog", header = { "Title, body and two actions" }) {}
@@ -34,6 +38,34 @@ internal fun DesignSystemDialogs() {
                 onClick = { showThreeActions = true },
                 text = "Show dialog with three actions",
             )
+        }
+        group(key = "textField", header = { "Text field" }) {}
+        item(key = "textFieldExample") {
+            AppTextField(text = field, onTextChange = { field = it }, placeholder = "Name")
+        }
+        group(key = "rename", header = { "In a dialog, e.g. renaming" }) {}
+        item(key = "renameExample") {
+            AppSecondaryButton(
+                modifier = Modifier.fillMaxWidth(),
+                onClick = { showRename = true },
+                text = "Rename \"$name\"",
+            )
+        }
+    }
+
+    if (showRename) {
+        var edited by rememberSaveable { mutableStateOf(name) }
+        val save = {
+            name = edited.trim().ifEmpty { name }
+            showRename = false
+        }
+        AppDialog(
+            title = "Name",
+            onDismissRequest = { showRename = false },
+            primaryAction = AppDialogAction(text = "Save", onClick = save),
+            secondaryAction = AppDialogAction(text = "Cancel", onClick = { showRename = false }),
+        ) {
+            AppTextField(text = edited, onTextChange = { edited = it }, autoFocus = true, selectAllOnFocus = true, onDone = save)
         }
     }
 
