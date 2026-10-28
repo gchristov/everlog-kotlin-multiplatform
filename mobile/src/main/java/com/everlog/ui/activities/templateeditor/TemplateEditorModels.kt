@@ -1,6 +1,7 @@
 package com.everlog.ui.activities.templateeditor
 
 import com.everlog.data.controllers.workoutsession.DeletedSets
+import com.everlog.data.controllers.workoutsession.ExerciseRef
 import com.everlog.data.controllers.workoutsession.SetRef
 import com.everlog.data.controllers.workoutsession.WorkoutBlock
 import com.everlog.data.model.ELRoutine
@@ -27,6 +28,10 @@ internal data class TemplateEditorState(
     val typed: String? = null,
     // Goes up with every key, to bring the edited cell back into view
     val reveal: Int = 0,
+    // The edit list, to reorder, group or delete exercises, in place of the table
+    val editing: Boolean = false,
+    // The exercises ticked in the edit list
+    val picked: Set<ExerciseRef> = emptySet(),
     val dialog: TemplateEditorDialog? = null,
     val message: TemplateEditorMessage? = null,
     val deletion: DeletedSets? = null,
@@ -67,6 +72,12 @@ internal sealed interface TemplateEditorDialog {
 
     // Leaving with changes
     data object Leave : TemplateEditorDialog
+
+    // The ticked exercises' set type
+    data object SetType : TemplateEditorDialog
+
+    // Deleting the ticked exercises
+    data class DeletePicked(val count: Int) : TemplateEditorDialog
 }
 
 internal sealed interface TemplateEditorMessage {

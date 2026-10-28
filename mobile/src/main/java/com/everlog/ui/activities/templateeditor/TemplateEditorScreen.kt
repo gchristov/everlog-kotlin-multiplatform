@@ -38,11 +38,13 @@ import com.everlog.data.controllers.workoutsession.WorkoutBlock
 import com.everlog.data.controllers.workoutsession.WorkoutExercise
 import com.everlog.data.controllers.workoutsession.WorkoutRound
 import com.everlog.data.controllers.workoutsession.WorkoutSet
+import com.everlog.data.controllers.workoutsession.block
 import com.everlog.data.controllers.workoutsession.set
 import com.everlog.data.model.exercise.ELExercise
 import com.everlog.managers.preferences.SettingsManager
 import com.everlog.ui.components.exercisetable.CellFocus
 import com.everlog.ui.components.exercisetable.ExampleTable
+import com.everlog.ui.components.exercisetable.ExerciseEditList
 import com.everlog.ui.components.exercisetable.ExerciseTab
 import com.everlog.ui.components.exercisetable.ExerciseTable
 import com.everlog.ui.components.exercisetable.ExerciseTableActions
@@ -52,6 +54,8 @@ import com.everlog.ui.components.exercisetable.exerciseName
 import com.everlog.ui.components.exercisetable.focusLabel
 import com.everlog.ui.design.elements.AppButton
 import com.everlog.ui.design.elements.AppCircularProgressIndicator
+import com.everlog.ui.design.elements.AppFooter
+import com.everlog.ui.design.elements.AppFooterAction
 import com.everlog.ui.design.elements.AppIconButton
 import com.everlog.ui.design.elements.AppScreen
 import com.everlog.ui.design.elements.AppSnackbarHost
@@ -124,7 +128,9 @@ internal fun TemplateEditorScreen(
     AppScreen(
         topBar = { Header(state, viewModel) },
         footer = {
-            if (ready) {
+            if (state.editing) {
+                EditFooter(state, viewModel, onAddExercise)
+            } else if (ready) {
                 val addExercise = AppKeypadAction(stringResource(R.string.workout_log_add_exercise), onClick = onAddExercise)
                 AppKeypad(
                     modifier = Modifier
@@ -155,7 +161,16 @@ internal fun TemplateEditorScreen(
                 TemplateLoad.Loading -> AppCircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
                 TemplateLoad.Failed -> LoadFailed(stringResource(R.string.template_editor_load_failed), onRetry = viewModel::onRetry)
                 TemplateLoad.NotFound -> LoadFailed(stringResource(R.string.template_editor_not_found), onRetry = null)
-                TemplateLoad.Ready -> if (empty) {
+                TemplateLoad.Ready -> if (state.editing) {
+                    ExerciseEditList(
+                        blocks = state.blocks,
+                        contentPadding = contentPadding,
+                        onMove = viewModel::onMoveExercise,
+                        onDelete = viewModel::onDeleteExercise,
+                        picked = state.picked,
+                        onTogglePicked = viewModel::onTogglePicked,
+                    )
+                } else if (empty) {
                     Column(modifier = Modifier.fillMaxSize().padding(top = contentPadding.calculateTopPadding())) {
                         TemplateSettings(state, viewModel, Modifier.padding(horizontal = Theme.spacing.large, vertical = Theme.spacing.medium))
                         ExampleTable(
@@ -211,6 +226,14 @@ private fun Header(state: TemplateEditorState, viewModel: TemplateEditorViewMode
             style = Theme.typography.heading,
             maxLines = 1,
         )
+        if (state.load == TemplateLoad.Ready && state.blocks.isNotEmpty() && !state.editing) {
+            AppIconButton(
+                onClick = viewModel::onEditList,
+                icon = ImageVector.vectorResource(R.drawable.ic_drag),
+                contentDescription = stringResource(R.string.template_editor_edit_list),
+                outlined = true,
+            )
+        }
         if (state.load == TemplateLoad.Ready) {
             AppButton(
                 modifier = Modifier.testTag(TemplateEditorTags.Save),
@@ -243,6 +266,32 @@ private fun TemplateSettings(state: TemplateEditorState, viewModel: TemplateEdit
             )
         }
     }
+}
+
+// Done and Add exercise; with exercises ticked, what to do with them instead
+@Composable
+private fun EditFooter(state: TemplateEditorState, viewModel: TemplateEditorViewModel, onAddExercise: () -> Unit) {
+    val picked = state.picked
+    val inGroup = picked.any { ref -> (state.blocks.block(ref.blockId)?.exercises?.size ?: 0) > 1 }
+    AppFooter(
+        modifier = Modifier.testTag(TemplateEditorTags.EditFooter),
+        header = if (picked.isEmpty()) stringResource(R.string.template_editor_edit_hint) else null,
+        actions = if (picked.isEmpty()) {
+            listOf(
+                AppFooterAction(text = stringResource(R.string.workout_log_done), onClick = viewModel::onEditDone),
+                AppFooterAction(text = stringResource(R.string.workout_log_add_exercise), onClick = onAddExercise, style = AppFooterAction.Style.Secondary),
+            )
+        } else {
+            listOfNotNull(
+                AppFooterAction(
+                    text = if (picked.size == 1) stringResource(R.string.template_editor_set_type) else stringResource(R.string.template_editor_group, picked.size),
+                    onClick = viewModel::onSetTypeTapped,
+                ),
+                AppFooterAction(text = stringResource(R.string.workout_log_delete), onClick = viewModel::onDeletePicked, style = AppFooterAction.Style.Secondary),
+                if (inGroup) AppFooterAction(text = stringResource(R.string.template_editor_ungroup), onClick = viewModel::onUngroupPicked, style = AppFooterAction.Style.Tertiary) else null,
+            )
+        },
+    )
 }
 
 @Composable

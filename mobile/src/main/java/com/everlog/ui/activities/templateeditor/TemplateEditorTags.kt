@@ -10,4 +10,6 @@ internal object TemplateEditorTags {
     const val NameField = "name_field"
     const val Rest = "settings:rest"
     const val TimeForAllSets = "time_for_all_sets"
+    const val EditFooter = "edit:footer"
+    const val SetTypeSheet = "set_type_sheet"
 }

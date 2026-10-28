@@ -1,19 +1,30 @@
 package com.everlog.ui.activities.templateeditor
 
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import com.everlog.R
 import com.everlog.data.controllers.workoutsession.block
+import com.everlog.data.model.set.ELSetType
 import com.everlog.ui.components.rest.RestStepper
+import com.everlog.ui.design.elements.AppBottomSheet
 import com.everlog.ui.design.elements.AppDialog
 import com.everlog.ui.design.elements.AppDialogAction
 import com.everlog.ui.design.elements.AppTextField
+import com.everlog.ui.design.elements.list.AppListGroup
+import com.everlog.ui.design.elements.list.AppListItem
+import com.everlog.ui.design.theme.Theme
 
 @Composable
 internal fun TemplateEditorDialogs(state: TemplateEditorState, viewModel: TemplateEditorViewModel) {
@@ -56,6 +67,14 @@ internal fun TemplateEditorDialogs(state: TemplateEditorState, viewModel: Templa
                 secondaryAction = AppDialogAction(stringResource(R.string.cancel), viewModel::onDialogDismissed),
             )
         }
+        TemplateEditorDialog.SetType -> SetTypeSheet(state.picked.size, viewModel)
+        is TemplateEditorDialog.DeletePicked -> AppDialog(
+            title = pluralStringResource(R.plurals.template_editor_delete_picked_title, dialog.count, dialog.count),
+            body = pluralStringResource(R.plurals.template_editor_delete_picked_body, dialog.count),
+            onDismissRequest = viewModel::onDialogDismissed,
+            primaryAction = AppDialogAction(stringResource(R.string.workout_log_delete), viewModel::onDeletePickedConfirmed),
+            secondaryAction = AppDialogAction(stringResource(R.string.cancel), viewModel::onDialogDismissed),
+        )
         TemplateEditorDialog.Leave -> AppDialog(
             title = stringResource(R.string.template_editor_leave_title),
             onDismissRequest = viewModel::onDialogDismissed,
@@ -65,3 +84,44 @@ internal fun TemplateEditorDialogs(state: TemplateEditorState, viewModel: Templa
         )
     }
 }
+
+// Every set type, the ones for this number of exercises first; the others show but can't be picked
+@Composable
+private fun SetTypeSheet(count: Int, viewModel: TemplateEditorViewModel) {
+    val context = LocalContext.current
+    val (fits, others) = ELSetType.entries.partition { it.canBeSelected(count) }
+    AppBottomSheet(
+        modifier = Modifier.testTag(TemplateEditorTags.SetTypeSheet),
+        onDismissRequest = viewModel::onDialogDismissed,
+        title = pluralStringResource(R.plurals.template_editor_set_type_title, count, count),
+    ) {
+        val sheet = this
+        Column(modifier = Modifier.verticalScroll(rememberScrollState()), verticalArrangement = Arrangement.spacedBy(Theme.spacing.large)) {
+            AppListGroup {
+                fits.forEach { type ->
+                    row {
+                        AppListItem(
+                            title = type.getTitle(context).orEmpty(),
+                            subtitle = type.getDescription(context),
+                            onClick = { sheet.dismiss { viewModel.onSetTypePicked(type) } },
+                        )
+                    }
+                }
+            }
+            if (others.isNotEmpty()) {
+                AppListGroup(header = stringResource(R.string.template_editor_set_type_other)) {
+                    others.forEach { type ->
+                        row {
+                            AppListItem(
+                                title = type.getTitle(context).orEmpty(),
+                                titleColor = Theme.contentColors.secondary,
+                                subtitle = type.getDescription(context),
+                            )
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+

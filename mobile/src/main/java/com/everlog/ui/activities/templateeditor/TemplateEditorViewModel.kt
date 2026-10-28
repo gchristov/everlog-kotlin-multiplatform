@@ -5,8 +5,12 @@ import com.everlog.data.controllers.templatesession.LoadTemplateUseCase
 import com.everlog.data.controllers.templatesession.SaveTemplateUseCase
 import com.everlog.data.controllers.templatesession.TemplateNotFoundException
 import com.everlog.data.controllers.templatesession.addTemplateGroups
+import com.everlog.data.controllers.templatesession.deleteExercises
+import com.everlog.data.controllers.templatesession.groupExercises
 import com.everlog.data.controllers.templatesession.setExerciseMode
+import com.everlog.data.controllers.templatesession.ungroupExercises
 import com.everlog.data.controllers.templatesession.withTimeForAllSets
+import com.everlog.data.controllers.workoutsession.ExerciseRef
 import com.everlog.data.controllers.workoutsession.SessionIds
 import com.everlog.data.controllers.workoutsession.SetMode
 import com.everlog.data.controllers.workoutsession.SetRef
@@ -14,6 +18,7 @@ import com.everlog.data.controllers.workoutsession.addRound
 import com.everlog.data.controllers.workoutsession.block
 import com.everlog.data.controllers.workoutsession.deleteBlock
 import com.everlog.data.controllers.workoutsession.deleteSet
+import com.everlog.data.controllers.workoutsession.moveBlock
 import com.everlog.data.controllers.workoutsession.refs
 import com.everlog.data.controllers.workoutsession.restore
 import com.everlog.data.controllers.workoutsession.set
@@ -23,6 +28,7 @@ import com.everlog.data.model.ELRoutine
 import com.everlog.data.model.exercise.ELExerciseGroup
 import com.everlog.data.model.exercise.library.LibraryExercise
 import com.everlog.data.model.exercise.library.toELExercise
+import com.everlog.data.model.set.ELSetType
 import com.everlog.data.sync.Load
 import com.everlog.managers.preferences.SettingsManager.WeightUnit
 import com.everlog.ui.components.exercisetable.CellFocus
@@ -123,9 +129,40 @@ internal class TemplateEditorViewModel(
 
     fun onBack() {
         when {
+            state.value.editing -> onEditDone()
             state.value.focus != null -> onHideKeypad()
             else -> onClose()
         }
+    }
+
+    fun onEditList() {
+        finishTyping()
+        setState { focusOn(null).copy(editing = true, picked = emptySet(), deletion = null) }
+    }
+
+    fun onEditDone() = setState { copy(editing = false, picked = emptySet()) }
+
+    fun onMoveExercise(from: Int, to: Int) = change { copy(blocks = blocks.moveBlock(from, to)) }
+
+    fun onTogglePicked(ref: ExerciseRef) = setState { copy(picked = if (ref in picked) picked - ref else picked + ref) }
+
+    fun onSetTypeTapped() = setState { if (picked.isEmpty()) this else copy(dialog = TemplateEditorDialog.SetType) }
+
+    // Only a type for the number of exercises ticked, which the sheet offers
+    fun onSetTypePicked(type: ELSetType) {
+        val picked = state.value.picked
+        if (!type.canBeSelected(picked.size)) return
+        change { copy(blocks = blocks.groupExercises(picked, type, ids), picked = emptySet(), dialog = null).withoutGoneSets() }
+        analytics.setTypePicked(type)
+    }
+
+    fun onUngroupPicked() = change { copy(blocks = blocks.ungroupExercises(picked, ids), picked = emptySet()).withoutGoneSets() }
+
+    fun onDeletePicked() = setState { if (picked.isEmpty()) this else copy(dialog = TemplateEditorDialog.DeletePicked(picked.size)) }
+
+    fun onDeletePickedConfirmed() {
+        change { copy(blocks = blocks.deleteExercises(picked), picked = emptySet(), dialog = null).withoutGoneSets() }
+        if (state.value.blocks.isEmpty()) onEditDone()
     }
 
     fun onDigit(digit: Char) = type(digit)
@@ -216,6 +253,7 @@ internal class TemplateEditorViewModel(
     fun onDeleteExerciseConfirmed(blockId: Long) {
         finishTyping()
         change { copy(blocks = blocks.deleteBlock(blockId), dialog = null).withoutGoneSets() }
+        if (state.value.blocks.isEmpty()) onEditDone()
     }
 
     fun onExercisesPicked(groups: List<ELExerciseGroup>) {

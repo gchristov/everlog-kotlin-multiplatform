@@ -1,5 +1,6 @@
 package com.everlog.ui.activities.templateeditor
 
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.semantics.SemanticsActions
 import androidx.compose.ui.test.SemanticsNodeInteraction
 import androidx.compose.ui.test.assertTextEquals
@@ -230,6 +231,69 @@ class TemplateEditorScenarioTest {
     }
 
     @Test
+    fun reorganisingWithTheEditList() {
+        load.state.value = Load.Ready(push())
+        show(viewModel(uuid = "push"))
+
+        // The edit list takes the table's place; Back leaves it
+        compose.onNode(hasContentDescription("Edit list")).performClick()
+        compose.onNodeWithTag(ExerciseTableTags.EditList).assertExists()
+        compose.onNodeWithText("Drag the grip to move an exercise. Tick exercises to group them, change their set type or delete them.").assertExists()
+        Espresso.pressBack()
+        compose.onNodeWithTag(ExerciseTableTags.EditList).assertDoesNotExist()
+        assertThat(exit).isNull()
+        compose.onNode(hasContentDescription("Edit list")).performClick()
+
+        // Bench press dragged below the superset
+        compose.onNodeWithTag(ExerciseTableTags.editGrip(0)).performTouchInput {
+            down(center)
+            moveBy(Offset(0f, height * 6f), delayMillis = 200)
+            up()
+        }
+        compose.onNode(hasText("Cable fly") and hasAnyAncestor(hasTestTag(ExerciseTableTags.editCard(0)))).assertExists()
+
+        // Raise taken out of the superset: the fly is left as a single, the raise follows it
+        pick(0, 1)
+        editAction("Ungroup").performClick()
+        compose.onNode(hasText("SUPER SET")).assertDoesNotExist()
+        compose.onNode(hasText("Lateral raise") and hasAnyAncestor(hasTestTag(ExerciseTableTags.editCard(1)))).assertExists()
+
+        // One ticked offers its set type; the sheet only lets the ones for one exercise be picked
+        pick(2, 0)
+        editAction("Set type").performClick()
+        compose.onNodeWithText("Set type for 1 exercise").assertExists()
+        compose.onNode(hasText("Super Set") and hasAnyAncestor(hasTestTag(TemplateEditorTags.SetTypeSheet))).performClick()
+        compose.onNodeWithTag(TemplateEditorTags.SetTypeSheet).assertExists()
+        compose.onNode(hasText("Drop Set") and hasAnyAncestor(hasTestTag(TemplateEditorTags.SetTypeSheet))).performClick()
+        compose.waitUntil(5_000L) { compose.onAllNodes(hasTestTag(TemplateEditorTags.SetTypeSheet)).fetchSemanticsNodes().isEmpty() }
+        compose.onNodeWithText("DROP SET").assertDoesNotExist()
+
+        // Fly and bench press grouped as a superset where the fly was
+        pick(0, 0)
+        pick(2, 0)
+        editAction("Group 2 exercises").performClick()
+        compose.onNode(hasText("Super Set") and hasAnyAncestor(hasTestTag(TemplateEditorTags.SetTypeSheet))).performClick()
+        compose.waitUntil(5_000L) { compose.onAllNodes(hasText("SUPER SET")).fetchSemanticsNodes().isNotEmpty() }
+
+        // The raise deleted once confirmed, then back to the table
+        pick(1, 0)
+        editAction("Delete").performClick()
+        compose.onNodeWithText("Delete 1 exercise?").assertExists()
+        compose.onNode(hasText("Delete") and hasAnyAncestor(isDialog())).performClick()
+        compose.onNodeWithText("Lateral raise").assertDoesNotExist()
+        editAction("Done").performClick()
+        compose.onNodeWithTag(ExerciseTableTags.EditList).assertDoesNotExist()
+        listOf("1a", "1b").forEach { compose.onNodeWithText(it).assertExists() }
+
+        compose.onNodeWithTag(TemplateEditorTags.Save).performClick()
+        compose.waitUntil(TIMEOUT) { exit != null }
+        val saved = save.saved.single()
+        assertThat(saved.exerciseGroups.map { group -> group.type to group.exercises.map { it.exercise?.name } })
+            .containsExactly("SUPER" to listOf("Cable fly", "Bench press"))
+        assertThat(saved.exerciseGroups.single().exercises.map { it.sets.size }).containsExactly(3, 3)
+    }
+
+    @Test
     fun deletingAnExercise() {
         load.state.value = Load.Ready(push())
         show(viewModel(uuid = "push"))
@@ -426,6 +490,10 @@ class TemplateEditorScenarioTest {
         compose.onNode(hasText("Save") and hasAnyAncestor(isDialog())).performClick()
     }
 
+    private fun pick(block: Int, exercise: Int) = compose.onNodeWithTag(ExerciseTableTags.editPick(block, exercise)).performClick()
+
+    private fun editAction(text: String) = compose.onNode(hasText(text) and hasAnyAncestor(hasTestTag(TemplateEditorTags.EditFooter)))
+
     // A key or button on the docked keypad, rather than the same text in the table
     private fun key(text: String) = compose.onNode(hasText(text) and hasAnyAncestor(hasTestTag(TemplateEditorTags.Keypad)))
 
@@ -455,6 +523,7 @@ class TemplateEditorScenarioTest {
         override fun setDeleted() = Unit
         override fun restChanged(seconds: Int) = Unit
         override fun timeForAllSets(seconds: Int) = Unit
+        override fun setTypePicked(type: ELSetType) = Unit
     }
 
     private companion object {

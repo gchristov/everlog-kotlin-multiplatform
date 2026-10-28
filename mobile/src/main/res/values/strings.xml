@@ -358,6 +358,24 @@
     <string name="template_editor_retry">Try again</string>
     <string name="template_editor_not_found">This template has been deleted.</string>
     <string name="template_editor_save_failed">Couldn\'t save the template. Try again.</string>
+    <string name="template_editor_edit_list">Edit list</string>
+    <string name="template_editor_edit_hint">Drag the grip to move an exercise. Tick exercises to group them, change their set type or delete them.</string>
+    <string name="template_editor_set_type">Set type</string>
+    <string name="template_editor_group">Group %1$d exercises</string>
+    <string name="template_editor_ungroup">Ungroup</string>
+    <string name="template_editor_set_type_other">Needs a different number of exercises</string>
+    <plurals name="template_editor_set_type_title">
+        <item quantity="one">Set type for %d exercise</item>
+        <item quantity="other">Set type for %d exercises</item>
+    </plurals>
+    <plurals name="template_editor_delete_picked_title">
+        <item quantity="one">Delete %d exercise?</item>
+        <item quantity="other">Delete %d exercises?</item>
+    </plurals>
+    <plurals name="template_editor_delete_picked_body">
+        <item quantity="one">Its sets go with it.</item>
+        <item quantity="other">Their sets go with them.</item>
+    </plurals>
     <string name="workout_discard_keep_going">Keep going</string>
     <string name="workout_metric_prompt_missing">Please enter a value</string>
     <string name="workout_rest_time">"Rest • %1$s"</string>

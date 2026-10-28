@@ -5,6 +5,7 @@ import com.everlog.config.AppConfig
 import com.everlog.data.controllers.templatesession.LoadTemplateUseCase
 import com.everlog.data.controllers.templatesession.SaveTemplateUseCase
 import com.everlog.data.controllers.templatesession.TemplateNotFoundException
+import com.everlog.data.controllers.workoutsession.ExerciseRef
 import com.everlog.data.controllers.workoutsession.SetMode
 import com.everlog.data.controllers.workoutsession.SetRef
 import com.everlog.data.controllers.workoutsession.ValueField
@@ -15,6 +16,7 @@ import com.everlog.data.model.exercise.ELExerciseGroup
 import com.everlog.data.model.exercise.ELRoutineExercise
 import com.everlog.data.model.exercise.library.LibraryExercise
 import com.everlog.data.model.set.ELSet
+import com.everlog.data.model.set.ELSetType
 import com.everlog.data.sync.Load
 import com.everlog.testutil.FakeCoroutineDispatcher
 import com.everlog.testutil.InMemorySharedPreferences
@@ -302,6 +304,99 @@ class TemplateEditorViewModelTest {
         assertThat(viewModel.state.value.focus).isEqualTo(CellFocus(viewModel.ref(1, 2), ValueField.Time))
     }
 
+    // The edit list
+
+    @Test
+    fun `the edit list closes the keypad, and Back or Done leave it with nothing ticked`() {
+        val viewModel = loaded()
+        viewModel.onShowKeypad()
+
+        viewModel.onEditList()
+        assertThat(viewModel.state.value.editing).isTrue()
+        assertThat(viewModel.state.value.focus).isNull()
+        viewModel.onTogglePicked(ExerciseRef(viewModel.blocks[0].id, 0))
+        viewModel.onBack()
+
+        assertThat(viewModel.state.value.editing).isFalse()
+        assertThat(viewModel.state.value.picked).isEmpty()
+        assertThat(viewModel.state.value.exit).isNull()
+    }
+
+    @Test
+    fun `exercises move by their grip`() {
+        val viewModel = loaded()
+        viewModel.onEditList()
+
+        viewModel.onMoveExercise(0, 1)
+
+        assertThat(viewModel.blocks.map { it.exercises.single().exercise }).containsExactly(plank, bench).inOrder()
+        assertThat(viewModel.state.value.hasChanges()).isTrue()
+    }
+
+    @Test
+    fun `ticked exercises are grouped as the type picked, which has to fit how many are ticked`() {
+        val viewModel = loaded()
+        viewModel.onEditList()
+        val picked = viewModel.blocks.map { ExerciseRef(it.id, 0) }
+        picked.forEach(viewModel::onTogglePicked)
+
+        viewModel.onSetTypeTapped()
+        assertThat(viewModel.state.value.dialog).isEqualTo(TemplateEditorDialog.SetType)
+        viewModel.onSetTypePicked(ELSetType.GIANT)
+        assertThat(viewModel.blocks).hasSize(2)
+        viewModel.onSetTypePicked(ELSetType.SUPER)
+
+        assertThat(viewModel.blocks.single().type).isEqualTo("SUPER")
+        assertThat(viewModel.blocks.single().exercises.map { it.exercise }).containsExactly(bench, plank).inOrder()
+        assertThat(viewModel.state.value.picked).isEmpty()
+        assertThat(viewModel.state.value.dialog).isNull()
+        assertThat(analytics.events).contains("setType:SUPER")
+        viewModel.onSave()
+        assertThat(saved.exerciseGroups.single().exercises).hasSize(2)
+    }
+
+    @Test
+    fun `an exercise ticked in a group can be taken out of it`() {
+        val viewModel = loaded()
+        viewModel.onEditList()
+        viewModel.blocks.map { ExerciseRef(it.id, 0) }.forEach(viewModel::onTogglePicked)
+        viewModel.onSetTypePicked(ELSetType.SUPER)
+
+        viewModel.onTogglePicked(ExerciseRef(viewModel.blocks.single().id, 1))
+        viewModel.onUngroupPicked()
+
+        assertThat(viewModel.blocks.map { it.type to it.exercises.single().exercise }).containsExactly("SINGLE" to bench, "SINGLE" to plank).inOrder()
+    }
+
+    @Test
+    fun `ticked exercises are deleted once confirmed, and deleting them all leaves the edit list`() {
+        val viewModel = loaded()
+        viewModel.onEditList()
+        viewModel.blocks.map { ExerciseRef(it.id, 0) }.forEach(viewModel::onTogglePicked)
+
+        viewModel.onDeletePicked()
+        assertThat(viewModel.state.value.dialog).isEqualTo(TemplateEditorDialog.DeletePicked(2))
+        viewModel.onDialogDismissed()
+        assertThat(viewModel.blocks).hasSize(2)
+        viewModel.onDeletePicked()
+        viewModel.onDeletePickedConfirmed()
+
+        assertThat(viewModel.blocks).isEmpty()
+        assertThat(viewModel.state.value.editing).isFalse()
+        assertThat(viewModel.state.value.dialog).isNull()
+    }
+
+    @Test
+    fun `nothing ticked has no set type or delete to ask about`() {
+        val viewModel = loaded()
+        viewModel.onEditList()
+
+        viewModel.onSetTypeTapped()
+        viewModel.onDeletePicked()
+
+        assertThat(viewModel.state.value.dialog).isNull()
+    }
+
     // Leaving
 
     @Test
@@ -510,6 +605,10 @@ class TemplateEditorViewModelTest {
 
         override fun timeForAllSets(seconds: Int) {
             events += "timeForAllSets:$seconds"
+        }
+
+        override fun setTypePicked(type: ELSetType) {
+            events += "setType:${type.name}"
         }
     }
 }

@@ -644,6 +644,8 @@ internal object ExerciseTableTags {
 
     fun editGrip(block: Int) = "edit:$block:grip"
 
+    fun editPick(block: Int, exercise: Int) = "edit:$block:pick:$exercise"
+
     fun set(block: Int, round: Int, exercise: Int) = "set:$block:$round:$exercise"
 
     fun menu(block: Int) = "menu:$block"
