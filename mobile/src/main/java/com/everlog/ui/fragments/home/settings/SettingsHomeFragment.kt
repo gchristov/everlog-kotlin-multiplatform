@@ -6,6 +6,7 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.appcompat.app.AlertDialog
 import androidx.core.content.ContextCompat
 import com.everlog.BuildConfig
 import com.everlog.R
@@ -16,6 +17,7 @@ import com.everlog.managers.RemoteConfigManager
 import com.everlog.managers.analytics.AnalyticsConstants
 import com.everlog.managers.preferences.SettingsManager
 import com.everlog.ui.activities.setsuggestions.SetSuggestion
+import com.everlog.ui.activities.templateeditor.TemplateEditorPrototype
 import com.everlog.ui.dialog.DialogBuilder
 import com.everlog.ui.fragments.base.BaseFragmentMvpView
 import com.everlog.ui.fragments.base.BaseFragmentPresenter
@@ -39,6 +41,20 @@ class SettingsHomeFragment : BaseTabFragment(), MvpViewSettingsHome {
     override fun onFragmentCreated() {
         setupButtons()
         binding.root.findViewById<View>(R.id.developerSection).visibility = if (BuildConfig.DEBUG) View.VISIBLE else View.GONE
+        binding.root.findViewById<View>(R.id.templateEditorPrototypeBtn).setOnClickListener { showTemplateEditorPrototype() }
+    }
+
+    // Prototype: switches the template editor reads as it opens
+    private fun showTemplateEditorPrototype() {
+        val checked = TemplateEditorPrototype.read(requireContext()).checked()
+        AlertDialog.Builder(requireContext())
+            .setTitle("Template editor prototype")
+            .setMultiChoiceItems(TemplateEditorPrototype.Labels, checked) { _, which, isChecked -> checked[which] = isChecked }
+            .setPositiveButton("Save") { _, _ ->
+                TemplateEditorPrototype.write(requireContext(), TemplateEditorPrototype(lastTime = checked[0], setsAndReps = checked[1], compact = checked[2]))
+            }
+            .setNegativeButton("Cancel", null)
+            .show()
     }
 
     override fun getAnalyticsScreenName(): String {

@@ -10,6 +10,7 @@ import com.everlog.data.controllers.templatesession.groupExercises
 import com.everlog.data.controllers.templatesession.setExerciseMode
 import com.everlog.data.controllers.templatesession.ungroupExercises
 import com.everlog.data.controllers.templatesession.withTimeForAllSets
+import com.everlog.data.controllers.workoutprefill.LoadPrefillSourcesUseCase
 import com.everlog.data.controllers.workoutsession.ExerciseRef
 import com.everlog.data.controllers.workoutsession.SessionIds
 import com.everlog.data.controllers.workoutsession.SetMode
@@ -18,6 +19,7 @@ import com.everlog.data.controllers.workoutsession.addRound
 import com.everlog.data.controllers.workoutsession.block
 import com.everlog.data.controllers.workoutsession.deleteBlock
 import com.everlog.data.controllers.workoutsession.deleteSet
+import com.everlog.data.controllers.workoutsession.lastSets
 import com.everlog.data.controllers.workoutsession.moveBlock
 import com.everlog.data.controllers.workoutsession.refs
 import com.everlog.data.controllers.workoutsession.restore
@@ -58,6 +60,9 @@ internal class TemplateEditorViewModel(
     private val saveTemplate: SaveTemplateUseCase,
     private val analytics: TemplateEditorAnalytics,
     private val ownExerciseUpdates: () -> Flow<List<LibraryExercise>>,
+    // Prototype: other layouts, and history for the last time column
+    private val prototype: TemplateEditorPrototype = TemplateEditorPrototype(),
+    private val loadPrefillSources: LoadPrefillSourcesUseCase? = null,
     private val clock: () -> Long = System::currentTimeMillis,
     private val ids: SessionIds = SessionIds(),
 ) : CommonViewModel<TemplateEditorState>(
@@ -71,6 +76,7 @@ internal class TemplateEditorViewModel(
         if (uuid == null) {
             val routine = ELRoutine(uuid = UUID.randomUUID().toString(), name = defaultName, createdDate = clock())
             setState { opened(routine, ids, defaultName) }
+            loadLastTime()
         } else {
             load(uuid)
         }
@@ -96,13 +102,40 @@ internal class TemplateEditorViewModel(
         setState { copy(load = TemplateLoad.Loading) }
         loading = launchCoroutine {
             when (val load = loadTemplate(uuid).first { it != Load.Loading }) {
-                is Load.Ready -> setState { opened(load.value, ids, defaultName) }
+                is Load.Ready -> {
+                    setState { opened(load.value, ids, defaultName) }
+                    loadLastTime()
+                }
                 is Load.Unavailable -> setState {
                     copy(load = if (load.error is TemplateNotFoundException) TemplateLoad.NotFound else TemplateLoad.Failed)
                 }
                 Load.Loading -> error("Filtered out")
             }
         }
+    }
+
+    // Prototype: last time's sets of every exercise in the template, for the LAST TIME column
+    private fun loadLastTime() {
+        val load = loadPrefillSources?.takeIf { prototype.lastTime } ?: return
+        val exercises = state.value.blocks.flatMap { block -> block.exercises.mapNotNull { it.exercise } }.distinctBy { it.uuid }
+        if (exercises.isEmpty()) return
+        launchCoroutine {
+            load(exercises).onRight { found -> setState { copy(lastTime = lastTime + found.mapValues { (_, source) -> source.lastSets() }) } }
+        }
+    }
+
+    // Prototype: the sets × reps layout
+
+    fun onSummaryTapped(field: SummaryFocus) {
+        finishTyping()
+        setState { focusOn(null).copy(summary = field) }
+    }
+
+    fun onToggleExpanded(blockId: Long) = setState { copy(expanded = if (blockId in expanded) expanded - blockId else expanded + blockId) }
+
+    private fun enterSummary(field: SummaryFocus, text: String) {
+        val value = parse(field.field(state.value.blocks), text)?.toInt()
+        change { copy(blocks = blocks.withSummary(field, value, ids), typed = text, reveal = reveal + 1) }
     }
 
     fun onRetry() {
@@ -117,7 +150,11 @@ internal class TemplateEditorViewModel(
     // On the set last typed into, or the first
     fun onShowKeypad() {
         val state = state.value
-        if (state.focus != null) return
+        if (state.focus != null || state.summary != null) return
+        if (prototype.setsAndReps) {
+            setState { copy(summary = blocks.summaryFields().firstOrNull()) }
+            return
+        }
         val ref = state.selected?.takeIf { state.blocks.set(it)?.removed == false } ?: state.blocks.refs().firstOrNull() ?: return
         setState { focusOn(countCell(ref)) }
     }
@@ -130,7 +167,7 @@ internal class TemplateEditorViewModel(
     fun onBack() {
         when {
             state.value.editing -> onEditDone()
-            state.value.focus != null -> onHideKeypad()
+            state.value.focus != null || state.value.summary != null -> onHideKeypad()
             else -> onClose()
         }
     }
@@ -171,12 +208,20 @@ internal class TemplateEditorViewModel(
 
     private fun type(key: Char) {
         val state = state.value
+        state.summary?.let { field ->
+            enterSummary(field, typedAfterKey(state.typed, field.field(state.blocks), key) ?: return)
+            return
+        }
         val cell = state.focus ?: return
         enter(cell, typedAfterKey(state.typed, cell.field, key) ?: return)
     }
 
     fun onBackspace() {
         val state = state.value
+        state.summary?.let { field ->
+            enterSummary(field, (state.typed ?: field.text(state.blocks)).dropLast(1))
+            return
+        }
         val cell = state.focus ?: return
         val set = state.blocks.set(cell.ref) ?: return
         enter(cell, typedAfterBackspace(state.typed, set, cell.field, NoWeights))
@@ -188,6 +233,11 @@ internal class TemplateEditorViewModel(
     fun onStep(direction: Int) {
         finishTyping()
         val state = state.value
+        state.summary?.let { field ->
+            val value = state.blocks.block(field.blockId)?.stepped(field, direction) ?: return
+            change { copy(blocks = blocks.withSummary(field, value, ids), reveal = reveal + 1) }
+            return
+        }
         val cell = state.focus ?: return
         val set = state.blocks.set(cell.ref) ?: return
         val value = steppedValue(set, cell.field, NoWeights, weightStep = 0f, direction)
@@ -199,6 +249,11 @@ internal class TemplateEditorViewModel(
 
     fun onMainKey() {
         finishTyping()
+        if (state.value.summary != null) {
+            val next = state.value.nextSummary() ?: return onHideKeypad()
+            setState { copy(summary = next) }
+            return
+        }
         val next = state.value.nextSet() ?: return onHideKeypad()
         setState { focusOn(countCell(next)) }
     }
@@ -206,6 +261,10 @@ internal class TemplateEditorViewModel(
     // Reps or time is the exercise's, so it switches all of its sets
     fun onModeSelected(mode: SetMode) {
         finishTyping()
+        (state.value.summary as? SummaryFocus.Each)?.let { field ->
+            change { copy(blocks = blocks.setExerciseMode(field.blockId, field.index, mode)) }
+            return
+        }
         val ref = state.value.focus?.ref ?: return
         change {
             val switched = copy(blocks = blocks.setExerciseMode(ref.blockId, ref.index, mode))
@@ -260,6 +319,7 @@ internal class TemplateEditorViewModel(
         if (groups.isEmpty()) return
         change { copy(blocks = blocks.addTemplateGroups(groups, ids)) }
         analytics.exercisesAdded()
+        loadLastTime()
     }
 
     fun onNameTapped() {

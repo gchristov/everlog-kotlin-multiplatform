@@ -95,6 +95,7 @@ private object TableSizes {
     val Badge = 16.dp
     val BadgeOffset = 3.dp
     val RowHeight = 52.dp
+    val DenseRowHeight = 40.dp
     val DeleteWidth = 88.dp
     // The suggestion mark beside a weight, smaller than any text style
     val Mark = 9.sp
@@ -216,7 +217,7 @@ private fun BlockTable(
                 key(row.ref.roundId, row.exercise) {
                     val tag = ExerciseTableTags.set(index, row.round, row.exercise)
                     SwipeToDelete(ref = row.ref, tag = tag, onDelete = { actions.onDeleteSet(row.ref) }) {
-                        TableRow(tag = tag, row = row, columns = view.columns, actions = actions)
+                        TableRow(tag = tag, row = row, columns = view.columns, height = if (view.dense) TableSizes.DenseRowHeight else TableSizes.RowHeight, actions = actions)
                     }
                 }
             }
@@ -418,12 +419,12 @@ private fun Label(text: String, modifier: Modifier, align: TextAlign = TextAlign
 
 // The selected row is tinted and shows its values as boxes to type into
 @Composable
-private fun TableRow(tag: String, row: SetRow, columns: TableColumns, actions: ExerciseTableActions) {
+private fun TableRow(tag: String, row: SetRow, columns: TableColumns, height: Dp, actions: ExerciseTableActions) {
     val onCount = { actions.onCellTapped(CellFocus(row.ref, row.countField)) }
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .height(TableSizes.RowHeight)
+            .height(height)
             .testTag(tag)
             .background(if (row.selected) Theme.backgrounds.selected else Color.Transparent)
             .clickable(onClick = onCount)
@@ -459,6 +460,7 @@ private fun TableRow(tag: String, row: SetRow, columns: TableColumns, actions: E
             focused = row.countFocused,
             boxed = row.selected,
             onClick = onCount,
+            height = height,
             highlight = row.timing,
             suggested = row.countSuggested,
         )
@@ -469,6 +471,7 @@ private fun TableRow(tag: String, row: SetRow, columns: TableColumns, actions: E
                 focused = row.weightFocused,
                 boxed = row.selected,
                 onClick = { actions.onCellTapped(CellFocus(row.ref, ValueField.Weight)) },
+                height = height,
                 suggested = row.weightSuggested,
             )
         }
@@ -489,6 +492,7 @@ private fun Cell(
     focused: Boolean,
     boxed: Boolean,
     onClick: () -> Unit,
+    height: Dp = TableSizes.RowHeight,
     highlight: Boolean = false,
     suggested: Boolean = false,
 ) {
@@ -507,7 +511,7 @@ private fun Cell(
     }
     Box(
         modifier = Modifier
-            .size(TableSizes.Cell, TableSizes.RowHeight)
+            .size(TableSizes.Cell, height)
             .testTag(tag)
             .clickable(interactionSource = interactions, indication = null, onClick = onClick),
         contentAlignment = Alignment.Center,

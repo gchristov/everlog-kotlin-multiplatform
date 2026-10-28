@@ -47,7 +47,7 @@ internal fun TemplateEditorState.content(): TemplateContent? = edited()?.let { r
 internal fun TemplateEditorState.hasChanges(): Boolean = opened != null && content() != opened
 
 // Closing the keypad (a null cell) keeps the selection, so the keyboard button opens on it again
-internal fun TemplateEditorState.focusOn(cell: CellFocus?) = copy(focus = cell, typed = null, selected = cell?.ref ?: selected)
+internal fun TemplateEditorState.focusOn(cell: CellFocus?) = copy(focus = cell, summary = null, typed = null, selected = cell?.ref ?: selected)
 
 internal fun TemplateEditorState.countCell(ref: SetRef): CellFocus? = blocks.set(ref)?.let { CellFocus(ref, countField(it)) }
 
@@ -59,6 +59,7 @@ internal fun TemplateEditorState.nextSet(): SetRef? {
 }
 
 internal fun TemplateEditorState.mainKey(): TemplateMainKey? = when {
+    summary != null -> if (nextSummary() != null) TemplateMainKey.NextSet else TemplateMainKey.Done
     focus == null -> null
     nextSet() != null -> TemplateMainKey.NextSet
     else -> TemplateMainKey.Done
@@ -74,8 +75,6 @@ internal fun TemplateEditorState.timeForAllSets(): Int? {
     val others = block.exerciseSets(cell.ref.index)
     return seconds.takeIf { others.size > 1 && others.any { it.mode != SetMode.Time || it.timeSeconds != seconds } }
 }
-
-private fun WorkoutBlock.exerciseSets(index: Int) = rounds.map { it.sets[index] }.filterNot { it.removed }
 
 // After sets or exercises go: a cell or selection that went with them goes too
 internal fun TemplateEditorState.withoutGoneSets() = copy(

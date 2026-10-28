@@ -4,6 +4,7 @@ import com.everlog.data.controllers.workoutsession.DeletedSets
 import com.everlog.data.controllers.workoutsession.ExerciseRef
 import com.everlog.data.controllers.workoutsession.SetRef
 import com.everlog.data.controllers.workoutsession.WorkoutBlock
+import com.everlog.data.controllers.workoutsession.WorkoutSet
 import com.everlog.data.model.ELRoutine
 import com.everlog.ui.components.exercisetable.CellFocus
 
@@ -32,6 +33,12 @@ internal data class TemplateEditorState(
     val editing: Boolean = false,
     // The exercises ticked in the edit list
     val picked: Set<ExerciseRef> = emptySet(),
+    // Prototype: last time's sets by exercise uuid, for the LAST TIME column
+    val lastTime: Map<String, List<WorkoutSet>> = emptyMap(),
+    // Prototype: the sets × reps field the keypad types into, in place of a set's cell
+    val summary: SummaryFocus? = null,
+    // Prototype: the blocks showing each of their sets in the sets × reps layout
+    val expanded: Set<Long> = emptySet(),
     val dialog: TemplateEditorDialog? = null,
     val message: TemplateEditorMessage? = null,
     val deletion: DeletedSets? = null,

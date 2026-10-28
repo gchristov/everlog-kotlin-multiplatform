@@ -2,6 +2,7 @@ package com.everlog.ui.activities.templateeditor
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -29,6 +30,7 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.lifecycle.compose.LifecycleResumeEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.everlog.R
@@ -88,6 +90,7 @@ internal fun TemplateEditorScreen(
     onAddExercise: () -> Unit,
     onOpenExercise: (ELExercise, ExerciseTab) -> Unit,
     onExit: (TemplateEditorExit) -> Unit,
+    prototype: TemplateEditorPrototype = TemplateEditorPrototype(),
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
 
@@ -126,7 +129,7 @@ internal fun TemplateEditorScreen(
     val empty = state.blocks.isEmpty()
 
     AppScreen(
-        topBar = { Header(state, viewModel) },
+        topBar = { Header(state, viewModel, prototype.compact) },
         footer = {
             if (state.editing) {
                 EditFooter(state, viewModel, onAddExercise)
@@ -172,13 +175,20 @@ internal fun TemplateEditorScreen(
                     )
                 } else if (empty) {
                     Column(modifier = Modifier.fillMaxSize().padding(top = contentPadding.calculateTopPadding())) {
-                        TemplateSettings(state, viewModel, Modifier.padding(horizontal = Theme.spacing.large, vertical = Theme.spacing.medium))
+                        if (!prototype.compact) TemplateSettings(state, viewModel, Modifier.padding(horizontal = Theme.spacing.large, vertical = Theme.spacing.medium))
                         ExampleTable(
                             blocks = exampleBlocks(stringResource(R.string.workout_log_example_exercise)),
                             view = TableView(unit = NoWeights, unitLabel = "", selected = SetRef(-1, -2, 0), columns = TemplateColumns),
                             contentPadding = PaddingValues(bottom = contentPadding.calculateBottomPadding()),
                         )
                     }
+                } else if (prototype.setsAndReps) {
+                    SetsAndRepsList(
+                        state = state,
+                        viewModel = viewModel,
+                        contentPadding = contentPadding,
+                        header = if (prototype.compact) null else ({ TemplateSettings(state, viewModel, Modifier.padding(bottom = Theme.spacing.small)) }),
+                    )
                 } else {
                     ExerciseTable(
                         blocks = state.blocks,
@@ -188,12 +198,14 @@ internal fun TemplateEditorScreen(
                             focus = state.focus,
                             selected = state.focus?.ref,
                             typed = state.typed,
-                            columns = TemplateColumns,
+                            lastTime = state.lastTime,
+                            columns = TemplateColumns.copy(lastTime = prototype.lastTime),
+                            dense = prototype.compact,
                         ),
                         reveal = state.reveal,
                         contentPadding = contentPadding,
                         actions = tableActions,
-                        header = { TemplateSettings(state, viewModel, Modifier.padding(bottom = Theme.spacing.extraLarge)) },
+                        header = if (prototype.compact) null else ({ TemplateSettings(state, viewModel, Modifier.padding(bottom = Theme.spacing.extraLarge)) }),
                     )
                 }
             }
@@ -205,7 +217,7 @@ internal fun TemplateEditorScreen(
 }
 
 @Composable
-private fun Header(state: TemplateEditorState, viewModel: TemplateEditorViewModel) {
+private fun Header(state: TemplateEditorState, viewModel: TemplateEditorViewModel, compact: Boolean) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -220,12 +232,32 @@ private fun Header(state: TemplateEditorState, viewModel: TemplateEditorViewMode
             icon = ImageVector.vectorResource(R.drawable.ic_remove),
             contentDescription = stringResource(R.string.template_editor_close),
         )
-        AppText(
-            modifier = Modifier.weight(1f),
-            text = stringResource(if (state.isNew) R.string.template_editor_new else R.string.template_editor_edit),
-            style = Theme.typography.heading,
-            maxLines = 1,
-        )
+        if (compact && state.load == TemplateLoad.Ready) {
+            // Prototype: the name to tap to rename, and the rest under it
+            Column(modifier = Modifier.weight(1f)) {
+                AppText(
+                    modifier = Modifier.clickable(onClick = viewModel::onNameTapped),
+                    text = state.name,
+                    style = Theme.typography.heading,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                )
+                AppText(
+                    modifier = Modifier.clickable(onClick = viewModel::onRestTapped),
+                    text = "Rest ${formatClock(state.restSeconds.toLong())} after each set ›",
+                    style = Theme.typography.small,
+                    color = Theme.contentColors.secondary,
+                    maxLines = 1,
+                )
+            }
+        } else {
+            AppText(
+                modifier = Modifier.weight(1f),
+                text = stringResource(if (state.isNew) R.string.template_editor_new else R.string.template_editor_edit),
+                style = Theme.typography.heading,
+                maxLines = 1,
+            )
+        }
         if (state.load == TemplateLoad.Ready && state.blocks.isNotEmpty() && !state.editing) {
             AppIconButton(
                 onClick = viewModel::onEditList,
@@ -296,6 +328,7 @@ private fun EditFooter(state: TemplateEditorState, viewModel: TemplateEditorView
 
 @Composable
 private fun keypadEntry(state: TemplateEditorState, viewModel: TemplateEditorViewModel): AppKeypadEntry? {
+    state.summary?.let { return summaryEntry(it, state, viewModel) }
     val focus = state.focus ?: return null
     val set = state.blocks.set(focus.ref) ?: return null
     val mainKey = state.mainKey() ?: return null
@@ -377,3 +410,32 @@ private fun exampleBlocks(name: String) = listOf(
         rounds = (2L..4L).map { WorkoutRound(-it, listOf(WorkoutSet(reps = 10))) },
     ),
 )
+
+// Prototype: the sets × reps layout's keypad, on a block's sets or an exercise's value for every set
+@Composable
+private fun summaryEntry(field: SummaryFocus, state: TemplateEditorState, viewModel: TemplateEditorViewModel): AppKeypadEntry? {
+    val block = state.blocks.block(field.blockId) ?: return null
+    val mainKey = state.mainKey() ?: return null
+    val each = field as? SummaryFocus.Each
+    val time = each?.let { block.modeOf(it.index) == SetMode.Time } == true
+    return AppKeypadEntry(
+        label = when {
+            each == null -> if (block.exercises.size > 1) "ROUNDS" else "SETS"
+            time -> "TIME · EVERY SET"
+            else -> "REPS · EVERY SET"
+        },
+        title = if (each != null) block.exercises[each.index].exercise?.name.orEmpty() else block.exercises.joinToString(" + ") { it.exercise?.name.orEmpty() },
+        decimal = false,
+        toggle = each?.let {
+            AppKeypadToggle(
+                options = listOf(stringResource(R.string.workout_log_reps), stringResource(R.string.workout_log_time)),
+                selected = if (time) 1 else 0,
+                onSelect = { viewModel.onModeSelected(if (it == 1) SetMode.Time else SetMode.Reps) },
+            )
+        },
+        mainKey = AppKeypadAction(
+            text = stringResource(if (mainKey == TemplateMainKey.NextSet) R.string.workout_log_next else R.string.workout_log_done),
+            onClick = viewModel::onMainKey,
+        ),
+    )
+}

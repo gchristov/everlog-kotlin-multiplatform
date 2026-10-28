@@ -11,10 +11,12 @@ import com.everlog.constants.ELActivityRequestCodes
 import com.everlog.constants.ELConstants
 import com.everlog.data.controllers.templatesession.RealLoadTemplateUseCase
 import com.everlog.data.controllers.templatesession.RealSaveTemplateUseCase
+import com.everlog.data.controllers.workoutprefill.RealLoadPrefillSourcesUseCase
 import com.everlog.data.model.exercise.ELExerciseGroup
 import com.everlog.data.repositories.RealExerciseRepository
 import com.everlog.data.repositories.RealOngoingPlanRepository
 import com.everlog.data.repositories.RealRoutineRepository
+import com.everlog.data.repositories.RealWorkoutRepository
 import com.everlog.data.sync.AppDataSync
 import com.everlog.managers.RemoteConfigManager
 import com.everlog.ui.activities.home.exercise.details.ExerciseDetailsActivity
@@ -42,12 +44,16 @@ class TemplateEditorActivity : CommonComposeActivity() {
                     saveTemplate = RealSaveTemplateUseCase(Dispatchers.IO, routines, RealOngoingPlanRepository(applicationContext)),
                     analytics = RealTemplateEditorAnalytics(),
                     ownExerciseUpdates = exercises::ownExerciseUpdates,
+                    prototype = prototype,
+                    loadPrefillSources = RealLoadPrefillSourcesUseCase(Dispatchers.Default, RealWorkoutRepository(Dispatchers.IO, AppDataSync.instance)),
                 )
             }
         }
     }
 
     override val requiresUser = true
+
+    private val prototype by lazy { TemplateEditorPrototype.read(this) }
 
     @Composable
     override fun Content() = TemplateEditorScreen(
@@ -61,6 +67,7 @@ class TemplateEditorActivity : CommonComposeActivity() {
             ELNavigator(this).openExerciseDetails(ExerciseDetailsActivity.Companion.Properties().exercise(exercise).type(type))
         },
         onExit = ::exit,
+        prototype = prototype,
     )
 
     @Deprecated("The navigator opens the exercise picker with startActivityForResult")

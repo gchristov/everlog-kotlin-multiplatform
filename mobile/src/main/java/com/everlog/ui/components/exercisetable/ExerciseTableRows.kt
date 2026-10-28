@@ -31,6 +31,8 @@ internal data class TableView(
     val startsTimer: (SetRef) -> Boolean = { false },
     val lastTime: Map<String, List<WorkoutSet>> = emptyMap(),
     val columns: TableColumns = TableColumns(),
+    // Prototype: shorter rows
+    val dense: Boolean = false,
 )
 
 // The columns a table can leave out, e.g. a template's, which has targets only. SET and REPS (or TIME) always show.
