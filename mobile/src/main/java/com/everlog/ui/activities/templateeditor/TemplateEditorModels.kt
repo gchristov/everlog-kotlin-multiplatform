@@ -17,8 +17,8 @@ internal data class TemplateEditorState(
     val name: String = "",
     val restSeconds: Int = 0,
     val blocks: List<WorkoutBlock> = emptyList(),
-    // Whether anything changed since it was loaded, which leaving then asks about
-    val changed: Boolean = false,
+    // The template as it opened, which leaving compares with to ask about changes
+    val opened: TemplateContent? = null,
     // The cell the keypad types into; null while it's closed
     val focus: CellFocus? = null,
     // The set last typed into, which the keyboard button opens on again
@@ -32,6 +32,15 @@ internal data class TemplateEditorState(
     val deletion: DeletedSets? = null,
     val saving: Boolean = false,
     val exit: TemplateEditorExit? = null,
+)
+
+/**
+ * What saving a template writes, less the exercises' stored copies, so a rename isn't a change of the template's.
+ */
+internal data class TemplateContent(
+    val name: String,
+    val restSeconds: Int,
+    val groups: List<Map<String, Any?>>,
 )
 
 internal enum class TemplateLoad {

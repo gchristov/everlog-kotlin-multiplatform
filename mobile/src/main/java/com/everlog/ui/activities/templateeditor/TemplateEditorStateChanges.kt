@@ -2,6 +2,7 @@ package com.everlog.ui.activities.templateeditor
 
 import com.everlog.data.controllers.templatesession.templateRestSeconds
 import com.everlog.data.controllers.templatesession.toTemplateBlocks
+import com.everlog.data.controllers.templatesession.withTemplateBlocks
 import com.everlog.data.controllers.workoutsession.SessionIds
 import com.everlog.data.controllers.workoutsession.SetMode
 import com.everlog.data.controllers.workoutsession.SetRef
@@ -14,13 +15,36 @@ import com.everlog.data.model.ELRoutine
 import com.everlog.ui.components.exercisetable.CellFocus
 import com.everlog.ui.components.exercisetable.countField
 
-internal fun TemplateEditorState.opened(routine: ELRoutine, ids: SessionIds, defaultName: String) = copy(
-    load = TemplateLoad.Ready,
-    routine = routine,
-    name = routine.name?.takeIf { it.isNotBlank() } ?: defaultName,
-    restSeconds = routine.templateRestSeconds(),
-    blocks = routine.toTemplateBlocks(ids),
-)
+internal fun TemplateEditorState.opened(routine: ELRoutine, ids: SessionIds, defaultName: String): TemplateEditorState {
+    val opened = copy(
+        load = TemplateLoad.Ready,
+        routine = routine,
+        name = routine.name?.takeIf { it.isNotBlank() } ?: defaultName,
+        restSeconds = routine.templateRestSeconds(),
+        blocks = routine.toTemplateBlocks(ids),
+    )
+    return opened.copy(opened = opened.content())
+}
+
+// The template as saving would write it
+internal fun TemplateEditorState.edited(): ELRoutine? =
+    routine?.withTemplateBlocks(blocks, restSeconds)?.also { it.name = name }
+
+internal fun TemplateEditorState.content(): TemplateContent? = edited()?.let { routine ->
+    TemplateContent(
+        name = routine.name.orEmpty(),
+        restSeconds = restSeconds,
+        groups = routine.exerciseGroups.map { group ->
+            @Suppress("UNCHECKED_CAST")
+            val exercises = group.asMap()["exercises"] as List<Map<String, Any?>>
+            group.asMap() + ("exercises" to exercises.map { it - "exercise" })
+        },
+    )
+}
+
+// Whether the template differs from how it opened. Undoing an edit by hand (deleting a set just added, typing the
+// old value back) leaves it unchanged.
+internal fun TemplateEditorState.hasChanges(): Boolean = opened != null && content() != opened
 
 // Closing the keypad (a null cell) keeps the selection, so the keyboard button opens on it again
 internal fun TemplateEditorState.focusOn(cell: CellFocus?) = copy(focus = cell, typed = null, selected = cell?.ref ?: selected)

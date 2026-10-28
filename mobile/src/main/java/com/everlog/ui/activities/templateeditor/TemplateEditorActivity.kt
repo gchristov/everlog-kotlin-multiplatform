@@ -33,13 +33,15 @@ class TemplateEditorActivity : CommonComposeActivity() {
         viewModelFactory {
             initializer {
                 val routines = RealRoutineRepository(Dispatchers.IO, AppDataSync.instance)
+                val exercises = RealExerciseRepository(Dispatchers.IO, AppDataSync.instance)
                 TemplateEditorViewModel(
                     dispatcher = Dispatchers.Main,
                     uuid = intent.getStringExtra(ExtraRoutineUuid),
                     defaultName = getString(R.string.template_editor_default_name),
-                    loadTemplate = RealLoadTemplateUseCase(Dispatchers.Default, routines, RealExerciseRepository(Dispatchers.IO, AppDataSync.instance)),
+                    loadTemplate = RealLoadTemplateUseCase(Dispatchers.Default, routines, exercises),
                     saveTemplate = RealSaveTemplateUseCase(Dispatchers.IO, routines, RealOngoingPlanRepository(applicationContext)),
                     analytics = RealTemplateEditorAnalytics(),
+                    ownExerciseUpdates = exercises::ownExerciseUpdates,
                 )
             }
         }

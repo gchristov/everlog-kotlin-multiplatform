@@ -6,7 +6,6 @@ import com.everlog.data.controllers.templatesession.SaveTemplateUseCase
 import com.everlog.data.controllers.templatesession.TemplateNotFoundException
 import com.everlog.data.controllers.templatesession.addTemplateGroups
 import com.everlog.data.controllers.templatesession.setExerciseMode
-import com.everlog.data.controllers.templatesession.withTemplateBlocks
 import com.everlog.data.controllers.templatesession.withTimeForAllSets
 import com.everlog.data.controllers.workoutsession.SessionIds
 import com.everlog.data.controllers.workoutsession.SetMode
@@ -19,8 +18,11 @@ import com.everlog.data.controllers.workoutsession.refs
 import com.everlog.data.controllers.workoutsession.restore
 import com.everlog.data.controllers.workoutsession.set
 import com.everlog.data.controllers.workoutsession.setValue
+import com.everlog.data.controllers.workoutsession.withExercises
 import com.everlog.data.model.ELRoutine
 import com.everlog.data.model.exercise.ELExerciseGroup
+import com.everlog.data.model.exercise.library.LibraryExercise
+import com.everlog.data.model.exercise.library.toELExercise
 import com.everlog.data.sync.Load
 import com.everlog.managers.preferences.SettingsManager.WeightUnit
 import com.everlog.ui.components.exercisetable.CellFocus
@@ -32,6 +34,7 @@ import com.everlog.ui.mvvm.CommonViewModel
 import java.util.UUID
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 
 /**
@@ -48,6 +51,7 @@ internal class TemplateEditorViewModel(
     private val loadTemplate: LoadTemplateUseCase,
     private val saveTemplate: SaveTemplateUseCase,
     private val analytics: TemplateEditorAnalytics,
+    private val ownExerciseUpdates: () -> Flow<List<LibraryExercise>>,
     private val clock: () -> Long = System::currentTimeMillis,
     private val ids: SessionIds = SessionIds(),
 ) : CommonViewModel<TemplateEditorState>(
@@ -63,6 +67,18 @@ internal class TemplateEditorViewModel(
             setState { opened(routine, ids, defaultName) }
         } else {
             load(uuid)
+        }
+        followOwnExercises()
+    }
+
+    // The user's own exercises follow the cache while the editor is open, so one renamed from its details shows
+    // straight away. Not an edit of the template's, so leaving doesn't ask about it.
+    private fun followOwnExercises() {
+        launchCoroutine {
+            ownExerciseUpdates().collect { own ->
+                val current = own.associate { it.uuid to it.toELExercise() }
+                setState { copy(blocks = blocks.withExercises(current)) }
+            }
         }
     }
 
@@ -237,9 +253,9 @@ internal class TemplateEditorViewModel(
         finishTyping()
         val state = state.value
         if (state.saving) return
-        val routine = state.routine ?: return
-        if (!state.changed && !state.isNew) return setState { copy(dialog = null, exit = TemplateEditorExit.Closed) }
-        val edited = routine.withTemplateBlocks(state.blocks, state.restSeconds).apply { name = state.name }
+        // A new template saves even untouched, as the old editor's did; an existing one only when it differs
+        if (!state.hasChanges() && !state.isNew) return setState { copy(dialog = null, exit = TemplateEditorExit.Closed) }
+        val edited = state.edited() ?: return
         setState { copy(saving = true) }
         launchCoroutine {
             saveTemplate(edited).fold(
@@ -255,14 +271,14 @@ internal class TemplateEditorViewModel(
     // Close or Back. Changes are only lost once the user says so.
     fun onClose() {
         finishTyping()
-        setState { if (changed) copy(dialog = TemplateEditorDialog.Leave) else copy(exit = TemplateEditorExit.Closed) }
+        setState { if (hasChanges()) copy(dialog = TemplateEditorDialog.Leave) else copy(exit = TemplateEditorExit.Closed) }
     }
 
     fun onDiscard() = setState { copy(dialog = null, exit = TemplateEditorExit.Closed) }
 
     // Every edit goes through here, and ends the undo of a delete unless it's the delete itself
     private fun change(keepUndo: Boolean = false, reducer: TemplateEditorState.() -> TemplateEditorState) = setState {
-        reducer().copy(changed = true).let { if (keepUndo) it else it.copy(deletion = null) }
+        reducer().let { if (keepUndo) it else it.copy(deletion = null) }
     }
 
     companion object {

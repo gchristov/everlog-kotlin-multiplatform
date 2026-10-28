@@ -13,6 +13,7 @@ import com.everlog.data.model.ELRoutine
 import com.everlog.data.model.exercise.ELExercise
 import com.everlog.data.model.exercise.ELExerciseGroup
 import com.everlog.data.model.exercise.ELRoutineExercise
+import com.everlog.data.model.exercise.library.LibraryExercise
 import com.everlog.data.model.set.ELSet
 import com.everlog.data.sync.Load
 import com.everlog.testutil.FakeCoroutineDispatcher
@@ -20,6 +21,7 @@ import com.everlog.testutil.InMemorySharedPreferences
 import com.everlog.ui.components.exercisetable.CellFocus
 import com.google.common.truth.Truth.assertThat
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import org.junit.After
 import org.junit.Before
@@ -32,6 +34,7 @@ class TemplateEditorViewModelTest {
     private val load = FakeLoadTemplate()
     private val save = FakeSaveTemplate()
     private val analytics = FakeAnalytics()
+    private val ownUpdates = MutableSharedFlow<List<LibraryExercise>>(extraBufferCapacity = 1)
 
     // Push: bench press 10, 8, 8 reps, then a plank 3 × 0:30, with 1:30 of rest
     private fun push() = ELRoutine(
@@ -58,6 +61,7 @@ class TemplateEditorViewModelTest {
         loadTemplate = load,
         saveTemplate = save,
         analytics = analytics,
+        ownExerciseUpdates = { ownUpdates },
         clock = { 1_000L },
     )
 
@@ -206,7 +210,7 @@ class TemplateEditorViewModelTest {
         assertThat(viewModel.state.value.dialog).isEqualTo(TemplateEditorDialog.Name)
         viewModel.onNameSaved("   ")
         assertThat(viewModel.state.value.name).isEqualTo("Push")
-        assertThat(viewModel.state.value.changed).isFalse()
+        assertThat(viewModel.state.value.hasChanges()).isFalse()
 
         viewModel.onNameTapped()
         viewModel.onNameSaved("  Push day ")
@@ -304,6 +308,39 @@ class TemplateEditorViewModelTest {
     }
 
     @Test
+    fun `a new template left untouched closes without asking or saving`() {
+        val viewModel = viewModel(uuid = null)
+
+        viewModel.onBack()
+
+        assertThat(viewModel.state.value.dialog).isNull()
+        assertThat(viewModel.state.value.exit).isEqualTo(TemplateEditorExit.Closed)
+        assertThat(save.saved).isEmpty()
+    }
+
+    @Test
+    fun `edits undone by hand leave nothing to ask about`() {
+        val viewModel = loaded()
+
+        viewModel.onAddSet(viewModel.blocks[0].id)
+        viewModel.onDeleteSet(viewModel.ref(0, 3))
+        viewModel.onCellTapped(CellFocus(viewModel.ref(0, 0), ValueField.Reps))
+        viewModel.type("12")
+        assertThat(viewModel.state.value.hasChanges()).isTrue()
+        viewModel.onBackspace()
+        viewModel.onBackspace()
+        viewModel.type("10")
+        viewModel.onRestTapped()
+        viewModel.onRestStep(1)
+        viewModel.onRestStep(-1)
+        viewModel.onDialogDismissed()
+
+        assertThat(viewModel.state.value.hasChanges()).isFalse()
+        viewModel.onClose()
+        assertThat(viewModel.state.value.exit).isEqualTo(TemplateEditorExit.Closed)
+    }
+
+    @Test
     fun `back closes the keypad first, then leaves without asking when nothing changed`() {
         val viewModel = loaded()
         viewModel.onShowKeypad()
@@ -322,6 +359,30 @@ class TemplateEditorViewModelTest {
 
         assertThat(save.saved).isEmpty()
         assertThat(viewModel.state.value.exit).isEqualTo(TemplateEditorExit.Closed)
+    }
+
+    @Test
+    fun `an own exercise renamed while the template is open shows its new name, and is saved with it`() {
+        val viewModel = loaded()
+
+        ownUpdates.tryEmit(listOf(LibraryExercise(uuid = "plank", name = "Side plank", own = true)))
+
+        assertThat(viewModel.blocks.map { it.exercises.single().exercise?.name }).containsExactly("Bench press", "Side plank").inOrder()
+        assertThat(viewModel.state.value.hasChanges()).isFalse()
+        viewModel.onAddSet(viewModel.blocks[0].id)
+        viewModel.onSave()
+        assertThat(saved.exerciseGroups[1].exercises.single().exercise?.name).isEqualTo("Side plank")
+    }
+
+    @Test
+    fun `a rename arriving before the template has loaded doesn't stop it loading`() {
+        val viewModel = viewModel()
+
+        ownUpdates.tryEmit(listOf(LibraryExercise(uuid = "plank", name = "Side plank", own = true)))
+        load.state.value = Load.Ready(push())
+
+        assertThat(viewModel.state.value.load).isEqualTo(TemplateLoad.Ready)
+        assertThat(viewModel.blocks).hasSize(2)
     }
 
     // Edge cases
