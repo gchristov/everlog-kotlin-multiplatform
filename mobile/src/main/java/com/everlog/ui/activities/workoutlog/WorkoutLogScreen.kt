@@ -2,9 +2,6 @@ package com.everlog.ui.activities.workoutlog
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
-import androidx.compose.foundation.gestures.awaitEachGesture
-import androidx.compose.foundation.gestures.awaitFirstDown
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -29,18 +26,12 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.CompositingStrategy
-import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
-import androidx.compose.ui.semantics.clearAndSetSemantics
-import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.LifecycleResumeEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.everlog.R
@@ -51,18 +42,20 @@ import com.everlog.data.controllers.workoutsession.WorkoutBlock
 import com.everlog.data.controllers.workoutsession.WorkoutExercise
 import com.everlog.data.controllers.workoutsession.WorkoutRound
 import com.everlog.data.controllers.workoutsession.WorkoutSet
-import com.everlog.data.controllers.workoutsession.block
 import com.everlog.data.controllers.workoutsession.set
 import com.everlog.data.model.exercise.ELExercise
 import com.everlog.managers.preferences.SettingsManager
 import com.everlog.ui.activities.setsuggestions.SetSuggestion
 import com.everlog.ui.components.exercisetable.CellFocus
+import com.everlog.ui.components.exercisetable.ExampleTable
 import com.everlog.ui.components.exercisetable.ExerciseEditList
 import com.everlog.ui.components.exercisetable.ExerciseTab
 import com.everlog.ui.components.exercisetable.ExerciseTable
 import com.everlog.ui.components.exercisetable.ExerciseTableActions
 import com.everlog.ui.components.exercisetable.SuggestedMark
 import com.everlog.ui.components.exercisetable.TableView
+import com.everlog.ui.components.exercisetable.exerciseName
+import com.everlog.ui.components.exercisetable.focusLabel
 import com.everlog.ui.design.elements.AppButton
 import com.everlog.ui.design.elements.AppFooter
 import com.everlog.ui.design.elements.AppFooterAction
@@ -350,47 +343,11 @@ private fun EmptyTable(contentPadding: PaddingValues, unit: SettingsManager.Weig
             ),
         )
     }
-    Column(modifier = Modifier.fillMaxSize()) {
-        AppText(
-            modifier = Modifier
-                .padding(horizontal = Theme.spacing.large, vertical = Theme.spacing.small)
-                .clip(Theme.shapes.button)
-                .border(1.dp, Theme.backgrounds.separator, Theme.shapes.button)
-                .padding(horizontal = Theme.spacing.medium, vertical = Theme.spacing.extraSmall),
-            text = stringResource(R.string.workout_log_example),
-            style = Theme.typography.small,
-            color = Theme.contentColors.secondary,
-        )
-        Box(modifier = Modifier.fillMaxSize()) {
-            // Faded as one layer, so overlapping parts don't show through each other
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .graphicsLayer {
-                        alpha = 0.35f
-                        compositingStrategy = CompositingStrategy.Offscreen
-                    }
-                    .clearAndSetSemantics {},
-            ) {
-                ExerciseTable(
-                    blocks = example,
-                    view = TableView(unit = unit, unitLabel = unitLabel(unit), selected = SetRef(-1, -3, 0)),
-                    reveal = 0,
-                    contentPadding = contentPadding,
-                    actions = object : ExerciseTableActions {},
-                )
-            }
-            Box(modifier = Modifier.fillMaxSize().pointerInput(Unit) {
-                awaitEachGesture {
-                    awaitFirstDown().consume()
-                    do {
-                        val event = awaitPointerEvent()
-                        event.changes.forEach { it.consume() }
-                    } while (event.changes.any { it.pressed })
-                }
-            })
-        }
-    }
+    ExampleTable(
+        blocks = example,
+        view = TableView(unit = unit, unitLabel = unitLabel(unit), selected = SetRef(-1, -3, 0)),
+        contentPadding = contentPadding,
+    )
 }
 
 @Composable
@@ -401,26 +358,6 @@ private fun KeepScreenOn() {
         onDispose { view.keepScreenOn = false }
     }
 }
-
-// SET 2 OF 4 · KG, with a superset's exercise: SET 1 OF 3 · 2 OF 2 · REPS
-@Composable
-private fun focusLabel(blocks: List<WorkoutBlock>, focus: CellFocus, unit: SettingsManager.WeightUnit): String {
-    val block = blocks.block(focus.ref.blockId) ?: return ""
-    val round = block.rounds.indexOfFirst { it.id == focus.ref.roundId } + 1
-    val field = when (focus.field) {
-        ValueField.Weight -> unitLabel(unit)
-        ValueField.Reps -> stringResource(R.string.workout_log_column_reps)
-        ValueField.Time -> stringResource(R.string.workout_log_column_time)
-    }
-    return if (block.exercises.size > 1) {
-        stringResource(R.string.workout_log_keypad_label_group, round, block.rounds.size, focus.ref.index + 1, block.exercises.size, field)
-    } else {
-        stringResource(R.string.workout_log_keypad_label, round, block.rounds.size, field)
-    }
-}
-
-private fun exerciseName(blocks: List<WorkoutBlock>, ref: SetRef): String =
-    blocks.block(ref.blockId)?.exercises?.getOrNull(ref.index)?.exercise?.name.orEmpty()
 
 @Composable
 private fun suggestionNoteText(note: SuggestionNote, unit: SettingsManager.WeightUnit): String = when (note) {

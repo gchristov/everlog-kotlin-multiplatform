@@ -1,13 +1,10 @@
 package com.everlog.ui.activities.workoutlog
 
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Row
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
@@ -18,7 +15,6 @@ import com.everlog.R
 import com.everlog.ui.activities.setsuggestions.SetSuggestion
 import com.everlog.ui.design.elements.AppBottomSheet
 import com.everlog.ui.design.elements.AppIconButton
-import com.everlog.ui.design.elements.AppText
 import com.everlog.ui.design.elements.list.AppListGroup
 import com.everlog.ui.design.elements.list.AppListItem
 import com.everlog.ui.design.theme.Theme
@@ -90,24 +86,5 @@ internal fun WorkoutOptionsButton(
                 )
             }
         }
-    }
-}
-
-@Composable
-internal fun RestStepper(seconds: Int, onStep: (Int) -> Unit) {
-    Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(Theme.spacing.large)) {
-        AppIconButton(
-            onClick = { onStep(-1) },
-            icon = ImageVector.vectorResource(R.drawable.ic_minus),
-            contentDescription = stringResource(R.string.workout_log_rest_less),
-            outlined = true,
-        )
-        AppText(text = formatClock(seconds.toLong()), style = Theme.typography.heading.copy(fontFeatureSettings = "tnum"))
-        AppIconButton(
-            onClick = { onStep(1) },
-            icon = ImageVector.vectorResource(R.drawable.ic_add),
-            contentDescription = stringResource(R.string.workout_log_rest_more),
-            outlined = true,
-        )
     }
 }

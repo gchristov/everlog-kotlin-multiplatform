@@ -17,6 +17,8 @@ data class RemoteConfig (
         var workoutScreenV2: Boolean = false,
         // The Set suggestions screen in Compose instead of MuscleGoalActivity, from every entry point
         var setSuggestionsV2: Boolean = false,
+        // The template editor in Compose instead of CreateRoutineActivity, from every entry point
+        var templateEditorV2: Boolean = false,
         var feedbackForms: FeedbackForms? = null,
         // How old synced data may get before reading it asks the server again (DataSync); null for the default
         var dataSyncMaxAgeMinutes: Long? = null,
@@ -31,6 +33,7 @@ data class RemoteConfig (
     private val EXERCISE_DETAILS_V2 = "exercise_details_v2"
     private val WORKOUT_SCREEN_V2 = "workout_screen_v2"
     private val SET_SUGGESTIONS_V2 = "set_suggestions_v2"
+    private val TEMPLATE_EDITOR_V2 = "template_editor_v2"
     private val FEEDBACK_FORMS = "feedback_forms"
     private val DATA_SYNC_MAX_AGE_MINUTES = "data_sync_max_age_minutes"
     private val DATA_SYNC_FULL_HISTORY_MAX_AGE_DAYS = "data_sync_full_history_max_age_days"
@@ -42,6 +45,7 @@ data class RemoteConfig (
         exerciseDetailsV2 = config.getBoolean(EXERCISE_DETAILS_V2)
         workoutScreenV2 = config.getBoolean(WORKOUT_SCREEN_V2)
         setSuggestionsV2 = config.getBoolean(SET_SUGGESTIONS_V2)
+        templateEditorV2 = config.getBoolean(TEMPLATE_EDITOR_V2)
         feedbackForms = getObjectFromRemoteConfig(FEEDBACK_FORMS, FeedbackForms::class.java, config)
         dataSyncMaxAgeMinutes = config.longOrNull(DATA_SYNC_MAX_AGE_MINUTES)
         dataSyncFullHistoryMaxAgeDays = config.longOrNull(DATA_SYNC_FULL_HISTORY_MAX_AGE_DAYS)
