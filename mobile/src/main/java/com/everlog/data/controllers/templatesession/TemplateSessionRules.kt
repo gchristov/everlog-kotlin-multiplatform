@@ -1,12 +1,16 @@
 package com.everlog.data.controllers.templatesession
 
 import com.everlog.config.AppConfig
+import com.everlog.data.controllers.workoutsession.ExerciseRef
 import com.everlog.data.controllers.workoutsession.SessionIds
 import com.everlog.data.controllers.workoutsession.SetMode
 import com.everlog.data.controllers.workoutsession.WorkoutBlock
 import com.everlog.data.controllers.workoutsession.WorkoutRound
 import com.everlog.data.controllers.workoutsession.WorkoutSet
+import com.everlog.data.controllers.workoutsession.block
 import com.everlog.data.model.exercise.ELExerciseGroup
+import com.everlog.data.model.set.ELSetType
+import java.util.UUID
 
 // How the template editor changes a template's blocks. Adding rounds, deleting sets and moving exercises are the
 // workout's rules (WorkoutSessionRules), which work the same on targets.
@@ -53,3 +57,85 @@ private fun List<WorkoutBlock>.updateExerciseSets(blockId: Long, exercise: Int, 
             round.copy(sets = round.sets.mapIndexed { i, set -> if (i == exercise && !set.removed) transform(set) else set })
         })
     }
+
+/**
+ * Makes the [picked] exercises one block of [type], where the first of them was. They keep their sets, in the
+ * table's order; one with fewer sets than the others gets copies of its last, so the rounds line up. The blocks they
+ * came from keep their other exercises, as a single when one is left. Picking the whole of one block only changes
+ * its type.
+ */
+fun List<WorkoutBlock>.groupExercises(picked: Collection<ExerciseRef>, type: ELSetType, ids: SessionIds): List<WorkoutBlock> {
+    val ordered = ordered(picked).ifEmpty { return this }
+    val first = block(ordered.first().blockId) ?: return this
+    if (ordered.all { it.blockId == first.id } && ordered.size == first.exercises.size) {
+        return map { if (it.id == first.id) it.copy(type = type.name) else it }
+    }
+    val sets = ordered.map { ref -> exerciseSets(ref) }
+    val rounds = sets.maxOf { it.size }.coerceAtLeast(1)
+    val grouped = WorkoutBlock(
+        id = ids.next(),
+        uuid = UUID.randomUUID().toString(),
+        type = type.name,
+        restSeconds = first.restSeconds,
+        exercises = ordered.map { ref -> block(ref.blockId)!!.exercises[ref.index] },
+        rounds = List(rounds) { r ->
+            WorkoutRound(ids.next(), sets.map { exercise -> exercise.getOrNull(r) ?: exercise.lastOrNull()?.asCopy() ?: WorkoutSet() })
+        },
+    )
+    return flatMap { block ->
+        val rest = block.without(ordered.filter { it.blockId == block.id }.map { it.index }.toSet())
+        if (block.id == first.id) listOfNotNull(grouped, rest) else listOfNotNull(rest)
+    }
+}
+
+/**
+ * Takes the [picked] exercises out of their supersets and circuits, each as a single right after the group it left.
+ * A group left with one exercise becomes a single. Picked exercises that are singles already stay as they are.
+ */
+fun List<WorkoutBlock>.ungroupExercises(picked: Collection<ExerciseRef>, ids: SessionIds): List<WorkoutBlock> = flatMap { block ->
+    val out = picked.filter { it.blockId == block.id }.map { it.index }.sorted()
+    if (block.exercises.size < 2 || out.isEmpty()) return@flatMap listOf(block)
+    val singles = out.map { index ->
+        WorkoutBlock(
+            id = ids.next(),
+            uuid = UUID.randomUUID().toString(),
+            type = ELSetType.SINGLE.name,
+            restSeconds = block.restSeconds,
+            exercises = listOf(block.exercises[index]),
+            rounds = block.rounds.map { it.sets[index] }.filterNot { it.removed }.map { WorkoutRound(ids.next(), listOf(it)) },
+        )
+    }.filter { it.rounds.isNotEmpty() }
+    listOfNotNull(block.without(out.toSet())) + singles
+}
+
+/**
+ * Deletes the [picked] exercises. A block left with one exercise becomes a single; one left with none goes.
+ */
+fun List<WorkoutBlock>.deleteExercises(picked: Collection<ExerciseRef>): List<WorkoutBlock> = mapNotNull { block ->
+    block.without(picked.filter { it.blockId == block.id }.map { it.index }.toSet())
+}
+
+// In the table's order: block by block, exercise by exercise
+private fun List<WorkoutBlock>.ordered(picked: Collection<ExerciseRef>): List<ExerciseRef> {
+    val position = mapIndexed { i, block -> block.id to i }.toMap()
+    return picked.filter { ref -> block(ref.blockId)?.exercises?.indices?.contains(ref.index) == true }
+        .sortedWith(compareBy({ position[it.blockId] }, { it.index }))
+}
+
+private fun List<WorkoutBlock>.exerciseSets(ref: ExerciseRef): List<WorkoutSet> =
+    block(ref.blockId)?.rounds?.map { it.sets[ref.index] }?.filterNot { it.removed }.orEmpty()
+
+private fun WorkoutSet.asCopy() = copy(startedDate = null, completedDate = null, removed = false)
+
+// Without the exercises at [indexes]: a single when one is left, null when none is
+private fun WorkoutBlock.without(indexes: Set<Int>): WorkoutBlock? {
+    if (indexes.isEmpty()) return this
+    val keep = exercises.indices.filterNot { it in indexes }
+    val rounds = rounds.map { round -> round.copy(sets = keep.map { round.sets[it] }) }.filterNot { round -> round.sets.all { it.removed } }
+    if (keep.isEmpty() || rounds.isEmpty()) return null
+    return copy(
+        exercises = keep.map { exercises[it] },
+        rounds = rounds,
+        type = if (keep.size == 1) ELSetType.SINGLE.name else type,
+    )
+}
