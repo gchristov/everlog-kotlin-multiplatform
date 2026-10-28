@@ -7,6 +7,7 @@ import android.content.Intent
 import androidx.compose.ui.test.hasAnyAncestor
 import androidx.compose.ui.test.hasTestTag
 import androidx.compose.ui.test.hasText
+import androidx.compose.ui.test.isDialog
 import androidx.compose.ui.test.junit4.createEmptyComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
@@ -14,6 +15,7 @@ import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollToNode
 import androidx.lifecycle.Lifecycle
 import androidx.test.core.app.ActivityScenario
+import androidx.test.espresso.Espresso
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
 import com.everlog.constants.ELConstants
@@ -107,14 +109,7 @@ class TemplateEditorActivityTest {
 
     @Test
     fun editingASavedTemplate() {
-        val routine = ELRoutine(
-            uuid = "e2e-template-${System.currentTimeMillis()}",
-            name = "E2E push",
-            createdDate = System.currentTimeMillis(),
-            exerciseGroups = mutableListOf(group("e2e-bench", "Bench press", sets = 2)),
-        )
-        runBlocking { RealRoutineRepository(Dispatchers.IO, AppDataSync.instance).saveRoutines(listOf(routine)) }
-        saved += routine
+        val routine = savedRoutine()
 
         val screen = ActivityScenario.launchActivityForResult<TemplateEditorActivity>(
             TemplateEditorActivity.launchIntent(context, routine.uuid, showDetailsOnSuccess = true),
@@ -133,12 +128,48 @@ class TemplateEditorActivityTest {
     }
 
     @Test
+    fun anEditKeptThroughRecreationThenDiscarded() {
+        val routine = savedRoutine()
+        val screen = ActivityScenario.launchActivityForResult<TemplateEditorActivity>(
+            TemplateEditorActivity.launchIntent(context, routine.uuid, showDetailsOnSuccess = true),
+        )
+        compose.waitUntil(TIMEOUT) { shows("E2E push") }
+
+        // A set added stays when Android rebuilds the screen, e.g. turning the phone
+        compose.onNodeWithText("Add set").performClick()
+        screen.recreate()
+        compose.waitUntil(TIMEOUT) { shows("E2E push") }
+        compose.onNodeWithTag(ExerciseTableTags.set(0, 2, 0)).assertExists()
+
+        // The system back button asks; Discard closes without saving and hands nothing back
+        Espresso.pressBack()
+        compose.onNode(hasText("Discard") and hasAnyAncestor(isDialog())).performClick()
+        compose.waitUntil(TIMEOUT) { screen.state == Lifecycle.State.DESTROYED }
+
+        assertThat(screen.result.resultCode).isEqualTo(Activity.RESULT_CANCELED)
+        assertThat(stored(routine.uuid!!).exerciseGroups.single().exercises.single().sets).hasSize(2)
+    }
+
+    @Test
     fun aTemplateThatDoesntExistSaysSo() {
         ActivityScenario.launch<TemplateEditorActivity>(
             TemplateEditorActivity.launchIntent(context, "e2e-missing-${System.currentTimeMillis()}", showDetailsOnSuccess = false),
         ).use {
             compose.waitUntil(TIMEOUT) { shows("This template has been deleted.") }
         }
+    }
+
+    // E2E push: bench press, 2 sets of 8, saved to the E2E account and deleted after the test
+    private fun savedRoutine(): ELRoutine {
+        val routine = ELRoutine(
+            uuid = "e2e-template-${System.currentTimeMillis()}",
+            name = "E2E push",
+            createdDate = System.currentTimeMillis(),
+            exerciseGroups = mutableListOf(group("e2e-bench", "Bench press", sets = 2)),
+        )
+        runBlocking { RealRoutineRepository(Dispatchers.IO, AppDataSync.instance).saveRoutines(listOf(routine)) }
+        saved += routine
+        return routine
     }
 
     private fun shows(text: String) = compose.onAllNodes(hasText(text)).fetchSemanticsNodes().isNotEmpty()

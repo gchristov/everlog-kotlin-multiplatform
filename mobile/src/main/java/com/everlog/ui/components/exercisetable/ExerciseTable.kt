@@ -222,7 +222,7 @@ private fun BlockTable(
             }
         }
         AppTertiaryButton(
-            modifier = Modifier.align(Alignment.CenterHorizontally),
+            modifier = Modifier.align(Alignment.CenterHorizontally).testTag(ExerciseTableTags.addSet(index)),
             onClick = { actions.onAddSet(block.id) },
             text = stringResource(R.string.workout_log_add_set),
         )
@@ -647,6 +647,8 @@ internal object ExerciseTableTags {
     fun set(block: Int, round: Int, exercise: Int) = "set:$block:$round:$exercise"
 
     fun menu(block: Int) = "menu:$block"
+
+    fun addSet(block: Int) = "add_set:$block"
 
     fun delete(set: String) = "$set:delete"
 

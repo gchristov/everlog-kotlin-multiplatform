@@ -21,6 +21,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -66,6 +67,7 @@ import com.everlog.ui.design.elements.list.AppListItem
 import com.everlog.ui.design.theme.Theme
 import com.everlog.utils.format.formatClock
 import kotlinx.coroutines.android.awaitFrame
+import kotlinx.coroutines.launch
 
 // Templates hold targets: no last time, weight or ticks
 private val TemplateColumns = TableColumns(lastTime = false, weight = false, tick = false)
@@ -288,11 +290,15 @@ private fun Messages(state: TemplateEditorState, viewModel: TemplateEditorViewMo
         TemplateEditorMessage.SaveFailed -> stringResource(R.string.template_editor_save_failed)
         null -> null
     }
+    // Shown outside the effect: clearing the message restarts the effect, which would cancel the snackbar with it
+    val scope = rememberCoroutineScope()
     LaunchedEffect(message) {
         if (message == null) return@LaunchedEffect
         viewModel.onMessageShown()
-        snackbar.currentSnackbarData?.dismiss()
-        snackbar.showSnackbar(message)
+        scope.launch {
+            snackbar.currentSnackbarData?.dismiss()
+            snackbar.showSnackbar(message)
+        }
     }
     AppSnackbarHost(hostState = snackbar, modifier = modifier)
 }
