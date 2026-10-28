@@ -5,6 +5,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.semantics.SemanticsActions
 import androidx.compose.ui.test.SemanticsNodeInteraction
 import androidx.compose.ui.test.assertContentDescriptionEquals
 import androidx.compose.ui.test.assertTextEquals
@@ -24,12 +25,14 @@ import androidx.compose.ui.test.performScrollToIndex
 import androidx.compose.ui.test.performScrollToNode
 import androidx.compose.ui.test.performTouchInput
 import androidx.compose.ui.test.getUnclippedBoundsInRoot
+import androidx.compose.ui.test.performSemanticsAction
 import androidx.compose.ui.test.swipeLeft
 import androidx.test.espresso.Espresso
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
 import arrow.core.Either
 import arrow.core.right
+import com.everlog.config.AppConfig
 import com.everlog.constants.ELConstants
 import com.everlog.data.controllers.workoutprefill.BaseWorkoutPrefillController.PrefillSource
 import com.everlog.data.controllers.workoutprefill.LoadPrefillSourcesUseCase
@@ -439,6 +442,17 @@ class WorkoutLogScenarioTest {
         viewModel = viewModel(template())
         compose.waitForIdle()
         tick(0, 0, 0).performClick()
+
+        // Adding sets stops at the most an exercise can have, and the snackbar says so
+        val max = AppConfig.configuration.maxExerciseSets
+        showExercise(0)
+        repeat(max - 1) {
+            // By its click action: the button can sit under the keypad, which takes a tap there
+            compose.onAllNodes(hasText("Add set") and hasAnyAncestor(hasTestTag(ExerciseTableTags.Table)))[0]
+                .performSemanticsAction(SemanticsActions.OnClick)
+        }
+        compose.waitUntil(5_000L) { compose.onAllNodes(hasText("You cannot add more than $max sets per exercise")).fetchSemanticsNodes().isNotEmpty() }
+
         Espresso.pressBack()
         compose.onNodeWithText("You've completed 1 set.", substring = true).assertExists()
         compose.onNode(hasText("Discard") and hasAnyAncestor(isDialog())).performClick()

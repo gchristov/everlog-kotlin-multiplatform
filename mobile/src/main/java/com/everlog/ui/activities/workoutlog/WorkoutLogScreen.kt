@@ -22,6 +22,7 @@ import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -80,6 +81,7 @@ import com.everlog.utils.format.unitLabel
 import com.everlog.utils.format.unitName
 import kotlinx.coroutines.android.awaitFrame
 import kotlin.math.roundToInt
+import kotlinx.coroutines.launch
 
 /**
  * Renders the view-model's state and forwards what's tapped and typed to it.
@@ -230,11 +232,15 @@ private fun Messages(state: WorkoutLogState, viewModel: WorkoutLogViewModel, mod
         is WorkoutLogMessage.TooManySets -> stringResource(R.string.exercises_max_sets, it.max)
         null -> null
     }
+    // Shown outside the effect: clearing the message restarts the effect, which would cancel the snackbar with it
+    val scope = rememberCoroutineScope()
     LaunchedEffect(message) {
         if (message == null) return@LaunchedEffect
         viewModel.onMessageShown()
-        snackbar.currentSnackbarData?.dismiss()
-        snackbar.showSnackbar(message)
+        scope.launch {
+            snackbar.currentSnackbarData?.dismiss()
+            snackbar.showSnackbar(message)
+        }
     }
     AppSnackbarHost(hostState = snackbar, modifier = modifier)
 }
