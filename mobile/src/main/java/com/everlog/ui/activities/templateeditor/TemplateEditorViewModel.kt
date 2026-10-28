@@ -241,8 +241,10 @@ internal class TemplateEditorViewModel(
         setState { focusOn(null).copy(dialog = TemplateEditorDialog.Rest) }
     }
 
+    // Never below a step, unless it was saved with less (the old editor could turn rest off), which − then keeps
     fun onRestStep(direction: Int) {
-        val seconds = (state.value.restSeconds + direction * RestStepSeconds).coerceAtLeast(RestStepSeconds)
+        val current = state.value.restSeconds
+        val seconds = (current + direction * RestStepSeconds).coerceAtLeast(minOf(RestStepSeconds, current))
         change { copy(restSeconds = seconds) }
         analytics.restChanged(seconds)
     }

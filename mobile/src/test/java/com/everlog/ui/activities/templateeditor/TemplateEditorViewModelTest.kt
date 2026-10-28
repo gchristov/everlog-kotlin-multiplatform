@@ -236,6 +236,19 @@ class TemplateEditorViewModelTest {
     }
 
     @Test
+    fun `a template saved without rest keeps it on minus, and plus starts it at a step`() {
+        load.state.value = Load.Ready(push().apply { exerciseGroups.forEach { it.restTimeSeconds = 0 } })
+        val viewModel = viewModel()
+        val step = AppConfig.configuration.defaultRestTimeOffsetSeconds
+
+        viewModel.onRestStep(-1)
+        assertThat(viewModel.state.value.restSeconds).isEqualTo(0)
+        assertThat(viewModel.state.value.hasChanges()).isFalse()
+        viewModel.onRestStep(1)
+        assertThat(viewModel.state.value.restSeconds).isEqualTo(step)
+    }
+
+    @Test
     fun `adding sets stops at the most an exercise can have`() {
         val viewModel = loaded()
         val max = AppConfig.configuration.maxExerciseSets
