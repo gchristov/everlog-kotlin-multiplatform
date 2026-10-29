@@ -6,7 +6,7 @@ import android.app.NotificationManager
 import android.app.Service
 import android.content.pm.ServiceInfo
 import androidx.core.app.NotificationManagerCompat
-import com.everlog.application.ELApplication
+import com.everlog.android.common.kotlin.AppContext
 import com.everlog.utils.device.DeviceUtils
 import timber.log.Timber
 
@@ -38,21 +38,21 @@ class ELNotificationManager {
             // Make sure we have a channel
             createNotificationChannel(channelOptions)
             // Then show notification
-            val manager = NotificationManagerCompat.from(ELApplication.getInstance())
+            val manager = NotificationManagerCompat.from(AppContext)
             manager.notify(notificationId, notification)
             Timber.tag(TAG).d("Notified user with notification")
         }
 
         @JvmStatic
         fun cancel(notificationId: Int) {
-            val manager = NotificationManagerCompat.from(ELApplication.getInstance())
+            val manager = NotificationManagerCompat.from(AppContext)
             manager.cancel(notificationId)
             Timber.tag(TAG).d("Cancelled notification")
         }
 
         private fun createNotificationChannel(options: NotificationChannelOptions) {
             if (DeviceUtils.isAndroidO()) {
-                val manager = NotificationManagerCompat.from(ELApplication.getInstance())
+                val manager = NotificationManagerCompat.from(AppContext)
                 val channel = NotificationChannel(options.id, options.name, if (options.important) NotificationManager.IMPORTANCE_HIGH else NotificationManager.IMPORTANCE_DEFAULT)
                 channel.description = options.description
                 if (options.disableSound) {

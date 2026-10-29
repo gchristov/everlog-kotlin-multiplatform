@@ -8,7 +8,7 @@ import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import com.everlog.BuildConfig;
 import com.everlog.R;
-import com.everlog.application.ELApplication;
+import com.everlog.android.common.kotlin.AppContext;
 import com.everlog.config.AppUsageNotification;
 import com.everlog.config.FeedbackForms;
 import com.everlog.config.FeedbackSource;
@@ -147,7 +147,7 @@ public class RemoteConfigManager extends PreferencesManager {
             Timber.tag(TAG).i("Remote config changed");
         }
         Timber.tag(TAG).d("Remote config refreshed");
-        LocalBroadcastManager.getInstance(ELApplication.getInstance()).sendBroadcast(new Intent(ELConstants.BROADCAST_REMOTE_CONFIG_REFRESHED));
+        LocalBroadcastManager.getInstance(AppContext.getAppContext()).sendBroadcast(new Intent(ELConstants.BROADCAST_REMOTE_CONFIG_REFRESHED));
     }
 
     private void checkLocalConfig() {

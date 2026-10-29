@@ -5,7 +5,7 @@ import android.content.Context
 import com.android.billingclient.api.*
 import com.android.billingclient.api.BillingClient.SkuType
 import com.everlog.BuildConfig
-import com.everlog.application.ELApplication
+import com.everlog.android.common.kotlin.AppContext
 import com.everlog.ui.dialog.ToastBuilder
 import rx.Observable
 import rx.subjects.PublishSubject
@@ -31,7 +31,7 @@ class BillingManager private constructor(context: Context) : PurchasesUpdatedLis
 
         const val TAG = "BillingManager"
 
-        val manager = BillingManager(ELApplication.getInstance())
+        val manager = BillingManager(AppContext)
     }
 
     private val mContextRef = WeakReference(context)
@@ -256,7 +256,7 @@ class BillingManager private constructor(context: Context) : PurchasesUpdatedLis
             val e = "Billing not available on this device: code=$code"
             Timber.tag(TAG).e(e)
             if (code != BillingClient.BillingResponseCode.SERVICE_DISCONNECTED) {
-                ToastBuilder.showToast(ELApplication.getInstance(), e)
+                ToastBuilder.showToast(AppContext, e)
             }
         }
     }

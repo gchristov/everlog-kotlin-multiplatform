@@ -3,7 +3,6 @@ package com.everlog.config
 import androidx.core.content.ContextCompat
 import com.everlog.BuildConfig
 import com.everlog.R
-import com.everlog.application.ELApplication
 import com.everlog.managers.ErrorManager
 import com.everlog.managers.analytics.AnalyticsManager
 import com.everlog.ui.fragments.home.activity.history.HistoryHomeFragment

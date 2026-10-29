@@ -1,7 +1,7 @@
 package com.everlog.data.model
 
 import com.everlog.R
-import com.everlog.application.ELApplication
+import com.everlog.android.common.kotlin.AppContext
 import com.everlog.constants.ELConstants
 import com.everlog.data.model.exercise.ELExercise
 import com.everlog.data.model.exercise.ELExerciseGroup
@@ -97,10 +97,10 @@ data class ELRoutine(
         var summary = ""
         // Include exercises
         val exercisesCount = getTotalExercises()
-        summary = summary.append(separator, ELApplication.getInstance().resources.getQuantityString(R.plurals.exercises, exercisesCount, exercisesCount))
+        summary = summary.append(separator, AppContext.resources.getQuantityString(R.plurals.exercises, exercisesCount, exercisesCount))
         // Include sets
         val setsCount = getTotalSets()
-        summary = summary.append(separator, ELApplication.getInstance().resources.getQuantityString(R.plurals.sets, setsCount, setsCount))
+        summary = summary.append(separator, AppContext.resources.getQuantityString(R.plurals.sets, setsCount, setsCount))
         return summary
     }
 

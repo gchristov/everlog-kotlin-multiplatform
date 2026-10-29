@@ -7,7 +7,7 @@ import android.content.Intent
 import android.os.Bundle
 import androidx.core.app.NotificationManagerCompat
 import com.everlog.R
-import com.everlog.application.ELApplication
+import com.everlog.android.common.kotlin.AppContext
 import com.everlog.config.AppUsageNotification
 import com.everlog.managers.analytics.AnalyticsManager
 import com.everlog.managers.apprate.AppLaunchManager
@@ -111,7 +111,7 @@ class AppUsageReminderManager : PreferencesManager() {
             val schedule = getSchedule() ?: return
             val reminder = nextReminder(now) ?: return
             val alarmAt = reminder.alarmAtMillis(now, schedule.scheduleHourOfDay)
-            val alarmManager = ELApplication.getInstance().getSystemService(Context.ALARM_SERVICE) as AlarmManager
+            val alarmManager = AppContext.getSystemService(Context.ALARM_SERVICE) as AlarmManager
             alarmManager.setWindow(AlarmManager.RTC_WAKEUP, alarmAt, ALARM_WINDOW_MILLIS, buildAlarmIntent())
             Timber.tag(TAG).i("Scheduled app usage reminder: attempt=%s trigger=%s", reminder.attempt, Date(alarmAt))
         }
@@ -141,24 +141,24 @@ class AppUsageReminderManager : PreferencesManager() {
         }
 
         private fun notificationsEnabled(): Boolean {
-            val manager = NotificationManagerCompat.from(ELApplication.getInstance())
+            val manager = NotificationManagerCompat.from(AppContext)
             if (!manager.areNotificationsEnabled()) {
                 return false
             }
             // The user can also turn off just the channel the reminder is posted to
-            val channel = manager.getNotificationChannelCompat(ELApplication.getInstance().getString(R.string.notification_channel_normal))
+            val channel = manager.getNotificationChannelCompat(AppContext.getString(R.string.notification_channel_normal))
             return channel == null || channel.importance != NotificationManagerCompat.IMPORTANCE_NONE
         }
 
         private fun cancelAlarm() {
-            val alarmManager = ELApplication.getInstance().getSystemService(Context.ALARM_SERVICE) as AlarmManager
+            val alarmManager = AppContext.getSystemService(Context.ALARM_SERVICE) as AlarmManager
             alarmManager.cancel(buildAlarmIntent())
         }
 
         private fun buildAlarmIntent(): PendingIntent {
-            val notificationIntent = Intent(ELApplication.getInstance(), AppUsageReceiver::class.java)
+            val notificationIntent = Intent(AppContext, AppUsageReceiver::class.java)
             return PendingIntent.getBroadcast(
-                ELApplication.getInstance(),
+                AppContext,
                 ALARM_REQUEST_CODE,
                 notificationIntent,
                 PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE

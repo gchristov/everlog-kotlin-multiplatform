@@ -2,7 +2,7 @@ package com.everlog.managers;
 
 import android.util.Log;
 
-import com.everlog.application.ELApplication;
+import com.everlog.android.common.kotlin.AppContext;
 import com.everlog.constants.ELConstants;
 import com.everlog.logging.CrashlyticsTree;
 import com.everlog.logging.HyperlogTree;
@@ -30,7 +30,7 @@ public class ErrorManager {
         // Add Crashlytics
         Timber.plant(new CrashlyticsTree());
         // Add Hyperlog
-        HyperLog.initialize(ELApplication.getInstance(), (int) TimeUnit.HOURS.toSeconds(24));
+        HyperLog.initialize(AppContext.getAppContext(), (int) TimeUnit.HOURS.toSeconds(24));
         HyperLog.setLogLevel(Log.VERBOSE);
         Timber.plant(new HyperlogTree());
     }

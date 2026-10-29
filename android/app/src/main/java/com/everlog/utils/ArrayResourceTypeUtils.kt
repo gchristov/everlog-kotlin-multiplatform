@@ -2,7 +2,7 @@ package com.everlog.utils
 
 import android.content.Context
 import com.everlog.R
-import com.everlog.application.ELApplication.Companion.getInstance
+import com.everlog.android.common.kotlin.AppContext
 import java.util.*
 
 class ArrayResourceTypeUtils private constructor(context: Context,
@@ -39,7 +39,7 @@ class ArrayResourceTypeUtils private constructor(context: Context,
             return if (cache.containsKey(key)) {
                 cache[key]!!
             } else {
-                val utils = ArrayResourceTypeUtils(getInstance(), arrayTypeResId, arrayTitlesResId)
+                val utils = ArrayResourceTypeUtils(AppContext, arrayTypeResId, arrayTitlesResId)
                 cache[key] = utils
                 utils
             }

@@ -2,7 +2,7 @@ package com.everlog.data.datastores
 
 import android.content.Intent
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
-import com.everlog.application.ELApplication
+import com.everlog.android.common.kotlin.AppContext
 import com.everlog.constants.ELConstants
 import com.everlog.data.datastores.base.ELDocumentStore
 import com.everlog.data.datastores.events.document.ELDocStoreItemLoadedEvent
@@ -42,7 +42,7 @@ class ELUserStore : ELDocumentStore<ELUser>() {
                 checkProDependentFeatures()
             }
             // Notify interested listeners of subscription change
-            LocalBroadcastManager.getInstance(ELApplication.getInstance()).sendBroadcast(Intent(ELConstants.BROADCAST_PRO_CHANGED))
+            LocalBroadcastManager.getInstance(AppContext).sendBroadcast(Intent(ELConstants.BROADCAST_PRO_CHANGED))
         }
     }
 
