@@ -1,4 +1,4 @@
-package com.everlog.data.sync
+package com.everlog.android.common.datasync
 
 import com.everlog.android.common.kotlin.Load
 import com.google.common.truth.Truth.assertThat

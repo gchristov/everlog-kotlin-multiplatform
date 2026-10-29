@@ -1,12 +1,14 @@
 package com.everlog.data.controllers.statistics
 
+import com.everlog.android.common.test.InMemorySharedPreferences
 import com.everlog.data.model.exercise.ELExercise
 import com.everlog.data.model.exercise.ELRoutineExercise
 import com.everlog.data.model.set.ELSet
 import com.everlog.data.model.workout.ELWorkout
-import com.everlog.testutil.InMemorySharedPreferences
 import com.everlog.testutil.at
+import com.everlog.testutil.install
 import com.everlog.testutil.loggedSet
+import com.everlog.testutil.uninstall
 import com.everlog.testutil.workout
 import com.everlog.ui.fragments.home.activity.statistics.StatisticsHomeFragment.RangeType
 import com.google.common.truth.Truth.assertThat

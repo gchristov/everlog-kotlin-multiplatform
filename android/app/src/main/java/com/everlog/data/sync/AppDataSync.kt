@@ -2,6 +2,11 @@ package com.everlog.data.sync
 
 import android.content.Context
 import com.everlog.BuildConfig
+import com.everlog.android.common.datasync.DataSync
+import com.everlog.android.common.datasync.PreferencesSyncRecords
+import com.everlog.android.common.datasync.SyncSettings
+import com.everlog.android.common.datasync.fullHistoryMaxAgeMillis
+import com.everlog.android.common.datasync.maxAgeMillis
 import com.everlog.application.ELApplication
 import com.everlog.config.AppConfig
 import com.everlog.managers.RemoteConfigManager

@@ -3,6 +3,9 @@ package com.everlog.data.sync
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
 import com.everlog.BuildConfig
+import com.everlog.android.common.datasync.Chunk
+import com.everlog.android.common.datasync.FirestoreCollection
+import com.everlog.android.common.datasync.FirestoreDocument
 import com.everlog.managers.auth.LocalUserManager
 import com.everlog.testutil.E2EAccount
 import com.google.common.truth.Truth.assertThat

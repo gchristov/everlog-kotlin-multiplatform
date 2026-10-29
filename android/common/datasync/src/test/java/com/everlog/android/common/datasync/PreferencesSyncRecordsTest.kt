@@ -1,6 +1,6 @@
-package com.everlog.data.sync
+package com.everlog.android.common.datasync
 
-import com.everlog.testutil.InMemorySharedPreferences
+import com.everlog.android.common.test.InMemorySharedPreferences
 import com.google.common.truth.Truth.assertThat
 import org.junit.Test
 

@@ -1,4 +1,4 @@
-package com.everlog.data.sync
+package com.everlog.android.common.datasync
 
 import com.everlog.android.common.kotlin.Load
 import java.util.Calendar
@@ -66,11 +66,11 @@ internal fun windowStart(now: Long, months: Int): Long = Calendar.getInstance().
 }
 
 // A missing or invalid value falls back to the default. Debug builds too: a full history on every read is too much.
-internal fun fullHistoryMaxAgeMillis(remoteDays: Long?, defaultDays: Long): Long =
+fun fullHistoryMaxAgeMillis(remoteDays: Long?, defaultDays: Long): Long =
     TimeUnit.DAYS.toMillis(if (remoteDays == null || remoteDays <= 0) defaultDays else remoteDays)
 
 // Debug builds sync on every read, like Remote Config. A missing or invalid value falls back to the default.
-internal fun maxAgeMillis(debug: Boolean, remoteMinutes: Long?, defaultMinutes: Long): Long = when {
+fun maxAgeMillis(debug: Boolean, remoteMinutes: Long?, defaultMinutes: Long): Long = when {
     debug -> 0
     remoteMinutes == null || remoteMinutes < 0 -> TimeUnit.MINUTES.toMillis(defaultMinutes)
     else -> TimeUnit.MINUTES.toMillis(remoteMinutes)

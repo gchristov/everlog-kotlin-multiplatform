@@ -1,6 +1,6 @@
-package com.everlog.data.sync
+package com.everlog.android.common.datasync
 
-import com.everlog.data.sync.ParsedDocuments.Change
+import com.everlog.android.common.datasync.ParsedDocuments.Change
 import com.google.common.truth.Truth.assertThat
 import org.junit.Test
 

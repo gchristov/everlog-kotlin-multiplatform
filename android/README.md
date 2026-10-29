@@ -28,7 +28,7 @@ Common modules:
 | `common:mvp` | The XML/MVP bases: presenters, base activities, fragments, bottom sheets, dialogs, shared views and adapters |
 | `common:firebase` | Firebase, `FirestorePathManager`, the analytics interface |
 | `common:persistence` | `PreferencesManager`, `SettingsManager` |
-| `common:datasync` | `DataSync` (`data/sync`) |
+| `common:datasync` | `DataSync`, the cache-first sync layer (the app wires its instance in `AppDataSync`) |
 | `common:data` | The models and stores every feature shares, until they're split into the features' `data` modules |
 
 ## Dependency rules
