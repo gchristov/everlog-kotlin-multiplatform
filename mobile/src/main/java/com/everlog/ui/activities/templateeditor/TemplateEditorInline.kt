@@ -70,6 +70,9 @@ import com.everlog.ui.components.exercisetable.typedSeconds
 import com.everlog.ui.design.elements.AppIcon
 import com.everlog.ui.design.elements.AppMenuItem
 import com.everlog.ui.design.elements.AppOverflowMenu
+import com.everlog.ui.design.elements.AppSectionHeader
+import com.everlog.ui.design.elements.list.AppListGroup
+import com.everlog.ui.design.elements.list.AppListItem
 import com.everlog.ui.design.elements.AppTertiaryButton
 import com.everlog.ui.design.elements.AppText
 import com.everlog.ui.design.elements.AppThumbnail
@@ -127,7 +130,8 @@ internal fun InlineTemplateList(
             .padding(top = Theme.spacing.medium, bottom = contentPadding.calculateBottomPadding() + Theme.spacing.large),
     ) {
         header()
-        Spacer(modifier = Modifier.height(Theme.spacing.large))
+        Spacer(modifier = Modifier.height(Theme.spacing.extraLarge))
+        AppSectionHeader(modifier = Modifier.padding(bottom = Theme.spacing.large), text = "Exercises")
         state.blocks.forEachIndexed { index, block ->
             key(block.id) {
                 val lifted = dragging == block.id
@@ -199,6 +203,15 @@ internal fun InlineTemplateList(
                 }
             }
         }
+    }
+}
+
+// The template's details, each value first with what it is above it
+@Composable
+internal fun InlineTemplateSettings(state: TemplateEditorState, viewModel: TemplateEditorViewModel) {
+    AppListGroup(header = "Details") {
+        row { AppListItem(header = "Name", title = state.name, onClick = viewModel::onNameTapped) }
+        row { AppListItem(header = "Rest after each set", title = formatClock(state.restSeconds.toLong()), onClick = viewModel::onRestTapped) }
     }
 }
 

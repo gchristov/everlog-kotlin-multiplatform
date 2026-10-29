@@ -187,7 +187,7 @@ internal fun TemplateEditorScreen(
                         state = state,
                         viewModel = viewModel,
                         contentPadding = contentPadding,
-                        header = { if (!prototype.compact) TemplateSettings(state, viewModel, Modifier) },
+                        header = { if (!prototype.compact) InlineTemplateSettings(state, viewModel) },
                         onOpenExercise = onOpenExercise,
                     )
                 } else if (prototype.setsAndReps) {
