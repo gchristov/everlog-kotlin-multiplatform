@@ -41,4 +41,7 @@ dependencies {
     implementation(libs.google.services.gradlePlugin)
     implementation(libs.firebase.crashlytics.gradlePlugin)
     implementation(libs.firebase.perf.gradlePlugin)
+
+    testImplementation(libs.junit)
+    testImplementation(libs.truth)
 }
