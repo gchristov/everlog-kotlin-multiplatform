@@ -85,9 +85,9 @@ private val Coral = Color(0xFFF07A6A)
 private object InlineSizes {
     val Thumbnail = 40.dp
     val ThumbnailCorner = 12.dp
+    val GroupThumbnail = 24.dp
+    val GroupThumbnailCorner = 8.dp
     val Grip = 40.dp
-    // Lines the grip up with the exercise's name
-    val GripTop = 12.dp
     val RowHeight = 52.dp
     val RowPadding = 12.dp
     val SetColumn = 32.dp
@@ -167,7 +167,7 @@ internal fun InlineTemplateList(
                         },
                 ) {
                 Row(verticalAlignment = if (dragging == null) Alignment.Top else Alignment.CenterVertically) {
-                    Box(modifier = grip.padding(top = if (dragging == null) InlineSizes.GripTop else 0.dp).size(InlineSizes.Grip), contentAlignment = Alignment.Center) {
+                    Box(modifier = grip.size(InlineSizes.Grip), contentAlignment = Alignment.Center) {
                         AppIcon(imageVector = ImageVector.vectorResource(R.drawable.ic_drag), tint = Theme.contentColors.secondary, contentDescription = "Move")
                     }
                     ExerciseCard(
@@ -202,7 +202,7 @@ internal fun InlineTemplateList(
 @Composable
 private fun BlockActions(onAddSet: () -> Unit, addSet: String, join: String?, onJoin: () -> Unit) {
     Row(
-        modifier = Modifier.fillMaxWidth().padding(start = InlineSizes.Grip, bottom = Theme.spacing.small),
+        modifier = Modifier.fillMaxWidth().padding(start = InlineSizes.Grip, bottom = Theme.spacing.large),
         horizontalArrangement = Arrangement.Center,
     ) {
         AppTertiaryButton(onClick = onAddSet, text = addSet)
@@ -223,23 +223,42 @@ private fun ExerciseCard(
     onOpenExercise: (ELExercise, ExerciseTab) -> Unit,
 ) {
     val shape = Theme.shapes.surface
+    // As the workout screen: the exercise above, then its column labels, then a card of its sets
     Column(
         modifier = modifier
             .fillMaxWidth()
-            .clip(shape)
-            .background(if (lifted) Theme.backgrounds.surfaceRaised else Theme.backgrounds.surface)
-            .border(1.dp, if (lifted) Theme.contentColors.action else Theme.backgrounds.separator, shape),
+            .then(
+                if (lifted) {
+                    Modifier
+                        .clip(shape)
+                        .background(Theme.backgrounds.surfaceRaised)
+                        .border(1.dp, Theme.contentColors.action, shape)
+                } else {
+                    Modifier
+                },
+            ),
     ) {
         CardHeader(block, viewModel, collapsed, onOpenExercise)
         if (collapsed) return@Column
+        Spacer(modifier = Modifier.height(Theme.spacing.medium))
         ColumnLabels(block)
-        block.rounds.forEachIndexed { r, round ->
-            round.sets.forEachIndexed { i, set ->
-                if (set.removed) return@forEachIndexed
-                key(round.id, i) {
-                    HorizontalDivider(thickness = 1.dp, color = Theme.backgrounds.separator)
-                    val number = if (round.sets.size > 1) "${r + 1}${'a' + i}" else "${r + 1}"
-                    SetRow(SetRef(block.id, round.id, i), number, set, state, viewModel, keepClear)
+        Spacer(modifier = Modifier.height(Theme.spacing.extraSmall))
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .clip(shape)
+                .background(Theme.backgrounds.surface),
+        ) {
+            var first = true
+            block.rounds.forEachIndexed { r, round ->
+                round.sets.forEachIndexed { i, set ->
+                    if (set.removed) return@forEachIndexed
+                    key(round.id, i) {
+                        if (!first) HorizontalDivider(thickness = 1.dp, color = Theme.backgrounds.separator)
+                        val number = if (round.sets.size > 1) "${r + 1}${'a' + i}" else "${r + 1}"
+                        SetRow(SetRef(block.id, round.id, i), number, set, state, viewModel, keepClear)
+                    }
+                    first = false
                 }
             }
         }
@@ -256,7 +275,7 @@ private fun CardHeader(
     val context = LocalContext.current
     val group = block.exercises.size > 1
     Row(
-        modifier = Modifier.padding(start = Theme.spacing.medium, end = Theme.spacing.small, top = Theme.spacing.small, bottom = Theme.spacing.small),
+        modifier = Modifier.padding(horizontal = InlineSizes.RowPadding, vertical = if (collapsed) Theme.spacing.small else 0.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Column(modifier = Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(Theme.spacing.small)) {
@@ -288,12 +307,18 @@ private fun CardHeader(
             block.exercises.forEachIndexed { i, exercise ->
                 Row(
                     modifier = Modifier
-                        .clip(RoundedCornerShape(InlineSizes.ThumbnailCorner))
+                        .clip(RoundedCornerShape(if (group) InlineSizes.GroupThumbnailCorner else InlineSizes.ThumbnailCorner))
                         .clickable(enabled = exercise.exercise != null) { exercise.exercise?.let { onOpenExercise(it, ExerciseTab.Info) } },
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.spacedBy(Theme.spacing.medium),
                 ) {
-                    if (!collapsed) AppThumbnail(imageUrl = exercise.exercise?.imageUrl, size = InlineSizes.Thumbnail, corner = InlineSizes.ThumbnailCorner)
+                    if (!collapsed) {
+                        AppThumbnail(
+                            imageUrl = exercise.exercise?.imageUrl,
+                            size = if (group) InlineSizes.GroupThumbnail else InlineSizes.Thumbnail,
+                            corner = if (group) InlineSizes.GroupThumbnailCorner else InlineSizes.ThumbnailCorner,
+                        )
+                    }
                     AppText(
                         text = (if (group) "${'a' + i}  " else "") + exercise.exercise?.name.orEmpty(),
                         style = Theme.typography.bodyBold,
@@ -306,6 +331,7 @@ private fun CardHeader(
         if (!collapsed) {
             val exercises = block.exercises.mapNotNull { it.exercise }
             AppOverflowMenu(
+                outlined = true,
                 items = exercises.map { exercise ->
                     AppMenuItem(text = if (exercises.size == 1) "History" else "History: ${exercise.name.orEmpty()}", onClick = { onOpenExercise(exercise, ExerciseTab.History) })
                 } + AppMenuItem(text = if (block.exercises.size > 1) "Delete group" else "Delete exercise", onClick = { viewModel.onDeleteExercise(block.id) }),
@@ -323,7 +349,7 @@ private fun ColumnLabels(block: WorkoutBlock) {
         else -> "REPS"
     }
     Row(
-        modifier = Modifier.padding(horizontal = InlineSizes.RowPadding, vertical = Theme.spacing.extraSmall),
+        modifier = Modifier.padding(horizontal = InlineSizes.RowPadding),
         horizontalArrangement = Arrangement.spacedBy(InlineSizes.ColumnGap),
     ) {
         Label("SET", Modifier.width(InlineSizes.SetColumn))
