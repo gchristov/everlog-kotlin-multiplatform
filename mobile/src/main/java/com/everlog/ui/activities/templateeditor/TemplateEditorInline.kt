@@ -277,7 +277,7 @@ internal fun InlineEmptyTemplate(
                         keepClear = 0f,
                         onOpenExercise = { _, _ -> },
                     )
-                    BlockActions(onAddSet = {}, addSet = "Add set", join = null, onJoin = {}, onSplit = null)
+                    BlockActions(onAddSet = {}, addSet = "Add set", join = "Superset with next", onJoin = {}, onSplit = null)
                 }
             }
             Box(modifier = Modifier.matchParentSize().pointerInput(Unit) {
@@ -405,12 +405,14 @@ private fun CardHeader(
                         else -> Modifier
                     },
                 )
+                // A single exercise's row is the grip's height, so the two line up
+                .heightIn(min = if (collapsed) InlineSizes.Grip else 0.dp)
                 .padding(
                     horizontal = if (collapsed) InlineSizes.RowPadding else 0.dp,
-                    vertical = if (collapsed) Theme.spacing.small else 0.dp,
+                    vertical = if (collapsed && group) Theme.spacing.small else 0.dp,
                 )
                 .padding(end = if (collapsed) 0.dp else InlineSizes.RowPadding),
-            verticalArrangement = Arrangement.spacedBy(if (group) InlineSizes.GroupRowGap else 0.dp)) {
+            verticalArrangement = if (group) Arrangement.spacedBy(InlineSizes.GroupRowGap) else Arrangement.Center) {
             if (group) {
                 // Lined up with the names, past the images
                 Row(
