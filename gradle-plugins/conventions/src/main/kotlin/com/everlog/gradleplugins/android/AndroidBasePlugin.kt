@@ -2,6 +2,7 @@ package com.everlog.gradleplugins.android
 
 import com.everlog.gradleplugins.android
 import com.everlog.gradleplugins.catalogLibrary
+import com.everlog.gradleplugins.libs
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.kotlin.dsl.configure
@@ -31,10 +32,14 @@ class AndroidBasePlugin : Plugin<Project> {
             dependencies {
                 add("coreLibraryDesugaring", catalogLibrary("desugar-jdk-libs"))
             }
+            // JUnit 4 and Espresso still depend on Hamcrest 1.3's hamcrest-core and hamcrest-library. Since 2.1 Hamcrest
+            // ships as the single hamcrest artifact, which the tests use directly, so without this both versions' classes
+            // end up on the test classpath.
+            val hamcrest = "org.hamcrest:hamcrest:${libs.findVersion("hamcrest").get().requiredVersion}"
             configurations.configureEach {
                 resolutionStrategy.dependencySubstitution {
-                    substitute(module("org.hamcrest:hamcrest-core")).using(module("org.hamcrest:hamcrest:3.0"))
-                    substitute(module("org.hamcrest:hamcrest-library")).using(module("org.hamcrest:hamcrest:3.0"))
+                    substitute(module("org.hamcrest:hamcrest-core")).using(module(hamcrest))
+                    substitute(module("org.hamcrest:hamcrest-library")).using(module(hamcrest))
                 }
             }
         }
