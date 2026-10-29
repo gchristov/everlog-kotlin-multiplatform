@@ -328,10 +328,6 @@
     <string name="workout_log_edit_hint">Drag the grip to move an exercise. Tap the bin to delete it.</string>
     <string name="workout_log_discard">Discard workout</string>
     <string name="workout_log_move">Move</string>
-    <plurals name="workout_log_sets">
-        <item quantity="one">%1$d set</item>
-        <item quantity="other">%1$d sets</item>
-    </plurals>
     <string name="workout_log_history">History</string>
     <string name="workout_log_exercise_history">%1$s history</string>
     <string name="workout_log_delete_exercise_title">Delete %1$s?</string>

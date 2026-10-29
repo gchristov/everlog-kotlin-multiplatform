@@ -7,10 +7,16 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -24,23 +30,26 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.layout.HorizontalAlignmentLine
+import androidx.compose.ui.layout.layout
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.testTag
-import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import com.everlog.R
 import com.everlog.data.controllers.workoutsession.WorkoutBlock
 import com.everlog.ui.design.elements.AppIcon
 import com.everlog.ui.design.elements.AppIconButton
-import com.everlog.ui.design.elements.list.AppListItem
+import com.everlog.ui.design.elements.AppText
 import com.everlog.ui.design.theme.Theme
 
 private object EditSizes {
@@ -48,6 +57,8 @@ private object EditSizes {
     // Bigger than the icon, so the grip is easy to catch
     val Grip = 40.dp
     val LiftScale = 1.03f
+    val RowPadding = 12.dp
+    val GroupRowGap = 6.dp
 }
 
 /**
@@ -130,7 +141,8 @@ internal fun ExerciseEditList(
     }
 }
 
-// An exercise, or a group's type over its exercises, with its number of sets, the grip and the bin
+// The grip, outside the card on its left, beside the last exercise. The card holds a group's type, the names and the
+// bin; it's raised while dragged, the grip staying outside it.
 @Composable
 private fun EditCard(
     block: WorkoutBlock,
@@ -141,32 +153,67 @@ private fun EditCard(
 ) {
     val shape = Theme.shapes.surface
     val context = LocalContext.current
-    AppListItem(
-        modifier = modifier
-            .clip(shape)
-            .background(if (lifted) Theme.backgrounds.surfaceRaised else Theme.backgrounds.surface)
-            .border(1.dp, if (lifted) Theme.contentColors.action else Theme.backgrounds.separator, shape),
-        header = block.setType?.takeIf { block.exercises.size > 1 }?.getTitle(context),
-        // One exercise per line, like the table's headers
-        title = block.exercises.joinToString("\n") { it.exercise?.name.orEmpty() },
-        subtitle = pluralStringResource(R.plurals.workout_log_sets, block.rounds.size, block.rounds.size),
-        leading = {
-            Box(modifier = gripModifier.size(EditSizes.Grip), contentAlignment = Alignment.Center) {
-                AppIcon(
-                    imageVector = ImageVector.vectorResource(R.drawable.ic_drag),
-                    tint = Theme.contentColors.secondary,
-                    contentDescription = stringResource(R.string.workout_log_move),
-                )
+    val group = block.exercises.size > 1
+    Row(modifier = modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
+        Box(
+            modifier = gripModifier
+                .alignBy { it.measuredHeight / 2 }
+                .size(EditSizes.Grip)
+                .border(1.dp, Theme.backgrounds.separator, CircleShape),
+            contentAlignment = Alignment.Center,
+        ) {
+            AppIcon(
+                imageVector = ImageVector.vectorResource(R.drawable.ic_drag),
+                tint = Theme.contentColors.secondary,
+                contentDescription = stringResource(R.string.workout_log_move),
+            )
+        }
+        Spacer(modifier = Modifier.width(Theme.spacing.large))
+        Row(
+            modifier = Modifier
+                .weight(1f)
+                .alignBy(LastExerciseCenter)
+                .clip(shape)
+                .background(if (lifted) Theme.backgrounds.surfaceRaised else Color.Transparent)
+                .border(1.dp, if (lifted) Theme.contentColors.action else Theme.backgrounds.separator, shape)
+                // A single exercise's row is the grip's height, so the two line up
+                .heightIn(min = EditSizes.Grip)
+                .padding(start = EditSizes.RowPadding, end = Theme.spacing.extraSmall, top = if (group) Theme.spacing.small else 0.dp, bottom = if (group) Theme.spacing.small else 0.dp),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            Column(
+                modifier = Modifier.weight(1f),
+                verticalArrangement = if (group) Arrangement.spacedBy(EditSizes.GroupRowGap) else Arrangement.Center,
+            ) {
+                block.setType?.takeIf { group }?.getTitle(context)?.let { type ->
+                    AppText(text = type.uppercase(), style = Theme.typography.small, color = Theme.contentColors.secondary)
+                }
+                block.exercises.forEachIndexed { i, exercise ->
+                    AppText(
+                        modifier = if (i == block.exercises.lastIndex) Modifier.providingCenter(LastExerciseCenter) else Modifier,
+                        text = exercise.exercise?.name.orEmpty(),
+                        style = Theme.typography.bodyBold,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                    )
+                }
             }
-        },
-        trailing = {
             AppIconButton(
+                // The grip's size, so it doesn't make a single exercise's row taller; it still takes 48dp of touches
+                modifier = Modifier.size(EditSizes.Grip),
                 onClick = onDelete,
                 icon = ImageVector.vectorResource(R.drawable.ic_delete),
                 tint = Theme.contentColors.destructive,
                 contentDescription = stringResource(R.string.workout_log_delete),
-                outlined = true,
             )
-        },
-    )
+        }
+    }
+}
+
+// The middle of the card's last exercise, which the grip lines up with
+private val LastExerciseCenter = HorizontalAlignmentLine(merger = { _, last -> last })
+
+private fun Modifier.providingCenter(line: HorizontalAlignmentLine) = layout { measurable, constraints ->
+    val placeable = measurable.measure(constraints)
+    layout(placeable.width, placeable.height, mapOf(line to placeable.height / 2)) { placeable.place(0, 0) }
 }
