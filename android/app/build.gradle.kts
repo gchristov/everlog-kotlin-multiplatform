@@ -61,6 +61,17 @@ android {
 }
 
 dependencies {
+    implementation(projects.android.auth.feature)
+    implementation(projects.android.exercise.feature)
+    implementation(projects.android.history.feature)
+    implementation(projects.android.onboarding.feature)
+    implementation(projects.android.plan.feature)
+    implementation(projects.android.pro.feature)
+    implementation(projects.android.settings.feature)
+    implementation(projects.android.showcase.feature)
+    implementation(projects.android.template.feature)
+    implementation(projects.android.workout.feature)
+
     testImplementation(libs.junit)
     testImplementation(libs.kotlin.test.junit)
     testImplementation(libs.truth)

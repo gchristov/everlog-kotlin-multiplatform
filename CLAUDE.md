@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project overview
 
-Everlog is a native Android fitness/workout-tracking app (package `com.everlog`). Despite the repo name (`everlog-kotlin-multiplatform`), the codebase is currently a **single Android application module** (`:android:app`) — `settings.gradle.kts` only includes `:android:app`, there is no shared/iOS Kotlin Multiplatform module yet. Some leftover references to KMP exist (e.g. a link in `PULL_REQUEST_TEMPLATE.md`) but don't reflect the current module layout.
+Everlog is a native Android fitness/workout-tracking app (package `com.everlog`). Despite the repo name (`everlog-kotlin-multiplatform`), there is no shared/iOS Kotlin Multiplatform code yet. The Android app is being split into Gradle modules under `android/` (`common/*`, and `data`, `feature` and `test-fixtures` modules per feature; see Modules below), but almost all code still lives in the application module `:android:app` and moves out screen by screen (TAS-468). Some leftover references to KMP exist (e.g. a link in `PULL_REQUEST_TEMPLATE.md`) but don't reflect the current module layout.
 
 The app itself is a mixed Kotlin/Java codebase (`android/app/src/main/java`, ~284 `.kt` and ~115 `.java` files) built on an older stack: MVP, RxJava 1 (`rx.Observable`, not RxJava 2/3), and EventBus — see Architecture below before assuming modern Android patterns (coroutines, Flow, Compose) apply. New screens are the exception: they're Jetpack Compose with view-models (see Compose screens and the design system).
 
@@ -23,7 +23,7 @@ There is no ktlint/detekt configured — the only lint is Android's built-in lin
 
 ### Build setup
 
-Shared build setup lives in convention plugins in the `gradle-plugins/conventions` composite build (included from `settings.gradle.kts`), as in newsfeed-kotlin-multiplatform. Modules apply them through the version catalog (`alias(libs.plugins.everlog.android.…)`): `android-base-plugin` (SDK levels, JVM toolchain, desugaring, parcelize), `android-compose-plugin`, `android-firebase-plugin` (google-services, Crashlytics, Performance; app only) and `android-application-binary-plugin` (app module, target SDK, version code and name). Put setup every module needs in a plugin, not in `android/app/build.gradle.kts`.
+Shared build setup lives in convention plugins in the `gradle-plugins/conventions` composite build (included from `settings.gradle.kts`), as in newsfeed-kotlin-multiplatform. Modules apply them through the version catalog (`alias(libs.plugins.everlog.android.…)`): `android-base-plugin` (SDK levels, JVM toolchain, desugaring, parcelize), `android-module-plugin` (a library module with `common:test`), `android-compose-plugin`, `android-feature-plugin` and `android-data-plugin` (a feature's `feature` and `data` modules with the common modules they use), `android-firebase-plugin` (google-services, Crashlytics, Performance; app only) and `android-application-binary-plugin` (app module, target SDK, version code and name). Put setup every module needs in a plugin, not in a module's `build.gradle.kts`. Modules below says which plugin each module type applies.
 
 ### Local secrets required to build
 
@@ -55,6 +55,21 @@ Three workflows in `.github/workflows/`, all built from shared composite actions
 Fastlane lanes (`fastlane/Fastfile`): `deploy_firebase`, `deploy_play_internal`, `deploy_play_release`. Changelogs are auto-generated from `git log` since the last tag.
 
 ## Architecture
+
+### Modules
+
+The Android app is split into Gradle modules under `android/`, modelled on newsfeed-kotlin-multiplatform but without dependency injection: modules are wired by hand through view-model factories. The modules exist, but almost all code still lives in `:android:app` and moves out bit by bit, leaf modules first (TAS-468).
+
+- **`android/app`**: `ELApplication`, splash, home (it hosts tabs from several features), `Navigator`/`ELNavigator`, the managers until they're split, FCM and receivers.
+- **`android/common/<name>`**: shared code. `kotlin` (coroutines, Arrow, `Load`, logging, the app context holder), `test` (JUnit, Truth, kotlin-test, threetenbp, test helpers), `design` (shared resources), `compose` (the design system, `CommonComposeActivity`), `compose-test` (Compose UI test setup), `mvvm` (`CommonViewModel`, `ViewModelFactory`), `mvp` (the XML/MVP bases, dialogs, shared views and adapters), `firebase` (Firebase, `FirestorePathManager`, the analytics interface), `persistence` (`PreferencesManager`, `SettingsManager`), `datasync` (`data/sync`) and `data` (the models and stores every feature shares, until they're split into the features' `data` modules).
+- **`android/<feature>/{data,feature,test-fixtures}`** for `auth`, `onboarding`, `exercise`, `workout`, `template`, `plan`, `history`, `pro`, `settings` and `showcase`: `data` holds repositories, use cases and stores, `feature` holds screens and view-models, and `test-fixtures` holds fakes and test robots for other modules' tests. Every feature has all three, even while one is empty.
+
+Rules:
+- **app → feature → data → common.** The app depends on every `feature` module, and a feature on its own `data` module. A feature never depends on another feature: screens open each other through the app's `Navigator`. Data never depends on UI (`feature` modules, `common:compose`, `common:mvp`, `common:design`).
+- **One convention plugin per module type**: `everlog.android.feature` for `feature` (adds Compose, `common:compose`, `common:design`, `common:mvvm`, and `common:compose-test` for instrumented tests), `everlog.android.data` for `data` (adds `common:kotlin`, `common:firebase`, `common:datasync` and `common:data` as `api`, as a data module's API returns their types), `everlog.android.module` for `common` and `test-fixtures` modules (plus `everlog.android.compose` for Compose code), and only `everlog.android.base` for `common:test`, since `everlog.android.module` adds it to every module's unit tests.
+- **Test support lives in `main`**, with its dependencies as `api` (`common:test`, `common:compose-test`, the `test-fixtures` modules), because a module's `test` sources can't be shared. A feature's `feature` and `data` modules use its `test-fixtures` for their tests.
+- **Adding a module**: a `build.gradle.kts` with its plugin and a `namespace` that follows its path without dashes (`com.everlog.android.exercise.testfixtures`, `com.everlog.android.common.composetest`), included in `settings.gradle.kts` and depended on through type-safe accessors (`projects.android.exercise.data`). Libraries don't need a manifest.
+- **Moving code**: it takes the module's namespace as its package, except anything the system knows by its full class name (the launcher activity, services, receivers behind pending alarms and notification intents), which keeps its package and name so an update can't break it. R8 keep rules for what Firestore or Gson maps by reflection move to the module's `consumerProguardFiles`; check them with `./gradlew :android:app:minifyReleaseWithR8` and the mapping.
 
 ### Pattern: MVP + RxJava 1 + EventBus (not MVVM/coroutines)
 
@@ -93,7 +108,7 @@ New screens are built in Compose: a `CommonComposeActivity` (wraps the content i
 - **Design mockups may predate it.** The Claude Design canvases (e.g. Everlog Onboarding) don't always follow the design system. Map each mockup piece onto an element and its spacing, and keep the standard styles over mockup-only sizes, colours or densities.
 - **Flag anything that isn't in the design system.** When a screen needs something the design system doesn't have, say so (in the reply and the PR) and ask whether it should become a design system element or stay local to the feature, rather than deciding silently. Only skip the question when the answer is obvious: a generic group, card, row or button belongs in the design system, while something tied to one screen's behaviour (e.g. onboarding's animated question blocks) stays local. Local pieces live in the feature's package, with their sizes in a private object.
 - **Design system changes ship separately** from the feature using them, in their own commits or PR, with a showcase example for anything new.
-- **Shared feature components live in `ui/components`**, not the design system: pieces several screens use that are built on a feature's model, e.g. `ui/components/exercisetable` (the exercise table, typing into its cells, the edit list), shared by the workout screen and the template editor (TAS-466). Generic elements still go in the design system.
+- **Shared components belong to the design system**, which moves to `common:compose`: a piece several screens use gets its own UI model, a showcase page, and goes in with the other elements, rather than into a module of its own. `ui/components/reorder` and `ui/components/rest` are already generic. `ui/components/exercisetable` (the exercise table, typing into its cells, the edit list), shared by the workout screen and the template editor, still uses the workout session model (`WorkoutBlock`, `WorkoutSet`, `SetRef`, `ValueField`), `ELExercise`, the weight unit and formatters: it stays in the app until it has its own row and cell model that the workout and template map onto.
 
 ### Background work
 

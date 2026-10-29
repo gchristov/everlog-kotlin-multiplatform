@@ -7,6 +7,10 @@ gradlePlugin {
         id = "android-base-plugin"
         implementationClass = "com.everlog.gradleplugins.android.AndroidBasePlugin"
     }
+    plugins.register("android-module-plugin") {
+        id = "android-module-plugin"
+        implementationClass = "com.everlog.gradleplugins.android.AndroidModulePlugin"
+    }
     plugins.register("android-compose-plugin") {
         id = "android-compose-plugin"
         implementationClass = "com.everlog.gradleplugins.android.AndroidComposePlugin"
@@ -14,6 +18,14 @@ gradlePlugin {
     plugins.register("android-firebase-plugin") {
         id = "android-firebase-plugin"
         implementationClass = "com.everlog.gradleplugins.android.AndroidFirebasePlugin"
+    }
+    plugins.register("android-feature-plugin") {
+        id = "android-feature-plugin"
+        implementationClass = "com.everlog.gradleplugins.android.AndroidFeaturePlugin"
+    }
+    plugins.register("android-data-plugin") {
+        id = "android-data-plugin"
+        implementationClass = "com.everlog.gradleplugins.android.AndroidDataPlugin"
     }
     plugins.register("android-application-binary-plugin") {
         id = "android-application-binary-plugin"
