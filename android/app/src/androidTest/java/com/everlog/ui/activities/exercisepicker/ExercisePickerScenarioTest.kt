@@ -13,12 +13,12 @@ import androidx.compose.ui.test.performTextInput
 import androidx.lifecycle.SavedStateHandle
 import androidx.test.espresso.Espresso
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import com.everlog.android.common.kotlin.Load
 import com.everlog.data.controllers.exerciselibrary.LoadExerciseLibraryUseCase
 import com.everlog.data.model.exercise.library.ExerciseLibrary
 import com.everlog.data.model.exercise.library.ExerciseRegistry
 import com.everlog.data.model.exercise.library.LibraryExercise
 import com.everlog.data.model.set.ELSetType
-import com.everlog.data.sync.Load
 import com.everlog.ui.design.theme.Theme
 import com.google.common.truth.Truth.assertThat
 import java.util.concurrent.TimeUnit

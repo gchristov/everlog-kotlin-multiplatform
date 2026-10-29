@@ -1,12 +1,12 @@
 package com.everlog.data.controllers.templatesession
 
+import com.everlog.android.common.kotlin.Load
 import com.everlog.data.model.ELRoutine
 import com.everlog.data.model.exercise.ELExercise
 import com.everlog.data.model.exercise.ELExerciseGroup
 import com.everlog.data.model.exercise.ELRoutineExercise
 import com.everlog.data.model.exercise.library.LibraryExercise
 import com.everlog.data.model.set.ELSet
-import com.everlog.data.sync.Load
 import com.everlog.testutil.FakeExerciseRepository
 import com.everlog.testutil.FakeRoutineRepository
 import com.google.common.truth.Truth.assertThat

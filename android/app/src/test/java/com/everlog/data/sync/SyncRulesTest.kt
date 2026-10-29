@@ -1,5 +1,6 @@
 package com.everlog.data.sync
 
+import com.everlog.android.common.kotlin.Load
 import com.google.common.truth.Truth.assertThat
 import org.junit.Test
 import java.util.Calendar

@@ -1,9 +1,9 @@
 package com.everlog.data.controllers.exerciseguide
 
+import com.everlog.android.common.kotlin.Load
+import com.everlog.android.common.kotlin.map
 import com.everlog.data.model.exercise.library.ExerciseGuide
 import com.everlog.data.repositories.ExerciseRepository
-import com.everlog.data.sync.Load
-import com.everlog.data.sync.map
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOn

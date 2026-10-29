@@ -1,6 +1,7 @@
 package com.everlog.ui.activities.exercisepicker
 
 import androidx.lifecycle.SavedStateHandle
+import com.everlog.android.common.kotlin.Load
 import com.everlog.android.common.test.FakeCoroutineDispatcher
 import com.everlog.data.controllers.exerciselibrary.LoadExerciseLibraryUseCase
 import com.everlog.data.model.exercise.library.ExerciseLibrary
@@ -12,7 +13,6 @@ import com.everlog.testutil.LibraryFixtures.barbellRow
 import com.everlog.testutil.LibraryFixtures.dumbbellBench
 import com.everlog.testutil.LibraryFixtures.own
 import com.google.common.truth.Truth.assertThat
-import com.everlog.data.sync.Load
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.flowOf
