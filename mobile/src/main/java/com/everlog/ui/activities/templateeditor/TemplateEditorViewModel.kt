@@ -161,12 +161,6 @@ internal class TemplateEditorViewModel(
         change { focusOn(null).copy(blocks = blocks.ungroupExercises(picked, ids)).withoutGoneSets() }
     }
 
-    fun onGroupTypeTapped(blockId: Long) {
-        val block = state.value.blocks.block(blockId) ?: return
-        finishTyping()
-        setState { focusOn(null).copy(picked = block.exercises.indices.map { ExerciseRef(blockId, it) }.toSet(), dialog = TemplateEditorDialog.SetType) }
-    }
-
     fun onDragStarted() {
         finishTyping()
         setState { focusOn(null) }

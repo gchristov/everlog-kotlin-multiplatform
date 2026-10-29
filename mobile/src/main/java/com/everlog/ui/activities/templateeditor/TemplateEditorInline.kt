@@ -418,11 +418,7 @@ private fun CardHeader(
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
                     AppText(
-                        modifier = Modifier
-                            .clip(Theme.shapes.button)
-                            .clickable { viewModel.onGroupTypeTapped(block.id) }
-                            .padding(vertical = Theme.spacing.extraSmall),
-                        text = "${block.setType?.getTitle(context)?.uppercase().orEmpty()} ▾",
+                        text = block.setType?.getTitle(context)?.uppercase().orEmpty(),
                         style = Theme.typography.small,
                         color = Theme.contentColors.secondary,
                     )
