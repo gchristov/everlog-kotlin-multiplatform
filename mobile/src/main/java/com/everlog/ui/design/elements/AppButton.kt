@@ -31,7 +31,7 @@ fun AppButton(
 ) {
     androidx.compose.material3.Button(
         onClick = onClick,
-        modifier = modifier.defaultMinSize(minHeight = ButtonMinHeight),
+        modifier = modifier.defaultMinSize(minHeight = AppButtonHeight),
         enabled = enabled,
         shape = Theme.shapes.button,
         colors = ButtonDefaults.buttonColors(
@@ -69,7 +69,7 @@ fun AppSecondaryButton(
     val color = Theme.contentColors.action
     androidx.compose.material3.OutlinedButton(
         onClick = onClick,
-        modifier = modifier.defaultMinSize(minHeight = ButtonMinHeight),
+        modifier = modifier.defaultMinSize(minHeight = AppButtonHeight),
         enabled = enabled,
         shape = Theme.shapes.button,
         colors = ButtonDefaults.outlinedButtonColors(containerColor = Color.Transparent),
@@ -99,7 +99,7 @@ fun AppTertiaryButton(
 ) {
     androidx.compose.material3.TextButton(
         onClick = onClick,
-        modifier = modifier.defaultMinSize(minHeight = ButtonMinHeight),
+        modifier = modifier.defaultMinSize(minHeight = AppButtonHeight),
         enabled = enabled,
         shape = Theme.shapes.button,
         contentPadding = contentPadding,
@@ -159,7 +159,10 @@ private fun buttonContentPadding() = PaddingValues(
     vertical = Theme.spacing.small,
 )
 
-private val ButtonMinHeight = 42.dp
+/**
+ * A button's height, at least: for something that sits beside a button and should match it, e.g. an icon button.
+ */
+val AppButtonHeight = 42.dp
 private val ButtonIconSize = 18.dp
 private const val DisabledAlpha = 0.4f
 

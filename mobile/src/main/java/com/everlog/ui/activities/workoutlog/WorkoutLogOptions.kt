@@ -1,5 +1,6 @@
 package com.everlog.ui.activities.workoutlog
 
+import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -14,6 +15,7 @@ import androidx.compose.ui.res.vectorResource
 import com.everlog.R
 import com.everlog.ui.activities.setsuggestions.SetSuggestion
 import com.everlog.ui.design.elements.AppBottomSheet
+import com.everlog.ui.design.elements.AppButtonHeight
 import com.everlog.ui.design.elements.AppIconButton
 import com.everlog.ui.design.elements.list.AppListGroup
 import com.everlog.ui.design.elements.list.AppListItem
@@ -32,6 +34,8 @@ internal fun WorkoutOptionsButton(
 ) {
     var open by remember { mutableStateOf(false) }
     AppIconButton(
+        // As tall as the Finish button beside it
+        modifier = Modifier.size(AppButtonHeight),
         onClick = { open = true },
         icon = ImageVector.vectorResource(R.drawable.ic_settings),
         contentDescription = stringResource(R.string.workout_log_options),
