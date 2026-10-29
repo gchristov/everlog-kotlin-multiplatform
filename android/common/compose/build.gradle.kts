@@ -14,7 +14,8 @@ dependencies {
     api(libs.androidx.compose.material3)
     api(libs.androidx.compose.ui.tooling.preview)
     api(libs.haze)
-    implementation(libs.androidx.activity.compose)
+    // CommonComposeActivity is a ComponentActivity
+    api(libs.androidx.activity.compose)
     implementation(libs.coil.compose)
     implementation(libs.timber)
     debugImplementation(libs.androidx.compose.ui.tooling)

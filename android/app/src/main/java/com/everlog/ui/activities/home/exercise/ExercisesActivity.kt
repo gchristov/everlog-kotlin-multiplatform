@@ -239,7 +239,7 @@ class ExercisesActivity : BaseSearchActivity(), MvpViewExercises {
         setSupportActionBar(binding.root.findViewById(R.id.toolbar))
         if (isSelectionMode()) {
             supportActionBar?.setTitle(R.string.exercises_title_select)
-            binding.root.findViewById<Toolbar>(R.id.toolbar).setNavigationIcon(R.drawable.ic_clear_white)
+            binding.root.findViewById<Toolbar>(R.id.toolbar).setNavigationIcon(DesignR.drawable.ic_clear_white)
         } else {
             supportActionBar?.setTitle(R.string.exercises_title)
             supportActionBar?.setDisplayHomeAsUpEnabled(true)

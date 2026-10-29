@@ -18,6 +18,7 @@ import com.everlog.ui.views.recyclerview.infinitescroll.InfiniteRecyclerView
 import com.everlog.utils.ViewUtils
 import com.everlog.utils.device.DeviceUtils
 import rx.Observable
+import com.everlog.android.common.design.R as DesignR
 
 class CoverImagePickerActivity : BaseActivity(), MvpViewCoverImagePicker {
 
@@ -91,7 +92,7 @@ class CoverImagePickerActivity : BaseActivity(), MvpViewCoverImagePicker {
     }
 
     private fun setupTopBar() {
-        binding.root.findViewById<Toolbar>(R.id.toolbar).setNavigationIcon(R.drawable.ic_clear_white)
+        binding.root.findViewById<Toolbar>(R.id.toolbar).setNavigationIcon(DesignR.drawable.ic_clear_white)
         setSupportActionBar(binding.root.findViewById(R.id.toolbar))
         supportActionBar?.title = "Choose Cover"
         supportActionBar?.setDisplayHomeAsUpEnabled(true)

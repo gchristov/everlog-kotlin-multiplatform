@@ -23,6 +23,7 @@ import com.everlog.utils.Utils
 import com.jakewharton.rxbinding.view.RxView
 import rx.Observable
 import rx.subjects.PublishSubject
+import com.everlog.android.common.design.R as DesignR
 import java.io.Serializable
 
 abstract class CreateExerciseGroupsActivity : BaseActivity(), MvpViewCreateExerciseGroups {
@@ -142,12 +143,12 @@ abstract class CreateExerciseGroupsActivity : BaseActivity(), MvpViewCreateExerc
     // Setup
 
     protected open fun setupTopBar() {
-        findViewById<Toolbar>(R.id.toolbar).setNavigationIcon(R.drawable.ic_clear_white)
+        findViewById<Toolbar>(R.id.toolbar).setNavigationIcon(DesignR.drawable.ic_clear_white)
         setSupportActionBar(findViewById(R.id.toolbar))
         supportActionBar?.title = "[YOUR TITLE]"
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         // Selection options
-        findViewById<Toolbar>(R.id.optionsToolbar).setNavigationIcon(R.drawable.ic_clear_white)
+        findViewById<Toolbar>(R.id.optionsToolbar).setNavigationIcon(DesignR.drawable.ic_clear_white)
         findViewById<Toolbar>(R.id.optionsToolbar).inflateMenu(R.menu.menu_activity_exercise_group_create)
         findViewById<Toolbar>(R.id.optionsToolbar).setNavigationOnClickListener {
             mOnCancelSelectionClick.onNext(null)

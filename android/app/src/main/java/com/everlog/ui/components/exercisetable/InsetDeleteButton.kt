@@ -13,9 +13,9 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.unit.dp
-import com.everlog.R
 import com.everlog.android.common.compose.elements.AppIcon
 import com.everlog.android.common.compose.theme.Theme
+import com.everlog.android.common.design.R as DesignR
 
 private object InsetDeleteSizes {
     val Icon = 18.dp
@@ -39,7 +39,7 @@ internal fun InsetDeleteButton(onClick: () -> Unit, contentDescription: String, 
     ) {
         AppIcon(
             modifier = Modifier.size(InsetDeleteSizes.Icon),
-            imageVector = ImageVector.vectorResource(R.drawable.ic_delete),
+            imageVector = ImageVector.vectorResource(DesignR.drawable.ic_delete),
             tint = Theme.contentColors.destructiveSoft,
             contentDescription = contentDescription,
         )

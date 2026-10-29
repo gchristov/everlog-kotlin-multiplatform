@@ -1,4 +1,4 @@
-package com.everlog.ui.activities.designsystem
+package com.everlog.android.showcase.feature
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -16,7 +16,6 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.everlog.R
 import com.everlog.android.common.compose.elements.AppButton
 import com.everlog.android.common.compose.elements.AppIconButton
 import com.everlog.android.common.compose.elements.AppSecondaryButton
@@ -68,7 +67,7 @@ internal fun DesignSystemButtons(
                     AppIconButton(
                         modifier = Modifier.size(Theme.sizes.button),
                         onClick = onButtonClick,
-                        icon = ImageVector.vectorResource(R.drawable.ic_settings),
+                        icon = ImageVector.vectorResource(DesignR.drawable.ic_settings),
                         contentDescription = "Options",
                         outlined = true,
                     )

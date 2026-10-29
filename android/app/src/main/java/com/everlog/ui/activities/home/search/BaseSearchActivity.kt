@@ -136,7 +136,7 @@ abstract class BaseSearchActivity : BaseActivity() {
             ContextCompat.getColor(this, DesignR.color.background_base),
             PorterDuff.Mode.SRC_IN
         )
-        closeButton?.setImageResource(R.drawable.ic_clear_white)
+        closeButton?.setImageResource(DesignR.drawable.ic_clear_white)
 
         // set hint and the text colors
         val txtSearch = searchView.findViewById<EditText>(androidx.appcompat.R.id.search_src_text)

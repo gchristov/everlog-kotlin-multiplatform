@@ -1,4 +1,4 @@
-package com.everlog.ui.activities.designsystem
+package com.everlog.android.showcase.feature
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
@@ -8,7 +8,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
-import com.everlog.R
 import com.everlog.android.common.compose.elements.AppIcon
 import com.everlog.android.common.compose.elements.AppIconButton
 import com.everlog.android.common.compose.elements.AppMenuItem
@@ -38,14 +37,14 @@ internal fun DesignSystemIcons(onButtonClick: () -> Unit) {
 private fun AppIcons() {
     val icons = listOf(
         DesignR.drawable.ic_back,
-        R.drawable.ic_clear_white,
+        DesignR.drawable.ic_clear_white,
         DesignR.drawable.ic_add,
-        R.drawable.ic_remove_white,
-        R.drawable.ic_edit,
-        R.drawable.ic_delete,
-        R.drawable.ic_share,
-        R.drawable.ic_timer,
-        R.drawable.ic_settings,
+        DesignR.drawable.ic_remove_white,
+        DesignR.drawable.ic_edit,
+        DesignR.drawable.ic_delete,
+        DesignR.drawable.ic_share,
+        DesignR.drawable.ic_timer,
+        DesignR.drawable.ic_settings,
         DesignR.drawable.ic_more,
     ).map { ImageVector.vectorResource(it) }
     Row(
@@ -67,7 +66,7 @@ private fun Tints() {
         Theme.contentColors.destructive,
         Theme.contentColors.destructiveSoft,
     )
-    val star = ImageVector.vectorResource(R.drawable.ic_star_filled)
+    val star = ImageVector.vectorResource(DesignR.drawable.ic_star_filled)
     Row(horizontalArrangement = Arrangement.spacedBy(Theme.spacing.extraLarge)) {
         tints.forEach { tint ->
             AppIcon(
@@ -96,7 +95,7 @@ private fun IconButtons(onButtonClick: () -> Unit) {
         )
         AppIconButton(
             onClick = onButtonClick,
-            icon = ImageVector.vectorResource(R.drawable.ic_settings),
+            icon = ImageVector.vectorResource(DesignR.drawable.ic_settings),
             contentDescription = "Settings",
             outlined = true,
         )

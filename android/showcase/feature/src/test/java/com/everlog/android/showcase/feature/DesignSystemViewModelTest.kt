@@ -1,4 +1,4 @@
-package com.everlog.ui.activities.designsystem
+package com.everlog.android.showcase.feature
 
 import com.everlog.android.common.test.FakeCoroutineDispatcher
 import com.google.common.truth.Truth.assertThat

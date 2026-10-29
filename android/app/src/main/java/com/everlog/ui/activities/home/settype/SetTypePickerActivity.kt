@@ -14,6 +14,7 @@ import com.everlog.managers.analytics.AnalyticsConstants
 import com.everlog.ui.activities.base.BaseActivity
 import com.everlog.ui.activities.base.BaseActivityMvpView
 import com.everlog.ui.activities.base.BaseActivityPresenter
+import com.everlog.android.common.design.R as DesignR
 
 class SetTypePickerActivity : BaseActivity(), MvpViewSetTypePicker {
 
@@ -72,7 +73,7 @@ class SetTypePickerActivity : BaseActivity(), MvpViewSetTypePicker {
     }
 
     private fun setupTopBar() {
-        binding.root.findViewById<Toolbar>(R.id.toolbar).setNavigationIcon(R.drawable.ic_clear_white)
+        binding.root.findViewById<Toolbar>(R.id.toolbar).setNavigationIcon(DesignR.drawable.ic_clear_white)
         setSupportActionBar(binding.root.findViewById(R.id.toolbar))
         supportActionBar?.setTitle(R.string.select_set_type)
         supportActionBar?.subtitle = resources.getQuantityString(R.plurals.select_set_type_subtitle, getSelectedExercisesCount(), getSelectedExercisesCount())

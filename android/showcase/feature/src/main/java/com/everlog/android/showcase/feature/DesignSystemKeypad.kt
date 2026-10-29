@@ -1,4 +1,4 @@
-package com.everlog.ui.activities.designsystem
+package com.everlog.android.showcase.feature
 
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.navigationBars
@@ -15,7 +15,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
-import com.everlog.R
 import com.everlog.android.common.compose.elements.keypad.AppKeypad
 import com.everlog.android.common.compose.elements.keypad.AppKeypadAction
 import com.everlog.android.common.compose.elements.keypad.AppKeypadEntry
@@ -88,7 +87,7 @@ internal fun DesignSystemKeypad(onButtonClick: () -> Unit) {
                                 typing = false
                             }
                         } else {
-                            AppKeypadAction(if (timed) "Start timer" else "Complete set", icon = ImageVector.vectorResource(if (timed) R.drawable.ic_timer else DesignR.drawable.ic_check)) {
+                            AppKeypadAction(if (timed) "Start timer" else "Complete set", icon = ImageVector.vectorResource(if (timed) DesignR.drawable.ic_timer else DesignR.drawable.ic_check)) {
                                 onButtonClick()
                                 focused = null
                             }

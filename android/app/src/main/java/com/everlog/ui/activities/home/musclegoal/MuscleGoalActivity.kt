@@ -17,6 +17,7 @@ import com.everlog.ui.activities.base.BaseActivityPresenter
 import com.everlog.ui.views.notification.warning.WarningNotificationView
 import com.jakewharton.rxbinding.view.RxView
 import rx.Observable
+import com.everlog.android.common.design.R as DesignR
 
 class MuscleGoalActivity : BaseActivity(), MvpViewMuscleGoal {
 
@@ -86,7 +87,7 @@ class MuscleGoalActivity : BaseActivity(), MvpViewMuscleGoal {
     }
 
     private fun setupTopBar() {
-        binding.appBar.toolbar.setNavigationIcon(R.drawable.ic_clear_white)
+        binding.appBar.toolbar.setNavigationIcon(DesignR.drawable.ic_clear_white)
         setSupportActionBar(binding.appBar.toolbar)
         supportActionBar?.setTitle(R.string.muscle_goal_title)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)

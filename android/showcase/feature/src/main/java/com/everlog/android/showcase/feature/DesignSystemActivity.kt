@@ -1,4 +1,4 @@
-package com.everlog.ui.activities.designsystem
+package com.everlog.android.showcase.feature
 
 import androidx.activity.compose.BackHandler
 import androidx.activity.viewModels

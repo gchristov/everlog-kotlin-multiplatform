@@ -183,7 +183,7 @@ class CreatePlanActivity : BaseActivity(), MvpViewCreatePlan {
 
     private fun setupTopBar() {
         val toolbar = binding.root.findViewById<Toolbar>(R.id.toolbar)
-        toolbar.setNavigationIcon(R.drawable.ic_clear_white)
+        toolbar.setNavigationIcon(DesignR.drawable.ic_clear_white)
         setSupportActionBar(toolbar)
         supportActionBar?.title = getString(if (isEditMode()) R.string.create_plan_title_edit else R.string.create_plan_title)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)

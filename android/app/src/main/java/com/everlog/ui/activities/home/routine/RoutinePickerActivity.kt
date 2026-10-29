@@ -16,6 +16,7 @@ import com.everlog.ui.activities.base.BaseActivityPresenter
 import com.facebook.shimmer.ShimmerFrameLayout
 import com.jakewharton.rxbinding.view.RxView
 import rx.Observable
+import com.everlog.android.common.design.R as DesignR
 
 class RoutinePickerActivity : BaseActivity(), MvpViewRoutinePicker {
 
@@ -103,7 +104,7 @@ class RoutinePickerActivity : BaseActivity(), MvpViewRoutinePicker {
         setSupportActionBar(binding.appBar.toolbar)
         supportActionBar?.setTitle(R.string.routine_picker_title)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
-        binding.appBar.toolbar.setNavigationIcon(R.drawable.ic_clear_white)
+        binding.appBar.toolbar.setNavigationIcon(DesignR.drawable.ic_clear_white)
     }
 
     private fun setupListView() {

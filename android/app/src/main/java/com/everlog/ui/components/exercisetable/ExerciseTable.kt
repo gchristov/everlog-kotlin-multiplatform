@@ -551,7 +551,7 @@ private fun StartButton(tag: String, armed: Boolean, onClick: () -> Unit) {
         ) {
             AppIcon(
                 modifier = Modifier.size(TableSizes.CheckIcon),
-                imageVector = ImageVector.vectorResource(R.drawable.ic_timer),
+                imageVector = ImageVector.vectorResource(DesignR.drawable.ic_timer),
                 tint = if (armed) Theme.contentColors.action else Theme.contentColors.secondary,
                 contentDescription = stringResource(R.string.workout_log_start_timer),
             )
