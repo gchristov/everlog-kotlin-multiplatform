@@ -12,7 +12,7 @@ still read through the old stores, which share the same Firestore cache.
 
 ## Rules
 
-- **Screens read the cache, always.** `DataSync.observe` gives a stream of `Load` states:
+- **Screens read the cache, always.** `DataSync.observe` gives a stream of `Load` states (`Load` lives in `common:kotlin`, as every module returns it):
   - `Loading`: nothing cached and never synced, so the full-screen shimmer.
   - `Ready(value)`: what's cached. It's empty only once the server has said so.
   - `Unavailable(error)`: nothing cached, never synced, and the server can't be reached. Collecting again tries again.

@@ -20,6 +20,7 @@ import androidx.compose.ui.test.performTouchInput
 import androidx.test.espresso.Espresso
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import arrow.core.Either
+import com.everlog.android.common.kotlin.Load
 import com.everlog.config.AppConfig
 import com.everlog.data.controllers.templatesession.LoadTemplateUseCase
 import com.everlog.data.controllers.templatesession.SaveTemplateUseCase
@@ -31,7 +32,6 @@ import com.everlog.data.model.exercise.ELRoutineExercise
 import com.everlog.data.model.exercise.library.LibraryExercise
 import com.everlog.data.model.set.ELSet
 import com.everlog.data.model.set.ELSetType
-import com.everlog.data.sync.Load
 import com.everlog.ui.components.exercisetable.ExerciseTab
 import com.everlog.ui.design.theme.Theme
 import com.google.common.truth.Truth.assertThat

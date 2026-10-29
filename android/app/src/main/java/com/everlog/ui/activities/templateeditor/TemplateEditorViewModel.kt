@@ -1,5 +1,6 @@
 package com.everlog.ui.activities.templateeditor
 
+import com.everlog.android.common.kotlin.Load
 import com.everlog.config.AppConfig
 import com.everlog.data.controllers.templatesession.LoadTemplateUseCase
 import com.everlog.data.controllers.templatesession.SaveTemplateUseCase
@@ -27,7 +28,6 @@ import com.everlog.data.model.exercise.ELExerciseGroup
 import com.everlog.data.model.exercise.library.LibraryExercise
 import com.everlog.data.model.exercise.library.toELExercise
 import com.everlog.data.model.set.ELSetType
-import com.everlog.data.sync.Load
 import com.everlog.managers.preferences.SettingsManager.WeightUnit
 import com.everlog.ui.components.exercisetable.CellFocus
 import com.everlog.ui.components.exercisetable.parse

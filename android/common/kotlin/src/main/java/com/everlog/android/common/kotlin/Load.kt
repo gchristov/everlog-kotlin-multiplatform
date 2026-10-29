@@ -1,4 +1,4 @@
-package com.everlog.data.sync
+package com.everlog.android.common.kotlin
 
 /**
  * What a screen shows for data it reads from the cache. There's no state for "syncing": a screen shows

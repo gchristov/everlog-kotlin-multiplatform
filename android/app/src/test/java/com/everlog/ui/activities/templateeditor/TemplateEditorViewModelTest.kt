@@ -1,6 +1,8 @@
 package com.everlog.ui.activities.templateeditor
 
 import arrow.core.Either
+import com.everlog.android.common.kotlin.Load
+import com.everlog.android.common.test.FakeCoroutineDispatcher
 import com.everlog.android.common.test.FakeCoroutineDispatcher
 import com.everlog.config.AppConfig
 import com.everlog.data.controllers.templatesession.LoadTemplateUseCase
@@ -17,7 +19,6 @@ import com.everlog.data.model.exercise.ELRoutineExercise
 import com.everlog.data.model.exercise.library.LibraryExercise
 import com.everlog.data.model.set.ELSet
 import com.everlog.data.model.set.ELSetType
-import com.everlog.data.sync.Load
 import com.everlog.testutil.InMemorySharedPreferences
 import com.everlog.ui.components.exercisetable.CellFocus
 import com.google.common.truth.Truth.assertThat

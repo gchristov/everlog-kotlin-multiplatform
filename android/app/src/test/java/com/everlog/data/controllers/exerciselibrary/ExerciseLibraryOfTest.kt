@@ -1,10 +1,10 @@
 package com.everlog.data.controllers.exerciselibrary
 
+import com.everlog.android.common.kotlin.Load
 import com.everlog.data.controllers.starterroutines.ExerciseLibraryEmptyException
 import com.everlog.data.model.exercise.library.ExerciseLibrary
 import com.everlog.data.model.exercise.library.ExerciseRegistry
 import com.everlog.data.model.exercise.library.LibraryExercise
-import com.everlog.data.sync.Load
 import com.google.common.truth.Truth.assertThat
 import org.junit.Test
 import java.io.IOException

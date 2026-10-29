@@ -1,5 +1,6 @@
 package com.everlog.data.sync
 
+import com.everlog.android.common.kotlin.Load
 import java.util.Calendar
 import java.util.concurrent.TimeUnit
 
