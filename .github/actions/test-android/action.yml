@@ -15,10 +15,9 @@ runs:
         ndk: 'false'
     - name: Start building the app and test APKs
       shell: bash
-      # In the background, so the build overlaps the emulator's setup and boot; the tests wait for it below. The
-      # configuration cache lets the test run reuse this build's configuration.
+      # In the background, so the build overlaps the emulator's setup and boot; the tests wait for it below
       run: |
-        nohup bash -c './gradlew --configuration-cache :mobile:assembleDebug :mobile:assembleDebugAndroidTest > build.log 2>&1; echo $? > build.status' > /dev/null 2>&1 &
+        nohup bash -c './gradlew :mobile:assembleDebug :mobile:assembleDebugAndroidTest > build.log 2>&1; echo $? > build.status' > /dev/null 2>&1 &
     - name: Android tests
       uses: reactivecircus/android-emulator-runner@v2
       with:
@@ -35,7 +34,7 @@ runs:
           while [ ! -f build.status ]; do sleep 5; done
           cat build.log
           test "$(cat build.status)" = 0
-          ./gradlew --configuration-cache connectedAndroidTest || (adb logcat -d > logcat.txt; exit 1)
+          ./gradlew connectedAndroidTest || (adb logcat -d > logcat.txt; exit 1)
     - name: Artifacts
       uses: actions/upload-artifact@v7
       if: always() # Ensure all artifacts are collected, even after errors
