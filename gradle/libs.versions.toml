@@ -74,6 +74,14 @@ haze = "1.6.10"
 lottie = "6.7.1"
 
 [libraries]
+# Gradle plugins, applied through the convention plugins
+android-gradlePlugin = { group = "com.android.tools.build", name = "gradle", version.ref = "agp" }
+kotlin-gradlePlugin = { group = "org.jetbrains.kotlin", name = "kotlin-gradle-plugin", version.ref = "kotlin" }
+kotlin-compose-gradlePlugin = { group = "org.jetbrains.kotlin", name = "compose-compiler-gradle-plugin", version.ref = "kotlin" }
+google-services-gradlePlugin = { group = "com.google.gms", name = "google-services", version.ref = "googleServices" }
+firebase-crashlytics-gradlePlugin = { group = "com.google.firebase", name = "firebase-crashlytics-gradle", version.ref = "firebaseCrashlyticsPlugin" }
+firebase-perf-gradlePlugin = { group = "com.google.firebase", name = "perf-plugin", version.ref = "firebasePerfPlugin" }
+
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 kotlin-test-junit = { group = "org.jetbrains.kotlin", name = "kotlin-test-junit", version.ref = "kotlin" }
 androidx-test-runner = { group = "androidx.test", name = "runner", version.ref = "androidxTestRunner" }
@@ -173,9 +181,8 @@ achievementView = { group = "com.github.RafaelBarbosatec", name = "AchievementVi
 textDrawable = { group = "com.amulyakhare", name = "com.amulyakhare.textdrawable", version.ref = "textDrawable" }
 
 [plugins]
-android-application = { id = "com.android.application", version.ref = "agp" }
-kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
-kotlin-compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
-google-services = { id = "com.google.gms.google-services", version.ref = "googleServices" }
-firebase-crashlytics = { id = "com.google.firebase.crashlytics", version.ref = "firebaseCrashlyticsPlugin" }
-firebase-perf = { id = "com.google.firebase.firebase-perf", version.ref = "firebasePerfPlugin" }
+# Convention plugins from gradle-plugins/conventions
+everlog-android-base = { id = "android-base-plugin", version = "unspecified" }
+everlog-android-compose = { id = "android-compose-plugin", version = "unspecified" }
+everlog-android-firebase = { id = "android-firebase-plugin", version = "unspecified" }
+everlog-android-applicationBinary = { id = "android-application-binary-plugin", version = "unspecified" }
