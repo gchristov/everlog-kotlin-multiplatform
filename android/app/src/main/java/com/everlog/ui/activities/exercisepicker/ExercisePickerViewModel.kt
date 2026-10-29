@@ -2,12 +2,12 @@ package com.everlog.ui.activities.exercisepicker
 
 import androidx.lifecycle.SavedStateHandle
 import com.everlog.android.common.kotlin.Load
+import com.everlog.android.common.mvvm.CommonViewModel
 import com.everlog.data.controllers.exerciselibrary.LoadExerciseLibraryUseCase
 import com.everlog.data.controllers.starterroutines.ExerciseLibraryEmptyException
 import com.everlog.data.model.exercise.library.ExerciseLibrary
 import com.everlog.data.model.exercise.library.LibraryExercise
 import com.everlog.data.model.set.ELSetType
-import com.everlog.ui.mvvm.CommonViewModel
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job

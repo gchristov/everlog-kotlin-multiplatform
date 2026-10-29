@@ -1,5 +1,6 @@
 package com.everlog.ui.activities.workoutlog
 
+import com.everlog.android.common.mvvm.CommonViewModel
 import com.everlog.config.AppConfig
 import com.everlog.data.controllers.workoutprefill.BaseWorkoutPrefillController.PrefillSource
 import com.everlog.data.controllers.workoutprefill.LoadPrefillSourcesUseCase
@@ -43,7 +44,6 @@ import com.everlog.ui.components.exercisetable.parse
 import com.everlog.ui.components.exercisetable.steppedValue
 import com.everlog.ui.components.exercisetable.typedAfterBackspace
 import com.everlog.ui.components.exercisetable.typedAfterKey
-import com.everlog.ui.mvvm.CommonViewModel
 import java.util.Date
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Job

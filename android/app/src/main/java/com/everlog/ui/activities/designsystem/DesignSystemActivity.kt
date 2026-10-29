@@ -10,10 +10,10 @@ import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.runtime.toMutableStateList
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.everlog.android.common.mvvm.createViewModelFactory
 import com.everlog.ui.design.CommonComposeActivity
 import com.everlog.ui.design.elements.list.AppListItem
 import com.everlog.ui.design.theme.Theme
-import com.everlog.ui.mvvm.createViewModelFactory
 import kotlinx.coroutines.Dispatchers
 
 // Debug-only showcase of the Compose design system, opened from Settings. A list of pages, each in

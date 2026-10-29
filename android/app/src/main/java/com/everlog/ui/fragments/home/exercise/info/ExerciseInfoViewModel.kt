@@ -1,9 +1,9 @@
 package com.everlog.ui.fragments.home.exercise.info
 
 import com.everlog.android.common.kotlin.Load
+import com.everlog.android.common.mvvm.CommonViewModel
 import com.everlog.data.controllers.exerciseguide.LoadExerciseGuideUseCase
 import com.everlog.data.model.exercise.library.ExerciseGuide
-import com.everlog.ui.mvvm.CommonViewModel
 import kotlinx.coroutines.CoroutineDispatcher
 import timber.log.Timber
 

@@ -1,6 +1,6 @@
 package com.everlog.ui.activities.designsystem
 
-import com.everlog.ui.mvvm.CommonViewModel
+import com.everlog.android.common.mvvm.CommonViewModel
 import kotlinx.coroutines.CoroutineDispatcher
 
 class DesignSystemViewModel(

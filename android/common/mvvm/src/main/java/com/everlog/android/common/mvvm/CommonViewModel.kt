@@ -1,4 +1,4 @@
-package com.everlog.ui.mvvm
+package com.everlog.android.common.mvvm
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
