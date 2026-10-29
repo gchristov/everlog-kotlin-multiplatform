@@ -18,8 +18,6 @@ import com.everlog.ui.design.elements.AppIcon
 import com.everlog.ui.design.theme.Theme
 
 private object InsetDeleteSizes {
-    // A selected value box's height
-    val Box = 36.dp
     val Icon = 18.dp
 }
 
@@ -32,7 +30,7 @@ internal fun InsetDeleteButton(onClick: () -> Unit, contentDescription: String, 
     val shape = Theme.shapes.button
     Box(
         modifier = modifier
-            .size(InsetDeleteSizes.Box)
+            .size(Theme.sizes.rowControl)
             .clip(shape)
             .background(Theme.backgrounds.inset)
             .border(1.dp, Theme.backgrounds.separator, shape)

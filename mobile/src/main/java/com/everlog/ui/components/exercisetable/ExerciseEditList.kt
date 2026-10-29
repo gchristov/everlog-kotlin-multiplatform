@@ -52,8 +52,6 @@ import com.everlog.ui.design.theme.Theme
 
 private object EditSizes {
     val CardGap = 12.dp
-    // Bigger than the icon, so the grip is easy to catch
-    val Grip = 40.dp
     val LiftScale = 1.03f
     val RowPadding = 12.dp
     // Centres the bin in a single exercise's row
@@ -158,7 +156,7 @@ private fun EditCard(
         Box(
             modifier = gripModifier
                 .alignBy { it.measuredHeight / 2 }
-                .size(EditSizes.Grip)
+                .size(Theme.sizes.leading)
                 .border(1.dp, Theme.backgrounds.separator, CircleShape),
             contentAlignment = Alignment.Center,
         ) {
@@ -177,7 +175,7 @@ private fun EditCard(
                 .background(if (lifted) Theme.backgrounds.surfaceRaised else Theme.backgrounds.surface)
                 .then(if (lifted) Modifier.border(1.dp, Theme.contentColors.action, shape) else Modifier)
                 // A single exercise's row is the grip's height, so the two line up
-                .heightIn(min = EditSizes.Grip)
+                .heightIn(min = Theme.sizes.leading)
                 .padding(start = EditSizes.RowPadding, end = EditSizes.BinPadding, top = if (group) Theme.spacing.small else 0.dp, bottom = if (group) Theme.spacing.small else 0.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {

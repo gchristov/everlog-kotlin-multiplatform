@@ -13,6 +13,7 @@ fun Theme(content: @Composable () -> Unit) {
         LocalTypography provides typography(),
         LocalShapes provides shapes(),
         LocalSpacing provides spacing(),
+        LocalSizes provides sizes(),
     ) {
         MaterialTheme(content = content)
     }
@@ -38,4 +39,8 @@ object Theme {
     val spacing: Spacing
         @Composable
         get() = LocalSpacing.current
+
+    val sizes: Sizes
+        @Composable
+        get() = LocalSizes.current
 }
