@@ -3,6 +3,7 @@ package com.everlog.gradleplugins.android
 import com.everlog.gradleplugins.android
 import com.everlog.gradleplugins.catalogLibrary
 import com.everlog.gradleplugins.libs
+import com.everlog.gradleplugins.modules.enforceModuleRules
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.kotlin.dsl.configure
@@ -18,6 +19,7 @@ class AndroidBasePlugin : Plugin<Project> {
             }
             pluginManager.apply("org.jetbrains.kotlin.android")
             pluginManager.apply("org.jetbrains.kotlin.plugin.parcelize")
+            enforceModuleRules()
 
             extensions.configure<KotlinAndroidProjectExtension> {
                 // When changing the Java version make sure to also update the CI

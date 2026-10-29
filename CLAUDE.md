@@ -59,7 +59,7 @@ Fastlane lanes (`fastlane/Fastfile`): `deploy_firebase`, `deploy_play_internal`,
 ### Modules
 
 The Android app is split into Gradle modules under `android/`: `app`, `common/<name>`, and `data`, `feature` and `test-fixtures` modules per feature. Almost all code still lives in `:android:app` and moves out bit by bit, leaf modules first (TAS-468). **`android/README.md` is the reference** for the layout, what each module holds, which convention plugin each type applies, and how to add a module or move code; keep it up to date when the structure changes. The rules that matter most:
-- **app → feature → data → common.** A feature never depends on another feature (screens open each other through the app's `Navigator`), and data never depends on UI.
+- **app → feature → data → common**, enforced by the convention plugins: a dependency that breaks a rule fails the build. A feature never depends on another feature (screens open each other through the app's `Navigator`), data may depend on other features' data but never on UI, and test support (`test-fixtures`, `common:test`, `common:compose-test`) is only for tests.
 - **Code moves with its tests**, never ahead of them: a feature's tests go to its modules when its code does, and common modules hold only common code and its tests.
 - **Moved code takes the module's namespace as its package**, except anything the system knows by its full class name (the launcher activity, services, receivers behind pending alarms and notification intents). R8 keep rules for what Firestore or Gson maps by reflection move to the module's `consumerProguardFiles`; check them with `./gradlew :android:app:minifyReleaseWithR8` and the mapping.
 
