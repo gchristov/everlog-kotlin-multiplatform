@@ -39,6 +39,8 @@ There's no `bq`/`gcloud` CLI installed. Query the GA4 export (`everlog-prod.anal
 
 `versionCode`/`versionName` are computed from `tools/versioning/version.txt` and `version_code.txt`, not hand-bumped per build. See `tools/versioning/README.md` for the full scheme (`MmmPTSS` version code format, per-environment suffixes). `tools/versioning/version_code.sh <staging|nightly|master> [--release]` is what CI (and `compute-app-version` action) invokes; it also shells out to `git describe`/`git rev-list` to derive a commit-based sequence number.
 
+**Watch the sequence wrap.** A nightly's last two digits are the commits since `master`'s latest reachable tag modulo 80, so the 80th commit wraps to `00` and Play rejects the nightly as lower than the ones already uploaded. Check `git rev-list --count $(git describe --tags --abbrev=0 origin/master)..origin/master` when opening or merging a PR, and from 65 tell the user how many are left and suggest a release (then the usual version bump) or raising `version_code.txt`. A tag alone doesn't help: it resets the count under the same base, so the next nightly is lower too. The tag counted is the last one in `master`'s history, which skips hotfix tags (they stay on their branch).
+
 ## CI/CD
 
 Three workflows in `.github/workflows/`, all built from shared composite actions in `.github/actions/`:
