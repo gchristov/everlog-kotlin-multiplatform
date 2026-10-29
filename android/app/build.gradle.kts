@@ -62,6 +62,7 @@ android {
 
 dependencies {
     implementation(projects.android.common.kotlin)
+    implementation(projects.android.common.mvp)
     implementation(projects.android.auth.feature)
     implementation(projects.android.exercise.feature)
     implementation(projects.android.history.feature)

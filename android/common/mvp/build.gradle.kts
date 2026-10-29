@@ -9,4 +9,5 @@ android {
 dependencies {
     api(projects.android.common.kotlin)
     api(projects.android.common.design)
+    api(libs.androidx.recyclerview)
 }
