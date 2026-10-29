@@ -18,17 +18,17 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import com.everlog.R
+import com.everlog.android.common.compose.elements.AppSectionHeader
+import com.everlog.android.common.compose.elements.AppTertiaryButton
+import com.everlog.android.common.compose.elements.list.AppListGroup
+import com.everlog.android.common.compose.elements.list.AppListItem
+import com.everlog.android.common.compose.theme.Theme
 import com.everlog.data.model.exercise.ELExercise
 import com.everlog.ui.components.exercisetable.ExerciseTab
 import com.everlog.ui.components.reorder.rememberReorderState
 import com.everlog.ui.components.reorder.reorderGrip
 import com.everlog.ui.components.reorder.reorderItem
 import com.everlog.ui.components.reorder.reorderViewport
-import com.everlog.ui.design.elements.AppSectionHeader
-import com.everlog.ui.design.elements.AppTertiaryButton
-import com.everlog.ui.design.elements.list.AppListGroup
-import com.everlog.ui.design.elements.list.AppListItem
-import com.everlog.ui.design.theme.Theme
 import com.everlog.utils.format.formatClock
 
 /**

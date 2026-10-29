@@ -27,6 +27,12 @@ import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.compose.LifecycleResumeEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.everlog.R
+import com.everlog.android.common.compose.elements.AppBarScrollBehavior
+import com.everlog.android.common.compose.elements.AppDialog
+import com.everlog.android.common.compose.elements.AppDialogAction
+import com.everlog.android.common.compose.elements.AppScreen
+import com.everlog.android.common.compose.elements.rememberAppBarScrollBehavior
+import com.everlog.android.common.compose.theme.Theme
 import com.everlog.android.common.mvvm.createViewModelFactory
 import com.everlog.data.controllers.starterroutines.RealBuildStarterRoutinesUseCase
 import com.everlog.data.controllers.starterroutines.RealSaveStarterRoutinesUseCase
@@ -34,15 +40,9 @@ import com.everlog.data.repositories.RealExerciseRepository
 import com.everlog.data.sync.AppDataSync
 import com.everlog.data.repositories.RealRoutineRepository
 import com.everlog.managers.preferences.SettingsManager
+import com.everlog.ui.activities.base.CommonComposeActivity
 import com.everlog.ui.activities.home.routine.create.CreateRoutineActivity
 import com.everlog.ui.activities.templateeditor.TemplateEditorActivity
-import com.everlog.ui.design.CommonComposeActivity
-import com.everlog.ui.design.elements.AppBarScrollBehavior
-import com.everlog.ui.design.elements.AppDialog
-import com.everlog.ui.design.elements.AppDialogAction
-import com.everlog.ui.design.elements.AppScreen
-import com.everlog.ui.design.elements.rememberAppBarScrollBehavior
-import com.everlog.ui.design.theme.Theme
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.android.awaitFrame
 

@@ -2,10 +2,10 @@ package com.everlog.ui.activities.designsystem
 
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.runtime.Composable
-import com.everlog.ui.design.elements.AppBar
-import com.everlog.ui.design.elements.AppScreen
-import com.everlog.ui.design.elements.list.AppGroupedList
-import com.everlog.ui.design.elements.list.AppGroupedListScope
+import com.everlog.android.common.compose.elements.AppBar
+import com.everlog.android.common.compose.elements.AppScreen
+import com.everlog.android.common.compose.elements.list.AppGroupedList
+import com.everlog.android.common.compose.elements.list.AppGroupedListScope
 
 // A showcase page: a back button and the page's title, then its examples as a grouped list.
 // Sections without rows are a header-only group followed by their content.

@@ -60,15 +60,15 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.everlog.R
-import com.everlog.ui.design.elements.AppBar
-import com.everlog.ui.design.elements.AppBarScrollBehavior
-import com.everlog.ui.design.elements.AppIcon
-import com.everlog.ui.design.elements.AppTertiaryButton
-import com.everlog.ui.design.elements.AppText
-import com.everlog.ui.design.elements.LocalAppScreenMaxContentWidth
-import com.everlog.ui.design.elements.list.AppListItem
-import com.everlog.ui.design.elements.list.appListGroupRowShape
-import com.everlog.ui.design.theme.Theme
+import com.everlog.android.common.compose.elements.AppBar
+import com.everlog.android.common.compose.elements.AppBarScrollBehavior
+import com.everlog.android.common.compose.elements.AppIcon
+import com.everlog.android.common.compose.elements.AppTertiaryButton
+import com.everlog.android.common.compose.elements.AppText
+import com.everlog.android.common.compose.elements.LocalAppScreenMaxContentWidth
+import com.everlog.android.common.compose.elements.list.AppListItem
+import com.everlog.android.common.compose.elements.list.appListGroupRowShape
+import com.everlog.android.common.compose.theme.Theme
 
 // Pieces of the onboarding design that aren't in the design system yet. They stay local to this
 // screen until we decide which ones to promote.

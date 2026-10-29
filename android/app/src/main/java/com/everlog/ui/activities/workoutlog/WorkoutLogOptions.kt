@@ -13,12 +13,12 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import com.everlog.R
+import com.everlog.android.common.compose.elements.AppBottomSheet
+import com.everlog.android.common.compose.elements.AppIconButton
+import com.everlog.android.common.compose.elements.list.AppListGroup
+import com.everlog.android.common.compose.elements.list.AppListItem
+import com.everlog.android.common.compose.theme.Theme
 import com.everlog.ui.activities.setsuggestions.SetSuggestion
-import com.everlog.ui.design.elements.AppBottomSheet
-import com.everlog.ui.design.elements.AppIconButton
-import com.everlog.ui.design.elements.list.AppListGroup
-import com.everlog.ui.design.elements.list.AppListItem
-import com.everlog.ui.design.theme.Theme
 import com.everlog.utils.format.formatClock
 
 /**

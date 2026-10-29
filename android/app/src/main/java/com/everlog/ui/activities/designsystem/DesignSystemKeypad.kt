@@ -16,16 +16,16 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
 import com.everlog.R
-import com.everlog.ui.design.elements.keypad.AppKeypad
-import com.everlog.ui.design.elements.keypad.AppKeypadAction
-import com.everlog.ui.design.elements.keypad.AppKeypadEntry
-import com.everlog.ui.design.elements.keypad.AppKeypadInput
-import com.everlog.ui.design.elements.keypad.AppKeypadNote
-import com.everlog.ui.design.elements.keypad.AppKeypadTimer
-import com.everlog.ui.design.elements.keypad.AppKeypadTimerStyle
-import com.everlog.ui.design.elements.keypad.AppKeypadToggle
-import com.everlog.ui.design.elements.list.AppListItem
-import com.everlog.ui.design.theme.Theme
+import com.everlog.android.common.compose.elements.keypad.AppKeypad
+import com.everlog.android.common.compose.elements.keypad.AppKeypadAction
+import com.everlog.android.common.compose.elements.keypad.AppKeypadEntry
+import com.everlog.android.common.compose.elements.keypad.AppKeypadInput
+import com.everlog.android.common.compose.elements.keypad.AppKeypadNote
+import com.everlog.android.common.compose.elements.keypad.AppKeypadTimer
+import com.everlog.android.common.compose.elements.keypad.AppKeypadTimerStyle
+import com.everlog.android.common.compose.elements.keypad.AppKeypadToggle
+import com.everlog.android.common.compose.elements.list.AppListItem
+import com.everlog.android.common.compose.theme.Theme
 import kotlinx.coroutines.delay
 import com.everlog.android.common.design.R as DesignR
 

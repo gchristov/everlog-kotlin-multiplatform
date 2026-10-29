@@ -1,6 +1,6 @@
 # Everlog elements
 
-The app's design system is Jetpack Compose (`ui/design/elements` in the Android repo), so there are no
+The app's design system is Jetpack Compose (`common:compose` elements in the Android repo), so there are no
 web components to import. Build each element below from plain markup and the tokens in `styles.css`,
 using exactly these colours, fonts, paddings and radii, and call it by its element name in comments
 or layer names (e.g. `<!-- AppListGroup -->`) so the design maps 1:1 onto the Compose screen.

@@ -18,9 +18,9 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.unit.dp
 import com.everlog.R
+import com.everlog.android.common.compose.elements.AppText
+import com.everlog.android.common.compose.theme.Theme
 import com.everlog.data.controllers.workoutsession.WorkoutBlock
-import com.everlog.ui.design.elements.AppText
-import com.everlog.ui.design.theme.Theme
 
 /**
  * A faded example of what the table becomes, under an EXAMPLE label, which can't be touched: an empty screen's

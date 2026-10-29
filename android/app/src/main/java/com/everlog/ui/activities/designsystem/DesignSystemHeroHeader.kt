@@ -6,8 +6,8 @@ import androidx.compose.ui.graphics.painter.ColorPainter
 import androidx.compose.ui.layout.layout
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
-import com.everlog.ui.design.elements.AppHeroHeader
-import com.everlog.ui.design.theme.Theme
+import com.everlog.android.common.compose.elements.AppHeroHeader
+import com.everlog.android.common.compose.theme.Theme
 
 @Composable
 internal fun DesignSystemHeroHeader() {

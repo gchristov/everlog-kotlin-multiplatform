@@ -6,10 +6,10 @@ import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.tooling.preview.Preview
-import com.everlog.ui.design.elements.AppFooter
-import com.everlog.ui.design.elements.AppFooterAction
-import com.everlog.ui.design.elements.list.AppListItem
-import com.everlog.ui.design.theme.Theme
+import com.everlog.android.common.compose.elements.AppFooter
+import com.everlog.android.common.compose.elements.AppFooterAction
+import com.everlog.android.common.compose.elements.list.AppListItem
+import com.everlog.android.common.compose.theme.Theme
 
 // The footer pinned to the bottom like on a real screen: a week of routines to scroll behind it and
 // see the blur. Add updates its count in place; Next step changes the transitionKey, so the actions

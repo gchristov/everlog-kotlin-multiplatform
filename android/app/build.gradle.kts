@@ -61,6 +61,7 @@ android {
 }
 
 dependencies {
+    implementation(projects.android.common.compose)
     implementation(projects.android.common.design)
     implementation(projects.android.common.kotlin)
     implementation(projects.android.common.mvp)
@@ -115,9 +116,8 @@ dependencies {
     implementation(libs.androidx.compose.material3)
     implementation(libs.androidx.compose.ui.tooling.preview)
     debugImplementation(libs.androidx.compose.ui.tooling)
-    // Compose UI tests (androidTest); the manifest gives them an activity to host the content in
-    androidTestImplementation(platform(libs.androidx.compose.bom))
-    androidTestImplementation(libs.androidx.compose.ui.test.junit4)
+    androidTestImplementation(projects.android.common.composeTest)
+    // The app's own Compose tests run in its process, so the host activity has to be in the app's debug manifest
     debugImplementation(libs.androidx.compose.ui.test.manifest)
     implementation(libs.haze)
     implementation(libs.lottie.compose)

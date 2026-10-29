@@ -8,11 +8,11 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
-import com.everlog.ui.design.elements.AppDialog
-import com.everlog.ui.design.elements.AppDialogAction
-import com.everlog.ui.design.elements.AppSecondaryButton
-import com.everlog.ui.design.elements.AppTextField
-import com.everlog.ui.design.theme.Theme
+import com.everlog.android.common.compose.elements.AppDialog
+import com.everlog.android.common.compose.elements.AppDialogAction
+import com.everlog.android.common.compose.elements.AppSecondaryButton
+import com.everlog.android.common.compose.elements.AppTextField
+import com.everlog.android.common.compose.theme.Theme
 
 @Composable
 internal fun DesignSystemDialogs() {

@@ -7,7 +7,7 @@ import androidx.compose.runtime.Composable
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import com.everlog.config.FeedbackSource
-import com.everlog.ui.design.CommonComposeActivity
+import com.everlog.ui.activities.base.CommonComposeActivity
 import com.everlog.ui.navigator.feedbackFormLauncher
 import kotlinx.coroutines.Dispatchers
 

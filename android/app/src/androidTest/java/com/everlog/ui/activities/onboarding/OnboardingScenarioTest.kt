@@ -11,13 +11,13 @@ import androidx.test.espresso.Espresso
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import arrow.core.Either
 import arrow.core.left
+import com.everlog.android.common.compose.theme.Theme
 import com.everlog.data.controllers.starterroutines.BuildStarterRoutinesUseCase
 import com.everlog.data.controllers.starterroutines.SaveStarterRoutinesUseCase
 import com.everlog.data.controllers.starterroutines.StarterRoutineGenerator
 import com.everlog.data.model.ELRoutine
 import com.everlog.data.model.exercise.ELExercise
 import com.everlog.managers.preferences.SettingsManager
-import com.everlog.ui.design.theme.Theme
 import com.google.common.truth.Truth.assertThat
 import java.io.IOException
 import java.util.concurrent.TimeUnit

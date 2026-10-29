@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- A spinner's option, like an AppMenu row (ui/design/elements/AppOverflowMenu.kt): 56dp, body text,
+<!-- A spinner's option, like an AppMenu row (common:compose elements/AppOverflowMenu.kt): 56dp, body text,
      and a tick in the action colour on the current choice (the dropdown checks it) -->
 <CheckedTextView
     xmlns:android="http://schemas.android.com/apk/res/android"

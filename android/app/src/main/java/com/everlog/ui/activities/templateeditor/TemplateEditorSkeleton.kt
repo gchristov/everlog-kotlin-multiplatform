@@ -25,8 +25,8 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import com.everlog.ui.design.elements.rememberShimmerBrush
-import com.everlog.ui.design.theme.Theme
+import com.everlog.android.common.compose.elements.rememberShimmerBrush
+import com.everlog.android.common.compose.theme.Theme
 
 private object SkeletonSizes {
     val LineCorner = 6.dp

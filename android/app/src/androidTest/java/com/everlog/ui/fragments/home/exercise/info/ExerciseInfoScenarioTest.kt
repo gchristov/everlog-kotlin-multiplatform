@@ -4,10 +4,10 @@ import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithText
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import com.everlog.android.common.compose.theme.Theme
 import com.everlog.android.common.kotlin.Load
 import com.everlog.data.controllers.exerciseguide.LoadExerciseGuideUseCase
 import com.everlog.data.model.exercise.library.ExerciseGuide
-import com.everlog.ui.design.theme.Theme
 import java.io.IOException
 import java.util.concurrent.TimeUnit
 import kotlinx.coroutines.Dispatchers

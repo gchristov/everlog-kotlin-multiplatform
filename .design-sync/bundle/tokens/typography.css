@@ -1,4 +1,4 @@
-/* Everlog type scale, from ui/design/theme/Typography.kt. The app uses the system font (Roboto on
+/* Everlog type scale, from common:compose theme/Typography.kt. The app uses the system font (Roboto on
    Android); Medium is weight 500. Use as `font: var(--font-body);`. */
 :root {
   --font-family: Roboto, system-ui, -apple-system, "Segoe UI", sans-serif;

@@ -16,12 +16,12 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
-import com.everlog.ui.design.elements.AppBar
-import com.everlog.ui.design.elements.AppScreen
-import com.everlog.ui.design.elements.AppSecondaryButton
-import com.everlog.ui.design.elements.AppSnackbarHost
-import com.everlog.ui.design.elements.AppText
-import com.everlog.ui.design.theme.Theme
+import com.everlog.android.common.compose.elements.AppBar
+import com.everlog.android.common.compose.elements.AppScreen
+import com.everlog.android.common.compose.elements.AppSecondaryButton
+import com.everlog.android.common.compose.elements.AppSnackbarHost
+import com.everlog.android.common.compose.elements.AppText
+import com.everlog.android.common.compose.theme.Theme
 import kotlinx.coroutines.launch
 
 // A delete with Undo: the snackbar over the bottom of the screen until Undo or it times out

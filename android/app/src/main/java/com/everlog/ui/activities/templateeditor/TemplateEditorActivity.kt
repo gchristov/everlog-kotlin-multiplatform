@@ -17,10 +17,10 @@ import com.everlog.data.repositories.RealOngoingPlanRepository
 import com.everlog.data.repositories.RealRoutineRepository
 import com.everlog.data.sync.AppDataSync
 import com.everlog.managers.RemoteConfigManager
+import com.everlog.ui.activities.base.CommonComposeActivity
 import com.everlog.ui.activities.home.exercise.details.ExerciseDetailsActivity
 import com.everlog.ui.activities.home.routine.create.CreateRoutineActivity
 import com.everlog.ui.components.exercisetable.ExerciseTab
-import com.everlog.ui.design.CommonComposeActivity
 import com.everlog.ui.navigator.ELNavigator
 import kotlinx.coroutines.Dispatchers
 

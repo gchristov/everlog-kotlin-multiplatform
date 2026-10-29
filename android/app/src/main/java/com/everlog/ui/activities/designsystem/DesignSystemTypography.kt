@@ -8,8 +8,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
-import com.everlog.ui.design.elements.AppText
-import com.everlog.ui.design.theme.Theme
+import com.everlog.android.common.compose.elements.AppText
+import com.everlog.android.common.compose.theme.Theme
 
 @Composable
 internal fun DesignSystemTypography() {

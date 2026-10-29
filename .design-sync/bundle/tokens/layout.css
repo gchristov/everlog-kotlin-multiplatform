@@ -1,4 +1,4 @@
-/* Everlog spacing and shapes, from ui/design/theme (Spacing.kt, Shape.kt). 1px here = 1dp. */
+/* Everlog spacing and shapes, from common:compose theme (Spacing.kt, Shape.kt). 1px here = 1dp. */
 :root {
   /* Spacing (Theme.spacing) */
   --space-xs: 4px;
