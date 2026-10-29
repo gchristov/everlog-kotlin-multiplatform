@@ -178,7 +178,8 @@ private fun AppButtonPreview() {
 // The outlined icon button's circle: the icon button's own size, its touch area still the minimum 48dp
 @Composable
 private fun Modifier.outlinedCircle(): Modifier = this
-    .size(OutlinedIconButtonSize)
+    // Drawn around the 40dp size, not inside it: inside, it would wrap the 48dp touch area the button lays out
     .border(1.dp, Theme.backgrounds.separator, CircleShape)
+    .size(OutlinedIconButtonSize)
 
 private val OutlinedIconButtonSize = 40.dp

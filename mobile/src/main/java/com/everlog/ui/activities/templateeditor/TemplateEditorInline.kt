@@ -21,7 +21,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.relocation.BringIntoViewRequester
-import com.everlog.ui.design.elements.AppIconButton
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.graphics.Color
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -94,8 +93,8 @@ private object InlineSizes {
     val GroupRowGap = 6.dp
     val Badge = 16.dp
     val BadgeOffset = 3.dp
-    // The bin's outlined circle
-    val Grip = 48.dp
+    // The exercise image's size, as the outlined icon buttons
+    val Grip = 40.dp
     val GripGap = 8.dp
     // The card and its labels and buttons, past the grip
     val Indent = Grip + GripGap
@@ -104,6 +103,8 @@ private object InlineSizes {
     val SetColumn = 32.dp
     val Cell = 72.dp
     val CellHeight = 36.dp
+    val DeleteIcon = 18.dp
+    val DeleteTarget = 48.dp
     val ColumnGap = 8.dp
     val FocusOutline = 1.5.dp
     val LiftScale = 1.02f
@@ -432,13 +433,7 @@ private fun SetRow(ref: SetRef, number: String, set: WorkoutSet, state: Template
         AppText(modifier = Modifier.width(InlineSizes.SetColumn), text = number, color = Theme.contentColors.secondary, textAlign = TextAlign.Center)
         ValueCell(text = valueText(state, cell, set), selected = selected, focused = focused) { viewModel.onCellTapped(cell) }
         Spacer(modifier = Modifier.weight(1f))
-        AppIconButton(
-            onClick = { viewModel.onDeleteSet(ref) },
-            icon = ImageVector.vectorResource(R.drawable.ic_delete),
-            tint = Coral,
-            contentDescription = "Delete set",
-            outlined = true,
-        )
+        DeleteButton { viewModel.onDeleteSet(ref) }
     }
 }
 private fun valueText(state: TemplateEditorState, cell: CellFocus, set: WorkoutSet): String {
@@ -450,6 +445,34 @@ private fun valueText(state: TemplateEditorState, cell: CellFocus, set: WorkoutS
         value == null -> "–"
         time -> formatClock(value.toLong())
         else -> value.toString()
+    }
+}
+
+// Drawn as the selected row's value box, at its height, with a full-size touch area around it
+@Composable
+private fun DeleteButton(onClick: () -> Unit) {
+    val shape = Theme.shapes.button
+    Box(
+        modifier = Modifier
+            .size(InlineSizes.DeleteTarget)
+            .clip(shape)
+            .clickable(onClick = onClick),
+        contentAlignment = Alignment.Center,
+    ) {
+        Box(
+            modifier = Modifier
+                .size(InlineSizes.CellHeight)
+                .background(Theme.backgrounds.inset, shape)
+                .border(1.dp, Theme.backgrounds.separator, shape),
+            contentAlignment = Alignment.Center,
+        ) {
+            AppIcon(
+                modifier = Modifier.size(InlineSizes.DeleteIcon),
+                imageVector = ImageVector.vectorResource(R.drawable.ic_delete),
+                tint = Coral,
+                contentDescription = "Delete set",
+            )
+        }
     }
 }
 
