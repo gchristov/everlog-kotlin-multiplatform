@@ -5,6 +5,9 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectDragGestures
+import androidx.compose.ui.layout.boundsInWindow
+import androidx.compose.runtime.withFrameNanos
+import androidx.compose.foundation.gestures.scrollBy
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.graphics.CompositingStrategy
@@ -82,6 +85,7 @@ import com.everlog.ui.design.elements.AppText
 import com.everlog.ui.design.elements.AppThumbnail
 import com.everlog.ui.design.theme.Theme
 import com.everlog.utils.format.formatClock
+import kotlinx.coroutines.android.awaitFrame
 
 // Prototype: a template being built, with every control on screen rather than behind gestures. Each set's reps sit
 // beside its number with a delete on the right; exercises drag by their grip, and the link between two joins them.
@@ -113,6 +117,9 @@ private object InlineSizes {
     val ColumnGap = 8.dp
     val FocusOutline = 1.5.dp
     val LiftScale = 1.02f
+    // How near the list's edge a dragged exercise starts it scrolling, and its fastest scroll per frame
+    val ScrollEdge = 72.dp
+    val MaxScrollStep = 16.dp
 }
 
 @Composable
@@ -127,15 +134,59 @@ internal fun InlineTemplateList(
     val tops = remember { mutableStateMapOf<Long, Float>() }
     val heights = remember { mutableStateMapOf<Long, Int>() }
     var dragging by remember { mutableStateOf<Long?>(null) }
+    // The exercise just dropped, which the expanded list scrolls to
+    var dropped by remember { mutableStateOf<Long?>(null) }
     // Where the dragged card was when the drag started and how far the finger has gone since, in the window
     var dragStart by remember { mutableFloatStateOf(0f) }
     var dragDistance by remember { mutableFloatStateOf(0f) }
-    val keepClear = with(LocalDensity.current) { (contentPadding.calculateBottomPadding() + Theme.spacing.extraLarge).toPx() }
+    val density = LocalDensity.current
+    val keepClear = with(density) { (contentPadding.calculateBottomPadding() + Theme.spacing.extraLarge).toPx() }
+    val scroll = rememberScrollState()
+    // The list's visible part in the window, less the footer floating over its bottom
+    var viewTop by remember { mutableFloatStateOf(0f) }
+    var viewBottom by remember { mutableFloatStateOf(0f) }
+    val footer = with(density) { contentPadding.calculateBottomPadding().toPx() }
+    val scrollEdge = with(density) { InlineSizes.ScrollEdge.toPx() }
+    val maxScrollStep = with(density) { InlineSizes.MaxScrollStep.toPx() }
+
+    // Past the middle of a neighbour, the dragged exercise and it swap places
+    val swapPastNeighbours: (Long) -> Unit = { id ->
+        val at = current.indexOfFirst { it.id == id }
+        val middle = dragStart + dragDistance + (heights[id] ?: 0) / 2f
+        val next = current.getOrNull(at + 1)
+        val previous = current.getOrNull(at - 1)
+        if (next != null && middle > (tops[next.id] ?: 0f) + (heights[next.id] ?: 0) / 2f) {
+            viewModel.onMoveExercise(at, at + 1)
+        } else if (previous != null && middle < (tops[previous.id] ?: 0f) + (heights[previous.id] ?: 0) / 2f) {
+            viewModel.onMoveExercise(at, at - 1)
+        }
+    }
+
+    // Near the list's top or bottom, the list scrolls under the dragged exercise, faster the closer it is
+    LaunchedEffect(dragging) {
+        val id = dragging ?: return@LaunchedEffect
+        while (true) {
+            val top = dragStart + dragDistance
+            val bottom = top + (heights[id] ?: 0)
+            val step = when {
+                top < viewTop + scrollEdge -> -maxScrollStep * ((viewTop + scrollEdge - top) / scrollEdge).coerceAtMost(1f)
+                bottom > viewBottom - footer - scrollEdge -> maxScrollStep * ((bottom - (viewBottom - footer - scrollEdge)) / scrollEdge).coerceAtMost(1f)
+                else -> 0f
+            }
+            if (step != 0f && scroll.scrollBy(step) != 0f) swapPastNeighbours(id)
+            withFrameNanos { }
+        }
+    }
 
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .verticalScroll(rememberScrollState())
+            .onGloballyPositioned {
+                val bounds = it.boundsInWindow()
+                viewTop = bounds.top
+                viewBottom = bounds.bottom
+            }
+            .verticalScroll(scroll)
             .padding(horizontal = Theme.spacing.large)
             .padding(top = Theme.spacing.medium, bottom = contentPadding.calculateBottomPadding() + Theme.spacing.large),
     ) {
@@ -145,6 +196,13 @@ internal fun InlineTemplateList(
         state.blocks.forEachIndexed { index, block ->
             key(block.id) {
                 val lifted = dragging == block.id
+                val requester = remember { BringIntoViewRequester() }
+                LaunchedEffect(dropped == block.id && dragging == null) {
+                    if (dropped != block.id || dragging != null) return@LaunchedEffect
+                    awaitFrame()
+                    requester.bringIntoView()
+                    dropped = null
+                }
                 val grip = Modifier.pointerInput(block.id) {
                     detectDragGestures(
                         onDragStart = {
@@ -153,21 +211,12 @@ internal fun InlineTemplateList(
                             dragDistance = 0f
                             dragging = block.id
                         },
-                        onDragEnd = { dragging = null },
-                        onDragCancel = { dragging = null },
+                        onDragEnd = { dropped = block.id; dragging = null },
+                        onDragCancel = { dropped = block.id; dragging = null },
                         onDrag = { change, amount ->
                             change.consume()
                             dragDistance += amount.y
-                            // Past the middle of a neighbour, the two swap places
-                            val at = current.indexOfFirst { it.id == block.id }
-                            val middle = dragStart + dragDistance + (heights[block.id] ?: 0) / 2f
-                            val next = current.getOrNull(at + 1)
-                            val previous = current.getOrNull(at - 1)
-                            if (next != null && middle > (tops[next.id] ?: 0f) + (heights[next.id] ?: 0) / 2f) {
-                                viewModel.onMoveExercise(at, at + 1)
-                            } else if (previous != null && middle < (tops[previous.id] ?: 0f) + (heights[previous.id] ?: 0) / 2f) {
-                                viewModel.onMoveExercise(at, at - 1)
-                            }
+                            swapPastNeighbours(block.id)
                         },
                     )
                 }
@@ -176,6 +225,7 @@ internal fun InlineTemplateList(
                         // Outside the lift, so these are where the card is laid out, not where it's drawn
                         .onGloballyPositioned { tops[block.id] = it.positionInWindow().y }
                         .onSizeChanged { heights[block.id] = it.height }
+                        .bringIntoViewRequester(requester)
                         .zIndex(if (lifted) 1f else 0f)
                         .graphicsLayer {
                             translationY = if (lifted) dragStart + dragDistance - (tops[block.id] ?: 0f) else 0f
