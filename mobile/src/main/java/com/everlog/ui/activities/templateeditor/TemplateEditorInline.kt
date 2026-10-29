@@ -49,6 +49,8 @@ import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.layout.layout
+import androidx.compose.ui.layout.HorizontalAlignmentLine
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.layout.positionInWindow
 import androidx.compose.ui.platform.LocalContext
@@ -68,8 +70,6 @@ import com.everlog.ui.components.exercisetable.ExerciseTab
 import com.everlog.ui.components.exercisetable.countField
 import com.everlog.ui.components.exercisetable.typedSeconds
 import com.everlog.ui.design.elements.AppIcon
-import com.everlog.ui.design.elements.AppMenuItem
-import com.everlog.ui.design.elements.AppOverflowMenu
 import com.everlog.ui.design.elements.AppSectionHeader
 import com.everlog.ui.design.elements.list.AppListGroup
 import com.everlog.ui.design.elements.list.AppListItem
@@ -94,7 +94,11 @@ private object InlineSizes {
     val GroupRowGap = 6.dp
     val Badge = 16.dp
     val BadgeOffset = 3.dp
+    // The outlined icon button's size
     val Grip = 40.dp
+    val GripGap = 8.dp
+    // The card and its labels and buttons, past the grip
+    val Indent = Grip + GripGap
     val RowHeight = 52.dp
     val RowPadding = 12.dp
     val SetColumn = 32.dp
@@ -174,28 +178,25 @@ internal fun InlineTemplateList(
                             scaleY = scale
                         },
                 ) {
-                Row(verticalAlignment = if (dragging == null) Alignment.Top else Alignment.CenterVertically) {
-                    Box(modifier = grip.size(InlineSizes.Grip), contentAlignment = Alignment.Center) {
-                        AppIcon(imageVector = ImageVector.vectorResource(R.drawable.ic_drag), tint = Theme.contentColors.secondary, contentDescription = "Move")
-                    }
-                    ExerciseCard(
-                    modifier = Modifier.weight(1f),
+                ExerciseCard(
+                    modifier = Modifier.fillMaxWidth(),
                     block = block,
                     state = state,
                     viewModel = viewModel,
                     collapsed = dragging != null,
                     lifted = lifted,
+                    grip = grip,
                     keepClear = keepClear,
                     onOpenExercise = onOpenExercise,
                 )
-                }
                 if (dragging == null) {
                     val next = state.blocks.getOrNull(index + 1)
                     BlockActions(
                         onAddSet = { viewModel.onAddSet(block.id) },
-                        addSet = if (block.exercises.size > 1) "Add round" else "Add set",
+                        addSet = "Add set",
                         join = next?.let { if (block.exercises.size + it.exercises.size == 2) "Superset with next" else "Circuit with next" },
                         onJoin = { viewModel.onJoinWithNext(block.id) },
+                        onSplit = if (block.exercises.size > 1) ({ viewModel.onSplitGroup(block.id) }) else null,
                     )
                 } else {
                     Spacer(modifier = Modifier.height(Theme.spacing.medium))
@@ -204,6 +205,14 @@ internal fun InlineTemplateList(
             }
         }
     }
+}
+
+// The middle of the header's last exercise, which the grip lines up with
+private val LastExerciseCenter = HorizontalAlignmentLine(merger = { _, last -> last })
+
+private fun Modifier.providingCenter(line: HorizontalAlignmentLine) = layout { measurable, constraints ->
+    val placeable = measurable.measure(constraints)
+    layout(placeable.width, placeable.height, mapOf(line to placeable.height / 2)) { placeable.place(0, 0) }
 }
 
 // The template's details, each value first with what it is above it
@@ -215,15 +224,17 @@ internal fun InlineTemplateSettings(state: TemplateEditorState, viewModel: Templ
     }
 }
 
-// Under an exercise, as the workout's Add set: adding a set, and joining it with the exercise after it
+// Under an exercise, as the workout's Add set: adding a set, splitting a group, and joining it with the exercise after it
 @Composable
-private fun BlockActions(onAddSet: () -> Unit, addSet: String, join: String?, onJoin: () -> Unit) {
+private fun BlockActions(onAddSet: () -> Unit, addSet: String, join: String?, onJoin: () -> Unit, onSplit: (() -> Unit)?) {
     Row(
-        modifier = Modifier.fillMaxWidth().padding(start = InlineSizes.Grip, bottom = Theme.spacing.large),
+        modifier = Modifier.fillMaxWidth().padding(start = InlineSizes.Indent, bottom = Theme.spacing.large),
         horizontalArrangement = Arrangement.Center,
     ) {
-        AppTertiaryButton(onClick = onAddSet, text = addSet)
-        if (join != null) AppTertiaryButton(onClick = onJoin, text = join)
+        val padding = PaddingValues(horizontal = Theme.spacing.medium)
+        AppTertiaryButton(onClick = onAddSet, text = addSet, contentPadding = padding)
+        if (join != null) AppTertiaryButton(onClick = onJoin, text = join, contentPadding = padding)
+        if (onSplit != null) AppTertiaryButton(onClick = onSplit, text = "Split", contentPadding = padding)
     }
 }
 
@@ -236,6 +247,7 @@ private fun ExerciseCard(
     // While any card is dragged, every card is its header only, so it's a short way to anywhere
     collapsed: Boolean,
     lifted: Boolean,
+    grip: Modifier,
     keepClear: Float,
     onOpenExercise: (ELExercise, ExerciseTab) -> Unit,
 ) {
@@ -255,13 +267,14 @@ private fun ExerciseCard(
                 },
             ),
     ) {
-        CardHeader(block, viewModel, collapsed, onOpenExercise)
+        CardHeader(block, viewModel, grip, collapsed, onOpenExercise)
         if (collapsed) return@Column
         Spacer(modifier = Modifier.height(Theme.spacing.medium))
-        ColumnLabels(block)
+        ColumnLabels(block, Modifier.padding(start = InlineSizes.Indent))
         Spacer(modifier = Modifier.height(Theme.spacing.extraSmall))
         Column(
             modifier = Modifier
+                .padding(start = InlineSizes.Indent)
                 .fillMaxWidth()
                 .clip(shape)
                 .background(Theme.backgrounds.surface),
@@ -286,16 +299,29 @@ private fun ExerciseCard(
 private fun CardHeader(
     block: WorkoutBlock,
     viewModel: TemplateEditorViewModel,
+    grip: Modifier,
     collapsed: Boolean,
     onOpenExercise: (ELExercise, ExerciseTab) -> Unit,
 ) {
     val context = LocalContext.current
     val group = block.exercises.size > 1
     Row(
-        modifier = Modifier.padding(horizontal = InlineSizes.RowPadding, vertical = if (collapsed) Theme.spacing.small else 0.dp),
+        modifier = Modifier.padding(end = InlineSizes.RowPadding, top = if (collapsed) Theme.spacing.small else 0.dp, bottom = if (collapsed) Theme.spacing.small else 0.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        Column(modifier = Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(if (group) InlineSizes.GroupRowGap else 0.dp)) {
+        // Left of the card, beside the last exercise as the workout's exercise menu is
+        Box(
+            modifier = grip
+                .alignBy { it.measuredHeight / 2 }
+                .size(InlineSizes.Grip)
+                .border(1.dp, Theme.backgrounds.separator, CircleShape),
+            contentAlignment = Alignment.Center,
+        ) {
+            AppIcon(imageVector = ImageVector.vectorResource(R.drawable.ic_drag), tint = Theme.contentColors.secondary, contentDescription = "Move")
+        }
+        // As much room as the screen's side margin
+        Spacer(modifier = Modifier.width(Theme.spacing.large))
+        Column(modifier = Modifier.weight(1f).alignBy(LastExerciseCenter), verticalArrangement = Arrangement.spacedBy(if (group) InlineSizes.GroupRowGap else 0.dp)) {
             if (group) {
                 // Lined up with the names, past the images
                 Row(
@@ -311,23 +337,12 @@ private fun CardHeader(
                         style = Theme.typography.small,
                         color = Theme.contentColors.secondary,
                     )
-                    Spacer(modifier = Modifier.weight(1f))
-                    if (!collapsed) {
-                        AppText(
-                            modifier = Modifier
-                                .clip(Theme.shapes.button)
-                                .clickable { viewModel.onSplitGroup(block.id) }
-                                .padding(horizontal = Theme.spacing.small, vertical = Theme.spacing.extraSmall),
-                            text = "Split",
-                            style = Theme.typography.small,
-                            color = Theme.contentColors.action,
-                        )
-                    }
                 }
             }
             block.exercises.forEachIndexed { i, exercise ->
                 Row(
                     modifier = Modifier
+                        .then(if (i == block.exercises.lastIndex) Modifier.providingCenter(LastExerciseCenter) else Modifier)
                         .clip(RoundedCornerShape(if (group) InlineSizes.GroupThumbnailCorner else InlineSizes.ThumbnailCorner))
                         .clickable(enabled = exercise.exercise != null) { exercise.exercise?.let { onOpenExercise(it, ExerciseTab.Info) } },
                     verticalAlignment = Alignment.CenterVertically,
@@ -346,15 +361,6 @@ private fun CardHeader(
                     )
                 }
             }
-        }
-        if (!collapsed) {
-            val exercises = block.exercises.mapNotNull { it.exercise }
-            AppOverflowMenu(
-                outlined = true,
-                items = exercises.map { exercise ->
-                    AppMenuItem(text = if (exercises.size == 1) "History" else "History: ${exercise.name.orEmpty()}", onClick = { onOpenExercise(exercise, ExerciseTab.History) })
-                } + AppMenuItem(text = if (block.exercises.size > 1) "Delete group" else "Delete exercise", onClick = { viewModel.onDeleteExercise(block.id) }),
-            )
         }
     }
 }
@@ -379,7 +385,7 @@ private fun LetteredThumbnail(imageUrl: String?, letter: Char) {
 }
 
 @Composable
-private fun ColumnLabels(block: WorkoutBlock) {
+private fun ColumnLabels(block: WorkoutBlock, modifier: Modifier) {
     val modes = block.rounds.flatMap { round -> round.sets.filterNot { it.removed }.map { it.mode } }.toSet()
     val count = when {
         modes == setOf(SetMode.Time) -> "TIME"
@@ -387,7 +393,7 @@ private fun ColumnLabels(block: WorkoutBlock) {
         else -> "REPS"
     }
     Row(
-        modifier = Modifier.padding(horizontal = InlineSizes.RowPadding),
+        modifier = modifier.padding(horizontal = InlineSizes.RowPadding),
         horizontalArrangement = Arrangement.spacedBy(InlineSizes.ColumnGap),
     ) {
         Label("SET", Modifier.width(InlineSizes.SetColumn))
