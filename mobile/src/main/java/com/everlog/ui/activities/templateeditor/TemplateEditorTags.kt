@@ -13,6 +13,7 @@ internal object TemplateEditorTags {
     const val TimeForAllSets = "time_for_all_sets"
     const val List = "exercises"
     const val Example = "example"
+    const val Loading = "loading"
 
     fun exercise(index: Int) = "exercise:$index"
 
