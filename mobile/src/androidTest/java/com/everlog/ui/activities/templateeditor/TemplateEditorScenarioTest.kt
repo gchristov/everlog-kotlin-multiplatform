@@ -339,6 +339,19 @@ class TemplateEditorScenarioTest {
     }
 
     @Test
+    fun aTemplateShimmersUntilItLoads() {
+        show(viewModel(uuid = "push"))
+
+        compose.onNodeWithTag(TemplateEditorTags.Loading).assertExists()
+        compose.onNodeWithTag(TemplateEditorTags.Save).assertDoesNotExist()
+        compose.onNodeWithTag(TemplateEditorTags.Keypad).assertDoesNotExist()
+        load.state.value = Load.Ready(push())
+
+        compose.onNodeWithText("Push").assertExists()
+        compose.onNodeWithTag(TemplateEditorTags.Loading).assertDoesNotExist()
+    }
+
+    @Test
     fun aTemplateThatCantBeLoadedIsTriedAgain() {
         load.state.value = Load.Unavailable(IllegalStateException("offline"))
         show(viewModel(uuid = "push"))

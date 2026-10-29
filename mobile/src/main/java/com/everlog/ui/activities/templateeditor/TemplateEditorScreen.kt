@@ -39,7 +39,6 @@ import com.everlog.ui.components.exercisetable.ExerciseTab
 import com.everlog.ui.components.exercisetable.exerciseName
 import com.everlog.ui.components.exercisetable.focusLabel
 import com.everlog.ui.design.elements.AppButton
-import com.everlog.ui.design.elements.AppCircularProgressIndicator
 import com.everlog.ui.design.elements.AppIconButton
 import com.everlog.ui.design.elements.AppScreen
 import com.everlog.ui.design.elements.AppSnackbarHost
@@ -126,7 +125,7 @@ internal fun TemplateEditorScreen(
     ) { contentPadding ->
         Box(modifier = Modifier.fillMaxSize()) {
             when (state.load) {
-                TemplateLoad.Loading -> AppCircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
+                TemplateLoad.Loading -> TemplateEditorSkeleton(contentPadding)
                 TemplateLoad.Failed -> LoadFailed(stringResource(R.string.template_editor_load_failed), onRetry = viewModel::onRetry)
                 TemplateLoad.NotFound -> LoadFailed(stringResource(R.string.template_editor_not_found), onRetry = null)
                 TemplateLoad.Ready -> if (empty) {
