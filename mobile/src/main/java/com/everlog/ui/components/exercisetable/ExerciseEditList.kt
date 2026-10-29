@@ -2,9 +2,7 @@ package com.everlog.ui.components.exercisetable
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -16,43 +14,31 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
-import androidx.compose.runtime.mutableFloatStateOf
-import androidx.compose.runtime.mutableStateMapOf
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberUpdatedState
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.graphicsLayer
-import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.HorizontalAlignmentLine
 import androidx.compose.ui.layout.layout
-import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.zIndex
 import com.everlog.R
 import com.everlog.data.controllers.workoutsession.WorkoutBlock
-import com.everlog.ui.design.elements.AppIcon
+import com.everlog.ui.components.reorder.ReorderGrip
+import com.everlog.ui.components.reorder.rememberReorderState
+import com.everlog.ui.components.reorder.reorderGrip
+import com.everlog.ui.components.reorder.reorderItem
+import com.everlog.ui.components.reorder.reorderViewport
 import com.everlog.ui.design.elements.AppText
 import com.everlog.ui.design.theme.Theme
 
 private object EditSizes {
     val CardGap = 12.dp
-    val LiftScale = 1.03f
     val RowPadding = 12.dp
     // Centres the bin in a single exercise's row
     val BinPadding = 2.dp
@@ -70,68 +56,30 @@ internal fun ExerciseEditList(
     onMove: (from: Int, to: Int) -> Unit,
     onDelete: (Long) -> Unit,
 ) {
-    val current by rememberUpdatedState(blocks)
-    val heights = remember { mutableStateMapOf<Long, Int>() }
-    var dragging by remember { mutableStateOf<Long?>(null) }
-    var offset by remember { mutableFloatStateOf(0f) }
-    val gap = with(LocalDensity.current) { EditSizes.CardGap.toPx() }
+    val scroll = rememberScrollState()
+    val reorder = rememberReorderState(scroll, blocks.map { it.id }, contentPadding.calculateBottomPadding(), onMove)
 
     Column(
         modifier = Modifier
             .fillMaxSize()
             .testTag(ExerciseTableTags.EditList)
-            .verticalScroll(rememberScrollState())
+            .reorderViewport(reorder)
+            .verticalScroll(scroll)
             .padding(horizontal = Theme.spacing.large)
             .padding(top = Theme.spacing.medium, bottom = contentPadding.calculateBottomPadding() + Theme.spacing.large),
         verticalArrangement = Arrangement.spacedBy(EditSizes.CardGap),
     ) {
         blocks.forEachIndexed { index, block ->
             key(block.id) {
-                val lifted = dragging == block.id
                 EditCard(
                     modifier = Modifier
                         .testTag(ExerciseTableTags.editCard(index))
-                        .onSizeChanged { heights[block.id] = it.height }
-                        .zIndex(if (lifted) 1f else 0f)
-                        .graphicsLayer {
-                            translationY = if (lifted) offset else 0f
-                            val scale = if (lifted) EditSizes.LiftScale else 1f
-                            scaleX = scale
-                            scaleY = scale
-                        },
+                        .reorderItem(reorder, block.id),
                     block = block,
-                    lifted = lifted,
+                    lifted = reorder.dragging == block.id,
                     gripModifier = Modifier
                         .testTag(ExerciseTableTags.editGrip(index))
-                        .pointerInput(block.id) {
-                            detectDragGestures(
-                                onDragStart = {
-                                    dragging = block.id
-                                    offset = 0f
-                                },
-                                onDragEnd = { dragging = null; offset = 0f },
-                                onDragCancel = { dragging = null; offset = 0f },
-                                onDrag = { change, amount ->
-                                    change.consume()
-                                    offset += amount.y
-                                    // Past half of the neighbour's height, the two swap places
-                                    val at = current.indexOfFirst { it.id == block.id }
-                                    if (offset > 0 && at < current.lastIndex) {
-                                        val step = (heights[current[at + 1].id] ?: 0) + gap
-                                        if (offset > step / 2) {
-                                            onMove(at, at + 1)
-                                            offset -= step
-                                        }
-                                    } else if (offset < 0 && at > 0) {
-                                        val step = (heights[current[at - 1].id] ?: 0) + gap
-                                        if (-offset > step / 2) {
-                                            onMove(at, at - 1)
-                                            offset += step
-                                        }
-                                    }
-                                },
-                            )
-                        },
+                        .reorderGrip(reorder, block.id),
                     onDelete = { onDelete(block.id) },
                 )
             }
@@ -153,19 +101,7 @@ private fun EditCard(
     val context = LocalContext.current
     val group = block.exercises.size > 1
     Row(modifier = modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
-        Box(
-            modifier = gripModifier
-                .alignBy { it.measuredHeight / 2 }
-                .size(Theme.sizes.leading)
-                .border(1.dp, Theme.backgrounds.separator, CircleShape),
-            contentAlignment = Alignment.Center,
-        ) {
-            AppIcon(
-                imageVector = ImageVector.vectorResource(R.drawable.ic_drag),
-                tint = Theme.contentColors.secondary,
-                contentDescription = stringResource(R.string.workout_log_move),
-            )
-        }
+        ReorderGrip(modifier = gripModifier.alignBy { it.measuredHeight / 2 })
         Spacer(modifier = Modifier.width(Theme.spacing.large))
         Row(
             modifier = Modifier
