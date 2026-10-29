@@ -183,6 +183,9 @@ textDrawable = { group = "com.amulyakhare", name = "com.amulyakhare.textdrawable
 [plugins]
 # Convention plugins from gradle-plugins/conventions
 everlog-android-base = { id = "android-base-plugin", version = "unspecified" }
+everlog-android-module = { id = "android-module-plugin", version = "unspecified" }
 everlog-android-compose = { id = "android-compose-plugin", version = "unspecified" }
 everlog-android-firebase = { id = "android-firebase-plugin", version = "unspecified" }
+everlog-android-feature = { id = "android-feature-plugin", version = "unspecified" }
+everlog-android-data = { id = "android-data-plugin", version = "unspecified" }
 everlog-android-applicationBinary = { id = "android-application-binary-plugin", version = "unspecified" }
