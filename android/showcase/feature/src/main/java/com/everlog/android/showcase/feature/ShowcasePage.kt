@@ -1,4 +1,4 @@
-package com.everlog.ui.activities.designsystem
+package com.everlog.android.showcase.feature
 
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.runtime.Composable

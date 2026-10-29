@@ -1,4 +1,4 @@
-package com.everlog.ui.activities.designsystem
+package com.everlog.android.showcase.feature
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.runtime.Composable
@@ -9,7 +9,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
-import com.everlog.R
 import com.everlog.android.common.compose.elements.AppChip
 import com.everlog.android.common.compose.elements.AppMenu
 import com.everlog.android.common.compose.elements.AppMenuItem
@@ -26,8 +25,8 @@ internal fun DesignSystemMenus(onButtonClick: () -> Unit) {
     var range by remember { mutableStateOf("This week") }
     var rangeOpen by remember { mutableStateOf(false) }
     val add = ImageVector.vectorResource(DesignR.drawable.ic_add)
-    val copy = ImageVector.vectorResource(R.drawable.ic_copy)
-    val delete = ImageVector.vectorResource(R.drawable.ic_delete_black)
+    val copy = ImageVector.vectorResource(DesignR.drawable.ic_copy)
+    val delete = ImageVector.vectorResource(DesignR.drawable.ic_delete_black)
     ShowcasePage(
         title = "Menus",
         actions = {

@@ -133,7 +133,7 @@ internal fun FilterTokenView(
         ) {
             AppIcon(
                 modifier = Modifier.size(PickerSizes.TokenIcon),
-                imageVector = ImageVector.vectorResource(R.drawable.ic_clear_white),
+                imageVector = ImageVector.vectorResource(DesignR.drawable.ic_clear_white),
                 contentDescription = stringResource(R.string.exercise_picker_remove_filter, key),
                 tint = Theme.contentColors.secondary,
             )

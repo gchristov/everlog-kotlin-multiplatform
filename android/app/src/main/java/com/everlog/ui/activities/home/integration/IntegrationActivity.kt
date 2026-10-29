@@ -13,6 +13,7 @@ import com.everlog.ui.activities.base.BaseActivityMvpView
 import com.everlog.ui.activities.base.BaseActivityPresenter
 import com.jakewharton.rxbinding.view.RxView
 import rx.Observable
+import com.everlog.android.common.design.R as DesignR
 
 class IntegrationActivity : BaseActivity(), MvpViewIntegration {
 
@@ -79,7 +80,7 @@ class IntegrationActivity : BaseActivity(), MvpViewIntegration {
     }
 
     private fun setupTopBar() {
-        binding.appBar.toolbar.setNavigationIcon(R.drawable.ic_clear_white)
+        binding.appBar.toolbar.setNavigationIcon(DesignR.drawable.ic_clear_white)
         setSupportActionBar(binding.appBar.toolbar)
         supportActionBar?.title = getItemToEdit().convertedType()?.getTitle()
         supportActionBar?.setDisplayHomeAsUpEnabled(true)

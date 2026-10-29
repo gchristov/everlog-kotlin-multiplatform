@@ -14,6 +14,7 @@ import com.everlog.utils.ArrayResourceTypeUtils
 import com.google.android.flexbox.FlexDirection
 import com.google.android.flexbox.FlexboxLayoutManager
 import com.google.android.flexbox.JustifyContent
+import com.everlog.android.common.design.R as DesignR
 import java.io.Serializable
 
 class FilterExercisesView(context: Context,
@@ -87,7 +88,7 @@ class FilterExercisesView(context: Context,
 
     private fun setupTopBar() {
         binding.root.findViewById<Toolbar>(R.id.toolbar).setTitle(R.string.filter)
-        binding.root.findViewById<Toolbar>(R.id.toolbar).setNavigationIcon(R.drawable.ic_clear_white)
+        binding.root.findViewById<Toolbar>(R.id.toolbar).setNavigationIcon(DesignR.drawable.ic_clear_white)
         binding.root.findViewById<Toolbar>(R.id.toolbar).setNavigationOnClickListener {
             hide(parent as ViewGroup)
         }

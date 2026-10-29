@@ -151,7 +151,7 @@ class WorkoutNotificationBuilder(private val context: Context) {
                 // API 31+. The big text template shows both.
                 .setStyle(NotificationCompat.BigTextStyle().bigText(upNext))
                 .setProgress(100, state.remainingPercent, false)
-                .addAction(R.drawable.ic_clear_white,
+                .addAction(DesignR.drawable.ic_clear_white,
                         context.getString(R.string.workout_notification_skip_rest),
                         actionIntent(WorkoutService.ACTION_TIMER_REST_STOP))
     }

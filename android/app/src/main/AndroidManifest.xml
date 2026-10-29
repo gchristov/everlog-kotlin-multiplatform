@@ -222,7 +222,7 @@
             android:windowSoftInputMode="stateHidden"
             android:exported="false" />
         <activity
-            android:name="com.everlog.ui.activities.designsystem.DesignSystemActivity"
+            android:name="com.everlog.android.showcase.feature.DesignSystemActivity"
             android:theme="@style/AppTheme.NoActionBar"
             android:exported="false" />
         <activity

@@ -15,6 +15,7 @@ import android.widget.TextView;
 
 import com.everlog.BuildConfig;
 import com.everlog.R;
+import com.everlog.android.showcase.feature.DesignSystemActivity;
 import com.everlog.config.FeedbackSource;
 import com.everlog.constants.ELActivityRequestCodes;
 import com.everlog.constants.ELConstants;
@@ -34,7 +35,6 @@ import com.everlog.managers.auth.LocalUserManager;
 import com.everlog.managers.preferences.SettingsManager;
 import com.everlog.services.workout.ShownSet;
 import com.everlog.services.workout.WorkoutService;
-import com.everlog.ui.activities.designsystem.DesignSystemActivity;
 import com.everlog.ui.activities.exercisepicker.ExercisePickerActivity;
 import com.everlog.ui.activities.home.HomeActivity;
 import com.everlog.ui.activities.onboarding.OnboardingActivity;

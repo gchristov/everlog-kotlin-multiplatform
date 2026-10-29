@@ -1,4 +1,4 @@
-package com.everlog.ui.activities.designsystem
+package com.everlog.android.showcase.feature
 
 import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.Composable
@@ -10,13 +10,13 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.everlog.R
 import com.everlog.android.common.compose.elements.AppCheck
 import com.everlog.android.common.compose.elements.AppIcon
 import com.everlog.android.common.compose.elements.AppText
 import com.everlog.android.common.compose.elements.AppThumbnail
 import com.everlog.android.common.compose.elements.list.AppListItem
 import com.everlog.android.common.compose.theme.Theme
+import com.everlog.android.common.design.R as DesignR
 
 @Composable
 internal fun DesignSystemLists(onButtonClick: () -> Unit) {
@@ -46,7 +46,7 @@ internal fun DesignSystemLists(onButtonClick: () -> Unit) {
                         trailing = {
                             AppIcon(
                                 modifier = Modifier.size(20.dp),
-                                imageVector = ImageVector.vectorResource(R.drawable.ic_edit),
+                                imageVector = ImageVector.vectorResource(DesignR.drawable.ic_edit),
                                 tint = Theme.contentColors.secondary,
                             )
                         },
@@ -56,7 +56,7 @@ internal fun DesignSystemLists(onButtonClick: () -> Unit) {
                         title = "Leading and trailing",
                         leading = {
                             AppIcon(
-                                imageVector = ImageVector.vectorResource(R.drawable.ic_timer),
+                                imageVector = ImageVector.vectorResource(DesignR.drawable.ic_timer),
                                 tint = Theme.contentColors.secondary,
                             )
                         },
@@ -75,7 +75,7 @@ internal fun DesignSystemLists(onButtonClick: () -> Unit) {
                     subtitle = "A subtitle long enough to run to several lines, to show where the leading icon sits against the text.",
                     leading = {
                         AppIcon(
-                            imageVector = ImageVector.vectorResource(R.drawable.ic_timer),
+                            imageVector = ImageVector.vectorResource(DesignR.drawable.ic_timer),
                             tint = Theme.contentColors.secondary,
                         )
                     },

@@ -69,6 +69,7 @@ import com.everlog.android.common.compose.elements.LocalAppScreenMaxContentWidth
 import com.everlog.android.common.compose.elements.list.AppListItem
 import com.everlog.android.common.compose.elements.list.appListGroupRowShape
 import com.everlog.android.common.compose.theme.Theme
+import com.everlog.android.common.design.R as DesignR
 
 // Pieces of the onboarding design that aren't in the design system yet. They stay local to this
 // screen until we decide which ones to promote.
@@ -482,7 +483,7 @@ internal fun SummaryRow(
             title = shownAnswer,
             titleColor = if (skipped) Theme.contentColors.secondary else Theme.contentColors.action,
             trailing = {
-                AppIcon(imageVector = ImageVector.vectorResource(R.drawable.ic_edit), tint = Theme.contentColors.secondary)
+                AppIcon(imageVector = ImageVector.vectorResource(DesignR.drawable.ic_edit), tint = Theme.contentColors.secondary)
             },
             onClick = onClick,
         )

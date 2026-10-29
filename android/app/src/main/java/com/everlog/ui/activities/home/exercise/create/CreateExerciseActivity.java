@@ -149,7 +149,7 @@ public class CreateExerciseActivity extends BaseActivity implements MvpViewCreat
     }
 
     private void setupTopBar() {
-        binding.includeToolbar.toolbar.setNavigationIcon(R.drawable.ic_clear_white);
+        binding.includeToolbar.toolbar.setNavigationIcon(com.everlog.android.common.design.R.drawable.ic_clear_white);
         setSupportActionBar(binding.includeToolbar.toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setTitle("");

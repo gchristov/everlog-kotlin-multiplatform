@@ -362,8 +362,8 @@ class ExerciseGroupCreateAdapter {
             }
             val menuBtn = myVH.binding.menuBtn
             val build: PopupMenu.() -> Unit = {
-                menu.add(0, MENU_DUPLICATE, MENU_DUPLICATE, "Duplicate").setIcon(R.drawable.ic_copy)
-                menu.add(0, MENU_DELETE, MENU_DELETE, "Delete").setIcon(R.drawable.ic_delete_black)
+                menu.add(0, MENU_DUPLICATE, MENU_DUPLICATE, "Duplicate").setIcon(DesignR.drawable.ic_copy)
+                menu.add(0, MENU_DELETE, MENU_DELETE, "Delete").setIcon(DesignR.drawable.ic_delete_black)
             }
             showPopupMenu(menuBtn, build) { menuItem: MenuItem ->
                 var scrollToLast = false

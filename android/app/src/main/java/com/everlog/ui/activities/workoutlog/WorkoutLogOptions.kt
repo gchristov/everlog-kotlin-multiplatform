@@ -20,6 +20,7 @@ import com.everlog.android.common.compose.elements.list.AppListItem
 import com.everlog.android.common.compose.theme.Theme
 import com.everlog.ui.activities.setsuggestions.SetSuggestion
 import com.everlog.utils.format.formatClock
+import com.everlog.android.common.design.R as DesignR
 
 /**
  * The cog in the header, with the rest after each set, Set suggestions, Edit workout, Send feedback and Discard.
@@ -36,7 +37,7 @@ internal fun WorkoutOptionsButton(
         // As tall as the Finish button beside it
         modifier = Modifier.size(Theme.sizes.button),
         onClick = { open = true },
-        icon = ImageVector.vectorResource(R.drawable.ic_settings),
+        icon = ImageVector.vectorResource(DesignR.drawable.ic_settings),
         contentDescription = stringResource(R.string.workout_log_options),
         outlined = true,
     )
