@@ -30,7 +30,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.input.pointer.pointerInput
@@ -48,16 +47,17 @@ import androidx.compose.ui.zIndex
 import com.everlog.R
 import com.everlog.data.controllers.workoutsession.WorkoutBlock
 import com.everlog.ui.design.elements.AppIcon
-import com.everlog.ui.design.elements.AppIconButton
 import com.everlog.ui.design.elements.AppText
 import com.everlog.ui.design.theme.Theme
 
 private object EditSizes {
-    val CardGap = 8.dp
+    val CardGap = 12.dp
     // Bigger than the icon, so the grip is easy to catch
     val Grip = 40.dp
     val LiftScale = 1.03f
     val RowPadding = 12.dp
+    // Centres the bin in a single exercise's row
+    val BinPadding = 2.dp
     val GroupRowGap = 6.dp
 }
 
@@ -174,11 +174,11 @@ private fun EditCard(
                 .weight(1f)
                 .alignBy(LastExerciseCenter)
                 .clip(shape)
-                .background(if (lifted) Theme.backgrounds.surfaceRaised else Color.Transparent)
-                .border(1.dp, if (lifted) Theme.contentColors.action else Theme.backgrounds.separator, shape)
+                .background(if (lifted) Theme.backgrounds.surfaceRaised else Theme.backgrounds.surface)
+                .then(if (lifted) Modifier.border(1.dp, Theme.contentColors.action, shape) else Modifier)
                 // A single exercise's row is the grip's height, so the two line up
                 .heightIn(min = EditSizes.Grip)
-                .padding(start = EditSizes.RowPadding, end = Theme.spacing.extraSmall, top = if (group) Theme.spacing.small else 0.dp, bottom = if (group) Theme.spacing.small else 0.dp),
+                .padding(start = EditSizes.RowPadding, end = EditSizes.BinPadding, top = if (group) Theme.spacing.small else 0.dp, bottom = if (group) Theme.spacing.small else 0.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {
             Column(
@@ -198,14 +198,7 @@ private fun EditCard(
                     )
                 }
             }
-            AppIconButton(
-                // The grip's size, so it doesn't make a single exercise's row taller; it still takes 48dp of touches
-                modifier = Modifier.size(EditSizes.Grip),
-                onClick = onDelete,
-                icon = ImageVector.vectorResource(R.drawable.ic_delete),
-                tint = Theme.contentColors.destructive,
-                contentDescription = stringResource(R.string.workout_log_delete),
-            )
+            InsetDeleteButton(onClick = onDelete, contentDescription = stringResource(R.string.workout_log_delete))
         }
     }
 }
