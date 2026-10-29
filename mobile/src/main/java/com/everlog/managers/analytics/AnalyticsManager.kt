@@ -405,6 +405,13 @@ class AnalyticsManager : Analytic {
         }
     }
 
+    override fun workoutResumed(source: String, setsCompleted: Int) {
+        Timber.tag(TAG).i("Workout resumed: source=%s, setsCompleted=%d", source, setsCompleted)
+        mAnalytics?.forEach {
+            it.workoutResumed(source, setsCompleted)
+        }
+    }
+
     override fun workoutNextExercise() {
         Timber.tag(TAG).i("Workout next exercise")
         mAnalytics?.forEach {
