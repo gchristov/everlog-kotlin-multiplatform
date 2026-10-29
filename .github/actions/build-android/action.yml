@@ -28,6 +28,8 @@ runs:
         isRelease: ${{ inputs.isRelease }}
     - name: Set up Gradle
       uses: ./.github/actions/setup-gradle
+      with:
+        ndk: ${{ inputs.buildType == 'release' }}
     - name: Build Android
       shell: bash
       run: |

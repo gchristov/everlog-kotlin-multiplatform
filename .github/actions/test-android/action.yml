@@ -11,17 +11,31 @@ runs:
         sudo udevadm trigger --name-match=kvm
     - name: Set up Gradle
       uses: ./.github/actions/setup-gradle
+      with:
+        ndk: 'false'
+    - name: Start building the app and test APKs
+      shell: bash
+      # In the background, so the build overlaps the emulator's setup and boot; the tests wait for it below. The
+      # configuration cache lets the test run reuse this build's configuration.
+      run: |
+        nohup bash -c './gradlew --configuration-cache :mobile:assembleDebug :mobile:assembleDebugAndroidTest > build.log 2>&1; echo $? > build.status' > /dev/null 2>&1 &
     - name: Android tests
       uses: reactivecircus/android-emulator-runner@v2
       with:
         api-level: 34
         arch: x86_64
         disk-size: 6G
-        emulator-boot-timeout: 120
+        # Booting alongside the build takes longer than on its own
+        emulator-boot-timeout: 300
         emulator-options: -no-snapshot-save -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
         disable-animations: true
-        # On a failure, keep the device's log for the artifacts below
-        script: ./gradlew connectedAndroidTest || (adb logcat -d > logcat.txt; exit 1)
+        # Each line runs on its own. The build started above has to finish, and pass, first. On a test failure, keep
+        # the device's log for the artifacts below.
+        script: |
+          while [ ! -f build.status ]; do sleep 5; done
+          cat build.log
+          test "$(cat build.status)" = 0
+          ./gradlew --configuration-cache connectedAndroidTest || (adb logcat -d > logcat.txt; exit 1)
     - name: Artifacts
       uses: actions/upload-artifact@v7
       if: always() # Ensure all artifacts are collected, even after errors
@@ -31,3 +45,4 @@ runs:
           **/test-result.pb
           **/build/outputs/androidTest-results/connected/**/*.xml
           logcat.txt
+          build.log

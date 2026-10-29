@@ -1,4 +1,9 @@
 name: 'setup-gradle'
+inputs:
+  ndk:
+    description: 'Whether to install the NDK, which only release builds need (to strip and upload native symbols)'
+    required: false
+    default: 'true'
 runs:
   using: "composite"
   steps:
@@ -17,6 +22,7 @@ runs:
         path: '~/.konan/**' # Will only exist for Kotlin Native gradle builds like iOS
         key: ${{ github.job }}-konan
     - name: Set up NDK
+      if: inputs.ndk == 'true'
       shell: bash
       run: |
         # Find the sdkmanager tool (it's not in the PATH by default on CI)
