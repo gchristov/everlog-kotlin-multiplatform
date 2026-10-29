@@ -7,9 +7,9 @@ import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollTo
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import com.everlog.android.common.compose.theme.Theme
 import com.everlog.managers.preferences.SettingsManager.MuscleGoal
 import com.everlog.managers.preferences.SettingsManager.WeightUnit
-import com.everlog.ui.design.theme.Theme
 import com.google.common.truth.Truth.assertThat
 import java.util.concurrent.TimeUnit
 import kotlinx.coroutines.Dispatchers

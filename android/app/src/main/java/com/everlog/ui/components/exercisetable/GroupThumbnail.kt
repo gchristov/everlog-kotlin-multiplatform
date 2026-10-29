@@ -10,9 +10,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.everlog.ui.design.elements.AppText
-import com.everlog.ui.design.elements.AppThumbnail
-import com.everlog.ui.design.theme.Theme
+import com.everlog.android.common.compose.elements.AppText
+import com.everlog.android.common.compose.elements.AppThumbnail
+import com.everlog.android.common.compose.theme.Theme
 
 internal object GroupThumbnailSizes {
     val Size = 24.dp

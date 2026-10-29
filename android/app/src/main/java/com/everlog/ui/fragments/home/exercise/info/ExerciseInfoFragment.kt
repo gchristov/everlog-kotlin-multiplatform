@@ -9,13 +9,13 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import com.everlog.R
+import com.everlog.android.common.compose.theme.Theme
 import com.everlog.data.controllers.exerciseguide.RealLoadExerciseGuideUseCase
 import com.everlog.data.controllers.statistics.ExerciseStatsController
 import com.everlog.data.model.exercise.ELExercise
 import com.everlog.data.repositories.RealExerciseRepository
 import com.everlog.data.sync.AppDataSync
 import com.everlog.managers.analytics.AnalyticsConstants
-import com.everlog.ui.design.theme.Theme
 import com.everlog.ui.fragments.home.exercise.BaseExerciseTabFragment
 import com.everlog.ui.fragments.home.exercise.BasePresenterExerciseTab
 import kotlinx.coroutines.Dispatchers

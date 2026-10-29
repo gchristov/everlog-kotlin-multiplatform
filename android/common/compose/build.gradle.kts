@@ -9,4 +9,12 @@ android {
 
 dependencies {
     api(projects.android.common.design)
+    api(platform(libs.androidx.compose.bom))
+    api(libs.androidx.compose.foundation)
+    api(libs.androidx.compose.material3)
+    api(libs.androidx.compose.ui.tooling.preview)
+    api(libs.haze)
+    implementation(libs.androidx.activity.compose)
+    implementation(libs.coil.compose)
+    debugImplementation(libs.androidx.compose.ui.tooling)
 }

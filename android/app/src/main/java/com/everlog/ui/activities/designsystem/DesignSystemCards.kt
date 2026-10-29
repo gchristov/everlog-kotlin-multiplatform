@@ -6,10 +6,10 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
-import com.everlog.ui.design.elements.AppButton
-import com.everlog.ui.design.elements.AppSurface
-import com.everlog.ui.design.elements.AppText
-import com.everlog.ui.design.theme.Theme
+import com.everlog.android.common.compose.elements.AppButton
+import com.everlog.android.common.compose.elements.AppSurface
+import com.everlog.android.common.compose.elements.AppText
+import com.everlog.android.common.compose.theme.Theme
 
 @Composable
 internal fun DesignSystemCards(onButtonClick: () -> Unit) {

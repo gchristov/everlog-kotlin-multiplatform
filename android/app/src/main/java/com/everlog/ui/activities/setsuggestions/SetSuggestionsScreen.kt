@@ -12,16 +12,16 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.compose.LifecycleResumeEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.everlog.R
+import com.everlog.android.common.compose.elements.AppBar
+import com.everlog.android.common.compose.elements.AppCheck
+import com.everlog.android.common.compose.elements.AppIcon
+import com.everlog.android.common.compose.elements.AppScreen
+import com.everlog.android.common.compose.elements.list.AppGroupedList
+import com.everlog.android.common.compose.elements.list.AppGroupedListScope
+import com.everlog.android.common.compose.elements.list.AppListItem
+import com.everlog.android.common.compose.elements.list.items
+import com.everlog.android.common.compose.theme.Theme
 import com.everlog.managers.preferences.SettingsManager.WeightUnit
-import com.everlog.ui.design.elements.AppBar
-import com.everlog.ui.design.elements.AppCheck
-import com.everlog.ui.design.elements.AppIcon
-import com.everlog.ui.design.elements.AppScreen
-import com.everlog.ui.design.elements.list.AppGroupedList
-import com.everlog.ui.design.elements.list.AppGroupedListScope
-import com.everlog.ui.design.elements.list.AppListItem
-import com.everlog.ui.design.elements.list.items
-import com.everlog.ui.design.theme.Theme
 
 /**
  * Off or last time on top, the 1RM goals below them with a sheet on how their weights are worked out.

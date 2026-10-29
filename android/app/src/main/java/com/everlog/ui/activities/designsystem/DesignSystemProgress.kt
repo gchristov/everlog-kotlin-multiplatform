@@ -16,9 +16,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.everlog.ui.design.elements.AppCircularProgressIndicator
-import com.everlog.ui.design.elements.rememberShimmerBrush
-import com.everlog.ui.design.theme.Theme
+import com.everlog.android.common.compose.elements.AppCircularProgressIndicator
+import com.everlog.android.common.compose.elements.rememberShimmerBrush
+import com.everlog.android.common.compose.theme.Theme
 
 @Composable
 internal fun DesignSystemProgress() {

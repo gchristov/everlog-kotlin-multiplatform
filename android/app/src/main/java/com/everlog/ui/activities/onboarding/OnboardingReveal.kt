@@ -46,21 +46,21 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.everlog.R
+import com.everlog.android.common.compose.elements.AppBar
+import com.everlog.android.common.compose.elements.AppBarHeader
+import com.everlog.android.common.compose.elements.AppFooter
+import com.everlog.android.common.compose.elements.AppFooterAction
+import com.everlog.android.common.compose.elements.AppIcon
+import com.everlog.android.common.compose.elements.AppScreen
+import com.everlog.android.common.compose.elements.AppSurface
+import com.everlog.android.common.compose.elements.AppText
+import com.everlog.android.common.compose.elements.list.AppListItem
+import com.everlog.android.common.compose.elements.rememberAppBarScrollBehavior
+import com.everlog.android.common.compose.theme.Theme
 import com.everlog.data.controllers.starterroutines.BuildStarterRoutinesUseCase
 import com.everlog.data.controllers.starterroutines.StarterProfile
 import com.everlog.data.controllers.starterroutines.StarterRoutine
 import com.everlog.data.controllers.starterroutines.StarterWeek
-import com.everlog.ui.design.elements.AppBar
-import com.everlog.ui.design.elements.AppBarHeader
-import com.everlog.ui.design.elements.AppFooter
-import com.everlog.ui.design.elements.AppFooterAction
-import com.everlog.ui.design.elements.AppIcon
-import com.everlog.ui.design.elements.AppScreen
-import com.everlog.ui.design.elements.AppSurface
-import com.everlog.ui.design.elements.AppText
-import com.everlog.ui.design.elements.list.AppListItem
-import com.everlog.ui.design.elements.rememberAppBarScrollBehavior
-import com.everlog.ui.design.theme.Theme
 import com.everlog.android.common.design.R as DesignR
 
 // The reveal from the Everlog Onboarding design: "Here are your workout templates", the summary of

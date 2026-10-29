@@ -29,10 +29,10 @@ import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import com.everlog.R
-import com.everlog.ui.design.elements.AppBarHeader
-import com.everlog.ui.design.elements.list.AppListGroup
-import com.everlog.ui.design.elements.list.AppListItem
-import com.everlog.ui.design.theme.Theme
+import com.everlog.android.common.compose.elements.AppBarHeader
+import com.everlog.android.common.compose.elements.list.AppListGroup
+import com.everlog.android.common.compose.elements.list.AppListItem
+import com.everlog.android.common.compose.theme.Theme
 
 private data class WelcomeStep(
     @StringRes val title: Int,

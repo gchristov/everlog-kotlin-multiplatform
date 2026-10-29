@@ -24,9 +24,9 @@ import com.everlog.data.repositories.RealExerciseRepository
 import com.everlog.data.repositories.RealWorkoutRepository
 import com.everlog.data.sync.AppDataSync
 import com.everlog.data.repositories.RealOngoingWorkoutRepository
+import com.everlog.ui.activities.base.CommonComposeActivity
 import com.everlog.ui.activities.home.exercise.details.ExerciseDetailsActivity
 import com.everlog.ui.components.exercisetable.ExerciseTab
-import com.everlog.ui.design.CommonComposeActivity
 import com.everlog.ui.navigator.ELNavigator
 import kotlinx.coroutines.Dispatchers
 import com.everlog.ui.navigator.feedbackFormLauncher

@@ -49,13 +49,13 @@ import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.everlog.R
-import com.everlog.ui.design.elements.AppDialog
-import com.everlog.ui.design.elements.AppDialogAction
-import com.everlog.ui.design.elements.AppFooter
-import com.everlog.ui.design.elements.AppFooterAction
-import com.everlog.ui.design.elements.AppText
-import com.everlog.ui.design.elements.list.AppListGroup
-import com.everlog.ui.design.theme.Theme
+import com.everlog.android.common.compose.elements.AppDialog
+import com.everlog.android.common.compose.elements.AppDialogAction
+import com.everlog.android.common.compose.elements.AppFooter
+import com.everlog.android.common.compose.elements.AppFooterAction
+import com.everlog.android.common.compose.elements.AppText
+import com.everlog.android.common.compose.elements.list.AppListGroup
+import com.everlog.android.common.compose.theme.Theme
 import kotlinx.coroutines.delay
 import org.threeten.bp.DayOfWeek
 

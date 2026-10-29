@@ -8,13 +8,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import com.everlog.R
+import com.everlog.android.common.compose.elements.AppBottomSheet
+import com.everlog.android.common.compose.elements.AppButton
+import com.everlog.android.common.compose.elements.AppText
+import com.everlog.android.common.compose.elements.list.AppListGroup
+import com.everlog.android.common.compose.elements.list.AppListItem
+import com.everlog.android.common.compose.theme.Theme
 import com.everlog.managers.preferences.SettingsManager.WeightUnit
-import com.everlog.ui.design.elements.AppBottomSheet
-import com.everlog.ui.design.elements.AppButton
-import com.everlog.ui.design.elements.AppText
-import com.everlog.ui.design.elements.list.AppListGroup
-import com.everlog.ui.design.elements.list.AppListItem
-import com.everlog.ui.design.theme.Theme
 import com.everlog.utils.format.formatWeight
 import com.everlog.utils.format.unitName
 

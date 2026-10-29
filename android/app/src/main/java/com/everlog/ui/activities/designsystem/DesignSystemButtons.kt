@@ -17,13 +17,13 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.everlog.R
-import com.everlog.ui.design.elements.AppButton
-import com.everlog.ui.design.elements.AppIconButton
-import com.everlog.ui.design.elements.AppSecondaryButton
-import com.everlog.ui.design.elements.AppTertiaryButton
-import com.everlog.ui.design.elements.AppText
-import com.everlog.ui.design.elements.AppThumbnail
-import com.everlog.ui.design.theme.Theme
+import com.everlog.android.common.compose.elements.AppButton
+import com.everlog.android.common.compose.elements.AppIconButton
+import com.everlog.android.common.compose.elements.AppSecondaryButton
+import com.everlog.android.common.compose.elements.AppTertiaryButton
+import com.everlog.android.common.compose.elements.AppText
+import com.everlog.android.common.compose.elements.AppThumbnail
+import com.everlog.android.common.compose.theme.Theme
 import com.everlog.android.common.design.R as DesignR
 
 @Composable

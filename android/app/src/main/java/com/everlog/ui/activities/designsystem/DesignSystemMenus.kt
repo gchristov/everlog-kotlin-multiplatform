@@ -10,12 +10,12 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
 import com.everlog.R
-import com.everlog.ui.design.elements.AppChip
-import com.everlog.ui.design.elements.AppMenu
-import com.everlog.ui.design.elements.AppMenuItem
-import com.everlog.ui.design.elements.AppOverflowMenu
-import com.everlog.ui.design.elements.list.AppListItem
-import com.everlog.ui.design.theme.Theme
+import com.everlog.android.common.compose.elements.AppChip
+import com.everlog.android.common.compose.elements.AppMenu
+import com.everlog.android.common.compose.elements.AppMenuItem
+import com.everlog.android.common.compose.elements.AppOverflowMenu
+import com.everlog.android.common.compose.elements.list.AppListItem
+import com.everlog.android.common.compose.theme.Theme
 import com.everlog.android.common.design.R as DesignR
 
 // The overflow menu in the app bar, as on the exercise picker, and on a row, as on a plan's days;

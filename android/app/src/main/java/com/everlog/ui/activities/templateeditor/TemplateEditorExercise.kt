@@ -40,6 +40,9 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.everlog.R
+import com.everlog.android.common.compose.elements.AppText
+import com.everlog.android.common.compose.elements.AppThumbnail
+import com.everlog.android.common.compose.theme.Theme
 import com.everlog.data.controllers.workoutsession.SetMode
 import com.everlog.data.controllers.workoutsession.SetRef
 import com.everlog.data.controllers.workoutsession.WorkoutBlock
@@ -53,9 +56,6 @@ import com.everlog.ui.components.exercisetable.InsetDeleteButton
 import com.everlog.ui.components.exercisetable.countField
 import com.everlog.ui.components.exercisetable.typedSeconds
 import com.everlog.ui.components.reorder.ReorderGrip
-import com.everlog.ui.design.elements.AppText
-import com.everlog.ui.design.elements.AppThumbnail
-import com.everlog.ui.design.theme.Theme
 import com.everlog.utils.format.formatClock
 
 private object ExerciseSizes {

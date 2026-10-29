@@ -19,11 +19,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.everlog.ui.design.elements.AppChip
-import com.everlog.ui.design.elements.AppChipStyle
-import com.everlog.ui.design.elements.AppText
-import com.everlog.ui.design.elements.search.AppSearchBar
-import com.everlog.ui.design.theme.Theme
+import com.everlog.android.common.compose.elements.AppChip
+import com.everlog.android.common.compose.elements.AppChipStyle
+import com.everlog.android.common.compose.elements.AppText
+import com.everlog.android.common.compose.elements.search.AppSearchBar
+import com.everlog.android.common.compose.theme.Theme
 
 // The search bar, plain and with content before the text (a screen's own filter tokens), and chips, plain and selected
 @Composable

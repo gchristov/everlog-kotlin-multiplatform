@@ -13,19 +13,19 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.tooling.preview.Preview
-import com.everlog.ui.design.elements.AppBar
-import com.everlog.ui.design.elements.AppBarHeader
-import com.everlog.ui.design.elements.AppBarScrollBehavior
-import com.everlog.ui.design.elements.AppFooter
-import com.everlog.ui.design.elements.AppFooterAction
-import com.everlog.ui.design.elements.AppScreen
-import com.everlog.ui.design.elements.AppSurface
-import com.everlog.ui.design.elements.AppText
-import com.everlog.ui.design.elements.list.AppGroupedList
-import com.everlog.ui.design.elements.list.AppGroupedListScope
-import com.everlog.ui.design.elements.list.AppListItem
-import com.everlog.ui.design.elements.rememberAppBarScrollBehavior
-import com.everlog.ui.design.theme.Theme
+import com.everlog.android.common.compose.elements.AppBar
+import com.everlog.android.common.compose.elements.AppBarHeader
+import com.everlog.android.common.compose.elements.AppBarScrollBehavior
+import com.everlog.android.common.compose.elements.AppFooter
+import com.everlog.android.common.compose.elements.AppFooterAction
+import com.everlog.android.common.compose.elements.AppScreen
+import com.everlog.android.common.compose.elements.AppSurface
+import com.everlog.android.common.compose.elements.AppText
+import com.everlog.android.common.compose.elements.list.AppGroupedList
+import com.everlog.android.common.compose.elements.list.AppGroupedListScope
+import com.everlog.android.common.compose.elements.list.AppListItem
+import com.everlog.android.common.compose.elements.rememberAppBarScrollBehavior
+import com.everlog.android.common.compose.theme.Theme
 
 private data class ScrollExample(
     val page: DesignSystemPage,

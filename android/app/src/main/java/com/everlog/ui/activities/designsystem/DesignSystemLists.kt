@@ -11,12 +11,12 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.everlog.R
-import com.everlog.ui.design.elements.AppCheck
-import com.everlog.ui.design.elements.AppIcon
-import com.everlog.ui.design.elements.AppText
-import com.everlog.ui.design.elements.AppThumbnail
-import com.everlog.ui.design.elements.list.AppListItem
-import com.everlog.ui.design.theme.Theme
+import com.everlog.android.common.compose.elements.AppCheck
+import com.everlog.android.common.compose.elements.AppIcon
+import com.everlog.android.common.compose.elements.AppText
+import com.everlog.android.common.compose.elements.AppThumbnail
+import com.everlog.android.common.compose.elements.list.AppListItem
+import com.everlog.android.common.compose.theme.Theme
 
 @Composable
 internal fun DesignSystemLists(onButtonClick: () -> Unit) {

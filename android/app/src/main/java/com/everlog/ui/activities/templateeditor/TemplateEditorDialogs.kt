@@ -9,10 +9,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import com.everlog.R
+import com.everlog.android.common.compose.elements.AppDialog
+import com.everlog.android.common.compose.elements.AppDialogAction
+import com.everlog.android.common.compose.elements.AppTextField
 import com.everlog.ui.components.rest.RestStepper
-import com.everlog.ui.design.elements.AppDialog
-import com.everlog.ui.design.elements.AppDialogAction
-import com.everlog.ui.design.elements.AppTextField
 
 @Composable
 internal fun TemplateEditorDialogs(state: TemplateEditorState, viewModel: TemplateEditorViewModel) {

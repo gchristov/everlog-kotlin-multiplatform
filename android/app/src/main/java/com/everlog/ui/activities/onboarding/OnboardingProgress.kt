@@ -46,13 +46,13 @@ import com.airbnb.lottie.compose.LottieCompositionSpec
 import com.airbnb.lottie.compose.rememberLottieAnimatable
 import com.airbnb.lottie.compose.rememberLottieComposition
 import com.everlog.R
+import com.everlog.android.common.compose.elements.AppFooter
+import com.everlog.android.common.compose.elements.AppFooterAction
+import com.everlog.android.common.compose.elements.AppScreen
+import com.everlog.android.common.compose.elements.AppText
+import com.everlog.android.common.compose.theme.Theme
 import com.everlog.data.controllers.starterroutines.StarterProfile
 import com.everlog.data.controllers.starterroutines.StarterWeek
-import com.everlog.ui.design.elements.AppFooter
-import com.everlog.ui.design.elements.AppFooterAction
-import com.everlog.ui.design.elements.AppScreen
-import com.everlog.ui.design.elements.AppText
-import com.everlog.ui.design.theme.Theme
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.first
 

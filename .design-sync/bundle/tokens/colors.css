@@ -1,4 +1,4 @@
-/* Everlog colours, from ui/design/theme (Background.kt, ContentColor.kt) and res/values/colors.xml.
+/* Everlog colours, from common:compose theme (Background.kt, ContentColor.kt) and common:design res/values/colors.xml.
    The app only has a dark appearance. */
 :root {
   /* Backgrounds (Theme.backgrounds) */

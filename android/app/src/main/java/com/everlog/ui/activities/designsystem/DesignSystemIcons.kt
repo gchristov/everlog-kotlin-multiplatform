@@ -9,11 +9,11 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
 import com.everlog.R
-import com.everlog.ui.design.elements.AppIcon
-import com.everlog.ui.design.elements.AppIconButton
-import com.everlog.ui.design.elements.AppMenuItem
-import com.everlog.ui.design.elements.AppOverflowMenu
-import com.everlog.ui.design.theme.Theme
+import com.everlog.android.common.compose.elements.AppIcon
+import com.everlog.android.common.compose.elements.AppIconButton
+import com.everlog.android.common.compose.elements.AppMenuItem
+import com.everlog.android.common.compose.elements.AppOverflowMenu
+import com.everlog.android.common.compose.theme.Theme
 import com.everlog.android.common.design.R as DesignR
 
 @Composable

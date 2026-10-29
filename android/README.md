@@ -22,7 +22,7 @@ Common modules:
 | `common:kotlin` | Coroutines, Arrow, `Load`, logging, the app context holder |
 | `common:test` | JUnit, Truth, kotlin-test, threetenbp, shared test helpers |
 | `common:design` | Shared resources only: colours, fonts, dimens, drawables, strings. No code unless something strictly needs it |
-| `common:compose` | The design system (theme and elements), `CommonComposeActivity`, shared components |
+| `common:compose` | The design system (theme and elements) and shared components. `CommonComposeActivity` joins it once the user session it checks has left the app |
 | `common:compose-test` | Compose UI test dependencies, test manifest and finders |
 | `common:mvvm` | `CommonViewModel`, `ViewModelFactory` |
 | `common:mvp` | The XML/MVP bases: presenters, base activities, fragments, bottom sheets, dialogs, shared views and adapters |

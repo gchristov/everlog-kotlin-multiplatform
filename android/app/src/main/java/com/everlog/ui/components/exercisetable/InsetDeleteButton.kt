@@ -14,8 +14,8 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.unit.dp
 import com.everlog.R
-import com.everlog.ui.design.elements.AppIcon
-import com.everlog.ui.design.theme.Theme
+import com.everlog.android.common.compose.elements.AppIcon
+import com.everlog.android.common.compose.theme.Theme
 
 private object InsetDeleteSizes {
     val Icon = 18.dp

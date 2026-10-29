@@ -42,26 +42,26 @@ import androidx.compose.ui.res.vectorResource
 import androidx.lifecycle.compose.LifecycleResumeEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.everlog.R
+import com.everlog.android.common.compose.elements.AppBar
+import com.everlog.android.common.compose.elements.AppButton
+import com.everlog.android.common.compose.elements.AppCheck
+import com.everlog.android.common.compose.elements.AppFooter
+import com.everlog.android.common.compose.elements.AppFooterAction
+import com.everlog.android.common.compose.elements.AppMenuItem
+import com.everlog.android.common.compose.elements.AppOverflowMenu
+import com.everlog.android.common.compose.elements.AppScreen
+import com.everlog.android.common.compose.elements.AppSecondaryButton
+import com.everlog.android.common.compose.elements.AppSurface
+import com.everlog.android.common.compose.elements.AppTertiaryButton
+import com.everlog.android.common.compose.elements.AppText
+import com.everlog.android.common.compose.elements.AppThumbnail
+import com.everlog.android.common.compose.elements.list.AppGroupedList
+import com.everlog.android.common.compose.elements.list.AppListItem
+import com.everlog.android.common.compose.elements.list.items
+import com.everlog.android.common.compose.elements.search.AppSearchBar
+import com.everlog.android.common.compose.theme.Theme
 import com.everlog.data.model.exercise.library.LibraryExercise
 import com.everlog.data.model.set.ELSetType
-import com.everlog.ui.design.elements.AppBar
-import com.everlog.ui.design.elements.AppButton
-import com.everlog.ui.design.elements.AppCheck
-import com.everlog.ui.design.elements.AppFooter
-import com.everlog.ui.design.elements.AppFooterAction
-import com.everlog.ui.design.elements.AppMenuItem
-import com.everlog.ui.design.elements.AppOverflowMenu
-import com.everlog.ui.design.elements.AppScreen
-import com.everlog.ui.design.elements.AppSecondaryButton
-import com.everlog.ui.design.elements.AppSurface
-import com.everlog.ui.design.elements.AppTertiaryButton
-import com.everlog.ui.design.elements.AppText
-import com.everlog.ui.design.elements.AppThumbnail
-import com.everlog.ui.design.elements.list.AppGroupedList
-import com.everlog.ui.design.elements.list.AppListItem
-import com.everlog.ui.design.elements.list.items
-import com.everlog.ui.design.elements.search.AppSearchBar
-import com.everlog.ui.design.theme.Theme
 import com.everlog.android.common.design.R as DesignR
 
 @Composable

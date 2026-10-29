@@ -4,10 +4,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import com.everlog.R
+import com.everlog.android.common.compose.elements.AppDialog
+import com.everlog.android.common.compose.elements.AppDialogAction
 import com.everlog.data.controllers.workoutsession.block
 import com.everlog.ui.components.rest.RestStepper
-import com.everlog.ui.design.elements.AppDialog
-import com.everlog.ui.design.elements.AppDialogAction
 
 @Composable
 internal fun WorkoutLogDialogs(state: WorkoutLogState, viewModel: WorkoutLogViewModel) {

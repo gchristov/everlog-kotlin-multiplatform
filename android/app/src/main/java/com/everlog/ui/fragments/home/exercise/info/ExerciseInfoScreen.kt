@@ -25,12 +25,12 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.everlog.R
+import com.everlog.android.common.compose.elements.AppImage
+import com.everlog.android.common.compose.elements.AppText
+import com.everlog.android.common.compose.elements.list.AppListGroup
+import com.everlog.android.common.compose.elements.list.AppListItem
+import com.everlog.android.common.compose.theme.Theme
 import com.everlog.data.model.exercise.library.ExerciseGuide
-import com.everlog.ui.design.elements.AppImage
-import com.everlog.ui.design.elements.AppText
-import com.everlog.ui.design.elements.list.AppListGroup
-import com.everlog.ui.design.elements.list.AppListItem
-import com.everlog.ui.design.theme.Theme
 
 @Composable
 internal fun ExerciseInfoScreen(viewModel: ExerciseInfoViewModel) {

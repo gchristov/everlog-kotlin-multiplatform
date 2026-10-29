@@ -8,9 +8,9 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import com.everlog.R
-import com.everlog.ui.design.elements.AppIconButton
-import com.everlog.ui.design.elements.AppText
-import com.everlog.ui.design.theme.Theme
+import com.everlog.android.common.compose.elements.AppIconButton
+import com.everlog.android.common.compose.elements.AppText
+import com.everlog.android.common.compose.theme.Theme
 import com.everlog.utils.format.formatClock
 import com.everlog.android.common.design.R as DesignR
 
