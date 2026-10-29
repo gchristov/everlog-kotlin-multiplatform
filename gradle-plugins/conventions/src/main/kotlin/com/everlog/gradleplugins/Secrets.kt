@@ -7,7 +7,7 @@ import java.util.Properties
 // One file for every module, written by tools/secrets/secrets.sh on CI
 fun Project.envSecret(key: String): String {
     val properties = Properties()
-    rootProject.file("mobile/secrets.properties").inputStream().use(properties::load)
+    rootProject.file("android/app/secrets.properties").inputStream().use(properties::load)
     val property = properties.getProperty(key)
     if (property.isNullOrBlank()) {
         throw GradleException("Required property is missing: property=$key")

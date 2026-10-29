@@ -74,9 +74,9 @@ jobs:
         shell: bash
         run: |
           bundle exec fastlane android deploy_firebase \
-            apk_path:mobile/build/outputs/apk/debug/mobile-debug.apk \
+            apk_path:android/app/build/outputs/apk/debug/app-debug.apk \
             firebase_app_id:1:807594467020:android:ac26b664e229fe37 \
-            credentials_path:mobile/src/debug/google-deployment-key.json \
+            credentials_path:android/app/src/debug/google-deployment-key.json \
             groups:everlog-staging-testers
 
   test-android:

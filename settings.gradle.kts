@@ -34,4 +34,4 @@ dependencyResolutionManagement {
 
 rootProject.name = "everlog-kotlin-multiplatform"
 
-include(":mobile")
+include(":android:app")
