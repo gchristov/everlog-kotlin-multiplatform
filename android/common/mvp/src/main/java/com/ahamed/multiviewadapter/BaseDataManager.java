@@ -17,6 +17,7 @@
 package com.ahamed.multiviewadapter;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.annotation.RestrictTo;
 import androidx.recyclerview.widget.ListUpdateCallback;
 
@@ -24,8 +25,6 @@ import com.ahamed.multiviewadapter.listener.ItemSelectionChangedListener;
 import com.ahamed.multiviewadapter.listener.MultiSelectionChangedListener;
 import java.util.ArrayList;
 import java.util.List;
-
-import javax.annotation.Nullable;
 
 public abstract class BaseDataManager<M> implements ListUpdateCallback {
 

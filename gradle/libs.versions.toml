@@ -20,6 +20,8 @@ activity = "1.13.0"
 appcompat = "1.7.1"
 material = "1.13.0"
 constraintlayout = "2.2.1"
+# The version Material brings in, made explicit for the vendored multiviewadapter in common:mvp
+recyclerview = "1.2.1"
 cardview = "1.0.0"
 billing = "8.3.0"
 playAppUpdate = "2.1.0"
@@ -108,6 +110,7 @@ play-services-fitness = { group = "com.google.android.gms", name = "play-service
 androidx-activity = { group = "androidx.activity", name = "activity-ktx", version.ref = "activity" }
 androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
 material = { group = "com.google.android.material", name = "material", version.ref = "material" }
+androidx-recyclerview = { group = "androidx.recyclerview", name = "recyclerview", version.ref = "recyclerview" }
 androidx-constraintlayout = { group = "androidx.constraintlayout", name = "constraintlayout", version.ref = "constraintlayout" }
 androidx-cardview = { group = "androidx.cardview", name = "cardview", version.ref = "cardview" }
 billing = { group = "com.android.billingclient", name = "billing", version.ref = "billing" }

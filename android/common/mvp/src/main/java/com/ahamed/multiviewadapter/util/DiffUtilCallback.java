@@ -16,13 +16,12 @@
 
 package com.ahamed.multiviewadapter.util;
 
+import androidx.annotation.Nullable;
 import androidx.annotation.RestrictTo;
 import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.List;
-
-import javax.annotation.Nullable;
 
 @RestrictTo(RestrictTo.Scope.LIBRARY) public abstract class DiffUtilCallback<M>
     extends DiffUtil.Callback {
