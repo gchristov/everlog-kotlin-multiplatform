@@ -24,6 +24,7 @@ import com.everlog.ui.design.elements.AppTertiaryButton
 import com.everlog.ui.design.elements.AppText
 import com.everlog.ui.design.elements.AppThumbnail
 import com.everlog.ui.design.theme.Theme
+import com.everlog.android.common.design.R as DesignR
 
 @Composable
 private fun SizeExample(name: String, content: @Composable () -> Unit) {
@@ -77,7 +78,7 @@ internal fun DesignSystemButtons(
                     AppThumbnail(imageUrl = null, size = Theme.sizes.leading)
                     AppIconButton(
                         onClick = onButtonClick,
-                        icon = ImageVector.vectorResource(R.drawable.ic_more),
+                        icon = ImageVector.vectorResource(DesignR.drawable.ic_more),
                         contentDescription = "More",
                         outlined = true,
                     )
@@ -107,7 +108,7 @@ internal fun DesignSystemButtons(
                     modifier = Modifier.fillMaxWidth(),
                     onClick = onButtonClick,
                     text = "With an icon",
-                    icon = ImageVector.vectorResource(R.drawable.ic_check),
+                    icon = ImageVector.vectorResource(DesignR.drawable.ic_check),
                 )
                 AppSecondaryButton(
                     modifier = Modifier.fillMaxWidth(),

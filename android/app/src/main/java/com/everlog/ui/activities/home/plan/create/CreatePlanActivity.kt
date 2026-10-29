@@ -29,6 +29,7 @@ import com.facebook.shimmer.ShimmerFrameLayout
 import com.jakewharton.rxbinding.view.RxView
 import com.jakewharton.rxbinding.widget.RxTextView
 import rx.Observable
+import com.everlog.android.common.design.R as DesignR
 
 class CreatePlanActivity : BaseActivity(), MvpViewCreatePlan {
 
@@ -145,7 +146,7 @@ class CreatePlanActivity : BaseActivity(), MvpViewCreatePlan {
                 binding.weeksContainer.weeksList.layoutManager?.scrollToPosition(0)
                 binding.root.findViewById<Button>(R.id.saveBtn).setText(R.string.save)
                 binding.root.findViewById<Button>(R.id.saveBtn).setBackgroundResource(R.drawable.rounded_corners_btn_one)
-                binding.root.findViewById<Button>(R.id.saveBtn).setTextColor(ContextCompat.getColor(this, R.color.background_card))
+                binding.root.findViewById<Button>(R.id.saveBtn).setTextColor(ContextCompat.getColor(this, DesignR.color.background_card))
             }
             Flow.WEEKS -> {
                 supportActionBar?.title = getString(R.string.create_plan_weeks)
@@ -155,7 +156,7 @@ class CreatePlanActivity : BaseActivity(), MvpViewCreatePlan {
                 binding.weeksContainer.weeksList.layoutManager?.scrollToPosition(0)
                 binding.root.findViewById<Button>(R.id.saveBtn).setText(R.string.done)
                 binding.root.findViewById<Button>(R.id.saveBtn).setBackgroundResource(R.drawable.rounded_corners_btn_three)
-                binding.root.findViewById<Button>(R.id.saveBtn).setTextColor(ContextCompat.getColor(this, R.color.main_accent))
+                binding.root.findViewById<Button>(R.id.saveBtn).setTextColor(ContextCompat.getColor(this, DesignR.color.main_accent))
             }
             Flow.DAYS -> {
                 supportActionBar?.title = String.format("Week %d", weekNumber + 1)
@@ -165,7 +166,7 @@ class CreatePlanActivity : BaseActivity(), MvpViewCreatePlan {
                 binding.daysContainer.daysList.layoutManager?.scrollToPosition(0)
                 binding.root.findViewById<Button>(R.id.saveBtn).setText(R.string.done)
                 binding.root.findViewById<Button>(R.id.saveBtn).setBackgroundResource(R.drawable.rounded_corners_btn_three)
-                binding.root.findViewById<Button>(R.id.saveBtn).setTextColor(ContextCompat.getColor(this, R.color.main_accent))
+                binding.root.findViewById<Button>(R.id.saveBtn).setTextColor(ContextCompat.getColor(this, DesignR.color.main_accent))
             }
         }
     }

@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="main_accent">#87c252</color>
+    <color name="main_accent_darker">#72b03c</color>
+    <color name="main_accent_faded_1">#2287c252</color>
+    <color name="main_accent_faded_2">#6687c252</color>
+
+    <!-- A near-black with a green cast, and cards one step lighter in the same hue -->
+    <color name="background_base">#0A0E09</color>
+    <color name="background_card">#151D13</color>
+    <color name="background_inset">#52000000</color>
+    <color name="background_card_lighter">@color/black_lighter</color>
+    <color name="background_blur">#700A0E09</color>
+
+    <color name="gray_1">#A0A0A0</color>
+    <color name="white_darker">#f3f3f3</color>
+
+    <color name="black_lighter">#26331F</color>
+    <color name="separator">@color/black_lighter</color>
+
+    <color name="remove">#FE3824</color>
+    <color name="remove_soft">#F07A6A</color>
+    <color name="warning">#F2B84B</color>
+    <color name="warning_faded_1">#2A2210</color>
+    <color name="warning_faded_2">#6B5420</color>
+</resources>

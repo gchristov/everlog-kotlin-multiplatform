@@ -12,6 +12,7 @@ import com.everlog.ui.design.elements.AppIconButton
 import com.everlog.ui.design.elements.AppText
 import com.everlog.ui.design.theme.Theme
 import com.everlog.utils.format.formatClock
+import com.everlog.android.common.design.R as DesignR
 
 // The rest after each set, with − and +, e.g. in a dialog
 @Composable
@@ -26,7 +27,7 @@ internal fun RestStepper(seconds: Int, onStep: (Int) -> Unit) {
         AppText(text = formatClock(seconds.toLong()), style = Theme.typography.heading.copy(fontFeatureSettings = "tnum"))
         AppIconButton(
             onClick = { onStep(1) },
-            icon = ImageVector.vectorResource(R.drawable.ic_add),
+            icon = ImageVector.vectorResource(DesignR.drawable.ic_add),
             contentDescription = stringResource(R.string.workout_log_rest_more),
             outlined = true,
         )

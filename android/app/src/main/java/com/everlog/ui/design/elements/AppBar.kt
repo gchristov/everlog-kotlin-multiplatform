@@ -44,8 +44,8 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.dp
-import com.everlog.R
 import com.everlog.ui.design.theme.Theme
+import com.everlog.android.common.design.R as DesignR
 import kotlin.math.abs
 import kotlin.math.roundToInt
 
@@ -133,9 +133,9 @@ private fun AppBarRow(
         navigationIcon = {
             if (showBack) {
                 AppIconButton(
-                    icon = ImageVector.vectorResource(R.drawable.ic_back),
+                    icon = ImageVector.vectorResource(DesignR.drawable.ic_back),
                     tint = contentColor,
-                    contentDescription = stringResource(R.string.app_bar_back),
+                    contentDescription = stringResource(DesignR.string.app_bar_back),
                     onClick = { backDispatcher?.onBackPressed() }
                 )
             }

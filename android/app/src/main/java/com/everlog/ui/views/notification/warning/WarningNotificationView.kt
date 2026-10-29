@@ -15,6 +15,7 @@ import com.everlog.ui.views.base.BaseViewPresenter
 import com.everlog.utils.ViewUtils
 import com.jakewharton.rxbinding.view.RxView
 import rx.Observable
+import com.everlog.android.common.design.R as DesignR
 
 class WarningNotificationView(context: Context, attrs: AttributeSet?) : BaseView(context, attrs), MvpViewWarningNotification {
 
@@ -77,7 +78,7 @@ class WarningNotificationView(context: Context, attrs: AttributeSet?) : BaseView
                 binding.imageView.setPadding(p, p, p, p)
                 binding.imageView.setImageResource(R.drawable.ic_lock)
                 binding.imageView.setBackgroundResource(R.drawable.ic_hexagon)
-                ImageViewCompat.setImageTintList(binding.imageView, ColorStateList.valueOf(ContextCompat.getColor(context, R.color.background_card_lighter)));
+                ImageViewCompat.setImageTintList(binding.imageView, ColorStateList.valueOf(ContextCompat.getColor(context, DesignR.color.background_card_lighter)));
                 if (mType == WarningType.PRO_PLAN_DAYS) {
                     binding.titleLbl.text = context?.getString(R.string.pro_prompt_plan_title, AppConfig.configuration.maxPlanWeekDaysFree)
                     binding.descriptionLbl.text = context?.getString(R.string.pro_prompt_plan_subtitle)

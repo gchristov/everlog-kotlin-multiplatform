@@ -25,6 +25,7 @@ import com.google.android.material.appbar.SubtitleCollapsingToolbarLayout
 import com.jakewharton.rxbinding.view.RxView
 import rx.Observable
 import rx.subjects.PublishSubject
+import com.everlog.android.common.design.R as DesignR
 import kotlin.math.abs
 
 open class RoutineDetailsActivity : BaseActivity(), MvpViewRoutineDetails {
@@ -145,7 +146,7 @@ open class RoutineDetailsActivity : BaseActivity(), MvpViewRoutineDetails {
     }
 
     private fun setupTopBar() {
-        binding.root.findViewById<Toolbar>(R.id.toolbar).setNavigationIcon(R.drawable.ic_back)
+        binding.root.findViewById<Toolbar>(R.id.toolbar).setNavigationIcon(DesignR.drawable.ic_back)
         setSupportActionBar(binding.root.findViewById(R.id.toolbar))
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         ActivityUtils.setupWorkoutCoverImage(binding.root.findViewById(R.id.coverImage))

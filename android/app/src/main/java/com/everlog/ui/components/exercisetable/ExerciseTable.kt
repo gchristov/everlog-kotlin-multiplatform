@@ -82,6 +82,7 @@ import com.everlog.ui.design.elements.AppText
 import com.everlog.ui.design.elements.AppThumbnail
 import com.everlog.ui.design.theme.Theme
 import com.everlog.utils.format.EmptyValue
+import com.everlog.android.common.design.R as DesignR
 import kotlin.math.roundToInt
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -588,7 +589,7 @@ private fun Tick(tag: String, done: Boolean, armed: Boolean, onClick: () -> Unit
         ) {
             AppIcon(
                 modifier = Modifier.size(TableSizes.CheckIcon),
-                imageVector = ImageVector.vectorResource(R.drawable.ic_check),
+                imageVector = ImageVector.vectorResource(DesignR.drawable.ic_check),
                 tint = when {
                     done -> Theme.contentColors.onAction
                     armed -> Theme.contentColors.action

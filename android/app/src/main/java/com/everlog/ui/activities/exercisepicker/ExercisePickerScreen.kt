@@ -62,6 +62,7 @@ import com.everlog.ui.design.elements.list.AppListItem
 import com.everlog.ui.design.elements.list.items
 import com.everlog.ui.design.elements.search.AppSearchBar
 import com.everlog.ui.design.theme.Theme
+import com.everlog.android.common.design.R as DesignR
 
 @Composable
 internal fun ExercisePickerScreen(
@@ -105,7 +106,7 @@ internal fun ExercisePickerScreen(
                         items = listOfNotNull(
                             AppMenuItem(
                                 text = stringResource(R.string.exercise_picker_create_exercise),
-                                icon = ImageVector.vectorResource(R.drawable.ic_add),
+                                icon = ImageVector.vectorResource(DesignR.drawable.ic_add),
                                 onClick = {
                                     viewModel.onCreateTapped("menu")
                                     onCreateExercise(null)

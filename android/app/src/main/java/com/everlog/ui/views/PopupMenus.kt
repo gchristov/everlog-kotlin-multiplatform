@@ -13,6 +13,7 @@ import androidx.core.content.ContextCompat
 import androidx.core.view.MenuItemCompat
 import androidx.core.view.forEach
 import com.everlog.R
+import com.everlog.android.common.design.R as DesignR
 
 /**
  * Opens a ⋮ button's menu below [anchor], the XML twin of the design system's AppMenu: styled by
@@ -25,7 +26,7 @@ fun showPopupMenu(anchor: View, build: PopupMenu.() -> Unit, onItemClick: (MenuI
     // Its end lines up with the button's, like the toolbars' menus
     val popup = PopupMenu(context, anchor, Gravity.END)
     popup.build()
-    val tint = ColorStateList.valueOf(ContextCompat.getColor(context, R.color.white_darker))
+    val tint = ColorStateList.valueOf(ContextCompat.getColor(context, DesignR.color.white_darker))
     popup.menu.forEach { MenuItemCompat.setIconTintList(it, tint) }
     popup.setOnMenuItemClickListener {
         onItemClick(it)

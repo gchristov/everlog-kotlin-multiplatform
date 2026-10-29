@@ -5,7 +5,7 @@ import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.colorResource
-import com.everlog.R
+import com.everlog.android.common.design.R as DesignR
 
 @Immutable
 data class ContentColors(
@@ -37,12 +37,12 @@ internal val LocalContentColors = staticCompositionLocalOf {
 
 @Composable
 internal fun contentColors() = ContentColors(
-    action = colorResource(R.color.main_accent),
-    actionPressed = colorResource(R.color.main_accent_darker),
-    onAction = colorResource(R.color.background_card),
-    primary = colorResource(R.color.white_darker),
-    secondary = colorResource(R.color.gray_1),
-    destructive = colorResource(R.color.remove),
-    destructiveSoft = colorResource(R.color.remove_soft),
-    warning = colorResource(R.color.warning),
+    action = colorResource(DesignR.color.main_accent),
+    actionPressed = colorResource(DesignR.color.main_accent_darker),
+    onAction = colorResource(DesignR.color.background_card),
+    primary = colorResource(DesignR.color.white_darker),
+    secondary = colorResource(DesignR.color.gray_1),
+    destructive = colorResource(DesignR.color.remove),
+    destructiveSoft = colorResource(DesignR.color.remove_soft),
+    warning = colorResource(DesignR.color.warning),
 )

@@ -33,10 +33,10 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.everlog.R
 import com.everlog.ui.design.elements.AppIcon
 import com.everlog.ui.design.elements.AppText
 import com.everlog.ui.design.theme.Theme
+import com.everlog.android.common.design.R as DesignR
 
 /**
  * A search field in a card: a search icon, then the text. It has no outline or colour change when
@@ -77,7 +77,7 @@ fun AppSearchBar(
             modifier = Modifier
                 .padding(top = SearchBarSizes.IconTop)
                 .size(SearchBarSizes.Icon),
-            imageVector = ImageVector.vectorResource(R.drawable.ic_search_white),
+            imageVector = ImageVector.vectorResource(DesignR.drawable.ic_search_white),
             tint = Theme.contentColors.secondary,
         )
         FlowRow(

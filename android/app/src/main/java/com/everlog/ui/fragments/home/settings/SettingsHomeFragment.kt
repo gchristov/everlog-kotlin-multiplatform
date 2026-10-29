@@ -28,6 +28,7 @@ import com.jakewharton.rxbinding.view.RxView
 import org.threeten.bp.DayOfWeek
 import org.threeten.bp.format.TextStyle
 import rx.Observable
+import com.everlog.android.common.design.R as DesignR
 import java.util.*
 
 class SettingsHomeFragment : BaseTabFragment(), MvpViewSettingsHome {
@@ -178,7 +179,7 @@ class SettingsHomeFragment : BaseTabFragment(), MvpViewSettingsHome {
         val paying = user.subscription?.isPro() == true
         binding.root.findViewById<View>(R.id.proBadge).visibility = if (paying) View.VISIBLE else View.GONE
         binding.root.findViewById<View>(R.id.manageProBtn).visibility = if (paying) View.VISIBLE else View.GONE
-        binding.root.findViewById<Button>(R.id.manageProBtn).setTextColor(ContextCompat.getColor(requireContext(), if (paying) R.color.main_accent else R.color.background_card))
+        binding.root.findViewById<Button>(R.id.manageProBtn).setTextColor(ContextCompat.getColor(requireContext(), if (paying) DesignR.color.main_accent else DesignR.color.background_card))
         binding.root.findViewById<Button>(R.id.manageProBtn).setBackgroundResource(if (paying) R.drawable.rounded_corners_btn_three else R.drawable.rounded_corners_btn_one)
         binding.root.findViewById<Button>(R.id.manageProBtn).setText(if (paying) R.string.settings_pro_manage else R.string.settings_pro_upgrade)
         val trialDaysLeft = user.proFreeTrialDaysRemaining()

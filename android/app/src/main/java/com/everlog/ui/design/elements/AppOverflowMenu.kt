@@ -19,9 +19,9 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
-import com.everlog.R
 import com.everlog.ui.design.elements.list.AppListItem
 import com.everlog.ui.design.theme.Theme
+import com.everlog.android.common.design.R as DesignR
 
 // One option in an [AppMenu]. [selected] ticks the current choice when the menu picks one of several,
 // e.g. a time range.
@@ -48,9 +48,9 @@ fun AppOverflowMenu(
     Box(modifier = modifier) {
         AppIconButton(
             onClick = { expanded = true },
-            icon = ImageVector.vectorResource(R.drawable.ic_more),
+            icon = ImageVector.vectorResource(DesignR.drawable.ic_more),
             tint = tint,
-            contentDescription = stringResource(R.string.more_options),
+            contentDescription = stringResource(DesignR.string.more_options),
             outlined = outlined,
         )
         AppMenu(
@@ -101,7 +101,7 @@ fun AppMenu(
                     else -> null
                 },
                 trailing = if (item.selected) {
-                    { AppIcon(imageVector = ImageVector.vectorResource(R.drawable.ic_check), tint = Theme.contentColors.action) }
+                    { AppIcon(imageVector = ImageVector.vectorResource(DesignR.drawable.ic_check), tint = Theme.contentColors.action) }
                 } else {
                     null
                 },
@@ -133,7 +133,7 @@ private fun AppMenuPreview() {
             expanded = true,
             onDismissRequest = {},
             items = listOf(
-                AppMenuItem(text = "Create an exercise", onClick = {}, icon = ImageVector.vectorResource(R.drawable.ic_add)),
+                AppMenuItem(text = "Create an exercise", onClick = {}, icon = ImageVector.vectorResource(DesignR.drawable.ic_add)),
                 AppMenuItem(text = "Send feedback", onClick = {}),
             ),
         )

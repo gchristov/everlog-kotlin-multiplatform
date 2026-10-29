@@ -27,13 +27,14 @@ import com.github.leandroborgesferreira.loadingbutton.customViews.CircularProgre
 import com.jakewharton.rxbinding.view.RxView
 import rx.Observable
 import rx.subjects.PublishSubject
+import com.everlog.android.common.design.R as DesignR
 
 class LoginActivity : BaseActivity(), MvpViewLogin {
 
     companion object {
         fun setupLoadingButton(): Bitmap {
             val d = ELApplication.getInstance().resources.getDrawable(R.drawable.ic_check_green)
-            d.setColorFilter(ContextCompat.getColor(ELApplication.getInstance(), R.color.background_base), PorterDuff.Mode.SRC_ATOP)
+            d.setColorFilter(ContextCompat.getColor(ELApplication.getInstance(), DesignR.color.background_base), PorterDuff.Mode.SRC_ATOP)
             val bitmap = Bitmap.createBitmap(d.intrinsicWidth, d.intrinsicHeight, Bitmap.Config.ARGB_8888)
             val canvas = Canvas(bitmap)
             d.setBounds(0, 0, canvas.width, canvas.height)
@@ -206,15 +207,15 @@ class LoginActivity : BaseActivity(), MvpViewLogin {
     }
 
     override fun showLoginLoading(state: LoadingState) {
-        setButtonLoading(binding.formLogin.loginBtn, state, R.color.main_accent, -1)
+        setButtonLoading(binding.formLogin.loginBtn, state, DesignR.color.main_accent, -1)
     }
 
     override fun showRegisterLoading(state: LoadingState) {
-        setButtonLoading(binding.formRegister.registerBtn, state, R.color.main_accent, -1)
+        setButtonLoading(binding.formRegister.registerBtn, state, DesignR.color.main_accent, -1)
     }
 
     override fun showGetStartedLoading(state: LoadingState) {
-        setButtonLoading(binding.formIntro.showRegisterBtn, state, R.color.main_accent, -1)
+        setButtonLoading(binding.formIntro.showRegisterBtn, state, DesignR.color.main_accent, -1)
     }
 
     override fun showLoginError(emailError: String?, passwordError: String?) {
@@ -291,7 +292,7 @@ class LoginActivity : BaseActivity(), MvpViewLogin {
     }
 
     private fun setupTopBar() {
-        binding.toolbar.setNavigationIcon(R.drawable.ic_back)
+        binding.toolbar.setNavigationIcon(DesignR.drawable.ic_back)
         binding.toolbar.setNavigationOnClickListener { onBackPressedDispatcher.onBackPressed() }
     }
 

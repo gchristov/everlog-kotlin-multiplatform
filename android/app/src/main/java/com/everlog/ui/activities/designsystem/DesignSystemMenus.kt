@@ -16,6 +16,7 @@ import com.everlog.ui.design.elements.AppMenuItem
 import com.everlog.ui.design.elements.AppOverflowMenu
 import com.everlog.ui.design.elements.list.AppListItem
 import com.everlog.ui.design.theme.Theme
+import com.everlog.android.common.design.R as DesignR
 
 // The overflow menu in the app bar, as on the exercise picker, and on a row, as on a plan's days;
 // and a chip picking one of several options, as statistics' time range
@@ -24,7 +25,7 @@ internal fun DesignSystemMenus(onButtonClick: () -> Unit) {
     val ranges = listOf("Today", "This week", "This month", "This year", "Overall")
     var range by remember { mutableStateOf("This week") }
     var rangeOpen by remember { mutableStateOf(false) }
-    val add = ImageVector.vectorResource(R.drawable.ic_add)
+    val add = ImageVector.vectorResource(DesignR.drawable.ic_add)
     val copy = ImageVector.vectorResource(R.drawable.ic_copy)
     val delete = ImageVector.vectorResource(R.drawable.ic_delete_black)
     ShowcasePage(

@@ -23,6 +23,7 @@ import com.kizitonwose.calendarview.model.DayOwner
 import com.kizitonwose.calendarview.ui.MonthHeaderFooterBinder
 import com.kizitonwose.calendarview.ui.ViewContainer
 import org.threeten.bp.LocalDate
+import com.everlog.android.common.design.R as DesignR
 import java.util.*
 import kotlin.collections.ArrayList
 
@@ -181,7 +182,7 @@ class CalendarAdapter {
                     if (isSelected()) {
                         binding.calendarDaySelected.visibility = View.VISIBLE
                         binding.calendarDayMonthText.visibility = View.VISIBLE
-                        binding.calendarDayText.setTextColor(ContextCompat.getColor(view.context, R.color.background_card))
+                        binding.calendarDayText.setTextColor(ContextCompat.getColor(view.context, DesignR.color.background_card))
                         binding.calendarDayText.setTypeface(null, Typeface.BOLD)
                     }
                 }

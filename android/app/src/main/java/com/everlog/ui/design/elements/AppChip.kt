@@ -17,8 +17,8 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.everlog.R
 import com.everlog.ui.design.theme.Theme
+import com.everlog.android.common.design.R as DesignR
 
 /**
  * A compact pill button, e.g. a row of filters to start from. [AppChipStyle.Default] is a card-coloured
@@ -59,7 +59,7 @@ fun AppChip(
         if (dropdown) {
             AppIcon(
                 modifier = Modifier.size(ChipSizes.Icon),
-                imageVector = ImageVector.vectorResource(R.drawable.ic_keyboard_down),
+                imageVector = ImageVector.vectorResource(DesignR.drawable.ic_keyboard_down),
                 tint = content,
             )
         }

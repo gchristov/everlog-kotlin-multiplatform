@@ -16,8 +16,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
-import com.everlog.R
 import com.everlog.ui.design.theme.Theme
+import com.everlog.android.common.design.R as DesignR
 
 // An image from a URL, loaded and cached by Coil
 @Composable
@@ -48,7 +48,7 @@ fun AppThumbnail(
     size: Dp = ThumbnailSizes.Size,
     corner: Dp = ThumbnailSizes.Corner,
     contentDescription: String? = null,
-    placeholder: ImageVector = ImageVector.vectorResource(R.drawable.ic_barbell),
+    placeholder: ImageVector = ImageVector.vectorResource(DesignR.drawable.ic_barbell),
 ) {
     val shape = RoundedCornerShape(corner)
     if (imageUrl != null) {

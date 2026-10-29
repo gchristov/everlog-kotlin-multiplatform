@@ -4,13 +4,13 @@ import android.app.Activity
 import android.graphics.Point
 import android.graphics.Rect
 import android.view.View
-import com.everlog.R
 import com.everlog.utils.Utils
 import com.everlog.utils.device.DeviceUtils
 import com.everlog.utils.ViewUtils
 import com.getkeepsafe.taptargetview.TapTarget
 import com.getkeepsafe.taptargetview.TapTargetSequence
 import com.getkeepsafe.taptargetview.TapTargetView
+import com.everlog.android.common.design.R as DesignR
 import java.lang.ref.WeakReference
 import java.util.*
 
@@ -155,11 +155,11 @@ abstract class BaseOnboardingController<T : Activity> constructor(context: T) {
 
     private fun styleTarget(target: TapTarget): TapTarget {
         return target
-                .outerCircleColor(R.color.main_accent)
+                .outerCircleColor(DesignR.color.main_accent)
                 .titleTextSize(24)
-                .titleTextColor(R.color.background_base)
-                .descriptionTextColor(R.color.background_base)
-                .dimColor(R.color.black_lighter)
+                .titleTextColor(DesignR.color.background_base)
+                .descriptionTextColor(DesignR.color.background_base)
+                .dimColor(DesignR.color.black_lighter)
                 .transparentTarget(true)
     }
 

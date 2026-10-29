@@ -21,7 +21,7 @@ Common modules:
 | --- | --- |
 | `common:kotlin` | Coroutines, Arrow, `Load`, logging, the app context holder |
 | `common:test` | JUnit, Truth, kotlin-test, threetenbp, shared test helpers |
-| `common:design` | Shared resources: colours, fonts, dimens, drawables, strings |
+| `common:design` | Shared resources only: colours, fonts, dimens, drawables, strings. No code unless something strictly needs it |
 | `common:compose` | The design system (theme and elements), `CommonComposeActivity`, shared components |
 | `common:compose-test` | Compose UI test dependencies, test manifest and finders |
 | `common:mvvm` | `CommonViewModel`, `ViewModelFactory` |
@@ -60,4 +60,5 @@ Each module applies one plugin for its type, from `gradle-plugins/conventions`, 
 
 1. Create `android/<path>/build.gradle.kts` with the plugin for its type and a `namespace` matching its path: `com.everlog.android.<feature>.<type>` or `com.everlog.android.common.<name>`, without dashes (`test-fixtures` becomes `testfixtures`).
 2. Include it in `settings.gradle.kts`, and depend on it through the type-safe accessors (`projects.android.exercise.data`).
-3. Code moved into the module takes the namespace as its package, except anything the system knows by its full class name: the launcher activity, services, and receivers behind pending alarms and notification intents. These keep their package and name, so an app update can't break them. Move the R8 keep rules for anything Firestore or Gson maps by reflection into the module's `consumerProguardFiles`, and check them with `./gradlew :android:app:minifyReleaseWithR8` and the mapping.
+3. Resources move with the code that uses them, and resources several modules use go to `common:design`. Each module has its own `R` class, so code reads another module's resources through that module's `R`: in Kotlin `import com.everlog.android.common.design.R as DesignR` and then `DesignR.color.main_accent`, in Java the full name. XML refers to them as before (`@color/main_accent`). A library module can't see the app's resources, so anything a moved resource refers to moves with it.
+4. Code moved into the module takes the namespace as its package, except anything the system knows by its full class name: the launcher activity, services, and receivers behind pending alarms and notification intents. These keep their package and name, so an app update can't break them. Move the R8 keep rules for anything Firestore or Gson maps by reflection into the module's `consumerProguardFiles`, and check them with `./gradlew :android:app:minifyReleaseWithR8` and the mapping.

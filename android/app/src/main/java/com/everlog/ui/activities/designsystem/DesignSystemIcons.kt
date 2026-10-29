@@ -14,6 +14,7 @@ import com.everlog.ui.design.elements.AppIconButton
 import com.everlog.ui.design.elements.AppMenuItem
 import com.everlog.ui.design.elements.AppOverflowMenu
 import com.everlog.ui.design.theme.Theme
+import com.everlog.android.common.design.R as DesignR
 
 @Composable
 internal fun DesignSystemIcons(onButtonClick: () -> Unit) {
@@ -36,16 +37,16 @@ internal fun DesignSystemIcons(onButtonClick: () -> Unit) {
 @Composable
 private fun AppIcons() {
     val icons = listOf(
-        R.drawable.ic_back,
+        DesignR.drawable.ic_back,
         R.drawable.ic_clear_white,
-        R.drawable.ic_add,
+        DesignR.drawable.ic_add,
         R.drawable.ic_remove_white,
         R.drawable.ic_edit,
         R.drawable.ic_delete,
         R.drawable.ic_share,
         R.drawable.ic_timer,
         R.drawable.ic_settings,
-        R.drawable.ic_more,
+        DesignR.drawable.ic_more,
     ).map { ImageVector.vectorResource(it) }
     Row(
         modifier = Modifier.fillMaxWidth(),
@@ -82,13 +83,13 @@ private fun IconButtons(onButtonClick: () -> Unit) {
     Row(horizontalArrangement = Arrangement.spacedBy(Theme.spacing.small)) {
         AppIconButton(
             onClick = onButtonClick,
-            icon = ImageVector.vectorResource(R.drawable.ic_add),
+            icon = ImageVector.vectorResource(DesignR.drawable.ic_add),
             tint = Theme.contentColors.action,
             contentDescription = "Add",
         )
         AppIconButton(
             onClick = onButtonClick,
-            icon = ImageVector.vectorResource(R.drawable.ic_add),
+            icon = ImageVector.vectorResource(DesignR.drawable.ic_add),
             tint = Theme.contentColors.action,
             contentDescription = "Add",
             enabled = false,

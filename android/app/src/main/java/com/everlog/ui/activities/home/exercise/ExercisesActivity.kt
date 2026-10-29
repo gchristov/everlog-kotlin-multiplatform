@@ -23,6 +23,7 @@ import com.facebook.shimmer.ShimmerFrameLayout
 import com.jakewharton.rxbinding.view.RxView
 import rx.Observable
 import rx.subjects.PublishSubject
+import com.everlog.android.common.design.R as DesignR
 
 class ExercisesActivity : BaseSearchActivity(), MvpViewExercises {
 
@@ -184,7 +185,7 @@ class ExercisesActivity : BaseSearchActivity(), MvpViewExercises {
             binding.emptyView.setTitle(getString(if (searchText.isEmpty()) R.string.exercises_empty_title else R.string.exercises_empty_search, searchText))
             binding.emptyView.setSubtitle(-1)
         } else {
-            binding.emptyView.setImage(R.drawable.ic_barbell)
+            binding.emptyView.setImage(DesignR.drawable.ic_barbell)
             binding.emptyView.setTitle(R.string.exercises_empty_title)
             binding.emptyView.setSubtitle(R.string.exercises_empty_subtitle)
         }

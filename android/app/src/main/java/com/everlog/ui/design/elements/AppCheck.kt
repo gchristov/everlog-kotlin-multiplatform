@@ -16,8 +16,8 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.everlog.R
 import com.everlog.ui.design.theme.Theme
+import com.everlog.android.common.design.R as DesignR
 
 /**
  * Whether a row is picked, at the end of the row: an empty ring, or filled in the accent with a tick.
@@ -39,7 +39,7 @@ fun AppCheck(
         if (checked) {
             AppIcon(
                 modifier = Modifier.size(CheckSizes.Tick),
-                imageVector = ImageVector.vectorResource(R.drawable.ic_check),
+                imageVector = ImageVector.vectorResource(DesignR.drawable.ic_check),
                 tint = Theme.contentColors.onAction,
             )
         }

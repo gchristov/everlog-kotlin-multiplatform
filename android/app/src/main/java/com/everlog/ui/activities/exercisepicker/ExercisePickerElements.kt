@@ -56,6 +56,7 @@ import dev.chrisbanes.haze.HazeStyle
 import dev.chrisbanes.haze.HazeTint
 import dev.chrisbanes.haze.hazeEffect
 import dev.chrisbanes.haze.hazeSource
+import com.everlog.android.common.design.R as DesignR
 
 // The picker's own pieces, around the design system's (AppSearchBar, AppChip, AppCheck,
 // AppThumbnail): the filter tokens in the search bar, the menu under it, and the loading skeleton.
@@ -343,7 +344,7 @@ private fun PickBox(picked: Boolean) {
         contentAlignment = Alignment.Center,
     ) {
         if (picked) {
-            AppIcon(modifier = Modifier.size(PickerSizes.Tick), imageVector = ImageVector.vectorResource(R.drawable.ic_check), tint = Theme.contentColors.onAction)
+            AppIcon(modifier = Modifier.size(PickerSizes.Tick), imageVector = ImageVector.vectorResource(DesignR.drawable.ic_check), tint = Theme.contentColors.onAction)
         }
     }
 }
@@ -353,7 +354,7 @@ private fun PickBox(picked: Boolean) {
 internal fun ShowAllChevron(expanded: Boolean) {
     AppIcon(
         modifier = Modifier.rotate(if (expanded) 180f else 0f),
-        imageVector = ImageVector.vectorResource(R.drawable.ic_keyboard_down),
+        imageVector = ImageVector.vectorResource(DesignR.drawable.ic_keyboard_down),
         tint = Theme.contentColors.action,
     )
 }

@@ -61,6 +61,7 @@ android {
 }
 
 dependencies {
+    implementation(projects.android.common.design)
     implementation(projects.android.common.kotlin)
     implementation(projects.android.common.mvp)
     implementation(projects.android.auth.feature)

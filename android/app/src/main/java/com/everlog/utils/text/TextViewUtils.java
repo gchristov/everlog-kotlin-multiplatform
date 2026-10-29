@@ -39,7 +39,7 @@ public class TextViewUtils {
                                           int start,
                                           int end) {
         Spannable spannedTitle = new SpannableString(text);
-        spannedTitle.setSpan(new ForegroundColorSpan(ContextCompat.getColor(textView.getContext(), R.color.main_accent)), start, end, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+        spannedTitle.setSpan(new ForegroundColorSpan(ContextCompat.getColor(textView.getContext(), com.everlog.android.common.design.R.color.main_accent)), start, end, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
         spannedTitle.setSpan(new UnderlineSpan(), start, end, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
         textView.setText(spannedTitle);
     }

@@ -21,6 +21,7 @@ import androidx.compose.ui.Modifier
 import com.everlog.ui.design.theme.Theme
 import dev.chrisbanes.haze.HazeState
 import dev.chrisbanes.haze.hazeSource
+import com.everlog.android.common.design.R as DesignR
 
 /**
  * On tablets the content and the footer's actions are capped at [content_width_tablet] and centred,
@@ -42,7 +43,7 @@ fun AppScreen(
 ) {
     val hazeState = remember { HazeState() }
     val maxContentWidth = if (booleanResource(R.bool.isTablet)) {
-        dimensionResource(R.dimen.content_width_tablet)
+        dimensionResource(DesignR.dimen.content_width_tablet)
     } else {
         Dp.Unspecified
     }

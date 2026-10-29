@@ -25,6 +25,7 @@ import com.github.mikephil.charting.components.YAxis
 import com.jakewharton.rxbinding.view.RxView
 import rx.Observable
 import rx.subjects.PublishSubject
+import com.everlog.android.common.design.R as DesignR
 
 class ExerciseStatisticsFragment(exercise: ELExercise,
                                  stats: ExerciseStatsController.StatsResult?,
@@ -160,7 +161,7 @@ class ExerciseStatisticsFragment(exercise: ELExercise,
     private fun setupRangeSpinner() {
         val adapter = ArrayAdapter.createFromResource(requireContext(), R.array.statistics_durations_titles, R.layout.view_spinner_row_statistics)
         adapter.setDropDownViewResource(R.layout.view_spinner_row_dropdown)
-        binding.rangeSpinner.background?.setColorFilter(ContextCompat.getColor(requireContext(), R.color.main_accent), PorterDuff.Mode.SRC_ATOP)
+        binding.rangeSpinner.background?.setColorFilter(ContextCompat.getColor(requireContext(), DesignR.color.main_accent), PorterDuff.Mode.SRC_ATOP)
         binding.rangeSpinner.adapter = adapter
     }
 }

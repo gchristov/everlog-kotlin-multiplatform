@@ -11,7 +11,6 @@ import androidx.activity.addCallback
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
-import com.everlog.R
 import com.everlog.managers.analytics.AnalyticsManager
 import com.everlog.ui.dialog.DialogBuilder
 import com.everlog.ui.dialog.DialogBuilder.AppBlockerDialogType
@@ -22,6 +21,7 @@ import com.everlog.utils.input.KeyboardUtils
 import com.facebook.shimmer.Shimmer.ColorHighlightBuilder
 import com.facebook.shimmer.ShimmerFrameLayout
 import rx.Observable
+import com.everlog.android.common.design.R as DesignR
 
 abstract class BaseActivity : AppCompatActivity(), BaseActivityMvpView {
 
@@ -55,7 +55,7 @@ abstract class BaseActivity : AppCompatActivity(), BaseActivityMvpView {
         fun toggleShimmerLayout(layout: ShimmerFrameLayout?,
                                 show: Boolean,
                                 affectVisibility: Boolean) {
-            toggleShimmerLayout(layout, show, affectVisibility, R.color.background_card)
+            toggleShimmerLayout(layout, show, affectVisibility, DesignR.color.background_card)
         }
 
         @JvmStatic
