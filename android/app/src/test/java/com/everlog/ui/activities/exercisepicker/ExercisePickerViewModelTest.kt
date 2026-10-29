@@ -1,11 +1,11 @@
 package com.everlog.ui.activities.exercisepicker
 
 import androidx.lifecycle.SavedStateHandle
+import com.everlog.android.common.test.FakeCoroutineDispatcher
 import com.everlog.data.controllers.exerciselibrary.LoadExerciseLibraryUseCase
 import com.everlog.data.model.exercise.library.ExerciseLibrary
 import com.everlog.data.model.exercise.library.LibraryExercise
 import com.everlog.data.model.set.ELSetType
-import com.everlog.android.common.test.FakeCoroutineDispatcher
 import com.everlog.testutil.LibraryFixtures
 import com.everlog.testutil.LibraryFixtures.barbellBench
 import com.everlog.testutil.LibraryFixtures.barbellRow
