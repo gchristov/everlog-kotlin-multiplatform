@@ -27,6 +27,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.compose.LifecycleResumeEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.everlog.R
+import com.everlog.android.common.compose.CommonComposeActivity
 import com.everlog.android.common.compose.elements.AppBarScrollBehavior
 import com.everlog.android.common.compose.elements.AppDialog
 import com.everlog.android.common.compose.elements.AppDialogAction
@@ -40,7 +41,6 @@ import com.everlog.data.repositories.RealExerciseRepository
 import com.everlog.data.sync.AppDataSync
 import com.everlog.data.repositories.RealRoutineRepository
 import com.everlog.managers.preferences.SettingsManager
-import com.everlog.ui.activities.base.CommonComposeActivity
 import com.everlog.ui.activities.home.routine.create.CreateRoutineActivity
 import com.everlog.ui.activities.templateeditor.TemplateEditorActivity
 import kotlinx.coroutines.Dispatchers

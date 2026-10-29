@@ -17,7 +17,7 @@ import com.everlog.data.repositories.RealOngoingPlanRepository
 import com.everlog.data.repositories.RealRoutineRepository
 import com.everlog.data.sync.AppDataSync
 import com.everlog.managers.RemoteConfigManager
-import com.everlog.ui.activities.base.CommonComposeActivity
+import com.everlog.ui.activities.base.SignedInComposeActivity
 import com.everlog.ui.activities.home.exercise.details.ExerciseDetailsActivity
 import com.everlog.ui.activities.home.routine.create.CreateRoutineActivity
 import com.everlog.ui.components.exercisetable.ExerciseTab
@@ -28,7 +28,7 @@ import kotlinx.coroutines.Dispatchers
  * The template editor in Compose, while Remote Config's template_editor_v2 is on ([editIntent]). It reads the
  * template by its uuid rather than taking it in the intent, which a big template could outgrow.
  */
-class TemplateEditorActivity : CommonComposeActivity() {
+class TemplateEditorActivity : SignedInComposeActivity() {
     private val viewModel by viewModels<TemplateEditorViewModel> {
         viewModelFactory {
             initializer {
@@ -46,8 +46,6 @@ class TemplateEditorActivity : CommonComposeActivity() {
             }
         }
     }
-
-    override val requiresUser = true
 
     @Composable
     override fun Content() = TemplateEditorScreen(

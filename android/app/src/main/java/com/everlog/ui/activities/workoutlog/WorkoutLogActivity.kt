@@ -24,7 +24,7 @@ import com.everlog.data.repositories.RealExerciseRepository
 import com.everlog.data.repositories.RealWorkoutRepository
 import com.everlog.data.sync.AppDataSync
 import com.everlog.data.repositories.RealOngoingWorkoutRepository
-import com.everlog.ui.activities.base.CommonComposeActivity
+import com.everlog.ui.activities.base.SignedInComposeActivity
 import com.everlog.ui.activities.home.exercise.details.ExerciseDetailsActivity
 import com.everlog.ui.components.exercisetable.ExerciseTab
 import com.everlog.ui.navigator.ELNavigator
@@ -34,7 +34,7 @@ import com.everlog.ui.navigator.feedbackFormLauncher
 /**
  * For workouts started while Remote Config's workout_screen_v2 is on (ELNavigator.workoutActivity).
  */
-class WorkoutLogActivity : CommonComposeActivity() {
+class WorkoutLogActivity : SignedInComposeActivity() {
     private val viewModel by viewModels<WorkoutLogViewModel> {
         viewModelFactory {
             initializer {
@@ -61,7 +61,6 @@ class WorkoutLogActivity : CommonComposeActivity() {
     }
 
     override val requiredExtras = listOf(ELConstants.EXTRA_WORKOUT)
-    override val requiresUser = true
 
     private val notificationReceiver by lazy { WorkoutLogNotificationReceiver(viewModel) }
 

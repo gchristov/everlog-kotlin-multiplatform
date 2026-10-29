@@ -14,6 +14,9 @@ dependencies {
     implementation(projects.android.common.compose)
     api(platform(libs.androidx.compose.bom))
     api(libs.androidx.compose.ui.test.junit4)
+    api(libs.androidx.test.runner)
+    api(libs.androidx.test.ext.junit)
+    api(libs.truth)
     // Gives Compose tests an activity to host their content in
     debugApi(libs.androidx.compose.ui.test.manifest)
 }

@@ -9,6 +9,7 @@ import androidx.lifecycle.createSavedStateHandle
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import com.everlog.R
+import com.everlog.android.common.compose.CommonComposeActivity
 import com.everlog.config.AppConfig
 import com.everlog.config.FeedbackSource
 import com.everlog.constants.ELActivityRequestCodes
@@ -20,7 +21,6 @@ import com.everlog.data.repositories.RealExerciseRepository
 import com.everlog.data.sync.AppDataSync
 import com.everlog.data.repositories.RealRoutineRepository
 import com.everlog.data.repositories.RealWorkoutRepository
-import com.everlog.ui.activities.base.CommonComposeActivity
 import com.everlog.ui.activities.home.exercise.details.ExerciseDetailsActivity
 import com.everlog.ui.navigator.ELNavigator
 import com.everlog.ui.navigator.feedbackFormLauncher
