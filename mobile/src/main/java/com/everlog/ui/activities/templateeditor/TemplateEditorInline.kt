@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -87,6 +88,9 @@ private object InlineSizes {
     val ThumbnailCorner = 12.dp
     val GroupThumbnail = 24.dp
     val GroupThumbnailCorner = 8.dp
+    val GroupRowGap = 6.dp
+    val Badge = 16.dp
+    val BadgeOffset = 3.dp
     val Grip = 40.dp
     val RowHeight = 52.dp
     val RowPadding = 12.dp
@@ -278,9 +282,13 @@ private fun CardHeader(
         modifier = Modifier.padding(horizontal = InlineSizes.RowPadding, vertical = if (collapsed) Theme.spacing.small else 0.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        Column(modifier = Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(Theme.spacing.small)) {
+        Column(modifier = Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(if (group) InlineSizes.GroupRowGap else 0.dp)) {
             if (group) {
-                Row(verticalAlignment = Alignment.CenterVertically) {
+                // Lined up with the names, past the images
+                Row(
+                    modifier = Modifier.padding(start = if (collapsed) 0.dp else InlineSizes.GroupThumbnail + Theme.spacing.medium),
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
                     AppText(
                         modifier = Modifier
                             .clip(Theme.shapes.button)
@@ -312,17 +320,15 @@ private fun CardHeader(
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.spacedBy(Theme.spacing.medium),
                 ) {
-                    if (!collapsed) {
-                        AppThumbnail(
-                            imageUrl = exercise.exercise?.imageUrl,
-                            size = if (group) InlineSizes.GroupThumbnail else InlineSizes.Thumbnail,
-                            corner = if (group) InlineSizes.GroupThumbnailCorner else InlineSizes.ThumbnailCorner,
-                        )
+                    when {
+                        collapsed -> Unit
+                        group -> LetteredThumbnail(exercise.exercise?.imageUrl, 'a' + i)
+                        else -> AppThumbnail(imageUrl = exercise.exercise?.imageUrl, size = InlineSizes.Thumbnail, corner = InlineSizes.ThumbnailCorner)
                     }
                     AppText(
-                        text = (if (group) "${'a' + i}  " else "") + exercise.exercise?.name.orEmpty(),
+                        text = (if (group && collapsed) "${'a' + i}  " else "") + exercise.exercise?.name.orEmpty(),
                         style = Theme.typography.bodyBold,
-                        maxLines = if (collapsed) 1 else 2,
+                        maxLines = if (collapsed || group) 1 else 2,
                         overflow = TextOverflow.Ellipsis,
                     )
                 }
@@ -336,6 +342,25 @@ private fun CardHeader(
                     AppMenuItem(text = if (exercises.size == 1) "History" else "History: ${exercise.name.orEmpty()}", onClick = { onOpenExercise(exercise, ExerciseTab.History) })
                 } + AppMenuItem(text = if (block.exercises.size > 1) "Delete group" else "Delete exercise", onClick = { viewModel.onDeleteExercise(block.id) }),
             )
+        }
+    }
+}
+
+// As the workout's group header: a small image with the exercise's letter on its corner
+@Composable
+private fun LetteredThumbnail(imageUrl: String?, letter: Char) {
+    Box {
+        AppThumbnail(imageUrl = imageUrl, size = InlineSizes.GroupThumbnail, corner = InlineSizes.GroupThumbnailCorner)
+        Box(
+            modifier = Modifier
+                .align(Alignment.BottomEnd)
+                .offset(x = InlineSizes.BadgeOffset, y = InlineSizes.BadgeOffset)
+                .size(InlineSizes.Badge)
+                .background(Theme.backgrounds.primary, CircleShape)
+                .border(1.dp, Theme.backgrounds.separator, CircleShape),
+            contentAlignment = Alignment.Center,
+        ) {
+            AppText(text = letter.toString(), style = Theme.typography.small, color = Theme.contentColors.primary)
         }
     }
 }
