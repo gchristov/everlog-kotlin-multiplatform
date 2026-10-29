@@ -371,7 +371,11 @@ private fun keypadEntry(state: TemplateEditorState, viewModel: TemplateEditorVie
 @Composable
 private fun Messages(state: TemplateEditorState, viewModel: TemplateEditorViewModel, modifier: Modifier) {
     val snackbar = remember { SnackbarHostState() }
-    val deleted = stringResource(R.string.workout_log_set_deleted)
+    // Deleting an exercise's last set deletes the exercise, or takes it out of its superset
+    val exerciseGone = state.deletion?.let { deleted ->
+        (state.blocks.firstOrNull { it.id == deleted.block.id }?.exercises?.size ?: 0) < deleted.block.exercises.size
+    } == true
+    val deleted = stringResource(if (exerciseGone) R.string.template_editor_exercise_deleted else R.string.workout_log_set_deleted)
     val undo = stringResource(R.string.workout_log_undo)
     LaunchedEffect(state.deletion) {
         if (state.deletion == null) {
