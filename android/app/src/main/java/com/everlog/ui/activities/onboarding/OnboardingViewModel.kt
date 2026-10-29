@@ -1,11 +1,11 @@
 package com.everlog.ui.activities.onboarding
 
+import com.everlog.android.common.mvvm.CommonViewModel
 import com.everlog.data.controllers.starterroutines.BuildStarterRoutinesUseCase
 import com.everlog.data.controllers.starterroutines.SaveStarterRoutinesUseCase
 import com.everlog.data.model.ELRoutine
 import com.everlog.managers.analytics.AnalyticsConstants
 import com.everlog.managers.preferences.SettingsManager
-import com.everlog.ui.mvvm.CommonViewModel
 import kotlinx.coroutines.CoroutineDispatcher
 import org.threeten.bp.DayOfWeek
 import timber.log.Timber

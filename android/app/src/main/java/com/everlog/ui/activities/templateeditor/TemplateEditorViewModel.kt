@@ -1,6 +1,7 @@
 package com.everlog.ui.activities.templateeditor
 
 import com.everlog.android.common.kotlin.Load
+import com.everlog.android.common.mvvm.CommonViewModel
 import com.everlog.config.AppConfig
 import com.everlog.data.controllers.templatesession.LoadTemplateUseCase
 import com.everlog.data.controllers.templatesession.SaveTemplateUseCase
@@ -34,7 +35,6 @@ import com.everlog.ui.components.exercisetable.parse
 import com.everlog.ui.components.exercisetable.steppedValue
 import com.everlog.ui.components.exercisetable.typedAfterBackspace
 import com.everlog.ui.components.exercisetable.typedAfterKey
-import com.everlog.ui.mvvm.CommonViewModel
 import java.util.UUID
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Job
