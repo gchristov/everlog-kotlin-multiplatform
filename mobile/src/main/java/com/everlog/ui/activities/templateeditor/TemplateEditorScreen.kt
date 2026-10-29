@@ -129,7 +129,7 @@ internal fun TemplateEditorScreen(
     val empty = state.blocks.isEmpty()
 
     AppScreen(
-        topBar = { Header(state, viewModel, prototype.compact) },
+        topBar = { Header(state, viewModel, prototype.compact, editList = !prototype.inline) },
         footer = {
             if (state.editing) {
                 EditFooter(state, viewModel, onAddExercise)
@@ -182,6 +182,14 @@ internal fun TemplateEditorScreen(
                             contentPadding = PaddingValues(bottom = contentPadding.calculateBottomPadding()),
                         )
                     }
+                } else if (prototype.inline) {
+                    InlineTemplateList(
+                        state = state,
+                        viewModel = viewModel,
+                        contentPadding = contentPadding,
+                        header = { if (!prototype.compact) TemplateSettings(state, viewModel, Modifier) },
+                        onOpenExercise = onOpenExercise,
+                    )
                 } else if (prototype.setsAndReps) {
                     SetsAndRepsList(
                         state = state,
@@ -217,7 +225,7 @@ internal fun TemplateEditorScreen(
 }
 
 @Composable
-private fun Header(state: TemplateEditorState, viewModel: TemplateEditorViewModel, compact: Boolean) {
+private fun Header(state: TemplateEditorState, viewModel: TemplateEditorViewModel, compact: Boolean, editList: Boolean) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -258,7 +266,7 @@ private fun Header(state: TemplateEditorState, viewModel: TemplateEditorViewMode
                 maxLines = 1,
             )
         }
-        if (state.load == TemplateLoad.Ready && state.blocks.isNotEmpty() && !state.editing) {
+        if (editList && state.load == TemplateLoad.Ready && state.blocks.isNotEmpty() && !state.editing) {
             AppIconButton(
                 onClick = viewModel::onEditList,
                 icon = ImageVector.vectorResource(R.drawable.ic_drag),

@@ -51,7 +51,7 @@ class SettingsHomeFragment : BaseTabFragment(), MvpViewSettingsHome {
             .setTitle("Template editor prototype")
             .setMultiChoiceItems(TemplateEditorPrototype.Labels, checked) { _, which, isChecked -> checked[which] = isChecked }
             .setPositiveButton("Save") { _, _ ->
-                TemplateEditorPrototype.write(requireContext(), TemplateEditorPrototype(lastTime = checked[0], setsAndReps = checked[1], compact = checked[2]))
+                TemplateEditorPrototype.write(requireContext(), TemplateEditorPrototype(lastTime = checked[0], setsAndReps = checked[1], compact = checked[2], inline = checked[3]))
             }
             .setNegativeButton("Cancel", null)
             .show()

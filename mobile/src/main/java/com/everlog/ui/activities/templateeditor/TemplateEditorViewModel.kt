@@ -138,6 +138,40 @@ internal class TemplateEditorViewModel(
         change { copy(blocks = blocks.withSummary(field, value, ids), typed = text, reveal = reveal + 1) }
     }
 
+    // Prototype: controls on screen
+
+    // Joins an exercise (or group) with the one after it: a superset of two, a circuit of more, or the group's own
+    // type when it can take them all
+    fun onJoinWithNext(blockId: Long) {
+        finishTyping()
+        val blocks = state.value.blocks
+        val at = blocks.indexOfFirst { it.id == blockId }
+        val first = blocks.getOrNull(at) ?: return
+        val next = blocks.getOrNull(at + 1) ?: return
+        val picked = listOf(first, next).flatMap { block -> block.exercises.indices.map { ExerciseRef(block.id, it) } }
+        val type = first.setType?.takeIf { first.exercises.size > 1 && it.canBeSelected(picked.size) }
+            ?: if (picked.size == 2) ELSetType.SUPER else ELSetType.CIRCUIT
+        change { focusOn(null).copy(blocks = blocks.groupExercises(picked, type, ids)).withoutGoneSets() }
+    }
+
+    fun onSplitGroup(blockId: Long) {
+        finishTyping()
+        val block = state.value.blocks.block(blockId) ?: return
+        val picked = block.exercises.indices.drop(1).map { ExerciseRef(blockId, it) }
+        change { focusOn(null).copy(blocks = blocks.ungroupExercises(picked, ids)).withoutGoneSets() }
+    }
+
+    fun onGroupTypeTapped(blockId: Long) {
+        val block = state.value.blocks.block(blockId) ?: return
+        finishTyping()
+        setState { focusOn(null).copy(picked = block.exercises.indices.map { ExerciseRef(blockId, it) }.toSet(), dialog = TemplateEditorDialog.SetType) }
+    }
+
+    fun onDragStarted() {
+        finishTyping()
+        setState { focusOn(null) }
+    }
+
     fun onRetry() {
         load(uuid ?: return)
     }

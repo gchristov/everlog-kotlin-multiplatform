@@ -14,15 +14,17 @@ internal data class TemplateEditorPrototype(
     val setsAndReps: Boolean = false,
     // The name and rest in the header, and shorter rows
     val compact: Boolean = false,
+    // Every control on screen: reps beside each set's number, a delete per set, a grip per exercise, links between
+    val inline: Boolean = false,
 ) {
     companion object {
         private const val Prefs = "template_editor_prototype"
-        val Labels = arrayOf("Last time column", "Sets × reps layout", "Compact header and rows")
+        val Labels = arrayOf("Last time column", "Sets × reps layout", "Compact header and rows", "Controls on screen")
 
         fun read(context: Context): TemplateEditorPrototype {
             if (!BuildConfig.DEBUG) return TemplateEditorPrototype()
             val prefs = context.getSharedPreferences(Prefs, Context.MODE_PRIVATE)
-            return TemplateEditorPrototype(prefs.getBoolean("lastTime", false), prefs.getBoolean("setsAndReps", false), prefs.getBoolean("compact", false))
+            return TemplateEditorPrototype(prefs.getBoolean("lastTime", false), prefs.getBoolean("setsAndReps", false), prefs.getBoolean("compact", false), prefs.getBoolean("inline", true))
         }
 
         fun write(context: Context, options: TemplateEditorPrototype) {
@@ -30,9 +32,10 @@ internal data class TemplateEditorPrototype(
                 .putBoolean("lastTime", options.lastTime)
                 .putBoolean("setsAndReps", options.setsAndReps)
                 .putBoolean("compact", options.compact)
+                .putBoolean("inline", options.inline)
                 .apply()
         }
     }
 
-    fun checked() = booleanArrayOf(lastTime, setsAndReps, compact)
+    fun checked() = booleanArrayOf(lastTime, setsAndReps, compact, inline)
 }
