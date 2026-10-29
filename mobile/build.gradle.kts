@@ -5,7 +5,6 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
-    alias(libs.plugins.ksp)
     alias(libs.plugins.google.services)
     alias(libs.plugins.firebase.crashlytics)
     alias(libs.plugins.firebase.perf)
@@ -36,7 +35,6 @@ android {
     buildFeatures {
         buildConfig = true
         viewBinding = true
-        dataBinding = true
         compose = true
     }
 
@@ -160,8 +158,6 @@ dependencies {
     implementation(libs.rxjava)
     implementation(libs.rxbinding)
 
-    implementation(libs.kotlin.stdlib)
-
     implementation(libs.shimmer)
 
     implementation(libs.retrofit)
@@ -178,7 +174,6 @@ dependencies {
     implementation(libs.loading.button)
 
     implementation(libs.mpandroidchart)
-    implementation(libs.nineoldandroids)
     implementation(libs.roundedimageview)
     implementation(libs.threetenabp)
     implementation(libs.materialnumberpicker)
