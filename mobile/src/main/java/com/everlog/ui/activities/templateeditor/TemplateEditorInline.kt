@@ -101,7 +101,6 @@ private object InlineSizes {
     // The exercise image's size, as the outlined icon buttons
     val Grip = 40.dp
     val GripGap = 8.dp
-    val CollapsedGap = 8.dp
     // The card and its labels and buttons, past the grip
     val Indent = Grip + GripGap
     val RowHeight = 52.dp
@@ -375,7 +374,7 @@ private fun CardHeader(
     val context = LocalContext.current
     val group = block.exercises.size > 1
     Row(
-        modifier = Modifier.padding(vertical = if (collapsed) InlineSizes.CollapsedGap / 2 else 0.dp),
+        modifier = Modifier,
         verticalAlignment = Alignment.CenterVertically,
     ) {
         // Left of the card, beside the last exercise as the workout's exercise menu is
@@ -401,7 +400,9 @@ private fun CardHeader(
                             .clip(shape)
                             .background(Theme.backgrounds.surfaceRaised)
                             .border(1.dp, Theme.contentColors.action, shape)
-                        collapsed -> Modifier.border(1.dp, Theme.backgrounds.separator, shape)
+                        collapsed -> Modifier
+                            .clip(shape)
+                            .background(Theme.backgrounds.surface)
                         else -> Modifier
                     },
                 )
