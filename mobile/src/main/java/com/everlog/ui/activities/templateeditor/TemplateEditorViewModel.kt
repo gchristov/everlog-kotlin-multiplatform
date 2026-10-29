@@ -15,8 +15,8 @@ import com.everlog.data.controllers.workoutsession.SetMode
 import com.everlog.data.controllers.workoutsession.SetRef
 import com.everlog.data.controllers.workoutsession.addRound
 import com.everlog.data.controllers.workoutsession.block
-import com.everlog.data.controllers.workoutsession.moveBlock
 import com.everlog.data.controllers.workoutsession.deleteSet
+import com.everlog.data.controllers.workoutsession.moveBlock
 import com.everlog.data.controllers.workoutsession.refs
 import com.everlog.data.controllers.workoutsession.restore
 import com.everlog.data.controllers.workoutsession.set

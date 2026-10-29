@@ -204,7 +204,9 @@ private fun keypadEntry(state: TemplateEditorState, viewModel: TemplateEditorVie
 @Composable
 private fun Messages(state: TemplateEditorState, viewModel: TemplateEditorViewModel, modifier: Modifier) {
     val snackbar = remember { SnackbarHostState() }
-    val deleted = stringResource(if (state.deletionRemovedExercise()) R.string.template_editor_exercise_deleted else R.string.workout_log_set_deleted)
+    val deleted = stringResource(
+        if (state.deletionRemovedExercise()) R.string.template_editor_exercise_deleted else R.string.workout_log_set_deleted,
+    )
     val undo = stringResource(R.string.workout_log_undo)
     LaunchedEffect(state.deletion) {
         if (state.deletion == null) {
