@@ -35,9 +35,9 @@ runs:
       run: |
         set -Eeuo pipefail
         if [ "${{ inputs.buildType }}" == "release" ]; then
-          TASK=":mobile:bundleRelease :mobile:uploadCrashlyticsSymbolFileRelease"
+          TASK=":android:app:bundleRelease :android:app:uploadCrashlyticsSymbolFileRelease"
         else
-          TASK=":mobile:assembleDebug"
+          TASK=":android:app:assembleDebug"
         fi
         ./gradlew $TASK \
           ${ciVersionCode:+-PciVersionCode=$ciVersionCode} \

@@ -6,7 +6,7 @@ import os
 import re
 from collections import defaultdict
 
-STARTER_EXERCISES = 'mobile/src/main/java/com/everlog/data/controllers/starterroutines/StarterExercises.kt'
+STARTER_EXERCISES = 'android/app/src/main/java/com/everlog/data/controllers/starterroutines/StarterExercises.kt'
 LEGACY_CATEGORIES = {'CHEST', 'BACK', 'LEGS', 'SHOULDERS', 'ARMS', 'ABS'}
 STATUSES = {'active', 'hidden'}
 ID = re.compile(r'^[a-z][a-z0-9_]*$')
