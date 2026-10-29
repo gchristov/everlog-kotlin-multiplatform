@@ -9,16 +9,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
 import com.everlog.R
 import com.everlog.ui.design.elements.AppIcon
 import com.everlog.ui.design.theme.Theme
-
-// Softer than the destructive red, for a bin on every row
-private val Coral = Color(0xFFF07A6A)
 
 private object InsetDeleteSizes {
     // A selected value box's height
@@ -45,7 +41,7 @@ internal fun InsetDeleteButton(onClick: () -> Unit, contentDescription: String, 
         AppIcon(
             modifier = Modifier.size(InsetDeleteSizes.Icon),
             imageVector = ImageVector.vectorResource(R.drawable.ic_delete),
-            tint = Coral,
+            tint = Theme.contentColors.destructiveSoft,
             contentDescription = contentDescription,
         )
     }

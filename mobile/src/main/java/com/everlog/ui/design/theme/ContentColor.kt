@@ -16,6 +16,8 @@ data class ContentColors(
     val primary: Color,
     val secondary: Color,
     val destructive: Color,
+    // A quieter destructive, for a delete repeated on every row, e.g. a set's bin
+    val destructiveSoft: Color,
     // Something to keep an eye on, e.g. a rest counting down
     val warning: Color,
 )
@@ -28,6 +30,7 @@ internal val LocalContentColors = staticCompositionLocalOf {
         primary = Color.Unspecified,
         secondary = Color.Unspecified,
         destructive = Color.Unspecified,
+        destructiveSoft = Color.Unspecified,
         warning = Color.Unspecified,
     )
 }
@@ -40,5 +43,6 @@ internal fun contentColors() = ContentColors(
     primary = colorResource(R.color.white_darker),
     secondary = colorResource(R.color.gray_1),
     destructive = colorResource(R.color.remove),
+    destructiveSoft = colorResource(R.color.remove_soft),
     warning = colorResource(R.color.warning),
 )
