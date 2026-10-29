@@ -77,7 +77,7 @@ public class ExerciseImageView extends LinearLayout {
             if (!TextUtils.isEmpty(exercise.getName()) && mShowLetter) {
                 mImageView.setImageDrawable(TextDrawable.builder()
                         .beginConfig()
-                        .textColor(ContextCompat.getColor(getContext(), R.color.background_base))
+                        .textColor(ContextCompat.getColor(getContext(), com.everlog.android.common.design.R.color.background_base))
                         .endConfig()
                         .buildRect(exercise.getFirstChar(), Color.WHITE));
             }
@@ -92,7 +92,7 @@ public class ExerciseImageView extends LinearLayout {
         if (!TextUtils.isEmpty(exercise.getName()) && mShowLetter) {
             mImageView.setImageDrawable(TextDrawable.builder()
                     .beginConfig()
-                    .textColor(ContextCompat.getColor(getContext(), R.color.background_base))
+                    .textColor(ContextCompat.getColor(getContext(), com.everlog.android.common.design.R.color.background_base))
                     .endConfig()
                     .buildRect(exercise.getFirstChar(), Color.WHITE));
         }

@@ -61,7 +61,7 @@ public class TaskDialog {
         View tv1 = dialog.findViewById(android.R.id.message);
         if (tv1 != null) {
             TextView message = (TextView) tv1;
-            message.setTextColor(ContextCompat.getColor(dialog.getContext(), R.color.black_lighter));
+            message.setTextColor(ContextCompat.getColor(dialog.getContext(), com.everlog.android.common.design.R.color.black_lighter));
         }
     }
 

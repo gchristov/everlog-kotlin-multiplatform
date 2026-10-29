@@ -27,6 +27,7 @@ import com.everlog.ui.design.elements.keypad.AppKeypadToggle
 import com.everlog.ui.design.elements.list.AppListItem
 import com.everlog.ui.design.theme.Theme
 import kotlinx.coroutines.delay
+import com.everlog.android.common.design.R as DesignR
 
 // The keypad docked at the bottom, as the workout screen has it. Tap a value to type into it; Next moves to the
 // other. The strips can be switched on to see them above the keys or the closed controls, and Empty shows it with
@@ -87,7 +88,7 @@ internal fun DesignSystemKeypad(onButtonClick: () -> Unit) {
                                 typing = false
                             }
                         } else {
-                            AppKeypadAction(if (timed) "Start timer" else "Complete set", icon = ImageVector.vectorResource(if (timed) R.drawable.ic_timer else R.drawable.ic_check)) {
+                            AppKeypadAction(if (timed) "Start timer" else "Complete set", icon = ImageVector.vectorResource(if (timed) R.drawable.ic_timer else DesignR.drawable.ic_check)) {
                                 onButtonClick()
                                 focused = null
                             }
@@ -109,7 +110,7 @@ internal fun DesignSystemKeypad(onButtonClick: () -> Unit) {
                 primaryAction = if (empty) {
                     AppKeypadAction("Add exercise", onClick = onButtonClick)
                 } else {
-                    AppKeypadAction("Complete set", icon = ImageVector.vectorResource(R.drawable.ic_check), onClick = onButtonClick)
+                    AppKeypadAction("Complete set", icon = ImageVector.vectorResource(DesignR.drawable.ic_check), onClick = onButtonClick)
                 },
                 strips = {
                     if (empty) AppKeypadNote(text = "Add an exercise to start")

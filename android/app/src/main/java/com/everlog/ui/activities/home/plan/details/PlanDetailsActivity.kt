@@ -25,6 +25,7 @@ import com.jakewharton.rxbinding.view.RxView
 import ru.tinkoff.scrollingpagerindicator.ScrollingPagerIndicator
 import rx.Observable
 import rx.subjects.PublishSubject
+import com.everlog.android.common.design.R as DesignR
 
 class PlanDetailsActivity : BaseActivity(), MvpViewPlanDetails {
 
@@ -113,7 +114,7 @@ class PlanDetailsActivity : BaseActivity(), MvpViewPlanDetails {
         // Start/Stop
         binding.root.findViewById<Button>(R.id.toggleStartBtn).setText(if (showStop) R.string.plan_details_stop else R.string.plan_details_start)
         binding.root.findViewById<Button>(R.id.toggleStartBtn).setBackgroundResource(if (showStop) R.drawable.rounded_corners_btn_three else R.drawable.rounded_corners_btn_one)
-        binding.root.findViewById<Button>(R.id.toggleStartBtn).setTextColor(ContextCompat.getColor(this, if (showStop) R.color.main_accent else R.color.background_card))
+        binding.root.findViewById<Button>(R.id.toggleStartBtn).setTextColor(ContextCompat.getColor(this, if (showStop) DesignR.color.main_accent else DesignR.color.background_card))
     }
 
     override fun getItemToEditUuid(): String? {

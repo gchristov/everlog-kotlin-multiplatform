@@ -16,6 +16,7 @@ import androidx.core.content.ContextCompat
 import com.everlog.R
 import com.everlog.ui.activities.base.BaseActivity
 import rx.subjects.PublishSubject
+import com.everlog.android.common.design.R as DesignR
 
 abstract class BaseSearchActivity : BaseActivity() {
 
@@ -132,7 +133,7 @@ abstract class BaseSearchActivity : BaseActivity() {
         // Customise search close btn.
         val closeButton = searchView.findViewById<ImageView>(androidx.appcompat.R.id.search_close_btn)
         closeButton?.setColorFilter(
-            ContextCompat.getColor(this, R.color.background_base),
+            ContextCompat.getColor(this, DesignR.color.background_base),
             PorterDuff.Mode.SRC_IN
         )
         closeButton?.setImageResource(R.drawable.ic_clear_white)
@@ -141,7 +142,7 @@ abstract class BaseSearchActivity : BaseActivity() {
         val txtSearch = searchView.findViewById<EditText>(androidx.appcompat.R.id.search_src_text)
         txtSearch?.setHint(getString(R.string.exercises_search))
         txtSearch?.setHintTextColor(ContextCompat.getColor(this, R.color.gray_3))
-        txtSearch?.setTextColor(ContextCompat.getColor(this, R.color.background_base))
+        txtSearch?.setTextColor(ContextCompat.getColor(this, DesignR.color.background_base))
 
         searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String): Boolean {

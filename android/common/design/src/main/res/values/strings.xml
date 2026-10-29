@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="more_options">More options</string>
+    <string name="app_bar_back">Back</string>
+    <string name="keypad_show">Show keypad</string>
+    <string name="keypad_hide">Hide keypad</string>
+    <string name="keypad_backspace">Delete</string>
+</resources>

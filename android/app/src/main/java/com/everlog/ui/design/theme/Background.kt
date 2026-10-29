@@ -5,7 +5,7 @@ import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.colorResource
-import com.everlog.R
+import com.everlog.android.common.design.R as DesignR
 
 @Immutable
 data class Backgrounds(
@@ -44,14 +44,14 @@ internal val LocalBackgrounds = staticCompositionLocalOf {
 
 @Composable
 internal fun backgrounds() = Backgrounds(
-    primary = colorResource(R.color.background_base),
-    surface = colorResource(R.color.background_card),
-    surfaceRaised = colorResource(R.color.background_card_lighter),
-    inset = colorResource(R.color.background_inset),
-    blurOverlay = colorResource(R.color.background_blur),
-    separator = colorResource(R.color.separator),
-    selected = colorResource(R.color.main_accent_faded_1),
-    actionMuted = colorResource(R.color.main_accent_faded_2),
-    warningFaint = colorResource(R.color.warning_faded_1),
-    warningMuted = colorResource(R.color.warning_faded_2),
+    primary = colorResource(DesignR.color.background_base),
+    surface = colorResource(DesignR.color.background_card),
+    surfaceRaised = colorResource(DesignR.color.background_card_lighter),
+    inset = colorResource(DesignR.color.background_inset),
+    blurOverlay = colorResource(DesignR.color.background_blur),
+    separator = colorResource(DesignR.color.separator),
+    selected = colorResource(DesignR.color.main_accent_faded_1),
+    actionMuted = colorResource(DesignR.color.main_accent_faded_2),
+    warningFaint = colorResource(DesignR.color.warning_faded_1),
+    warningMuted = colorResource(DesignR.color.warning_faded_2),
 )

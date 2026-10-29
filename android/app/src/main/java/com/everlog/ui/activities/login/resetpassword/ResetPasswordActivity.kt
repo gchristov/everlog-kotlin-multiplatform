@@ -19,6 +19,7 @@ import com.everlog.utils.input.KeyboardUtils
 import com.github.leandroborgesferreira.loadingbutton.customViews.CircularProgressButton
 import com.jakewharton.rxbinding.view.RxView
 import rx.Observable
+import com.everlog.android.common.design.R as DesignR
 
 class ResetPasswordActivity : BaseActivity(), MvpViewResetPassword {
 
@@ -102,7 +103,7 @@ class ResetPasswordActivity : BaseActivity(), MvpViewResetPassword {
     }
 
     override fun showResetPasswordLoading(state: LoginActivity.LoadingState) {
-        setButtonLoading(binding.resetPasswordBtn, state, R.color.main_accent, -1)
+        setButtonLoading(binding.resetPasswordBtn, state, DesignR.color.main_accent, -1)
     }
 
     override fun showResetPasswordError(emailError: String) {
@@ -145,7 +146,7 @@ class ResetPasswordActivity : BaseActivity(), MvpViewResetPassword {
     }
 
     private fun setupTopBar() {
-        binding.appBar.toolbar.setNavigationIcon(R.drawable.ic_back)
+        binding.appBar.toolbar.setNavigationIcon(DesignR.drawable.ic_back)
         binding.appBar.toolbar.setNavigationOnClickListener { onBackPressedDispatcher.onBackPressed() }
         setSupportActionBar(binding.appBar.toolbar)
         supportActionBar?.setTitle(R.string.reset_password)

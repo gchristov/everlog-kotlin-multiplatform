@@ -30,6 +30,7 @@ import com.everlog.ui.activities.home.exercise.details.ExerciseDetailsActivity
 import com.everlog.ui.navigator.ELNavigator
 import com.everlog.utils.ArrayResourceTypeUtils
 import com.everlog.utils.Utils
+import com.everlog.android.common.design.R as DesignR
 import java.util.*
 import kotlin.math.max
 
@@ -55,7 +56,7 @@ class ExerciseGroupSummaryAdapter {
                 str.setSpan(StyleSpan(Typeface.BOLD), xPos, txt.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
                 str.setSpan(ForegroundColorSpan(ContextCompat.getColor(context, R.color.white_base)), xPos, txt.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
                 str.setSpan(StyleSpan(Typeface.NORMAL), 0, xPos, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
-                str.setSpan(ForegroundColorSpan(ContextCompat.getColor(context, R.color.gray_1)), 0, xPos, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+                str.setSpan(ForegroundColorSpan(ContextCompat.getColor(context, DesignR.color.gray_1)), 0, xPos, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
                 summaryView?.text = str
                 summaryView?.setTypeface(null, Typeface.NORMAL)
             }

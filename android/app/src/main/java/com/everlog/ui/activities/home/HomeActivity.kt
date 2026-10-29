@@ -33,6 +33,7 @@ import com.google.android.material.snackbar.Snackbar
 import com.jakewharton.rxbinding.view.RxView
 import rx.Observable
 import rx.subjects.PublishSubject
+import com.everlog.android.common.design.R as DesignR
 
 class HomeActivity : BaseActivity(), MvpViewHome {
 
@@ -178,7 +179,7 @@ class HomeActivity : BaseActivity(), MvpViewHome {
         }
         mAppUpdateSnackbar = Snackbar.make(binding.root, R.string.app_update_ready, Snackbar.LENGTH_INDEFINITE)
                 .setAction(R.string.app_update_restart) { mOnClickAppUpdateRestart.onNext(null) }
-                .setActionTextColor(ContextCompat.getColor(this, R.color.main_accent))
+                .setActionTextColor(ContextCompat.getColor(this, DesignR.color.main_accent))
                 .setAnchorView(binding.tabBar)
                 .addCallback(object : Snackbar.Callback() {
 

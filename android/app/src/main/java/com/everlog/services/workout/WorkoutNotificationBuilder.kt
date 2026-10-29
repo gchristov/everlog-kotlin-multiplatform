@@ -26,6 +26,7 @@ import com.everlog.utils.format.formatClock
 import com.everlog.utils.format.formatWeight
 import com.everlog.utils.format.lastTimeText
 import com.everlog.utils.format.unitLabel
+import com.everlog.android.common.design.R as DesignR
 
 /**
  * Renders a [WorkoutNotificationState] as the ongoing workout notification.
@@ -57,7 +58,7 @@ class WorkoutNotificationBuilder(private val context: Context) {
     fun build(channelId: String, state: WorkoutNotificationState, workout: ELWorkout?): Notification {
         val builder = NotificationCompat.Builder(context, channelId)
                 .setSmallIcon(R.drawable.ic_notification)
-                .setColor(ContextCompat.getColor(context, R.color.main_accent))
+                .setColor(ContextCompat.getColor(context, DesignR.color.main_accent))
                 .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
                 .setPriority(NotificationCompat.PRIORITY_HIGH)
                 .setOngoing(true)

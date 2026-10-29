@@ -56,7 +56,6 @@
     <string name="ok">OK</string>
     <string name="disable">Disable</string>
     <string name="edit">Edit</string>
-    <string name="more_options">More options</string>
     <string name="processing">Processing…</string>
     <string name="done">Done</string>
     <string name="retry">Retry</string>
@@ -403,10 +402,6 @@
     <string name="settings_play_store_prompt">Review us on Google Play</string>
     <string name="settings_logout">Logout</string>
     <string name="settings_share">Share Everlog</string>
-    <string name="app_bar_back">Back</string>
-    <string name="keypad_show">Show keypad</string>
-    <string name="keypad_hide">Hide keypad</string>
-    <string name="keypad_backspace">Delete</string>
     <string name="settings_logout_prompt">Are you sure you want to log out?</string>
     <string name="settings_workouts">Workouts</string>
     <string name="settings_weight_increase">Weight increment</string>

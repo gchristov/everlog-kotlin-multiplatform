@@ -27,6 +27,7 @@ import com.github.mikephil.charting.interfaces.datasets.ILineDataSet
 import com.github.mikephil.charting.listener.OnChartValueSelectedListener
 import com.github.mikephil.charting.utils.MPPointF
 import com.github.mikephil.charting.utils.Utils
+import com.everlog.android.common.design.R as DesignR
 
 class ChartRenderer(context: Context) {
 
@@ -128,7 +129,7 @@ class ChartRenderer(context: Context) {
                             val drawable = ContextCompat.getDrawable(chart.context, R.drawable.chart_gradient)
                             set.fillDrawable = drawable
                         } else {
-                            set.fillColor = ContextCompat.getColor(chart.context, R.color.main_accent)
+                            set.fillColor = ContextCompat.getColor(chart.context, DesignR.color.main_accent)
                         }
                     }
                     dataSets.add(set)
@@ -182,7 +183,7 @@ class ChartRenderer(context: Context) {
         val txt = context.getString(R.string.statistics_muscles_trained_tap_prompt)
         val s = SpannableString(txt)
         s.setSpan(RelativeSizeSpan(1f), 0, s.length, 0)
-        s.setSpan(ForegroundColorSpan(ContextCompat.getColor(context, R.color.gray_1)), 0, s.length, 0)
+        s.setSpan(ForegroundColorSpan(ContextCompat.getColor(context, DesignR.color.gray_1)), 0, s.length, 0)
         return s
     }
 
@@ -197,7 +198,7 @@ class ChartRenderer(context: Context) {
         s.setSpan(StyleSpan(Typeface.BOLD), catIndex, category.length, 0)
         s.setSpan(ForegroundColorSpan(Color.WHITE), catIndex, category.length, 0)
         s.setSpan(RelativeSizeSpan(1f), exIndex, s.length, 0)
-        s.setSpan(ForegroundColorSpan(ContextCompat.getColor(context, R.color.gray_1)), exIndex, s.length, 0)
+        s.setSpan(ForegroundColorSpan(ContextCompat.getColor(context, DesignR.color.gray_1)), exIndex, s.length, 0)
         return s
     }
 
@@ -215,7 +216,7 @@ class ChartRenderer(context: Context) {
     }
 
     private fun setupBarChart(chart: BarLineChartBase<*>) {
-        chart.setNoDataTextColor(ContextCompat.getColor(chart.context, R.color.gray_1))
+        chart.setNoDataTextColor(ContextCompat.getColor(chart.context, DesignR.color.gray_1))
         chart.description?.isEnabled = false
         chart.isDragEnabled = true
         chart.setBackgroundColor(Color.TRANSPARENT)
@@ -256,7 +257,7 @@ class ChartRenderer(context: Context) {
     }
 
     private fun setupPieChart(chart: PieChart) {
-        chart.setNoDataTextColor(ContextCompat.getColor(chart.context, R.color.gray_1))
+        chart.setNoDataTextColor(ContextCompat.getColor(chart.context, DesignR.color.gray_1))
         chart.setUsePercentValues(true)
         chart.description?.isEnabled = false
         chart.dragDecelerationFrictionCoef = 0.95f

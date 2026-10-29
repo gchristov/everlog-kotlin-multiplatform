@@ -152,8 +152,8 @@ public class WorkoutDetailsActivity extends BaseActivity implements MvpViewWorko
         binding.achievementView
                 .setTitle("Congratulations!")
                 .setMensage("You achieved your weekly goal.")
-                .setTextColor(ContextCompat.getColor(this, R.color.background_card))
-                .setColor(R.color.main_accent_darker)
+                .setTextColor(ContextCompat.getColor(this, com.everlog.android.common.design.R.color.background_card))
+                .setColor(com.everlog.android.common.design.R.color.main_accent_darker)
                 .setIcon(R.drawable.ic_trophy)
                 .show();
         binding.achievementKonfettiView.build()
@@ -161,7 +161,7 @@ public class WorkoutDetailsActivity extends BaseActivity implements MvpViewWorko
                         ContextCompat.getColor(this, R.color.konfetti_lt_pink),
                         ContextCompat.getColor(this, R.color.konfetti_lt_purple),
                         ContextCompat.getColor(this, R.color.konfetti_lt_yellow),
-                        ContextCompat.getColor(this, R.color.main_accent))
+                        ContextCompat.getColor(this, com.everlog.android.common.design.R.color.main_accent))
                 .setDirection(0.0, 359.0)
                 .setSpeed(1f, 5f)
                 .setFadeOutEnabled(true)
@@ -178,8 +178,8 @@ public class WorkoutDetailsActivity extends BaseActivity implements MvpViewWorko
         binding.achievementView
                 .setTitle(msgs[new Random().nextInt(msgs.length)])
                 .setMensage("You're a step closer to your goal.")
-                .setTextColor(ContextCompat.getColor(this, R.color.background_card))
-                .setColor(R.color.main_accent_darker)
+                .setTextColor(ContextCompat.getColor(this, com.everlog.android.common.design.R.color.background_card))
+                .setColor(com.everlog.android.common.design.R.color.main_accent_darker)
                 .setIcon(R.drawable.ic_trophy)
                 .show();
     }

@@ -43,7 +43,6 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import com.everlog.R
 import com.everlog.ui.design.elements.AppButton
 import com.everlog.ui.design.elements.AppIcon
 import com.everlog.ui.design.elements.AppIconButton
@@ -53,6 +52,7 @@ import com.everlog.ui.design.theme.Theme
 import dev.chrisbanes.haze.HazeStyle
 import dev.chrisbanes.haze.HazeTint
 import dev.chrisbanes.haze.hazeEffect
+import com.everlog.android.common.design.R as DesignR
 
 /**
  * What the open keypad types into: its [label] and [title] over the keys (e.g. SET 2 OF 4 · KG over the exercise),
@@ -212,8 +212,8 @@ private fun EntryHeader(entry: AppKeypadEntry, onHide: () -> Unit) {
         horizontalArrangement = Arrangement.spacedBy(Theme.spacing.small),
     ) {
         CircleButton(
-            icon = ImageVector.vectorResource(R.drawable.ic_keyboard_down),
-            contentDescription = stringResource(R.string.keypad_hide),
+            icon = ImageVector.vectorResource(DesignR.drawable.ic_keyboard_down),
+            contentDescription = stringResource(DesignR.string.keypad_hide),
             onClick = onHide,
         )
         Column(modifier = Modifier.weight(1f)) {
@@ -235,8 +235,8 @@ private fun Controls(onShow: (() -> Unit)?, actions: List<AppKeypadAction>, prim
     ) {
         onShow?.let {
             CircleButton(
-                icon = ImageVector.vectorResource(R.drawable.ic_keyboard),
-                contentDescription = stringResource(R.string.keypad_show),
+                icon = ImageVector.vectorResource(DesignR.drawable.ic_keyboard),
+                contentDescription = stringResource(DesignR.string.keypad_show),
                 onClick = it,
             )
         }
@@ -313,8 +313,8 @@ private fun Keys(entry: AppKeypadEntry, input: AppKeypadInput) {
             DigitKey('8', input)
             DigitKey('9', input)
             Key(
-                icon = ImageVector.vectorResource(R.drawable.ic_backspace),
-                contentDescription = stringResource(R.string.keypad_backspace),
+                icon = ImageVector.vectorResource(DesignR.drawable.ic_backspace),
+                contentDescription = stringResource(DesignR.string.keypad_backspace),
                 onClick = input::onBackspace,
             )
         }
@@ -427,7 +427,7 @@ private fun AppKeypadPreview() {
             entry = AppKeypadEntry(
                 label = "SET 2 OF 4 · KG",
                 title = "Bench Press",
-                mainKey = AppKeypadAction("Complete set", icon = ImageVector.vectorResource(R.drawable.ic_check)) {},
+                mainKey = AppKeypadAction("Complete set", icon = ImageVector.vectorResource(DesignR.drawable.ic_check)) {},
                 decimal = true,
                 toggle = AppKeypadToggle(listOf("Reps", "Time"), selected = 0) {},
             ),
@@ -447,7 +447,7 @@ private fun AppKeypadClosedPreview() {
             onHide = {},
             onShow = {},
             actions = listOf(AppKeypadAction("Add exercise") {}),
-            primaryAction = AppKeypadAction("Complete set", icon = ImageVector.vectorResource(R.drawable.ic_check)) {},
+            primaryAction = AppKeypadAction("Complete set", icon = ImageVector.vectorResource(DesignR.drawable.ic_check)) {},
         )
     }
 }

@@ -61,6 +61,7 @@ import com.everlog.ui.design.elements.AppText
 import com.everlog.ui.design.elements.list.AppListItem
 import com.everlog.ui.design.elements.rememberAppBarScrollBehavior
 import com.everlog.ui.design.theme.Theme
+import com.everlog.android.common.design.R as DesignR
 
 // The reveal from the Everlog Onboarding design: "Here are your workout templates", the summary of
 // the answers, then a card per routine. The first card starts open with its exercises, the others
@@ -255,7 +256,7 @@ private fun RoutineCardHeader(
                 }
                 AppIcon(
                     modifier = Modifier.rotate(chevronRotation),
-                    imageVector = ImageVector.vectorResource(R.drawable.ic_keyboard_down),
+                    imageVector = ImageVector.vectorResource(DesignR.drawable.ic_keyboard_down),
                     tint = Theme.contentColors.secondary,
                 )
             }

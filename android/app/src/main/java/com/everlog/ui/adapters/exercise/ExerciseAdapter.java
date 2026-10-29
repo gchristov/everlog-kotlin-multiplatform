@@ -148,7 +148,7 @@ public class ExerciseAdapter {
             binding.exerciseName.setText(item.getName());
             binding.categoryName.setText(R.string.exercises_create_prompt);
             binding.categoryName.setBackground(null);
-            binding.categoryName.setTextColor(ContextCompat.getColor(itemView.getContext(), R.color.gray_1));
+            binding.categoryName.setTextColor(ContextCompat.getColor(itemView.getContext(), com.everlog.android.common.design.R.color.gray_1));
             binding.categoryName.setAllCaps(false);
             binding.categoryName.setPadding(0, 0, 0, 0);
             binding.categoryName.setTextSize(TypedValue.COMPLEX_UNIT_SP, 15);

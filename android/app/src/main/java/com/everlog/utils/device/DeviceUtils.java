@@ -9,7 +9,6 @@ import android.provider.Settings;
 import android.view.Display;
 import android.view.WindowManager;
 
-import com.everlog.R;
 import com.everlog.application.ELApplication;
 import com.everlog.managers.auth.AuthManager;
 
@@ -69,7 +68,7 @@ public class DeviceUtils {
 	}
 	
 	public static boolean isTablet(Context c) {
-		return c.getResources().getBoolean(R.bool.isTablet);
+		return c.getResources().getBoolean(com.everlog.android.common.design.R.bool.isTablet);
 	}
 
 	public static boolean isAndroidO() {

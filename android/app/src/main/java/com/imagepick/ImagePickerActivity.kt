@@ -14,6 +14,7 @@ import androidx.core.content.FileProvider
 import com.everlog.R
 import com.imagepick.dialog.ELPickerDialog
 import com.yalantis.ucrop.UCrop
+import com.everlog.android.common.design.R as DesignR
 import java.io.File
 
 class ImagePickerActivity : AppCompatActivity() {
@@ -207,11 +208,11 @@ class ImagePickerActivity : AppCompatActivity() {
 
             val uCropOptions = UCrop.Options().apply {
                 setCompressionQuality(80)
-                setToolbarColor(ContextCompat.getColor(this@ImagePickerActivity, R.color.background_card))
-                setStatusBarColor(ContextCompat.getColor(this@ImagePickerActivity, R.color.background_card))
+                setToolbarColor(ContextCompat.getColor(this@ImagePickerActivity, DesignR.color.background_card))
+                setStatusBarColor(ContextCompat.getColor(this@ImagePickerActivity, DesignR.color.background_card))
                 setToolbarWidgetColor(ContextCompat.getColor(this@ImagePickerActivity, R.color.white_base))
                 setToolbarTitle(getString(R.string.select_image))
-                setActiveControlsWidgetColor(ContextCompat.getColor(this@ImagePickerActivity, R.color.main_accent))
+                setActiveControlsWidgetColor(ContextCompat.getColor(this@ImagePickerActivity, DesignR.color.main_accent))
                 
                 if (options.lockAspectRatio) {
                     withAspectRatio(options.aspectRatioX.toFloat(), options.aspectRatioY.toFloat())

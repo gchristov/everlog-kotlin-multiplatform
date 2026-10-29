@@ -4,7 +4,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
-import com.everlog.R
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.booleanResource
@@ -21,6 +20,7 @@ import androidx.compose.ui.Modifier
 import com.everlog.ui.design.theme.Theme
 import dev.chrisbanes.haze.HazeState
 import dev.chrisbanes.haze.hazeSource
+import com.everlog.android.common.design.R as DesignR
 
 /**
  * On tablets the content and the footer's actions are capped at [content_width_tablet] and centred,
@@ -41,8 +41,8 @@ fun AppScreen(
     content: @Composable (contentPadding: PaddingValues) -> Unit,
 ) {
     val hazeState = remember { HazeState() }
-    val maxContentWidth = if (booleanResource(R.bool.isTablet)) {
-        dimensionResource(R.dimen.content_width_tablet)
+    val maxContentWidth = if (booleanResource(DesignR.bool.isTablet)) {
+        dimensionResource(DesignR.dimen.content_width_tablet)
     } else {
         Dp.Unspecified
     }

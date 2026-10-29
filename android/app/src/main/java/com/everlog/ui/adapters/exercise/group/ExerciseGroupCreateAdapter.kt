@@ -43,6 +43,7 @@ import com.everlog.utils.ViewUtils
 import com.everlog.utils.format.FormatUtils.Companion.formatDurationShort
 import com.everlog.utils.format.FormatUtils.Companion.formatSetWeight
 import rx.Observable
+import com.everlog.android.common.design.R as DesignR
 import java.util.LinkedList
 import java.util.Locale
 import java.util.Queue
@@ -311,7 +312,7 @@ class ExerciseGroupCreateAdapter {
             val complete = groupVH.item.setIsComplete(set)
             myVH.binding.completeBtn.text = String.format("%s Set %s", if (complete) "Edit" else "Complete", set + 1)
             myVH.binding.completeBtn.setBackgroundResource(if (complete) R.drawable.rounded_corners_btn_set_edit else R.drawable.rounded_corners_btn_set_complete)
-            myVH.binding.completeBtn.setTextColor(ContextCompat.getColor(myVH.view.context, if (complete) R.color.main_accent else R.color.background_base))
+            myVH.binding.completeBtn.setTextColor(ContextCompat.getColor(myVH.view.context, if (complete) DesignR.color.main_accent else DesignR.color.background_base))
             myVH.binding.completeBtn.visibility = if (builder.allowSetCompletion && !builder.hasSelections()) View.VISIBLE else View.GONE
         }
 
