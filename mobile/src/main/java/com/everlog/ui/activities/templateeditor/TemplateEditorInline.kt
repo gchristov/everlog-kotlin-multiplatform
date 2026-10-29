@@ -442,7 +442,7 @@ private fun CardHeader(
                         else -> AppThumbnail(imageUrl = exercise.exercise?.imageUrl, size = InlineSizes.Thumbnail, corner = InlineSizes.ThumbnailCorner)
                     }
                     AppText(
-                        text = (if (group && collapsed) "${'a' + i}  " else "") + exercise.exercise?.name.orEmpty(),
+                        text = exercise.exercise?.name.orEmpty(),
                         style = Theme.typography.bodyBold,
                         maxLines = if (collapsed || group) 1 else 2,
                         overflow = TextOverflow.Ellipsis,
