@@ -1,6 +1,7 @@
 package com.everlog.data.controllers.workoutprefill
 
 import arrow.core.Either
+import com.everlog.android.common.test.FakeCoroutineDispatcher
 import com.everlog.data.model.exercise.ELExercise
 import com.everlog.data.model.workout.ELWorkout
 import com.everlog.data.repositories.WorkoutRepository
@@ -8,7 +9,6 @@ import com.everlog.data.sync.Load
 import com.everlog.data.sync.Range
 import com.everlog.managers.preferences.SettingsManager
 import com.everlog.managers.preferences.SettingsManager.WeightUnit
-import com.everlog.testutil.FakeCoroutineDispatcher
 import com.everlog.testutil.InMemorySharedPreferences
 import com.everlog.testutil.at
 import com.everlog.testutil.loggedSet

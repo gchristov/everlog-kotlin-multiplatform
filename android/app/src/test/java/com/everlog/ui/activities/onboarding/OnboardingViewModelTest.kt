@@ -1,11 +1,11 @@
 package com.everlog.ui.activities.onboarding
 
 import arrow.core.Either
+import com.everlog.android.common.test.FakeCoroutineDispatcher
 import com.everlog.data.controllers.starterroutines.RealBuildStarterRoutinesUseCase
 import com.everlog.data.controllers.starterroutines.RealSaveStarterRoutinesUseCase
 import com.everlog.data.controllers.starterroutines.StarterRoutineGenerator
 import com.everlog.managers.preferences.SettingsManager
-import com.everlog.testutil.FakeCoroutineDispatcher
 import com.everlog.testutil.FakeExerciseRepository
 import com.everlog.testutil.FakeRoutineRepository
 import com.everlog.testutil.exerciseLibrary

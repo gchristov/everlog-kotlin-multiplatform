@@ -1,6 +1,6 @@
 package com.everlog.ui.activities.designsystem
 
-import com.everlog.testutil.FakeCoroutineDispatcher
+import com.everlog.android.common.test.FakeCoroutineDispatcher
 import com.google.common.truth.Truth.assertThat
 import org.junit.Test
 

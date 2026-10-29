@@ -1,9 +1,9 @@
 package com.everlog.data.controllers.exerciseguide
 
+import com.everlog.android.common.test.FakeCoroutineDispatcher
 import com.everlog.data.model.exercise.library.ExerciseGuide
 import com.everlog.data.model.exercise.library.LibraryExercise
 import com.everlog.data.sync.Load
-import com.everlog.testutil.FakeCoroutineDispatcher
 import com.everlog.testutil.FakeExerciseRepository
 import com.google.common.truth.Truth.assertThat
 import kotlinx.coroutines.flow.first
