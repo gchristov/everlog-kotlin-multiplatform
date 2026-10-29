@@ -4,6 +4,8 @@ runs:
   steps:
     - name: Set up Gradle
       uses: ./.github/actions/setup-gradle
+      with:
+        ndk: 'false'
     - name: Test
       shell: bash
       run: |
