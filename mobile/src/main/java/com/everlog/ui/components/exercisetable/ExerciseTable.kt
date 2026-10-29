@@ -88,11 +88,7 @@ import kotlinx.coroutines.launch
 
 private object TableSizes {
     val ThumbnailCorner = 12.dp
-    val GroupThumbnail = 24.dp
-    val GroupThumbnailCorner = 8.dp
     val GroupRowGap = 6.dp
-    val Badge = 16.dp
-    val BadgeOffset = 3.dp
     val RowHeight = 52.dp
     val DeleteWidth = 88.dp
     // The suggestion mark beside a weight, smaller than any text style
@@ -110,8 +106,8 @@ private object TableSizes {
 }
 
 /**
- * Per exercise its header, then a card of rows: SET · LAST TIME · REPS (or TIME) · KG · tick, less the columns the
- * view leaves out. A superset or circuit has a row per exercise in each round, in its header's order.
+ * Per exercise its header, then a card of rows: SET · LAST TIME · REPS (or TIME) · KG · tick. A superset or circuit
+ * has a row per exercise in each round, in its header's order.
  */
 @Composable
 internal fun ExerciseTable(
@@ -197,7 +193,7 @@ private fun BlockTable(
     Column(modifier = Modifier.padding(bottom = Theme.spacing.extraLarge)) {
         ExerciseHeader(index, block, actions)
         Spacer(modifier = Modifier.height(Theme.spacing.medium))
-        ColumnLabels(block, view.unitLabel, view.columns)
+        ColumnLabels(block, view.unitLabel)
         Spacer(modifier = Modifier.height(Theme.spacing.extraSmall))
         Column(
             modifier = Modifier
@@ -213,7 +209,7 @@ private fun BlockTable(
                 key(row.ref.roundId, row.exercise) {
                     val tag = ExerciseTableTags.set(index, row.round, row.exercise)
                     SwipeToDelete(ref = row.ref, tag = tag, onDelete = { actions.onDeleteSet(row.ref) }) {
-                        TableRow(tag = tag, row = row, columns = view.columns, actions = actions)
+                        TableRow(tag = tag, row = row, actions = actions)
                     }
                 }
             }
@@ -344,7 +340,7 @@ private fun GroupHeader(modifier: Modifier, block: WorkoutBlock, actions: Exerci
     Column(modifier = modifier, verticalArrangement = Arrangement.spacedBy(TableSizes.GroupRowGap)) {
         type?.getTitle(context)?.let { title ->
             AppText(
-                modifier = Modifier.padding(start = TableSizes.GroupThumbnail + Theme.spacing.medium),
+                modifier = Modifier.padding(start = GroupThumbnailSizes.Size + Theme.spacing.medium),
                 text = title.uppercase(),
                 style = Theme.typography.small,
                 color = Theme.contentColors.secondary,
@@ -354,28 +350,11 @@ private fun GroupHeader(modifier: Modifier, block: WorkoutBlock, actions: Exerci
             Row(
                 modifier = Modifier
                     .then(if (i == block.exercises.lastIndex) Modifier.providingCenter(LastExerciseCenter) else Modifier)
-                    .openingInfo(exercise.exercise, actions, TableSizes.GroupThumbnailCorner),
+                    .openingInfo(exercise.exercise, actions, GroupThumbnailSizes.Corner),
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(Theme.spacing.medium),
             ) {
-                Box {
-                    AppThumbnail(
-                        imageUrl = exercise.exercise?.imageUrl,
-                        size = TableSizes.GroupThumbnail,
-                        corner = TableSizes.GroupThumbnailCorner,
-                    )
-                    Box(
-                        modifier = Modifier
-                            .align(Alignment.BottomEnd)
-                            .offset(x = TableSizes.BadgeOffset, y = TableSizes.BadgeOffset)
-                            .size(TableSizes.Badge)
-                            .background(Theme.backgrounds.primary, CircleShape)
-                            .border(1.dp, Theme.backgrounds.separator, CircleShape),
-                        contentAlignment = Alignment.Center,
-                    ) {
-                        AppText(text = ('a' + i).toString(), style = Theme.typography.small, color = Theme.contentColors.primary)
-                    }
-                }
+                GroupThumbnail(exercise.exercise?.imageUrl, 'a' + i)
                 AppText(
                     text = exercise.exercise?.name.orEmpty(),
                     style = Theme.typography.bodyBold,
@@ -388,7 +367,7 @@ private fun GroupHeader(modifier: Modifier, block: WorkoutBlock, actions: Exerci
 }
 
 @Composable
-private fun ColumnLabels(block: WorkoutBlock, unitLabel: String, columns: TableColumns) {
+private fun ColumnLabels(block: WorkoutBlock, unitLabel: String) {
     val modes = block.rounds.flatMap { round -> round.sets.filterNot { it.removed }.map { it.mode } }.toSet()
     val count = when {
         modes == setOf(SetMode.Time) -> stringResource(R.string.workout_log_column_time)
@@ -400,11 +379,10 @@ private fun ColumnLabels(block: WorkoutBlock, unitLabel: String, columns: TableC
         horizontalArrangement = Arrangement.spacedBy(TableSizes.ColumnGap),
     ) {
         Label(stringResource(R.string.workout_log_column_set), Modifier.width(TableSizes.SetColumn), TextAlign.Center)
-        if (columns.lastTime) Label(stringResource(R.string.workout_log_column_last_time), Modifier.weight(1f))
+        Label(stringResource(R.string.workout_log_column_last_time), Modifier.weight(1f))
         Label(count, Modifier.width(TableSizes.Cell), TextAlign.Center)
-        if (columns.weight) Label(unitLabel, Modifier.width(TableSizes.Cell), TextAlign.Center)
-        if (columns.tick) Spacer(modifier = Modifier.width(TableSizes.CheckTarget))
-        if (!columns.lastTime) Spacer(modifier = Modifier.weight(1f))
+        Label(unitLabel, Modifier.width(TableSizes.Cell), TextAlign.Center)
+        Spacer(modifier = Modifier.width(TableSizes.CheckTarget))
     }
 }
 
@@ -415,7 +393,7 @@ private fun Label(text: String, modifier: Modifier, align: TextAlign = TextAlign
 
 // The selected row is tinted and shows its values as boxes to type into
 @Composable
-private fun TableRow(tag: String, row: SetRow, columns: TableColumns, actions: ExerciseTableActions) {
+private fun TableRow(tag: String, row: SetRow, actions: ExerciseTableActions) {
     val onCount = { actions.onCellTapped(CellFocus(row.ref, row.countField)) }
     Row(
         modifier = Modifier
@@ -434,20 +412,18 @@ private fun TableRow(tag: String, row: SetRow, columns: TableColumns, actions: E
             text = row.number.orEmpty(),
             style = Theme.typography.bodyBold,
         )
-        if (columns.lastTime) {
-            Box(
-                modifier = Modifier
-                    .weight(1f)
-                    .fillMaxHeight(),
-                contentAlignment = Alignment.CenterStart,
-            ) {
-                AppText(
-                    text = row.lastTime ?: EmptyValue,
-                    style = Theme.typography.caption.copy(fontFeatureSettings = "tnum"),
-                    color = Theme.contentColors.secondary,
-                    maxLines = 1,
-                )
-            }
+        Box(
+            modifier = Modifier
+                .weight(1f)
+                .fillMaxHeight(),
+            contentAlignment = Alignment.CenterStart,
+        ) {
+            AppText(
+                text = row.lastTime ?: EmptyValue,
+                style = Theme.typography.caption.copy(fontFeatureSettings = "tnum"),
+                color = Theme.contentColors.secondary,
+                maxLines = 1,
+            )
         }
         // Reps (or time) first, then weight, as last time reads: 15 × 17 kg
         Cell(
@@ -459,22 +435,18 @@ private fun TableRow(tag: String, row: SetRow, columns: TableColumns, actions: E
             highlight = row.timing,
             suggested = row.countSuggested,
         )
-        if (columns.weight) {
-            Cell(
-                tag = ExerciseTableTags.weight(tag),
-                text = row.weightText,
-                focused = row.weightFocused,
-                boxed = row.selected,
-                onClick = { actions.onCellTapped(CellFocus(row.ref, ValueField.Weight)) },
-                suggested = row.weightSuggested,
-            )
-        }
+        Cell(
+            tag = ExerciseTableTags.weight(tag),
+            text = row.weightText,
+            focused = row.weightFocused,
+            boxed = row.selected,
+            onClick = { actions.onCellTapped(CellFocus(row.ref, ValueField.Weight)) },
+            suggested = row.weightSuggested,
+        )
         when {
-            !columns.tick -> Unit
             row.startsTimer -> StartButton(tag = ExerciseTableTags.tick(tag), armed = row.armed, onClick = { actions.onStartTimer(row.ref) })
             else -> Tick(tag = ExerciseTableTags.tick(tag), done = row.done, armed = row.armed, onClick = { actions.onTick(row.ref) })
         }
-        if (!columns.lastTime) Spacer(modifier = Modifier.weight(1f))
     }
 }
 

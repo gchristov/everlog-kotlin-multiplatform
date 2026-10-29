@@ -83,3 +83,11 @@ internal fun TemplateEditorState.withoutGoneSets() = copy(
     selected = selected?.takeIf { blocks.set(it)?.removed == false },
     typed = typed?.takeIf { focus?.let { blocks.set(it.ref)?.removed == false } == true },
 )
+
+// Whether the delete that can be undone took a whole exercise: deleting an exercise's last set deletes it, or takes it
+// out of its superset
+internal fun TemplateEditorState.deletionRemovedExercise(): Boolean {
+    val deleted = deletion ?: return false
+    val now = blocks.firstOrNull { it.id == deleted.block.id }?.exercises?.size ?: 0
+    return now < deleted.block.exercises.size
+}

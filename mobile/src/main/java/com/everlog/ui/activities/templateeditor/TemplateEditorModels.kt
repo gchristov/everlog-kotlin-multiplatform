@@ -63,8 +63,6 @@ internal sealed interface TemplateEditorDialog {
 
     data object Rest : TemplateEditorDialog
 
-    data class DeleteExercise(val blockId: Long) : TemplateEditorDialog
-
     // Leaving with changes
     data object Leave : TemplateEditorDialog
 }

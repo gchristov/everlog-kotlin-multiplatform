@@ -100,6 +100,14 @@ data class SetRef(
 )
 
 /**
+ * One exercise of a block, e.g. ticked in the edit list. [index] is its place in the block.
+ */
+data class ExerciseRef(
+    val blockId: Long,
+    val index: Int,
+)
+
+/**
  * A block as it was before some of its sets were deleted, and where it was, so the delete can be undone.
  */
 data class DeletedSets(
