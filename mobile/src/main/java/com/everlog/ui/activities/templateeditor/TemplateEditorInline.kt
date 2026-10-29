@@ -94,8 +94,8 @@ private object InlineSizes {
     val GroupRowGap = 6.dp
     val Badge = 16.dp
     val BadgeOffset = 3.dp
-    // The outlined icon button's size
-    val Grip = 40.dp
+    // The bin's outlined circle
+    val Grip = 48.dp
     val GripGap = 8.dp
     // The card and its labels and buttons, past the grip
     val Indent = Grip + GripGap
@@ -194,7 +194,7 @@ internal fun InlineTemplateList(
                     BlockActions(
                         onAddSet = { viewModel.onAddSet(block.id) },
                         addSet = "Add set",
-                        join = next?.let { if (block.exercises.size + it.exercises.size == 2) "Superset with next" else "Circuit with next" },
+                        join = next?.let { "Superset with next" },
                         onJoin = { viewModel.onJoinWithNext(block.id) },
                         onSplit = if (block.exercises.size > 1) ({ viewModel.onSplitGroup(block.id) }) else null,
                     )
@@ -279,16 +279,16 @@ private fun ExerciseCard(
                 .clip(shape)
                 .background(Theme.backgrounds.surface),
         ) {
-            var first = true
+            // As the workout's table: a divider between rounds, none between a superset's exercises in one
             block.rounds.forEachIndexed { r, round ->
+                val firstShown = round.sets.indexOfFirst { !it.removed }
                 round.sets.forEachIndexed { i, set ->
                     if (set.removed) return@forEachIndexed
                     key(round.id, i) {
-                        if (!first) HorizontalDivider(thickness = 1.dp, color = Theme.backgrounds.separator)
+                        if (r > 0 && i == firstShown) HorizontalDivider(thickness = 1.dp, color = Theme.backgrounds.separator)
                         val number = if (round.sets.size > 1) "${r + 1}${'a' + i}" else "${r + 1}"
                         SetRow(SetRef(block.id, round.id, i), number, set, state, viewModel, keepClear)
                     }
-                    first = false
                 }
             }
         }
