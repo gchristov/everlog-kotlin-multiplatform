@@ -9,7 +9,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import com.everlog.R
-import com.everlog.data.controllers.workoutsession.block
 import com.everlog.ui.components.rest.RestStepper
 import com.everlog.ui.design.elements.AppDialog
 import com.everlog.ui.design.elements.AppDialogAction
@@ -45,16 +44,6 @@ internal fun TemplateEditorDialogs(state: TemplateEditorState, viewModel: Templa
             primaryAction = AppDialogAction(stringResource(R.string.workout_log_done), viewModel::onDialogDismissed),
         ) {
             RestStepper(seconds = state.restSeconds, onStep = viewModel::onRestStep)
-        }
-        is TemplateEditorDialog.DeleteExercise -> {
-            val name = state.blocks.block(dialog.blockId)?.exercises?.joinToString(" + ") { it.exercise?.name.orEmpty() }.orEmpty()
-            AppDialog(
-                title = stringResource(R.string.workout_log_delete_exercise_title, name),
-                body = stringResource(R.string.workout_log_delete_exercise_body),
-                onDismissRequest = viewModel::onDialogDismissed,
-                primaryAction = AppDialogAction(stringResource(R.string.workout_log_delete)) { viewModel.onDeleteExerciseConfirmed(dialog.blockId) },
-                secondaryAction = AppDialogAction(stringResource(R.string.cancel), viewModel::onDialogDismissed),
-            )
         }
         TemplateEditorDialog.Leave -> AppDialog(
             title = stringResource(R.string.template_editor_leave_title),

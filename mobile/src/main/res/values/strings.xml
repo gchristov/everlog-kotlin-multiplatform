@@ -347,6 +347,12 @@
     <string name="template_editor_next_set">Next set</string>
     <string name="template_editor_same_time">Use %1$s for every set</string>
     <string name="template_editor_same_time_apply">Apply</string>
+    <string name="template_editor_details">Details</string>
+    <string name="template_editor_exercises">Exercises</string>
+    <string name="template_editor_superset_with_next">Superset with next</string>
+    <string name="template_editor_split">Split</string>
+    <string name="template_editor_delete_set">Delete set</string>
+    <string name="template_editor_exercise_deleted">Exercise deleted</string>
     <string name="template_editor_empty_hint">Add the exercises you want in this template</string>
     <string name="template_editor_leave_title">Save your changes?</string>
     <string name="template_editor_keep_editing">Keep editing</string>

@@ -185,15 +185,6 @@ class TemplateSessionRulesTest {
         assertThat(blocks.ungroupExercises(listOf(ExerciseRef(2, 0)), SessionIds(100))).isEqualTo(blocks)
     }
 
-    @Test
-    fun `deleting picked exercises keeps what's left of their blocks`() {
-        val blocks = listOf(superset(1, flyItem, raiseItem, rounds = 2), single(2, squatItem, 5), single(3, benchItem, 8))
-
-        val left = blocks.deleteExercises(listOf(ExerciseRef(1, 1), ExerciseRef(2, 0)))
-
-        assertThat(left.shape()).containsExactly("SINGLE" to listOf("fly-item"), "SINGLE" to listOf("bench-item")).inOrder()
-    }
-
     private fun block(id: Long, sets: List<List<WorkoutSet>>) = WorkoutBlock(
         id = id,
         uuid = null,

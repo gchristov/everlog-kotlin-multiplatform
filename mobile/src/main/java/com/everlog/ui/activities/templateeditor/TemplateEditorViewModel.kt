@@ -5,14 +5,17 @@ import com.everlog.data.controllers.templatesession.LoadTemplateUseCase
 import com.everlog.data.controllers.templatesession.SaveTemplateUseCase
 import com.everlog.data.controllers.templatesession.TemplateNotFoundException
 import com.everlog.data.controllers.templatesession.addTemplateGroups
+import com.everlog.data.controllers.templatesession.groupExercises
 import com.everlog.data.controllers.templatesession.setExerciseMode
+import com.everlog.data.controllers.templatesession.ungroupExercises
 import com.everlog.data.controllers.templatesession.withTimeForAllSets
+import com.everlog.data.controllers.workoutsession.ExerciseRef
 import com.everlog.data.controllers.workoutsession.SessionIds
 import com.everlog.data.controllers.workoutsession.SetMode
 import com.everlog.data.controllers.workoutsession.SetRef
 import com.everlog.data.controllers.workoutsession.addRound
 import com.everlog.data.controllers.workoutsession.block
-import com.everlog.data.controllers.workoutsession.deleteBlock
+import com.everlog.data.controllers.workoutsession.moveBlock
 import com.everlog.data.controllers.workoutsession.deleteSet
 import com.everlog.data.controllers.workoutsession.refs
 import com.everlog.data.controllers.workoutsession.restore
@@ -23,6 +26,7 @@ import com.everlog.data.model.ELRoutine
 import com.everlog.data.model.exercise.ELExerciseGroup
 import com.everlog.data.model.exercise.library.LibraryExercise
 import com.everlog.data.model.exercise.library.toELExercise
+import com.everlog.data.model.set.ELSetType
 import com.everlog.data.sync.Load
 import com.everlog.managers.preferences.SettingsManager.WeightUnit
 import com.everlog.ui.components.exercisetable.CellFocus
@@ -211,11 +215,36 @@ internal class TemplateEditorViewModel(
 
     fun onMessageShown() = setState { copy(message = null) }
 
-    fun onDeleteExercise(blockId: Long) = setState { copy(dialog = TemplateEditorDialog.DeleteExercise(blockId)) }
+    fun onMoveExercise(from: Int, to: Int) = change { copy(blocks = blocks.moveBlock(from, to)) }
 
-    fun onDeleteExerciseConfirmed(blockId: Long) {
+    // A drag closes the keypad, as the exercises shrink to their names while it lasts
+    fun onDragStarted() {
         finishTyping()
-        change { copy(blocks = blocks.deleteBlock(blockId), dialog = null).withoutGoneSets() }
+        setState { focusOn(null) }
+    }
+
+    // Makes an exercise, or a group, one group with the exercise after it: a superset of two, a circuit of more, or
+    // the group's own type when it can take them all
+    fun onJoinWithNext(blockId: Long) {
+        finishTyping()
+        val blocks = state.value.blocks
+        val at = blocks.indexOfFirst { it.id == blockId }
+        val first = blocks.getOrNull(at) ?: return
+        val next = blocks.getOrNull(at + 1) ?: return
+        val exercises = listOf(first, next).flatMap { block -> block.exercises.indices.map { ExerciseRef(block.id, it) } }
+        val type = first.setType?.takeIf { first.exercises.size > 1 && it.canBeSelected(exercises.size) }
+            ?: if (exercises.size == 2) ELSetType.SUPER else ELSetType.CIRCUIT
+        change { focusOn(null).copy(blocks = blocks.groupExercises(exercises, type, ids)).withoutGoneSets() }
+        analytics.setTypeChanged(type)
+    }
+
+    // Every exercise of a group on its own again, in the group's order
+    fun onSplitGroup(blockId: Long) {
+        finishTyping()
+        val block = state.value.blocks.block(blockId)?.takeIf { it.exercises.size > 1 } ?: return
+        val out = block.exercises.indices.drop(1).map { ExerciseRef(blockId, it) }
+        change { focusOn(null).copy(blocks = blocks.ungroupExercises(out, ids)).withoutGoneSets() }
+        analytics.setTypeChanged(ELSetType.SINGLE)
     }
 
     fun onExercisesPicked(groups: List<ELExerciseGroup>) {

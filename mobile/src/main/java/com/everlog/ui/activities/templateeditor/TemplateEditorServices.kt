@@ -1,5 +1,6 @@
 package com.everlog.ui.activities.templateeditor
 
+import com.everlog.data.model.set.ELSetType
 import com.everlog.managers.analytics.AnalyticsConstants
 import com.everlog.managers.analytics.AnalyticsManager
 
@@ -19,6 +20,9 @@ internal interface TemplateEditorAnalytics {
 
     // One time given to every set of an exercise
     fun timeForAllSets(seconds: Int)
+
+    // Exercises made a superset or circuit, or split (SINGLE)
+    fun setTypeChanged(type: ELSetType)
 }
 
 internal class RealTemplateEditorAnalytics : TemplateEditorAnalytics {
@@ -37,4 +41,6 @@ internal class RealTemplateEditorAnalytics : TemplateEditorAnalytics {
     override fun restChanged(seconds: Int) = analytics.setRestTimeModified(seconds)
 
     override fun timeForAllSets(seconds: Int) = analytics.setRequiredTimeModified(seconds)
+
+    override fun setTypeChanged(type: ELSetType) = analytics.setTypeSelected(type)
 }

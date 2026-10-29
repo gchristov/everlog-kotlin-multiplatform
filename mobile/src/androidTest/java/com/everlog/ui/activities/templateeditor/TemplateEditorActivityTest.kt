@@ -33,7 +33,6 @@ import com.everlog.testutil.E2EAccount
 import com.everlog.ui.activities.exercisepicker.ExercisePickerActivity
 import com.everlog.ui.activities.home.exercise.ExercisesActivity
 import com.everlog.ui.activities.home.routine.details.RoutineDetailsActivity
-import com.everlog.ui.components.exercisetable.ExerciseTableTags
 import com.google.android.gms.tasks.Tasks
 import com.google.common.truth.Truth.assertThat
 import java.util.concurrent.TimeUnit
@@ -88,11 +87,11 @@ class TemplateEditorActivityTest {
         )
         compose.onNodeWithText("New template").assertExists()
 
-        // Add exercise opens the picker, whose picks come back to the table at 3 sets of 10
+        // Add exercise opens the picker, whose picks come back at 3 sets of 10
         val pickerOpened = returnFromPicker(picked("e2e-bench", "Bench press"))
         compose.onNode(hasText("Add exercise") and hasAnyAncestor(hasTestTag(TemplateEditorTags.Keypad))).performClick()
         compose.waitUntil(TIMEOUT) { pickerOpened() }
-        compose.onNodeWithTag(ExerciseTableTags.Table).performScrollToNode(hasText("Bench press"))
+        compose.onNodeWithTag(TemplateEditorTags.List).performScrollToNode(hasText("Bench press"))
 
         // Save writes it to Firestore, opens its details and hands it back
         val details = intercept(RoutineDetailsActivity::class.java, null)
@@ -139,7 +138,7 @@ class TemplateEditorActivityTest {
         compose.onNodeWithText("Add set").performClick()
         screen.recreate()
         compose.waitUntil(TIMEOUT) { shows("E2E push") }
-        compose.onNodeWithTag(ExerciseTableTags.set(0, 2, 0)).assertExists()
+        compose.onNodeWithTag(TemplateEditorTags.set(0, 2, 0)).assertExists()
 
         // The system back button asks; Discard closes without saving and hands nothing back
         Espresso.pressBack()

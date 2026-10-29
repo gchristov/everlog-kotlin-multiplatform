@@ -15,6 +15,7 @@ import com.everlog.data.model.exercise.ELExerciseGroup
 import com.everlog.data.model.exercise.ELRoutineExercise
 import com.everlog.data.model.exercise.library.LibraryExercise
 import com.everlog.data.model.set.ELSet
+import com.everlog.data.model.set.ELSetType
 import com.everlog.data.sync.Load
 import com.everlog.testutil.FakeCoroutineDispatcher
 import com.everlog.testutil.InMemorySharedPreferences
@@ -31,6 +32,7 @@ class TemplateEditorViewModelTest {
 
     private val bench = ELExercise(uuid = "bench", name = "Bench press")
     private val plank = ELExercise(uuid = "plank", name = "Plank")
+    private val squat = ELExercise(uuid = "squat", name = "Squat")
     private val load = FakeLoadTemplate()
     private val save = FakeSaveTemplate()
     private val analytics = FakeAnalytics()
@@ -275,18 +277,97 @@ class TemplateEditorViewModelTest {
     }
 
     @Test
-    fun `deleting an exercise asks first, and takes the keypad's cell with it`() {
+    fun `deleting an exercise's last set deletes the exercise, and undo puts it back where it was`() {
         val viewModel = loaded()
-        viewModel.onCellTapped(CellFocus(viewModel.ref(0, 0), ValueField.Reps))
-        val bench = viewModel.blocks[0].id
 
-        viewModel.onDeleteExercise(bench)
-        assertThat(viewModel.state.value.dialog).isEqualTo(TemplateEditorDialog.DeleteExercise(bench))
-        viewModel.onDeleteExerciseConfirmed(bench)
+        viewModel.onDeleteSet(viewModel.ref(0, 0))
+        assertThat(viewModel.state.value.deletionRemovedExercise()).isFalse()
+        viewModel.onDeleteSet(viewModel.ref(0, 0))
+        viewModel.onDeleteSet(viewModel.ref(0, 0))
 
         assertThat(viewModel.blocks.map { it.exercises.single().exercise }).containsExactly(plank)
+        assertThat(viewModel.state.value.deletionRemovedExercise()).isTrue()
+        viewModel.onUndoDelete()
+        assertThat(viewModel.blocks.map { it.exercises.single().exercise }).containsExactly(bench, plank).inOrder()
+    }
+
+    @Test
+    fun `an exercise joins the next as a superset, and closes the keypad`() {
+        val viewModel = loaded()
+        viewModel.onCellTapped(CellFocus(viewModel.ref(0, 0), ValueField.Reps))
+
+        viewModel.onJoinWithNext(viewModel.blocks[0].id)
+
+        val superset = viewModel.blocks.single()
+        assertThat(superset.setType).isEqualTo(ELSetType.SUPER)
+        assertThat(superset.exercises.map { it.exercise }).containsExactly(bench, plank).inOrder()
+        assertThat(superset.rounds.map { round -> round.sets.map { it.reps to it.timeSeconds } }).containsExactly(
+            listOf(10 to null, null to 30), listOf(8 to null, null to 30), listOf(8 to null, null to 30),
+        ).inOrder()
         assertThat(viewModel.state.value.focus).isNull()
-        assertThat(viewModel.state.value.selected).isNull()
+        assertThat(analytics.events).contains("setType:SUPER")
+        assertThat(viewModel.state.value.hasChanges()).isTrue()
+    }
+
+    @Test
+    fun `a superset joining a third exercise becomes a circuit, and the last exercise has nothing to join`() {
+        val viewModel = loaded()
+        viewModel.onExercisesPicked(listOf(group(squat, ELSet(requiredReps = 5))))
+        val last = viewModel.blocks.last().id
+
+        viewModel.onJoinWithNext(last)
+        assertThat(viewModel.blocks).hasSize(3)
+
+        viewModel.onJoinWithNext(viewModel.blocks[0].id)
+        viewModel.onJoinWithNext(viewModel.blocks[0].id)
+        val circuit = viewModel.blocks.single()
+        assertThat(circuit.setType).isEqualTo(ELSetType.CIRCUIT)
+        assertThat(circuit.exercises.map { it.exercise }).containsExactly(bench, plank, squat).inOrder()
+    }
+
+    @Test
+    fun `splitting a superset puts each exercise on its own, in order, with its sets`() {
+        val viewModel = loaded()
+        viewModel.onJoinWithNext(viewModel.blocks[0].id)
+
+        viewModel.onSplitGroup(viewModel.blocks.single().id)
+
+        assertThat(viewModel.blocks.map { it.setType }).containsExactly(ELSetType.SINGLE, ELSetType.SINGLE)
+        assertThat(viewModel.blocks.map { it.exercises.single().exercise }).containsExactly(bench, plank).inOrder()
+        assertThat(viewModel.blocks[0].rounds.map { it.sets.single().reps }).containsExactly(10, 8, 8).inOrder()
+        assertThat(analytics.events).contains("setType:SINGLE")
+        // A single has nothing to split
+        viewModel.onSplitGroup(viewModel.blocks[0].id)
+        assertThat(viewModel.blocks).hasSize(2)
+    }
+
+    @Test
+    fun `in a superset, deleting an exercise's last set takes it out of the group`() {
+        val viewModel = loaded()
+        viewModel.onJoinWithNext(viewModel.blocks[0].id)
+
+        repeat(3) {
+            val superset = viewModel.blocks.single()
+            viewModel.onDeleteSet(SetRef(superset.id, superset.rounds.first { !it.sets[1].removed }.id, 1))
+        }
+
+        assertThat(viewModel.blocks.single().exercises.map { it.exercise }).containsExactly(bench)
+        assertThat(viewModel.state.value.deletionRemovedExercise()).isTrue()
+    }
+
+    @Test
+    fun `dragging closes the keypad, and moving an exercise is a change`() {
+        val viewModel = loaded()
+        viewModel.onCellTapped(CellFocus(viewModel.ref(0, 0), ValueField.Reps))
+
+        viewModel.onDragStarted()
+        assertThat(viewModel.state.value.focus).isNull()
+        viewModel.onMoveExercise(0, 1)
+
+        assertThat(viewModel.blocks.map { it.exercises.single().exercise }).containsExactly(plank, bench).inOrder()
+        assertThat(viewModel.state.value.hasChanges()).isTrue()
+        viewModel.onMoveExercise(1, 0)
+        assertThat(viewModel.state.value.hasChanges()).isFalse()
     }
 
     @Test
@@ -510,6 +591,10 @@ class TemplateEditorViewModelTest {
 
         override fun timeForAllSets(seconds: Int) {
             events += "timeForAllSets:$seconds"
+        }
+
+        override fun setTypeChanged(type: ELSetType) {
+            events += "setType:${type.name}"
         }
     }
 }

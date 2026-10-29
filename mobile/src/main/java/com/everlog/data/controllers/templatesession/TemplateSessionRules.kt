@@ -108,13 +108,6 @@ fun List<WorkoutBlock>.ungroupExercises(picked: Collection<ExerciseRef>, ids: Se
     listOfNotNull(block.without(out.toSet())) + singles
 }
 
-/**
- * Deletes the [picked] exercises. A block left with one exercise becomes a single; one left with none goes.
- */
-fun List<WorkoutBlock>.deleteExercises(picked: Collection<ExerciseRef>): List<WorkoutBlock> = mapNotNull { block ->
-    block.without(picked.filter { it.blockId == block.id }.map { it.index }.toSet())
-}
-
 // In the table's order: block by block, exercise by exercise
 private fun List<WorkoutBlock>.ordered(picked: Collection<ExerciseRef>): List<ExerciseRef> {
     val position = mapIndexed { i, block -> block.id to i }.toMap()

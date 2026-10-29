@@ -5,7 +5,6 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
@@ -33,21 +32,10 @@ import androidx.lifecycle.compose.LifecycleResumeEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.everlog.R
 import com.everlog.data.controllers.workoutsession.SetMode
-import com.everlog.data.controllers.workoutsession.SetRef
-import com.everlog.data.controllers.workoutsession.WorkoutBlock
-import com.everlog.data.controllers.workoutsession.WorkoutExercise
-import com.everlog.data.controllers.workoutsession.WorkoutRound
-import com.everlog.data.controllers.workoutsession.WorkoutSet
 import com.everlog.data.controllers.workoutsession.set
 import com.everlog.data.model.exercise.ELExercise
 import com.everlog.managers.preferences.SettingsManager
-import com.everlog.ui.components.exercisetable.CellFocus
-import com.everlog.ui.components.exercisetable.ExampleTable
 import com.everlog.ui.components.exercisetable.ExerciseTab
-import com.everlog.ui.components.exercisetable.ExerciseTable
-import com.everlog.ui.components.exercisetable.ExerciseTableActions
-import com.everlog.ui.components.exercisetable.TableColumns
-import com.everlog.ui.components.exercisetable.TableView
 import com.everlog.ui.components.exercisetable.exerciseName
 import com.everlog.ui.components.exercisetable.focusLabel
 import com.everlog.ui.design.elements.AppButton
@@ -62,17 +50,12 @@ import com.everlog.ui.design.elements.keypad.AppKeypadEntry
 import com.everlog.ui.design.elements.keypad.AppKeypadInput
 import com.everlog.ui.design.elements.keypad.AppKeypadNote
 import com.everlog.ui.design.elements.keypad.AppKeypadToggle
-import com.everlog.ui.design.elements.list.AppListGroup
-import com.everlog.ui.design.elements.list.AppListItem
 import com.everlog.ui.design.theme.Theme
 import com.everlog.utils.format.formatClock
 import kotlinx.coroutines.android.awaitFrame
 import kotlinx.coroutines.launch
 
-// Templates hold targets: no last time, weight or ticks
-private val TemplateColumns = TableColumns(lastTime = false, weight = false, tick = false)
-
-// The unit isn't shown, as there's no weight column
+// The keypad's labels take a unit, but templates hold reps and times only
 private val NoWeights = SettingsManager.WeightUnit.KILOGRAM
 
 /**
@@ -107,15 +90,6 @@ internal fun TemplateEditorScreen(
             override fun onDecimal() = viewModel.onDecimal()
             override fun onBackspace() = viewModel.onBackspace()
             override fun onStep(direction: Int) = viewModel.onStep(direction)
-        }
-    }
-    val tableActions = remember(viewModel, onOpenExercise) {
-        object : ExerciseTableActions {
-            override fun onCellTapped(cell: CellFocus) = viewModel.onCellTapped(cell)
-            override fun onAddSet(blockId: Long) = viewModel.onAddSet(blockId)
-            override fun onDeleteSet(ref: SetRef) = viewModel.onDeleteSet(ref)
-            override fun onOpenExercise(exercise: ELExercise, tab: ExerciseTab) = onOpenExercise(exercise, tab)
-            override fun onDeleteExercise(blockId: Long) = viewModel.onDeleteExercise(blockId)
         }
     }
     val ready = state.load == TemplateLoad.Ready
@@ -156,30 +130,9 @@ internal fun TemplateEditorScreen(
                 TemplateLoad.Failed -> LoadFailed(stringResource(R.string.template_editor_load_failed), onRetry = viewModel::onRetry)
                 TemplateLoad.NotFound -> LoadFailed(stringResource(R.string.template_editor_not_found), onRetry = null)
                 TemplateLoad.Ready -> if (empty) {
-                    Column(modifier = Modifier.fillMaxSize().padding(top = contentPadding.calculateTopPadding())) {
-                        TemplateSettings(state, viewModel, Modifier.padding(horizontal = Theme.spacing.large, vertical = Theme.spacing.medium))
-                        ExampleTable(
-                            blocks = exampleBlocks(stringResource(R.string.workout_log_example_exercise)),
-                            view = TableView(unit = NoWeights, unitLabel = "", selected = SetRef(-1, -2, 0), columns = TemplateColumns),
-                            contentPadding = PaddingValues(bottom = contentPadding.calculateBottomPadding()),
-                        )
-                    }
+                    TemplateEditorExample(state, viewModel, contentPadding)
                 } else {
-                    ExerciseTable(
-                        blocks = state.blocks,
-                        view = TableView(
-                            unit = NoWeights,
-                            unitLabel = "",
-                            focus = state.focus,
-                            selected = state.focus?.ref,
-                            typed = state.typed,
-                            columns = TemplateColumns,
-                        ),
-                        reveal = state.reveal,
-                        contentPadding = contentPadding,
-                        actions = tableActions,
-                        header = { TemplateSettings(state, viewModel, Modifier.padding(bottom = Theme.spacing.extraLarge)) },
-                    )
+                    TemplateEditorList(state, viewModel, contentPadding, onOpenExercise)
                 }
             }
             Messages(state, viewModel, Modifier.align(Alignment.BottomCenter).padding(bottom = contentPadding.calculateBottomPadding()))
@@ -222,29 +175,6 @@ private fun Header(state: TemplateEditorState, viewModel: TemplateEditorViewMode
     }
 }
 
-// The template's name and rest, above its exercises
-@Composable
-private fun TemplateSettings(state: TemplateEditorState, viewModel: TemplateEditorViewModel, modifier: Modifier) {
-    AppListGroup(modifier = modifier) {
-        row {
-            AppListItem(
-                modifier = Modifier.testTag(TemplateEditorTags.Name),
-                title = stringResource(R.string.template_editor_name),
-                subtitle = state.name,
-                onClick = viewModel::onNameTapped,
-            )
-        }
-        row {
-            AppListItem(
-                modifier = Modifier.testTag(TemplateEditorTags.Rest),
-                title = stringResource(R.string.template_editor_rest),
-                subtitle = formatClock(state.restSeconds.toLong()),
-                onClick = viewModel::onRestTapped,
-            )
-        }
-    }
-}
-
 @Composable
 private fun keypadEntry(state: TemplateEditorState, viewModel: TemplateEditorViewModel): AppKeypadEntry? {
     val focus = state.focus ?: return null
@@ -274,7 +204,7 @@ private fun keypadEntry(state: TemplateEditorState, viewModel: TemplateEditorVie
 @Composable
 private fun Messages(state: TemplateEditorState, viewModel: TemplateEditorViewModel, modifier: Modifier) {
     val snackbar = remember { SnackbarHostState() }
-    val deleted = stringResource(R.string.workout_log_set_deleted)
+    val deleted = stringResource(if (state.deletionRemovedExercise()) R.string.template_editor_exercise_deleted else R.string.workout_log_set_deleted)
     val undo = stringResource(R.string.workout_log_undo)
     LaunchedEffect(state.deletion) {
         if (state.deletion == null) {
@@ -317,14 +247,3 @@ private fun LoadFailed(text: String, onRetry: (() -> Unit)?) {
         if (onRetry != null) AppButton(onClick = onRetry, text = stringResource(R.string.template_editor_retry))
     }
 }
-
-private fun exampleBlocks(name: String) = listOf(
-    WorkoutBlock(
-        id = -1,
-        uuid = null,
-        type = null,
-        restSeconds = 0,
-        exercises = listOf(WorkoutExercise(null, ELExercise(name = name))),
-        rounds = (2L..4L).map { WorkoutRound(-it, listOf(WorkoutSet(reps = 10))) },
-    ),
-)

@@ -29,16 +29,7 @@ import com.everlog.ui.design.theme.Theme
 @Composable
 internal fun ExampleTable(blocks: List<WorkoutBlock>, view: TableView, contentPadding: PaddingValues, modifier: Modifier = Modifier) {
     Column(modifier = modifier.fillMaxSize()) {
-        AppText(
-            modifier = Modifier
-                .padding(horizontal = Theme.spacing.large, vertical = Theme.spacing.small)
-                .clip(Theme.shapes.button)
-                .border(1.dp, Theme.backgrounds.separator, Theme.shapes.button)
-                .padding(horizontal = Theme.spacing.medium, vertical = Theme.spacing.extraSmall),
-            text = stringResource(R.string.workout_log_example),
-            style = Theme.typography.small,
-            color = Theme.contentColors.secondary,
-        )
+        ExampleLabel(modifier = Modifier.padding(horizontal = Theme.spacing.large, vertical = Theme.spacing.small))
         Box(modifier = Modifier.fillMaxSize()) {
             // Faded as one layer, so overlapping parts don't show through each other
             Box(
@@ -58,15 +49,36 @@ internal fun ExampleTable(blocks: List<WorkoutBlock>, view: TableView, contentPa
                     actions = object : ExerciseTableActions {},
                 )
             }
-            Box(modifier = Modifier.fillMaxSize().pointerInput(Unit) {
-                awaitEachGesture {
-                    awaitFirstDown().consume()
-                    do {
-                        val event = awaitPointerEvent()
-                        event.changes.forEach { it.consume() }
-                    } while (event.changes.any { it.pressed })
-                }
-            })
+            Box(modifier = Modifier.fillMaxSize().blockingTouches())
         }
+    }
+}
+
+/**
+ * EXAMPLE · NOT YOUR DATA, in an outlined pill, over an empty screen's faded example.
+ */
+@Composable
+internal fun ExampleLabel(modifier: Modifier = Modifier) {
+    AppText(
+        modifier = modifier
+            .clip(Theme.shapes.button)
+            .border(1.dp, Theme.backgrounds.separator, Theme.shapes.button)
+            .padding(horizontal = Theme.spacing.medium, vertical = Theme.spacing.extraSmall),
+        text = stringResource(R.string.workout_log_example),
+        style = Theme.typography.small,
+        color = Theme.contentColors.secondary,
+    )
+}
+
+/**
+ * Lets no touch through to what's under it, e.g. an example that only shows what the screen becomes.
+ */
+internal fun Modifier.blockingTouches(): Modifier = pointerInput(Unit) {
+    awaitEachGesture {
+        awaitFirstDown().consume()
+        do {
+            val event = awaitPointerEvent()
+            event.changes.forEach { it.consume() }
+        } while (event.changes.any { it.pressed })
     }
 }
