@@ -1,32 +1,17 @@
-import java.io.FileInputStream
-import java.util.Properties
+import com.everlog.gradleplugins.envSecret
 
 plugins {
-    alias(libs.plugins.android.application)
-    alias(libs.plugins.kotlin.android)
-    alias(libs.plugins.kotlin.compose)
-    alias(libs.plugins.google.services)
-    alias(libs.plugins.firebase.crashlytics)
-    alias(libs.plugins.firebase.perf)
-    id("kotlin-parcelize")
-}
-
-kotlin {
-    jvmToolchain(20)
+    alias(libs.plugins.everlog.android.applicationBinary)
+    alias(libs.plugins.everlog.android.compose)
+    alias(libs.plugins.everlog.android.firebase)
 }
 
 android {
     namespace = "com.everlog"
-    compileSdk = 36
     ndkVersion = "26.1.10909125" // Must match version in .github/actions/setup-gradle/action.yml
 
     defaultConfig {
         applicationId = "com.everlog"
-        minSdk = 24
-        targetSdk = 36
-        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-        versionCode = project.calculateVersionCode()
-        versionName = project.calculateVersionName()
         vectorDrawables {
             useSupportLibrary = true
         }
@@ -35,17 +20,6 @@ android {
     buildFeatures {
         buildConfig = true
         viewBinding = true
-        compose = true
-    }
-
-    compileOptions {
-        isCoreLibraryDesugaringEnabled = true
-    }
-
-    kotlin {
-        compilerOptions {
-            freeCompilerArgs.add("-Xexpect-builtin-arguments-junction")
-        }
     }
 
     signingConfigs {
@@ -57,9 +31,9 @@ android {
         }
         create("release") {
             storeFile = file("src/release/release_key.jks")
-            storePassword = project.envSecret("KEYSTORE_RELEASE_PASSWORD")
-            keyAlias = project.envSecret("KEYSTORE_RELEASE_ALIAS")
-            keyPassword = project.envSecret("KEYSTORE_RELEASE_ALIAS_PASSWORD")
+            storePassword = envSecret("KEYSTORE_RELEASE_PASSWORD")
+            keyAlias = envSecret("KEYSTORE_RELEASE_ALIAS")
+            keyPassword = envSecret("KEYSTORE_RELEASE_ALIAS_PASSWORD")
         }
     }
 
@@ -67,8 +41,8 @@ android {
         getByName("debug") {
             applicationIdSuffix = ".dev"
             isDebuggable = true
-            buildConfigField("String", "E2E_TEST_USER_EMAIL", "\"${project.envSecret("E2E_TEST_USER_EMAIL")}\"")
-            buildConfigField("String", "E2E_TEST_USER_PASSWORD", "\"${project.envSecret("E2E_TEST_USER_PASSWORD")}\"")
+            buildConfigField("String", "E2E_TEST_USER_EMAIL", "\"${envSecret("E2E_TEST_USER_EMAIL")}\"")
+            buildConfigField("String", "E2E_TEST_USER_PASSWORD", "\"${envSecret("E2E_TEST_USER_PASSWORD")}\"")
         }
         getByName("release") {
             signingConfig = signingConfigs.getByName("release")
@@ -82,15 +56,6 @@ android {
             configure<com.google.firebase.crashlytics.buildtools.gradle.CrashlyticsExtension> {
                 nativeSymbolUploadEnabled = true
             }
-        }
-    }
-}
-
-configurations.all {
-    resolutionStrategy {
-        dependencySubstitution {
-            substitute(module("org.hamcrest:hamcrest-core")).using(module("org.hamcrest:hamcrest:3.0"))
-            substitute(module("org.hamcrest:hamcrest-library")).using(module("org.hamcrest:hamcrest:3.0"))
         }
     }
 }
@@ -165,7 +130,6 @@ dependencies {
     implementation(libs.retrofit.rxjava)
     implementation(libs.okhttp.logging)
 
-    coreLibraryDesugaring(libs.desugar.jdk.libs)
     implementation(libs.calendarview)
 
     implementation(libs.commons.lang3)
@@ -209,40 +173,4 @@ dependencies {
     implementation(libs.blurView)
     implementation(libs.achievementView)
     implementation(libs.textDrawable)
-}
-
-fun Project.envSecret(key: String): String {
-    val propFile = file("./secrets.properties")
-    val properties = Properties()
-    properties.load(FileInputStream(propFile))
-    val property = properties.getProperty(key)
-    if (property.isNullOrBlank()) {
-        throw IllegalStateException("Required property is missing: property=$key")
-    }
-    return property
-}
-
-fun Project.calculateVersionName(): String {
-    val versionFile = rootProject.file("tools/versioning/version.txt")
-    if (!versionFile.exists()) {
-        throw GradleException("tools/versioning/version.txt is missing. Required for versioning logic.")
-    }
-    val baseVersion = versionFile.readText().trim()
-    val suffix = project.findProperty("ciVersionNameSuffix")?.toString()
-    return when {
-        suffix == "none" -> baseVersion
-        suffix.isNullOrBlank() -> "$baseVersion-local"
-        else -> "$baseVersion-$suffix"
-    }
-}
-
-fun Project.calculateVersionCode(): Int {
-    val ciVersionCode = project.findProperty("ciVersionCode")?.toString()?.toIntOrNull()
-    if (ciVersionCode != null) return ciVersionCode
-
-    val versionFile = rootProject.file("tools/versioning/version_code.txt")
-    if (!versionFile.exists()) {
-        throw GradleException("tools/versioning/version_code.txt is missing. Required for versioning logic.")
-    }
-    return versionFile.readText().trim().toInt()
 }

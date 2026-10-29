@@ -21,9 +21,13 @@ Run all commands from the repo root; the Gradle wrapper targets the `:mobile` mo
 
 There is no ktlint/detekt configured — the only lint is Android's built-in lint (bundled into the `bundleRelease`/`assembleRelease` tasks via `isMinifyEnabled`/proguard).
 
+### Build setup
+
+Shared build setup lives in convention plugins in the `gradle-plugins/conventions` composite build (included from `settings.gradle.kts`), as in newsfeed-kotlin-multiplatform. Modules apply them through the version catalog (`alias(libs.plugins.everlog.android.…)`): `android-base-plugin` (SDK levels, JVM toolchain, desugaring, parcelize), `android-compose-plugin`, `android-firebase-plugin` (google-services, Crashlytics, Performance; app only) and `android-application-binary-plugin` (app module, target SDK, version code and name). Put setup every module needs in a plugin, not in `mobile/build.gradle.kts`.
+
 ### Local secrets required to build
 
-`mobile/build.gradle.kts` reads `mobile/secrets.properties` (gitignored) via `envSecret(key)`, and will throw a `GradleException` if a required key is missing. Locally you need at least:
+The build reads `mobile/secrets.properties` (gitignored) via `envSecret(key)` (`gradle-plugins/conventions`), and will throw a `GradleException` if a required key is missing. Locally you need at least:
 - `E2E_TEST_USER_EMAIL`, `E2E_TEST_USER_PASSWORD` (debug build config fields, used by the `LoginActivityTest` instrumented E2E test)
 - `KEYSTORE_RELEASE_PASSWORD`, `KEYSTORE_RELEASE_ALIAS`, `KEYSTORE_RELEASE_ALIAS_PASSWORD` (only needed for release signing)
 
