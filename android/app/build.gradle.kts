@@ -72,10 +72,7 @@ dependencies {
     implementation(projects.android.template.feature)
     implementation(projects.android.workout.feature)
 
-    testImplementation(libs.junit)
-    testImplementation(libs.kotlin.test.junit)
-    testImplementation(libs.truth)
-    testImplementation(libs.threetenbp)
+    testImplementation(projects.android.common.test)
 
     androidTestImplementation(libs.androidx.test.runner)
     androidTestImplementation(libs.androidx.test.ext.junit)

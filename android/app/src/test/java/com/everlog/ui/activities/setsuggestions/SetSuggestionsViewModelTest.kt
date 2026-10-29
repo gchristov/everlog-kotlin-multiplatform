@@ -2,7 +2,7 @@ package com.everlog.ui.activities.setsuggestions
 
 import com.everlog.managers.preferences.SettingsManager.MuscleGoal
 import com.everlog.managers.preferences.SettingsManager.WeightUnit
-import com.everlog.testutil.FakeCoroutineDispatcher
+import com.everlog.android.common.test.FakeCoroutineDispatcher
 import com.google.common.truth.Truth.assertThat
 import org.junit.Test
 

@@ -2,7 +2,7 @@ package com.everlog.data.controllers.starterroutines
 
 import arrow.core.Either
 import com.everlog.data.model.ELRoutine
-import com.everlog.testutil.FakeCoroutineDispatcher
+import com.everlog.android.common.test.FakeCoroutineDispatcher
 import com.everlog.testutil.FakeRoutineRepository
 import com.google.common.truth.Truth.assertThat
 import kotlinx.coroutines.CoroutineScope

@@ -1,4 +1,4 @@
-package com.everlog.testutil
+package com.everlog.android.common.test
 
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers

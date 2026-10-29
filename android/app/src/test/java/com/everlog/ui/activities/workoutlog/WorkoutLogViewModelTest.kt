@@ -27,7 +27,7 @@ import com.everlog.managers.preferences.SettingsManager
 import com.everlog.managers.preferences.SettingsManager.MuscleGoal
 import com.everlog.managers.preferences.SettingsManager.WeightUnit
 import com.everlog.services.workout.ShownSet
-import com.everlog.testutil.FakeCoroutineDispatcher
+import com.everlog.android.common.test.FakeCoroutineDispatcher
 import com.everlog.testutil.InMemorySharedPreferences
 import com.everlog.ui.components.exercisetable.CellFocus
 import com.everlog.utils.format.displayWeight
