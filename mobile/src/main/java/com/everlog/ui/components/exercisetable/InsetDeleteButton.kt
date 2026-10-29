@@ -11,6 +11,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.vectorResource
+import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.unit.dp
 import com.everlog.R
 import com.everlog.ui.design.elements.AppIcon
@@ -35,7 +36,7 @@ internal fun InsetDeleteButton(onClick: () -> Unit, contentDescription: String, 
             .clip(shape)
             .background(Theme.backgrounds.inset)
             .border(1.dp, Theme.backgrounds.separator, shape)
-            .clickable(onClick = onClick),
+            .clickable(role = Role.Button, onClick = onClick),
         contentAlignment = Alignment.Center,
     ) {
         AppIcon(
