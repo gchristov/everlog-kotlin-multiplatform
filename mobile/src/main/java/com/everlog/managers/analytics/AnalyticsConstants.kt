@@ -148,6 +148,7 @@ class AnalyticsConstants {
         const val EVENT_WORKOUT_DISCARD_PROMPT_SHOWN = "workout_discard_prompt_shown"
         const val EVENT_WORKOUT_DISCARD_PROMPT_FINISHED = "workout_discard_prompt_finished"
         const val EVENT_WORKOUT_DISCARD_PROMPT_CANCELLED = "workout_discard_prompt_cancelled"
+        const val EVENT_WORKOUT_RESUMED = "workout_resumed"
         const val EVENT_WORKOUT_NEXT_EXERCISE = "workout_next_exercise"
         const val EVENT_WORKOUT_PREV_EXERCISE = "workout_prev_exercise"
         const val EVENT_WORKOUT_REPS_MODIFIED = "workout_reps_modified"
@@ -291,6 +292,9 @@ class AnalyticsConstants {
         // home screen's resume prompt after the app was closed mid-workout
         const val DISCARD_PROMPT_SOURCE_WORKOUT = "workout"
         const val DISCARD_PROMPT_SOURCE_HOME = "home"
+
+        // The app opened on the home screen with a workout ongoing, e.g. after it was swiped away mid-workout
+        const val WORKOUT_RESUMED_SOURCE_LAUNCH = "launch"
 
         // Onboarding steps, besides the questions, which are their question's id (e.g. units, days)
         const val ONBOARDING_STEP_WELCOME = "welcome"

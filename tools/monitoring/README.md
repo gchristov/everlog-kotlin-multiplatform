@@ -108,7 +108,7 @@ Each query runs on its own too, e.g. `./tools/bigquery/bq_query.sh bigquery-cred
 
 ### Analysis queries
 
-The Funnel baseline (2020–2026) in Notion was built from these. They're kept here so the page links to them instead of keeping copies. Their results identify users or devices, so save them only under `tools/bigquery/` (gitignored), e.g. `--output tools/bigquery/baseline_users.csv`.
+The Funnel baseline (2020–2026) in Notion was built from the first four. They're kept here so the page links to them instead of keeping copies. Their results identify users or devices, so save them only under `tools/bigquery/` (gitignored), e.g. `--output tools/bigquery/baseline_users.csv`.
 
 | File | What it returns | Reads |
 |---|---|---|
@@ -116,6 +116,7 @@ The Funnel baseline (2020–2026) in Notion was built from these. They're kept h
 | `analysis/baseline_workouts.sql` | One row per workout start by real users, 2020–2026: outcome, duration, sets, notification use, start type | ~1.5 GB |
 | `analysis/new_user_paths.sql` | Each 2026 new user's screens and actions in order, for reading people one by one while there are few | small |
 | `analysis/most_active_users.sql` | Users ranked by workouts finished in the last 90 days (Firebase Auth UIDs; names are in Firestore at `users/<uid>`) | small |
+| `analysis/workout_resumes.sql` | Per app version since 2.15.0: workouts finished and discarded, and those brought back after the app opened without the workout screen (home's resume prompt up to 2.21.1, reopened straight away from 2.21.2) and how they ended | ~1.7 GB |
 
 The two baseline tables are kept as they were run for the baseline, without the owner filter added later, so the baseline's numbers can be reproduced exactly. The owner's account is among the power users there.
 
