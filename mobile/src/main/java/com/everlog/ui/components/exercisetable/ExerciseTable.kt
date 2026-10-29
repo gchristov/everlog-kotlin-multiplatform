@@ -87,7 +87,6 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 private object TableSizes {
-    val Thumbnail = 40.dp
     val ThumbnailCorner = 12.dp
     val GroupThumbnail = 24.dp
     val GroupThumbnailCorner = 8.dp
@@ -102,8 +101,6 @@ private object TableSizes {
     val RowPadding = 12.dp
     val SetColumn = 32.dp
     val Cell = 72.dp
-    val CellHeight = 36.dp
-    val Check = 36.dp
     val CheckDone = 32.dp
     val CheckTarget = 44.dp
     val ColumnGap = 8.dp
@@ -295,7 +292,7 @@ private fun ExerciseHeader(index: Int, block: WorkoutBlock, actions: ExerciseTab
             ) {
                 AppThumbnail(
                     imageUrl = exercise?.imageUrl,
-                    size = TableSizes.Thumbnail,
+                    size = Theme.sizes.leading,
                     corner = TableSizes.ThumbnailCorner,
                 )
                 AppText(
@@ -518,7 +515,7 @@ private fun Cell(
                     top = it.positionInWindow().y
                     bottom = top + it.size.height
                 }
-                .size(TableSizes.Cell, TableSizes.CellHeight)
+                .size(TableSizes.Cell, Theme.sizes.rowControl)
                 .clip(shape)
                 .indication(interactions, ripple())
                 .then(
@@ -568,7 +565,7 @@ private fun StartButton(tag: String, armed: Boolean, onClick: () -> Unit) {
     ) {
         Box(
             modifier = Modifier
-                .size(TableSizes.Check)
+                .size(Theme.sizes.rowControl)
                 .clip(CircleShape)
                 .indication(interactions, ripple())
                 .background(Theme.backgrounds.inset)
@@ -604,7 +601,7 @@ private fun Tick(tag: String, done: Boolean, armed: Boolean, onClick: () -> Unit
         // A solid fill reads bigger than an outline of the same size, so the done one is a little smaller
         Box(
             modifier = Modifier
-                .size(if (done) TableSizes.CheckDone else TableSizes.Check)
+                .size(if (done) TableSizes.CheckDone else Theme.sizes.rowControl)
                 .clip(shape)
                 .indication(interactions, ripple())
                 .background(if (done) Theme.contentColors.action else Theme.backgrounds.inset)

@@ -64,6 +64,7 @@ private fun Tints() {
         Theme.contentColors.secondary,
         Theme.contentColors.action,
         Theme.contentColors.destructive,
+        Theme.contentColors.destructiveSoft,
     )
     val star = ImageVector.vectorResource(R.drawable.ic_star_filled)
     Row(horizontalArrangement = Arrangement.spacedBy(Theme.spacing.extraLarge)) {

@@ -31,7 +31,7 @@ fun AppButton(
 ) {
     androidx.compose.material3.Button(
         onClick = onClick,
-        modifier = modifier.defaultMinSize(minHeight = ButtonMinHeight),
+        modifier = modifier.defaultMinSize(minHeight = Theme.sizes.button),
         enabled = enabled,
         shape = Theme.shapes.button,
         colors = ButtonDefaults.buttonColors(
@@ -69,7 +69,7 @@ fun AppSecondaryButton(
     val color = Theme.contentColors.action
     androidx.compose.material3.OutlinedButton(
         onClick = onClick,
-        modifier = modifier.defaultMinSize(minHeight = ButtonMinHeight),
+        modifier = modifier.defaultMinSize(minHeight = Theme.sizes.button),
         enabled = enabled,
         shape = Theme.shapes.button,
         colors = ButtonDefaults.outlinedButtonColors(containerColor = Color.Transparent),
@@ -99,7 +99,7 @@ fun AppTertiaryButton(
 ) {
     androidx.compose.material3.TextButton(
         onClick = onClick,
-        modifier = modifier.defaultMinSize(minHeight = ButtonMinHeight),
+        modifier = modifier.defaultMinSize(minHeight = Theme.sizes.button),
         enabled = enabled,
         shape = Theme.shapes.button,
         contentPadding = contentPadding,
@@ -159,7 +159,7 @@ private fun buttonContentPadding() = PaddingValues(
     vertical = Theme.spacing.small,
 )
 
-private val ButtonMinHeight = 42.dp
+
 private val ButtonIconSize = 18.dp
 private const val DisabledAlpha = 0.4f
 
@@ -178,7 +178,6 @@ private fun AppButtonPreview() {
 // The outlined icon button's circle: the icon button's own size, its touch area still the minimum 48dp
 @Composable
 private fun Modifier.outlinedCircle(): Modifier = this
-    .size(OutlinedIconButtonSize)
+    // Drawn around the 40dp size, not inside it: inside, it would wrap the 48dp touch area the button lays out
     .border(1.dp, Theme.backgrounds.separator, CircleShape)
-
-private val OutlinedIconButtonSize = 40.dp
+    .size(Theme.sizes.leading)
