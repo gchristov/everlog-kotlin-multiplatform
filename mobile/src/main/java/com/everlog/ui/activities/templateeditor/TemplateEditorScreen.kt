@@ -173,6 +173,13 @@ internal fun TemplateEditorScreen(
                         picked = state.picked,
                         onTogglePicked = viewModel::onTogglePicked,
                     )
+                } else if (empty && prototype.inline) {
+                    InlineEmptyTemplate(
+                        state = state,
+                        viewModel = viewModel,
+                        example = exampleBlocks(stringResource(R.string.workout_log_example_exercise)),
+                        showSettings = !prototype.compact,
+                    )
                 } else if (empty) {
                     Column(modifier = Modifier.fillMaxSize().padding(top = contentPadding.calculateTopPadding())) {
                         if (!prototype.compact) TemplateSettings(state, viewModel, Modifier.padding(horizontal = Theme.spacing.large, vertical = Theme.spacing.medium))

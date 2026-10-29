@@ -5,6 +5,11 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectDragGestures
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.clearAndSetSemantics
+import androidx.compose.ui.graphics.CompositingStrategy
+import androidx.compose.foundation.gestures.awaitFirstDown
+import androidx.compose.foundation.gestures.awaitEachGesture
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -215,6 +220,79 @@ private fun Modifier.providingCenter(line: HorizontalAlignmentLine) = layout { m
     val placeable = measurable.measure(constraints)
     layout(placeable.width, placeable.height, mapOf(line to placeable.height / 2)) { placeable.place(0, 0) }
 }
+
+/**
+ * A template with no exercises: its details, then a faded example exercise under an EXAMPLE label, which can't be
+ * touched.
+ */
+@Composable
+internal fun InlineEmptyTemplate(
+    state: TemplateEditorState,
+    viewModel: TemplateEditorViewModel,
+    example: List<WorkoutBlock>,
+    showSettings: Boolean,
+) {
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(horizontal = Theme.spacing.large)
+            .padding(top = Theme.spacing.medium),
+    ) {
+        if (showSettings) {
+            InlineTemplateSettings(state, viewModel)
+            Spacer(modifier = Modifier.height(Theme.spacing.extraLarge))
+        }
+        AppSectionHeader(modifier = Modifier.padding(bottom = Theme.spacing.large), text = "Exercises")
+        AppText(
+            modifier = Modifier
+                .padding(bottom = Theme.spacing.medium)
+                .clip(Theme.shapes.button)
+                .border(1.dp, Theme.backgrounds.separator, Theme.shapes.button)
+                .padding(horizontal = Theme.spacing.medium, vertical = Theme.spacing.extraSmall),
+            text = stringResource(R.string.workout_log_example),
+            style = Theme.typography.small,
+            color = Theme.contentColors.secondary,
+        )
+        Box {
+            // Faded as one layer, so overlapping parts don't show through each other
+            Column(
+                modifier = Modifier
+                    .graphicsLayer {
+                        alpha = ExampleAlpha
+                        compositingStrategy = CompositingStrategy.Offscreen
+                    }
+                    .clearAndSetSemantics {},
+            ) {
+                val exampleState = state.copy(blocks = example, focus = null, selected = null, typed = null)
+                example.forEach { block ->
+                    ExerciseCard(
+                        modifier = Modifier.fillMaxWidth(),
+                        block = block,
+                        state = exampleState,
+                        viewModel = viewModel,
+                        collapsed = false,
+                        lifted = false,
+                        grip = Modifier,
+                        keepClear = 0f,
+                        onOpenExercise = { _, _ -> },
+                    )
+                    BlockActions(onAddSet = {}, addSet = "Add set", join = null, onJoin = {}, onSplit = null)
+                }
+            }
+            Box(modifier = Modifier.matchParentSize().pointerInput(Unit) {
+                awaitEachGesture {
+                    awaitFirstDown().consume()
+                    do {
+                        val event = awaitPointerEvent()
+                        event.changes.forEach { it.consume() }
+                    } while (event.changes.any { it.pressed })
+                }
+            })
+        }
+    }
+}
+
+private const val ExampleAlpha = 0.35f
 
 // The template's details, each value first with what it is above it
 @Composable
