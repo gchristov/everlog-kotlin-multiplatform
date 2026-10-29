@@ -1,7 +1,9 @@
 package com.everlog.managers.apprate
 
-import com.everlog.testutil.InMemorySharedPreferences
+import com.everlog.android.common.test.InMemorySharedPreferences
 import com.everlog.testutil.at
+import com.everlog.testutil.install
+import com.everlog.testutil.uninstall
 import com.google.common.truth.Truth.assertThat
 import org.junit.After
 import org.junit.Before

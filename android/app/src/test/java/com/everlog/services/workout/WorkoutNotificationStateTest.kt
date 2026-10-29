@@ -1,5 +1,6 @@
 package com.everlog.services.workout
 
+import com.everlog.android.common.test.InMemorySharedPreferences
 import com.everlog.data.model.ELRoutine
 import com.everlog.data.model.exercise.ELExercise
 import com.everlog.data.model.exercise.ELExerciseGroup
@@ -14,8 +15,9 @@ import com.everlog.services.workout.WorkoutNotificationState.NextSet
 import com.everlog.services.workout.WorkoutNotificationState.NoExercises
 import com.everlog.services.workout.WorkoutNotificationState.Rest
 import com.everlog.services.workout.WorkoutNotificationState.RestTimer
-import com.everlog.testutil.InMemorySharedPreferences
+import com.everlog.testutil.install
 import com.everlog.testutil.plannedSet
+import com.everlog.testutil.uninstall
 import com.everlog.testutil.workout
 import com.google.common.truth.Truth.assertThat
 import org.junit.After

@@ -1,4 +1,4 @@
-package com.everlog.data.sync
+package com.everlog.android.common.datasync
 
 // Where a source's sync stands, for the Settings sync status and to decide what a screen shows
 data class SyncStatus(

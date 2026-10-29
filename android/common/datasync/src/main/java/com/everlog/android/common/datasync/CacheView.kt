@@ -1,4 +1,4 @@
-package com.everlog.data.sync
+package com.everlog.android.common.datasync
 
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow

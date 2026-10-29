@@ -62,6 +62,7 @@ android {
 
 dependencies {
     implementation(projects.android.common.compose)
+    implementation(projects.android.common.datasync)
     implementation(projects.android.common.design)
     implementation(projects.android.common.kotlin)
     implementation(projects.android.common.mvp)

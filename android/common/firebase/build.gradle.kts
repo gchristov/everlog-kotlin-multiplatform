@@ -8,4 +8,6 @@ android {
 
 dependencies {
     api(projects.android.common.kotlin)
+    api(platform(libs.firebase.bom))
+    api(libs.firebase.firestore)
 }

@@ -9,4 +9,6 @@ android {
 dependencies {
     api(projects.android.common.kotlin)
     api(projects.android.common.firebase)
+    implementation(libs.kotlinx.coroutines.play.services)
+    implementation(libs.timber)
 }

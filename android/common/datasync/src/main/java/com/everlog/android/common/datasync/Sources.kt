@@ -1,4 +1,4 @@
-package com.everlog.data.sync
+package com.everlog.android.common.datasync
 
 /**
  * A collection a screen reads, and how its cache is kept in step with the server.

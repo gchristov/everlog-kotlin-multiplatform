@@ -1,26 +1,9 @@
-package com.everlog.testutil
+package com.everlog.android.common.test
 
 import android.content.SharedPreferences
-import com.everlog.managers.preferences.PreferencesManager
 
-/**
- * A map-backed SharedPreferences, so code that reads settings (e.g. SettingsManager) can run
- * in plain JVM unit tests. Install it with [install] and remove it with [uninstall].
- */
+/** A map-backed SharedPreferences, for code that reads preferences in plain JVM unit tests. */
 class InMemorySharedPreferences : SharedPreferences {
-
-    companion object {
-
-        fun install(): InMemorySharedPreferences {
-            val preferences = InMemorySharedPreferences()
-            PreferencesManager.setPreferencesProvider { preferences }
-            return preferences
-        }
-
-        fun uninstall() {
-            PreferencesManager.setPreferencesProvider(null)
-        }
-    }
 
     private val values = HashMap<String, Any?>()
 
@@ -82,4 +65,7 @@ class InMemorySharedPreferences : SharedPreferences {
             commit()
         }
     }
+
+    // For helpers that install it in place of a module's preferences
+    companion object
 }

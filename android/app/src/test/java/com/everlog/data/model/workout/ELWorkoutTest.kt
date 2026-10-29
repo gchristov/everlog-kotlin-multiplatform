@@ -1,12 +1,14 @@
 package com.everlog.data.model.workout
 
+import com.everlog.android.common.test.InMemorySharedPreferences
 import com.everlog.data.model.ELRoutine
 import com.everlog.data.model.exercise.ELExercise
 import com.everlog.data.model.exercise.ELExerciseGroup
 import com.everlog.data.model.exercise.ELRoutineExercise
 import com.everlog.data.model.set.ELSet
-import com.everlog.testutil.InMemorySharedPreferences
 import com.everlog.testutil.at
+import com.everlog.testutil.install
+import com.everlog.testutil.uninstall
 import com.everlog.testutil.workout
 import com.google.common.truth.Truth.assertThat
 import org.junit.After

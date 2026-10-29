@@ -1,4 +1,4 @@
-package com.everlog.data.sync
+package com.everlog.android.common.datasync
 
 import com.google.firebase.firestore.AggregateSource
 import com.google.firebase.firestore.DocumentChange

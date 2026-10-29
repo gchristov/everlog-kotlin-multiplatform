@@ -1,6 +1,12 @@
 package com.everlog.data.repositories
 
 import arrow.core.Either
+import com.everlog.android.common.datasync.CollectionSource
+import com.everlog.android.common.datasync.DataSync
+import com.everlog.android.common.datasync.DocumentSource
+import com.everlog.android.common.datasync.FirestoreCollection
+import com.everlog.android.common.datasync.FirestoreDocument
+import com.everlog.android.common.datasync.SyncPlan
 import com.everlog.android.common.kotlin.Load
 import com.everlog.android.common.kotlin.map
 import com.everlog.data.model.exercise.ELExercise
@@ -8,12 +14,6 @@ import com.everlog.data.model.exercise.library.ExerciseRegistry
 import com.everlog.data.model.exercise.library.ExerciseRegistryDto
 import com.everlog.data.model.exercise.library.LibraryExercise
 import com.everlog.data.model.exercise.library.LibraryExerciseDto
-import com.everlog.data.sync.CollectionSource
-import com.everlog.data.sync.DataSync
-import com.everlog.data.sync.DocumentSource
-import com.everlog.data.sync.FirestoreCollection
-import com.everlog.data.sync.FirestoreDocument
-import com.everlog.data.sync.SyncPlan
 import com.everlog.managers.auth.LocalUserManager
 import com.everlog.managers.firebase.FirestorePathManager
 import com.google.firebase.firestore.DocumentSnapshot

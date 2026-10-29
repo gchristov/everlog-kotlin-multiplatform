@@ -1,4 +1,4 @@
-package com.everlog.data.sync
+package com.everlog.android.common.datasync
 
 /**
  * A listener's documents, parsed once each. Every snapshot of a query holds all its documents, so parsing
