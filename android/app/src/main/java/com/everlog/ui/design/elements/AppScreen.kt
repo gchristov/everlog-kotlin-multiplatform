@@ -4,7 +4,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
-import com.everlog.R
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.booleanResource
@@ -42,7 +41,7 @@ fun AppScreen(
     content: @Composable (contentPadding: PaddingValues) -> Unit,
 ) {
     val hazeState = remember { HazeState() }
-    val maxContentWidth = if (booleanResource(R.bool.isTablet)) {
+    val maxContentWidth = if (booleanResource(DesignR.bool.isTablet)) {
         dimensionResource(DesignR.dimen.content_width_tablet)
     } else {
         Dp.Unspecified
