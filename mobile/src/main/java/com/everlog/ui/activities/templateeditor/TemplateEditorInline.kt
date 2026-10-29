@@ -101,6 +101,7 @@ private object InlineSizes {
     // The exercise image's size, as the outlined icon buttons
     val Grip = 40.dp
     val GripGap = 8.dp
+    val CollapsedGap = 8.dp
     // The card and its labels and buttons, past the grip
     val Indent = Grip + GripGap
     val RowHeight = 52.dp
@@ -332,21 +333,8 @@ private fun ExerciseCard(
 ) {
     val shape = Theme.shapes.surface
     // As the workout screen: the exercise above, then its column labels, then a card of its sets
-    Column(
-        modifier = modifier
-            .fillMaxWidth()
-            .then(
-                if (lifted) {
-                    Modifier
-                        .clip(shape)
-                        .background(Theme.backgrounds.surfaceRaised)
-                        .border(1.dp, Theme.contentColors.action, shape)
-                } else {
-                    Modifier
-                },
-            ),
-    ) {
-        CardHeader(block, viewModel, grip, collapsed, onOpenExercise)
+    Column(modifier = modifier.fillMaxWidth()) {
+        CardHeader(block, viewModel, grip, collapsed, lifted, onOpenExercise)
         if (collapsed) return@Column
         Spacer(modifier = Modifier.height(Theme.spacing.medium))
         ColumnLabels(block, Modifier.padding(start = InlineSizes.Indent))
@@ -380,12 +368,14 @@ private fun CardHeader(
     viewModel: TemplateEditorViewModel,
     grip: Modifier,
     collapsed: Boolean,
+    // Raised while dragged: the exercise, with the grip still outside it
+    lifted: Boolean,
     onOpenExercise: (ELExercise, ExerciseTab) -> Unit,
 ) {
     val context = LocalContext.current
     val group = block.exercises.size > 1
     Row(
-        modifier = Modifier.padding(end = InlineSizes.RowPadding, top = if (collapsed) Theme.spacing.small else 0.dp, bottom = if (collapsed) Theme.spacing.small else 0.dp),
+        modifier = Modifier.padding(vertical = if (collapsed) InlineSizes.CollapsedGap / 2 else 0.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         // Left of the card, beside the last exercise as the workout's exercise menu is
@@ -400,7 +390,27 @@ private fun CardHeader(
         }
         // As much room as the screen's side margin
         Spacer(modifier = Modifier.width(Theme.spacing.large))
-        Column(modifier = Modifier.weight(1f).alignBy(LastExerciseCenter), verticalArrangement = Arrangement.spacedBy(if (group) InlineSizes.GroupRowGap else 0.dp)) {
+        val shape = Theme.shapes.surface
+        Column(
+            modifier = Modifier
+                .weight(1f)
+                .alignBy(LastExerciseCenter)
+                .then(
+                    when {
+                        lifted -> Modifier
+                            .clip(shape)
+                            .background(Theme.backgrounds.surfaceRaised)
+                            .border(1.dp, Theme.contentColors.action, shape)
+                        collapsed -> Modifier.border(1.dp, Theme.backgrounds.separator, shape)
+                        else -> Modifier
+                    },
+                )
+                .padding(
+                    horizontal = if (collapsed) InlineSizes.RowPadding else 0.dp,
+                    vertical = if (collapsed) Theme.spacing.small else 0.dp,
+                )
+                .padding(end = if (collapsed) 0.dp else InlineSizes.RowPadding),
+            verticalArrangement = Arrangement.spacedBy(if (group) InlineSizes.GroupRowGap else 0.dp)) {
             if (group) {
                 // Lined up with the names, past the images
                 Row(
