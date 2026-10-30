@@ -2,12 +2,12 @@ package com.everlog.utils.format
 
 import android.content.Context
 import com.everlog.R
+import com.everlog.android.common.data.model.ELRoutine
+import com.everlog.android.common.data.model.exercise.ELRoutineExercise
+import com.everlog.android.common.data.model.workout.ELWorkout
 import com.everlog.android.common.kotlin.append
 import com.everlog.android.common.kotlin.format.StatsFormatUtils
 import com.everlog.android.settings.data.SettingsManager
-import com.everlog.data.model.ELRoutine
-import com.everlog.data.model.exercise.ELRoutineExercise
-import com.everlog.data.model.workout.ELWorkout
 import java.util.concurrent.TimeUnit
 
 private const val SEPARATOR = " • "

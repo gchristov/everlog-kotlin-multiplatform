@@ -6,9 +6,9 @@ import androidx.core.app.NotificationCompat
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
 import com.everlog.R
+import com.everlog.android.common.data.model.set.ELSet
 import com.everlog.android.common.kotlin.WeightUnit
 import com.everlog.android.settings.data.SettingsManager
-import com.everlog.data.model.set.ELSet
 import com.everlog.services.workout.WorkoutNotificationState.Done
 import com.everlog.services.workout.WorkoutNotificationState.NextSet
 import com.everlog.services.workout.WorkoutNotificationState.NoExercises

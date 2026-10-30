@@ -1,10 +1,10 @@
 package com.everlog.data.controllers.workoutprefill
 
+import com.everlog.android.common.data.model.exercise.ELExerciseHistory
+import com.everlog.android.common.data.model.exercise.ELRoutineExercise
+import com.everlog.android.common.data.model.set.ELSet
+import com.everlog.android.common.data.model.workout.ELWorkout
 import com.everlog.android.settings.data.SettingsManager
-import com.everlog.data.model.exercise.ELExerciseHistory
-import com.everlog.data.model.exercise.ELRoutineExercise
-import com.everlog.data.model.set.ELSet
-import com.everlog.data.model.workout.ELWorkout
 import timber.log.Timber
 
 abstract class BaseWorkoutPrefillController {

@@ -1,9 +1,9 @@
 package com.everlog.data.datastores.history
 
+import com.everlog.android.common.data.model.workout.ELWorkout
 import com.everlog.data.datastores.base.ELDocumentStore
 import com.everlog.data.datastores.events.document.ELDocStoreItemLoadedEvent
 import com.everlog.data.datastores.routines.ELRoutineDecorator
-import com.everlog.data.model.workout.ELWorkout
 import com.everlog.managers.firebase.FirestorePathManager
 import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.FieldPath

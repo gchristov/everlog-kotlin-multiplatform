@@ -1,10 +1,10 @@
 package com.everlog.data.controllers.starterroutines
 
+import com.everlog.android.common.data.model.set.ELSetType
 import com.everlog.data.controllers.starterroutines.StarterProfile.Experience
 import com.everlog.data.controllers.starterroutines.StarterProfile.Goal
 import com.everlog.data.controllers.starterroutines.StarterProfile.Place
 import com.everlog.data.controllers.starterroutines.StarterRoutine.Target
-import com.everlog.data.model.set.ELSetType
 import com.everlog.testutil.exerciseLibrary
 import com.google.common.truth.Truth.assertThat
 import org.junit.Assert.assertThrows

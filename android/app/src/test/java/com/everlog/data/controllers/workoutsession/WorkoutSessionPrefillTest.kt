@@ -1,7 +1,7 @@
 package com.everlog.data.controllers.workoutsession
 
+import com.everlog.android.common.data.model.exercise.ELExercise
 import com.everlog.data.controllers.workoutprefill.BaseWorkoutPrefillController.PrefillSource
-import com.everlog.data.model.exercise.ELExercise
 import com.google.common.truth.Truth.assertThat
 import org.junit.Test
 

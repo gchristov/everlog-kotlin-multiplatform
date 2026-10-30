@@ -1,9 +1,9 @@
 package com.everlog.managers.analytics
 
 import android.os.Bundle
+import com.everlog.android.common.data.model.set.ELSetType
+import com.everlog.android.common.data.model.workout.RangeType
 import com.everlog.android.settings.data.SettingsManager
-import com.everlog.data.model.set.ELSetType
-import com.everlog.data.model.workout.RangeType
 import com.everlog.managers.appupdate.AppUpdateController
 import com.everlog.utils.device.DeviceUtils
 import org.json.JSONObject

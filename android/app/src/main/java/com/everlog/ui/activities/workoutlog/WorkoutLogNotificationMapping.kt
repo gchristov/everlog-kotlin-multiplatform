@@ -1,10 +1,10 @@
 package com.everlog.ui.activities.workoutlog
 
+import com.everlog.android.common.data.model.workout.ELWorkout
+import com.everlog.android.common.data.model.workout.ELWorkoutState
 import com.everlog.data.controllers.workoutsession.SetRef
 import com.everlog.data.controllers.workoutsession.WorkoutBlock
 import com.everlog.data.controllers.workoutsession.withSessionBlocks
-import com.everlog.data.model.workout.ELWorkout
-import com.everlog.data.model.workout.ELWorkoutState
 
 // The notification works on ELWorkout, which WorkoutService shows and sends back positions in
 

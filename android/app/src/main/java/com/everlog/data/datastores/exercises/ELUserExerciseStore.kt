@@ -1,8 +1,8 @@
 package com.everlog.data.datastores.exercises
 
+import com.everlog.android.common.data.model.exercise.ELExercise
 import com.everlog.data.datastores.base.ELDocumentStore
 import com.everlog.data.datastores.events.document.ELDocStoreItemLoadedEvent
-import com.everlog.data.model.exercise.ELExercise
 import com.everlog.managers.firebase.FirestorePathManager
 import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.FieldPath

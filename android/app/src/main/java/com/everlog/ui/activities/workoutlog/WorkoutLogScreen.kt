@@ -52,6 +52,7 @@ import com.everlog.android.common.compose.elements.keypad.AppKeypadTimer
 import com.everlog.android.common.compose.elements.keypad.AppKeypadTimerStyle
 import com.everlog.android.common.compose.elements.keypad.AppKeypadToggle
 import com.everlog.android.common.compose.theme.Theme
+import com.everlog.android.common.data.model.exercise.ELExercise
 import com.everlog.android.common.kotlin.UnitUtils
 import com.everlog.android.common.kotlin.WeightUnit
 import com.everlog.data.controllers.workoutsession.SetMode
@@ -62,7 +63,6 @@ import com.everlog.data.controllers.workoutsession.WorkoutExercise
 import com.everlog.data.controllers.workoutsession.WorkoutRound
 import com.everlog.data.controllers.workoutsession.WorkoutSet
 import com.everlog.data.controllers.workoutsession.set
-import com.everlog.data.model.exercise.ELExercise
 import com.everlog.ui.activities.setsuggestions.SetSuggestion
 import com.everlog.ui.components.exercisetable.CellFocus
 import com.everlog.ui.components.exercisetable.ExampleTable

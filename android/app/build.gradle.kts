@@ -62,6 +62,7 @@ android {
 
 dependencies {
     implementation(projects.android.common.compose)
+    implementation(projects.android.common.data)
     implementation(projects.android.common.datasync)
     implementation(projects.android.common.design)
     implementation(projects.android.common.kotlin)
@@ -81,6 +82,7 @@ dependencies {
     implementation(projects.android.workout.feature)
 
     testImplementation(projects.android.common.test)
+    testImplementation(projects.android.common.dataTest)
     testImplementation(projects.android.settings.testFixtures)
 
     androidTestImplementation(libs.androidx.test.runner)

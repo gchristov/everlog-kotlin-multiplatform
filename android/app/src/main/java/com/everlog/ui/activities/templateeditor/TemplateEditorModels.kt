@@ -1,9 +1,9 @@
 package com.everlog.ui.activities.templateeditor
 
+import com.everlog.android.common.data.model.ELRoutine
 import com.everlog.data.controllers.workoutsession.DeletedSets
 import com.everlog.data.controllers.workoutsession.SetRef
 import com.everlog.data.controllers.workoutsession.WorkoutBlock
-import com.everlog.data.model.ELRoutine
 import com.everlog.ui.components.exercisetable.CellFocus
 
 /**

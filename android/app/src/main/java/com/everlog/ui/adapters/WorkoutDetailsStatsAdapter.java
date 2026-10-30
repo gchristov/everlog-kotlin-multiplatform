@@ -11,7 +11,7 @@ import com.everlog.R;
 import com.everlog.android.common.kotlin.DateExtKt;
 import com.everlog.android.common.kotlin.format.StatsFormatUtils;
 import com.everlog.android.settings.data.SettingsManager;
-import com.everlog.data.model.workout.ELWorkout;
+import com.everlog.android.common.data.model.workout.ELWorkout;
 import com.everlog.databinding.RowHeaderWorkoutDetailsBinding;
 import com.everlog.utils.format.WorkoutSetFormatKt;
 

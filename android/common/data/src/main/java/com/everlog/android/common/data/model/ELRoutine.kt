@@ -1,9 +1,9 @@
-package com.everlog.data.model
+package com.everlog.android.common.data.model
 
+import com.everlog.android.common.data.model.exercise.ELExercise
+import com.everlog.android.common.data.model.exercise.ELExerciseGroup
 import com.everlog.android.common.firebase.FirestoreFields
 import com.everlog.android.common.kotlin.timeOfDayMessage
-import com.everlog.data.model.exercise.ELExercise
-import com.everlog.data.model.exercise.ELExerciseGroup
 import java.io.Serializable
 import java.util.*
 

@@ -29,7 +29,8 @@ Common modules:
 | `common:firebase` | Firebase, `FirestorePathManager`, the analytics interface |
 | `common:persistence` | `PreferencesManager`, the app's key-value storage. The user's settings (`SettingsManager`) go to `settings:data` |
 | `common:datasync` | `DataSync`, the cache-first sync layer (the app wires its instance in `AppDataSync`) |
-| `common:data` | The models and stores every feature shares, until they're split into the features' `data` modules |
+| `common:data` | The models every feature shares (sets, exercises, routines, workouts), with their R8 keep rule, until they're split into the features' `data` modules. Feature-only models go to their feature's `data` module |
+| `common:data-test` | Fixtures for building the shared models in tests |
 
 ## Dependency rules
 
@@ -41,7 +42,7 @@ The convention plugins enforce these: a module that declares a dependency breaki
 - **Data never depends on UI**: no `feature` modules, `common:compose`, `common:compose-test`, `common:mvp` or `common:design`.
 - **Nothing depends on the app**, and **common modules never depend on a feature's modules.**
 - **Code moves with its tests**, never ahead of them. A feature's tests go to its `feature` or `data` module when the code they test does, and common modules hold only common code and its tests.
-- **Test support goes through `test-fixtures` modules and `common:test`/`common:compose-test`**, which only test configurations (`testImplementation`, `androidTestImplementation`) and other test support may depend on. Their code lives in `main`, with their dependencies as `api`, because a module's `test` sources can't be shared. A feature's `feature` and `data` modules use its `test-fixtures` for their tests.
+- **Test support goes through `test-fixtures` modules and the `common:*-test` modules** (`common:test`, `common:compose-test`, `common:data-test`), which only test configurations (`testImplementation`, `androidTestImplementation`) and other test support may depend on. Their code lives in `main`, with their dependencies as `api`, because a module's `test` sources can't be shared. A feature's `feature` and `data` modules use its `test-fixtures` for their tests.
 
 ## Convention plugins
 

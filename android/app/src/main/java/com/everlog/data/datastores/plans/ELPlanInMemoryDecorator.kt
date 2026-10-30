@@ -1,9 +1,9 @@
 package com.everlog.data.datastores.plans
 
+import com.everlog.android.common.data.model.ELRoutine
 import com.everlog.data.datastores.base.InMemoryDatabase
 import com.everlog.data.datastores.routines.ELRoutineDecorator
 import com.everlog.data.datastores.routines.ELUserRoutinesInMemoryStore
-import com.everlog.data.model.ELRoutine
 import com.everlog.data.model.plan.ELPlan
 
 /**

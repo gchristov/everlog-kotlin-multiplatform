@@ -7,7 +7,7 @@ import android.view.View;
 import android.widget.ArrayAdapter;
 
 import com.everlog.R;
-import com.everlog.data.model.exercise.ELExercise;
+import com.everlog.android.common.data.model.exercise.ELExercise;
 import com.everlog.databinding.ActivityExerciseCreateBinding;
 import com.everlog.ui.activities.base.BaseActivity;
 import com.everlog.ui.activities.base.BaseActivityPresenter;

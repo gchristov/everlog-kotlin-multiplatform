@@ -1,5 +1,6 @@
 package com.everlog.ui.activities.workoutlog
 
+import com.everlog.android.common.data.model.workout.ELWorkout
 import com.everlog.data.controllers.workoutsession.SessionIds
 import com.everlog.data.controllers.workoutsession.SetRef
 import com.everlog.data.controllers.workoutsession.ValueField
@@ -9,7 +10,6 @@ import com.everlog.data.controllers.workoutsession.refs
 import com.everlog.data.controllers.workoutsession.set
 import com.everlog.data.controllers.workoutsession.setValue
 import com.everlog.data.controllers.workoutsession.toSessionBlocks
-import com.everlog.data.model.workout.ELWorkout
 import com.everlog.ui.components.exercisetable.CellFocus
 import com.everlog.ui.components.exercisetable.countField
 import com.everlog.utils.format.storedWeight

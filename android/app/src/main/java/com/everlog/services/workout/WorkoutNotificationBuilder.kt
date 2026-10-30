@@ -9,11 +9,11 @@ import android.widget.RemoteViews
 import androidx.core.app.NotificationCompat
 import androidx.core.content.ContextCompat
 import com.everlog.R
+import com.everlog.android.common.data.model.set.ELSetType
+import com.everlog.android.common.data.model.workout.ELWorkout
 import com.everlog.android.settings.data.SettingsManager
 import com.everlog.constants.ELConstants
 import com.everlog.data.controllers.workoutsession.toSessionSet
-import com.everlog.data.model.set.ELSetType
-import com.everlog.data.model.workout.ELWorkout
 import com.everlog.services.workout.WorkoutNotificationState.Done
 import com.everlog.services.workout.WorkoutNotificationState.NextSet
 import com.everlog.services.workout.WorkoutNotificationState.NoExercises

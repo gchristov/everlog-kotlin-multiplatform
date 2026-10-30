@@ -13,13 +13,13 @@ import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.everlog.R
+import com.everlog.android.common.data.model.exercise.ELExerciseGroup
+import com.everlog.android.common.data.model.workout.ELWorkout
 import com.everlog.config.FeedbackSource
 import com.everlog.constants.ELActivityRequestCodes
 import com.everlog.constants.ELConstants
 import com.everlog.data.controllers.workoutprefill.RealLoadPrefillSourcesUseCase
 import com.everlog.data.controllers.workoutsession.RealWorkoutSetPrefill
-import com.everlog.data.model.exercise.ELExerciseGroup
-import com.everlog.data.model.workout.ELWorkout
 import com.everlog.data.repositories.RealExerciseRepository
 import com.everlog.data.repositories.RealWorkoutRepository
 import com.everlog.data.sync.AppDataSync

@@ -1,4 +1,4 @@
-package com.everlog.data.model
+package com.everlog.android.common.data.model
 
 interface ELFirestoreModel {
 

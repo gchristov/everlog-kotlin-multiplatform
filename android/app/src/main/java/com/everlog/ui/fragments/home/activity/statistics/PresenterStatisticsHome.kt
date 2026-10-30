@@ -1,12 +1,12 @@
 package com.everlog.ui.fragments.home.activity.statistics
 
+import com.everlog.android.common.data.model.workout.ELWorkout
+import com.everlog.android.common.data.model.workout.RangeType
 import com.everlog.config.AppConfig
 import com.everlog.config.FeedbackSource
 import com.everlog.data.controllers.statistics.UserStatsController
 import com.everlog.data.datastores.ELDatastore
 import com.everlog.data.datastores.history.ELColStoreWorkoutsLoadedEvent
-import com.everlog.data.model.workout.ELWorkout
-import com.everlog.data.model.workout.RangeType
 import com.everlog.managers.RemoteConfigManager
 import com.everlog.managers.analytics.AnalyticsManager
 import com.everlog.ui.fragments.base.BaseFragmentPresenter

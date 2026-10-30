@@ -19,10 +19,10 @@ import com.ahamed.multiviewadapter.ItemBinder
 import com.ahamed.multiviewadapter.ItemViewHolder
 import com.ahamed.multiviewadapter.RecyclerAdapter
 import com.everlog.R
-import com.everlog.data.model.exercise.ELExerciseGroup
-import com.everlog.data.model.exercise.ELRoutineExercise
-import com.everlog.data.model.set.ELSet
-import com.everlog.data.model.set.ELSetType
+import com.everlog.android.common.data.model.exercise.ELExerciseGroup
+import com.everlog.android.common.data.model.exercise.ELRoutineExercise
+import com.everlog.android.common.data.model.set.ELSet
+import com.everlog.android.common.data.model.set.ELSetType
 import com.everlog.databinding.RowExerciseGroupSummaryBinding
 import com.everlog.databinding.RowExerciseWithinSetSummaryBinding
 import com.everlog.databinding.RowSetSummaryBinding

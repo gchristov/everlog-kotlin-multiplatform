@@ -4,8 +4,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.everlog.R
+import com.everlog.android.common.data.model.exercise.ELExercise
 import com.everlog.data.controllers.statistics.ExerciseStatsController
-import com.everlog.data.model.exercise.ELExercise
 import com.everlog.databinding.FragmentExerciseInfoLegacyBinding
 import com.everlog.managers.analytics.AnalyticsConstants
 import com.everlog.ui.fragments.home.exercise.BaseExerciseTabFragment

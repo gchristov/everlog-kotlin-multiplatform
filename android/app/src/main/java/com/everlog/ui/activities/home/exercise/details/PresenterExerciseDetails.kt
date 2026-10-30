@@ -2,12 +2,12 @@ package com.everlog.ui.activities.home.exercise.details
 
 import android.content.DialogInterface
 import com.everlog.R
+import com.everlog.android.common.data.model.exercise.ELExercise
 import com.everlog.config.AppConfig
 import com.everlog.data.controllers.statistics.ExerciseStatsController
 import com.everlog.data.datastores.ELDatastore
 import com.everlog.data.datastores.ELUserStore
 import com.everlog.data.datastores.exercises.ELUserExerciseStore
-import com.everlog.data.model.exercise.ELExercise
 import com.everlog.managers.analytics.AnalyticsManager
 import com.everlog.managers.auth.LocalUserManager
 import com.everlog.managers.firebase.FirebaseStorageManager

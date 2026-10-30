@@ -4,6 +4,9 @@ plugins {
 
 android {
     namespace = "com.everlog.android.common.data"
+    defaultConfig {
+        consumerProguardFiles("consumer-rules.pro")
+    }
 }
 
 dependencies {
@@ -11,4 +14,6 @@ dependencies {
     api(projects.android.common.firebase)
     api(projects.android.common.datasync)
     api(projects.android.common.persistence)
+    implementation(libs.commons.lang3)
+    testImplementation(projects.android.common.dataTest)
 }

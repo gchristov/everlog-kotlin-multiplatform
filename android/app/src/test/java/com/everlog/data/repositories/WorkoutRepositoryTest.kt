@@ -1,8 +1,8 @@
 package com.everlog.data.repositories
 
-import com.everlog.data.model.exercise.ELExercise
-import com.everlog.testutil.loggedSet
-import com.everlog.testutil.workout
+import com.everlog.android.common.data.model.exercise.ELExercise
+import com.everlog.android.common.datatest.loggedSet
+import com.everlog.android.common.datatest.workout
 import com.google.common.truth.Truth.assertThat
 import org.junit.Test
 

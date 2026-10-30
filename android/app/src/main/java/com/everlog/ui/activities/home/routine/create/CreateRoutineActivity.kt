@@ -3,8 +3,8 @@ package com.everlog.ui.activities.home.routine.create
 import android.content.Context
 import android.content.Intent
 import com.everlog.R
+import com.everlog.android.common.data.model.ELRoutine
 import com.everlog.constants.ELConstants
-import com.everlog.data.model.ELRoutine
 import com.everlog.managers.analytics.AnalyticsConstants
 import com.everlog.ui.activities.home.exercisegroup.CreateExerciseGroupsActivity
 import com.everlog.ui.activities.home.exercisegroup.PresenterCreateExerciseGroups

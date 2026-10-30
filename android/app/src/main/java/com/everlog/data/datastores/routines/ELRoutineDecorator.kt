@@ -1,9 +1,9 @@
 package com.everlog.data.datastores.routines
 
+import com.everlog.android.common.data.model.ELRoutine
+import com.everlog.android.common.data.model.exercise.ELExercise
+import com.everlog.android.common.data.model.workout.ELWorkout
 import com.everlog.data.datastores.ELDatastore
-import com.everlog.data.model.ELRoutine
-import com.everlog.data.model.exercise.ELExercise
-import com.everlog.data.model.workout.ELWorkout
 import com.everlog.managers.firebase.FirestorePathManager
 import com.google.android.gms.tasks.Tasks
 import com.google.firebase.firestore.Source

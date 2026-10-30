@@ -1,5 +1,8 @@
 package com.everlog.ui.activities.templateeditor
 
+import com.everlog.android.common.data.model.ELRoutine
+import com.everlog.android.common.data.model.exercise.ELExerciseGroup
+import com.everlog.android.common.data.model.set.ELSetType
 import com.everlog.android.common.kotlin.Load
 import com.everlog.android.common.kotlin.WeightUnit
 import com.everlog.android.common.mvvm.CommonViewModel
@@ -25,11 +28,8 @@ import com.everlog.data.controllers.workoutsession.restore
 import com.everlog.data.controllers.workoutsession.set
 import com.everlog.data.controllers.workoutsession.setValue
 import com.everlog.data.controllers.workoutsession.withExercises
-import com.everlog.data.model.ELRoutine
-import com.everlog.data.model.exercise.ELExerciseGroup
 import com.everlog.data.model.exercise.library.LibraryExercise
 import com.everlog.data.model.exercise.library.toELExercise
-import com.everlog.data.model.set.ELSetType
 import com.everlog.ui.components.exercisetable.CellFocus
 import com.everlog.ui.components.exercisetable.parse
 import com.everlog.ui.components.exercisetable.steppedValue

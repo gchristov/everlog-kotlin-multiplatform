@@ -1,6 +1,6 @@
 package com.everlog.ui.activities.templateeditor
 
-import com.everlog.data.model.set.ELSetType
+import com.everlog.android.common.data.model.set.ELSetType
 import com.everlog.managers.analytics.AnalyticsConstants
 import com.everlog.managers.analytics.AnalyticsManager
 

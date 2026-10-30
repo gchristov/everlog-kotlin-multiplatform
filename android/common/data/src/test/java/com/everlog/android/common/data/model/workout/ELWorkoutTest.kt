@@ -1,33 +1,18 @@
-package com.everlog.data.model.workout
+package com.everlog.android.common.data.model.workout
 
-import com.everlog.android.common.test.InMemorySharedPreferences
-import com.everlog.android.settings.testfixtures.install
-import com.everlog.android.settings.testfixtures.uninstall
-import com.everlog.data.model.ELRoutine
-import com.everlog.data.model.exercise.ELExercise
-import com.everlog.data.model.exercise.ELExerciseGroup
-import com.everlog.data.model.exercise.ELRoutineExercise
-import com.everlog.data.model.set.ELSet
-import com.everlog.testutil.at
-import com.everlog.testutil.workout
+import com.everlog.android.common.data.model.ELRoutine
+import com.everlog.android.common.data.model.exercise.ELExercise
+import com.everlog.android.common.data.model.exercise.ELExerciseGroup
+import com.everlog.android.common.data.model.exercise.ELRoutineExercise
+import com.everlog.android.common.data.model.set.ELSet
+import com.everlog.android.common.datatest.at
+import com.everlog.android.common.datatest.workout
 import com.google.common.truth.Truth.assertThat
-import org.junit.After
-import org.junit.Before
 import org.junit.Test
 
 class ELWorkoutTest {
 
     private val plank = ELExercise(uuid = "plank", name = "Plank")
-
-    @Before
-    fun setUp() {
-        InMemorySharedPreferences.install()
-    }
-
-    @After
-    fun tearDown() {
-        InMemorySharedPreferences.uninstall()
-    }
 
     @Test
     fun `starting a workout copies template targets and clears timer countdowns`() {

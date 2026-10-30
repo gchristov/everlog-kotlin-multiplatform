@@ -9,8 +9,8 @@ import com.ahamed.multiviewadapter.ItemBinder
 import com.ahamed.multiviewadapter.ItemViewHolder
 import com.ahamed.multiviewadapter.RecyclerAdapter
 import com.everlog.R
-import com.everlog.data.model.exercise.ELExerciseHistory
-import com.everlog.data.model.set.ELSet
+import com.everlog.android.common.data.model.exercise.ELExerciseHistory
+import com.everlog.android.common.data.model.set.ELSet
 import com.everlog.databinding.RowHistoryExerciseBinding
 import com.everlog.databinding.RowSetSummaryBinding
 import com.everlog.ui.adapters.exercise.group.ExerciseGroupSummaryAdapter.Companion.renderCompleteSetSummary

@@ -1,7 +1,7 @@
 package com.everlog.data.model.plan
 
-import com.everlog.data.model.ELFirestoreModel
-import com.everlog.data.model.ELRoutine
+import com.everlog.android.common.data.model.ELFirestoreModel
+import com.everlog.android.common.data.model.ELRoutine
 import java.io.Serializable
 import java.util.*
 

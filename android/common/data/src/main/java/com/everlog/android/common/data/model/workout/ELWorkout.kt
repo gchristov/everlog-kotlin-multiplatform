@@ -1,5 +1,11 @@
-package com.everlog.data.model.workout
+package com.everlog.android.common.data.model.workout
 
+import com.everlog.android.common.data.model.ELFirestoreModel
+import com.everlog.android.common.data.model.ELRoutine
+import com.everlog.android.common.data.model.exercise.ELExercise
+import com.everlog.android.common.data.model.exercise.ELExerciseGroup
+import com.everlog.android.common.data.model.exercise.ELRoutineExercise
+import com.everlog.android.common.data.model.set.ELSet
 import com.everlog.android.common.firebase.FirestoreFields
 import com.everlog.android.common.kotlin.WeightUnit
 import com.everlog.android.common.kotlin.format.FormatUtils
@@ -11,12 +17,6 @@ import com.everlog.android.common.kotlin.toDayOfMonthWithMonthOnlyTimestamp
 import com.everlog.android.common.kotlin.toDayOfMonthWithNoHourTimestamp
 import com.everlog.android.common.kotlin.toDayOfMonthWithYearOnlyTimestamp
 import com.everlog.android.common.kotlin.toLocalDate
-import com.everlog.data.model.ELFirestoreModel
-import com.everlog.data.model.ELRoutine
-import com.everlog.data.model.exercise.ELExercise
-import com.everlog.data.model.exercise.ELExerciseGroup
-import com.everlog.data.model.exercise.ELRoutineExercise
-import com.everlog.data.model.set.ELSet
 import com.google.firebase.firestore.Exclude
 import org.apache.commons.lang3.SerializationUtils
 import org.threeten.bp.DayOfWeek

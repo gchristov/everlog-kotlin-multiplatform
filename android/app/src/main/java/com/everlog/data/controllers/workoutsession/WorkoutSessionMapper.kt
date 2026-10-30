@@ -1,10 +1,10 @@
 package com.everlog.data.controllers.workoutsession
 
-import com.everlog.data.model.exercise.ELExerciseGroup
-import com.everlog.data.model.exercise.ELRoutineExercise
-import com.everlog.data.model.set.ELSet
-import com.everlog.data.model.set.ELSetType
-import com.everlog.data.model.workout.ELWorkout
+import com.everlog.android.common.data.model.exercise.ELExerciseGroup
+import com.everlog.android.common.data.model.exercise.ELRoutineExercise
+import com.everlog.android.common.data.model.set.ELSet
+import com.everlog.android.common.data.model.set.ELSetType
+import com.everlog.android.common.data.model.workout.ELWorkout
 import org.apache.commons.lang3.SerializationUtils
 
 // Maps the ongoing workout between ELWorkout and the session's blocks. A round is the sets at the same index

@@ -1,5 +1,6 @@
 package com.everlog.ui.activities.workoutlog
 
+import com.everlog.android.common.data.model.workout.ELWorkout
 import com.everlog.android.common.kotlin.WeightUnit
 import com.everlog.android.settings.data.SettingsManager.MuscleGoal
 import com.everlog.data.controllers.workoutsession.DeletedSets
@@ -10,7 +11,6 @@ import com.everlog.data.controllers.workoutsession.WorkoutBlock
 import com.everlog.data.controllers.workoutsession.WorkoutSet
 import com.everlog.data.controllers.workoutsession.set
 import com.everlog.data.controllers.workoutsession.unfinishedSets
-import com.everlog.data.model.workout.ELWorkout
 import com.everlog.ui.components.exercisetable.CellFocus
 
 internal data class WorkoutLogState(

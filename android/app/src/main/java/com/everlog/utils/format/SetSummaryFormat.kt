@@ -2,9 +2,9 @@ package com.everlog.utils.format
 
 import android.content.Context
 import com.everlog.R
+import com.everlog.android.common.data.model.set.ELSet
 import com.everlog.android.common.kotlin.format.FormatUtils
 import com.everlog.android.settings.data.SettingsManager
-import com.everlog.data.model.set.ELSet
 
 fun ELSet.getWorkoutDetailsSummary(context: Context?): String? {
     if (isWithoutData()) {

@@ -1,6 +1,7 @@
 package com.everlog.data.repositories
 
 import arrow.core.Either
+import com.everlog.android.common.data.model.exercise.ELExercise
 import com.everlog.android.common.datasync.CollectionSource
 import com.everlog.android.common.datasync.DataSync
 import com.everlog.android.common.datasync.DocumentSource
@@ -9,7 +10,6 @@ import com.everlog.android.common.datasync.FirestoreDocument
 import com.everlog.android.common.datasync.SyncPlan
 import com.everlog.android.common.kotlin.Load
 import com.everlog.android.common.kotlin.map
-import com.everlog.data.model.exercise.ELExercise
 import com.everlog.data.model.exercise.library.ExerciseRegistry
 import com.everlog.data.model.exercise.library.ExerciseRegistryDto
 import com.everlog.data.model.exercise.library.LibraryExercise

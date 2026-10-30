@@ -1,7 +1,7 @@
 package com.everlog.managers.apprate
 
+import com.everlog.android.common.data.model.workout.ELWorkout
 import com.everlog.config.AppConfig
-import com.everlog.data.model.workout.ELWorkout
 import java.util.concurrent.TimeUnit
 
 /**

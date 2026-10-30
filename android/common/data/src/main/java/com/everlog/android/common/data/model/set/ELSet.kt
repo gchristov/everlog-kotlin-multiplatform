@@ -1,9 +1,9 @@
-package com.everlog.data.model.set
+package com.everlog.android.common.data.model.set
 
+import com.everlog.android.common.data.model.ELFirestoreModel
 import com.everlog.android.common.kotlin.UnitUtils.Companion.kgToLb
 import com.everlog.android.common.kotlin.UnitUtils.Companion.lbToKg
 import com.everlog.android.common.kotlin.WeightUnit
-import com.everlog.data.model.ELFirestoreModel
 import com.google.firebase.firestore.Exclude
 import java.io.Serializable
 import java.util.*

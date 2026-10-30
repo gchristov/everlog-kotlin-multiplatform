@@ -1,11 +1,11 @@
 package com.everlog.data.datastores.routines
 
+import com.everlog.android.common.data.model.ELRoutine
 import com.everlog.data.datastores.events.collection.ELColStoreItemAddedEvent
 import com.everlog.data.datastores.events.collection.ELColStoreItemModifiedEvent
 import com.everlog.data.datastores.events.collection.ELColStoreItemRemovedEvent
 import com.everlog.data.datastores.events.collection.ELColStoreItemsLoadedEvent
 import com.everlog.data.datastores.events.document.ELDocStoreItemLoadedEvent
-import com.everlog.data.model.ELRoutine
 
 // Events posted by the routine stores, both the Firestore and the in-memory ones
 

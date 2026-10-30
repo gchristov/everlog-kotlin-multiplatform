@@ -16,11 +16,11 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.clearAndSetSemantics
 import com.everlog.R
 import com.everlog.android.common.compose.theme.Theme
+import com.everlog.android.common.data.model.exercise.ELExercise
 import com.everlog.data.controllers.workoutsession.WorkoutBlock
 import com.everlog.data.controllers.workoutsession.WorkoutExercise
 import com.everlog.data.controllers.workoutsession.WorkoutRound
 import com.everlog.data.controllers.workoutsession.WorkoutSet
-import com.everlog.data.model.exercise.ELExercise
 import com.everlog.ui.components.exercisetable.ExampleLabel
 import com.everlog.ui.components.exercisetable.blockingTouches
 

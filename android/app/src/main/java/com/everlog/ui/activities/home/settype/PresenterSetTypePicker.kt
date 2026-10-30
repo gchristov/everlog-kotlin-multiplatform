@@ -5,9 +5,9 @@ import android.content.Intent
 import com.ahamed.multiviewadapter.DataListManager
 import com.ahamed.multiviewadapter.RecyclerAdapter
 import com.everlog.R
+import com.everlog.android.common.data.model.set.ELSetType
 import com.everlog.config.FeedbackSource
 import com.everlog.constants.ELConstants.EXTRA_SET_TYPE
-import com.everlog.data.model.set.ELSetType
 import com.everlog.managers.RemoteConfigManager
 import com.everlog.managers.analytics.AnalyticsManager
 import com.everlog.ui.activities.base.BaseActivityPresenter

@@ -1,6 +1,7 @@
 package com.everlog.data.model
 
 import android.text.TextUtils
+import com.everlog.android.common.data.model.ELFirestoreModel
 import com.everlog.android.common.firebase.FirestoreFields
 import com.everlog.data.model.pro.ELProSubscription
 import com.google.firebase.auth.FirebaseUser

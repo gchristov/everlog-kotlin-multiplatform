@@ -1,11 +1,11 @@
-package com.everlog.testutil
+package com.everlog.android.common.datatest
 
-import com.everlog.data.model.ELRoutine
-import com.everlog.data.model.exercise.ELExercise
-import com.everlog.data.model.exercise.ELExerciseGroup
-import com.everlog.data.model.exercise.ELRoutineExercise
-import com.everlog.data.model.set.ELSet
-import com.everlog.data.model.workout.ELWorkout
+import com.everlog.android.common.data.model.ELRoutine
+import com.everlog.android.common.data.model.exercise.ELExercise
+import com.everlog.android.common.data.model.exercise.ELExerciseGroup
+import com.everlog.android.common.data.model.exercise.ELRoutineExercise
+import com.everlog.android.common.data.model.set.ELSet
+import com.everlog.android.common.data.model.workout.ELWorkout
 import java.time.LocalDateTime
 import java.time.ZoneId
 

@@ -1,7 +1,7 @@
 package com.everlog.data.repositories
 
+import com.everlog.android.common.data.model.workout.ELWorkout
 import com.everlog.data.datastores.ELDatastore
-import com.everlog.data.model.workout.ELWorkout
 import com.everlog.managers.PlanManager
 import com.everlog.managers.WorkoutManager
 import com.everlog.managers.apprate.AppLaunchManager

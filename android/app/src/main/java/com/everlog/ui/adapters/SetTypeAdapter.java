@@ -7,7 +7,7 @@ import android.view.ViewGroup;
 import com.ahamed.multiviewadapter.ItemBinder;
 import com.ahamed.multiviewadapter.ItemViewHolder;
 import com.everlog.R;
-import com.everlog.data.model.set.ELSetType;
+import com.everlog.android.common.data.model.set.ELSetType;
 import com.everlog.ui.views.SetTypeSummaryView;
 
 public class SetTypeAdapter {

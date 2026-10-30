@@ -11,8 +11,8 @@ import androidx.core.view.updatePadding
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.everlog.R
+import com.everlog.android.common.data.model.exercise.ELExerciseGroup
 import com.everlog.constants.ELConstants
-import com.everlog.data.model.exercise.ELExerciseGroup
 import com.everlog.managers.analytics.AnalyticsConstants
 import com.everlog.ui.activities.base.BaseActivity
 import com.everlog.ui.activities.base.BaseActivityMvpView

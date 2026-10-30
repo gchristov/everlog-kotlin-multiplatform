@@ -7,13 +7,13 @@ import android.content.Intent
 import com.ahamed.multiviewadapter.DataListManager
 import com.ahamed.multiviewadapter.RecyclerAdapter
 import com.everlog.R
+import com.everlog.android.common.data.model.ELRoutine
 import com.everlog.constants.ELActivityRequestCodes
 import com.everlog.constants.ELActivityRequestCodes.REQUEST_PICK_COVER_IMAGE
 import com.everlog.constants.ELConstants
 import com.everlog.constants.ELConstants.EXTRA_ROUTINE
 import com.everlog.data.datastores.ELDatastore
 import com.everlog.data.datastores.plans.ELDocStorePlanLoadedEvent
-import com.everlog.data.model.ELRoutine
 import com.everlog.data.model.plan.ELPlan
 import com.everlog.data.model.plan.ELPlanDay
 import com.everlog.data.model.plan.ELPlanWeek

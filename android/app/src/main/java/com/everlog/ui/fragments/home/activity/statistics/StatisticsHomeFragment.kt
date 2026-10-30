@@ -8,13 +8,13 @@ import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import androidx.core.content.ContextCompat
 import com.everlog.R
+import com.everlog.android.common.data.model.workout.RangeType
 import com.everlog.android.common.kotlin.format.StatsFormatUtils
 import com.everlog.android.common.kotlin.makeSingleLine
 import com.everlog.android.settings.data.SettingsManager
 import com.everlog.config.AppConfig
 import com.everlog.data.controllers.statistics.BaseStatsController
 import com.everlog.data.controllers.statistics.UserStatsController
-import com.everlog.data.model.workout.RangeType
 import com.everlog.databinding.FragmentHomeStatisticsBinding
 import com.everlog.managers.analytics.AnalyticsConstants
 import com.everlog.ui.activities.base.BaseActivity

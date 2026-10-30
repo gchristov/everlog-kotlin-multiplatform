@@ -2,7 +2,7 @@ package com.everlog.utils.format
 
 import android.content.Context
 import com.everlog.R
-import com.everlog.data.model.set.ELSetType
+import com.everlog.android.common.data.model.set.ELSetType
 
 fun ELSetType.getTitle(context: Context): String? {
     return when (this) {

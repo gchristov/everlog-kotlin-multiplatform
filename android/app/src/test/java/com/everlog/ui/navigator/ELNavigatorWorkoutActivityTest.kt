@@ -1,6 +1,6 @@
 package com.everlog.ui.navigator
 
-import com.everlog.data.model.workout.ELWorkout
+import com.everlog.android.common.data.model.workout.ELWorkout
 import com.everlog.ui.activities.home.workout.WorkoutActivity
 import com.everlog.ui.activities.workoutlog.WorkoutLogActivity
 import com.google.common.truth.Truth.assertThat

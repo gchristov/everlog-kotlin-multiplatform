@@ -1,8 +1,8 @@
 package com.everlog.data.model.plan
 
+import com.everlog.android.common.data.model.ELFirestoreModel
+import com.everlog.android.common.data.model.ELRoutine
 import com.everlog.android.common.firebase.FirestoreFields
-import com.everlog.data.model.ELFirestoreModel
-import com.everlog.data.model.ELRoutine
 import org.apache.commons.lang3.SerializationUtils
 import java.io.Serializable
 import java.util.*

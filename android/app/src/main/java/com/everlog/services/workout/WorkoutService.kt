@@ -8,9 +8,9 @@ import android.content.IntentFilter
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.everlog.BuildConfig
 import com.everlog.R
+import com.everlog.android.common.data.model.workout.ELWorkout
+import com.everlog.android.common.data.model.workout.ELWorkoutState
 import com.everlog.constants.ELConstants
-import com.everlog.data.model.workout.ELWorkout
-import com.everlog.data.model.workout.ELWorkoutState
 import com.everlog.managers.ELNotificationManager
 import com.everlog.managers.analytics.AnalyticsManager
 import com.everlog.services.BaseService

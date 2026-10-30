@@ -1,7 +1,7 @@
 package com.everlog.ui.activities.home.workout
 
-import com.everlog.data.model.workout.ELWorkout
-import com.everlog.data.model.workout.ELWorkoutState
+import com.everlog.android.common.data.model.workout.ELWorkout
+import com.everlog.android.common.data.model.workout.ELWorkoutState
 import com.everlog.databinding.ActivityWorkoutBinding
 import com.everlog.ui.activities.home.exercisegroup.MvpViewCreateExerciseGroups
 import rx.Observable

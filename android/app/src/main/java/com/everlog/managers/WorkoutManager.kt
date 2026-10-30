@@ -1,7 +1,7 @@
 package com.everlog.managers
 
+import com.everlog.android.common.data.model.workout.ELWorkout
 import com.everlog.android.common.persistence.PreferencesManager
-import com.everlog.data.model.workout.ELWorkout
 import com.google.gson.Gson
 
 class WorkoutManager : PreferencesManager() {

@@ -1,4 +1,4 @@
-package com.everlog.data.model.set
+package com.everlog.android.common.data.model.set
 
 import com.everlog.android.common.kotlin.WeightUnit
 import com.google.common.truth.Truth.assertThat

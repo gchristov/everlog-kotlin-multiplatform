@@ -10,13 +10,13 @@ import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import com.everlog.R
 import com.everlog.android.common.compose.CommonComposeActivity
+import com.everlog.android.common.data.model.set.ELSetType
 import com.everlog.config.AppConfig
 import com.everlog.config.FeedbackSource
 import com.everlog.constants.ELActivityRequestCodes
 import com.everlog.constants.ELConstants
 import com.everlog.data.controllers.exerciselibrary.RealLoadExerciseLibraryUseCase
 import com.everlog.data.model.exercise.library.toELExercise
-import com.everlog.data.model.set.ELSetType
 import com.everlog.data.repositories.RealExerciseRepository
 import com.everlog.data.sync.AppDataSync
 import com.everlog.data.repositories.RealRoutineRepository

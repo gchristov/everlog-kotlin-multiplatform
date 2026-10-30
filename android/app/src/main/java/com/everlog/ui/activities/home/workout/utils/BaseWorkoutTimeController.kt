@@ -4,8 +4,8 @@ import android.content.Context
 import android.graphics.Point
 import android.view.View
 import android.view.ViewGroup
+import com.everlog.android.common.data.model.workout.ELWorkout
 import com.everlog.config.AppConfig
-import com.everlog.data.model.workout.ELWorkout
 import com.everlog.managers.WorkoutManager
 import com.everlog.ui.activities.home.workout.MvpViewWorkout
 import com.everlog.ui.views.revealcircle.WorkoutTimerView
