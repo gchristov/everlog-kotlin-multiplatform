@@ -1,4 +1,4 @@
-package com.everlog.ui.activities.exercisepicker
+package com.everlog.android.exercise.feature.picker
 
 import android.text.format.DateUtils
 import android.widget.Toast
@@ -41,7 +41,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.lifecycle.compose.LifecycleResumeEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.everlog.R
 import com.everlog.android.common.compose.elements.AppBar
 import com.everlog.android.common.compose.elements.AppButton
 import com.everlog.android.common.compose.elements.AppCheck
@@ -62,6 +61,7 @@ import com.everlog.android.common.compose.elements.search.AppSearchBar
 import com.everlog.android.common.compose.theme.Theme
 import com.everlog.android.common.data.model.set.ELSetType
 import com.everlog.android.exercise.data.model.library.LibraryExercise
+import com.everlog.android.exercise.feature.R
 import com.everlog.android.common.design.R as DesignR
 
 @Composable
@@ -114,8 +114,8 @@ internal fun ExercisePickerScreen(
                             ),
                             onSendFeedback?.let {
                                 AppMenuItem(
-                                    text = stringResource(R.string.feedback_send),
-                                    icon = ImageVector.vectorResource(R.drawable.ic_feedback),
+                                    text = stringResource(DesignR.string.feedback_send),
+                                    icon = ImageVector.vectorResource(DesignR.drawable.ic_feedback),
                                     onClick = it,
                                 )
                             },

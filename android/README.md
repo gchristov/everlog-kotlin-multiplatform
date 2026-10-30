@@ -44,6 +44,12 @@ The convention plugins enforce these: a module that declares a dependency breaki
 - **Code moves with its tests**, never ahead of them. A feature's tests go to its `feature` or `data` module when the code they test does, and common modules hold only common code and its tests.
 - **Test support goes through `test-fixtures` modules and the `common:*-test` modules** (`common:test`, `common:compose-test`, `common:data-test`), which only test configurations (`testImplementation`, `androidTestImplementation`) and other test support may depend on. Their code lives in `main`, with their dependencies as `api`, because a module's `test` sources can't be shared. A feature's `feature` and `data` modules use its `test-fixtures` for their tests.
 
+## What a feature gets from the app
+
+A feature module can't see the app, but some of what it needs lives there for now: services built on the app's managers (analytics, the user, remote config) and other features' screens, which open through the app's `Navigator`. So each feature declares one interface for them, e.g. `ExerciseFeatureDependencies` in `exercise:feature`, and a holder for it (`ExerciseFeature.dependencies`). The app implements it (`application/features`) and registers it first thing in `ELApplication.onCreate`. The feature's activities read it and hand its parts to their view-models' own interfaces, so view-model tests still pass fakes.
+
+This stands in for dependency injection while the app is split into modules. Each interface is shaped like constructor injection, a list of what the feature needs, so introducing a DI framework after the modularisation (TAS-468) only replaces how the app registers them; the interfaces and the features stay as they are.
+
 ## Convention plugins
 
 Each module applies one plugin for its type, from `gradle-plugins/conventions`, through the version catalog:

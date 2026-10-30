@@ -1,9 +1,9 @@
-package com.everlog.ui.activities.exercisepicker
+package com.everlog.android.exercise.feature.picker
 
 import androidx.annotation.StringRes
-import com.everlog.R
 import com.everlog.android.exercise.data.model.library.ExerciseLibrary
 import com.everlog.android.exercise.data.model.library.LibraryExercise
+import com.everlog.android.exercise.feature.R
 import java.text.Normalizer
 
 // The picker's filters and search over the exercise library. The spec is on the Everlog canvas

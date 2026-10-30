@@ -1,4 +1,4 @@
-package com.everlog.ui.activities.exercisepicker
+package com.everlog.android.exercise.feature.picker
 
 import androidx.compose.ui.test.hasSetTextAction
 import androidx.compose.ui.test.hasText

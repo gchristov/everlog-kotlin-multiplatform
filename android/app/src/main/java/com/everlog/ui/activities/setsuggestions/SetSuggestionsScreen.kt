@@ -22,6 +22,7 @@ import com.everlog.android.common.compose.elements.list.AppListItem
 import com.everlog.android.common.compose.elements.list.items
 import com.everlog.android.common.compose.theme.Theme
 import com.everlog.android.common.kotlin.WeightUnit
+import com.everlog.android.common.design.R as DesignR
 
 /**
  * Off or last time on top, the 1RM goals below them with a sheet on how their weights are worked out.
@@ -67,9 +68,9 @@ private fun SetSuggestionsContent(
                     items(count = 1, key = { "send_feedback" }) {
                         AppListItem(
                             modifier = Modifier.testTag(SetSuggestionsTags.SendFeedback),
-                            title = stringResource(R.string.feedback_send),
+                            title = stringResource(DesignR.string.feedback_send),
                             subtitle = stringResource(R.string.feedback_set_suggestions_subtitle),
-                            leading = { AppIcon(imageVector = ImageVector.vectorResource(R.drawable.ic_feedback), tint = Theme.contentColors.action) },
+                            leading = { AppIcon(imageVector = ImageVector.vectorResource(DesignR.drawable.ic_feedback), tint = Theme.contentColors.action) },
                             onClick = onSendFeedback,
                         )
                     }
