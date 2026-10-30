@@ -1,6 +1,6 @@
 package com.everlog.managers;
 
-import com.everlog.managers.preferences.PreferencesManager;
+import com.everlog.android.common.persistence.PreferencesManager;
 
 public class OnboardManager extends PreferencesManager {
 

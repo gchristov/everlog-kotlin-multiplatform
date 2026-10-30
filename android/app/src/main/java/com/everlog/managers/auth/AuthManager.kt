@@ -5,6 +5,7 @@ import android.text.TextUtils
 import com.everlog.BuildConfig
 import com.everlog.R
 import com.everlog.android.common.kotlin.AppContext
+import com.everlog.android.common.persistence.PreferencesManager
 import com.everlog.constants.ELActivityRequestCodes
 import com.everlog.constants.ELConstants
 import com.everlog.data.datastores.ELDatastore
@@ -18,7 +19,6 @@ import com.everlog.managers.analytics.AnalyticsConstants
 import com.everlog.managers.analytics.AnalyticsManager
 import com.everlog.managers.apprate.AppLaunchManager
 import com.everlog.managers.integrations.GoogleFitIntegrationManager
-import com.everlog.managers.preferences.PreferencesManager
 import com.everlog.managers.preferences.SettingsManager
 import com.everlog.ui.navigator.Navigator
 import com.google.android.gms.auth.api.signin.GoogleSignIn

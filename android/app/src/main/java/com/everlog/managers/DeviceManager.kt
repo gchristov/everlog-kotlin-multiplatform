@@ -1,7 +1,7 @@
 package com.everlog.managers
 
 import android.text.TextUtils
-import com.everlog.managers.preferences.PreferencesManager
+import com.everlog.android.common.persistence.PreferencesManager
 import java.util.*
 
 class DeviceManager : PreferencesManager() {

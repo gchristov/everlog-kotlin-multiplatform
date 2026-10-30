@@ -1,10 +1,10 @@
-package com.everlog.managers.preferences;
+package com.everlog.android.common.persistence;
 
 import android.content.Context;
 import android.content.SharedPreferences;
 
-
 import com.everlog.android.common.kotlin.AppContext;
+
 import java.util.Set;
 
 public abstract class PreferencesManager {

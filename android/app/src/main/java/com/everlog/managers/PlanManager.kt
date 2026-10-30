@@ -4,13 +4,13 @@ import android.content.Context
 import android.content.Intent
 import android.text.TextUtils
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
+import com.everlog.android.common.persistence.PreferencesManager
 import com.everlog.constants.ELConstants
 import com.everlog.data.model.plan.ELPlan
 import com.everlog.data.model.plan.ELPlanState
 import com.everlog.data.model.ELRoutine
 import com.everlog.data.model.workout.ELWorkout
 import com.everlog.managers.analytics.AnalyticsManager
-import com.everlog.managers.preferences.PreferencesManager
 import com.google.gson.Gson
 
 class PlanManager : PreferencesManager() {

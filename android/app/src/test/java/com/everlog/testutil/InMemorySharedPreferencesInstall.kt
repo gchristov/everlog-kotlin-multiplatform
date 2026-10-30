@@ -1,7 +1,7 @@
 package com.everlog.testutil
 
+import com.everlog.android.common.persistence.PreferencesManager
 import com.everlog.android.common.test.InMemorySharedPreferences
-import com.everlog.managers.preferences.PreferencesManager
 
 /** Makes PreferencesManager, and so SettingsManager, read a fresh [InMemorySharedPreferences]. Undo with [uninstall]. */
 fun InMemorySharedPreferences.Companion.install(): InMemorySharedPreferences {

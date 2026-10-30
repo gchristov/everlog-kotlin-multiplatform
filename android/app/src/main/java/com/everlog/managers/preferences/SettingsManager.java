@@ -3,6 +3,7 @@ package com.everlog.managers.preferences;
 import android.content.Context;
 import android.content.SharedPreferences;
 
+import com.everlog.android.common.persistence.PreferencesManager;
 import com.everlog.utils.ArrayResourceTypeUtils;
 
 import org.threeten.bp.DayOfWeek;
