@@ -3,6 +3,7 @@ package com.everlog.ui.fragments.home.settings
 import android.content.DialogInterface
 import android.content.Intent
 import com.everlog.R
+import com.everlog.android.common.kotlin.WeightUnit
 import com.everlog.config.FeedbackSource
 import com.everlog.constants.ELConstants
 import com.everlog.data.datastores.ELDatastore
@@ -339,7 +340,7 @@ class PresenterSettingsHome : BaseFragmentPresenter<MvpViewSettingsHome>() {
     }
 
     private fun handleWeightUnitChanged(index: Int) {
-        val unit = SettingsManager.WeightUnit.valueOf(ArrayResourceTypeUtils.withWeightUnits().types[index])
+        val unit = WeightUnit.valueOf(ArrayResourceTypeUtils.withWeightUnits().types[index])
         SettingsManager.manager.setWeightUnit(unit)
         loadData()
         notifyPreferencesChanged()

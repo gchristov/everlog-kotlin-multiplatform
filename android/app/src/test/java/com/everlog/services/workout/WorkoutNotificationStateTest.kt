@@ -1,5 +1,6 @@
 package com.everlog.services.workout
 
+import com.everlog.android.common.kotlin.WeightUnit
 import com.everlog.android.common.test.InMemorySharedPreferences
 import com.everlog.data.model.ELRoutine
 import com.everlog.data.model.exercise.ELExercise
@@ -9,7 +10,6 @@ import com.everlog.data.model.set.ELSet
 import com.everlog.data.model.workout.ELWorkout
 import com.everlog.data.model.workout.ELWorkoutState
 import com.everlog.managers.preferences.SettingsManager
-import com.everlog.managers.preferences.SettingsManager.WeightUnit
 import com.everlog.services.workout.WorkoutNotificationState.Done
 import com.everlog.services.workout.WorkoutNotificationState.NextSet
 import com.everlog.services.workout.WorkoutNotificationState.NoExercises

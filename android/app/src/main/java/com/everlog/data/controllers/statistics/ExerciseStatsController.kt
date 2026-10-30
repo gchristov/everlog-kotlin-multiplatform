@@ -1,5 +1,6 @@
 package com.everlog.data.controllers.statistics
 
+import com.everlog.managers.preferences.SettingsManager
 import com.everlog.data.datastores.ELDatastore
 import com.everlog.data.datastores.base.OnStoreItemsListener
 import com.everlog.data.model.exercise.ELExercise
@@ -61,7 +62,7 @@ class ExerciseStatsController : BaseStatsController() {
                     matches
                             ?.filter { it.getSetsWithData().isNotEmpty() }
                             ?.forEach { routineExercise ->
-                                val inRange = workout.inRange(range)
+                                val inRange = workout.inRange(range, SettingsManager.manager.firstDayOfWeek())
                                 if (inRange || allowHistoryOutOfRange) {
                                     // Add workout to exercise history
                                     val historicItem = ELExerciseHistory()
@@ -73,7 +74,7 @@ class ExerciseStatsController : BaseStatsController() {
                                 if (inRange) {
                                     workoutUsedForCalculations = true
                                     val workoutHeaviestSet = routineExercise.getBestSet(true)
-                                    val workoutTotalWeight = routineExercise.getTotalWeight()
+                                    val workoutTotalWeight = routineExercise.getTotalWeight(SettingsManager.manager.weightUnit())
                                     val workoutTotalReps = routineExercise.getTotalReps()
                                     stats.totalWeight += workoutTotalWeight
                                     stats.totalReps += workoutTotalReps
@@ -83,7 +84,7 @@ class ExerciseStatsController : BaseStatsController() {
                                     // Add rep stats
                                     calculateAccumulativeValue(workout, stats.repCountsPerDay, workoutTotalReps, range)
                                     // Add weight stats
-                                    calculateMaxValue(workout, stats.maxWeightsPerDay, workoutHeaviestSet.getWeight(), range)
+                                    calculateMaxValue(workout, stats.maxWeightsPerDay, workoutHeaviestSet.getWeight(SettingsManager.manager.weightUnit()), range)
                                     val workout1RM = calculate1RM(routineExercise)
                                     if (workout1RM > 0) {
                                         // Add 1RM stats only if there's a set to estimate it from

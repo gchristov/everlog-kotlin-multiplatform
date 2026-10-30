@@ -1,5 +1,6 @@
 package com.everlog.data.controllers.workoutprefill
 
+import com.everlog.managers.preferences.SettingsManager
 import com.everlog.data.model.exercise.ELExerciseHistory
 import com.everlog.data.model.exercise.ELRoutineExercise
 import com.everlog.data.model.set.ELSet
@@ -27,7 +28,7 @@ abstract class BaseWorkoutPrefillController {
     }
 
     internal fun buildSetInfo(set: ELSet): String {
-        return String.format("weight=%.2f, reps=%d, time=%d", set.getWeight(), set.getReps(), set.getTimeSeconds())
+        return String.format("weight=%.2f, reps=%d, time=%d", set.getWeight(SettingsManager.manager.weightUnit()), set.getReps(), set.getTimeSeconds())
     }
 
     /**

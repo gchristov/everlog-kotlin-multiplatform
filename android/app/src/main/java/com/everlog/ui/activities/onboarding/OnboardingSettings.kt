@@ -3,6 +3,7 @@ package com.everlog.ui.activities.onboarding
 import android.content.Context
 import android.content.Intent
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
+import com.everlog.android.common.kotlin.WeightUnit
 import com.everlog.constants.ELConstants
 import com.everlog.managers.analytics.AnalyticsManager
 import com.everlog.managers.preferences.SettingsManager
@@ -12,7 +13,7 @@ import com.everlog.managers.preferences.SettingsManager
  * days a week as the weekly workouts goal. A change logs the same event as in Settings.
  */
 interface OnboardingSettings {
-    fun setWeightUnit(unit: SettingsManager.WeightUnit)
+    fun setWeightUnit(unit: WeightUnit)
 
     fun setWeeklyWorkoutsGoal(count: Int)
 }
@@ -20,7 +21,7 @@ interface OnboardingSettings {
 class RealOnboardingSettings(context: Context) : OnboardingSettings {
     private val context = context.applicationContext
 
-    override fun setWeightUnit(unit: SettingsManager.WeightUnit) {
+    override fun setWeightUnit(unit: WeightUnit) {
         if (SettingsManager.manager.weightUnit() == unit) return
         SettingsManager.manager.setWeightUnit(unit)
         notifyChanged()

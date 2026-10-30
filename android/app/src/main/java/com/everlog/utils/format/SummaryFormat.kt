@@ -23,7 +23,7 @@ fun ELRoutine.summary(context: Context): String {
 
 fun ELRoutineExercise.summary(context: Context): String {
     val reps = getTotalReps()
-    val weight = getTotalWeight()
+    val weight = getTotalWeight(SettingsManager.manager.weightUnit())
     val timeSeconds = getTotalTimeSeconds()
     var summary = ""
     if (weight != 0F) {
@@ -45,7 +45,7 @@ fun ELWorkout.summary(context: Context): String {
     val durationSummary = String.format("%s %s", StatsFormatUtils.formatTimeStatsLabel(getDurationMillis()), context.getString(R.string.hour))
     summary = summary.append(SEPARATOR, durationSummary)
     if (hasWeight()) {
-        val weightSummary = String.format("%s %s", StatsFormatUtils.formatWeightStatsLabel(getTotalWeight()), SettingsManager.weightUnitAbbreviation())
+        val weightSummary = String.format("%s %s", StatsFormatUtils.formatWeightStatsLabel(getTotalWeight(SettingsManager.manager.weightUnit())), SettingsManager.weightUnitAbbreviation())
         summary = summary.append(SEPARATOR, weightSummary)
     }
     return summary

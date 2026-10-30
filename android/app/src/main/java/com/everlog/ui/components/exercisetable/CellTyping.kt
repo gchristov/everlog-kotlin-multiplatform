@@ -1,9 +1,9 @@
 package com.everlog.ui.components.exercisetable
 
+import com.everlog.android.common.kotlin.WeightUnit
 import com.everlog.config.AppConfig
 import com.everlog.data.controllers.workoutsession.ValueField
 import com.everlog.data.controllers.workoutsession.WorkoutSet
-import com.everlog.managers.preferences.SettingsManager.WeightUnit
 import com.everlog.utils.format.displayWeight
 import com.everlog.utils.format.formatWeight
 

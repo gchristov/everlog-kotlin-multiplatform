@@ -43,10 +43,10 @@ import com.everlog.android.common.compose.elements.keypad.AppKeypadInput
 import com.everlog.android.common.compose.elements.keypad.AppKeypadNote
 import com.everlog.android.common.compose.elements.keypad.AppKeypadToggle
 import com.everlog.android.common.compose.theme.Theme
+import com.everlog.android.common.kotlin.WeightUnit
 import com.everlog.data.controllers.workoutsession.SetMode
 import com.everlog.data.controllers.workoutsession.set
 import com.everlog.data.model.exercise.ELExercise
-import com.everlog.managers.preferences.SettingsManager
 import com.everlog.ui.components.exercisetable.ExerciseTab
 import com.everlog.ui.components.exercisetable.exerciseName
 import com.everlog.ui.components.exercisetable.focusLabel
@@ -55,7 +55,7 @@ import kotlinx.coroutines.android.awaitFrame
 import kotlinx.coroutines.launch
 
 // The keypad's labels take a unit, but templates hold reps and times only
-private val NoWeights = SettingsManager.WeightUnit.KILOGRAM
+private val NoWeights = WeightUnit.KILOGRAM
 
 /**
  * Renders the view-model's state and forwards what's tapped and typed to it.

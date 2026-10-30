@@ -1,5 +1,6 @@
 package com.everlog.data.controllers.statistics
 
+import com.everlog.managers.preferences.SettingsManager
 import com.everlog.config.AppConfig
 import com.everlog.data.model.workout.ELWorkout
 import com.everlog.data.model.workout.RangeType
@@ -36,14 +37,14 @@ class UserStatsController : BaseStatsController() {
             val durationCountsPerMonth: MutableMap<Int, MutableList<Float>> = LinkedHashMap()
 
             history
-                    .filter { it.inRange(range) } // Only use workouts in the specified range
+                    .filter { it.inRange(range, SettingsManager.manager.firstDayOfWeek()) } // Only use workouts in the specified range
                     .forEach {
-                        val workoutTotalWeight = it.getTotalWeight()
+                        val workoutTotalWeight = it.getTotalWeight(SettingsManager.manager.weightUnit())
                         stats.workoutsCompleted++
                         stats.totalWorkoutTimeMillis += it.getDurationMillis()
                         stats.totalWeightLifted += workoutTotalWeight
                         stats.longestSessionTimeMillis = max(stats.longestSessionTimeMillis, it.getDurationMillis())
-                        stats.maxWeightLifted = max(stats.maxWeightLifted, it.getMaxWeight())
+                        stats.maxWeightLifted = max(stats.maxWeightLifted, it.getMaxWeight(SettingsManager.manager.weightUnit()))
                         val day = it.getDay()
                         (stats.dayWorkoutMap as MutableMap)[day] = day
                         // Add category stats

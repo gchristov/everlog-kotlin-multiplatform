@@ -3,12 +3,12 @@ package com.everlog.ui.activities.setsuggestions
 import android.content.Context
 import android.content.Intent
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
+import com.everlog.android.common.kotlin.WeightUnit
 import com.everlog.constants.ELConstants
 import com.everlog.managers.analytics.AnalyticsConstants
 import com.everlog.managers.analytics.AnalyticsManager
 import com.everlog.managers.preferences.SettingsManager
 import com.everlog.managers.preferences.SettingsManager.MuscleGoal
-import com.everlog.managers.preferences.SettingsManager.WeightUnit
 
 /**
  * The setting the screen changes, stored as the muscle goal. A change logs the same event as the old screen.

@@ -1,12 +1,12 @@
 package com.everlog.data.controllers.workoutprefill
 
+import com.everlog.android.common.kotlin.WeightUnit
 import com.everlog.android.common.test.InMemorySharedPreferences
 import com.everlog.data.model.exercise.ELExercise
 import com.everlog.data.model.set.ELSet
 import com.everlog.data.model.workout.ELWorkout
 import com.everlog.managers.preferences.SettingsManager
 import com.everlog.managers.preferences.SettingsManager.MuscleGoal
-import com.everlog.managers.preferences.SettingsManager.WeightUnit
 import com.everlog.testutil.at
 import com.everlog.testutil.install
 import com.everlog.testutil.loggedSet
@@ -413,7 +413,7 @@ class WorkoutPrefillControllerTest {
         assertThat(WorkoutPrefillController.prefillAddedSet(source, added, 1)).isTrue()
 
         assertThat(added.getReps()).isEqualTo(8)
-        assertThat(added.getWeight()).isEqualTo(65f)
+        assertThat(added.getWeight(SettingsManager.manager.weightUnit())).isEqualTo(65f)
     }
 
     @Test
@@ -425,7 +425,7 @@ class WorkoutPrefillControllerTest {
         assertThat(WorkoutPrefillController.prefillAddedSet(source, added, 1)).isFalse()
 
         assertThat(added.getReps()).isEqualTo(12)
-        assertThat(added.getWeight()).isEqualTo(50f)
+        assertThat(added.getWeight(SettingsManager.manager.weightUnit())).isEqualTo(50f)
     }
 
     @Test
@@ -473,7 +473,7 @@ class WorkoutPrefillControllerTest {
 
         WorkoutPrefillController.prefillAddedSet(source, added, 1)
 
-        assertThat(added.getWeight()).isEqualTo(82f)
+        assertThat(added.getWeight(SettingsManager.manager.weightUnit())).isEqualTo(82f)
         assertThat(added.getReps()).isEqualTo(5)
     }
 
@@ -488,7 +488,7 @@ class WorkoutPrefillControllerTest {
     }
 
     private fun weights(workout: ELWorkout, exercise: ELExercise): List<Float> {
-        return sets(workout, exercise).map { it.getWeight() }
+        return sets(workout, exercise).map { it.getWeight(SettingsManager.manager.weightUnit()) }
     }
 
     private fun reps(workout: ELWorkout, exercise: ELExercise): List<Int> {

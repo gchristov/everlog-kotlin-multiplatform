@@ -1,5 +1,6 @@
 package com.everlog.data.model.workout
 
+import com.everlog.android.common.kotlin.WeightUnit
 import com.everlog.android.common.kotlin.format.FormatUtils
 import com.everlog.android.common.kotlin.isSameDay
 import com.everlog.android.common.kotlin.isSameMonth
@@ -16,9 +17,9 @@ import com.everlog.data.model.exercise.ELExercise
 import com.everlog.data.model.exercise.ELExerciseGroup
 import com.everlog.data.model.exercise.ELRoutineExercise
 import com.everlog.data.model.set.ELSet
-import com.everlog.managers.preferences.SettingsManager
 import com.google.firebase.firestore.Exclude
 import org.apache.commons.lang3.SerializationUtils
+import org.threeten.bp.DayOfWeek
 import org.threeten.bp.Instant
 import org.threeten.bp.ZoneId
 import java.io.Serializable
@@ -174,7 +175,7 @@ data class ELWorkout(
     }
 
     fun hasWeight(): Boolean {
-        return getTotalWeight() > 0
+        return getTotalWeight(WeightUnit.KILOGRAM) > 0
     }
 
     fun getCategoryCounts(): Map<String, Int> {
@@ -192,21 +193,21 @@ data class ELWorkout(
         return categories
     }
 
-    fun getTotalWeight(): Float {
+    fun getTotalWeight(unit: WeightUnit): Float {
         var weight = 0f
         getExerciseGroups().forEach { group ->
             group.exercises.forEach { exercise ->
-                weight += exercise.getTotalWeight()
+                weight += exercise.getTotalWeight(unit)
             }
         }
         return weight
     }
 
-    fun getMaxWeight(): Float {
+    fun getMaxWeight(unit: WeightUnit): Float {
         var weight = 0f
         getExerciseGroups().forEach { group ->
             group.exercises.forEach { exercise ->
-                weight = max(weight, exercise.getBestSet(true).getWeight())
+                weight = max(weight, exercise.getBestSet(true).getWeight(unit))
             }
         }
         return weight
@@ -244,8 +245,8 @@ data class ELWorkout(
         return Date().isSameDay(completedDate)
     }
 
-    private fun isThisWeek(): Boolean {
-        return Date().isSameWeek(completedDate, SettingsManager.manager.firstDayOfWeek())
+    private fun isThisWeek(firstDayOfWeek: DayOfWeek): Boolean {
+        return Date().isSameWeek(completedDate, firstDayOfWeek)
     }
 
     private fun isThisMonth(): Boolean {
@@ -256,10 +257,10 @@ data class ELWorkout(
         return Date().isSameYear(completedDate)
     }
 
-    fun inRange(range: RangeType): Boolean {
+    fun inRange(range: RangeType, firstDayOfWeek: DayOfWeek): Boolean {
         return when (range) {
             RangeType.TODAY -> isToday()
-            RangeType.WEEK -> isThisWeek()
+            RangeType.WEEK -> isThisWeek(firstDayOfWeek)
             RangeType.MONTH -> isThisMonth()
             RangeType.YEAR -> isThisYear()
             else -> true

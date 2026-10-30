@@ -1,6 +1,7 @@
 package com.everlog.data.model.exercise
 
 import com.everlog.android.common.kotlin.NumberUtils
+import com.everlog.android.common.kotlin.WeightUnit
 import com.everlog.config.AppConfig
 import com.everlog.constants.ELConstants
 import com.everlog.data.model.ELFirestoreModel
@@ -152,13 +153,14 @@ data class ELExerciseGroup (
 
     fun setUpdateWeightFromInput(exercise: ELRoutineExercise,
                                  setIndex: Int,
-                                 input: String): ELSet {
+                                 input: String,
+                                 unit: WeightUnit): ELSet {
         val value = NumberUtils.parseFloat(input)
         val set = exercise.sets[setIndex]
         if (input.isEmpty()) {
             set.clearWeight()
         } else {
-            set.updateWeight(value)
+            set.updateWeight(value, unit)
         }
         return set
     }

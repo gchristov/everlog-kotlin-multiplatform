@@ -103,7 +103,7 @@ class ExerciseStatisticsFragment(exercise: ELExercise,
         binding.timesPerformedSummary.setSummary(StatsFormatUtils.formatNumberStatsLabel(stats.timesPerformed), null, requireContext().getString(R.string.exercise_statistics_times_performed).lowercase().makeSingleLine())
         binding.totalWeightSummary.setSummary(StatsFormatUtils.formatWeightStatsLabel(stats.totalWeight), SettingsManager.weightUnitAbbreviation(), requireContext().getString(R.string.home_week_weight_lifted).lowercase().makeSingleLine())
         binding.totalRepsSummary.setSummary(StatsFormatUtils.formatNumberStatsLabel(stats.totalReps), null, requireContext().getString(R.string.exercise_statistics_total_reps).lowercase().makeSingleLine())
-        binding.maxWeightSummary.setSummary(StatsFormatUtils.formatWeightStatsLabel(stats.heaviestSet?.getWeight() ?: 0f), SettingsManager.weightUnitAbbreviation(), requireContext().getString(R.string.workout_details_max_weight).lowercase().makeSingleLine())
+        binding.maxWeightSummary.setSummary(StatsFormatUtils.formatWeightStatsLabel(stats.heaviestSet?.getWeight(SettingsManager.manager.weightUnit()) ?: 0f), SettingsManager.weightUnitAbbreviation(), requireContext().getString(R.string.workout_details_max_weight).lowercase().makeSingleLine())
     }
 
     private fun renderCharts(stats: ExerciseStatsController.StatsResult?) {
