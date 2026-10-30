@@ -4,8 +4,8 @@ import com.everlog.android.common.kotlin.WeightUnit
 import com.everlog.config.AppConfig
 import com.everlog.data.controllers.workoutsession.ValueField
 import com.everlog.data.controllers.workoutsession.WorkoutSet
-import com.everlog.utils.format.displayWeight
-import com.everlog.utils.format.formatWeight
+import com.everlog.android.common.kotlin.format.displayWeight
+import com.everlog.android.common.kotlin.format.formatWeight
 
 // Typing into a set's cells from the keypad. A typed value is kept as text until the keypad moves on, so these work on
 // the text; the first key replaces the cell's value.

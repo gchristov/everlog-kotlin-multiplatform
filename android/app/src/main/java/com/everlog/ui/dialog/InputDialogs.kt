@@ -19,7 +19,7 @@ import com.everlog.android.settings.data.SettingsManager
 import com.everlog.ui.dialog.AppDialogs.MetricDialogType
 import com.everlog.ui.dialog.AppDialogs.StringDialogType
 import com.everlog.android.common.kotlin.Utils
-import com.everlog.utils.format.weightUnitAbbreviation
+import com.everlog.android.common.kotlin.format.weightUnitAbbreviation
 import com.everlog.android.common.mvp.util.KeyboardUtils
 import rx.Observable
 import rx.subjects.PublishSubject

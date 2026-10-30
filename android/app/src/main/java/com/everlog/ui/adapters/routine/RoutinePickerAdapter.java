@@ -8,9 +8,9 @@ import com.ahamed.multiviewadapter.ItemBinder;
 import com.ahamed.multiviewadapter.ItemViewHolder;
 import com.everlog.R;
 import com.everlog.android.common.data.model.ELRoutine;
+import com.everlog.android.common.kotlin.format.SummaryFormatKt;
 import com.everlog.databinding.RowRoutinePickerBinding;
 import com.everlog.android.common.mvp.list.OnListItemListener;
-import com.everlog.utils.format.SummaryFormatKt;
 
 public class RoutinePickerAdapter {
 
@@ -63,7 +63,7 @@ public class RoutinePickerAdapter {
 
         private void renderSummary(ELRoutine item) {
             binding.routineName.setText(item.getName());
-            binding.routineSummary.setText(SummaryFormatKt.summary(item, binding.getRoot().getContext()));
+            binding.routineSummary.setText(SummaryFormatKt.routineSummary(binding.getRoot().getContext(), item.getTotalExercises(), item.getTotalSets()));
         }
     }
 }

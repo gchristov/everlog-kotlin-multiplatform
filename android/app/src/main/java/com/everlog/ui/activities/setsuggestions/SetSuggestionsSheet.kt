@@ -15,8 +15,8 @@ import com.everlog.android.common.compose.elements.list.AppListGroup
 import com.everlog.android.common.compose.elements.list.AppListItem
 import com.everlog.android.common.compose.theme.Theme
 import com.everlog.android.common.kotlin.WeightUnit
-import com.everlog.utils.format.formatWeight
-import com.everlog.utils.format.unitName
+import com.everlog.android.common.kotlin.format.formatWeight
+import com.everlog.android.common.kotlin.format.unitName
 
 /**
  * What a 1RM is, how it's estimated and what a goal does with it, with [example] in the user's unit.

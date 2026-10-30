@@ -7,10 +7,10 @@ import com.everlog.data.controllers.workoutsession.SetRef
 import com.everlog.data.controllers.workoutsession.ValueField
 import com.everlog.data.controllers.workoutsession.WorkoutBlock
 import com.everlog.data.controllers.workoutsession.WorkoutSet
-import com.everlog.utils.format.EmptyValue
-import com.everlog.utils.format.displayWeight
-import com.everlog.utils.format.formatClock
-import com.everlog.utils.format.formatWeight
+import com.everlog.android.common.kotlin.format.EmptyValue
+import com.everlog.android.common.kotlin.format.displayWeight
+import com.everlog.android.common.kotlin.format.formatClock
+import com.everlog.android.common.kotlin.format.formatWeight
 import com.everlog.utils.format.lastTimeText
 
 /**

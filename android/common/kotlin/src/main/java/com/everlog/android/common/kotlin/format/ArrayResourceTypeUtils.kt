@@ -1,7 +1,7 @@
-package com.everlog.utils
+package com.everlog.android.common.kotlin.format
 
 import android.content.Context
-import com.everlog.R
+import com.everlog.android.common.kotlin.R
 import com.everlog.android.common.kotlin.AppContext
 import java.util.*
 

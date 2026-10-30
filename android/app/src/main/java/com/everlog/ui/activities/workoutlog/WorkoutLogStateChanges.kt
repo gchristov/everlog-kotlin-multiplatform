@@ -12,7 +12,7 @@ import com.everlog.data.controllers.workoutsession.setValue
 import com.everlog.data.controllers.workoutsession.toSessionBlocks
 import com.everlog.ui.components.exercisetable.CellFocus
 import com.everlog.ui.components.exercisetable.countField
-import com.everlog.utils.format.storedWeight
+import com.everlog.android.common.kotlin.format.storedWeight
 
 // How the workout screen's state changes, as plain functions the view-model builds its events from
 

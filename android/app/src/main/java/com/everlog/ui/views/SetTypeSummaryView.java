@@ -8,11 +8,11 @@ import android.view.LayoutInflater;
 
 import com.everlog.R;
 import com.everlog.android.common.data.model.set.ELSetType;
+import com.everlog.android.common.kotlin.format.SetTypeFormatKt;
 import com.everlog.databinding.ViewSetTypeSummaryBinding;
 
 import androidx.annotation.Nullable;
 import android.widget.RelativeLayout;
-import com.everlog.utils.format.SetTypeFormatKt;
 
 public class SetTypeSummaryView extends RelativeLayout {
 
@@ -38,8 +38,8 @@ public class SetTypeSummaryView extends RelativeLayout {
     }
 
     public void setSetType(ELSetType type) {
-        binding.setTypeLbl.setText(SetTypeFormatKt.getTitle(type, getContext()));
-        binding.setDescriptionLbl.setText(SetTypeFormatKt.getDescription(type, getContext()));
+        binding.setTypeLbl.setText(SetTypeFormatKt.setTypeTitle(getContext(), type.name()));
+        binding.setDescriptionLbl.setText(SetTypeFormatKt.setTypeDescription(getContext(), type.name()));
     }
 
     // Setup

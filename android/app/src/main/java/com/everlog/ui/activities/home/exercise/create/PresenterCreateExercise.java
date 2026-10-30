@@ -16,7 +16,7 @@ import com.everlog.managers.firebase.FirebaseStorageManager;
 import com.everlog.managers.firebase.FirestorePathManager;
 import com.everlog.ui.navigator.PresenterNavigator;
 import com.everlog.android.common.mvp.activity.BaseActivityPresenter;
-import com.everlog.utils.ArrayResourceTypeUtils;
+import com.everlog.android.common.kotlin.format.ArrayResourceTypeUtils;
 import com.everlog.android.common.kotlin.Utils;
 import com.everlog.android.common.mvp.util.KeyboardUtils;
 import com.google.firebase.firestore.SetOptions;

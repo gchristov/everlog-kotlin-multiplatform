@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <plurals name="exercises">
+        <item quantity="one">%1$d exercise</item>
+        <item quantity="other">%1$d exercises</item>
+    </plurals>
+    <plurals name="reps">
+        <item quantity="one">%1$d rep</item>
+        <item quantity="other">%1$d reps</item>
+    </plurals>
+    <plurals name="sets">
+        <item quantity="one">%1$d set</item>
+        <item quantity="other">%1$d sets</item>
+    </plurals>
+    <string name="category_abs">Abs</string>
+    <string name="category_arms">Arms</string>
+    <string name="category_back">Back</string>
+    <string name="category_chest">Chest</string>
+    <string name="category_legs">Legs</string>
+    <string name="category_shoulders">Shoulders</string>
+    <string name="hour">h</string>
+    <string name="set_amrap">AMRAP Set</string>
+    <string name="set_amrap_description">Perform as many reps as possible of 1 exercise</string>
+    <string name="set_circuit">Circuit Set</string>
+    <string name="set_circuit_description">Move from one exercise to another without rest</string>
+    <string name="set_combo">Combo Set</string>
+    <string name="set_combo_description">Contain compound exercises, which work more that one muscle group using more than one joint</string>
+    <string name="set_drop">Drop Set</string>
+    <string name="set_drop_description">1 exercise performed at a time and allow you to continue an exercise set past fatigue by using lower weight</string>
+    <string name="set_force">Force Set</string>
+    <string name="set_force_description">1 exercise with 10 seconds of rest between each set</string>
+    <string name="set_giant">Giant Set</string>
+    <string name="set_giant_description">3 or more exercises, performed back-to-back, that target the same muscle group</string>
+    <string name="set_multi">Multi Set</string>
+    <string name="set_multi_description">2 or more exercises that don\'t target similar muscle groups</string>
+    <string name="set_progressive">Progressive Set</string>
+    <string name="set_progressive_description">1 exercise performed as a pyramid that goes from high reps to low reps, takes a break, and then back up to high reps</string>
+    <string name="set_single">Single Set</string>
+    <string name="set_single_description">1 exercise only</string>
+    <string name="set_super">Super Set</string>
+    <string name="set_super_description">Any 2 exercises performed back-to-back, without rest</string>
+    <string name="settings_kilograms">Kilograms (kg)</string>
+    <string name="settings_kilograms_abbreviation">kg</string>
+    <string name="settings_pounds">Pounds (lb)</string>
+    <string name="settings_pounds_abbreviation">lb</string>
+</resources>

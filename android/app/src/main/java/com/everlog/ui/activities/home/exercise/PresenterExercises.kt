@@ -25,7 +25,7 @@ import com.everlog.ui.adapters.exercise.ExerciseAdapter.OnExerciseListener
 import com.everlog.ui.dialog.AppDialogs
 import com.everlog.ui.navigator.navigator
 import com.everlog.ui.views.revealcircle.FilterExercisesView
-import com.everlog.utils.ArrayResourceTypeUtils
+import com.everlog.android.common.kotlin.format.ArrayResourceTypeUtils
 import com.everlog.android.common.mvp.util.KeyboardUtils
 import com.google.firebase.firestore.SetOptions
 // import icepick.State

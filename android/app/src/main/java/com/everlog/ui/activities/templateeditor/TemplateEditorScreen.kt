@@ -50,7 +50,7 @@ import com.everlog.data.controllers.workoutsession.set
 import com.everlog.ui.components.exercisetable.ExerciseTab
 import com.everlog.ui.components.exercisetable.exerciseName
 import com.everlog.ui.components.exercisetable.focusLabel
-import com.everlog.utils.format.formatClock
+import com.everlog.android.common.kotlin.format.formatClock
 import kotlinx.coroutines.android.awaitFrame
 import kotlinx.coroutines.launch
 

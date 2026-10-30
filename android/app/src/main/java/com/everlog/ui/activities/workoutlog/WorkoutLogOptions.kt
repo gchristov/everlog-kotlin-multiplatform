@@ -19,7 +19,7 @@ import com.everlog.android.common.compose.elements.list.AppListGroup
 import com.everlog.android.common.compose.elements.list.AppListItem
 import com.everlog.android.common.compose.theme.Theme
 import com.everlog.ui.activities.setsuggestions.SetSuggestion
-import com.everlog.utils.format.formatClock
+import com.everlog.android.common.kotlin.format.formatClock
 import com.everlog.android.common.design.R as DesignR
 
 /**

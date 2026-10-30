@@ -29,7 +29,7 @@ import com.everlog.ui.components.reorder.rememberReorderState
 import com.everlog.ui.components.reorder.reorderGrip
 import com.everlog.ui.components.reorder.reorderItem
 import com.everlog.ui.components.reorder.reorderViewport
-import com.everlog.utils.format.formatClock
+import com.everlog.android.common.kotlin.format.formatClock
 
 /**
  * The template's details, then its exercises to edit in place: drag one by its grip (every exercise shrinks to its

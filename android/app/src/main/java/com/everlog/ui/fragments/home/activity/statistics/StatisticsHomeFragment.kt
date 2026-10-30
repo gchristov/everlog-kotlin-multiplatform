@@ -22,11 +22,12 @@ import com.everlog.android.common.mvp.fragment.BaseFragmentMvpView
 import com.everlog.android.common.mvp.fragment.BaseFragmentPresenter
 import com.everlog.android.common.mvp.fragment.BaseTabFragment
 import com.everlog.android.common.mvp.chart.ChartRenderer
-import com.everlog.utils.format.weightUnitAbbreviation
+import com.everlog.android.common.kotlin.format.weightUnitAbbreviation
 import com.jakewharton.rxbinding.view.RxView
 import rx.Observable
 import rx.subjects.PublishSubject
 import com.everlog.android.common.design.R as DesignR
+import com.everlog.android.common.kotlin.R as KotlinR
 
 class StatisticsHomeFragment : BaseTabFragment(), MvpViewStatisticsHome {
 
@@ -95,9 +96,9 @@ class StatisticsHomeFragment : BaseTabFragment(), MvpViewStatisticsHome {
     private fun renderSummaryViews(stats: UserStatsController.StatsResult) {
         binding.workoutsCompletedSummary.setSummary(StatsFormatUtils.formatNumberStatsLabel(stats.workoutsCompleted), null, requireContext().getString(R.string.home_week_workouts_completed).lowercase().makeSingleLine())
         binding.totalWeightSummary.setSummary(StatsFormatUtils.formatWeightStatsLabel(stats.totalWeightLifted), weightUnitAbbreviation(SettingsManager.manager.weightUnit()), requireContext().getString(R.string.home_week_weight_lifted).lowercase().makeSingleLine())
-        binding.totalTimeSummary.setSummary(StatsFormatUtils.formatTimeStatsLabel(stats.totalWorkoutTimeMillis), requireContext().getString(R.string.hour), requireContext().getString(R.string.home_week_total_time).lowercase().makeSingleLine())
-        binding.averageTimeSummary.setSummary(StatsFormatUtils.formatTimeStatsLabel(stats.averageSessionTimeMillis), requireContext().getString(R.string.hour), requireContext().getString(R.string.home_week_average_time).lowercase().makeSingleLine())
-        binding.longestSessionSummary.setSummary(StatsFormatUtils.formatTimeStatsLabel(stats.longestSessionTimeMillis), requireContext().getString(R.string.hour), requireContext().getString(R.string.statistics_longest_session).lowercase().makeSingleLine())
+        binding.totalTimeSummary.setSummary(StatsFormatUtils.formatTimeStatsLabel(stats.totalWorkoutTimeMillis), requireContext().getString(KotlinR.string.hour), requireContext().getString(R.string.home_week_total_time).lowercase().makeSingleLine())
+        binding.averageTimeSummary.setSummary(StatsFormatUtils.formatTimeStatsLabel(stats.averageSessionTimeMillis), requireContext().getString(KotlinR.string.hour), requireContext().getString(R.string.home_week_average_time).lowercase().makeSingleLine())
+        binding.longestSessionSummary.setSummary(StatsFormatUtils.formatTimeStatsLabel(stats.longestSessionTimeMillis), requireContext().getString(KotlinR.string.hour), requireContext().getString(R.string.statistics_longest_session).lowercase().makeSingleLine())
         binding.maxWeightSummary.setSummary(StatsFormatUtils.formatWeightStatsLabel(stats.maxWeightLifted), weightUnitAbbreviation(SettingsManager.manager.weightUnit()), requireContext().getString(R.string.workout_details_max_weight).lowercase().makeSingleLine())
     }
 

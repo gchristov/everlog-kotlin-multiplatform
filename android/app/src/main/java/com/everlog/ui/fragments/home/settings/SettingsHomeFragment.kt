@@ -25,13 +25,14 @@ import com.everlog.ui.dialog.AppDialogs
 import com.everlog.ui.views.CheckBoxTriStates
 import com.everlog.android.common.mvp.util.ViewUtils
 import com.everlog.utils.format.getIcon
-import com.everlog.utils.format.weightUnitAbbreviation
+import com.everlog.android.common.kotlin.format.weightUnitAbbreviation
 import com.everlog.android.common.mvp.util.ELGlideModule
 import com.jakewharton.rxbinding.view.RxView
 import org.threeten.bp.DayOfWeek
 import org.threeten.bp.format.TextStyle
 import rx.Observable
 import com.everlog.android.common.design.R as DesignR
+import com.everlog.android.common.kotlin.R as KotlinR
 import java.util.*
 
 class SettingsHomeFragment : BaseTabFragment(), MvpViewSettingsHome {
@@ -141,7 +142,7 @@ class SettingsHomeFragment : BaseTabFragment(), MvpViewSettingsHome {
         binding.root.findViewById<TextView>(R.id.weeklyGoalField).text = String.format("%d", viewModel.weeklyGoals)
         binding.root.findViewById<CheckBoxTriStates>(R.id.keepScreenOnCheckbox).setChecked(viewModel.keepScreenOn)
         // Units
-        binding.root.findViewById<TextView>(R.id.weightUnitField).text = getString(if (viewModel.weightUnit == WeightUnit.KILOGRAM) R.string.settings_kilograms else R.string.settings_pounds)
+        binding.root.findViewById<TextView>(R.id.weightUnitField).text = getString(if (viewModel.weightUnit == WeightUnit.KILOGRAM) KotlinR.string.settings_kilograms else KotlinR.string.settings_pounds)
         // First week day
         binding.root.findViewById<TextView>(R.id.firstWeekDayField).text = viewModel.firstWeekDay?.getDisplayName(TextStyle.FULL, Locale.getDefault())
         // Integrations

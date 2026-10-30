@@ -1,5 +1,6 @@
 package com.everlog.services.workout
 
+import com.everlog.android.common.kotlin.R as KotlinR
 import android.app.Notification
 import android.os.Build
 import androidx.core.app.NotificationCompat
@@ -180,7 +181,7 @@ class WorkoutNotificationBuilderTest {
         val notification = build(nextSet(exerciseName = "Squat", exercisePosition = 2, exercisesInGroup = 2, setType = "SUPER"))
 
         assertThat(title(notification)).isEqualTo("2/2 Squat")
-        assertThat(text(notification)).isEqualTo("${context.getString(R.string.set_super)} 2/3 • 8 × 60 kg")
+        assertThat(text(notification)).isEqualTo("${context.getString(KotlinR.string.set_super)} 2/3 • 8 × 60 kg")
     }
 
     // Rest
