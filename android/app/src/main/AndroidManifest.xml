@@ -226,7 +226,7 @@
             android:theme="@style/AppTheme.NoActionBar"
             android:exported="false" />
         <activity
-            android:name="com.everlog.ui.activities.exercisepicker.ExercisePickerActivity"
+            android:name="com.everlog.android.exercise.feature.picker.ExercisePickerActivity"
             android:theme="@style/AppTheme.NoActionBar"
             android:windowSoftInputMode="adjustResize"
             android:exported="false" />

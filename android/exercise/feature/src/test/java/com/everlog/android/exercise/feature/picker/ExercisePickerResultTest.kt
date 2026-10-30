@@ -1,4 +1,4 @@
-package com.everlog.ui.activities.exercisepicker
+package com.everlog.android.exercise.feature.picker
 
 import com.everlog.android.common.data.model.set.ELSetType
 import com.everlog.android.exercise.testfixtures.LibraryFixtures.barbellBench

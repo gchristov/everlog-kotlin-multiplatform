@@ -1,13 +1,13 @@
-package com.everlog.ui.activities.exercisepicker
+package com.everlog.android.exercise.feature.picker
 
 import androidx.lifecycle.SavedStateHandle
 import com.everlog.android.common.data.model.set.ELSetType
 import com.everlog.android.common.kotlin.Load
 import com.everlog.android.common.mvvm.CommonViewModel
+import com.everlog.android.exercise.data.ExerciseLibraryEmptyException
+import com.everlog.android.exercise.data.LoadExerciseLibraryUseCase
 import com.everlog.android.exercise.data.model.library.ExerciseLibrary
 import com.everlog.android.exercise.data.model.library.LibraryExercise
-import com.everlog.data.controllers.exerciselibrary.LoadExerciseLibraryUseCase
-import com.everlog.data.controllers.starterroutines.ExerciseLibraryEmptyException
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -15,7 +15,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.withContext
 import timber.log.Timber
 
-internal enum class PickerMode {
+enum class PickerMode {
     // Home › Exercises: a tap opens the exercise
     Browse,
 

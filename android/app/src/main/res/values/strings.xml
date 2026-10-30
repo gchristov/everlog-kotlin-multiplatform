@@ -183,7 +183,6 @@
     <string name="exercises_empty_subtitle">Looks like you have no exercises created yet</string>
     <string name="exercises_empty_action">Create exercise</string>
     <string name="exercises_empty_search">No exercises match\n\"%1$s\"</string>
-    <string name="exercises_max_selection">You cannot add more than %1$d exercises at a time</string>
     <string name="exercises_max_sets">You cannot add more than %1$d sets per exercise</string>
     <string name="exercises_create_prompt">Tap to create exercise</string>
     <string name="exercises_add">Add (%1$d)</string>
@@ -396,7 +395,6 @@
         <item quantity="one">Your free trial ends tomorrow</item>
         <item quantity="other">Your free trial ends in %1$d days</item>
     </plurals>
-    <string name="feedback_send">Send feedback</string>
     <string name="feedback_workout_subtitle">What works, what gets in the way</string>
     <string name="feedback_set_suggestions_subtitle">Were the weights right for you? Tell us</string>
     <string name="settings_play_store_prompt">Review us on Google Play</string>
@@ -673,58 +671,4 @@
     <string name="onboarding_reminders_answer">%1$s at %2$s</string>
     <string name="onboarding_reminders_off">Off</string>
 
-    <!-- Exercise picker (TAS-451). Filters read as "Equipment is Barbell, Dumbbell". -->
-    <string name="exercise_picker_title">Select exercises</string>
-    <string name="exercise_picker_title_browse">Exercises</string>
-    <string name="exercise_picker_search_loading">Search exercises</string>
-    <string name="exercise_picker_recently_done">Recently done</string>
-    <string name="exercise_picker_search">Search or filter %1$d exercises</string>
-    <string name="exercise_picker_search_more">Add a filter or name</string>
-    <string name="exercise_picker_key_muscle">Muscle</string>
-    <string name="exercise_picker_key_equipment">Equipment</string>
-    <string name="exercise_picker_key_movement">Movement</string>
-    <string name="exercise_picker_key_set_up">Set-up</string>
-    <string name="exercise_picker_key_grip">Grip</string>
-    <string name="exercise_picker_key_created_by">Created by</string>
-    <string name="exercise_picker_created_by_me">Me</string>
-    <!-- Other words that find "Created by is Me" while typing -->
-    <string-array name="exercise_picker_created_by_me_aliases">
-        <item>mine</item>
-        <item>my</item>
-        <item>own</item>
-        <item>custom</item>
-    </string-array>
-    <string name="exercise_picker_is">is</string>
-    <string name="exercise_picker_is_not">is not</string>
-    <string name="exercise_picker_values">%1$s is…</string>
-    <string name="exercise_picker_values_not">%1$s is not…</string>
-    <string name="exercise_picker_remove_filter">Remove the %1$s filter</string>
-    <string name="exercise_picker_clear_all">Clear all</string>
-    <string name="exercise_picker_recent">Recent</string>
-    <string name="exercise_picker_filter_by">Filter by</string>
-    <string name="exercise_picker_filters">Filters</string>
-    <string name="exercise_picker_names">Search</string>
-    <string name="exercise_picker_names_containing">Exercises matching “%1$s”</string>
-    <string name="exercise_picker_done">Done</string>
-    <string name="exercise_picker_most_used">Most used in your templates</string>
-    <plurals name="exercise_picker_in_templates">
-        <item quantity="one">In %1$d template</item>
-        <item quantity="other">In %1$d templates</item>
-    </plurals>
-    <string name="exercise_picker_show_all">Show all %1$d</string>
-    <string name="exercise_picker_show_fewer">Show fewer</string>
-    <string name="exercise_picker_own">Your exercises</string>
-    <plurals name="exercise_picker_add">
-        <item quantity="one">Add %1$d exercise</item>
-        <item quantity="other">Add %1$d exercises</item>
-    </plurals>
-    <string name="exercise_picker_add_superset">Add as a superset</string>
-    <string name="exercise_picker_details_hint">Press and hold an exercise to see its details.</string>
-    <string name="exercise_picker_empty_filters">Nothing matches these filters. Tap one in the search bar to change it, or clear all.</string>
-    <string name="exercise_picker_empty_text">Nothing matches “%1$s”.</string>
-    <string name="exercise_picker_create">Create “%1$s”</string>
-    <string name="exercise_picker_create_exercise">Create an exercise</string>
-    <string name="exercise_picker_missing">Tell us which exercise is missing</string>
-    <string name="exercise_picker_load_failed">Couldn\'t load the exercises.</string>
-    <string name="exercise_picker_retry">Try again</string>
 </resources>

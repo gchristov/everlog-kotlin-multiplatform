@@ -5,4 +5,5 @@
     <string name="keypad_show">Show keypad</string>
     <string name="keypad_hide">Hide keypad</string>
     <string name="keypad_backspace">Delete</string>
+    <string name="feedback_send">Send feedback</string>
 </resources>

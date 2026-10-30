@@ -30,6 +30,7 @@ import com.google.firebase.firestore.SetOptions
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
 import rx.Observable
+import com.everlog.android.exercise.feature.R as ExerciseR
 import java.util.concurrent.TimeUnit
 
 class PresenterExercises : BaseActivityPresenter<MvpViewExercises>() {
@@ -202,7 +203,7 @@ class PresenterExercises : BaseActivityPresenter<MvpViewExercises>() {
                 // Make sure we can only add up to 20 exercises at a time
                 val max = AppConfig.configuration.maxExerciseSelection
                 if (mSelectedExercises.size >= max) {
-                    mvpView.showToast(mvpView.context.getString(R.string.exercises_max_selection, max))
+                    mvpView.showToast(mvpView.context.getString(ExerciseR.string.exercises_max_selection, max))
                     return
                 }
                 mSelectedExercises.add(exercise)

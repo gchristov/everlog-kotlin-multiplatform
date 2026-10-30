@@ -1,9 +1,7 @@
-package com.everlog.ui.activities.exercisepicker
+package com.everlog.android.exercise.feature.picker
 
 import com.everlog.android.common.persistence.PreferencesManager
 import com.everlog.android.exercise.data.model.picker.StoredFilterToken
-import com.everlog.managers.analytics.AnalyticsConstants
-import com.everlog.managers.analytics.AnalyticsManager
 import com.google.gson.Gson
 import timber.log.Timber
 
@@ -12,7 +10,7 @@ import timber.log.Timber
  * sections are named for BigQuery: muscle, equipment, created_by…; most_used, recently_done,
  * movement, yours. The screen view (screen_exercises_v2 or screen_exercise_picker_v2) says the mode.
  */
-internal interface ExercisePickerAnalytics {
+interface ExercisePickerAnalytics {
     fun screenViewed(mode: PickerMode)
 
     // source: chip, menu, token, typed or recent
@@ -34,31 +32,6 @@ internal interface ExercisePickerAnalytics {
     fun createTapped(source: String)
 
     fun added(count: Int, setType: String, filters: Int, hadText: Boolean)
-}
-
-internal class RealExercisePickerAnalytics : ExercisePickerAnalytics {
-    private val analytics = AnalyticsManager.manager
-
-    override fun screenViewed(mode: PickerMode) = analytics.screenName(
-        if (mode == PickerMode.Pick) AnalyticsConstants.SCREEN_EXERCISE_PICKER_V2 else AnalyticsConstants.SCREEN_EXERCISES_V2,
-    )
-
-    override fun filterAdded(filter: String, value: String, source: String) = analytics.exercisePickerFilterAdded(filter, value, source)
-
-    override fun filterRemoved(filter: String) = analytics.exercisePickerFilterRemoved(filter)
-
-    override fun filterOperatorChanged(filter: String, not: Boolean) = analytics.exercisePickerFilterOperatorChanged(filter, not)
-
-    override fun searched(words: Int, results: Int) = analytics.exercisePickerSearched(words, results)
-
-    override fun noResults(text: String?, filters: Int) = analytics.exercisePickerNoResults(text, filters)
-
-    override fun exercisePicked(section: String, position: Int) = analytics.exercisePickerExercisePicked(section, position)
-
-    override fun createTapped(source: String) = analytics.exercisePickerCreateTapped(source)
-
-    override fun added(count: Int, setType: String, filters: Int, hadText: Boolean) =
-        analytics.exercisePickerAdded(count, setType, filters, hadText)
 }
 
 // The picker's recent searches, kept on the device

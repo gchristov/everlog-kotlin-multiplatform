@@ -5,6 +5,7 @@ import com.everlog.BuildConfig
 import com.everlog.R
 import com.everlog.android.common.data.model.exercise.ELExerciseGroup
 import com.everlog.android.common.data.model.workout.RangeType
+import com.everlog.android.exercise.feature.picker.ExercisePickerActivity
 import com.everlog.managers.ErrorManager
 import com.everlog.managers.analytics.AnalyticsManager
 import com.everlog.ui.fragments.home.activity.history.HistoryHomeFragment
@@ -24,7 +25,7 @@ class AppConfig {
     val defaultHistoryViewType = HistoryHomeFragment.ViewType.CALENDAR
 
     val maxPlanWeekDaysFree = 1
-    val maxExerciseSelection = 10
+    val maxExerciseSelection = ExercisePickerActivity.MAX_PICKS
     val maxExerciseSets = 14
 
     // Qualifying actions needed before each rating prompt, from any trigger. Its size caps the prompts.

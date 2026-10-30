@@ -15,7 +15,7 @@ class AndroidApplicationBinaryPlugin : Plugin<Project> {
             applyCatalogPlugin("everlog-android-base")
             extensions.configure<ApplicationExtension> {
                 defaultConfig {
-                    targetSdk = 36
+                    targetSdk = SDK
                     versionCode = calculateVersionCode()
                     versionName = calculateVersionName()
                 }
