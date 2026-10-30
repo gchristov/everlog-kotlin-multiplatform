@@ -4,7 +4,7 @@ import android.content.Intent
 import android.text.TextUtils
 import com.everlog.BuildConfig
 import com.everlog.R
-import com.everlog.application.ELApplication
+import com.everlog.android.common.kotlin.AppContext
 import com.everlog.constants.ELActivityRequestCodes
 import com.everlog.constants.ELConstants
 import com.everlog.data.datastores.ELDatastore
@@ -368,10 +368,10 @@ object AuthManager : PreferencesManager() {
 
     private fun setupGoogleClient() {
         val options = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-                .requestIdToken(ELApplication.getInstance().getString(R.string.default_web_client_id))
+                .requestIdToken(AppContext.getString(R.string.default_web_client_id))
                 .requestEmail()
                 .build()
-        mClient = GoogleSignIn.getClient(ELApplication.getInstance(), options)
+        mClient = GoogleSignIn.getClient(AppContext, options)
         mAuth = FirebaseAuth.getInstance()
     }
 

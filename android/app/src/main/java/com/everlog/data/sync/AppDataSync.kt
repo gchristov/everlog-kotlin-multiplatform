@@ -7,7 +7,7 @@ import com.everlog.android.common.datasync.PreferencesSyncRecords
 import com.everlog.android.common.datasync.SyncSettings
 import com.everlog.android.common.datasync.fullHistoryMaxAgeMillis
 import com.everlog.android.common.datasync.maxAgeMillis
-import com.everlog.application.ELApplication
+import com.everlog.android.common.kotlin.AppContext
 import com.everlog.config.AppConfig
 import com.everlog.managers.RemoteConfigManager
 import kotlinx.coroutines.CoroutineScope
@@ -21,7 +21,7 @@ object AppDataSync {
     val instance: DataSync by lazy {
         val config = AppConfig.configuration
         DataSync(
-            records = PreferencesSyncRecords(ELApplication.getInstance().getSharedPreferences(PreferencesSyncRecords.FILE, Context.MODE_PRIVATE)),
+            records = PreferencesSyncRecords(AppContext.getSharedPreferences(PreferencesSyncRecords.FILE, Context.MODE_PRIVATE)),
             settings = SyncSettings(
                 maxAgeMillis = { maxAgeMillis(BuildConfig.DEBUG, RemoteConfigManager.manager.dataSyncMaxAgeMinutes(), AppConfig.DATA_SYNC_MAX_AGE_MINUTES) },
                 fullHistoryMaxAgeMillis = {

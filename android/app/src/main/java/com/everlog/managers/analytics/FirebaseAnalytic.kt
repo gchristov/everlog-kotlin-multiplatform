@@ -1,7 +1,7 @@
 package com.everlog.managers.analytics
 
 import android.os.Bundle
-import com.everlog.application.ELApplication.Companion.getInstance
+import com.everlog.android.common.kotlin.AppContext
 import com.google.firebase.analytics.FirebaseAnalytics
 
 class FirebaseAnalytic : BaseAnalytic() {
@@ -67,7 +67,7 @@ class FirebaseAnalytic : BaseAnalytic() {
     // Setup
 
     private fun setupFirebase() {
-        mFirebaseAnalytics = FirebaseAnalytics.getInstance(getInstance())
+        mFirebaseAnalytics = FirebaseAnalytics.getInstance(AppContext)
     }
 
     // Setting a user property to null removes it. Cheap and idempotent, so it runs on every start.

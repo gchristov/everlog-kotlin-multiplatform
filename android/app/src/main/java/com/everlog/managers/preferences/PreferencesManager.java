@@ -3,8 +3,8 @@ package com.everlog.managers.preferences;
 import android.content.Context;
 import android.content.SharedPreferences;
 
-import com.everlog.application.ELApplication;
 
+import com.everlog.android.common.kotlin.AppContext;
 import java.util.Set;
 
 public abstract class PreferencesManager {
@@ -110,6 +110,6 @@ public abstract class PreferencesManager {
         if (sPreferencesProvider != null) {
             return sPreferencesProvider.getPreferences(PREFERENCE_TITLE);
         }
-        return ELApplication.getInstance().getSharedPreferences(PREFERENCE_TITLE, Context.MODE_PRIVATE);
+        return AppContext.getAppContext().getSharedPreferences(PREFERENCE_TITLE, Context.MODE_PRIVATE);
     }
 }

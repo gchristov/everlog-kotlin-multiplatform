@@ -1,7 +1,7 @@
 package com.everlog.data.model.exercise
 
 import com.everlog.R
-import com.everlog.application.ELApplication
+import com.everlog.android.common.kotlin.AppContext
 import com.everlog.constants.ELConstants
 import com.everlog.data.model.ELFirestoreModel
 import com.everlog.data.model.set.ELSet
@@ -197,7 +197,7 @@ data class ELRoutineExercise(
         }
         if (reps != 0) {
             // Include reps
-            summary = summary.append(separator, ELApplication.getInstance().resources.getQuantityString(R.plurals.reps, reps, reps))
+            summary = summary.append(separator, AppContext.resources.getQuantityString(R.plurals.reps, reps, reps))
         }
         if (timeSeconds != 0) {
             // Include time

@@ -9,7 +9,7 @@ import android.provider.Settings;
 import android.view.Display;
 import android.view.WindowManager;
 
-import com.everlog.application.ELApplication;
+import com.everlog.android.common.kotlin.AppContext;
 import com.everlog.managers.auth.AuthManager;
 
 import org.apache.commons.lang3.text.WordUtils;
@@ -100,7 +100,7 @@ public class DeviceUtils {
     }
 
     private static boolean isFirebaseTestLabFlagSet() {
-        String testLabSetting = Settings.System.getString(ELApplication.getInstance().getContentResolver(), "firebase.test.lab");
+        String testLabSetting = Settings.System.getString(AppContext.getAppContext().getContentResolver(), "firebase.test.lab");
         return "true".equals(testLabSetting);
     }
 }

@@ -1,7 +1,7 @@
 package com.everlog.data.model.workout
 
 import com.everlog.R
-import com.everlog.application.ELApplication
+import com.everlog.android.common.kotlin.AppContext
 import com.everlog.constants.ELConstants
 import com.everlog.data.model.ELFirestoreModel
 import com.everlog.data.model.ELRoutine
@@ -223,7 +223,7 @@ data class ELWorkout(
         val separator = " • "
         var summary = ""
         // Include duration
-        val durationSummary = String.format("%s %s", StatsFormatUtils.formatTimeStatsLabel(getDurationMillis()), ELApplication.getInstance().getString(R.string.hour))
+        val durationSummary = String.format("%s %s", StatsFormatUtils.formatTimeStatsLabel(getDurationMillis()), AppContext.getString(R.string.hour))
         summary = summary.append(separator, durationSummary)
         if (hasWeight()) {
             // Include weight

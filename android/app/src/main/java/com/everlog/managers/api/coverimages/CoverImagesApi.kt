@@ -1,7 +1,7 @@
 package com.everlog.managers.api.coverimages
 
 import android.text.TextUtils
-import com.everlog.application.ELApplication
+import com.everlog.android.common.kotlin.AppContext
 import com.everlog.constants.ELConstants
 import com.everlog.managers.api.coverimages.response.CoverImagesResponse
 import com.everlog.utils.NetworkUtils
@@ -64,7 +64,7 @@ class CoverImagesApi {
 
     private fun setupCache(): Cache {
         val cacheSize = (CACHE_SIZE_MB * 1024 * 1024).toLong()
-        return Cache(ELApplication.getInstance().cacheDir, cacheSize)
+        return Cache(AppContext.cacheDir, cacheSize)
     }
 
     private fun setupLoggingInterceptor(): HttpLoggingInterceptor {
@@ -80,7 +80,7 @@ class CoverImagesApi {
     private fun setupRequestCacheControlInterceptor(): Interceptor {
         return Interceptor { chain ->
             var request = chain.request()
-            request = if (NetworkUtils.hasNetwork(ELApplication.getInstance())) {
+            request = if (NetworkUtils.hasNetwork(AppContext)) {
                 request.newBuilder().header("Cache-Control", "public, max-age=" + TimeUnit.DAYS.toSeconds(CACHE_TIMEOUT_ONLINE_DAYS)).build()
             } else {
                 request.newBuilder().header("Cache-Control", "public, only-if-cached, max-stale=" + TimeUnit.DAYS.toSeconds(CACHE_TIMEOUT_OFFLINE_DAYS)).build()

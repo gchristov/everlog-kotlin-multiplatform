@@ -4,7 +4,7 @@ import android.Manifest
 import android.app.Activity
 import android.content.Intent
 import com.everlog.R
-import com.everlog.application.ELApplication
+import com.everlog.android.common.kotlin.AppContext
 import com.everlog.constants.ELActivityRequestCodes
 import com.everlog.data.datastores.ELDatastore
 import com.everlog.data.model.ELIntegration
@@ -91,10 +91,10 @@ object GoogleFitIntegrationManager {
 
     private fun buildSignInClient(): GoogleSignInClient {
         val options = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-                .requestServerAuthCode(ELApplication.getInstance().getString(R.string.default_web_client_id), true)
+                .requestServerAuthCode(AppContext.getString(R.string.default_web_client_id), true)
                 .addExtension(mFitnessOptions)
                 .build()
-        return GoogleSignIn.getClient(ELApplication.getInstance(), options)
+        return GoogleSignIn.getClient(AppContext, options)
     }
 
     fun disconnect(integration: ELIntegration?) {

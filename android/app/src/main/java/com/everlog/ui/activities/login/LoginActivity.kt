@@ -11,7 +11,7 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.updateLayoutParams
 import androidx.core.view.updatePadding
 import com.everlog.R
-import com.everlog.application.ELApplication
+import com.everlog.android.common.kotlin.AppContext
 import com.everlog.databinding.ActivityLoginBinding
 import com.everlog.managers.analytics.AnalyticsConstants
 import com.everlog.ui.activities.base.BaseActivity
@@ -33,8 +33,8 @@ class LoginActivity : BaseActivity(), MvpViewLogin {
 
     companion object {
         fun setupLoadingButton(): Bitmap {
-            val d = ELApplication.getInstance().resources.getDrawable(R.drawable.ic_check_green)
-            d.setColorFilter(ContextCompat.getColor(ELApplication.getInstance(), DesignR.color.background_base), PorterDuff.Mode.SRC_ATOP)
+            val d = AppContext.resources.getDrawable(R.drawable.ic_check_green)
+            d.setColorFilter(ContextCompat.getColor(AppContext, DesignR.color.background_base), PorterDuff.Mode.SRC_ATOP)
             val bitmap = Bitmap.createBitmap(d.intrinsicWidth, d.intrinsicHeight, Bitmap.Config.ARGB_8888)
             val canvas = Canvas(bitmap)
             d.setBounds(0, 0, canvas.width, canvas.height)

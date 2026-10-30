@@ -7,7 +7,7 @@ import android.os.Bundle
 import android.text.TextUtils
 import androidx.core.app.NotificationCompat
 import com.everlog.R
-import com.everlog.application.ELApplication
+import com.everlog.android.common.kotlin.AppContext
 import com.everlog.managers.ELNotificationManager.Companion.notify
 import com.everlog.managers.ELNotificationManager.NotificationChannelOptions
 import com.everlog.ui.activities.splash.SplashActivity
@@ -44,7 +44,7 @@ class ELFirebaseMessagingService : FirebaseMessagingService() {
         }
 
         private fun buildNotification(title: String, message: String, openAppExtras: Bundle?): Notification {
-            val builder = NotificationCompat.Builder(ELApplication.getInstance(), notificationChannelId())
+            val builder = NotificationCompat.Builder(AppContext, notificationChannelId())
             builder
                     .setContentTitle(title)
                     .setContentText(message)
@@ -62,13 +62,13 @@ class ELFirebaseMessagingService : FirebaseMessagingService() {
         }
 
         private fun buildOpenAppPendingIntent(extras: Bundle?): PendingIntent {
-            val intent = Intent(ELApplication.getInstance(), SplashActivity::class.java)
+            val intent = Intent(AppContext, SplashActivity::class.java)
             extras?.let { intent.putExtras(it) }
-            return PendingIntent.getActivity(ELApplication.getInstance(), Random.nextInt(), intent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_MUTABLE)
+            return PendingIntent.getActivity(AppContext, Random.nextInt(), intent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_MUTABLE)
         }
 
         private fun notificationChannelId(): String {
-            return ELApplication.getInstance().getString(R.string.notification_channel_normal)
+            return AppContext.getString(R.string.notification_channel_normal)
         }
     }
 
