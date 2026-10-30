@@ -21,7 +21,6 @@ import com.everlog.data.model.exercise.ELExerciseGroup
 import com.everlog.data.model.exercise.ELRoutineExercise
 import com.everlog.data.model.set.ELSet
 import com.everlog.managers.preferences.SettingsManager
-import com.everlog.ui.fragments.home.activity.statistics.StatisticsHomeFragment
 import com.google.firebase.firestore.Exclude
 import org.apache.commons.lang3.SerializationUtils
 import org.threeten.bp.Instant
@@ -275,12 +274,12 @@ data class ELWorkout(
         return Date().isSameYear(completedDate)
     }
 
-    fun inRange(range: StatisticsHomeFragment.RangeType): Boolean {
+    fun inRange(range: RangeType): Boolean {
         return when (range) {
-            StatisticsHomeFragment.RangeType.TODAY -> isToday()
-            StatisticsHomeFragment.RangeType.WEEK -> isThisWeek()
-            StatisticsHomeFragment.RangeType.MONTH -> isThisMonth()
-            StatisticsHomeFragment.RangeType.YEAR -> isThisYear()
+            RangeType.TODAY -> isToday()
+            RangeType.WEEK -> isThisWeek()
+            RangeType.MONTH -> isThisMonth()
+            RangeType.YEAR -> isThisYear()
             else -> true
         }
     }

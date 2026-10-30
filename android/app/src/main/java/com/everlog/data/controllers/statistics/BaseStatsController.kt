@@ -3,7 +3,7 @@ package com.everlog.data.controllers.statistics
 import com.everlog.data.model.exercise.ELRoutineExercise
 import com.everlog.data.model.set.ELSet
 import com.everlog.data.model.workout.ELWorkout
-import com.everlog.ui.fragments.home.activity.statistics.StatisticsHomeFragment
+import com.everlog.data.model.workout.RangeType
 import com.everlog.ui.fragments.home.activity.statistics.charts.axis.DateAxisFormatter
 import com.everlog.ui.fragments.home.activity.statistics.charts.axis.MonthAxisFormatter
 import com.everlog.ui.fragments.home.activity.statistics.charts.axis.YearAxisFormatter
@@ -27,10 +27,10 @@ abstract class BaseStatsController {
             return 1F // Because we're using days
         }
 
-        fun chartAxisFormatter(range: StatisticsHomeFragment.RangeType): ValueFormatter {
+        fun chartAxisFormatter(range: RangeType): ValueFormatter {
             return when (range) {
-                StatisticsHomeFragment.RangeType.YEAR -> MonthAxisFormatter()
-                StatisticsHomeFragment.RangeType.OVERALL -> YearAxisFormatter()
+                RangeType.YEAR -> MonthAxisFormatter()
+                RangeType.OVERALL -> YearAxisFormatter()
                 else -> DateAxisFormatter()
             }
         }
@@ -76,7 +76,7 @@ abstract class BaseStatsController {
     protected fun calculateMaxValue(workout: ELWorkout,
                                     currentValues: MutableMap<Long, Entry>,
                                     newValue: Float,
-                                    range: StatisticsHomeFragment.RangeType) {
+                                    range: RangeType) {
         val keys = getChartXAndDividerKey(workout, range)
         var currentEntry = currentValues[keys.first]
         if (currentEntry == null) {
@@ -90,7 +90,7 @@ abstract class BaseStatsController {
     protected fun calculateAccumulativeValue(workout: ELWorkout,
                                              currentValues: MutableMap<Long, Entry>,
                                              newValue: Int,
-                                             range: StatisticsHomeFragment.RangeType) {
+                                             range: RangeType) {
         val keys = getChartXAndDividerKey(workout, range)
         var currentEntry = currentValues[keys.first]
         if (currentEntry == null) {
@@ -103,7 +103,7 @@ abstract class BaseStatsController {
     protected fun calculateAccumulativeValue(workout: ELWorkout,
                                              currentValues: MutableMap<Long, BarEntry>,
                                              newValue: Float,
-                                             range: StatisticsHomeFragment.RangeType) {
+                                             range: RangeType) {
         val keys = getChartXAndDividerKey(workout, range)
         var currentEntry = currentValues[keys.first]
         if (currentEntry == null) {
@@ -117,7 +117,7 @@ abstract class BaseStatsController {
                                         currentValues: MutableMap<Long, Entry>,
                                         currentValuesPerTimePeriod: MutableMap<Int, MutableList<Float>>,
                                         newValue: Float,
-                                        range: StatisticsHomeFragment.RangeType) {
+                                        range: RangeType) {
         val keys = getChartXAndDividerKey(workout, range)
         var currentEntry = currentValues[keys.first]
         if (currentEntry == null) {
@@ -133,15 +133,15 @@ abstract class BaseStatsController {
         currentValuesPerTimePeriod[keys.second.toInt()] = valuesToSum
     }
 
-    private fun getChartXAndDividerKey(workout: ELWorkout, range: StatisticsHomeFragment.RangeType): Pair<Long, Float> {
+    private fun getChartXAndDividerKey(workout: ELWorkout, range: RangeType): Pair<Long, Float> {
         val workoutDate: Long
         val x: Float
         when (range) {
-            StatisticsHomeFragment.RangeType.YEAR -> {
+            RangeType.YEAR -> {
                 workoutDate = workout.getCompletedDateWithMonthOnlyTimestamp()
                 x = workout.getMonth().toFloat()
             }
-            StatisticsHomeFragment.RangeType.OVERALL -> {
+            RangeType.OVERALL -> {
                 workoutDate = workout.getCompletedDateWithYearOnlyTimestamp()
                 x = workout.getYear().toFloat()
             }

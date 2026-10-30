@@ -1,7 +1,6 @@
-package com.everlog.data.model.util
+package com.everlog.ui.fragments.home.activity.history
 
 import com.everlog.data.model.workout.ELWorkout
-import com.everlog.ui.fragments.home.activity.history.PresenterHistoryHome
 import org.threeten.bp.LocalDate
 import timber.log.Timber
 

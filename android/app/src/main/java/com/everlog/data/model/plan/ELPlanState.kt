@@ -1,7 +1,6 @@
 package com.everlog.data.model.plan
 
 import com.everlog.data.model.workout.ELWorkout
-import com.everlog.managers.PlanManager
 import java.io.Serializable
 
 data class ELPlanState (

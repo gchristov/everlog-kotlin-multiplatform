@@ -18,12 +18,12 @@ import com.everlog.data.model.ELRoutine
 import com.everlog.data.model.plan.ELPlan
 import com.everlog.data.model.plan.ELPlanState
 import com.everlog.data.model.workout.ELWorkout
+import com.everlog.data.model.workout.RangeType
 import com.everlog.managers.PlanManager
 import com.everlog.managers.RemoteConfigManager
 import com.everlog.managers.analytics.AnalyticsManager
 import com.everlog.ui.activities.home.congratulate.CongratulateActivity
 import com.everlog.ui.fragments.base.BaseFragmentPresenter
-import com.everlog.ui.fragments.home.activity.statistics.StatisticsHomeFragment
 import com.everlog.utils.Utils
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
@@ -123,7 +123,7 @@ class PresenterWeekHome : BaseFragmentPresenter<MvpViewWeekHome>() {
                 .debounce(600, TimeUnit.MILLISECONDS)
                 .compose(applyUISchedulers())
                 .subscribe({
-                    UserStatsController().loadStats(StatisticsHomeFragment.RangeType.WEEK,
+                    UserStatsController().loadStats(RangeType.WEEK,
                             it,
                             object : OnCompleteListener {
                                 override fun onComplete(result: UserStatsController.StatsResult) {
