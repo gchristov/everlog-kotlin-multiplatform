@@ -1,4 +1,4 @@
-package com.everlog.data.model.util
+package com.everlog.ui.adapters.items
 
 data class ExerciseGroupCreateHeader (
 

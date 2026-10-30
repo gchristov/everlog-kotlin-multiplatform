@@ -10,8 +10,6 @@ import com.android.billingclient.api.Purchase
 import com.android.billingclient.api.SkuDetails
 import com.everlog.R
 import com.everlog.constants.ELConstants
-import com.everlog.data.model.pro.ELProFeature
-import com.everlog.data.model.pro.ELProQuestion
 import com.everlog.data.model.pro.ELProSkuDetails
 import com.everlog.managers.analytics.AnalyticsManager
 import com.everlog.managers.billing.BillingBridge

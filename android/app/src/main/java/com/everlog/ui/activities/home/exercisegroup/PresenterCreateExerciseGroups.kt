@@ -17,14 +17,14 @@ import com.everlog.data.model.exercise.ELExerciseGroup
 import com.everlog.data.model.exercise.ELRoutineExercise
 import com.everlog.data.model.set.ELSet
 import com.everlog.data.model.set.ELSetType
-import com.everlog.data.model.util.ExerciseGroupCreateHeader
 import com.everlog.managers.analytics.AnalyticsManager
+// import icepick.State
 import com.everlog.ui.activities.base.BaseActivityPresenter
 import com.everlog.ui.activities.home.exercise.details.ExerciseDetailsActivity
 import com.everlog.ui.adapters.exercise.group.ExerciseGroupCreateAdapter
 import com.everlog.ui.adapters.exercise.group.ExerciseGroupCreateHeaderAdapter
+import com.everlog.ui.adapters.items.ExerciseGroupCreateHeader
 import com.everlog.ui.dialog.DialogBuilder
-// import icepick.State
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
 

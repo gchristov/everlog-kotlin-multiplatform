@@ -1,6 +1,6 @@
 package com.everlog.ui.activities.home.routine.perform
 
-import com.everlog.data.model.util.Header
+import com.everlog.ui.adapters.items.Header
 import com.everlog.ui.activities.home.routine.details.PresenterRoutineDetails
 import com.everlog.ui.adapters.routine.PerformRoutineHeaderAdapter
 

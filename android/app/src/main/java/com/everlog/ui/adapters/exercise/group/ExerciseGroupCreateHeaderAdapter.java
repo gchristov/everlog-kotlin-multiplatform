@@ -7,10 +7,10 @@ import android.view.ViewGroup;
 import com.ahamed.multiviewadapter.ItemBinder;
 import com.ahamed.multiviewadapter.ItemViewHolder;
 import com.everlog.R;
-import com.everlog.data.model.util.ExerciseGroupCreateHeader;
 import com.everlog.databinding.RowHeaderExerciseGroupCreateBinding;
-import com.everlog.ui.adapters.OnListItemListener;
 import com.everlog.android.common.kotlin.format.FormatUtils;
+import com.everlog.ui.adapters.OnListItemListener;
+import com.everlog.ui.adapters.items.ExerciseGroupCreateHeader;
 
 public class ExerciseGroupCreateHeaderAdapter {
 

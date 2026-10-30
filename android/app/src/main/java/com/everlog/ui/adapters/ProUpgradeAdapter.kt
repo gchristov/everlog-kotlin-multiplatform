@@ -12,10 +12,10 @@ import android.view.animation.RotateAnimation
 import com.ahamed.multiviewadapter.ItemBinder
 import com.ahamed.multiviewadapter.ItemViewHolder
 import com.everlog.R
-import com.everlog.data.model.pro.ELProFeature
-import com.everlog.data.model.pro.ELProQuestion
 import com.everlog.databinding.RowProFeatureBinding
 import com.everlog.databinding.RowProQuestionBinding
+import com.everlog.ui.activities.home.pro.ELProFeature
+import com.everlog.ui.activities.home.pro.ELProQuestion
 import com.everlog.utils.ViewUtils
 
 class ProUpgradeAdapter {
