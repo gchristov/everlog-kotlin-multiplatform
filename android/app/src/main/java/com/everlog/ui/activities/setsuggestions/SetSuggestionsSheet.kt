@@ -14,7 +14,7 @@ import com.everlog.android.common.compose.elements.AppText
 import com.everlog.android.common.compose.elements.list.AppListGroup
 import com.everlog.android.common.compose.elements.list.AppListItem
 import com.everlog.android.common.compose.theme.Theme
-import com.everlog.managers.preferences.SettingsManager.WeightUnit
+import com.everlog.android.common.kotlin.WeightUnit
 import com.everlog.utils.format.formatWeight
 import com.everlog.utils.format.unitName
 

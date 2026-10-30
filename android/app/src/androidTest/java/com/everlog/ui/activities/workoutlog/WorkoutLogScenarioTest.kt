@@ -34,6 +34,7 @@ import arrow.core.Either
 import arrow.core.right
 import com.everlog.android.common.compose.theme.Theme
 import com.everlog.android.common.kotlin.UnitUtils
+import com.everlog.android.common.kotlin.WeightUnit
 import com.everlog.config.AppConfig
 import com.everlog.constants.ELConstants
 import com.everlog.data.controllers.workoutprefill.BaseWorkoutPrefillController.PrefillSource
@@ -51,7 +52,6 @@ import com.everlog.data.model.set.ELSetType
 import com.everlog.data.model.workout.ELWorkout
 import com.everlog.data.repositories.OngoingWorkoutRepository
 import com.everlog.managers.WorkoutManager
-import com.everlog.managers.preferences.SettingsManager.WeightUnit
 import com.everlog.services.workout.ShownSet
 import com.everlog.services.workout.WorkoutService
 import com.google.common.truth.Truth.assertThat

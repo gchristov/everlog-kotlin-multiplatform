@@ -6,14 +6,12 @@ import java.io.Serializable
 data class ELPlanState (
 
         var totalWorkouts: Int = 0,
-        var totalWeightKG: Float = 0f,
         var totalWorkoutTimeMS: Int = 0
 
 ) : Serializable {
 
     fun finishWorkout(workout: ELWorkout) {
         totalWorkouts++
-        totalWeightKG += workout.getTotalWeight()
         totalWorkoutTimeMS += workout.getDurationMillis().toInt()
     }
 }

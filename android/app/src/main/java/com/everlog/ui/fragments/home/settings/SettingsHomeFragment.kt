@@ -9,6 +9,7 @@ import android.widget.TextView
 import androidx.core.content.ContextCompat
 import com.everlog.BuildConfig
 import com.everlog.R
+import com.everlog.android.common.kotlin.WeightUnit
 import com.everlog.android.common.kotlin.format.FormatUtils
 import com.everlog.data.model.ELIntegration
 import com.everlog.data.model.ELUser
@@ -139,7 +140,7 @@ class SettingsHomeFragment : BaseTabFragment(), MvpViewSettingsHome {
         binding.root.findViewById<TextView>(R.id.weeklyGoalField).text = String.format("%d", viewModel.weeklyGoals)
         binding.root.findViewById<CheckBoxTriStates>(R.id.keepScreenOnCheckbox).setChecked(viewModel.keepScreenOn)
         // Units
-        binding.root.findViewById<TextView>(R.id.weightUnitField).text = getString(if (viewModel.weightUnit == SettingsManager.WeightUnit.KILOGRAM) R.string.settings_kilograms else R.string.settings_pounds)
+        binding.root.findViewById<TextView>(R.id.weightUnitField).text = getString(if (viewModel.weightUnit == WeightUnit.KILOGRAM) R.string.settings_kilograms else R.string.settings_pounds)
         // First week day
         binding.root.findViewById<TextView>(R.id.firstWeekDayField).text = viewModel.firstWeekDay?.getDisplayName(TextStyle.FULL, Locale.getDefault())
         // Integrations
@@ -226,7 +227,7 @@ class SettingsHomeFragment : BaseTabFragment(), MvpViewSettingsHome {
             private set
         var weeklyGoals: Int? = null
             private set
-        var weightUnit: SettingsManager.WeightUnit? = null
+        var weightUnit: WeightUnit? = null
             private set
         var keepScreenOn: Boolean? = null
             private set
@@ -240,7 +241,7 @@ class SettingsHomeFragment : BaseTabFragment(), MvpViewSettingsHome {
         fun muscleGoal(muscleGoal: SettingsManager.MuscleGoal) = apply { this.muscleGoal = muscleGoal }
         fun weightIncrease(weightIncrease: Float) = apply { this.weightIncrease = weightIncrease }
         fun weeklyGoals(weeklyGoals: Int) = apply { this.weeklyGoals = weeklyGoals }
-        fun weightUnit(weightUnit: SettingsManager.WeightUnit) = apply { this.weightUnit = weightUnit }
+        fun weightUnit(weightUnit: WeightUnit) = apply { this.weightUnit = weightUnit }
         fun keepScreenOn(keepScreenOn: Boolean) = apply { this.keepScreenOn = keepScreenOn }
         fun firstWeekDay(firstWeekDay: DayOfWeek) = apply { this.firstWeekDay = firstWeekDay }
         fun integrationGoogleFitEnabled(integrationGoogleFitEnabled: Boolean) = apply { this.integrationGoogleFitEnabled = integrationGoogleFitEnabled }

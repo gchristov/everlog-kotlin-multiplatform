@@ -21,7 +21,7 @@ import com.everlog.android.common.compose.elements.list.AppGroupedListScope
 import com.everlog.android.common.compose.elements.list.AppListItem
 import com.everlog.android.common.compose.elements.list.items
 import com.everlog.android.common.compose.theme.Theme
-import com.everlog.managers.preferences.SettingsManager.WeightUnit
+import com.everlog.android.common.kotlin.WeightUnit
 
 /**
  * Off or last time on top, the 1RM goals below them with a sheet on how their weights are worked out.

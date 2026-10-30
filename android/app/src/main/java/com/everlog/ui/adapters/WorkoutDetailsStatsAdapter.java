@@ -100,11 +100,11 @@ public class WorkoutDetailsStatsAdapter {
             // Duration
             binding.totalTimeSummary.setSummary(StatsFormatUtils.Companion.formatTimeStatsLabel(item.getDurationMillis()), getContext().getString(R.string.hour), getContext().getString(R.string.workout_details_duration));
             // Weight
-            float weight = item.getTotalWeight();
+            float weight = item.getTotalWeight(SettingsManager.manager.weightUnit());
             binding.totalWeightSummary.setVisibility(weight > 0 ? View.VISIBLE : View.GONE);
             binding.totalWeightSummary.setSummary(StatsFormatUtils.Companion.formatWeightStatsLabel(weight), SettingsManager.weightUnitAbbreviation(), getContext().getString(R.string.weight));
             binding.maxWeightSummary.setVisibility(weight > 0 ? View.VISIBLE : View.GONE);
-            binding.maxWeightSummary.setSummary(StatsFormatUtils.Companion.formatWeightStatsLabel(item.getMaxWeight()), SettingsManager.weightUnitAbbreviation(), getContext().getString(R.string.workout_details_max_weight));
+            binding.maxWeightSummary.setSummary(StatsFormatUtils.Companion.formatWeightStatsLabel(item.getMaxWeight(SettingsManager.manager.weightUnit())), SettingsManager.weightUnitAbbreviation(), getContext().getString(R.string.workout_details_max_weight));
             // Exercises
             binding.exercisesSummary.setVisibility(weight > 0 ? View.GONE : View.VISIBLE);
             binding.exercisesSummary.setSummary(item.getTotalExercises() + "", null, getContext().getString(R.string.exercises_title));

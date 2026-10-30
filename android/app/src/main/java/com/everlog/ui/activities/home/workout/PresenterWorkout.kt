@@ -389,7 +389,7 @@ class PresenterWorkout : PresenterCreateExerciseGroups<MvpViewWorkout>() {
     private fun handleServiceSetModifyWeight(state: ELWorkoutState, offset: Float) {
         val group = mWorkout?.getExerciseGroups()?.get(state.groupIndex)
         val exercise = group?.getExercisesForSetIndex(state.setIndex)?.get(state.exerciseIndex)
-        exercise?.modifyWeight(offset, state.setIndex)
+        exercise?.modifyWeight(offset, state.setIndex, SettingsManager.manager.weightUnit())
         mAdapter.notifyDataSetChanged()
         // This causes an extra BROADCAST_SERVICE_SET_UPDATED event but is needed for when the app is in background.
         notifyWorkoutServiceSetUpdated()

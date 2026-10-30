@@ -3,6 +3,7 @@ package com.everlog.ui.activities.workoutlog
 import arrow.core.Either
 import arrow.core.left
 import arrow.core.right
+import com.everlog.android.common.kotlin.WeightUnit
 import com.everlog.android.common.test.FakeCoroutineDispatcher
 import com.everlog.android.common.test.InMemorySharedPreferences
 import com.everlog.config.AppConfig
@@ -27,7 +28,6 @@ import com.everlog.data.model.workout.ELWorkoutState
 import com.everlog.data.repositories.OngoingWorkoutRepository
 import com.everlog.managers.preferences.SettingsManager
 import com.everlog.managers.preferences.SettingsManager.MuscleGoal
-import com.everlog.managers.preferences.SettingsManager.WeightUnit
 import com.everlog.services.workout.ShownSet
 import com.everlog.testutil.install
 import com.everlog.testutil.uninstall

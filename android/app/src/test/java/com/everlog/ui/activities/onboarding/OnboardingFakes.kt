@@ -1,6 +1,6 @@
 package com.everlog.ui.activities.onboarding
 
-import com.everlog.managers.preferences.SettingsManager
+import com.everlog.android.common.kotlin.WeightUnit
 
 internal class FakeOnboardingAnalytics : OnboardingAnalytics {
     val events = mutableListOf<String>()
@@ -22,10 +22,10 @@ internal class FakeOnboardingAnalytics : OnboardingAnalytics {
 }
 
 internal class FakeOnboardingSettings : OnboardingSettings {
-    var savedUnit: SettingsManager.WeightUnit? = null
+    var savedUnit: WeightUnit? = null
     var savedWeeklyGoal: Int? = null
 
-    override fun setWeightUnit(unit: SettingsManager.WeightUnit) {
+    override fun setWeightUnit(unit: WeightUnit) {
         savedUnit = unit
     }
 

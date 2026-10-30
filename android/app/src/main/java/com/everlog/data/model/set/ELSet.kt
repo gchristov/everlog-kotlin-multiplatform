@@ -2,8 +2,8 @@ package com.everlog.data.model.set
 
 import com.everlog.android.common.kotlin.UnitUtils.Companion.kgToLb
 import com.everlog.android.common.kotlin.UnitUtils.Companion.lbToKg
+import com.everlog.android.common.kotlin.WeightUnit
 import com.everlog.data.model.ELFirestoreModel
-import com.everlog.managers.preferences.SettingsManager
 import com.google.firebase.firestore.Exclude
 import java.io.Serializable
 import java.util.*
@@ -17,7 +17,8 @@ data class ELSet (
         private var requiredReps: Int? = null,
         private var reps: Int? = null,
         // Weight
-        private var weight: Float? = null, // KG
+        // In kg, whatever the user's unit. A field, so Firestore and Gson map it by its name rather than through a getter
+        @JvmField var weight: Float? = null,
         // Time
         private var requiredTimeSeconds: Int? = null,
         private var timeSeconds: Int? = null,
@@ -65,7 +66,7 @@ data class ELSet (
             return false
         }
         return when {
-            compareWeight -> getWeight() > other.getWeight()
+            compareWeight -> (weight ?: -1f) > (other.weight ?: -1f)
             else -> getReps() > other.getReps()
         }
     }
@@ -126,38 +127,34 @@ data class ELSet (
     // Weight
 
     /**
-     * @return Calculated weight based on user preferences.
+     * @return The weight in [unit], or -1 if it's not entered.
      */
-    fun getWeight(): Float {
-        if (weight != null) {
-            return if (SettingsManager.manager.weightUnit() == SettingsManager.WeightUnit.KILOGRAM) {
-                weight!!
-            } else kgToLb(weight!!)
-        }
-        return -1f
+    fun getWeight(unit: WeightUnit): Float {
+        val kg = weight ?: return -1f
+        return if (unit == WeightUnit.KILOGRAM) kg else kgToLb(kg)
     }
 
     /**
-     * @param value Converts this value to the current weight unit and sets it.
+     * @param value A weight in [unit], stored in kg.
      */
-    fun updateWeight(value: Float?) {
+    fun updateWeight(value: Float?, unit: WeightUnit) {
         weight = when {
             value == null -> value
             value <= 0 -> null
-            SettingsManager.manager.weightUnit() == SettingsManager.WeightUnit.KILOGRAM -> value
+            unit == WeightUnit.KILOGRAM -> value
             else -> lbToKg(value)
         }
     }
 
-    fun modifyWeight(offset: Float) {
-        if (getWeight() + offset <= 0) {
+    fun modifyWeight(offset: Float, unit: WeightUnit) {
+        if (getWeight(unit) + offset <= 0) {
             if (!isWeightEntered() && offset > 0) {
-                updateWeight(1f)
+                updateWeight(1f, unit)
             } else {
                 clearWeight()
             }
         } else {
-            updateWeight(getWeight() + offset)
+            updateWeight(getWeight(unit) + offset, unit)
         }
     }
 
@@ -170,11 +167,11 @@ data class ELSet (
     }
 
     fun isWeightEntered(): Boolean {
-        return getWeight() > 0
+        return (weight ?: -1f) > 0
     }
 
     fun clearWeight() {
-        updateWeight(null)
+        weight = null
     }
 
     // Reps

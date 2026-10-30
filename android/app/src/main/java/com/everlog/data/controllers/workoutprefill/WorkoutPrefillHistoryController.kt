@@ -1,5 +1,6 @@
 package com.everlog.data.controllers.workoutprefill
 
+import com.everlog.managers.preferences.SettingsManager
 import com.everlog.data.model.set.ELSet
 import timber.log.Timber
 
@@ -21,7 +22,7 @@ class WorkoutPrefillHistoryController: BaseWorkoutPrefillController() {
         if (!setToPrefill.isWeightEntered() && historicSet.isWeightEntered()) {
             // Prefill weight if current set doesn't have weight AND historic set has
             printExerciseMessage(historicEntry.workout!!, historicEntry.exercise!!, setIndex, String.format("Found historic weight value: %s", buildSetInfo(historicSet)))
-            setToPrefill.updateWeight(historicSet.getWeight())
+            setToPrefill.updateWeight(historicSet.getWeight(SettingsManager.manager.weightUnit()), SettingsManager.manager.weightUnit())
         }
         // Reps and time replace each other, so only fill a set that has neither, including as a template target
         if (setToPrefill.isWithoutData() && !setToPrefill.isRequiredRepsEntered() && !setToPrefill.isRequiredTimeEntered()) {

@@ -52,7 +52,7 @@ private fun formatReps(context: Context?, reps: Int): String? {
 }
 
 private fun ELSet.formatWeight(): String? {
-    return "${FormatUtils.formatDecimal(getWeight())} ${SettingsManager.weightUnitAbbreviation()}"
+    return "${FormatUtils.formatDecimal(getWeight(SettingsManager.manager.weightUnit()))} ${SettingsManager.weightUnitAbbreviation()}"
 }
 
 private fun formatTime(timeSeconds: Int): String? {

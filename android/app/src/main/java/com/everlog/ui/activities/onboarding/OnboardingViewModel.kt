@@ -1,11 +1,11 @@
 package com.everlog.ui.activities.onboarding
 
+import com.everlog.android.common.kotlin.WeightUnit
 import com.everlog.android.common.mvvm.CommonViewModel
 import com.everlog.data.controllers.starterroutines.BuildStarterRoutinesUseCase
 import com.everlog.data.controllers.starterroutines.SaveStarterRoutinesUseCase
 import com.everlog.data.model.ELRoutine
 import com.everlog.managers.analytics.AnalyticsConstants
-import com.everlog.managers.preferences.SettingsManager
 import kotlinx.coroutines.CoroutineDispatcher
 import org.threeten.bp.DayOfWeek
 import timber.log.Timber
@@ -276,7 +276,7 @@ class OnboardingViewModel(
     private fun saveSetting(questionId: String, answer: Answer) {
         when (questionId) {
             OnboardingQuestions.Units -> settings.setWeightUnit(
-                if ((answer as Answer.Choice).optionId == OnboardingQuestions.Pounds) SettingsManager.WeightUnit.POUND else SettingsManager.WeightUnit.KILOGRAM
+                if ((answer as Answer.Choice).optionId == OnboardingQuestions.Pounds) WeightUnit.POUND else WeightUnit.KILOGRAM
             )
             OnboardingQuestions.Days -> settings.setWeeklyWorkoutsGoal((answer as Answer.Days).count)
         }

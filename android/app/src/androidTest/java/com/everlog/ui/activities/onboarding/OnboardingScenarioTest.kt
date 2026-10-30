@@ -12,12 +12,12 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import arrow.core.Either
 import arrow.core.left
 import com.everlog.android.common.compose.theme.Theme
+import com.everlog.android.common.kotlin.WeightUnit
 import com.everlog.data.controllers.starterroutines.BuildStarterRoutinesUseCase
 import com.everlog.data.controllers.starterroutines.SaveStarterRoutinesUseCase
 import com.everlog.data.controllers.starterroutines.StarterRoutineGenerator
 import com.everlog.data.model.ELRoutine
 import com.everlog.data.model.exercise.ELExercise
-import com.everlog.managers.preferences.SettingsManager
 import com.google.common.truth.Truth.assertThat
 import java.io.IOException
 import java.util.concurrent.TimeUnit
@@ -66,7 +66,7 @@ class OnboardingScenarioTest {
         compose.onNodeWithText("Next").performClick()
 
         // Units and days a week are settings, saved as they're answered
-        assertThat(settings.unit).isEqualTo(SettingsManager.WeightUnit.POUND)
+        assertThat(settings.unit).isEqualTo(WeightUnit.POUND)
         assertThat(settings.weeklyGoal).isEqualTo(4)
 
         compose.onNodeWithText("Build my templates").performClick()
@@ -155,10 +155,10 @@ class OnboardingScenarioTest {
     private fun exists(text: String) = compose.onAllNodes(hasText(text)).fetchSemanticsNodes().isNotEmpty()
 
     private class RecordingSettings : OnboardingSettings {
-        var unit: SettingsManager.WeightUnit? = null
+        var unit: WeightUnit? = null
         var weeklyGoal: Int? = null
 
-        override fun setWeightUnit(unit: SettingsManager.WeightUnit) {
+        override fun setWeightUnit(unit: WeightUnit) {
             this.unit = unit
         }
 

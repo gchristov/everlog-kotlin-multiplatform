@@ -1,5 +1,6 @@
 package com.everlog.data.model.exercise
 
+import com.everlog.android.common.kotlin.WeightUnit
 import com.everlog.constants.ELConstants
 import com.everlog.data.model.ELFirestoreModel
 import com.everlog.data.model.set.ELSet
@@ -52,16 +53,16 @@ data class ELRoutineExercise(
         return this.uuid.hashCode()
     }
 
-    fun modifyWeight(offset: Float, setIndex: Int) {
+    fun modifyWeight(offset: Float, setIndex: Int, unit: WeightUnit) {
         val set: ELSet = sets[setIndex]
-        if (set.getWeight() + offset <= 0) {
+        if (set.getWeight(unit) + offset <= 0) {
             if (!set.isWeightEntered() && offset > 0) {
-                set.updateWeight(1f)
+                set.updateWeight(1f, unit)
             } else {
                 set.clearWeight()
             }
         } else {
-            set.updateWeight(set.getWeight() + offset)
+            set.updateWeight(set.getWeight(unit) + offset, unit)
         }
     }
 
@@ -134,14 +135,14 @@ data class ELRoutineExercise(
         }
     }
 
-    fun getTotalWeight(): Float {
+    fun getTotalWeight(unit: WeightUnit): Float {
         var weight = 0f
         sets.forEach {
             if (it.isWeightEntered()) {
                 weight += if (it.isRepsEntered()) {
-                    it.getReps() * it.getWeight()
+                    it.getReps() * it.getWeight(unit)
                 } else {
-                    it.getWeight()
+                    it.getWeight(unit)
                 }
             }
         }

@@ -6,6 +6,7 @@ import com.everlog.data.model.exercise.ELRoutineExercise
 import com.everlog.data.model.set.ELSet
 import com.everlog.data.model.workout.ELWorkout
 import com.everlog.data.model.workout.RangeType
+import com.everlog.managers.preferences.SettingsManager
 import com.everlog.testutil.at
 import com.everlog.testutil.install
 import com.everlog.testutil.loggedSet
@@ -86,7 +87,7 @@ class ExerciseStatsControllerTest {
 
         val stats = calculateStats(history)
 
-        assertThat(stats.heaviestSet!!.getWeight()).isEqualTo(80f)
+        assertThat(stats.heaviestSet!!.getWeight(SettingsManager.manager.weightUnit())).isEqualTo(80f)
         assertThat(stats.weightCounts.single().y).isEqualTo(80f)
     }
 

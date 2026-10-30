@@ -3,6 +3,7 @@ package com.everlog.managers.preferences;
 import android.content.Context;
 import android.content.SharedPreferences;
 
+import com.everlog.android.common.kotlin.WeightUnit;
 import com.everlog.android.common.persistence.PreferencesManager;
 import com.everlog.utils.ArrayResourceTypeUtils;
 
@@ -21,11 +22,6 @@ public class SettingsManager extends PreferencesManager {
         MUSCLE_GOAL,
         KEEP_SCREEN_ON,
         ONBOARDING_PENDING,
-    }
-
-    public enum WeightUnit {
-        KILOGRAM,
-        POUND
     }
 
     public enum MuscleGoal {

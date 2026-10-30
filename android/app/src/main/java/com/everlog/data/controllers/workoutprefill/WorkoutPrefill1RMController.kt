@@ -25,7 +25,7 @@ class WorkoutPrefill1RMController: BaseWorkoutPrefillController() {
         val targetWeight = goalWeight(source.orm, SettingsManager.manager.muscleGoal())
         if (!setToPrefill.isWeightEntered()) {
             printExerciseMessage(setIndex, String.format("1RM calculated: 1RM=%f, target=%f", source.orm, targetWeight))
-            setToPrefill.updateWeight(targetWeight)
+            setToPrefill.updateWeight(targetWeight, SettingsManager.manager.weightUnit())
         }
     }
 }

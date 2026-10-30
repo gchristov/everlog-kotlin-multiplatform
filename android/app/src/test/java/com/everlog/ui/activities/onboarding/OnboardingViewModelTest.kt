@@ -1,11 +1,11 @@
 package com.everlog.ui.activities.onboarding
 
 import arrow.core.Either
+import com.everlog.android.common.kotlin.WeightUnit
 import com.everlog.android.common.test.FakeCoroutineDispatcher
 import com.everlog.data.controllers.starterroutines.RealBuildStarterRoutinesUseCase
 import com.everlog.data.controllers.starterroutines.RealSaveStarterRoutinesUseCase
 import com.everlog.data.controllers.starterroutines.StarterRoutineGenerator
-import com.everlog.managers.preferences.SettingsManager
 import com.everlog.testutil.FakeExerciseRepository
 import com.everlog.testutil.FakeRoutineRepository
 import com.everlog.testutil.exerciseLibrary
@@ -84,7 +84,7 @@ class OnboardingViewModelTest {
         viewModel.onStart()
         viewModel.onOptionSelect(OnboardingQuestions.Units, OnboardingQuestions.Pounds)
         viewModel.onSubmit()
-        assertThat(settings.savedUnit).isEqualTo(SettingsManager.WeightUnit.POUND)
+        assertThat(settings.savedUnit).isEqualTo(WeightUnit.POUND)
 
         viewModel.onDaysSelect(OnboardingQuestions.Days, 4)
         viewModel.onSubmit()
@@ -125,7 +125,7 @@ class OnboardingViewModelTest {
         viewModel.onOptionSelect(OnboardingQuestions.Units, OnboardingQuestions.Pounds)
         viewModel.onSubmit()
         assertThat(viewModel.current.answers[OnboardingQuestions.Units]).isEqualTo(Answer.Choice(OnboardingQuestions.Pounds))
-        assertThat(settings.savedUnit).isEqualTo(SettingsManager.WeightUnit.POUND)
+        assertThat(settings.savedUnit).isEqualTo(WeightUnit.POUND)
     }
 
     @Test

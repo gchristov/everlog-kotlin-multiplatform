@@ -442,7 +442,7 @@ class ExerciseGroupCreateAdapter {
             override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
                 // TODO: Optimisation
                 val input = binding.weightField.text.toString()
-                groupVH.item.setUpdateWeightFromInput(item, set, input)
+                groupVH.item.setUpdateWeightFromInput(item, set, input, SettingsManager.manager.weightUnit())
                 AnalyticsManager.manager.setWeightModified(NumberUtils.parseFloat(input))
                 render()
                 if (prevVisibility != binding.weightPanel.visibility) {
@@ -525,7 +525,7 @@ class ExerciseGroupCreateAdapter {
 
         fun onClickWeightPanel(view: View) {
             Observable.just(DialogBuilder.showInputNumberDialog(view.context,
-                    if (getSet().isWeightEntered()) formatSetWeight(getSet().getWeight()) else null,
+                    if (getSet().isWeightEntered()) formatSetWeight(getSet().getWeight(SettingsManager.manager.weightUnit())) else null,
                     DialogBuilder.MetricDialogType.WEIGHT)
                     .subscribe { text: String? ->
                         binding.weightField.text = if (TextUtils.isEmpty(text)) "" else text
@@ -565,12 +565,12 @@ class ExerciseGroupCreateAdapter {
         }
 
         fun onClickReduceWeight() {
-            getSet().modifyWeight(-SettingsManager.manager.weightIncrease())
+            getSet().modifyWeight(-SettingsManager.manager.weightIncrease(), SettingsManager.manager.weightUnit())
             renderWeight()
         }
 
         fun onClickIncreaceWeight() {
-            getSet().modifyWeight(SettingsManager.manager.weightIncrease())
+            getSet().modifyWeight(SettingsManager.manager.weightIncrease(), SettingsManager.manager.weightUnit())
             renderWeight()
         }
 
@@ -671,7 +671,7 @@ class ExerciseGroupCreateAdapter {
         }
 
         private fun renderWeight() {
-            binding.weightField.text = formatSetWeight(getSet().getWeight())
+            binding.weightField.text = formatSetWeight(getSet().getWeight(SettingsManager.manager.weightUnit()))
             binding.weightPanel.visibility = if (!builder.allowSetTemplates && getSet().isWeightEntered()) View.VISIBLE else View.GONE
             binding.weightUnit.text = String.format("(%s)", SettingsManager.weightUnitAbbreviation())
         }

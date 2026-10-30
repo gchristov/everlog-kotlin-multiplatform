@@ -1,5 +1,6 @@
 package com.everlog.data.controllers.statistics
 
+import com.everlog.managers.preferences.SettingsManager
 import com.everlog.data.model.exercise.ELRoutineExercise
 import com.everlog.data.model.set.ELSet
 import com.everlog.data.model.workout.ELWorkout
@@ -42,13 +43,13 @@ abstract class BaseStatsController {
         fun calculate1RM(exercise: ELRoutineExercise): Float {
             val heaviestSet = exercise.sets
                     .filter { it.isWeightEntered() && it.getReps() in 1..ORM_MAX_REPS }
-                    .maxByOrNull { it.getWeight() }
+                    .maxByOrNull { it.getWeight(SettingsManager.manager.weightUnit()) }
             return if (heaviestSet != null) calculate1RM(heaviestSet) else 0f
         }
 
         private fun calculate1RM(maxWeightSet: ELSet?): Float {
             // w and r could be -1, depending on set, as they are the default values
-            return estimate1RM(maxWeightSet?.getWeight() ?: 0f, maxWeightSet?.getReps() ?: 0)
+            return estimate1RM(maxWeightSet?.getWeight(SettingsManager.manager.weightUnit()) ?: 0f, maxWeightSet?.getReps() ?: 0)
         }
 
         /**

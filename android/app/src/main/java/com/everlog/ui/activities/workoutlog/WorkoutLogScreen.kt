@@ -53,6 +53,7 @@ import com.everlog.android.common.compose.elements.keypad.AppKeypadTimerStyle
 import com.everlog.android.common.compose.elements.keypad.AppKeypadToggle
 import com.everlog.android.common.compose.theme.Theme
 import com.everlog.android.common.kotlin.UnitUtils
+import com.everlog.android.common.kotlin.WeightUnit
 import com.everlog.data.controllers.workoutsession.SetMode
 import com.everlog.data.controllers.workoutsession.SetRef
 import com.everlog.data.controllers.workoutsession.ValueField
@@ -62,7 +63,6 @@ import com.everlog.data.controllers.workoutsession.WorkoutRound
 import com.everlog.data.controllers.workoutsession.WorkoutSet
 import com.everlog.data.controllers.workoutsession.set
 import com.everlog.data.model.exercise.ELExercise
-import com.everlog.managers.preferences.SettingsManager
 import com.everlog.ui.activities.setsuggestions.SetSuggestion
 import com.everlog.ui.components.exercisetable.CellFocus
 import com.everlog.ui.components.exercisetable.ExampleTable
@@ -323,11 +323,11 @@ private fun Header(state: WorkoutLogState, viewModel: WorkoutLogViewModel, onOpe
 
 // A faded example of what the table becomes, which can't be touched
 @Composable
-private fun EmptyTable(contentPadding: PaddingValues, unit: SettingsManager.WeightUnit) {
+private fun EmptyTable(contentPadding: PaddingValues, unit: WeightUnit) {
     val name = stringResource(R.string.workout_log_example_exercise)
     val example = remember(name, unit) {
         // A round number in either unit
-        val weightKg = if (unit == SettingsManager.WeightUnit.POUND) UnitUtils.lbToKg(45f) else 20f
+        val weightKg = if (unit == WeightUnit.POUND) UnitUtils.lbToKg(45f) else 20f
         val set = WorkoutSet(reps = 12, weightKg = weightKg)
         listOf(
             WorkoutBlock(
@@ -361,7 +361,7 @@ private fun KeepScreenOn() {
 }
 
 @Composable
-private fun suggestionNoteText(note: SuggestionNote, unit: SettingsManager.WeightUnit): String = when (note) {
+private fun suggestionNoteText(note: SuggestionNote, unit: WeightUnit): String = when (note) {
     SuggestionNote.LastTime -> stringResource(R.string.workout_log_suggested, SuggestedMark)
     is SuggestionNote.Goal -> stringResource(
         R.string.workout_log_suggested_goal,

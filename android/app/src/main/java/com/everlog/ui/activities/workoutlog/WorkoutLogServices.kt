@@ -1,6 +1,7 @@
 package com.everlog.ui.activities.workoutlog
 
 import android.content.Context
+import com.everlog.android.common.kotlin.WeightUnit
 import com.everlog.data.controllers.workoutsession.ValueField
 import com.everlog.data.model.set.ELSetType
 import com.everlog.data.model.workout.ELWorkout
@@ -16,7 +17,7 @@ import com.everlog.utils.VibrationUtils
  * Read again each time the screen shows, as they can change in Settings meanwhile.
  */
 internal interface WorkoutLogSettings {
-    fun weightUnit(): SettingsManager.WeightUnit
+    fun weightUnit(): WeightUnit
 
     // In the user's unit
     fun weightIncrease(): Float
@@ -28,7 +29,7 @@ internal interface WorkoutLogSettings {
 }
 
 internal class RealWorkoutLogSettings : WorkoutLogSettings {
-    override fun weightUnit(): SettingsManager.WeightUnit = SettingsManager.manager.weightUnit()
+    override fun weightUnit(): WeightUnit = SettingsManager.manager.weightUnit()
 
     override fun weightIncrease(): Float = SettingsManager.manager.weightIncrease()
 

@@ -437,7 +437,7 @@ public class ELNavigator implements Navigator {
         TextView exercises = v.findViewById(R.id.exercisesField);
         title.setText(workout.getName());
         sets.setText(StatsFormatUtils.Companion.formatNumberStatsLabel(workout.getTotalSets()));
-        weight.setText(String.format("%s %s", StatsFormatUtils.Companion.formatWeightStatsLabel(workout.getTotalWeight()), SettingsManager.weightUnitAbbreviation()));
+        weight.setText(String.format("%s %s", StatsFormatUtils.Companion.formatWeightStatsLabel(workout.getTotalWeight(SettingsManager.manager.weightUnit())), SettingsManager.weightUnitAbbreviation()));
         duration.setText(String.format("%s %s", StatsFormatUtils.Companion.formatTimeStatsLabel(workout.getDurationMillis()), mContext.getString(R.string.hour)));
         exercises.setText(workout.getTotalExercises() + "");
         // Draw everything.
