@@ -1,5 +1,6 @@
 package com.everlog.ui.activities.templateeditor
 
+import com.everlog.android.common.design.R as DesignR
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -154,7 +155,7 @@ private fun Header(state: TemplateEditorState, viewModel: TemplateEditorViewMode
     ) {
         AppIconButton(
             onClick = viewModel::onClose,
-            icon = ImageVector.vectorResource(R.drawable.ic_remove),
+            icon = ImageVector.vectorResource(DesignR.drawable.ic_remove),
             contentDescription = stringResource(R.string.template_editor_close),
         )
         AppText(

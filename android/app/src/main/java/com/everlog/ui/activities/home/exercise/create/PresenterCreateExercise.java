@@ -153,7 +153,7 @@ public class PresenterCreateExercise extends BaseActivityPresenter<MvpViewCreate
 
     private void handlePickImage() {
         ImagePickerOptions options = new ImagePickerOptions(
-                R.string.select_image,
+                com.everlog.android.common.mvp.R.string.select_image,
                 toEdit.getImageUrl() != null,
                 1, 1,
                 512, 512,

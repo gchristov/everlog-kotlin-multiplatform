@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.view.Menu;
 
 import com.cocosw.bottomsheet.BottomSheet;
-import com.everlog.R;
 import com.imagepick.utils.MenuUtils;
 
 import java.lang.ref.WeakReference;
@@ -75,7 +74,7 @@ public class ELPickerDialog implements ELPickerDialogBuilder {
     private BottomSheet.Builder buildImagePickerSheet() {
         Menu menu = MenuUtils.inflateMenu(activity.get(), layoutResId);
         BottomSheet.Builder builder = new BottomSheet.Builder(activity.get(),
-                R.style.BottomSheet_StyleDialog_Dark)
+                com.everlog.android.common.mvp.R.style.BottomSheet_StyleDialog_Dark)
                 .title(titleResId);
         builder = MenuUtils.populateSheetWithCameraMenuActions(activity.get(), menu, builder);
         return builder;
