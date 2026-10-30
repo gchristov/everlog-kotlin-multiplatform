@@ -4,7 +4,6 @@ import com.everlog.config.AppConfig
 import com.everlog.constants.ELConstants
 import com.everlog.data.model.ELFirestoreModel
 import com.everlog.data.model.ELRoutine
-import com.everlog.managers.auth.LocalUserManager
 import org.apache.commons.lang3.SerializationUtils
 import java.io.Serializable
 import java.util.*
@@ -173,8 +172,8 @@ data class ELPlan (
         }
     }
 
-    fun isEditable(): Boolean {
-        return createdByUserId == LocalUserManager.getUser()?.id
+    fun isEditable(userId: String?): Boolean {
+        return createdByUserId == userId
     }
 
     private fun setCreatedDateAsDate(date: Date) {

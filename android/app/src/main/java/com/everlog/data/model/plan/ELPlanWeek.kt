@@ -1,9 +1,7 @@
 package com.everlog.data.model.plan
 
-import com.everlog.config.AppConfig
 import com.everlog.data.model.ELFirestoreModel
 import com.everlog.data.model.ELRoutine
-import com.everlog.managers.auth.LocalUserManager
 import java.io.Serializable
 import java.util.*
 import kotlin.collections.ArrayList
@@ -31,7 +29,6 @@ data class ELPlanWeek (
 
     fun setDays(days: ArrayList<ELPlanDay>) {
         this.days = days
-        proLock()
     }
 
     fun getDays(): ArrayList<ELPlanDay> {
@@ -98,11 +95,8 @@ data class ELPlanWeek (
         return workouts
     }
 
-    private fun proLock() {
-        if (days.isNotEmpty()) {
-            val dayLimit = AppConfig.configuration.maxPlanWeekDaysFree
-            days.subList(0, dayLimit).forEach { it.proLocked = false }
-            days.subList(dayLimit, days.size).forEach { it.proLocked = LocalUserManager.getUser()?.isPro() == false }
-        }
+    // The first freeDays days are open to everyone, the rest only to Pro users
+    fun lockDays(freeDays: Int, userIsPro: Boolean) {
+        days.forEachIndexed { index, day -> day.proLocked = index >= freeDays && !userIsPro }
     }
 }

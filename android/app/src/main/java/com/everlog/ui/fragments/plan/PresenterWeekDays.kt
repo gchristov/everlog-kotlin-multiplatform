@@ -7,6 +7,7 @@ import com.everlog.data.model.plan.ELPlan
 import com.everlog.data.model.plan.ELPlanDay
 import com.everlog.managers.PlanManager
 import com.everlog.ui.adapters.plan.PlanDayAdapter
+import com.everlog.ui.adapters.plan.applyProLock
 import com.everlog.ui.fragments.base.BaseFragmentPresenter
 
 class PresenterWeekDays : BaseFragmentPresenter<MvpViewWeekDays>() {
@@ -34,7 +35,9 @@ class PresenterWeekDays : BaseFragmentPresenter<MvpViewWeekDays>() {
 
     private fun loadWeek() {
         mDataListManager.clear()
-        mDataListManager.addAll(mPlan?.weeks?.get(mWeekIndex)?.getDays() ?: ArrayList())
+        val week = mPlan?.weeks?.get(mWeekIndex)
+        week?.applyProLock()
+        mDataListManager.addAll(week?.getDays() ?: ArrayList())
         mAdapter.notifyDataSetChanged()
     }
 

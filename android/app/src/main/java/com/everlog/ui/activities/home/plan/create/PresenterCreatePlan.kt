@@ -22,6 +22,7 @@ import com.everlog.managers.analytics.AnalyticsManager
 import com.everlog.ui.activities.base.BaseActivityPresenter
 import com.everlog.ui.adapters.plan.PlanDayAdapter
 import com.everlog.ui.adapters.plan.PlanWeekAdapter
+import com.everlog.ui.adapters.plan.applyProLock
 import com.everlog.utils.Utils
 import com.everlog.utils.input.KeyboardUtils
 import com.google.firebase.firestore.SetOptions
@@ -397,6 +398,7 @@ class PresenterCreatePlan : BaseActivityPresenter<MvpViewCreatePlan>() {
     private fun showDays(week: ELPlanWeek?, weekIndex: Int) {
         mSelectedWeek = weekIndex
         mDaysDataListManager.clear()
+        week?.applyProLock()
         mDaysDataListManager.addAll(week?.getDays() ?: ArrayList())
         mDaysAdapter.notifyDataSetChanged()
         showPanel(CreatePlanActivity.Flow.DAYS, weekIndex)

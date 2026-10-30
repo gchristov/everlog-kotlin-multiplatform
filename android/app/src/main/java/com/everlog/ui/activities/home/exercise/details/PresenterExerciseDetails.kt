@@ -9,6 +9,7 @@ import com.everlog.data.datastores.ELUserStore
 import com.everlog.data.datastores.exercises.ELUserExerciseStore
 import com.everlog.data.model.exercise.ELExercise
 import com.everlog.managers.analytics.AnalyticsManager
+import com.everlog.managers.auth.LocalUserManager
 import com.everlog.managers.firebase.FirebaseStorageManager
 import com.everlog.ui.activities.base.BaseActivityPresenter
 import com.everlog.ui.fragments.home.exercise.statistics.ExerciseStatisticsFragment
@@ -95,7 +96,7 @@ class PresenterExerciseDetails : BaseActivityPresenter<MvpViewExerciseDetails>()
         // Show exercise immediately
         loadViewData()
         // Only the user's own exercises live in their exercises collection
-        if (toEdit!!.isEditable()) {
+        if (toEdit!!.isEditable(LocalUserManager.getUser()?.id)) {
             ELDatastore.exerciseStore().getItem(toEdit!!.uuid)
         }
         // Load stats
