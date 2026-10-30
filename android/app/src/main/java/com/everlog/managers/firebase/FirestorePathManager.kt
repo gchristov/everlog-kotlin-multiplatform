@@ -1,7 +1,7 @@
 package com.everlog.managers.firebase
 
 import com.everlog.BuildConfig
-import com.everlog.data.model.ELUser
+import com.everlog.android.auth.data.model.ELUser
 import com.everlog.managers.auth.LocalUserManager
 import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.DocumentReference

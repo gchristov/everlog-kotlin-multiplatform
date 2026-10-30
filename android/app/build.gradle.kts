@@ -69,6 +69,10 @@ dependencies {
     implementation(projects.android.common.mvp)
     implementation(projects.android.common.mvvm)
     implementation(projects.android.common.persistence)
+    implementation(projects.android.auth.data)
+    implementation(projects.android.exercise.data)
+    implementation(projects.android.plan.data)
+    implementation(projects.android.pro.data)
     implementation(projects.android.settings.data)
     implementation(projects.android.auth.feature)
     implementation(projects.android.exercise.feature)
@@ -83,6 +87,7 @@ dependencies {
 
     testImplementation(projects.android.common.test)
     testImplementation(projects.android.common.dataTest)
+    testImplementation(projects.android.exercise.testFixtures)
     testImplementation(projects.android.settings.testFixtures)
 
     androidTestImplementation(libs.androidx.test.runner)

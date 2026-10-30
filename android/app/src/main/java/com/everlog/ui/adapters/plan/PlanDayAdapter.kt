@@ -9,8 +9,8 @@ import androidx.core.content.ContextCompat
 import com.ahamed.multiviewadapter.ItemBinder
 import com.ahamed.multiviewadapter.ItemViewHolder
 import com.everlog.R
+import com.everlog.android.plan.data.model.ELPlanDay
 import com.everlog.constants.ELConstants
-import com.everlog.data.model.plan.ELPlanDay
 import com.everlog.databinding.RowPlanDayBinding
 import com.everlog.managers.analytics.AnalyticsManager
 import com.everlog.ui.adapters.OnListItemListener

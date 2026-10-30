@@ -1,6 +1,6 @@
 package com.everlog.ui.fragments.plan
 
-import com.everlog.data.model.plan.ELPlan
+import com.everlog.android.plan.data.model.ELPlan
 import com.everlog.ui.fragments.base.BaseFragmentMvpView
 
 interface MvpViewWeekDays : BaseFragmentMvpView {

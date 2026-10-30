@@ -1,8 +1,8 @@
 package com.everlog.data.datastores.plans
 
 import com.everlog.android.common.data.model.ELRoutine
+import com.everlog.android.plan.data.model.ELPlan
 import com.everlog.data.datastores.routines.ELRoutineDecorator
-import com.everlog.data.model.plan.ELPlan
 import com.everlog.managers.firebase.FirestorePathManager
 import com.everlog.utils.Utils
 import com.google.android.gms.tasks.Tasks

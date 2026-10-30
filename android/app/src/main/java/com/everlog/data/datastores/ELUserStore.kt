@@ -2,12 +2,12 @@ package com.everlog.data.datastores
 
 import android.content.Intent
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
+import com.everlog.android.auth.data.model.ELUser
 import com.everlog.android.common.kotlin.AppContext
 import com.everlog.android.settings.data.SettingsManager
 import com.everlog.constants.ELConstants
 import com.everlog.data.datastores.base.ELDocumentStore
 import com.everlog.data.datastores.events.document.ELDocStoreItemLoadedEvent
-import com.everlog.data.model.ELUser
 import com.everlog.managers.auth.LocalUserManager
 import com.everlog.managers.firebase.FirestorePathManager
 import com.google.firebase.firestore.CollectionReference

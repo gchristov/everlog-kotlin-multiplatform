@@ -1,7 +1,7 @@
 package com.everlog.ui.activities.exercisepicker
 
 import com.everlog.android.common.persistence.PreferencesManager
-import com.everlog.data.model.exercise.picker.StoredFilterToken
+import com.everlog.android.exercise.data.model.picker.StoredFilterToken
 import com.everlog.managers.analytics.AnalyticsConstants
 import com.everlog.managers.analytics.AnalyticsManager
 import com.google.gson.Gson

@@ -30,7 +30,7 @@ import com.everlog.android.common.compose.elements.AppText
 import com.everlog.android.common.compose.elements.list.AppListGroup
 import com.everlog.android.common.compose.elements.list.AppListItem
 import com.everlog.android.common.compose.theme.Theme
-import com.everlog.data.model.exercise.library.ExerciseGuide
+import com.everlog.android.exercise.data.model.library.ExerciseGuide
 
 @Composable
 internal fun ExerciseInfoScreen(viewModel: ExerciseInfoViewModel) {

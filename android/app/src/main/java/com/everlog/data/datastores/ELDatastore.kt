@@ -2,6 +2,7 @@ package com.everlog.data.datastores
 
 import com.everlog.android.common.data.model.ELRoutine
 import com.everlog.android.common.data.model.workout.ELWorkout
+import com.everlog.android.plan.data.model.ELPlan
 import com.everlog.data.datastores.base.CollectionStore
 import com.everlog.data.datastores.base.DocumentStore
 import com.everlog.data.datastores.exercises.ELExercisesStore
@@ -18,7 +19,6 @@ import com.everlog.data.datastores.routines.ELUserRoutineInMemoryStore
 import com.everlog.data.datastores.routines.ELUserRoutineStore
 import com.everlog.data.datastores.routines.ELUserRoutinesInMemoryStore
 import com.everlog.data.datastores.routines.ELUserRoutinesStore
-import com.everlog.data.model.plan.ELPlan
 import com.everlog.utils.device.DeviceUtils
 
 class ELDatastore {

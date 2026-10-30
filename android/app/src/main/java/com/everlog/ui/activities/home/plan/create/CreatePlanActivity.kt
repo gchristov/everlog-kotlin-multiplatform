@@ -15,8 +15,8 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import android.view.ViewGroup
 import android.widget.FrameLayout
 import com.everlog.R
+import com.everlog.android.plan.data.model.ELPlan
 import com.everlog.constants.ELConstants.EXTRA_PLAN_UUID
-import com.everlog.data.model.plan.ELPlan
 import com.everlog.databinding.ActivityPlanCreateBinding
 import com.everlog.managers.analytics.AnalyticsConstants
 import com.everlog.managers.auth.LocalUserManager

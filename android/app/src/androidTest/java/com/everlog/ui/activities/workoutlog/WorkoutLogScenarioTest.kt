@@ -43,6 +43,7 @@ import com.everlog.android.common.data.model.set.ELSetType
 import com.everlog.android.common.data.model.workout.ELWorkout
 import com.everlog.android.common.kotlin.UnitUtils
 import com.everlog.android.common.kotlin.WeightUnit
+import com.everlog.android.exercise.data.model.library.LibraryExercise
 import com.everlog.android.settings.data.SettingsManager.MuscleGoal
 import com.everlog.config.AppConfig
 import com.everlog.constants.ELConstants
@@ -50,7 +51,6 @@ import com.everlog.data.controllers.workoutprefill.BaseWorkoutPrefillController.
 import com.everlog.data.controllers.workoutprefill.LoadPrefillSourcesUseCase
 import com.everlog.data.controllers.workoutsession.RealWorkoutSetPrefill
 import com.everlog.data.controllers.workoutsession.ValueField
-import com.everlog.data.model.exercise.library.LibraryExercise
 import com.everlog.data.repositories.OngoingWorkoutRepository
 import com.everlog.managers.WorkoutManager
 import com.everlog.services.workout.ShownSet

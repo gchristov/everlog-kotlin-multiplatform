@@ -10,8 +10,8 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.viewpager.widget.ViewPager
 import com.everlog.R
+import com.everlog.android.plan.data.model.ELPlan
 import com.everlog.constants.ELConstants.EXTRA_PLAN_UUID
-import com.everlog.data.model.plan.ELPlan
 import com.everlog.databinding.ActivityPlanDetailsBinding
 import com.everlog.managers.analytics.AnalyticsConstants
 import com.everlog.managers.auth.LocalUserManager

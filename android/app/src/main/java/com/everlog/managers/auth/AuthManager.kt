@@ -4,6 +4,8 @@ import android.content.Intent
 import android.text.TextUtils
 import com.everlog.BuildConfig
 import com.everlog.R
+import com.everlog.android.auth.data.model.ELConsent.Companion.newConsent
+import com.everlog.android.auth.data.model.ELUser
 import com.everlog.android.common.kotlin.AppContext
 import com.everlog.android.common.persistence.PreferencesManager
 import com.everlog.android.settings.data.SettingsManager
@@ -11,8 +13,6 @@ import com.everlog.constants.ELActivityRequestCodes
 import com.everlog.constants.ELConstants
 import com.everlog.data.datastores.ELDatastore
 import com.everlog.data.datastores.base.OnStoreItemListener
-import com.everlog.data.model.ELConsent.Companion.newConsent
-import com.everlog.data.model.ELUser
 import com.everlog.data.sync.AppDataSync
 import com.everlog.utils.device.DeviceUtils
 import com.everlog.managers.PlanManager

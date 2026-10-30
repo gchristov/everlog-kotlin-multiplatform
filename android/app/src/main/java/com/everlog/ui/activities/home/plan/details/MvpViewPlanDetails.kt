@@ -1,6 +1,6 @@
 package com.everlog.ui.activities.home.plan.details
 
-import com.everlog.data.model.plan.ELPlan
+import com.everlog.android.plan.data.model.ELPlan
 import com.everlog.ui.activities.base.BaseActivityMvpView
 import rx.Observable
 

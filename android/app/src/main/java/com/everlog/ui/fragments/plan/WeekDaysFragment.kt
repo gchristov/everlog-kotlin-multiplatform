@@ -5,7 +5,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.everlog.R
-import com.everlog.data.model.plan.ELPlan
+import com.everlog.android.plan.data.model.ELPlan
 import com.everlog.databinding.FragmentPlanWeekBinding
 import com.everlog.ui.fragments.base.BaseFragment
 import com.everlog.ui.fragments.base.BaseFragmentMvpView

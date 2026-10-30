@@ -7,7 +7,7 @@ import android.view.LayoutInflater;
 import android.widget.LinearLayout;
 
 import com.everlog.R;
-import com.everlog.data.model.pro.ELProSkuDetails;
+import com.everlog.android.pro.data.model.ELProSkuDetails;
 import com.everlog.databinding.ViewBtnProSubBinding;
 
 import androidx.annotation.Nullable;

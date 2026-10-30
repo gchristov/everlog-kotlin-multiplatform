@@ -1,6 +1,6 @@
 package com.everlog.ui.activities.home.integration
 
-import com.everlog.data.model.ELIntegration
+import com.everlog.android.settings.data.model.ELIntegration
 import com.everlog.ui.activities.base.BaseActivityMvpView
 import rx.Observable
 

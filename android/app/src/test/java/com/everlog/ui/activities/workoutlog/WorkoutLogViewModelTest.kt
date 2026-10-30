@@ -15,6 +15,7 @@ import com.everlog.android.common.data.model.workout.ELWorkoutState
 import com.everlog.android.common.kotlin.WeightUnit
 import com.everlog.android.common.test.FakeCoroutineDispatcher
 import com.everlog.android.common.test.InMemorySharedPreferences
+import com.everlog.android.exercise.data.model.library.LibraryExercise
 import com.everlog.android.settings.data.SettingsManager
 import com.everlog.android.settings.data.SettingsManager.MuscleGoal
 import com.everlog.android.settings.testfixtures.install
@@ -28,7 +29,6 @@ import com.everlog.data.controllers.workoutsession.ValueField
 import com.everlog.data.controllers.workoutsession.WorkoutSet
 import com.everlog.data.controllers.workoutsession.WorkoutSetPrefill
 import com.everlog.data.controllers.workoutsession.set
-import com.everlog.data.model.exercise.library.LibraryExercise
 import com.everlog.data.repositories.OngoingWorkoutRepository
 import com.everlog.services.workout.ShownSet
 import com.everlog.ui.components.exercisetable.CellFocus

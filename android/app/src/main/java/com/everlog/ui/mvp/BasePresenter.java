@@ -6,7 +6,7 @@ import android.os.Bundle;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import com.everlog.data.datastores.events.BaseEvent;
-import com.everlog.data.model.ELUser;
+import com.everlog.android.auth.data.model.ELUser;
 import com.everlog.managers.auth.LocalUserManager;
 import com.everlog.ui.navigator.ELNavigator;
 import com.everlog.ui.navigator.Navigator;

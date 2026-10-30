@@ -4,10 +4,10 @@ import android.app.Activity
 import android.content.Intent
 import android.text.TextUtils
 import com.everlog.R
+import com.everlog.android.auth.data.model.ELUser
 import com.everlog.android.settings.data.SettingsManager
 import com.everlog.constants.ELActivityRequestCodes
 import com.everlog.constants.ELConstants
-import com.everlog.data.model.ELUser
 import com.everlog.managers.auth.AuthManager
 import com.everlog.ui.activities.base.BaseActivityPresenter
 import com.everlog.ui.dialog.ToastBuilder

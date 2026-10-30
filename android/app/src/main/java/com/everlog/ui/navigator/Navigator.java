@@ -3,10 +3,10 @@ package com.everlog.ui.navigator;
 import androidx.annotation.Nullable;
 
 import com.everlog.config.FeedbackSource;
-import com.everlog.data.model.ELIntegration;
+import com.everlog.android.settings.data.model.ELIntegration;
 import com.everlog.android.common.data.model.ELRoutine;
 import com.everlog.android.common.data.model.exercise.ELExercise;
-import com.everlog.data.model.plan.ELPlan;
+import com.everlog.android.plan.data.model.ELPlan;
 import com.everlog.android.common.data.model.workout.ELWorkout;
 import com.everlog.managers.apprate.RatePromptTrigger;
 import com.everlog.services.workout.ShownSet;

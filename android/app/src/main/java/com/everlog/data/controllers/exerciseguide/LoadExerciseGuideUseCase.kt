@@ -2,7 +2,7 @@ package com.everlog.data.controllers.exerciseguide
 
 import com.everlog.android.common.kotlin.Load
 import com.everlog.android.common.kotlin.map
-import com.everlog.data.model.exercise.library.ExerciseGuide
+import com.everlog.android.exercise.data.model.library.ExerciseGuide
 import com.everlog.data.repositories.ExerciseRepository
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow

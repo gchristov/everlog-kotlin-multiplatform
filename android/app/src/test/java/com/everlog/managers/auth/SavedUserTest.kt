@@ -1,6 +1,6 @@
 package com.everlog.managers.auth
 
-import com.everlog.data.model.ELUser
+import com.everlog.android.auth.data.model.ELUser
 import com.google.common.truth.Truth.assertThat
 import org.junit.Test
 

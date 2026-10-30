@@ -1,11 +1,11 @@
 package com.everlog.data.datastores.plans
 
+import com.everlog.android.plan.data.model.ELPlan
 import com.everlog.data.datastores.events.collection.ELColStoreItemAddedEvent
 import com.everlog.data.datastores.events.collection.ELColStoreItemModifiedEvent
 import com.everlog.data.datastores.events.collection.ELColStoreItemRemovedEvent
 import com.everlog.data.datastores.events.collection.ELColStoreItemsLoadedEvent
 import com.everlog.data.datastores.events.document.ELDocStoreItemLoadedEvent
-import com.everlog.data.model.plan.ELPlan
 
 // Events posted by the plan stores, both the Firestore and the in-memory ones
 

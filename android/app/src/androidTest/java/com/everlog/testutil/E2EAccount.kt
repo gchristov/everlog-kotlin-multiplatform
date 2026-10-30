@@ -2,7 +2,7 @@ package com.everlog.testutil
 
 import androidx.test.platform.app.InstrumentationRegistry
 import com.everlog.BuildConfig
-import com.everlog.data.model.ELUser
+import com.everlog.android.auth.data.model.ELUser
 import com.everlog.managers.auth.AuthManager
 import com.everlog.managers.auth.LocalUserManager
 import com.google.common.truth.Truth.assertThat
