@@ -3,8 +3,8 @@ package com.everlog.config
 import androidx.core.content.ContextCompat
 import com.everlog.BuildConfig
 import com.everlog.R
-import com.everlog.data.model.exercise.ELExerciseGroup
-import com.everlog.data.model.workout.RangeType
+import com.everlog.android.common.data.model.exercise.ELExerciseGroup
+import com.everlog.android.common.data.model.workout.RangeType
 import com.everlog.managers.ErrorManager
 import com.everlog.managers.analytics.AnalyticsManager
 import com.everlog.ui.fragments.home.activity.history.HistoryHomeFragment

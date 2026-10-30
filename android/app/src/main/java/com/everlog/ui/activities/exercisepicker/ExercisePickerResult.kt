@@ -1,10 +1,10 @@
 package com.everlog.ui.activities.exercisepicker
 
-import com.everlog.data.model.exercise.ELExerciseGroup
-import com.everlog.data.model.exercise.ELRoutineExercise
+import com.everlog.android.common.data.model.exercise.ELExerciseGroup
+import com.everlog.android.common.data.model.exercise.ELRoutineExercise
+import com.everlog.android.common.data.model.set.ELSetType
 import com.everlog.data.model.exercise.library.LibraryExercise
 import com.everlog.data.model.exercise.library.toELExercise
-import com.everlog.data.model.set.ELSetType
 
 /**
  * The picks as exercise groups: one per exercise, or one for all of them when they're linked as a superset or another

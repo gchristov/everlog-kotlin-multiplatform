@@ -2,9 +2,9 @@ package com.everlog.data.migration;
 
 import com.everlog.data.datastores.ELDatastore;
 import com.everlog.data.datastores.base.OnStoreItemsListener;
-import com.everlog.data.model.ELRoutine;
-import com.everlog.data.model.exercise.ELExercise;
-import com.everlog.data.model.workout.ELWorkout;
+import com.everlog.android.common.data.model.ELRoutine;
+import com.everlog.android.common.data.model.exercise.ELExercise;
+import com.everlog.android.common.data.model.workout.ELWorkout;
 import com.everlog.managers.firebase.FirestorePathManager;
 import com.google.firebase.firestore.SetOptions;
 

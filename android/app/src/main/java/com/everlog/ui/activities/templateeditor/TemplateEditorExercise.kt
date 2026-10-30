@@ -43,11 +43,11 @@ import com.everlog.R
 import com.everlog.android.common.compose.elements.AppText
 import com.everlog.android.common.compose.elements.AppThumbnail
 import com.everlog.android.common.compose.theme.Theme
+import com.everlog.android.common.data.model.exercise.ELExercise
 import com.everlog.data.controllers.workoutsession.SetMode
 import com.everlog.data.controllers.workoutsession.SetRef
 import com.everlog.data.controllers.workoutsession.WorkoutBlock
 import com.everlog.data.controllers.workoutsession.WorkoutSet
-import com.everlog.data.model.exercise.ELExercise
 import com.everlog.ui.components.exercisetable.CellFocus
 import com.everlog.ui.components.exercisetable.ExerciseTab
 import com.everlog.ui.components.exercisetable.GroupThumbnail

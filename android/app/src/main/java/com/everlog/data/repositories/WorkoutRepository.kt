@@ -1,6 +1,7 @@
 package com.everlog.data.repositories
 
 import arrow.core.Either
+import com.everlog.android.common.data.model.workout.ELWorkout
 import com.everlog.android.common.datasync.CollectionSource
 import com.everlog.android.common.datasync.DataSync
 import com.everlog.android.common.datasync.FirestoreCollection
@@ -9,7 +10,6 @@ import com.everlog.android.common.datasync.SyncPlan
 import com.everlog.android.common.firebase.FirestoreFields
 import com.everlog.android.common.kotlin.Load
 import com.everlog.config.AppConfig
-import com.everlog.data.model.workout.ELWorkout
 import com.everlog.managers.auth.LocalUserManager
 import com.everlog.managers.firebase.FirestorePathManager
 import com.google.firebase.firestore.Query

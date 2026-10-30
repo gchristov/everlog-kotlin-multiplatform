@@ -1,10 +1,10 @@
 package com.everlog.ui.activities.onboarding
 
+import com.everlog.android.common.data.model.ELRoutine
 import com.everlog.android.common.kotlin.WeightUnit
 import com.everlog.android.common.mvvm.CommonViewModel
 import com.everlog.data.controllers.starterroutines.BuildStarterRoutinesUseCase
 import com.everlog.data.controllers.starterroutines.SaveStarterRoutinesUseCase
-import com.everlog.data.model.ELRoutine
 import com.everlog.managers.analytics.AnalyticsConstants
 import kotlinx.coroutines.CoroutineDispatcher
 import org.threeten.bp.DayOfWeek

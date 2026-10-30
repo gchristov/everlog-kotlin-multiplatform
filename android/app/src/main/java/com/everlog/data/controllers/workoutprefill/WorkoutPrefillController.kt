@@ -1,14 +1,14 @@
 package com.everlog.data.controllers.workoutprefill
 
+import com.everlog.android.common.data.model.exercise.ELExercise
+import com.everlog.android.common.data.model.exercise.ELExerciseHistory
+import com.everlog.android.common.data.model.exercise.ELRoutineExercise
+import com.everlog.android.common.data.model.set.ELSet
+import com.everlog.android.common.data.model.workout.ELWorkout
 import com.everlog.data.controllers.statistics.BaseStatsController
 import com.everlog.data.controllers.workoutprefill.BaseWorkoutPrefillController.PrefillSource
 import com.everlog.data.datastores.ELDatastore
 import com.everlog.data.datastores.base.OnStoreItemsListener
-import com.everlog.data.model.exercise.ELExercise
-import com.everlog.data.model.exercise.ELExerciseHistory
-import com.everlog.data.model.exercise.ELRoutineExercise
-import com.everlog.data.model.set.ELSet
-import com.everlog.data.model.workout.ELWorkout
 import rx.Observable
 import rx.android.schedulers.AndroidSchedulers
 import rx.schedulers.Schedulers

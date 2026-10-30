@@ -2,10 +2,10 @@ package com.everlog.data.model.pro
 
 import com.android.billingclient.api.Purchase
 import com.android.billingclient.api.Purchase.PurchaseState
+import com.everlog.android.common.data.model.ELFirestoreModel
 import com.everlog.android.common.firebase.FirestoreFields
 import com.everlog.android.common.kotlin.calendarDaysDifference
 import com.everlog.android.common.kotlin.timestampWithAddedDays
-import com.everlog.data.model.ELFirestoreModel
 import java.io.Serializable
 import java.util.*
 

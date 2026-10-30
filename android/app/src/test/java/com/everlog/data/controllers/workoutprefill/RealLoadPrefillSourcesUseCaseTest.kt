@@ -1,7 +1,12 @@
 package com.everlog.data.controllers.workoutprefill
 
 import arrow.core.Either
+import com.everlog.android.common.data.model.exercise.ELExercise
+import com.everlog.android.common.data.model.workout.ELWorkout
 import com.everlog.android.common.datasync.Range
+import com.everlog.android.common.datatest.at
+import com.everlog.android.common.datatest.loggedSet
+import com.everlog.android.common.datatest.workout
 import com.everlog.android.common.kotlin.Load
 import com.everlog.android.common.kotlin.WeightUnit
 import com.everlog.android.common.test.FakeCoroutineDispatcher
@@ -9,12 +14,7 @@ import com.everlog.android.common.test.InMemorySharedPreferences
 import com.everlog.android.settings.data.SettingsManager
 import com.everlog.android.settings.testfixtures.install
 import com.everlog.android.settings.testfixtures.uninstall
-import com.everlog.data.model.exercise.ELExercise
-import com.everlog.data.model.workout.ELWorkout
 import com.everlog.data.repositories.WorkoutRepository
-import com.everlog.testutil.at
-import com.everlog.testutil.loggedSet
-import com.everlog.testutil.workout
 import com.google.common.truth.Truth.assertThat
 import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.Flow

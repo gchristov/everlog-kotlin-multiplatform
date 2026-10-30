@@ -4,9 +4,9 @@ import android.content.DialogInterface
 import com.ahamed.multiviewadapter.DataListManager
 import com.ahamed.multiviewadapter.RecyclerAdapter
 import com.everlog.R
+import com.everlog.android.common.data.model.ELRoutine
 import com.everlog.data.datastores.ELDatastore
 import com.everlog.data.datastores.routines.ELDocStoreRoutineLoadedEvent
-import com.everlog.data.model.ELRoutine
 import com.everlog.managers.PlanManager
 import com.everlog.managers.analytics.AnalyticsManager
 import com.everlog.ui.activities.base.BaseActivityPresenter

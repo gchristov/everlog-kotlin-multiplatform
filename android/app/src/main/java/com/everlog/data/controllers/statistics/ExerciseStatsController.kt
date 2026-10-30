@@ -1,13 +1,13 @@
 package com.everlog.data.controllers.statistics
 
+import com.everlog.android.common.data.model.exercise.ELExercise
+import com.everlog.android.common.data.model.exercise.ELExerciseHistory
+import com.everlog.android.common.data.model.set.ELSet
+import com.everlog.android.common.data.model.workout.ELWorkout
+import com.everlog.android.common.data.model.workout.RangeType
 import com.everlog.android.settings.data.SettingsManager
 import com.everlog.data.datastores.ELDatastore
 import com.everlog.data.datastores.base.OnStoreItemsListener
-import com.everlog.data.model.exercise.ELExercise
-import com.everlog.data.model.exercise.ELExerciseHistory
-import com.everlog.data.model.set.ELSet
-import com.everlog.data.model.workout.ELWorkout
-import com.everlog.data.model.workout.RangeType
 import com.github.mikephil.charting.data.Entry
 import rx.Observable
 import rx.android.schedulers.AndroidSchedulers

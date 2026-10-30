@@ -1,9 +1,9 @@
 package com.everlog.data.datastores.history
 
+import com.everlog.android.common.data.model.workout.ELWorkout
 import com.everlog.data.datastores.base.InMemoryCollectionStore
 import com.everlog.data.datastores.events.collection.ELColStoreItemsLoadedEvent
 import com.everlog.data.datastores.routines.ELRoutineDecorator
-import com.everlog.data.model.workout.ELWorkout
 
 /**
  * [ELUserWorkoutsStore] for Firebase Test Lab runs, kept in memory.

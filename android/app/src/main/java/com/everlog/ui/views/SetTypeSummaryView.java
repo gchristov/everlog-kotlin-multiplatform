@@ -7,7 +7,7 @@ import android.util.AttributeSet;
 import android.view.LayoutInflater;
 
 import com.everlog.R;
-import com.everlog.data.model.set.ELSetType;
+import com.everlog.android.common.data.model.set.ELSetType;
 import com.everlog.databinding.ViewSetTypeSummaryBinding;
 
 import androidx.annotation.Nullable;

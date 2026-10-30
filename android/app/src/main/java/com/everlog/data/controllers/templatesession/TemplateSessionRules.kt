@@ -1,5 +1,7 @@
 package com.everlog.data.controllers.templatesession
 
+import com.everlog.android.common.data.model.exercise.ELExerciseGroup
+import com.everlog.android.common.data.model.set.ELSetType
 import com.everlog.config.AppConfig
 import com.everlog.data.controllers.workoutsession.ExerciseRef
 import com.everlog.data.controllers.workoutsession.SessionIds
@@ -8,8 +10,6 @@ import com.everlog.data.controllers.workoutsession.WorkoutBlock
 import com.everlog.data.controllers.workoutsession.WorkoutRound
 import com.everlog.data.controllers.workoutsession.WorkoutSet
 import com.everlog.data.controllers.workoutsession.block
-import com.everlog.data.model.exercise.ELExerciseGroup
-import com.everlog.data.model.set.ELSetType
 import java.util.UUID
 
 // How the template editor changes a template's blocks. Adding rounds, deleting sets and moving exercises are the

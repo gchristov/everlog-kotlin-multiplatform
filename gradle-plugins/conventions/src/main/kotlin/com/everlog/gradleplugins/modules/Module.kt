@@ -28,7 +28,7 @@ internal sealed interface Module {
 // Code used only by other modules' tests
 internal val Module.isTestSupport
     get() = when (this) {
-        is Module.Common -> name == "test" || name == "compose-test"
+        is Module.Common -> name == "test" || name.endsWith("-test")
         is Module.Feature -> type == FeatureModuleType.TEST_FIXTURES
         Module.App -> false
     }

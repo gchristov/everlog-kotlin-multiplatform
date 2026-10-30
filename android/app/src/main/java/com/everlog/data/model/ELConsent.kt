@@ -1,5 +1,6 @@
 package com.everlog.data.model
 
+import com.everlog.android.common.data.model.ELFirestoreModel
 import com.everlog.android.common.firebase.FirestoreFields
 import java.io.Serializable
 import java.util.*

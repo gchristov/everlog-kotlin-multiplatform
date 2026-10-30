@@ -8,8 +8,8 @@ import android.view.ViewGroup;
 import com.ahamed.multiviewadapter.ItemBinder;
 import com.ahamed.multiviewadapter.ItemViewHolder;
 import com.everlog.R;
-import com.everlog.data.model.exercise.ELExercise;
-import com.everlog.data.model.exercise.ExerciseSuggestion;
+import com.everlog.android.common.data.model.exercise.ELExercise;
+import com.everlog.android.common.data.model.exercise.ExerciseSuggestion;
 import com.everlog.databinding.RowExerciseBinding;
 import com.everlog.ui.adapters.OnListItemListener;
 

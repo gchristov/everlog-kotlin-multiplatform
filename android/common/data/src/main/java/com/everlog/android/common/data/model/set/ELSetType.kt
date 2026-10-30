@@ -1,4 +1,4 @@
-package com.everlog.data.model.set
+package com.everlog.android.common.data.model.set
 
 
 enum class ELSetType {

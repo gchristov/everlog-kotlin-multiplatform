@@ -1,6 +1,12 @@
 package com.everlog.ui.activities.templateeditor
 
 import arrow.core.Either
+import com.everlog.android.common.data.model.ELRoutine
+import com.everlog.android.common.data.model.exercise.ELExercise
+import com.everlog.android.common.data.model.exercise.ELExerciseGroup
+import com.everlog.android.common.data.model.exercise.ELRoutineExercise
+import com.everlog.android.common.data.model.set.ELSet
+import com.everlog.android.common.data.model.set.ELSetType
 import com.everlog.android.common.kotlin.Load
 import com.everlog.android.common.test.FakeCoroutineDispatcher
 import com.everlog.android.common.test.FakeCoroutineDispatcher
@@ -15,13 +21,7 @@ import com.everlog.data.controllers.workoutsession.SetMode
 import com.everlog.data.controllers.workoutsession.SetRef
 import com.everlog.data.controllers.workoutsession.ValueField
 import com.everlog.data.controllers.workoutsession.set
-import com.everlog.data.model.ELRoutine
-import com.everlog.data.model.exercise.ELExercise
-import com.everlog.data.model.exercise.ELExerciseGroup
-import com.everlog.data.model.exercise.ELRoutineExercise
 import com.everlog.data.model.exercise.library.LibraryExercise
-import com.everlog.data.model.set.ELSet
-import com.everlog.data.model.set.ELSetType
 import com.everlog.ui.components.exercisetable.CellFocus
 import com.google.common.truth.Truth.assertThat
 import kotlinx.coroutines.flow.Flow

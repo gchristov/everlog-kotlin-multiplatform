@@ -4,9 +4,9 @@ import android.content.Context
 import android.widget.LinearLayout
 import com.ahamed.multiviewadapter.RecyclerAdapter
 import com.everlog.R
-import com.everlog.data.model.exercise.ELRoutineExercise
-import com.everlog.data.model.set.ELSet
-import com.everlog.data.model.workout.ELWorkout
+import com.everlog.android.common.data.model.exercise.ELRoutineExercise
+import com.everlog.android.common.data.model.set.ELSet
+import com.everlog.android.common.data.model.workout.ELWorkout
 import com.everlog.databinding.ActivityWorkoutBinding
 import com.everlog.managers.analytics.AnalyticsManager
 import com.everlog.ui.activities.home.workout.MvpViewWorkout

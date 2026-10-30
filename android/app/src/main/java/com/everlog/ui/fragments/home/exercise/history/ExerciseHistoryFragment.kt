@@ -7,8 +7,8 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.everlog.R
+import com.everlog.android.common.data.model.exercise.ELExercise
 import com.everlog.data.controllers.statistics.ExerciseStatsController
-import com.everlog.data.model.exercise.ELExercise
 import com.everlog.databinding.FragmentExerciseStatisticsBinding
 import com.everlog.databinding.FragmentHistoryExerciseBinding
 import com.everlog.managers.analytics.AnalyticsConstants

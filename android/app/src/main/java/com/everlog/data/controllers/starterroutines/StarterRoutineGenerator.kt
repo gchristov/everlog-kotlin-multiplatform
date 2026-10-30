@@ -1,15 +1,15 @@
 package com.everlog.data.controllers.starterroutines
 
 import arrow.core.Either
+import com.everlog.android.common.data.model.ELRoutine
+import com.everlog.android.common.data.model.exercise.ELExercise
+import com.everlog.android.common.data.model.exercise.ELExerciseGroup
+import com.everlog.android.common.data.model.exercise.ELRoutineExercise
+import com.everlog.android.common.data.model.set.ELSet
+import com.everlog.android.common.data.model.set.ELSetType
 import com.everlog.data.controllers.starterroutines.StarterProfile.Experience
 import com.everlog.data.controllers.starterroutines.StarterProfile.Goal
 import com.everlog.data.controllers.starterroutines.StarterRoutine.Target
-import com.everlog.data.model.ELRoutine
-import com.everlog.data.model.exercise.ELExercise
-import com.everlog.data.model.exercise.ELExerciseGroup
-import com.everlog.data.model.exercise.ELRoutineExercise
-import com.everlog.data.model.set.ELSet
-import com.everlog.data.model.set.ELSetType
 import org.threeten.bp.DayOfWeek
 import java.util.UUID
 

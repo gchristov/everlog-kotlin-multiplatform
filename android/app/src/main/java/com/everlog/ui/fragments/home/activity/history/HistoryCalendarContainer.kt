@@ -1,6 +1,6 @@
 package com.everlog.ui.fragments.home.activity.history
 
-import com.everlog.data.model.workout.ELWorkout
+import com.everlog.android.common.data.model.workout.ELWorkout
 import org.threeten.bp.LocalDate
 import timber.log.Timber
 

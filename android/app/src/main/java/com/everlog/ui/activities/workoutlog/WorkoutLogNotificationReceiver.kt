@@ -4,8 +4,8 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
+import com.everlog.android.common.data.model.workout.ELWorkoutState
 import com.everlog.constants.ELConstants
-import com.everlog.data.model.workout.ELWorkoutState
 import com.everlog.services.workout.WorkoutService
 
 /**

@@ -1,6 +1,6 @@
 package com.everlog.managers.apprate
 
-import com.everlog.testutil.at
+import com.everlog.android.common.datatest.at
 import com.google.common.truth.Truth.assertThat
 import org.junit.Test
 

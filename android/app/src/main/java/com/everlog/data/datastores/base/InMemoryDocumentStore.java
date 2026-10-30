@@ -1,7 +1,7 @@
 package com.everlog.data.datastores.base;
 
 import com.everlog.data.datastores.events.document.ELDocStoreItemLoadedEvent;
-import com.everlog.data.model.ELFirestoreModel;
+import com.everlog.android.common.data.model.ELFirestoreModel;
 import com.everlog.utils.Utils;
 import com.google.firebase.firestore.SetOptions;
 

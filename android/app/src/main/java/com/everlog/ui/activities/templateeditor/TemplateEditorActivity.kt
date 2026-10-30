@@ -7,11 +7,11 @@ import androidx.compose.runtime.Composable
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import com.everlog.R
+import com.everlog.android.common.data.model.exercise.ELExerciseGroup
 import com.everlog.constants.ELActivityRequestCodes
 import com.everlog.constants.ELConstants
 import com.everlog.data.controllers.templatesession.RealLoadTemplateUseCase
 import com.everlog.data.controllers.templatesession.RealSaveTemplateUseCase
-import com.everlog.data.model.exercise.ELExerciseGroup
 import com.everlog.data.repositories.RealExerciseRepository
 import com.everlog.data.repositories.RealOngoingPlanRepository
 import com.everlog.data.repositories.RealRoutineRepository

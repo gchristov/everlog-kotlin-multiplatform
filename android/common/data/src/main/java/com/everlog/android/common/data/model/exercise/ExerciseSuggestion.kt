@@ -1,4 +1,4 @@
-package com.everlog.data.model.exercise
+package com.everlog.android.common.data.model.exercise
 
 import org.apache.commons.lang3.text.WordUtils
 

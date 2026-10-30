@@ -1,7 +1,7 @@
 package com.everlog.data.repositories
 
 import android.content.Context
-import com.everlog.data.model.ELRoutine
+import com.everlog.android.common.data.model.ELRoutine
 import com.everlog.managers.PlanManager
 
 /**

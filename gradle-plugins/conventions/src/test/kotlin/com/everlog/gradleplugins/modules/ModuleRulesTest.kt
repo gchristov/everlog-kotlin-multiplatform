@@ -66,6 +66,8 @@ class ModuleRulesTest {
         assertThat(broken(":android:exercise:feature", ":android:exercise:test-fixtures")).isNotNull()
         assertThat(broken(":android:exercise:data", ":android:common:test")).isNotNull()
         assertThat(broken(":android:common:compose-test", ":android:common:test")).isNull()
+        assertThat(broken(":android:exercise:data", ":android:common:data-test")).isNotNull()
+        assertThat(broken(":android:exercise:data", ":android:common:data-test", forTests = true)).isNull()
     }
 
     private fun broken(from: String, to: String, forTests: Boolean = false) =

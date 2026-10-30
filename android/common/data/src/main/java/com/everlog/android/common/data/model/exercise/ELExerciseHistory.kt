@@ -1,6 +1,6 @@
-package com.everlog.data.model.exercise
+package com.everlog.android.common.data.model.exercise
 
-import com.everlog.data.model.workout.ELWorkout
+import com.everlog.android.common.data.model.workout.ELWorkout
 import java.io.Serializable
 
 data class ELExerciseHistory (

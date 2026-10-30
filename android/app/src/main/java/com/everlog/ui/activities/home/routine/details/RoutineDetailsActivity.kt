@@ -9,9 +9,9 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.everlog.R
+import com.everlog.android.common.data.model.ELRoutine
 import com.everlog.constants.ELConstants.EXTRA_ROUTINE
 import com.everlog.constants.ELConstants.EXTRA_VIEW_ONLY
-import com.everlog.data.model.ELRoutine
 import com.everlog.databinding.ActivityRoutineDetailsBinding
 import com.everlog.managers.analytics.AnalyticsConstants
 import com.everlog.ui.activities.base.BaseActivity

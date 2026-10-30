@@ -43,10 +43,10 @@ import com.everlog.android.common.compose.elements.keypad.AppKeypadInput
 import com.everlog.android.common.compose.elements.keypad.AppKeypadNote
 import com.everlog.android.common.compose.elements.keypad.AppKeypadToggle
 import com.everlog.android.common.compose.theme.Theme
+import com.everlog.android.common.data.model.exercise.ELExercise
 import com.everlog.android.common.kotlin.WeightUnit
 import com.everlog.data.controllers.workoutsession.SetMode
 import com.everlog.data.controllers.workoutsession.set
-import com.everlog.data.model.exercise.ELExercise
 import com.everlog.ui.components.exercisetable.ExerciseTab
 import com.everlog.ui.components.exercisetable.exerciseName
 import com.everlog.ui.components.exercisetable.focusLabel

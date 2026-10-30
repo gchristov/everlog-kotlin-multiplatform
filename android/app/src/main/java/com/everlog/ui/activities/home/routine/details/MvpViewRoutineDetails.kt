@@ -1,6 +1,6 @@
 package com.everlog.ui.activities.home.routine.details
 
-import com.everlog.data.model.ELRoutine
+import com.everlog.android.common.data.model.ELRoutine
 import com.everlog.ui.activities.base.BaseActivityMvpView
 import rx.Observable
 

@@ -7,7 +7,7 @@ import android.view.ViewGroup;
 import com.ahamed.multiviewadapter.ItemBinder;
 import com.ahamed.multiviewadapter.ItemViewHolder;
 import com.everlog.R;
-import com.everlog.data.model.ELRoutine;
+import com.everlog.android.common.data.model.ELRoutine;
 import com.everlog.databinding.RowRoutinePickerBinding;
 import com.everlog.ui.adapters.OnListItemListener;
 import com.everlog.utils.format.SummaryFormatKt;

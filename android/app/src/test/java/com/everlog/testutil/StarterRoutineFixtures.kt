@@ -1,10 +1,10 @@
 package com.everlog.testutil
 
 import arrow.core.Either
+import com.everlog.android.common.data.model.ELRoutine
+import com.everlog.android.common.data.model.exercise.ELExercise
 import com.everlog.android.common.kotlin.Load
 import com.everlog.data.controllers.starterroutines.StarterWeek
-import com.everlog.data.model.ELRoutine
-import com.everlog.data.model.exercise.ELExercise
 import com.everlog.data.model.exercise.library.ExerciseRegistry
 import com.everlog.data.model.exercise.library.LibraryExercise
 import com.everlog.data.repositories.ExerciseRepository

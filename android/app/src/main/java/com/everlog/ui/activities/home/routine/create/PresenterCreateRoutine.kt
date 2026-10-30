@@ -5,11 +5,11 @@ import android.content.DialogInterface
 import android.content.Intent
 import com.ahamed.multiviewadapter.DataListManager
 import com.everlog.R
+import com.everlog.android.common.data.model.ELRoutine
+import com.everlog.android.common.data.model.ELRoutine.Companion.buildNewRoutine
+import com.everlog.android.common.data.model.exercise.ELExerciseGroup
 import com.everlog.constants.ELConstants
 import com.everlog.data.datastores.ELDatastore
-import com.everlog.data.model.ELRoutine
-import com.everlog.data.model.ELRoutine.Companion.buildNewRoutine
-import com.everlog.data.model.exercise.ELExerciseGroup
 import com.everlog.managers.PlanManager
 import com.everlog.managers.analytics.AnalyticsManager
 import com.everlog.ui.activities.home.exercisegroup.PresenterCreateExerciseGroups

@@ -1,4 +1,4 @@
-package com.everlog.data.model.workout
+package com.everlog.android.common.data.model.workout
 
 // The period the statistics cover
 enum class RangeType {

@@ -1,10 +1,10 @@
 package com.everlog.data.controllers.statistics
 
+import com.everlog.android.common.data.model.exercise.ELRoutineExercise
+import com.everlog.android.common.data.model.set.ELSet
+import com.everlog.android.common.data.model.workout.ELWorkout
+import com.everlog.android.common.data.model.workout.RangeType
 import com.everlog.android.settings.data.SettingsManager
-import com.everlog.data.model.exercise.ELRoutineExercise
-import com.everlog.data.model.set.ELSet
-import com.everlog.data.model.workout.ELWorkout
-import com.everlog.data.model.workout.RangeType
 import com.everlog.ui.fragments.home.activity.statistics.charts.axis.DateAxisFormatter
 import com.everlog.ui.fragments.home.activity.statistics.charts.axis.MonthAxisFormatter
 import com.everlog.ui.fragments.home.activity.statistics.charts.axis.YearAxisFormatter

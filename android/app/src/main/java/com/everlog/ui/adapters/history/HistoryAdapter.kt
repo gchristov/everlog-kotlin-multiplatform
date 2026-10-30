@@ -5,8 +5,8 @@ import android.view.View
 import android.view.ViewGroup
 import com.ahamed.multiviewadapter.ItemBinder
 import com.everlog.R
+import com.everlog.android.common.data.model.workout.ELWorkout
 import com.everlog.android.common.kotlin.isSameDay
-import com.everlog.data.model.workout.ELWorkout
 import com.everlog.databinding.RowHistoryBinding
 import com.everlog.ui.adapters.history.BaseTimelineViewHolder.OnTimelineListener
 import com.everlog.utils.ViewUtils.dpToPx

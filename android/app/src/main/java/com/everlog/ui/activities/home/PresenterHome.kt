@@ -7,10 +7,10 @@ import android.content.Intent
 import android.content.IntentFilter
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.everlog.R
+import com.everlog.android.common.data.model.ELRoutine
+import com.everlog.android.common.data.model.workout.ELWorkout
 import com.everlog.constants.ELConstants
 import com.everlog.data.datastores.ELDatastore
-import com.everlog.data.model.ELRoutine
-import com.everlog.data.model.workout.ELWorkout
 import com.everlog.managers.ErrorManager
 import com.everlog.managers.PlanManager
 import com.everlog.managers.RemoteConfigManager

@@ -1,7 +1,7 @@
 package com.everlog.data.controllers.templatesession
 
 import arrow.core.Either
-import com.everlog.data.model.ELRoutine
+import com.everlog.android.common.data.model.ELRoutine
 import com.everlog.data.repositories.OngoingPlanRepository
 import com.everlog.testutil.FakeRoutineRepository
 import com.google.common.truth.Truth.assertThat

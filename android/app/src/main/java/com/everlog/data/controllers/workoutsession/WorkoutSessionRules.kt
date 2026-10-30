@@ -1,8 +1,8 @@
 package com.everlog.data.controllers.workoutsession
 
-import com.everlog.data.model.exercise.ELExercise
-import com.everlog.data.model.exercise.ELExerciseGroup
-import com.everlog.data.model.set.ELSetType
+import com.everlog.android.common.data.model.exercise.ELExercise
+import com.everlog.android.common.data.model.exercise.ELExerciseGroup
+import com.everlog.android.common.data.model.set.ELSetType
 
 // How the ongoing workout changes, as pure functions on its blocks, so they can be tested without a screen.
 // Sets are done in order: block by block, round by round, exercise by exercise. In a superset or circuit a round

@@ -1,11 +1,11 @@
-package com.everlog.data.model.exercise
+package com.everlog.android.common.data.model.exercise
 
+import com.everlog.android.common.data.model.ELFirestoreModel
+import com.everlog.android.common.data.model.set.ELSet
+import com.everlog.android.common.data.model.set.ELSetType
 import com.everlog.android.common.firebase.FirestoreFields
 import com.everlog.android.common.kotlin.NumberUtils
 import com.everlog.android.common.kotlin.WeightUnit
-import com.everlog.data.model.ELFirestoreModel
-import com.everlog.data.model.set.ELSet
-import com.everlog.data.model.set.ELSetType
 import java.io.Serializable
 import java.util.*
 import kotlin.collections.ArrayList

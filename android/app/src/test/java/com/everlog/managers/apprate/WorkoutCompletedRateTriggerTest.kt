@@ -1,6 +1,6 @@
 package com.everlog.managers.apprate
 
-import com.everlog.data.model.workout.ELWorkout
+import com.everlog.android.common.data.model.workout.ELWorkout
 import com.google.common.truth.Truth.assertThat
 import org.junit.Test
 import java.util.concurrent.TimeUnit

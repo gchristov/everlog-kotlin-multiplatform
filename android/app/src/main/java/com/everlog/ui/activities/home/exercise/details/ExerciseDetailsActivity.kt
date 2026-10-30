@@ -10,11 +10,11 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.updatePadding
 import com.everlog.R
+import com.everlog.android.common.data.model.exercise.ELExercise
+import com.everlog.android.common.data.model.workout.RangeType
 import com.everlog.constants.ELConstants.EXTRA_EXERCISE
 import com.everlog.constants.ELConstants.EXTRA_TYPE
 import com.everlog.data.controllers.statistics.ExerciseStatsController
-import com.everlog.data.model.exercise.ELExercise
-import com.everlog.data.model.workout.RangeType
 import com.everlog.databinding.ActivityExerciseDetailsBinding
 import com.everlog.managers.RemoteConfigManager
 import com.everlog.managers.analytics.AnalyticsConstants

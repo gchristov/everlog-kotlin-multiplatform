@@ -5,7 +5,7 @@ import android.view.MenuItem;
 import android.view.View;
 
 import com.everlog.R;
-import com.everlog.data.model.workout.ELWorkout;
+import com.everlog.android.common.data.model.workout.ELWorkout;
 import com.everlog.databinding.ActivityWorkoutDetailsBinding;
 import com.everlog.ui.activities.base.BaseActivity;
 import com.everlog.ui.activities.base.BaseActivityPresenter;

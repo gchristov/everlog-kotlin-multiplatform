@@ -9,7 +9,7 @@ import com.everlog.R;
 import com.everlog.data.datastores.ELDatastore;
 import com.everlog.data.migration.Migration;
 import com.everlog.data.migration.MultiPartUpdateExercise;
-import com.everlog.data.model.exercise.ELExercise;
+import com.everlog.android.common.data.model.exercise.ELExercise;
 import com.everlog.managers.analytics.AnalyticsManager;
 import com.everlog.managers.firebase.FirebaseStorageManager;
 import com.everlog.managers.firebase.FirestorePathManager;

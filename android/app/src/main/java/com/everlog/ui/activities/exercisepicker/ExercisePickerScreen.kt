@@ -60,8 +60,8 @@ import com.everlog.android.common.compose.elements.list.AppListItem
 import com.everlog.android.common.compose.elements.list.items
 import com.everlog.android.common.compose.elements.search.AppSearchBar
 import com.everlog.android.common.compose.theme.Theme
+import com.everlog.android.common.data.model.set.ELSetType
 import com.everlog.data.model.exercise.library.LibraryExercise
-import com.everlog.data.model.set.ELSetType
 import com.everlog.android.common.design.R as DesignR
 
 @Composable

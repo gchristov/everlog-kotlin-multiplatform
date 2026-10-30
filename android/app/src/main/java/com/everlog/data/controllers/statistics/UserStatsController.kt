@@ -1,9 +1,9 @@
 package com.everlog.data.controllers.statistics
 
+import com.everlog.android.common.data.model.workout.ELWorkout
+import com.everlog.android.common.data.model.workout.RangeType
 import com.everlog.android.settings.data.SettingsManager
 import com.everlog.config.AppConfig
-import com.everlog.data.model.workout.ELWorkout
-import com.everlog.data.model.workout.RangeType
 import com.github.mikephil.charting.data.BarEntry
 import com.github.mikephil.charting.data.Entry
 import com.github.mikephil.charting.data.PieEntry

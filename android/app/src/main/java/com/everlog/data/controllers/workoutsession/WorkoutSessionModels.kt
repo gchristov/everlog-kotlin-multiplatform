@@ -1,7 +1,7 @@
 package com.everlog.data.controllers.workoutsession
 
-import com.everlog.data.model.exercise.ELExercise
-import com.everlog.data.model.set.ELSetType
+import com.everlog.android.common.data.model.exercise.ELExercise
+import com.everlog.android.common.data.model.set.ELSetType
 
 // The ongoing workout as the workout screen holds it: immutable, so a view-model's state can hold it, and mapped to
 // and from ELWorkout (WorkoutSessionMapper), which stays what's saved, sent to the notification and stored in

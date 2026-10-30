@@ -1,6 +1,6 @@
 package com.everlog.ui.activities.home.workout.details;
 
-import com.everlog.data.model.workout.ELWorkout;
+import com.everlog.android.common.data.model.workout.ELWorkout;
 import com.everlog.ui.activities.base.BaseActivityMvpView;
 import com.everlog.ui.dialog.DialogBuilder;
 

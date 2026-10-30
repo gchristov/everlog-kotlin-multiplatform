@@ -6,11 +6,11 @@ import androidx.recyclerview.widget.RecyclerView
 import com.ahamed.multiviewadapter.DataListManager
 import com.ahamed.multiviewadapter.RecyclerAdapter
 import com.everlog.R
+import com.everlog.android.common.data.model.ELRoutine
 import com.everlog.constants.ELActivityRequestCodes
 import com.everlog.constants.ELConstants
 import com.everlog.data.datastores.ELDatastore
 import com.everlog.data.datastores.routines.ELColStoreRoutinesLoadedEvent
-import com.everlog.data.model.ELRoutine
 import com.everlog.ui.activities.base.BaseActivityPresenter
 import com.everlog.ui.activities.home.routine.create.CreateRoutineActivity
 import com.everlog.ui.adapters.routine.RoutinePickerAdapter

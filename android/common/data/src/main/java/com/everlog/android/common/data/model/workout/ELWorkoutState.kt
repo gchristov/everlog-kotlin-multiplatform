@@ -1,4 +1,4 @@
-package com.everlog.data.model.workout
+package com.everlog.android.common.data.model.workout
 
 import java.io.Serializable
 

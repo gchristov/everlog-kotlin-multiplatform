@@ -1,6 +1,6 @@
 package com.everlog.data.model.exercise.library
 
-import com.everlog.data.model.exercise.ELExercise
+import com.everlog.android.common.data.model.exercise.ELExercise
 
 /**
  * An exercise as the library describes it, with the fields `ELExercise` doesn't read: its family,

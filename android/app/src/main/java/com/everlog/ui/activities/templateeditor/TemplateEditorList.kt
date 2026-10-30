@@ -23,7 +23,7 @@ import com.everlog.android.common.compose.elements.AppTertiaryButton
 import com.everlog.android.common.compose.elements.list.AppListGroup
 import com.everlog.android.common.compose.elements.list.AppListItem
 import com.everlog.android.common.compose.theme.Theme
-import com.everlog.data.model.exercise.ELExercise
+import com.everlog.android.common.data.model.exercise.ELExercise
 import com.everlog.ui.components.exercisetable.ExerciseTab
 import com.everlog.ui.components.reorder.rememberReorderState
 import com.everlog.ui.components.reorder.reorderGrip
