@@ -10,7 +10,7 @@ import com.ahamed.multiviewadapter.RecyclerAdapter
 import com.everlog.R
 import com.everlog.databinding.ViewFilterExercisesBinding
 import com.everlog.ui.adapters.exercise.ExerciseCategoryAdapter
-import com.everlog.utils.ArrayResourceTypeUtils
+import com.everlog.android.common.kotlin.format.ArrayResourceTypeUtils
 import com.google.android.flexbox.FlexDirection
 import com.google.android.flexbox.FlexboxLayoutManager
 import com.google.android.flexbox.JustifyContent

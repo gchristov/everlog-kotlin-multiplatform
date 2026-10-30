@@ -44,6 +44,8 @@ import com.everlog.android.common.compose.elements.AppText
 import com.everlog.android.common.compose.elements.AppThumbnail
 import com.everlog.android.common.compose.theme.Theme
 import com.everlog.android.common.data.model.exercise.ELExercise
+import com.everlog.android.common.kotlin.format.formatClock
+import com.everlog.android.common.kotlin.format.setTypeTitle
 import com.everlog.data.controllers.workoutsession.SetMode
 import com.everlog.data.controllers.workoutsession.SetRef
 import com.everlog.data.controllers.workoutsession.WorkoutBlock
@@ -56,8 +58,6 @@ import com.everlog.ui.components.exercisetable.InsetDeleteButton
 import com.everlog.ui.components.exercisetable.countField
 import com.everlog.ui.components.exercisetable.typedSeconds
 import com.everlog.ui.components.reorder.ReorderGrip
-import com.everlog.utils.format.formatClock
-import com.everlog.utils.format.getTitle
 
 private object ExerciseSizes {
     val ThumbnailCorner = 12.dp
@@ -181,7 +181,7 @@ private fun ExerciseHeader(
                 AppText(
                     // Lined up with the names, past the images
                     modifier = Modifier.padding(start = if (collapsed) 0.dp else GroupThumbnailSizes.Size + Theme.spacing.medium),
-                    text = block.setType?.getTitle(context)?.uppercase().orEmpty(),
+                    text = block.setType?.let { setTypeTitle(context, it.name) }?.uppercase().orEmpty(),
                     style = Theme.typography.small,
                     color = Theme.contentColors.secondary,
                 )

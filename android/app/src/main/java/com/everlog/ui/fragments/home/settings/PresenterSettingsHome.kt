@@ -21,7 +21,7 @@ import com.everlog.android.auth.data.LocalUserManager
 import com.everlog.managers.integrations.GoogleFitIntegrationManager
 import com.everlog.ui.dialog.AppDialogs
 import com.everlog.ui.navigator.navigator
-import com.everlog.utils.ArrayResourceTypeUtils
+import com.everlog.android.common.kotlin.format.ArrayResourceTypeUtils
 import com.everlog.utils.device.DeviceInfo
 import com.google.firebase.firestore.SetOptions
 // import icepick.State

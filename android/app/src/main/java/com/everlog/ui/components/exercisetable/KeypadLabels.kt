@@ -8,7 +8,7 @@ import com.everlog.data.controllers.workoutsession.SetRef
 import com.everlog.data.controllers.workoutsession.ValueField
 import com.everlog.data.controllers.workoutsession.WorkoutBlock
 import com.everlog.data.controllers.workoutsession.block
-import com.everlog.utils.format.unitLabel
+import com.everlog.android.common.kotlin.format.unitLabel
 
 // SET 2 OF 4 · KG, with a superset's exercise: SET 1 OF 3 · 2 OF 2 · REPS
 @Composable

@@ -39,11 +39,11 @@ import com.everlog.ui.dialog.AppDialogs
 import com.everlog.ui.navigator.ELNavigator
 import com.everlog.ui.views.showPopupMenu
 import com.everlog.ui.views.viewpager.wrap.ObjectAtPositionPagerAdapter
-import com.everlog.utils.ArrayResourceTypeUtils
+import com.everlog.android.common.kotlin.format.ArrayResourceTypeUtils
 import com.everlog.utils.Throttler
 import com.everlog.android.common.kotlin.Utils
 import com.everlog.android.common.mvp.util.ViewUtils
-import com.everlog.utils.format.weightUnitAbbreviation
+import com.everlog.android.common.kotlin.format.weightUnitAbbreviation
 import rx.Observable
 import com.everlog.android.common.design.R as DesignR
 import java.util.LinkedList

@@ -11,7 +11,7 @@ import com.everlog.R
 import com.everlog.android.common.compose.elements.AppIconButton
 import com.everlog.android.common.compose.elements.AppText
 import com.everlog.android.common.compose.theme.Theme
-import com.everlog.utils.format.formatClock
+import com.everlog.android.common.kotlin.format.formatClock
 import com.everlog.android.common.design.R as DesignR
 
 // The rest after each set, with − and +, e.g. in a dialog

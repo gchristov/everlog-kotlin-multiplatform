@@ -8,7 +8,7 @@ import com.everlog.android.settings.data.SettingsManager
 import com.everlog.android.common.mvp.chart.axis.DateAxisFormatter
 import com.everlog.android.common.mvp.chart.axis.MonthAxisFormatter
 import com.everlog.android.common.mvp.chart.axis.YearAxisFormatter
-import com.everlog.utils.ArrayResourceTypeUtils
+import com.everlog.android.common.kotlin.format.ArrayResourceTypeUtils
 import com.github.mikephil.charting.data.BarEntry
 import com.github.mikephil.charting.data.Entry
 import com.github.mikephil.charting.data.PieEntry

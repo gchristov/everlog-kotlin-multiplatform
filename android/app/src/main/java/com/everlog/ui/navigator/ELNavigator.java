@@ -66,7 +66,7 @@ import com.everlog.ui.activities.workoutlog.WorkoutLogActivity;
 import com.everlog.android.common.mvp.dialog.DialogBuilder;
 import com.everlog.android.common.mvp.dialog.ToastBuilder;
 import com.everlog.android.common.mvp.util.ViewUtils;
-import com.everlog.utils.format.WorkoutSetFormatKt;
+import com.everlog.android.common.kotlin.format.WeightFormatKt;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 import com.imagepick.share.ELImageShare;
@@ -438,8 +438,8 @@ public class ELNavigator implements Navigator {
         TextView exercises = v.findViewById(R.id.exercisesField);
         title.setText(workout.getName());
         sets.setText(StatsFormatUtils.Companion.formatNumberStatsLabel(workout.getTotalSets()));
-        weight.setText(String.format("%s %s", StatsFormatUtils.Companion.formatWeightStatsLabel(workout.getTotalWeight(SettingsManager.manager.weightUnit())), WorkoutSetFormatKt.weightUnitAbbreviation(SettingsManager.manager.weightUnit())));
-        duration.setText(String.format("%s %s", StatsFormatUtils.Companion.formatTimeStatsLabel(workout.getDurationMillis()), mContext.getString(R.string.hour)));
+        weight.setText(String.format("%s %s", StatsFormatUtils.Companion.formatWeightStatsLabel(workout.getTotalWeight(SettingsManager.manager.weightUnit())), WeightFormatKt.weightUnitAbbreviation(SettingsManager.manager.weightUnit())));
+        duration.setText(String.format("%s %s", StatsFormatUtils.Companion.formatTimeStatsLabel(workout.getDurationMillis()), mContext.getString(com.everlog.android.common.kotlin.R.string.hour)));
         exercises.setText(workout.getTotalExercises() + "");
         // Draw everything.
         v.measure(View.MeasureSpec.makeMeasureSpec(dp, View.MeasureSpec.EXACTLY), View.MeasureSpec.makeMeasureSpec(dp, View.MeasureSpec.EXACTLY));

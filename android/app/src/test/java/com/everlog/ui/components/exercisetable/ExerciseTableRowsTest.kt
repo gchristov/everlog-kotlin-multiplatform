@@ -9,7 +9,7 @@ import com.everlog.data.controllers.workoutsession.WorkoutBlock
 import com.everlog.data.controllers.workoutsession.WorkoutExercise
 import com.everlog.data.controllers.workoutsession.WorkoutRound
 import com.everlog.data.controllers.workoutsession.WorkoutSet
-import com.everlog.utils.format.EmptyValue
+import com.everlog.android.common.kotlin.format.EmptyValue
 import com.google.common.truth.Truth.assertThat
 import org.junit.Test
 

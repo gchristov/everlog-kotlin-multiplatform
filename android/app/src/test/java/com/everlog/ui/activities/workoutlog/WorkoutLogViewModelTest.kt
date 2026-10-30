@@ -32,7 +32,7 @@ import com.everlog.data.controllers.workoutsession.set
 import com.everlog.data.repositories.OngoingWorkoutRepository
 import com.everlog.services.workout.ShownSet
 import com.everlog.ui.components.exercisetable.CellFocus
-import com.everlog.utils.format.displayWeight
+import com.everlog.android.common.kotlin.format.displayWeight
 import com.google.common.truth.Truth.assertThat
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.flow.MutableSharedFlow

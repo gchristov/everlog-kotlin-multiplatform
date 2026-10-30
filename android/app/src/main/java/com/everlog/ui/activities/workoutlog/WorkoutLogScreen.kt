@@ -74,11 +74,11 @@ import com.everlog.ui.components.exercisetable.SuggestedMark
 import com.everlog.ui.components.exercisetable.TableView
 import com.everlog.ui.components.exercisetable.exerciseName
 import com.everlog.ui.components.exercisetable.focusLabel
-import com.everlog.utils.format.formatClock
-import com.everlog.utils.format.displayWeight
-import com.everlog.utils.format.formatWeight
-import com.everlog.utils.format.unitLabel
-import com.everlog.utils.format.unitName
+import com.everlog.android.common.kotlin.format.formatClock
+import com.everlog.android.common.kotlin.format.displayWeight
+import com.everlog.android.common.kotlin.format.formatWeight
+import com.everlog.android.common.kotlin.format.unitLabel
+import com.everlog.android.common.kotlin.format.unitName
 import kotlinx.coroutines.android.awaitFrame
 import com.everlog.android.common.design.R as DesignR
 import kotlin.math.roundToInt

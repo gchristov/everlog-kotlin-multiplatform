@@ -21,7 +21,7 @@ import com.everlog.android.common.mvp.activity.BaseActivity
 import com.everlog.android.common.mvp.chart.ChartRenderer
 import com.everlog.ui.fragments.home.exercise.BaseExerciseTabFragment
 import com.everlog.ui.fragments.home.exercise.BasePresenterExerciseTab
-import com.everlog.utils.format.weightUnitAbbreviation
+import com.everlog.android.common.kotlin.format.weightUnitAbbreviation
 import com.github.mikephil.charting.components.YAxis
 import com.jakewharton.rxbinding.view.RxView
 import rx.Observable

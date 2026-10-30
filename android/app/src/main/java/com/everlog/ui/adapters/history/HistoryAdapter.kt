@@ -7,14 +7,15 @@ import android.view.ViewGroup
 import com.ahamed.multiviewadapter.ItemBinder
 import com.everlog.R
 import com.everlog.android.common.data.model.workout.ELWorkout
+import com.everlog.android.common.kotlin.format.workoutSummary
 import com.everlog.android.common.kotlin.isSameDay
 import com.everlog.android.common.mvp.list.BaseTimelineViewHolder
 import com.everlog.android.common.mvp.list.BaseTimelineViewHolder.OnTimelineListener
 import com.everlog.android.common.mvp.util.ViewUtils.dpToPx
 import com.everlog.android.common.mvp.util.ViewUtils.getRawDimension
 import com.everlog.android.common.mvp.util.ViewUtils.setMargins
+import com.everlog.android.settings.data.SettingsManager
 import com.everlog.databinding.RowHistoryBinding
-import com.everlog.utils.format.summary
 import java.util.*
 
 class HistoryAdapter {
@@ -55,7 +56,10 @@ class HistoryAdapter {
 
         private fun renderRoutine() {
             binding.routinePicker.routineName.text = item.getName()
-            binding.routinePicker.routineSummary.text = item.summary(binding.root.context)
+            binding.routinePicker.routineSummary.text = item.let { workout ->
+                val unit = SettingsManager.manager.weightUnit()
+                workoutSummary(binding.root.context, workout.getDurationMillis(), workout.getTotalWeight(unit).takeIf { workout.hasWeight() }, unit)
+            }
         }
 
         private fun renderGroups() {

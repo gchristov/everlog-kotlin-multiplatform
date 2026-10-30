@@ -23,16 +23,17 @@ import com.everlog.android.common.data.model.exercise.ELExerciseGroup
 import com.everlog.android.common.data.model.exercise.ELRoutineExercise
 import com.everlog.android.common.data.model.set.ELSet
 import com.everlog.android.common.data.model.set.ELSetType
+import com.everlog.android.common.data.model.set.summaryValues
 import com.everlog.databinding.RowExerciseGroupSummaryBinding
 import com.everlog.databinding.RowExerciseWithinSetSummaryBinding
 import com.everlog.databinding.RowSetSummaryBinding
 import com.everlog.ui.activities.home.exercise.details.ExerciseDetailsActivity
 import com.everlog.ui.navigator.ELNavigator
-import com.everlog.utils.ArrayResourceTypeUtils
+import com.everlog.android.common.kotlin.format.ArrayResourceTypeUtils
+import com.everlog.android.common.kotlin.format.exerciseSummary
+import com.everlog.android.common.kotlin.format.setSummary
+import com.everlog.android.settings.data.SettingsManager
 import com.everlog.android.common.kotlin.Utils
-import com.everlog.utils.format.getExerciseSetSummary
-import com.everlog.utils.format.getWorkoutDetailsSummary
-import com.everlog.utils.format.summary
 import com.everlog.android.common.design.R as DesignR
 import java.util.*
 import kotlin.math.max
@@ -47,7 +48,7 @@ class ExerciseGroupSummaryAdapter {
         fun renderCompleteSetSummary(context: Context,
                                      set: ELSet,
                                      summaryView: TextView?) {
-            val txt = set.getWorkoutDetailsSummary(context) ?: ""
+            val txt = if (set.isWithoutData()) "Skipped" else setSummary(context, set.summaryValues(useTemplate = false), SettingsManager.manager.weightUnit()) ?: ""
             if (set.isWithoutData()) {
                 summaryView?.text = txt
                 summaryView?.setTypeface(null, Typeface.ITALIC)
@@ -181,7 +182,8 @@ class ExerciseGroupSummaryAdapter {
             binding.exerciseImg.applyMask(R.drawable.mask_circle)
             binding.exerciseSummary.visibility = if (builder.showTemplates) View.GONE else View.VISIBLE
             if (!builder.showTemplates) {
-                binding.exerciseSummary.text = item.summary(binding.root.context)
+                val unit = SettingsManager.manager.weightUnit()
+                binding.exerciseSummary.text = exerciseSummary(binding.root.context, item.getTotalWeight(unit), item.getTotalReps(), item.getTotalTimeSeconds(), unit)
             }
         }
 
@@ -235,7 +237,7 @@ class ExerciseGroupSummaryAdapter {
         }
 
         private fun renderTemplate() {
-            val txt = item.getExerciseSetSummary(itemView.context, builder.showTemplates)
+            val txt = setSummary(itemView.context, item.summaryValues(builder.showTemplates), SettingsManager.manager.weightUnit())
             if (TextUtils.isEmpty(txt)) {
                 binding.setSummary.text = "Template not set"
                 binding.setSummary.setTypeface(null, Typeface.ITALIC)

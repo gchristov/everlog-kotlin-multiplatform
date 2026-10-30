@@ -77,12 +77,12 @@ import com.everlog.android.common.compose.elements.AppText
 import com.everlog.android.common.compose.elements.AppThumbnail
 import com.everlog.android.common.compose.theme.Theme
 import com.everlog.android.common.data.model.exercise.ELExercise
+import com.everlog.android.common.kotlin.format.EmptyValue
+import com.everlog.android.common.kotlin.format.setTypeTitle
 import com.everlog.data.controllers.workoutsession.SetMode
 import com.everlog.data.controllers.workoutsession.SetRef
 import com.everlog.data.controllers.workoutsession.ValueField
 import com.everlog.data.controllers.workoutsession.WorkoutBlock
-import com.everlog.utils.format.EmptyValue
-import com.everlog.utils.format.getTitle
 import com.everlog.android.common.design.R as DesignR
 import kotlin.math.roundToInt
 import kotlinx.coroutines.delay
@@ -340,7 +340,7 @@ private fun GroupHeader(modifier: Modifier, block: WorkoutBlock, actions: Exerci
     val context = LocalContext.current
     val type = block.setType
     Column(modifier = modifier, verticalArrangement = Arrangement.spacedBy(TableSizes.GroupRowGap)) {
-        type?.getTitle(context)?.let { title ->
+        type?.let { setTypeTitle(context, it.name) }?.let { title ->
             AppText(
                 modifier = Modifier.padding(start = GroupThumbnailSizes.Size + Theme.spacing.medium),
                 text = title.uppercase(),

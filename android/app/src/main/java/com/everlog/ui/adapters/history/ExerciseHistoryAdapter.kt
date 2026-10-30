@@ -11,12 +11,13 @@ import com.ahamed.multiviewadapter.RecyclerAdapter
 import com.everlog.R
 import com.everlog.android.common.data.model.exercise.ELExerciseHistory
 import com.everlog.android.common.data.model.set.ELSet
+import com.everlog.android.common.kotlin.format.exerciseSummary
 import com.everlog.android.common.mvp.list.BaseTimelineViewHolder
 import com.everlog.android.common.mvp.list.BaseTimelineViewHolder.OnTimelineListener
+import com.everlog.android.settings.data.SettingsManager
 import com.everlog.databinding.RowHistoryExerciseBinding
 import com.everlog.databinding.RowSetSummaryBinding
 import com.everlog.ui.adapters.exercise.group.ExerciseGroupSummaryAdapter.Companion.renderCompleteSetSummary
-import com.everlog.utils.format.summary
 import java.util.Date
 
 class ExerciseHistoryAdapter {
@@ -67,7 +68,10 @@ class ExerciseHistoryAdapter {
 
         private fun renderExercise() {
             binding.routineName.text = item.workout?.getName()
-            binding.exerciseSummary.text = item.exercise?.summary(binding.root.context)
+            binding.exerciseSummary.text = item.exercise?.let { exercise ->
+                val unit = SettingsManager.manager.weightUnit()
+                exerciseSummary(binding.root.context, exercise.getTotalWeight(unit), exercise.getTotalReps(), exercise.getTotalTimeSeconds(), unit)
+            }
         }
 
         // Setup
