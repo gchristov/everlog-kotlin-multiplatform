@@ -31,7 +31,6 @@ import com.everlog.android.template.data.RealRoutineRepository
 import com.everlog.data.sync.AppDataSync
 import com.everlog.managers.firebase.FirestorePathManager
 import com.everlog.testutil.E2EAccount
-import com.everlog.ui.activities.home.exercise.ExercisesActivity
 import com.everlog.ui.activities.home.routine.details.RoutineDetailsActivity
 import com.google.android.gms.tasks.Tasks
 import com.google.common.truth.Truth.assertThat
@@ -196,13 +195,12 @@ class TemplateEditorActivityTest {
         exercises = mutableListOf(ELRoutineExercise.buildRoutineExercise(ELExercise(uuid = uuid, name = name))),
     )
 
-    // The picker is whichever one Remote Config has on. Returns whether it was opened.
+    // Returns whether the picker was opened
     private fun returnFromPicker(vararg picked: ELExerciseGroup): () -> Boolean {
         val data = Intent().putExtra(ELConstants.EXTRA_EXERCISE_GROUPS, ArrayList(picked.toList()))
         val result = Instrumentation.ActivityResult(Activity.RESULT_OK, data)
-        val new = intercept(ExercisePickerActivity::class.java, result)
-        val old = intercept(ExercisesActivity::class.java, result)
-        return { new.hits + old.hits > 0 }
+        val picker = intercept(ExercisePickerActivity::class.java, result)
+        return { picker.hits > 0 }
     }
 
     // Stops the activity from opening, and answers with [result]

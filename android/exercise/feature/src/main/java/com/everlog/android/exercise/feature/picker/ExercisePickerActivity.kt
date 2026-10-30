@@ -15,9 +15,8 @@ import com.everlog.android.exercise.feature.R
 import kotlinx.coroutines.Dispatchers
 
 /**
- * The exercise picker, while Remote Config's exercise_picker_v2 is on. Browsing (Home › Exercises), a tap opens an
- * exercise; picking (the template and workout builders), it returns the picks as exercise groups in
- * [EXTRA_EXERCISE_GROUPS]. The spec is on the Everlog canvas (Exercise Library page).
+ * The exercise picker. Browsing (Home › Exercises), a tap opens an exercise; picking (the template and workout
+ * builders), it returns the picks as exercise groups in [EXTRA_EXERCISE_GROUPS]. The spec is on the Everlog canvas (Exercise Library page).
  */
 class ExercisePickerActivity : CommonComposeActivity() {
     private val dependencies = ExerciseFeature.dependencies

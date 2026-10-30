@@ -61,12 +61,6 @@ public class RemoteConfigManager extends PreferencesManager {
         return null;
     }
 
-    // The new exercise picker; off until Remote Config says otherwise
-    public boolean exercisePickerV2() {
-        RemoteConfig localConfig = loadLocalRemoteConfig();
-        return localConfig != null && localConfig.getExercisePickerV2();
-    }
-
     // The exercise detail in Compose (for now its Info tab); off until Remote Config says otherwise
     public boolean exerciseDetailsV2() {
         RemoteConfig localConfig = loadLocalRemoteConfig();

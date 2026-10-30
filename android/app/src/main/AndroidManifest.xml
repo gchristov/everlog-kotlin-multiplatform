@@ -142,12 +142,6 @@
             android:windowSoftInputMode="stateHidden"
             android:exported="false" />
         <activity
-            android:name=".ui.activities.home.exercise.ExercisesActivity"
-            android:configChanges="keyboardHidden|orientation|screenSize"
-            android:theme="@style/AppTheme.NoActionBar"
-            android:windowSoftInputMode="stateHidden|adjustResize"
-            android:exported="false" />
-        <activity
             android:name=".ui.activities.home.exercise.create.CreateExerciseActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:theme="@style/AppTheme.NoActionBar"
