@@ -1,6 +1,5 @@
 package com.everlog.managers
 
-import com.everlog.managers.preferences.SettingsManager
 import android.content.Context
 import android.content.Intent
 import android.text.TextUtils
@@ -31,7 +30,7 @@ class PlanManager : PreferencesManager() {
         // Check plan and mark plan day as complete
         if (hasOngoingPlan() && performingFromPlan) {
             val state = ongoingPlanState()
-            state?.finishWorkout(workout, SettingsManager.manager.weightUnit())
+            state?.finishWorkout(workout)
             val plan = ongoingPlan()
             val day = plan?.getNextDay()
             day?.complete = true
