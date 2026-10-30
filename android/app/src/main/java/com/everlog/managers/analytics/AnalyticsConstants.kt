@@ -16,8 +16,6 @@ class AnalyticsConstants {
         const val SCREEN_HOME_SETTINGS = "screen_settings"
         const val SCREEN_HOME_STATISTICS = "screen_statistics"
         const val SCREEN_HOME_HISTORY = "screen_history"
-        const val SCREEN_EXERCISES = "screen_exercises"
-        const val SCREEN_EXERCISE_PICKER = "screen_exercise_picker"
         const val SCREEN_EXERCISE_DETAILS = "screen_exercise_details"
         const val SCREEN_EXERCISE_CREATE = "screen_create_exercise"
         const val SCREEN_EXERCISE_GROUPS_CREATE = "screen_create_exercise_groups"
@@ -47,8 +45,7 @@ class AnalyticsConstants {
         const val SCREEN_ONBOARDING_BUILDING = "screen_onboarding_building"
         const val SCREEN_ONBOARDING_REVEAL = "screen_onboarding_reveal"
         const val SCREEN_ONBOARDING_SAVING = "screen_onboarding_saving"
-        // The new exercise picker, beside v1's SCREEN_EXERCISES and SCREEN_EXERCISE_PICKER so the two
-        // can be compared while exercise_picker_v2 rolls out
+        // The exercise picker, named apart from the old list's screen_exercises and screen_exercise_picker
         const val SCREEN_EXERCISES_V2 = "screen_exercises_v2"
         const val SCREEN_EXERCISE_PICKER_V2 = "screen_exercise_picker_v2"
         // The Compose screen that replaces SCREEN_MUSCLE_GOAL while set_suggestions_v2 rolls out

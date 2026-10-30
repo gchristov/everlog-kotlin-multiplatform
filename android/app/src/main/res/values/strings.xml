@@ -53,8 +53,6 @@
     <string name="notes">Notes</string>
     <string name="time">Time</string>
     <string name="complete">Complete</string>
-    <string name="filter">Filter</string>
-    <string name="filter_apply">Apply</string>
 
 
 
@@ -133,18 +131,9 @@
     <string name="home_workouts_new_template">New template</string>
 
     <string name="exercises_title">Exercises</string>
-    <string name="exercises_title_select">Select Exercises</string>
     <string name="exercises_title_edit">Edit Exercises</string>
     <string name="exercises_footer_link">Let us know</string>
-    <string name="exercises_search">Search exercises</string>
-    <string name="exercises_empty_title">No exercises</string>
-    <string name="exercises_empty_subtitle">Looks like you have no exercises created yet</string>
-    <string name="exercises_empty_action">Create exercise</string>
-    <string name="exercises_empty_search">No exercises match\n\"%1$s\"</string>
     <string name="exercises_max_sets">You cannot add more than %1$d sets per exercise</string>
-    <string name="exercises_create_prompt">Tap to create exercise</string>
-    <string name="exercises_add">Add (%1$d)</string>
-    <string name="exercises_link">Superset (%1$d)</string>
 
     <string name="exercise_info_title">Info</string>
     <string name="exercise_info_instructions">How to do it</string>

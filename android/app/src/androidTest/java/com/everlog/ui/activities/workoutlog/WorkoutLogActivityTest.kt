@@ -35,7 +35,6 @@ import com.everlog.constants.ELConstants
 import com.everlog.data.datastores.ELDatastore
 import com.everlog.managers.WorkoutManager
 import com.everlog.testutil.E2EAccount
-import com.everlog.ui.activities.home.exercise.ExercisesActivity
 import com.everlog.ui.activities.home.exercise.details.ExerciseDetailsActivity
 import com.everlog.ui.activities.home.workout.details.WorkoutDetailsActivity
 import com.everlog.ui.components.exercisetable.ExerciseTableTags
@@ -164,13 +163,12 @@ class WorkoutLogActivityTest {
         exercises = mutableListOf(ELRoutineExercise(uuid, ELExercise(uuid = uuid, name = name), MutableList(2) { ELSet(requiredReps = 8) })),
     )
 
-    // The picker is whichever one Remote Config has on. Returns whether it was opened.
+    // Returns whether the picker was opened
     private fun returnFromPicker(vararg picked: ELExerciseGroup): () -> Boolean {
         val data = Intent().putExtra(ELConstants.EXTRA_EXERCISE_GROUPS, ArrayList(picked.toList()))
         val result = Instrumentation.ActivityResult(Activity.RESULT_OK, data)
-        val new = intercept(ExercisePickerActivity::class.java, result)
-        val old = intercept(ExercisesActivity::class.java, result)
-        return { new.hits + old.hits > 0 }
+        val picker = intercept(ExercisePickerActivity::class.java, result)
+        return { picker.hits > 0 }
     }
 
     private fun interceptLaunch(activity: Class<out Activity>) = intercept(activity, null)

@@ -47,7 +47,7 @@ internal fun typography() = Typography(
 // Screen titles (Toolbar.HomeTitle)
 private val Title = TextStyle(fontSize = 30.sp, fontWeight = FontWeight.Medium)
 
-// List and card row titles (row_exercise, row_routine_picker)
+// List and card row titles (row_routine_picker)
 private val Heading = TextStyle(fontSize = 20.sp, fontWeight = FontWeight.Medium)
 
 // Section headers (SettingsCategory)
