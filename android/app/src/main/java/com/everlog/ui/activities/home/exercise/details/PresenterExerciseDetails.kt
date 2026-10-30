@@ -7,7 +7,7 @@ import com.everlog.config.AppConfig
 import com.everlog.data.controllers.statistics.ExerciseStatsController
 import com.everlog.data.datastores.ELDatastore
 import com.everlog.data.datastores.ELUserStore
-import com.everlog.data.datastores.exercises.ELUserExerciseStore
+import com.everlog.android.exercise.data.store.ELUserExerciseStore
 import com.everlog.managers.analytics.AnalyticsManager
 import com.everlog.android.auth.data.LocalUserManager
 import com.everlog.managers.firebase.FirebaseStorageManager

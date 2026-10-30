@@ -1,4 +1,4 @@
-package com.everlog.data.datastores.exercises
+package com.everlog.android.exercise.data.store
 
 import com.everlog.android.common.data.model.exercise.ELExercise
 import com.everlog.android.common.firebase.FirestoreFields
@@ -7,7 +7,7 @@ import com.everlog.android.common.data.store.events.ELColStoreItemAddedEvent
 import com.everlog.android.common.data.store.events.ELColStoreItemModifiedEvent
 import com.everlog.android.common.data.store.events.ELColStoreItemRemovedEvent
 import com.everlog.android.common.data.store.events.ELColStoreItemsLoadedEvent
-import com.everlog.managers.firebase.FirestorePathManager
+import com.everlog.android.common.firebase.FirestorePaths
 import com.google.firebase.firestore.Query
 import rx.Observable
 import rx.android.schedulers.AndroidSchedulers
@@ -45,7 +45,7 @@ class ELExercisesStore : ELCollectionStore<ELExercise>() {
     }
 
     override fun getQuery(): Query {
-        return FirestorePathManager.globalExercisesCollection
+        return FirestorePaths.globalExercises
                 .orderBy(FirestoreFields.NAME)
     }
 

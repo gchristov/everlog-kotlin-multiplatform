@@ -1,4 +1,4 @@
-package com.everlog.data.repositories
+package com.everlog.android.workout.data
 
 import arrow.core.Either
 import com.everlog.android.common.data.model.workout.ELWorkout
@@ -9,9 +9,8 @@ import com.everlog.android.common.datasync.Range
 import com.everlog.android.common.datasync.SyncPlan
 import com.everlog.android.common.firebase.FirestoreFields
 import com.everlog.android.common.kotlin.Load
-import com.everlog.config.AppConfig
 import com.everlog.android.auth.data.LocalUserManager
-import com.everlog.managers.firebase.FirestorePathManager
+import com.everlog.android.common.firebase.FirestorePaths
 import com.google.firebase.firestore.Query
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
@@ -22,7 +21,7 @@ interface WorkoutRepository {
     /**
      * The user's workouts, newest first, as they change. [Range.All] waits for the full history the first time
      * after an install, then shows the cache while it syncs again weekly; a range within the last
-     * [AppConfig.workoutSyncMonths] never waits for it. None without a signed-in user.
+     * [RealWorkoutRepository]'s sync months never waits for it. None without a signed-in user.
      */
     fun workouts(range: Range): Flow<Load<List<ELWorkout>>>
 
@@ -37,9 +36,13 @@ interface WorkoutRepository {
     }
 }
 
+/**
+ * @param syncMonths How many months of workouts to keep synced. Older ones are read when a screen asks for them.
+ */
 class RealWorkoutRepository(
     private val dispatcher: CoroutineDispatcher,
     private val dataSync: DataSync,
+    private val syncMonths: Int,
 ) : WorkoutRepository {
 
     override fun workouts(range: Range): Flow<Load<List<ELWorkout>>> {
@@ -48,9 +51,9 @@ class RealWorkoutRepository(
             CollectionSource(
                 "workouts",
                 userId,
-                SyncPlan.Recent(dateField = FirestoreFields.CREATED_DATE, months = AppConfig.configuration.workoutSyncMonths),
+                SyncPlan.Recent(dateField = FirestoreFields.CREATED_DATE, months = syncMonths),
                 FirestoreCollection(
-                    FirestorePathManager.workoutsCollection,
+                    FirestorePaths.workouts(userId),
                     order = { it.orderBy(FirestoreFields.CREATED_DATE, Query.Direction.DESCENDING) },
                     dateField = FirestoreFields.CREATED_DATE,
                     dispatcher = dispatcher,
@@ -62,7 +65,7 @@ class RealWorkoutRepository(
 
     // A first open with nothing synced waits for the recent sync
     override suspend fun exerciseLastDone(workouts: Int): Either<Throwable, Map<String, Long>> =
-        when (val load = workouts(Range.Last(AppConfig.configuration.workoutSyncMonths)).first { it != Load.Loading }) {
+        when (val load = workouts(Range.Last(syncMonths)).first { it != Load.Loading }) {
             is Load.Ready -> Either.Right(exerciseLastDone(load.value.take(workouts)))
             is Load.Unavailable -> Either.Left(load.error)
             Load.Loading -> error("Filtered out")

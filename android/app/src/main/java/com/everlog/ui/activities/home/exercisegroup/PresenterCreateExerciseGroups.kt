@@ -16,7 +16,7 @@ import com.everlog.android.common.data.model.set.ELSetType
 import com.everlog.config.AppConfig
 import com.everlog.constants.ELActivityRequestCodes
 import com.everlog.constants.ELConstants
-import com.everlog.data.datastores.exercises.ELExercisesStore.ELColStoreExerciseModifiedEvent
+import com.everlog.android.exercise.data.store.ELExercisesStore.ELColStoreExerciseModifiedEvent
 import com.everlog.managers.analytics.AnalyticsManager
 // import icepick.State
 import com.everlog.android.common.mvp.activity.BaseActivityPresenter

@@ -7,7 +7,7 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.everlog.android.common.compose.theme.Theme
 import com.everlog.android.common.kotlin.Load
 import com.everlog.android.exercise.data.model.library.ExerciseGuide
-import com.everlog.data.controllers.exerciseguide.LoadExerciseGuideUseCase
+import com.everlog.android.exercise.data.LoadExerciseGuideUseCase
 import java.io.IOException
 import java.util.concurrent.TimeUnit
 import kotlinx.coroutines.Dispatchers

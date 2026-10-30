@@ -29,6 +29,10 @@ object LocalUserManager : PreferencesManager() {
         savePreference(Gson().toJson(user), PreferenceKeys.USER.name)
     }
 
+    // For writes that only happen while signed in
+    @JvmStatic
+    fun requireUserId(): String = getUser()?.id ?: throw IllegalStateException("User missing or invalid")
+
     @JvmStatic
     fun hasUser(): Boolean {
         return getUser() != null

@@ -74,6 +74,8 @@ dependencies {
     implementation(projects.android.plan.data)
     implementation(projects.android.pro.data)
     implementation(projects.android.settings.data)
+    implementation(projects.android.template.data)
+    implementation(projects.android.workout.data)
     implementation(projects.android.auth.feature)
     implementation(projects.android.exercise.feature)
     implementation(projects.android.history.feature)
@@ -89,6 +91,7 @@ dependencies {
     testImplementation(projects.android.common.dataTest)
     testImplementation(projects.android.exercise.testFixtures)
     testImplementation(projects.android.settings.testFixtures)
+    testImplementation(projects.android.template.testFixtures)
 
     androidTestImplementation(libs.androidx.test.runner)
     androidTestImplementation(libs.androidx.test.ext.junit)

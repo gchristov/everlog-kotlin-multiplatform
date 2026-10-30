@@ -7,5 +7,7 @@ android {
 }
 
 dependencies {
+    implementation(projects.android.auth.data)
+    testImplementation(projects.android.common.dataTest)
     testImplementation(projects.android.workout.testFixtures)
 }

@@ -1,4 +1,4 @@
-package com.everlog.data.datastores.exercises
+package com.everlog.android.exercise.data.store
 
 import com.everlog.android.common.data.model.exercise.ELExercise
 import com.everlog.android.common.firebase.FirestoreFields
@@ -7,9 +7,9 @@ import com.everlog.android.common.data.store.events.ELColStoreItemAddedEvent
 import com.everlog.android.common.data.store.events.ELColStoreItemModifiedEvent
 import com.everlog.android.common.data.store.events.ELColStoreItemRemovedEvent
 import com.everlog.android.common.data.store.events.ELColStoreItemsLoadedEvent
-import com.everlog.data.datastores.exercises.ELExercisesStore.*
+import com.everlog.android.exercise.data.store.ELExercisesStore.*
 import com.everlog.android.auth.data.LocalUserManager
-import com.everlog.managers.firebase.FirestorePathManager
+import com.everlog.android.common.firebase.FirestorePaths
 import com.google.firebase.firestore.Query
 
 internal class ELUserExercisesStore : ELCollectionStore<ELExercise>() {
@@ -19,7 +19,7 @@ internal class ELUserExercisesStore : ELCollectionStore<ELExercise>() {
     }
 
     override fun getQuery(): Query {
-        return FirestorePathManager.exercisesCollection
+        return FirestorePaths.exercises(LocalUserManager.requireUserId())
                 .orderBy(FirestoreFields.NAME)
     }
 

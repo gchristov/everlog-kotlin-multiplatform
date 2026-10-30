@@ -1,9 +1,10 @@
-package com.everlog.data.datastores.exercises
+package com.everlog.android.exercise.data.store
 
+import com.everlog.android.auth.data.LocalUserManager
 import com.everlog.android.common.data.model.exercise.ELExercise
 import com.everlog.android.common.data.store.ELDocumentStore
 import com.everlog.android.common.data.store.events.ELDocStoreItemLoadedEvent
-import com.everlog.managers.firebase.FirestorePathManager
+import com.everlog.android.common.firebase.FirestorePaths
 import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.FieldPath
 import com.google.firebase.firestore.Query
@@ -20,7 +21,7 @@ class ELUserExerciseStore : ELDocumentStore<ELExercise>() {
     }
 
     override fun getParentCollection(): CollectionReference {
-        return FirestorePathManager.exercisesCollection
+        return FirestorePaths.exercises(LocalUserManager.requireUserId())
     }
 
     override fun getTag(): String {

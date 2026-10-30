@@ -35,12 +35,13 @@ import com.everlog.android.common.compose.elements.AppScreen
 import com.everlog.android.common.compose.elements.rememberAppBarScrollBehavior
 import com.everlog.android.common.compose.theme.Theme
 import com.everlog.android.common.mvvm.createViewModelFactory
+import com.everlog.android.exercise.data.RealExerciseRepository
 import com.everlog.android.settings.data.SettingsManager
 import com.everlog.data.controllers.starterroutines.RealBuildStarterRoutinesUseCase
 import com.everlog.data.controllers.starterroutines.RealSaveStarterRoutinesUseCase
-import com.everlog.data.repositories.RealExerciseRepository
+import com.everlog.data.datastores.ELDatastore
 import com.everlog.data.sync.AppDataSync
-import com.everlog.data.repositories.RealRoutineRepository
+import com.everlog.android.template.data.RealRoutineRepository
 import com.everlog.ui.activities.home.routine.create.CreateRoutineActivity
 import com.everlog.ui.activities.templateeditor.TemplateEditorActivity
 import kotlinx.coroutines.Dispatchers
@@ -66,7 +67,7 @@ class OnboardingActivity : CommonComposeActivity() {
                 ),
                 saveStarterRoutinesUseCase = RealSaveStarterRoutinesUseCase(
                     dispatcher = Dispatchers.Default,
-                    routineRepository = RealRoutineRepository(dispatcher = Dispatchers.IO, dataSync = AppDataSync.instance),
+                    routineRepository = RealRoutineRepository(dispatcher = Dispatchers.IO, dataSync = AppDataSync.instance, testLabRoutines = { ELDatastore.routineStore() }),
                 ),
                 settings = RealOnboardingSettings(this),
                 analytics = RealOnboardingAnalytics(),

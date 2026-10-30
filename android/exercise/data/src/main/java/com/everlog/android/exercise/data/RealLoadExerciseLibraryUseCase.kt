@@ -1,13 +1,13 @@
-package com.everlog.data.controllers.exerciselibrary
+package com.everlog.android.exercise.data
 
 import arrow.core.getOrElse
 import com.everlog.android.common.kotlin.Load
 import com.everlog.android.exercise.data.LoadExerciseLibraryUseCase
 import com.everlog.android.exercise.data.exerciseLibraryOf
 import com.everlog.android.exercise.data.model.library.ExerciseLibrary
-import com.everlog.data.repositories.ExerciseRepository
-import com.everlog.data.repositories.RoutineRepository
-import com.everlog.data.repositories.WorkoutRepository
+import com.everlog.android.exercise.data.ExerciseRepository
+import com.everlog.android.template.data.RoutineRepository
+import com.everlog.android.workout.data.WorkoutRepository
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope

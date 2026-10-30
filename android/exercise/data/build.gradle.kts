@@ -10,5 +10,10 @@ android {
 }
 
 dependencies {
+    implementation(projects.android.auth.data)
+    implementation(projects.android.template.data)
+    implementation(projects.android.workout.data)
+    implementation(libs.rxandroid)
+    implementation(libs.timber)
     testImplementation(projects.android.exercise.testFixtures)
 }

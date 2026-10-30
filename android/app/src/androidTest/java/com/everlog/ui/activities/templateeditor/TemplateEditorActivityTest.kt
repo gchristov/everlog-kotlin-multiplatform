@@ -27,7 +27,7 @@ import com.everlog.android.common.data.model.set.ELSetType
 import com.everlog.android.exercise.feature.picker.ExercisePickerActivity
 import com.everlog.constants.ELConstants
 import com.everlog.data.datastores.ELDatastore
-import com.everlog.data.repositories.RealRoutineRepository
+import com.everlog.android.template.data.RealRoutineRepository
 import com.everlog.data.sync.AppDataSync
 import com.everlog.managers.firebase.FirestorePathManager
 import com.everlog.testutil.E2EAccount
@@ -166,7 +166,7 @@ class TemplateEditorActivityTest {
             createdDate = System.currentTimeMillis(),
             exerciseGroups = mutableListOf(group("e2e-bench", "Bench press", sets = 2)),
         )
-        runBlocking { RealRoutineRepository(Dispatchers.IO, AppDataSync.instance).saveRoutines(listOf(routine)) }
+        runBlocking { RealRoutineRepository(Dispatchers.IO, AppDataSync.instance) { ELDatastore.routineStore() }.saveRoutines(listOf(routine)) }
         saved += routine
         return routine
     }

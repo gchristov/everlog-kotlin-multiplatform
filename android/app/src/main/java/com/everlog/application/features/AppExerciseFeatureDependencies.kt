@@ -5,15 +5,17 @@ import android.content.Intent
 import com.everlog.android.common.data.model.exercise.ELExercise
 import com.everlog.android.common.data.model.set.ELSetType
 import com.everlog.android.exercise.data.LoadExerciseLibraryUseCase
+import com.everlog.android.exercise.data.RealExerciseRepository
+import com.everlog.android.exercise.data.RealLoadExerciseLibraryUseCase
 import com.everlog.android.exercise.feature.ExerciseFeatureDependencies
 import com.everlog.android.exercise.feature.picker.ExercisePickerAnalytics
+import com.everlog.android.template.data.RealRoutineRepository
+import com.everlog.android.workout.data.RealWorkoutRepository
+import com.everlog.config.AppConfig
 import com.everlog.config.FeedbackSource
 import com.everlog.constants.ELActivityRequestCodes
 import com.everlog.constants.ELConstants
-import com.everlog.data.controllers.exerciselibrary.RealLoadExerciseLibraryUseCase
-import com.everlog.data.repositories.RealExerciseRepository
-import com.everlog.data.repositories.RealRoutineRepository
-import com.everlog.data.repositories.RealWorkoutRepository
+import com.everlog.data.datastores.ELDatastore
 import com.everlog.data.sync.AppDataSync
 import com.everlog.ui.activities.home.exercise.details.ExerciseDetailsActivity
 import com.everlog.ui.navigator.ELNavigator
@@ -27,8 +29,8 @@ class AppExerciseFeatureDependencies : ExerciseFeatureDependencies {
         return RealLoadExerciseLibraryUseCase(
             io,
             RealExerciseRepository(io, AppDataSync.instance),
-            RealRoutineRepository(io, AppDataSync.instance),
-            RealWorkoutRepository(io, AppDataSync.instance),
+            RealRoutineRepository(io, AppDataSync.instance) { ELDatastore.routineStore() },
+            RealWorkoutRepository(io, AppDataSync.instance, AppConfig.configuration.workoutSyncMonths),
         )
     }
 

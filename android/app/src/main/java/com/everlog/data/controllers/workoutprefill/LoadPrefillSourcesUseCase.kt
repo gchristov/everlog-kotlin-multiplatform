@@ -5,7 +5,7 @@ import com.everlog.android.common.data.model.exercise.ELExercise
 import com.everlog.android.common.datasync.Range
 import com.everlog.android.common.kotlin.Load
 import com.everlog.data.controllers.workoutprefill.BaseWorkoutPrefillController.PrefillSource
-import com.everlog.data.repositories.WorkoutRepository
+import com.everlog.android.workout.data.WorkoutRepository
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.withContext

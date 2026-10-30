@@ -7,5 +7,7 @@ android {
 }
 
 dependencies {
+    implementation(projects.android.auth.data)
+    implementation(libs.timber)
     testImplementation(projects.android.template.testFixtures)
 }
