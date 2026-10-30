@@ -2,11 +2,11 @@ package com.everlog.data.datastores.history
 
 import com.everlog.android.common.data.model.workout.ELWorkout
 import com.everlog.android.common.firebase.FirestoreFields
-import com.everlog.data.datastores.base.ELCollectionStore
-import com.everlog.data.datastores.events.collection.ELColStoreItemAddedEvent
-import com.everlog.data.datastores.events.collection.ELColStoreItemModifiedEvent
-import com.everlog.data.datastores.events.collection.ELColStoreItemRemovedEvent
-import com.everlog.data.datastores.events.collection.ELColStoreItemsLoadedEvent
+import com.everlog.android.common.data.store.ELCollectionStore
+import com.everlog.android.common.data.store.events.ELColStoreItemAddedEvent
+import com.everlog.android.common.data.store.events.ELColStoreItemModifiedEvent
+import com.everlog.android.common.data.store.events.ELColStoreItemRemovedEvent
+import com.everlog.android.common.data.store.events.ELColStoreItemsLoadedEvent
 import com.everlog.data.datastores.routines.ELRoutineDecorator
 import com.everlog.managers.firebase.FirestorePathManager
 import com.google.firebase.firestore.Query

@@ -14,7 +14,7 @@ import com.everlog.managers.firebase.FirebaseStorageManager
 import com.everlog.android.common.mvp.activity.BaseActivityPresenter
 import com.everlog.ui.fragments.home.exercise.statistics.ExerciseStatisticsFragment
 import com.everlog.ui.navigator.navigator
-import com.everlog.android.common.mvp.util.Utils
+import com.everlog.android.common.kotlin.Utils
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
 

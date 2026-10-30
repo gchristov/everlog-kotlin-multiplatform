@@ -6,7 +6,7 @@ import android.content.Intent
 import android.content.IntentFilter
 import android.os.Handler
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
-import com.everlog.android.common.mvp.util.Utils
+import com.everlog.android.common.kotlin.Utils
 import com.everlog.utils.device.DeviceUtils
 import timber.log.Timber
 import java.lang.ref.WeakReference

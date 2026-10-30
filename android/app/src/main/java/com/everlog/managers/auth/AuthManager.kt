@@ -13,7 +13,7 @@ import com.everlog.android.settings.data.SettingsManager
 import com.everlog.constants.ELActivityRequestCodes
 import com.everlog.constants.ELConstants
 import com.everlog.data.datastores.ELDatastore
-import com.everlog.data.datastores.base.OnStoreItemListener
+import com.everlog.android.common.data.store.OnStoreItemListener
 import com.everlog.data.sync.AppDataSync
 import com.everlog.utils.device.DeviceUtils
 import com.everlog.managers.PlanManager

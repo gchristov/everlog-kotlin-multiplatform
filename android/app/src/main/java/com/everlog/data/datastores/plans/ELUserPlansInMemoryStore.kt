@@ -1,8 +1,8 @@
 package com.everlog.data.datastores.plans
 
 import com.everlog.android.plan.data.model.ELPlan
-import com.everlog.data.datastores.base.InMemoryCollectionStore
-import com.everlog.data.datastores.events.collection.ELColStoreItemsLoadedEvent
+import com.everlog.android.common.data.store.InMemoryCollectionStore
+import com.everlog.android.common.data.store.events.ELColStoreItemsLoadedEvent
 
 /**
  * [ELUserPlansStore] for Firebase Test Lab runs, kept in memory.

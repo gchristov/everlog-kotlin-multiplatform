@@ -3,8 +3,8 @@ package com.everlog.data.datastores
 import com.everlog.android.common.data.model.ELRoutine
 import com.everlog.android.common.data.model.workout.ELWorkout
 import com.everlog.android.plan.data.model.ELPlan
-import com.everlog.data.datastores.base.CollectionStore
-import com.everlog.data.datastores.base.DocumentStore
+import com.everlog.android.common.data.store.CollectionStore
+import com.everlog.android.common.data.store.DocumentStore
 import com.everlog.data.datastores.exercises.ELExercisesStore
 import com.everlog.data.datastores.exercises.ELUserExerciseStore
 import com.everlog.data.datastores.history.ELUserWorkoutInMemoryStore

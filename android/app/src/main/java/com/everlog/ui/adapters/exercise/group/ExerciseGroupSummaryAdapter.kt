@@ -29,7 +29,7 @@ import com.everlog.databinding.RowSetSummaryBinding
 import com.everlog.ui.activities.home.exercise.details.ExerciseDetailsActivity
 import com.everlog.ui.navigator.ELNavigator
 import com.everlog.utils.ArrayResourceTypeUtils
-import com.everlog.android.common.mvp.util.Utils
+import com.everlog.android.common.kotlin.Utils
 import com.everlog.utils.format.getExerciseSetSummary
 import com.everlog.utils.format.getWorkoutDetailsSummary
 import com.everlog.utils.format.summary

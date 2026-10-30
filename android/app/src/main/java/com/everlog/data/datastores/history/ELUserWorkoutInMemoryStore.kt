@@ -1,8 +1,8 @@
 package com.everlog.data.datastores.history
 
 import com.everlog.android.common.data.model.workout.ELWorkout
-import com.everlog.data.datastores.base.InMemoryDocumentStore
-import com.everlog.data.datastores.events.document.ELDocStoreItemLoadedEvent
+import com.everlog.android.common.data.store.InMemoryDocumentStore
+import com.everlog.android.common.data.store.events.ELDocStoreItemLoadedEvent
 import com.everlog.data.datastores.routines.ELRoutineDecorator
 
 /**

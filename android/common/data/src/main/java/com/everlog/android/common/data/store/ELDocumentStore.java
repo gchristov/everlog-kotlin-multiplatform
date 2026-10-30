@@ -1,9 +1,9 @@
-package com.everlog.data.datastores.base;
+package com.everlog.android.common.data.store;
 
-import com.everlog.data.datastores.events.document.ELDocStoreItemLoadedEvent;
+import com.everlog.android.common.data.CommonData;
 import com.everlog.android.common.data.model.ELFirestoreModel;
-import com.everlog.android.common.mvp.util.Utils;
-import com.everlog.utils.device.DeviceUtils;
+import com.everlog.android.common.data.store.events.ELDocStoreItemLoadedEvent;
+import com.everlog.android.common.kotlin.Utils;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.ListenerRegistration;
@@ -86,7 +86,7 @@ public abstract class ELDocumentStore<T extends ELFirestoreModel> implements Doc
     // CRUD
 
     public void create(T item, SetOptions options) {
-        if (DeviceUtils.isFirebaseTestLabRun()) {
+        if (CommonData.dependencies.isTestLabRun()) {
             Timber.tag(getTag()).w("Ignoring CREATE operation for Firebase Test Lab run");
             return;
         }
@@ -98,7 +98,7 @@ public abstract class ELDocumentStore<T extends ELFirestoreModel> implements Doc
     }
 
     public void delete(T item) {
-        if (DeviceUtils.isFirebaseTestLabRun()) {
+        if (CommonData.dependencies.isTestLabRun()) {
             Timber.tag(getTag()).w("Ignoring DELETE operation for Firebase Test Lab run");
             return;
         }

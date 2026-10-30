@@ -1,8 +1,6 @@
-package com.everlog.data.datastores.events.document;
+package com.everlog.android.common.data.store.events;
 
-import com.everlog.android.common.mvp.BaseEvent;
-
-public abstract class ELDocStoreItemLoadedEvent<T> extends BaseEvent {
+public abstract class ELDocStoreItemLoadedEvent<T> {
 
     private T item;
     private boolean hasPendingWrites;

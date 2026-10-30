@@ -1,7 +1,7 @@
-package com.everlog.data.datastores.base;
+package com.everlog.android.common.data.store;
 
-import com.everlog.data.datastores.events.collection.ELColStoreItemsLoadedEvent;
-import com.everlog.android.common.mvp.util.Utils;
+import com.everlog.android.common.data.store.events.ELColStoreItemsLoadedEvent;
+import com.everlog.android.common.kotlin.Utils;
 
 import org.greenrobot.eventbus.EventBus;
 

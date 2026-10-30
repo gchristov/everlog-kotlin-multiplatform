@@ -41,7 +41,7 @@ import com.everlog.ui.views.showPopupMenu
 import com.everlog.ui.views.viewpager.wrap.ObjectAtPositionPagerAdapter
 import com.everlog.utils.ArrayResourceTypeUtils
 import com.everlog.utils.Throttler
-import com.everlog.android.common.mvp.util.Utils
+import com.everlog.android.common.kotlin.Utils
 import com.everlog.utils.ViewUtils
 import com.everlog.utils.format.weightUnitAbbreviation
 import rx.Observable

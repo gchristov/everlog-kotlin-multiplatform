@@ -25,7 +25,7 @@ import com.everlog.ui.adapters.plan.PlanDayAdapter
 import com.everlog.ui.adapters.plan.PlanWeekAdapter
 import com.everlog.ui.adapters.plan.applyProLock
 import com.everlog.ui.navigator.navigator
-import com.everlog.android.common.mvp.util.Utils
+import com.everlog.android.common.kotlin.Utils
 import com.everlog.android.common.mvp.util.KeyboardUtils
 import com.google.firebase.firestore.SetOptions
 import com.imagepick.dialog.ELPickerDialog

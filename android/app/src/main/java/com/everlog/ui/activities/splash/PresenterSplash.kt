@@ -10,7 +10,7 @@ import com.everlog.managers.auth.AuthManager
 import com.everlog.managers.auth.AuthManager.OnAuthActionListener
 import com.everlog.ui.navigator.navigator
 import com.everlog.android.common.mvp.activity.BaseActivityPresenter
-import com.everlog.android.common.mvp.util.Utils
+import com.everlog.android.common.kotlin.Utils
 
 class PresenterSplash : BaseActivityPresenter<MvpViewSplash>() {
 

@@ -1,6 +1,7 @@
 package com.everlog.data.datastores.base
 
 import com.everlog.android.common.data.model.ELRoutine
+import com.everlog.android.common.data.store.InMemoryDatabase
 import com.google.common.truth.Truth.assertThat
 import org.junit.After
 import org.junit.Test

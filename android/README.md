@@ -29,7 +29,7 @@ Common modules:
 | `common:firebase` | Firebase, the field names and `FirestorePaths` (each user's collections take the user id) |
 | `common:persistence` | `PreferencesManager`, the app's key-value storage. The user's settings (`SettingsManager`) go to `settings:data` |
 | `common:datasync` | `DataSync`, the cache-first sync layer (the app wires its instance in `AppDataSync`) |
-| `common:data` | The models every feature shares (sets, exercises, routines, workouts), with their R8 keep rule, until they're split into the features' `data` modules. Feature-only models live in their feature's `data` module, each with its own keep rule |
+| `common:data` | The models every feature shares (sets, exercises, routines, workouts), with their R8 keep rule, and the store base classes with their EventBus events, until they're split into the features' `data` modules. Feature-only models live in their feature's `data` module, each with its own keep rule |
 | `common:data-test` | Fixtures for building the shared models in tests |
 
 ## Dependency rules

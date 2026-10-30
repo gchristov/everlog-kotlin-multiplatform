@@ -1,19 +1,20 @@
-package com.everlog.data.datastores.events.collection;
+package com.everlog.android.common.data.store.events;
 
-import com.everlog.android.common.mvp.BaseEvent;
+public class ELColStoreItemModifiedEvent<T> {
 
-public class ELColStoreItemRemovedEvent<T> extends BaseEvent {
-
-    private int position;
+    private int oldPosition;
+    private int newPosition;
     private T item;
     private boolean hasPendingWrites;
     private boolean fromCache;
 
-    public ELColStoreItemRemovedEvent(int position,
-                                      T item,
-                                      boolean hasPendingWrites,
-                                      boolean fromCache) {
-        this.position = position;
+    public ELColStoreItemModifiedEvent(int oldPosition,
+                                       int newPosition,
+                                       T item,
+                                       boolean hasPendingWrites,
+                                       boolean fromCache) {
+        this.oldPosition = oldPosition;
+        this.newPosition = newPosition;
         this.item = item;
         this.hasPendingWrites = hasPendingWrites;
         this.fromCache = fromCache;
@@ -23,8 +24,12 @@ public class ELColStoreItemRemovedEvent<T> extends BaseEvent {
         return item;
     }
 
-    public int getPosition() {
-        return position;
+    public int getOldPosition() {
+        return oldPosition;
+    }
+
+    public int getNewPosition() {
+        return newPosition;
     }
 
     public boolean isFromCache() {
@@ -40,9 +45,10 @@ public class ELColStoreItemRemovedEvent<T> extends BaseEvent {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        ELColStoreItemRemovedEvent<?> that = (ELColStoreItemRemovedEvent<?>) o;
+        ELColStoreItemModifiedEvent<?> that = (ELColStoreItemModifiedEvent<?>) o;
 
-        if (position != that.position) return false;
+        if (oldPosition != that.oldPosition) return false;
+        if (newPosition != that.newPosition) return false;
         if (hasPendingWrites != that.hasPendingWrites) return false;
         if (fromCache != that.fromCache) return false;
         return item != null ? item.equals(that.item) : that.item == null;
@@ -50,7 +56,8 @@ public class ELColStoreItemRemovedEvent<T> extends BaseEvent {
 
     @Override
     public int hashCode() {
-        int result = position;
+        int result = oldPosition;
+        result = 31 * result + newPosition;
         result = 31 * result + (item != null ? item.hashCode() : 0);
         result = 31 * result + (hasPendingWrites ? 1 : 0);
         result = 31 * result + (fromCache ? 1 : 0);

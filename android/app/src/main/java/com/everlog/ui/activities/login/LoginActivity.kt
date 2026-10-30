@@ -18,7 +18,7 @@ import com.everlog.android.common.mvp.activity.BaseActivity
 import com.everlog.android.common.mvp.activity.BaseActivityMvpView
 import com.everlog.android.common.mvp.activity.BaseActivityPresenter
 import com.everlog.ui.views.CheckBoxTriStates
-import com.everlog.android.common.mvp.util.Utils
+import com.everlog.android.common.kotlin.Utils
 import com.everlog.utils.ViewUtils
 import com.everlog.android.common.mvp.util.KeyboardUtils
 import com.everlog.utils.text.TextViewUtils

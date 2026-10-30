@@ -19,7 +19,7 @@ import com.everlog.constants.ELConstants
 import com.everlog.managers.analytics.AnalyticsConstants
 import com.everlog.ui.dialog.AppDialogs
 import com.everlog.ui.onboarding.ExerciseGroupsOnboardingController
-import com.everlog.android.common.mvp.util.Utils
+import com.everlog.android.common.kotlin.Utils
 import com.jakewharton.rxbinding.view.RxView
 import rx.Observable
 import rx.subjects.PublishSubject

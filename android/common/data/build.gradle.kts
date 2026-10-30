@@ -14,6 +14,9 @@ dependencies {
     api(projects.android.common.firebase)
     api(projects.android.common.datasync)
     api(projects.android.common.persistence)
+    api(libs.eventbus)
+    api(libs.rxjava)
     implementation(libs.commons.lang3)
+    implementation(libs.timber)
     testImplementation(projects.android.common.dataTest)
 }
