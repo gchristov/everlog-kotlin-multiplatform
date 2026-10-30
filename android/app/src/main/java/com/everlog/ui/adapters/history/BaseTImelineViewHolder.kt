@@ -2,10 +2,10 @@ package com.everlog.ui.adapters.history
 
 import android.view.View
 import com.ahamed.multiviewadapter.ItemViewHolder
+import com.everlog.android.common.kotlin.isSameDay
+import com.everlog.android.common.kotlin.toLocalDateTime
 import com.everlog.databinding.IncludeTimelineBinding
 import com.everlog.ui.adapters.OnListItemListener
-import com.everlog.utils.isSameDay
-import com.everlog.utils.toLocalDateTime
 import org.threeten.bp.format.TextStyle
 import java.util.*
 

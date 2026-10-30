@@ -7,6 +7,7 @@ import android.text.TextUtils;
 import com.ahamed.multiviewadapter.DataListManager;
 import com.ahamed.multiviewadapter.RecyclerAdapter;
 import com.everlog.R;
+import com.everlog.android.common.kotlin.DateExtKt;
 import com.everlog.constants.ELActivityRequestCodes;
 import com.everlog.data.controllers.statistics.UserStatsController;
 import com.everlog.data.datastores.ELDatastore;
@@ -25,7 +26,6 @@ import com.everlog.ui.adapters.WorkoutDetailsStatsAdapter;
 import com.everlog.ui.adapters.exercise.group.ExerciseGroupSummaryAdapter;
 import com.everlog.ui.dialog.DialogBuilder;
 import com.everlog.ui.fragments.home.activity.statistics.StatisticsHomeFragment;
-import com.everlog.utils.DateExtKt;
 import com.everlog.utils.Utils;
 import com.google.firebase.firestore.SetOptions;
 

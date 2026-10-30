@@ -19,6 +19,8 @@ import com.ahamed.multiviewadapter.ItemBinder
 import com.ahamed.multiviewadapter.ItemViewHolder
 import com.ahamed.multiviewadapter.RecyclerAdapter
 import com.everlog.R
+import com.everlog.android.common.kotlin.format.FormatUtils.Companion.formatDurationShort
+import com.everlog.android.common.kotlin.format.FormatUtils.Companion.formatSetWeight
 import com.everlog.config.AppConfig
 import com.everlog.data.model.exercise.ELExerciseGroup
 import com.everlog.data.model.exercise.ELRoutineExercise
@@ -40,8 +42,6 @@ import com.everlog.utils.ArrayResourceTypeUtils
 import com.everlog.utils.Throttler
 import com.everlog.utils.Utils
 import com.everlog.utils.ViewUtils
-import com.everlog.utils.format.FormatUtils.Companion.formatDurationShort
-import com.everlog.utils.format.FormatUtils.Companion.formatSetWeight
 import rx.Observable
 import com.everlog.android.common.design.R as DesignR
 import java.util.LinkedList

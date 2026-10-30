@@ -8,11 +8,11 @@ import android.view.ViewGroup;
 import com.ahamed.multiviewadapter.ItemBinder;
 import com.ahamed.multiviewadapter.ItemViewHolder;
 import com.everlog.R;
+import com.everlog.android.common.kotlin.DateExtKt;
+import com.everlog.android.common.kotlin.format.StatsFormatUtils;
 import com.everlog.data.model.workout.ELWorkout;
 import com.everlog.databinding.RowHeaderWorkoutDetailsBinding;
 import com.everlog.managers.preferences.SettingsManager;
-import com.everlog.utils.DateExtKt;
-import com.everlog.utils.format.StatsFormatUtils;
 
 public class WorkoutDetailsStatsAdapter {
 

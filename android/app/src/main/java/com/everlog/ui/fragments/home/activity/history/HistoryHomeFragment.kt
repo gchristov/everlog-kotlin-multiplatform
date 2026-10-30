@@ -9,6 +9,7 @@ import android.widget.ArrayAdapter
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.everlog.R
+import com.everlog.android.common.kotlin.toLocalDate
 import com.everlog.config.AppConfig
 import com.everlog.databinding.FragmentHistoryHomeBinding
 import com.everlog.managers.analytics.AnalyticsConstants
@@ -19,7 +20,6 @@ import com.everlog.ui.fragments.base.BaseFragmentMvpView
 import com.everlog.ui.fragments.base.BaseFragmentPresenter
 import com.everlog.ui.fragments.base.BaseTabFragment
 import com.everlog.utils.toJava
-import com.everlog.utils.toLocalDate
 import org.threeten.bp.LocalDate
 import rx.Observable
 import rx.subjects.PublishSubject

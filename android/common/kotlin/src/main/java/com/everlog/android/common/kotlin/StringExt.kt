@@ -1,4 +1,4 @@
-package com.everlog.utils
+package com.everlog.android.common.kotlin
 
 import android.os.Build
 import android.text.Html

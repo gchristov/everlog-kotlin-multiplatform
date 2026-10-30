@@ -5,13 +5,13 @@ import android.view.View
 import android.view.ViewGroup
 import com.ahamed.multiviewadapter.ItemBinder
 import com.everlog.R
+import com.everlog.android.common.kotlin.isSameDay
 import com.everlog.data.model.workout.ELWorkout
 import com.everlog.databinding.RowHistoryBinding
 import com.everlog.ui.adapters.history.BaseTimelineViewHolder.OnTimelineListener
 import com.everlog.utils.ViewUtils.dpToPx
 import com.everlog.utils.ViewUtils.getRawDimension
 import com.everlog.utils.ViewUtils.setMargins
-import com.everlog.utils.isSameDay
 import java.util.*
 
 class HistoryAdapter {

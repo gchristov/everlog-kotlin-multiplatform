@@ -1,10 +1,10 @@
 package com.everlog.utils.format
 
+import com.everlog.android.common.kotlin.UnitUtils
 import com.everlog.data.controllers.workoutsession.SetMode
 import com.everlog.data.controllers.workoutsession.WorkoutSet
 import com.everlog.managers.preferences.SettingsManager.WeightUnit
 import com.everlog.utils.ArrayResourceTypeUtils
-import com.everlog.utils.UnitUtils
 import java.math.BigDecimal
 import java.math.RoundingMode
 

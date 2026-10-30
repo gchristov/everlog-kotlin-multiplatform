@@ -8,6 +8,8 @@ import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import androidx.core.content.ContextCompat
 import com.everlog.R
+import com.everlog.android.common.kotlin.format.StatsFormatUtils
+import com.everlog.android.common.kotlin.makeSingleLine
 import com.everlog.config.AppConfig
 import com.everlog.data.controllers.statistics.BaseStatsController
 import com.everlog.data.controllers.statistics.UserStatsController
@@ -19,8 +21,6 @@ import com.everlog.ui.fragments.base.BaseFragmentMvpView
 import com.everlog.ui.fragments.base.BaseFragmentPresenter
 import com.everlog.ui.fragments.base.BaseTabFragment
 import com.everlog.ui.fragments.home.activity.statistics.charts.ChartRenderer
-import com.everlog.utils.format.StatsFormatUtils
-import com.everlog.utils.makeSingleLine
 import com.jakewharton.rxbinding.view.RxView
 import rx.Observable
 import rx.subjects.PublishSubject

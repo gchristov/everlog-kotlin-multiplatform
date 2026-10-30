@@ -19,7 +19,7 @@ Common modules:
 
 | Module | Holds |
 | --- | --- |
-| `common:kotlin` | Coroutines, Arrow, `Load`, logging, `AppContext` (the application context, for code without one of its own) |
+| `common:kotlin` | Coroutines, Arrow, `Load`, the date, string, number and unit helpers and formatters, logging, `AppContext` (the application context, for code without one of its own) |
 | `common:test` | JUnit, Truth, kotlin-test, threetenbp, shared test helpers |
 | `common:design` | Shared resources only: colours, fonts, dimens, drawables, strings. No code unless something strictly needs it |
 | `common:compose` | The design system (theme and elements), `CommonComposeActivity` and shared components |

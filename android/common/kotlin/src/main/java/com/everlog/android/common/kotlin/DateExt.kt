@@ -1,6 +1,5 @@
-package com.everlog.utils
+package com.everlog.android.common.kotlin
 
-import com.everlog.managers.preferences.SettingsManager
 import org.threeten.bp.*
 import org.threeten.bp.format.DateTimeFormatter
 import org.threeten.bp.temporal.WeekFields
@@ -60,8 +59,8 @@ fun Date.isSameMonth(time: Long): Boolean {
     return now.month == then.month && this.isSameYear(time)
 }
 
-fun Date.isSameWeek(time: Long) : Boolean {
-    val sundayStart = SettingsManager.manager.firstDayOfWeek() == DayOfWeek.SUNDAY
+fun Date.isSameWeek(time: Long, firstDayOfWeek: DayOfWeek) : Boolean {
+    val sundayStart = firstDayOfWeek == DayOfWeek.SUNDAY
     val woy = (if (sundayStart) WeekFields.SUNDAY_START else WeekFields.ISO).weekOfWeekBasedYear()
     // Calculate current week number for each date.
     val now = this.toLocalDate()

@@ -8,10 +8,10 @@ import android.view.View
 import android.widget.FrameLayout
 import android.widget.TextView
 import com.everlog.R
+import com.everlog.android.common.kotlin.NumberUtils
 import com.everlog.managers.preferences.SettingsManager
 import com.everlog.ui.dialog.DialogBuilder.DurationPickerDialogType
 import com.everlog.ui.dialog.DialogBuilder.NumberPickerDialogType
-import com.everlog.utils.NumberUtils
 import com.everlog.utils.Utils
 import com.everlog.utils.input.KeyboardUtils
 import com.github.stephenvinouze.materialnumberpickercore.MaterialNumberPicker

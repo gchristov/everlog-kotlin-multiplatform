@@ -2,11 +2,11 @@ package com.everlog.data.model.set
 
 import android.content.Context
 import com.everlog.R
+import com.everlog.android.common.kotlin.UnitUtils.Companion.kgToLb
+import com.everlog.android.common.kotlin.UnitUtils.Companion.lbToKg
+import com.everlog.android.common.kotlin.format.FormatUtils
 import com.everlog.data.model.ELFirestoreModel
 import com.everlog.managers.preferences.SettingsManager
-import com.everlog.utils.UnitUtils.Companion.kgToLb
-import com.everlog.utils.UnitUtils.Companion.lbToKg
-import com.everlog.utils.format.FormatUtils
 import com.google.firebase.firestore.Exclude
 import java.io.Serializable
 import java.util.*

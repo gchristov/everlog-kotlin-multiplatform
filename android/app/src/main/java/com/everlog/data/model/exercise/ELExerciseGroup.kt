@@ -1,12 +1,12 @@
 package com.everlog.data.model.exercise
 
+import com.everlog.android.common.kotlin.NumberUtils
 import com.everlog.config.AppConfig
 import com.everlog.constants.ELConstants
 import com.everlog.data.model.ELFirestoreModel
 import com.everlog.data.model.set.ELSet
 import com.everlog.data.model.set.ELSetType
 import com.everlog.managers.analytics.AnalyticsManager
-import com.everlog.utils.NumberUtils
 import java.io.Serializable
 import java.util.*
 import kotlin.collections.ArrayList

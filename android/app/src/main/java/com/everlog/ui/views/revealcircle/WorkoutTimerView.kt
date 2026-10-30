@@ -7,8 +7,8 @@ import android.view.ViewGroup
 import android.widget.ProgressBar
 import android.widget.TextView
 import com.everlog.R
+import com.everlog.android.common.kotlin.format.FormatUtils.Companion.formatDurationShort
 import com.everlog.utils.ViewUtils
-import com.everlog.utils.format.FormatUtils.Companion.formatDurationShort
 
 class WorkoutTimerView(context: Context,
                        layoutId: Int,

@@ -10,7 +10,7 @@ import com.everlog.R;
 import com.everlog.data.model.util.ExerciseGroupCreateHeader;
 import com.everlog.databinding.RowHeaderExerciseGroupCreateBinding;
 import com.everlog.ui.adapters.OnListItemListener;
-import com.everlog.utils.format.FormatUtils;
+import com.everlog.android.common.kotlin.format.FormatUtils;
 
 public class ExerciseGroupCreateHeaderAdapter {
 
