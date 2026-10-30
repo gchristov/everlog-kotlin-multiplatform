@@ -11,6 +11,7 @@ import com.everlog.data.model.pro.ELProSkuDetails;
 import com.everlog.databinding.ViewBtnProSubBinding;
 
 import androidx.annotation.Nullable;
+import com.everlog.utils.format.ProFormatKt;
 import rx.Observable;
 import rx.subjects.PublishSubject;
 
@@ -74,7 +75,7 @@ public class ProSubButton extends LinearLayout {
 
     private void renderSku() {
         binding.titleLbl.setText(mDetails.weeklyPriceSummary());
-        binding.subtitleLbl.setText(mDetails.priceSummary(getContext()));
+        binding.subtitleLbl.setText(ProFormatKt.priceSummary(mDetails, getContext()));
     }
 
     // Setup

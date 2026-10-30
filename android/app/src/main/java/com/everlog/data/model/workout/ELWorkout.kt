@@ -1,10 +1,6 @@
 package com.everlog.data.model.workout
 
-import com.everlog.R
-import com.everlog.android.common.kotlin.AppContext
-import com.everlog.android.common.kotlin.append
 import com.everlog.android.common.kotlin.format.FormatUtils
-import com.everlog.android.common.kotlin.format.StatsFormatUtils
 import com.everlog.android.common.kotlin.isSameDay
 import com.everlog.android.common.kotlin.isSameMonth
 import com.everlog.android.common.kotlin.isSameWeek
@@ -224,20 +220,6 @@ data class ELWorkout(
             }
         }
         return sets
-    }
-
-    fun getSummary(): String {
-        val separator = " • "
-        var summary = ""
-        // Include duration
-        val durationSummary = String.format("%s %s", StatsFormatUtils.formatTimeStatsLabel(getDurationMillis()), AppContext.getString(R.string.hour))
-        summary = summary.append(separator, durationSummary)
-        if (hasWeight()) {
-            // Include weight
-            val weightSummary = String.format("%s %s", StatsFormatUtils.formatWeightStatsLabel(getTotalWeight()), SettingsManager.weightUnitAbbreviation())
-            summary = summary.append(separator, weightSummary)
-        }
-        return summary
     }
 
     fun findExercise(exercise: ELExercise): List<ELRoutineExercise>? {

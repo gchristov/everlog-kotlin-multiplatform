@@ -23,6 +23,7 @@ import com.everlog.ui.fragments.base.BaseFragmentPresenter
 import com.everlog.ui.fragments.base.BaseTabFragment
 import com.everlog.ui.views.CheckBoxTriStates
 import com.everlog.utils.ViewUtils
+import com.everlog.utils.format.getIcon
 import com.everlog.utils.glide.ELGlideModule
 import com.jakewharton.rxbinding.view.RxView
 import org.threeten.bp.DayOfWeek

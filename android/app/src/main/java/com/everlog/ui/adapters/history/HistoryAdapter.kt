@@ -12,6 +12,7 @@ import com.everlog.ui.adapters.history.BaseTimelineViewHolder.OnTimelineListener
 import com.everlog.utils.ViewUtils.dpToPx
 import com.everlog.utils.ViewUtils.getRawDimension
 import com.everlog.utils.ViewUtils.setMargins
+import com.everlog.utils.format.summary
 import java.util.*
 
 class HistoryAdapter {
@@ -52,7 +53,7 @@ class HistoryAdapter {
 
         private fun renderRoutine() {
             binding.routinePicker.routineName.text = item.getName()
-            binding.routinePicker.routineSummary.text = item.getSummary()
+            binding.routinePicker.routineSummary.text = item.summary(binding.root.context)
         }
 
         private fun renderGroups() {

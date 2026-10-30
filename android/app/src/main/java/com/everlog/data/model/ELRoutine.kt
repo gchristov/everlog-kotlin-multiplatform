@@ -1,8 +1,5 @@
 package com.everlog.data.model
 
-import com.everlog.R
-import com.everlog.android.common.kotlin.AppContext
-import com.everlog.android.common.kotlin.append
 import com.everlog.android.common.kotlin.timeOfDayMessage
 import com.everlog.constants.ELConstants
 import com.everlog.data.model.exercise.ELExercise
@@ -90,18 +87,6 @@ data class ELRoutine(
 
     fun canBePerformed(): Boolean {
         return getTotalExercises() > 0
-    }
-
-    fun getSummary(): String {
-        val separator = " • "
-        var summary = ""
-        // Include exercises
-        val exercisesCount = getTotalExercises()
-        summary = summary.append(separator, AppContext.resources.getQuantityString(R.plurals.exercises, exercisesCount, exercisesCount))
-        // Include sets
-        val setsCount = getTotalSets()
-        summary = summary.append(separator, AppContext.resources.getQuantityString(R.plurals.sets, setsCount, setsCount))
-        return summary
     }
 
     /**

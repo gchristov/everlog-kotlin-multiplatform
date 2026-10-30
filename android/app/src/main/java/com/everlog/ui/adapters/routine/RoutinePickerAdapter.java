@@ -10,6 +10,7 @@ import com.everlog.R;
 import com.everlog.data.model.ELRoutine;
 import com.everlog.databinding.RowRoutinePickerBinding;
 import com.everlog.ui.adapters.OnListItemListener;
+import com.everlog.utils.format.SummaryFormatKt;
 
 public class RoutinePickerAdapter {
 
@@ -62,7 +63,7 @@ public class RoutinePickerAdapter {
 
         private void renderSummary(ELRoutine item) {
             binding.routineName.setText(item.getName());
-            binding.routineSummary.setText(item.getSummary());
+            binding.routineSummary.setText(SummaryFormatKt.summary(item, binding.getRoot().getContext()));
         }
     }
 }

@@ -36,6 +36,7 @@ import com.everlog.ui.components.reorder.rememberReorderState
 import com.everlog.ui.components.reorder.reorderGrip
 import com.everlog.ui.components.reorder.reorderItem
 import com.everlog.ui.components.reorder.reorderViewport
+import com.everlog.utils.format.getTitle
 
 private object EditSizes {
     val CardGap = 12.dp

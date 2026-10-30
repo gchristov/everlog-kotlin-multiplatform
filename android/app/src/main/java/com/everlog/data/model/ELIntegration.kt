@@ -1,6 +1,5 @@
 package com.everlog.data.model
 
-import com.everlog.R
 import com.everlog.constants.ELConstants
 import java.io.Serializable
 import java.util.*
@@ -25,11 +24,6 @@ data class ELIntegration (
             }
         }
 
-        fun getIcon(): Int? {
-            return when (this) {
-                GOOGLE_FIT -> R.drawable.ic_integration_google_fit
-            }
-        }
     }
 
     companion object {
