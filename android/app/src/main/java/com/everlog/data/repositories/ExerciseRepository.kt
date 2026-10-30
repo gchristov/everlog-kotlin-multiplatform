@@ -14,7 +14,7 @@ import com.everlog.android.exercise.data.model.library.ExerciseRegistry
 import com.everlog.android.exercise.data.model.library.ExerciseRegistryDto
 import com.everlog.android.exercise.data.model.library.LibraryExercise
 import com.everlog.android.exercise.data.model.library.LibraryExerciseDto
-import com.everlog.managers.auth.LocalUserManager
+import com.everlog.android.auth.data.LocalUserManager
 import com.everlog.managers.firebase.FirestorePathManager
 import com.google.firebase.firestore.DocumentSnapshot
 import kotlinx.coroutines.CoroutineDispatcher

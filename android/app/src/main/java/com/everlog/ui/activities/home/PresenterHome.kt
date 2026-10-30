@@ -18,7 +18,7 @@ import com.everlog.managers.WorkoutManager
 import com.everlog.managers.analytics.AnalyticsConstants
 import com.everlog.managers.analytics.AnalyticsManager
 import com.everlog.managers.appupdate.AppUpdateController
-import com.everlog.managers.auth.LocalUserManager
+import com.everlog.android.auth.data.LocalUserManager
 import com.everlog.managers.billing.BillingBridge
 import com.everlog.managers.billing.BillingManager
 import com.everlog.ui.navigator.navigator

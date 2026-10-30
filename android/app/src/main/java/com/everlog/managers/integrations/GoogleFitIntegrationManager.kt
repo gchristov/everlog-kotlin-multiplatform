@@ -9,7 +9,7 @@ import com.everlog.android.settings.data.model.ELIntegration
 import com.everlog.constants.ELActivityRequestCodes
 import com.everlog.data.datastores.ELDatastore
 import com.everlog.managers.analytics.AnalyticsManager
-import com.everlog.managers.auth.LocalUserManager
+import com.everlog.android.auth.data.LocalUserManager
 import com.everlog.android.common.mvp.fragment.BaseFragmentMvpView
 import com.everlog.ui.navigator.ELNavigator
 import com.everlog.utils.device.DeviceUtils

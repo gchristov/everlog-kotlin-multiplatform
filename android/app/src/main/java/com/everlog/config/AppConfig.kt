@@ -68,6 +68,7 @@ class AppConfig {
 
     // Settings only apply before Firestore's first use, so this runs first
     private fun configureFirestore() {
+        FirebaseFirestore.setLoggingEnabled(BuildConfig.DEBUG)
         FirebaseFirestore.getInstance().firestoreSettings = firestoreSettings {
             setLocalCacheSettings(persistentCacheSettings { setSizeBytes(firestoreCacheSizeBytes) })
         }

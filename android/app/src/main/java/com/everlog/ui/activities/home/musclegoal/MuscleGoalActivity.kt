@@ -10,7 +10,7 @@ import android.view.ViewGroup
 import com.everlog.R
 import com.everlog.databinding.ActivityMuscleGoalBinding
 import com.everlog.managers.analytics.AnalyticsConstants
-import com.everlog.managers.auth.LocalUserManager
+import com.everlog.android.auth.data.LocalUserManager
 import com.everlog.android.common.mvp.activity.BaseActivity
 import com.everlog.android.common.mvp.activity.BaseActivityMvpView
 import com.everlog.android.common.mvp.activity.BaseActivityPresenter

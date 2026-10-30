@@ -10,7 +10,7 @@ import com.everlog.android.common.datasync.SyncPlan
 import com.everlog.android.common.firebase.FirestoreFields
 import com.everlog.android.common.kotlin.Load
 import com.everlog.config.AppConfig
-import com.everlog.managers.auth.LocalUserManager
+import com.everlog.android.auth.data.LocalUserManager
 import com.everlog.managers.firebase.FirestorePathManager
 import com.google.firebase.firestore.Query
 import kotlinx.coroutines.CoroutineDispatcher

@@ -4,7 +4,7 @@ import androidx.test.platform.app.InstrumentationRegistry
 import com.everlog.BuildConfig
 import com.everlog.android.auth.data.model.ELUser
 import com.everlog.managers.auth.AuthManager
-import com.everlog.managers.auth.LocalUserManager
+import com.everlog.android.auth.data.LocalUserManager
 import com.google.common.truth.Truth.assertThat
 import java.util.concurrent.CountDownLatch
 import java.util.concurrent.TimeUnit

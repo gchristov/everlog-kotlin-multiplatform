@@ -7,7 +7,7 @@ import com.everlog.data.datastores.events.collection.ELColStoreItemAddedEvent
 import com.everlog.data.datastores.events.collection.ELColStoreItemModifiedEvent
 import com.everlog.data.datastores.events.collection.ELColStoreItemRemovedEvent
 import com.everlog.data.datastores.events.collection.ELColStoreItemsLoadedEvent
-import com.everlog.managers.auth.LocalUserManager
+import com.everlog.android.auth.data.LocalUserManager
 import com.everlog.managers.firebase.FirestorePathManager
 import com.google.firebase.firestore.Query
 

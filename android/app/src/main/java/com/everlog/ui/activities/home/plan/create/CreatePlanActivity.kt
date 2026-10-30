@@ -19,7 +19,7 @@ import com.everlog.android.plan.data.model.ELPlan
 import com.everlog.constants.ELConstants.EXTRA_PLAN_UUID
 import com.everlog.databinding.ActivityPlanCreateBinding
 import com.everlog.managers.analytics.AnalyticsConstants
-import com.everlog.managers.auth.LocalUserManager
+import com.everlog.android.auth.data.LocalUserManager
 import com.everlog.android.common.mvp.activity.BaseActivity
 import com.everlog.android.common.mvp.activity.BaseActivityMvpView
 import com.everlog.android.common.mvp.activity.BaseActivityPresenter

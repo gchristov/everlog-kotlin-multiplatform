@@ -17,7 +17,7 @@ import com.everlog.data.datastores.ELUserStore
 import com.everlog.managers.RemoteConfigManager
 import com.everlog.managers.analytics.AnalyticsManager
 import com.everlog.managers.auth.AuthManager
-import com.everlog.managers.auth.LocalUserManager
+import com.everlog.android.auth.data.LocalUserManager
 import com.everlog.managers.integrations.GoogleFitIntegrationManager
 import com.everlog.ui.dialog.AppDialogs
 import com.everlog.ui.navigator.navigator

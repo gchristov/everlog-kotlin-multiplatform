@@ -3,7 +3,7 @@ package com.everlog.utils;
 import com.everlog.data.datastores.ELDatastore;
 import com.everlog.android.auth.data.model.ELDevice;
 import com.everlog.managers.DeviceManager;
-import com.everlog.managers.auth.LocalUserManager;
+import com.everlog.android.auth.data.LocalUserManager;
 import com.everlog.utils.device.DeviceUtils;
 import com.google.firebase.firestore.SetOptions;
 //import com.google.firebase.iid.FirebaseInstanceId;

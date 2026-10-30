@@ -8,7 +8,7 @@ import com.everlog.android.common.mvp.MvpBroadcasts
 import com.everlog.android.settings.data.SettingsManager
 import com.everlog.data.datastores.base.ELDocumentStore
 import com.everlog.data.datastores.events.document.ELDocStoreItemLoadedEvent
-import com.everlog.managers.auth.LocalUserManager
+import com.everlog.android.auth.data.LocalUserManager
 import com.everlog.managers.firebase.FirestorePathManager
 import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.FieldPath

@@ -8,7 +8,7 @@ import com.everlog.android.settings.data.SettingsManager
 import com.everlog.config.FeedbackSource
 import com.everlog.managers.RemoteConfigManager
 import com.everlog.managers.analytics.AnalyticsManager
-import com.everlog.managers.auth.LocalUserManager
+import com.everlog.android.auth.data.LocalUserManager
 import com.everlog.android.common.mvp.activity.BaseActivityPresenter
 import com.everlog.ui.adapters.MuscleGoalAdapter
 import com.everlog.ui.navigator.navigator

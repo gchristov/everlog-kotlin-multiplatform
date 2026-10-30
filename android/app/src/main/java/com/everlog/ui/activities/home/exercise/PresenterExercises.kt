@@ -17,7 +17,7 @@ import com.everlog.constants.ELConstants
 import com.everlog.data.datastores.ELDatastore
 import com.everlog.data.datastores.exercises.ELExercisesStore.*
 import com.everlog.managers.analytics.AnalyticsManager
-import com.everlog.managers.auth.LocalUserManager
+import com.everlog.android.auth.data.LocalUserManager
 import com.everlog.android.common.mvp.activity.BaseActivityPresenter
 import com.everlog.ui.activities.home.exercise.details.ExerciseDetailsActivity
 import com.everlog.ui.adapters.exercise.ExerciseAdapter
