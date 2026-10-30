@@ -57,6 +57,7 @@ import com.everlog.ui.components.exercisetable.countField
 import com.everlog.ui.components.exercisetable.typedSeconds
 import com.everlog.ui.components.reorder.ReorderGrip
 import com.everlog.utils.format.formatClock
+import com.everlog.utils.format.getTitle
 
 private object ExerciseSizes {
     val ThumbnailCorner = 12.dp

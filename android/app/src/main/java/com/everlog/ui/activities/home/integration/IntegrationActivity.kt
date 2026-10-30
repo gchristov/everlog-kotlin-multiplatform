@@ -11,6 +11,7 @@ import com.everlog.managers.analytics.AnalyticsConstants
 import com.everlog.ui.activities.base.BaseActivity
 import com.everlog.ui.activities.base.BaseActivityMvpView
 import com.everlog.ui.activities.base.BaseActivityPresenter
+import com.everlog.utils.format.getIcon
 import com.jakewharton.rxbinding.view.RxView
 import rx.Observable
 import com.everlog.android.common.design.R as DesignR

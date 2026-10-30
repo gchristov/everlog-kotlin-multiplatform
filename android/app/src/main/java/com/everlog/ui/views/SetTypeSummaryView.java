@@ -12,6 +12,7 @@ import com.everlog.databinding.ViewSetTypeSummaryBinding;
 
 import androidx.annotation.Nullable;
 import android.widget.RelativeLayout;
+import com.everlog.utils.format.SetTypeFormatKt;
 
 public class SetTypeSummaryView extends RelativeLayout {
 
@@ -37,8 +38,8 @@ public class SetTypeSummaryView extends RelativeLayout {
     }
 
     public void setSetType(ELSetType type) {
-        binding.setTypeLbl.setText(type.getTitle(getContext()));
-        binding.setDescriptionLbl.setText(type.getDescription(getContext()));
+        binding.setTypeLbl.setText(SetTypeFormatKt.getTitle(type, getContext()));
+        binding.setDescriptionLbl.setText(SetTypeFormatKt.getDescription(type, getContext()));
     }
 
     // Setup

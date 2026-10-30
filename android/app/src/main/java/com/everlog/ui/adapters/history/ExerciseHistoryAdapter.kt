@@ -15,6 +15,7 @@ import com.everlog.databinding.RowHistoryExerciseBinding
 import com.everlog.databinding.RowSetSummaryBinding
 import com.everlog.ui.adapters.exercise.group.ExerciseGroupSummaryAdapter.Companion.renderCompleteSetSummary
 import com.everlog.ui.adapters.history.BaseTimelineViewHolder.OnTimelineListener
+import com.everlog.utils.format.summary
 import java.util.Date
 
 class ExerciseHistoryAdapter {
@@ -65,7 +66,7 @@ class ExerciseHistoryAdapter {
 
         private fun renderExercise() {
             binding.routineName.text = item.workout?.getName()
-            binding.exerciseSummary.text = item.exercise?.getSummary()
+            binding.exerciseSummary.text = item.exercise?.summary(binding.root.context)
         }
 
         // Setup

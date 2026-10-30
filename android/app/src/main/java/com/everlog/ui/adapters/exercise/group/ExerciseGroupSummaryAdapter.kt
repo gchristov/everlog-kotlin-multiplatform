@@ -30,6 +30,9 @@ import com.everlog.ui.activities.home.exercise.details.ExerciseDetailsActivity
 import com.everlog.ui.navigator.ELNavigator
 import com.everlog.utils.ArrayResourceTypeUtils
 import com.everlog.utils.Utils
+import com.everlog.utils.format.getExerciseSetSummary
+import com.everlog.utils.format.getWorkoutDetailsSummary
+import com.everlog.utils.format.summary
 import com.everlog.android.common.design.R as DesignR
 import java.util.*
 import kotlin.math.max
@@ -178,7 +181,7 @@ class ExerciseGroupSummaryAdapter {
             binding.exerciseImg.applyMask(R.drawable.mask_circle)
             binding.exerciseSummary.visibility = if (builder.showTemplates) View.GONE else View.VISIBLE
             if (!builder.showTemplates) {
-                binding.exerciseSummary.text = item.getSummary()
+                binding.exerciseSummary.text = item.summary(binding.root.context)
             }
         }
 

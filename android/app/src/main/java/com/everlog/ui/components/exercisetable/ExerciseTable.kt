@@ -82,6 +82,7 @@ import com.everlog.data.controllers.workoutsession.ValueField
 import com.everlog.data.controllers.workoutsession.WorkoutBlock
 import com.everlog.data.model.exercise.ELExercise
 import com.everlog.utils.format.EmptyValue
+import com.everlog.utils.format.getTitle
 import com.everlog.android.common.design.R as DesignR
 import kotlin.math.roundToInt
 import kotlinx.coroutines.delay

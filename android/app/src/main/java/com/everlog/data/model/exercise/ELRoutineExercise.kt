@@ -1,17 +1,11 @@
 package com.everlog.data.model.exercise
 
-import com.everlog.R
-import com.everlog.android.common.kotlin.AppContext
-import com.everlog.android.common.kotlin.append
-import com.everlog.android.common.kotlin.format.StatsFormatUtils
 import com.everlog.constants.ELConstants
 import com.everlog.data.model.ELFirestoreModel
 import com.everlog.data.model.set.ELSet
-import com.everlog.managers.preferences.SettingsManager
 import org.apache.commons.lang3.SerializationUtils
 import java.io.Serializable
 import java.util.*
-import java.util.concurrent.TimeUnit
 
 data class ELRoutineExercise(
 
@@ -182,29 +176,6 @@ data class ELRoutineExercise(
             }
         }
         return bestSet ?: ELSet()
-    }
-
-    fun getSummary(): String {
-        val reps = getTotalReps()
-        val weight = getTotalWeight()
-        val timeSeconds = getTotalTimeSeconds()
-        val separator = " • "
-        var summary = ""
-        if (weight != 0F) {
-            // Include weight
-            val weightSummary = String.format("%s %s", StatsFormatUtils.formatWeightStatsLabel(weight), SettingsManager.weightUnitAbbreviation())
-            summary = summary.append(separator, weightSummary)
-        }
-        if (reps != 0) {
-            // Include reps
-            summary = summary.append(separator, AppContext.resources.getQuantityString(R.plurals.reps, reps, reps))
-        }
-        if (timeSeconds != 0) {
-            // Include time
-            val timeSummary = String.format("%s %s", StatsFormatUtils.formatTimeStatsLabel(TimeUnit.SECONDS.toMillis(timeSeconds.toLong()), "m:ss"), "m")
-            summary = summary.append(separator, timeSummary)
-        }
-        return summary
     }
 
     // Exercise time
