@@ -9,10 +9,10 @@ import androidx.core.app.NotificationManagerCompat
 import com.everlog.R
 import com.everlog.android.common.kotlin.AppContext
 import com.everlog.android.common.persistence.PreferencesManager
+import com.everlog.android.settings.data.SettingsManager
 import com.everlog.config.AppUsageNotification
 import com.everlog.managers.analytics.AnalyticsManager
 import com.everlog.managers.apprate.AppLaunchManager
-import com.everlog.managers.preferences.SettingsManager
 import com.everlog.receivers.AppUsageReceiver
 import com.everlog.services.fcm.ELFirebaseMessagingService
 import timber.log.Timber

@@ -1,7 +1,7 @@
 package com.everlog.data.controllers.workoutprefill
 
+import com.everlog.android.settings.data.SettingsManager.MuscleGoal
 import com.everlog.data.controllers.statistics.BaseStatsController
-import com.everlog.managers.preferences.SettingsManager.MuscleGoal
 import com.google.common.truth.Truth.assertThat
 import org.junit.Test
 

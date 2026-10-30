@@ -1,11 +1,10 @@
-package com.everlog.managers.preferences;
+package com.everlog.android.settings.data;
 
 import android.content.Context;
 import android.content.SharedPreferences;
 
 import com.everlog.android.common.kotlin.WeightUnit;
 import com.everlog.android.common.persistence.PreferencesManager;
-import com.everlog.utils.ArrayResourceTypeUtils;
 
 import org.threeten.bp.DayOfWeek;
 
@@ -152,10 +151,6 @@ public class SettingsManager extends PreferencesManager {
     }
 
     public static final SettingsManager manager = new SettingsManager();
-
-    public static String weightUnitAbbreviation() {
-        return ArrayResourceTypeUtils.withWeightAbbreviations().getTitle(manager.weightUnit().name(), "--");
-    }
 
     public void clearUserPreferences() {
         SharedPreferences sharedPref = getPreferences();

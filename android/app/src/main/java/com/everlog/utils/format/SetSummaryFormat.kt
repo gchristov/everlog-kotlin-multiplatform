@@ -3,8 +3,8 @@ package com.everlog.utils.format
 import android.content.Context
 import com.everlog.R
 import com.everlog.android.common.kotlin.format.FormatUtils
+import com.everlog.android.settings.data.SettingsManager
 import com.everlog.data.model.set.ELSet
-import com.everlog.managers.preferences.SettingsManager
 
 fun ELSet.getWorkoutDetailsSummary(context: Context?): String? {
     if (isWithoutData()) {
@@ -52,7 +52,7 @@ private fun formatReps(context: Context?, reps: Int): String? {
 }
 
 private fun ELSet.formatWeight(): String? {
-    return "${FormatUtils.formatDecimal(getWeight(SettingsManager.manager.weightUnit()))} ${SettingsManager.weightUnitAbbreviation()}"
+    return "${FormatUtils.formatDecimal(getWeight(SettingsManager.manager.weightUnit()))} ${weightUnitAbbreviation(SettingsManager.manager.weightUnit())}"
 }
 
 private fun formatTime(timeSeconds: Int): String? {

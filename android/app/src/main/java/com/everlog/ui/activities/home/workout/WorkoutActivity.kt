@@ -10,12 +10,12 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.recyclerview.widget.RecyclerView
 import com.everlog.R
+import com.everlog.android.settings.data.SettingsManager
 import com.everlog.constants.ELConstants
 import com.everlog.data.model.workout.ELWorkout
 import com.everlog.data.model.workout.ELWorkoutState
 import com.everlog.databinding.ActivityWorkoutBinding
 import com.everlog.managers.analytics.AnalyticsConstants
-import com.everlog.managers.preferences.SettingsManager
 import com.everlog.services.workout.WorkoutService
 import com.everlog.ui.activities.home.exercisegroup.CreateExerciseGroupsActivity
 import com.everlog.ui.activities.home.exercisegroup.PresenterCreateExerciseGroups

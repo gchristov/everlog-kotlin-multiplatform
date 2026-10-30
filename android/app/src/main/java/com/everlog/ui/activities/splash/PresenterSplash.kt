@@ -3,11 +3,11 @@ package com.everlog.ui.activities.splash
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
+import com.everlog.android.settings.data.SettingsManager
 import com.everlog.constants.ELActivityRequestCodes
 import com.everlog.data.model.ELUser
 import com.everlog.managers.auth.AuthManager
 import com.everlog.managers.auth.AuthManager.OnAuthActionListener
-import com.everlog.managers.preferences.SettingsManager
 import com.everlog.ui.activities.base.BaseActivityPresenter
 import com.everlog.utils.Utils
 

@@ -10,6 +10,7 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.everlog.R
+import com.everlog.android.settings.data.SettingsManager
 import com.everlog.constants.ELConstants
 import com.everlog.data.controllers.workoutprefill.BaseWorkoutPrefillController.PrefillSource
 import com.everlog.data.controllers.workoutprefill.WorkoutPrefillController
@@ -25,7 +26,6 @@ import com.everlog.managers.WorkoutManager
 import com.everlog.managers.analytics.AnalyticsConstants
 import com.everlog.managers.analytics.AnalyticsManager
 import com.everlog.managers.apprate.AppLaunchManager
-import com.everlog.managers.preferences.SettingsManager
 import com.everlog.ui.activities.home.exercisegroup.PresenterCreateExerciseGroups
 import com.everlog.ui.activities.home.workout.utils.*
 import com.everlog.ui.activities.home.workout.utils.TickTimeController.OnTimeTick

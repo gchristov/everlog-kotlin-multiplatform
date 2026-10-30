@@ -4,6 +4,7 @@ import android.content.DialogInterface
 import android.content.Intent
 import com.everlog.R
 import com.everlog.android.common.kotlin.WeightUnit
+import com.everlog.android.settings.data.SettingsManager
 import com.everlog.config.FeedbackSource
 import com.everlog.constants.ELConstants
 import com.everlog.data.datastores.ELDatastore
@@ -16,7 +17,6 @@ import com.everlog.managers.RemoteConfigManager
 import com.everlog.managers.analytics.AnalyticsManager
 import com.everlog.managers.auth.AuthManager
 import com.everlog.managers.integrations.GoogleFitIntegrationManager
-import com.everlog.managers.preferences.SettingsManager
 import com.everlog.ui.dialog.DialogBuilder
 import com.everlog.ui.fragments.base.BaseFragmentPresenter
 import com.everlog.utils.ArrayResourceTypeUtils

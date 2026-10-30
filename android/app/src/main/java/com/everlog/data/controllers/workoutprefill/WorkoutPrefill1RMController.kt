@@ -1,7 +1,7 @@
 package com.everlog.data.controllers.workoutprefill
 
+import com.everlog.android.settings.data.SettingsManager
 import com.everlog.data.model.set.ELSet
-import com.everlog.managers.preferences.SettingsManager
 import timber.log.Timber
 
 class WorkoutPrefill1RMController: BaseWorkoutPrefillController() {

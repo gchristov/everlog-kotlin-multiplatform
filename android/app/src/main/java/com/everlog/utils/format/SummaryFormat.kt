@@ -4,10 +4,10 @@ import android.content.Context
 import com.everlog.R
 import com.everlog.android.common.kotlin.append
 import com.everlog.android.common.kotlin.format.StatsFormatUtils
+import com.everlog.android.settings.data.SettingsManager
 import com.everlog.data.model.ELRoutine
 import com.everlog.data.model.exercise.ELRoutineExercise
 import com.everlog.data.model.workout.ELWorkout
-import com.everlog.managers.preferences.SettingsManager
 import java.util.concurrent.TimeUnit
 
 private const val SEPARATOR = " • "
@@ -27,7 +27,7 @@ fun ELRoutineExercise.summary(context: Context): String {
     val timeSeconds = getTotalTimeSeconds()
     var summary = ""
     if (weight != 0F) {
-        val weightSummary = String.format("%s %s", StatsFormatUtils.formatWeightStatsLabel(weight), SettingsManager.weightUnitAbbreviation())
+        val weightSummary = String.format("%s %s", StatsFormatUtils.formatWeightStatsLabel(weight), weightUnitAbbreviation(SettingsManager.manager.weightUnit()))
         summary = summary.append(SEPARATOR, weightSummary)
     }
     if (reps != 0) {
@@ -45,7 +45,7 @@ fun ELWorkout.summary(context: Context): String {
     val durationSummary = String.format("%s %s", StatsFormatUtils.formatTimeStatsLabel(getDurationMillis()), context.getString(R.string.hour))
     summary = summary.append(SEPARATOR, durationSummary)
     if (hasWeight()) {
-        val weightSummary = String.format("%s %s", StatsFormatUtils.formatWeightStatsLabel(getTotalWeight(SettingsManager.manager.weightUnit())), SettingsManager.weightUnitAbbreviation())
+        val weightSummary = String.format("%s %s", StatsFormatUtils.formatWeightStatsLabel(getTotalWeight(SettingsManager.manager.weightUnit())), weightUnitAbbreviation(SettingsManager.manager.weightUnit()))
         summary = summary.append(SEPARATOR, weightSummary)
     }
     return summary

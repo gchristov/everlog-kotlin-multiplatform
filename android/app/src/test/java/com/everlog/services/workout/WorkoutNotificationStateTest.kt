@@ -2,6 +2,9 @@ package com.everlog.services.workout
 
 import com.everlog.android.common.kotlin.WeightUnit
 import com.everlog.android.common.test.InMemorySharedPreferences
+import com.everlog.android.settings.data.SettingsManager
+import com.everlog.android.settings.testfixtures.install
+import com.everlog.android.settings.testfixtures.uninstall
 import com.everlog.data.model.ELRoutine
 import com.everlog.data.model.exercise.ELExercise
 import com.everlog.data.model.exercise.ELExerciseGroup
@@ -9,15 +12,12 @@ import com.everlog.data.model.exercise.ELRoutineExercise
 import com.everlog.data.model.set.ELSet
 import com.everlog.data.model.workout.ELWorkout
 import com.everlog.data.model.workout.ELWorkoutState
-import com.everlog.managers.preferences.SettingsManager
 import com.everlog.services.workout.WorkoutNotificationState.Done
 import com.everlog.services.workout.WorkoutNotificationState.NextSet
 import com.everlog.services.workout.WorkoutNotificationState.NoExercises
 import com.everlog.services.workout.WorkoutNotificationState.Rest
 import com.everlog.services.workout.WorkoutNotificationState.RestTimer
-import com.everlog.testutil.install
 import com.everlog.testutil.plannedSet
-import com.everlog.testutil.uninstall
 import com.everlog.testutil.workout
 import com.google.common.truth.Truth.assertThat
 import org.junit.After

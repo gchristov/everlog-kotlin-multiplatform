@@ -4,10 +4,10 @@ import android.content.Context
 import androidx.annotation.StringRes
 import com.everlog.R
 import com.everlog.android.common.kotlin.WeightUnit
+import com.everlog.android.settings.data.SettingsManager.MuscleGoal
 import com.everlog.data.controllers.statistics.BaseStatsController
 import com.everlog.data.controllers.workoutprefill.goalWeight
 import com.everlog.data.controllers.workoutprefill.rounded1RM
-import com.everlog.managers.preferences.SettingsManager.MuscleGoal
 import kotlin.math.roundToInt
 
 /**

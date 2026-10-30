@@ -15,6 +15,7 @@ import android.widget.TextView;
 
 import com.everlog.BuildConfig;
 import com.everlog.R;
+import com.everlog.android.settings.data.SettingsManager;
 import com.everlog.android.showcase.feature.DesignSystemActivity;
 import com.everlog.config.FeedbackSource;
 import com.everlog.constants.ELActivityRequestCodes;
@@ -32,7 +33,6 @@ import com.everlog.managers.analytics.AnalyticsManager;
 import com.everlog.managers.apprate.RatePromptController;
 import com.everlog.managers.apprate.RatePromptTrigger;
 import com.everlog.managers.auth.LocalUserManager;
-import com.everlog.managers.preferences.SettingsManager;
 import com.everlog.services.workout.ShownSet;
 import com.everlog.services.workout.WorkoutService;
 import com.everlog.ui.activities.exercisepicker.ExercisePickerActivity;
@@ -66,6 +66,7 @@ import com.everlog.ui.dialog.DialogBuilder;
 import com.everlog.ui.dialog.ToastBuilder;
 import com.everlog.utils.ViewUtils;
 import com.everlog.android.common.kotlin.format.StatsFormatUtils;
+import com.everlog.utils.format.WorkoutSetFormatKt;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 import com.imagepick.share.ELImageShare;
@@ -437,7 +438,7 @@ public class ELNavigator implements Navigator {
         TextView exercises = v.findViewById(R.id.exercisesField);
         title.setText(workout.getName());
         sets.setText(StatsFormatUtils.Companion.formatNumberStatsLabel(workout.getTotalSets()));
-        weight.setText(String.format("%s %s", StatsFormatUtils.Companion.formatWeightStatsLabel(workout.getTotalWeight(SettingsManager.manager.weightUnit())), SettingsManager.weightUnitAbbreviation()));
+        weight.setText(String.format("%s %s", StatsFormatUtils.Companion.formatWeightStatsLabel(workout.getTotalWeight(SettingsManager.manager.weightUnit())), WorkoutSetFormatKt.weightUnitAbbreviation(SettingsManager.manager.weightUnit())));
         duration.setText(String.format("%s %s", StatsFormatUtils.Companion.formatTimeStatsLabel(workout.getDurationMillis()), mContext.getString(R.string.hour)));
         exercises.setText(workout.getTotalExercises() + "");
         // Draw everything.

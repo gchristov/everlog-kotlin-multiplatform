@@ -5,6 +5,8 @@ import com.everlog.android.common.kotlin.Load
 import com.everlog.android.common.test.FakeCoroutineDispatcher
 import com.everlog.android.common.test.FakeCoroutineDispatcher
 import com.everlog.android.common.test.InMemorySharedPreferences
+import com.everlog.android.settings.testfixtures.install
+import com.everlog.android.settings.testfixtures.uninstall
 import com.everlog.config.AppConfig
 import com.everlog.data.controllers.templatesession.LoadTemplateUseCase
 import com.everlog.data.controllers.templatesession.SaveTemplateUseCase
@@ -20,8 +22,6 @@ import com.everlog.data.model.exercise.ELRoutineExercise
 import com.everlog.data.model.exercise.library.LibraryExercise
 import com.everlog.data.model.set.ELSet
 import com.everlog.data.model.set.ELSetType
-import com.everlog.testutil.install
-import com.everlog.testutil.uninstall
 import com.everlog.ui.components.exercisetable.CellFocus
 import com.google.common.truth.Truth.assertThat
 import kotlinx.coroutines.flow.Flow

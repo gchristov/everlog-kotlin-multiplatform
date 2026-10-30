@@ -1,6 +1,6 @@
 package com.everlog.data.controllers.workoutprefill
 
-import com.everlog.managers.preferences.SettingsManager.MuscleGoal
+import com.everlog.android.settings.data.SettingsManager.MuscleGoal
 import kotlin.math.ceil
 import kotlin.math.roundToInt
 

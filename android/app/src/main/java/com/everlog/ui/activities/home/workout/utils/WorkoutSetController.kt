@@ -1,9 +1,9 @@
 package com.everlog.ui.activities.home.workout.utils
 
 import androidx.appcompat.app.AppCompatActivity
+import com.everlog.android.settings.data.SettingsManager
 import com.everlog.data.model.workout.ELWorkout
 import com.everlog.databinding.ActivityWorkoutBinding
-import com.everlog.managers.preferences.SettingsManager
 import com.everlog.ui.activities.home.workout.MvpViewWorkout
 import com.everlog.utils.text.TextViewUtils
 

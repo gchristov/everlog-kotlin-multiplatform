@@ -9,7 +9,7 @@ import androidx.compose.ui.test.performScrollTo
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.everlog.android.common.compose.theme.Theme
 import com.everlog.android.common.kotlin.WeightUnit
-import com.everlog.managers.preferences.SettingsManager.MuscleGoal
+import com.everlog.android.settings.data.SettingsManager.MuscleGoal
 import com.google.common.truth.Truth.assertThat
 import java.util.concurrent.TimeUnit
 import kotlinx.coroutines.Dispatchers

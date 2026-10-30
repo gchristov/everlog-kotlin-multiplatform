@@ -30,6 +30,10 @@ fun formatClock(totalSeconds: Long): String {
 fun unitLabel(unit: WeightUnit): String =
     ArrayResourceTypeUtils.withWeightAbbreviations().getTitle(unit.name, "--").orEmpty().uppercase()
 
+// kg or lb after a number, or -- when the unit has no label
+fun weightUnitAbbreviation(unit: WeightUnit): String? =
+    ArrayResourceTypeUtils.withWeightAbbreviations().getTitle(unit.name, "--")
+
 // kg or lb, as in sentences
 fun unitName(unit: WeightUnit): String =
     ArrayResourceTypeUtils.withWeightAbbreviations().getTitle(unit.name, "").orEmpty()

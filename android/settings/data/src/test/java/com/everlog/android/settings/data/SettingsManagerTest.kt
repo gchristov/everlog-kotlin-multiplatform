@@ -1,8 +1,8 @@
-package com.everlog.managers.preferences
+package com.everlog.android.settings.data
 
 import com.everlog.android.common.test.InMemorySharedPreferences
-import com.everlog.testutil.install
-import com.everlog.testutil.uninstall
+import com.everlog.android.settings.testfixtures.install
+import com.everlog.android.settings.testfixtures.uninstall
 import com.google.common.truth.Truth.assertThat
 import org.junit.After
 import org.junit.Before

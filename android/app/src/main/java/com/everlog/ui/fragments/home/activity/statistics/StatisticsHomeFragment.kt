@@ -10,18 +10,19 @@ import androidx.core.content.ContextCompat
 import com.everlog.R
 import com.everlog.android.common.kotlin.format.StatsFormatUtils
 import com.everlog.android.common.kotlin.makeSingleLine
+import com.everlog.android.settings.data.SettingsManager
 import com.everlog.config.AppConfig
 import com.everlog.data.controllers.statistics.BaseStatsController
 import com.everlog.data.controllers.statistics.UserStatsController
 import com.everlog.data.model.workout.RangeType
 import com.everlog.databinding.FragmentHomeStatisticsBinding
 import com.everlog.managers.analytics.AnalyticsConstants
-import com.everlog.managers.preferences.SettingsManager
 import com.everlog.ui.activities.base.BaseActivity
 import com.everlog.ui.fragments.base.BaseFragmentMvpView
 import com.everlog.ui.fragments.base.BaseFragmentPresenter
 import com.everlog.ui.fragments.base.BaseTabFragment
 import com.everlog.ui.fragments.home.activity.statistics.charts.ChartRenderer
+import com.everlog.utils.format.weightUnitAbbreviation
 import com.jakewharton.rxbinding.view.RxView
 import rx.Observable
 import rx.subjects.PublishSubject
@@ -93,11 +94,11 @@ class StatisticsHomeFragment : BaseTabFragment(), MvpViewStatisticsHome {
 
     private fun renderSummaryViews(stats: UserStatsController.StatsResult) {
         binding.workoutsCompletedSummary.setSummary(StatsFormatUtils.formatNumberStatsLabel(stats.workoutsCompleted), null, requireContext().getString(R.string.home_week_workouts_completed).lowercase().makeSingleLine())
-        binding.totalWeightSummary.setSummary(StatsFormatUtils.formatWeightStatsLabel(stats.totalWeightLifted), SettingsManager.weightUnitAbbreviation(), requireContext().getString(R.string.home_week_weight_lifted).lowercase().makeSingleLine())
+        binding.totalWeightSummary.setSummary(StatsFormatUtils.formatWeightStatsLabel(stats.totalWeightLifted), weightUnitAbbreviation(SettingsManager.manager.weightUnit()), requireContext().getString(R.string.home_week_weight_lifted).lowercase().makeSingleLine())
         binding.totalTimeSummary.setSummary(StatsFormatUtils.formatTimeStatsLabel(stats.totalWorkoutTimeMillis), requireContext().getString(R.string.hour), requireContext().getString(R.string.home_week_total_time).lowercase().makeSingleLine())
         binding.averageTimeSummary.setSummary(StatsFormatUtils.formatTimeStatsLabel(stats.averageSessionTimeMillis), requireContext().getString(R.string.hour), requireContext().getString(R.string.home_week_average_time).lowercase().makeSingleLine())
         binding.longestSessionSummary.setSummary(StatsFormatUtils.formatTimeStatsLabel(stats.longestSessionTimeMillis), requireContext().getString(R.string.hour), requireContext().getString(R.string.statistics_longest_session).lowercase().makeSingleLine())
-        binding.maxWeightSummary.setSummary(StatsFormatUtils.formatWeightStatsLabel(stats.maxWeightLifted), SettingsManager.weightUnitAbbreviation(), requireContext().getString(R.string.workout_details_max_weight).lowercase().makeSingleLine())
+        binding.maxWeightSummary.setSummary(StatsFormatUtils.formatWeightStatsLabel(stats.maxWeightLifted), weightUnitAbbreviation(SettingsManager.manager.weightUnit()), requireContext().getString(R.string.workout_details_max_weight).lowercase().makeSingleLine())
     }
 
     private fun renderCharts(stats: UserStatsController.StatsResult) {
@@ -106,7 +107,7 @@ class StatisticsHomeFragment : BaseTabFragment(), MvpViewStatisticsHome {
         mChartRenderer?.renderPieChart(binding.musclesTrainedChart, stats.categoryCounts)
         // Volume lifted
         binding.weightLiftedChartTitle.text = getString(R.string.home_week_weight_lifted).makeSingleLine()
-        binding.weightLiftedAxisLeftTitleLbl.text = String.format("%s (%s)", getString(R.string.weight), SettingsManager.weightUnitAbbreviation())
+        binding.weightLiftedAxisLeftTitleLbl.text = String.format("%s (%s)", getString(R.string.weight), weightUnitAbbreviation(SettingsManager.manager.weightUnit()))
         mChartRenderer?.renderBarChart(binding.weightLiftedChart,
                 binding.weightLiftedAxisLeftTitle,
                 null,
