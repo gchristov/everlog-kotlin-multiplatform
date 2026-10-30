@@ -1,8 +1,8 @@
 package com.everlog.managers.auth
 
 import android.text.TextUtils
+import com.everlog.android.common.persistence.PreferencesManager
 import com.everlog.data.model.ELUser
-import com.everlog.managers.preferences.PreferencesManager
 import com.google.gson.Gson
 
 object LocalUserManager : PreferencesManager() {

@@ -1,7 +1,7 @@
 package com.everlog.data.migration
 
+import com.everlog.android.common.persistence.PreferencesManager
 import com.everlog.managers.firebase.FirestorePathManager
-import com.everlog.managers.preferences.PreferencesManager
 import timber.log.Timber
 
 class DataMigrationManager : PreferencesManager() {

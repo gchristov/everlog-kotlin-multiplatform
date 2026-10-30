@@ -1,12 +1,12 @@
 package com.everlog.managers.firebase
 
 import android.net.Uri
+import com.everlog.android.common.persistence.PreferencesManager
 import com.everlog.data.datastores.ELDatastore.Companion.exerciseStore
 import com.everlog.data.migration.Migration
 import com.everlog.data.migration.MultiPartUpdateExercise
 import com.everlog.data.model.exercise.ELExercise
 import com.everlog.managers.auth.LocalUserManager
-import com.everlog.managers.preferences.PreferencesManager
 import com.google.android.gms.tasks.Task
 import com.google.firebase.firestore.SetOptions
 import com.google.firebase.storage.FirebaseStorage

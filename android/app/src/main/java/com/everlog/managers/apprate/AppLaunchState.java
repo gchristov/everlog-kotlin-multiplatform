@@ -2,8 +2,8 @@ package com.everlog.managers.apprate;
 
 import android.content.SharedPreferences;
 
+import com.everlog.android.common.persistence.PreferencesManager;
 import com.everlog.config.HomeNotification;
-import com.everlog.managers.preferences.PreferencesManager;
 
 import java.util.Date;
 
