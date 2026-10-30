@@ -40,7 +40,7 @@ public class LogoView extends AppCompatTextView {
         Typeface tf = Typeface.createFromAsset(getContext().getAssets(), "UnderAuthority.ttf");
         setTypeface(tf);
         setText(R.string.everlog_app_name);
-        setTextColor(ContextCompat.getColor(getContext(), R.color.white_base));
+        setTextColor(ContextCompat.getColor(getContext(), com.everlog.android.common.design.R.color.white_base));
         setGravity(Gravity.CENTER);
         if (attrs != null) {
             TypedArray typedArray = getContext().obtainStyledAttributes(attrs, R.styleable.LogoView, defStyleAttr, 0);

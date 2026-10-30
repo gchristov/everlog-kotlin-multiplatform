@@ -1,7 +1,7 @@
 package com.everlog.ui.activities.home.pro
 
 import com.everlog.android.pro.data.model.ELProSkuDetails
-import com.everlog.ui.activities.base.BaseActivityMvpView
+import com.everlog.android.common.mvp.activity.BaseActivityMvpView
 import rx.Observable
 
 interface MvpViewPro : BaseActivityMvpView {

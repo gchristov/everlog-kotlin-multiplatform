@@ -1,5 +1,6 @@
 package com.everlog.ui.dialog
 
+import com.everlog.android.common.design.R as DesignR
 import android.app.AlertDialog
 import android.content.Context
 import android.content.DialogInterface
@@ -13,12 +14,13 @@ import android.widget.EditText
 import android.widget.FrameLayout
 import android.widget.TextView
 import com.everlog.R
+import com.everlog.android.common.mvp.dialog.ToastBuilder
 import com.everlog.android.settings.data.SettingsManager
-import com.everlog.ui.dialog.DialogBuilder.MetricDialogType
-import com.everlog.ui.dialog.DialogBuilder.StringDialogType
-import com.everlog.utils.Utils
+import com.everlog.ui.dialog.AppDialogs.MetricDialogType
+import com.everlog.ui.dialog.AppDialogs.StringDialogType
+import com.everlog.android.common.mvp.util.Utils
 import com.everlog.utils.format.weightUnitAbbreviation
-import com.everlog.utils.input.KeyboardUtils
+import com.everlog.android.common.mvp.util.KeyboardUtils
 import rx.Observable
 import rx.subjects.PublishSubject
 
@@ -48,7 +50,7 @@ internal class InputDialogs {
             }
 
             // Create dialog.
-            val builder = AlertDialog.Builder(context, R.style.DarkDialogTheme)
+            val builder = AlertDialog.Builder(context, DesignR.style.DarkDialogTheme)
             builder.setTitle(title)
 
             // Attach buttons.
@@ -129,7 +131,7 @@ internal class InputDialogs {
             }
 
             // Create dialog.
-            val builder = AlertDialog.Builder(context, R.style.DarkDialogTheme)
+            val builder = AlertDialog.Builder(context, DesignR.style.DarkDialogTheme)
             builder.setTitle(title)
 
             // Attach buttons.

@@ -25,7 +25,7 @@ Common modules:
 | `common:compose` | The design system (theme and elements), `CommonComposeActivity` and shared components |
 | `common:compose-test` | Compose UI test dependencies, test manifest and finders |
 | `common:mvvm` | `CommonViewModel`, `ViewModelFactory` |
-| `common:mvp` | The XML/MVP bases: presenters, base activities, fragments, bottom sheets, dialogs, shared views and adapters |
+| `common:mvp` | The XML/MVP bases: presenters, base activities, fragments, bottom sheets and views, the generic prompts, EventBus and the broadcasts every presenter listens to, the vendored adapter |
 | `common:firebase` | Firebase, `FirestorePathManager`, the analytics interface |
 | `common:persistence` | `PreferencesManager`, the app's key-value storage. The user's settings (`SettingsManager`) go to `settings:data` |
 | `common:datasync` | `DataSync`, the cache-first sync layer (the app wires its instance in `AppDataSync`) |
@@ -47,6 +47,8 @@ The convention plugins enforce these: a module that declares a dependency breaki
 ## What a feature gets from the app
 
 A feature module can't see the app, but some of what it needs lives there for now: services built on the app's managers (analytics, the user, remote config) and other features' screens, which open through the app's `Navigator`. So each feature declares one interface for them, e.g. `ExerciseFeatureDependencies` in `exercise:feature`, and a holder for it (`ExerciseFeature.dependencies`). The app implements it (`application/features`) and registers it first thing in `ELApplication.onCreate`. The feature's activities read it and hand its parts to their view-models' own interfaces, so view-model tests still pass fakes.
+
+`common:mvp` does the same for what its bases need (screen views and the signed-in user check), with `CommonMvpDependencies`.
 
 This stands in for dependency injection while the app is split into modules. Each interface is shaped like constructor injection, a list of what the feature needs, so introducing a DI framework after the modularisation (TAS-468) only replaces how the app registers them; the interfaces and the features stay as they are.
 

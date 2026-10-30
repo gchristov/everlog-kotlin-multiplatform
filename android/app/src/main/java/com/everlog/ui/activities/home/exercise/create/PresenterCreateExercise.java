@@ -11,12 +11,14 @@ import com.everlog.data.migration.Migration;
 import com.everlog.data.migration.MultiPartUpdateExercise;
 import com.everlog.android.common.data.model.exercise.ELExercise;
 import com.everlog.managers.analytics.AnalyticsManager;
+import com.everlog.managers.auth.LocalUserManager;
 import com.everlog.managers.firebase.FirebaseStorageManager;
 import com.everlog.managers.firebase.FirestorePathManager;
-import com.everlog.ui.activities.base.BaseActivityPresenter;
+import com.everlog.ui.navigator.PresenterNavigator;
+import com.everlog.android.common.mvp.activity.BaseActivityPresenter;
 import com.everlog.utils.ArrayResourceTypeUtils;
-import com.everlog.utils.Utils;
-import com.everlog.utils.input.KeyboardUtils;
+import com.everlog.android.common.mvp.util.Utils;
+import com.everlog.android.common.mvp.util.KeyboardUtils;
 import com.google.firebase.firestore.SetOptions;
 import com.imagepick.ImagePickerOptions;
 import com.imagepick.ImagePickerResult;
@@ -165,7 +167,7 @@ public class PresenterCreateExercise extends BaseActivityPresenter<MvpViewCreate
                     } else if (result instanceof ImagePickerResult.Removed) {
                         handleImagePicked(null);
                     } else if (result instanceof ImagePickerResult.PermissionDenied) {
-                        navigator.promptForAppSettings(R.string.create_exercise_error_no_permissions);
+                        PresenterNavigator.getNavigator(this).promptForAppSettings(R.string.create_exercise_error_no_permissions);
                     }
                 }, this::handleError));
     }
@@ -194,7 +196,7 @@ public class PresenterCreateExercise extends BaseActivityPresenter<MvpViewCreate
         toEdit = getMvpView().getItemToEdit();
         mEditMode = toEdit != null;
         if (toEdit == null) {
-            toEdit = ELExercise.newExercise(getUserAccount().getId());
+            toEdit = ELExercise.newExercise(LocalUserManager.getUser().getId());
             toEdit.setName(getMvpView().getNameToCreate());
         }
     }

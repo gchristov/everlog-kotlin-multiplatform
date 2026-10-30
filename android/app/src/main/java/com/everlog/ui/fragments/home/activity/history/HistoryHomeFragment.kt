@@ -14,11 +14,11 @@ import com.everlog.android.settings.data.SettingsManager
 import com.everlog.config.AppConfig
 import com.everlog.databinding.FragmentHistoryHomeBinding
 import com.everlog.managers.analytics.AnalyticsConstants
-import com.everlog.ui.activities.base.BaseActivity
+import com.everlog.android.common.mvp.activity.BaseActivity
 import com.everlog.ui.adapters.CalendarAdapter
-import com.everlog.ui.fragments.base.BaseFragmentMvpView
-import com.everlog.ui.fragments.base.BaseFragmentPresenter
-import com.everlog.ui.fragments.base.BaseTabFragment
+import com.everlog.android.common.mvp.fragment.BaseFragmentMvpView
+import com.everlog.android.common.mvp.fragment.BaseFragmentPresenter
+import com.everlog.android.common.mvp.fragment.BaseTabFragment
 import com.everlog.utils.toJava
 import org.threeten.bp.LocalDate
 import rx.Observable

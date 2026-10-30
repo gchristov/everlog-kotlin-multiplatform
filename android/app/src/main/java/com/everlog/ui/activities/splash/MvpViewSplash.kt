@@ -1,6 +1,6 @@
 package com.everlog.ui.activities.splash
 
-import com.everlog.ui.activities.base.BaseActivityMvpView
+import com.everlog.android.common.mvp.activity.BaseActivityMvpView
 
 interface MvpViewSplash : BaseActivityMvpView {
 

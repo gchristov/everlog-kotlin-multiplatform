@@ -11,9 +11,9 @@ import com.everlog.R
 import com.everlog.constants.ELConstants
 import com.everlog.databinding.ActivitySetTypePickerBinding
 import com.everlog.managers.analytics.AnalyticsConstants
-import com.everlog.ui.activities.base.BaseActivity
-import com.everlog.ui.activities.base.BaseActivityMvpView
-import com.everlog.ui.activities.base.BaseActivityPresenter
+import com.everlog.android.common.mvp.activity.BaseActivity
+import com.everlog.android.common.mvp.activity.BaseActivityMvpView
+import com.everlog.android.common.mvp.activity.BaseActivityPresenter
 import com.everlog.android.common.design.R as DesignR
 
 class SetTypePickerActivity : BaseActivity(), MvpViewSetTypePicker {

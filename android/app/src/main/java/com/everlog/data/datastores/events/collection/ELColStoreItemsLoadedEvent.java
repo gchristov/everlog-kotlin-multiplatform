@@ -1,6 +1,6 @@
 package com.everlog.data.datastores.events.collection;
 
-import com.everlog.data.datastores.events.BaseEvent;
+import com.everlog.android.common.mvp.BaseEvent;
 
 import java.util.List;
 

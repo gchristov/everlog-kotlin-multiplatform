@@ -2,7 +2,6 @@ package com.everlog.ui.fragments.home.exercise.info
 
 import com.everlog.android.common.kotlin.Load
 import com.everlog.android.common.test.FakeCoroutineDispatcher
-import com.everlog.android.common.test.FakeCoroutineDispatcher
 import com.everlog.android.exercise.data.model.library.ExerciseGuide
 import com.everlog.data.controllers.exerciseguide.LoadExerciseGuideUseCase
 import com.google.common.truth.Truth.assertThat

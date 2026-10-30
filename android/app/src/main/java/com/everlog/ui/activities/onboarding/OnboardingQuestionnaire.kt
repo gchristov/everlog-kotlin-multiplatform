@@ -1,5 +1,6 @@
 package com.everlog.ui.activities.onboarding
 
+import com.everlog.android.common.design.R as DesignR
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.SizeTransform
@@ -448,7 +449,7 @@ private fun ReminderTimeDialog(
         title = stringResource(R.string.onboarding_reminder_time_title),
         onDismissRequest = onDismiss,
         primaryAction = AppDialogAction(
-            text = stringResource(R.string.ok),
+            text = stringResource(DesignR.string.ok),
             onClick = { onConfirm(pickerState.hour, pickerState.minute) },
         ),
         secondaryAction = AppDialogAction(text = stringResource(R.string.cancel), onClick = onDismiss),

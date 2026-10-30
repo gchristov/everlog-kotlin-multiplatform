@@ -1,18 +1,14 @@
 <resources>
 
     <dimen name="activity_margin">16dp</dimen>
-    <dimen name="activity_margin_half">8dp</dimen>
     <dimen name="activity_margin_half_half">4dp</dimen>
     <dimen name="activity_margin_half_half_half">2dp</dimen>
-    <dimen name="activity_margin_double">32dp</dimen>
     <dimen name="activity_margin_triple">48dp</dimen>
 
     <dimen name="margin_6">6dp</dimen>
     <dimen name="margin_10">10dp</dimen>
-    <dimen name="margin_12">12dp</dimen>
     <dimen name="margin_14">14dp</dimen>
     <dimen name="margin_18">18dp</dimen>
-    <dimen name="margin_20">20dp</dimen>
     <dimen name="margin_22">22dp</dimen>
     <dimen name="margin_24">24dp</dimen>
     <dimen name="margin_26">26dp</dimen>

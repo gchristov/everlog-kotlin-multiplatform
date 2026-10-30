@@ -15,9 +15,9 @@ import com.everlog.constants.ELConstants.EXTRA_PLAN_UUID
 import com.everlog.databinding.ActivityPlanDetailsBinding
 import com.everlog.managers.analytics.AnalyticsConstants
 import com.everlog.managers.auth.LocalUserManager
-import com.everlog.ui.activities.base.BaseActivity
-import com.everlog.ui.activities.base.BaseActivityMvpView
-import com.everlog.ui.activities.base.BaseActivityPresenter
+import com.everlog.android.common.mvp.activity.BaseActivity
+import com.everlog.android.common.mvp.activity.BaseActivityMvpView
+import com.everlog.android.common.mvp.activity.BaseActivityPresenter
 import com.everlog.ui.fragments.plan.WeekDaysFragment
 import com.everlog.ui.views.viewpager.ELFragmentPagerAdapter
 import com.everlog.utils.glide.ELGlideModule
@@ -114,7 +114,7 @@ class PlanDetailsActivity : BaseActivity(), MvpViewPlanDetails {
         invalidateOptionsMenu()
         // Start/Stop
         binding.root.findViewById<Button>(R.id.toggleStartBtn).setText(if (showStop) R.string.plan_details_stop else R.string.plan_details_start)
-        binding.root.findViewById<Button>(R.id.toggleStartBtn).setBackgroundResource(if (showStop) R.drawable.rounded_corners_btn_three else R.drawable.rounded_corners_btn_one)
+        binding.root.findViewById<Button>(R.id.toggleStartBtn).setBackgroundResource(if (showStop) DesignR.drawable.rounded_corners_btn_three else DesignR.drawable.rounded_corners_btn_one)
         binding.root.findViewById<Button>(R.id.toggleStartBtn).setTextColor(ContextCompat.getColor(this, if (showStop) DesignR.color.main_accent else DesignR.color.background_card))
     }
 

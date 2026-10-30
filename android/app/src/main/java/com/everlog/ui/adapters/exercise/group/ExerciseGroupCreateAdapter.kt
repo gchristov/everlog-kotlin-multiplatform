@@ -26,6 +26,7 @@ import com.everlog.android.common.data.model.set.ELSetType
 import com.everlog.android.common.kotlin.NumberUtils
 import com.everlog.android.common.kotlin.format.FormatUtils.Companion.formatDurationShort
 import com.everlog.android.common.kotlin.format.FormatUtils.Companion.formatSetWeight
+import com.everlog.android.common.mvp.dialog.ToastBuilder
 import com.everlog.android.settings.data.SettingsManager
 import com.everlog.config.AppConfig
 import com.everlog.databinding.RowExerciseGroupCreateBinding
@@ -34,14 +35,13 @@ import com.everlog.databinding.RowSetCreateBinding
 import com.everlog.managers.analytics.AnalyticsConstants
 import com.everlog.managers.analytics.AnalyticsManager
 import com.everlog.ui.activities.home.exercise.details.ExerciseDetailsActivity
-import com.everlog.ui.dialog.DialogBuilder
-import com.everlog.ui.dialog.ToastBuilder
+import com.everlog.ui.dialog.AppDialogs
 import com.everlog.ui.navigator.ELNavigator
 import com.everlog.ui.views.showPopupMenu
 import com.everlog.ui.views.viewpager.wrap.ObjectAtPositionPagerAdapter
 import com.everlog.utils.ArrayResourceTypeUtils
 import com.everlog.utils.Throttler
-import com.everlog.utils.Utils
+import com.everlog.android.common.mvp.util.Utils
 import com.everlog.utils.ViewUtils
 import com.everlog.utils.format.weightUnitAbbreviation
 import rx.Observable
@@ -50,7 +50,6 @@ import java.util.LinkedList
 import java.util.Locale
 import java.util.Queue
 import java.util.concurrent.TimeUnit
-
 
 class ExerciseGroupCreateAdapter {
 
@@ -525,9 +524,9 @@ class ExerciseGroupCreateAdapter {
         }
 
         fun onClickWeightPanel(view: View) {
-            Observable.just(DialogBuilder.showInputNumberDialog(view.context,
+            Observable.just(AppDialogs.showInputNumberDialog(view.context,
                     if (getSet().isWeightEntered()) formatSetWeight(getSet().getWeight(SettingsManager.manager.weightUnit())) else null,
-                    DialogBuilder.MetricDialogType.WEIGHT)
+                    AppDialogs.MetricDialogType.WEIGHT)
                     .subscribe { text: String? ->
                         binding.weightField.text = if (TextUtils.isEmpty(text)) "" else text
                     })
@@ -535,13 +534,13 @@ class ExerciseGroupCreateAdapter {
 
         fun onClickRepsPanel(view: View) {
             val obs = if (!builder.allowSetTemplates) {
-                DialogBuilder.showInputNumberDialog(view.context,
+                AppDialogs.showInputNumberDialog(view.context,
                         if (getSet().isRepsEntered()) getSet().getReps().toString() + "" else null,
-                        DialogBuilder.MetricDialogType.REPS)
+                        AppDialogs.MetricDialogType.REPS)
             } else {
-                DialogBuilder.showInputNumberDialog(view.context,
+                AppDialogs.showInputNumberDialog(view.context,
                         if (getSet().isRequiredRepsEntered()) getSet().getRequiredReps().toString() + "" else null,
-                        DialogBuilder.MetricDialogType.REPS_REQUIRED)
+                        AppDialogs.MetricDialogType.REPS_REQUIRED)
             }
             Observable.just(obs
                     .subscribe { text: String? ->
@@ -551,13 +550,13 @@ class ExerciseGroupCreateAdapter {
 
         fun onClickTimePanel(view: View) {
             val obs = if (!builder.allowSetTemplates) {
-                DialogBuilder.showPickerDurationDialog(view.context,
+                AppDialogs.showPickerDurationDialog(view.context,
                         if (getSet().isTimeEntered()) getSet().getTimeSeconds() else AppConfig.configuration.defaultExerciseTimeSeconds,
-                        DialogBuilder.DurationPickerDialogType.EXERCISE_TIME)
+                        AppDialogs.DurationPickerDialogType.EXERCISE_TIME)
             } else {
-                DialogBuilder.showPickerDurationDialog(view.context,
+                AppDialogs.showPickerDurationDialog(view.context,
                         if (getSet().isRequiredTimeEntered()) getSet().getRequiredTimeSeconds() else AppConfig.configuration.defaultExerciseTimeSeconds,
-                        DialogBuilder.DurationPickerDialogType.EXERCISE_TIME_REQUIRED)
+                        AppDialogs.DurationPickerDialogType.EXERCISE_TIME_REQUIRED)
             }
             Observable.just(obs
                     .subscribe { value: Int ->
@@ -691,7 +690,7 @@ class ExerciseGroupCreateAdapter {
                 binding.repsPanel.visibility = if (getSet().isRequiredRepsEntered() && getSet().canShowRepOptions()) View.VISIBLE else View.GONE
                 binding.repsField.text = getSet().getRequiredReps().toString()
                 binding.repsField.gravity = Gravity.CENTER_VERTICAL or Gravity.RIGHT
-                binding.repsField.setPadding(0, 0, ViewUtils.dpToPxFromRaw(itemView.context, R.dimen.margin_20), 0)
+                binding.repsField.setPadding(0, 0, ViewUtils.dpToPxFromRaw(itemView.context, DesignR.dimen.margin_20), 0)
             }
         }
 

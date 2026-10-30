@@ -167,7 +167,7 @@ class CalendarAdapter {
             binding.calendarDayMonthText.visibility = View.GONE
             binding.calendarDayMonthText.text = mItem.date.month?.getDisplayName(java.time.format.TextStyle.SHORT, Locale.getDefault())
             binding.calendarDayText.text = mItem.date.dayOfMonth.toString()
-            binding.calendarDayText.setTextColor(ContextCompat.getColor(view.context, R.color.white_base))
+            binding.calendarDayText.setTextColor(ContextCompat.getColor(view.context, DesignR.color.white_base))
             binding.calendarDayText.setTypeface(null, Typeface.NORMAL)
             binding.calendarDayContainer.visibility = if (isOwnerThisMonth()) View.VISIBLE else View.INVISIBLE
             binding.calendarDayContainer.alpha = 1f

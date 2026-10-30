@@ -9,7 +9,6 @@ import com.everlog.android.common.data.model.set.ELSet
 import com.everlog.android.common.data.model.set.ELSetType
 import com.everlog.android.common.kotlin.Load
 import com.everlog.android.common.test.FakeCoroutineDispatcher
-import com.everlog.android.common.test.FakeCoroutineDispatcher
 import com.everlog.android.common.test.InMemorySharedPreferences
 import com.everlog.android.exercise.data.model.library.LibraryExercise
 import com.everlog.android.settings.testfixtures.install

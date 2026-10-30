@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Buttons -->
+    <style name="Button">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:foreground">?attr/selectableItemBackground</item>
+        <item name="android:background">@drawable/rounded_corners_btn_one</item>
+        <item name="android:textColor">@color/background_card</item>
+        <item name="android:textAllCaps">false</item>
+        <item name="android:paddingLeft">@dimen/activity_margin_double</item>
+        <item name="android:paddingTop">@dimen/activity_margin_half</item>
+        <item name="android:paddingRight">@dimen/activity_margin_double</item>
+        <item name="android:paddingBottom">@dimen/activity_margin_half</item>
+    </style>
+    <style name="Button.Four" parent="Button.Three">
+        <item name="android:background">@null</item>
+    </style>
+    <style name="Button.Three" parent="Button.Two">
+        <item name="android:background">@drawable/rounded_corners_btn_three</item>
+    </style>
+    <style name="Button.Two" parent="Button">
+        <item name="android:background">@drawable/rounded_corners_btn_two</item>
+        <item name="android:textColor">@color/main_accent</item>
+    </style>
+    <!-- Dialog styling -->
+    <style name="CustomBottomSheetDialogTheme" parent="Theme.Design.Light.BottomSheetDialog">
+        <item name="bottomSheetStyle">@style/CustomBottomSheetStyle</item>
+    </style>
+    <style name="CustomBottomSheetStyle" parent="Widget.Design.BottomSheet.Modal">
+        <item name="android:background">@android:color/transparent</item>
+        <item name="behavior_peekHeight">250dp</item>
+    </style>
+    <style name="DarkDialogTheme" parent="Theme.AppCompat.Light.Dialog.Alert">
+        <item name="android:background">@color/background_card</item>
+        <item name="android:textColor">@color/white_base</item>
+        <item name="android:textColorPrimary">@color/gray_5</item>
+        <!-- The buttons as in the Compose AppDialog: positive is the primary action, negative the
+        secondary one and neutral any other -->
+        <item name="android:buttonBarStyle">@style/DialogButtonBar</item>
+        <item name="android:buttonBarPositiveButtonStyle">@style/DialogButton.Primary</item>
+        <item name="android:buttonBarNegativeButtonStyle">@style/DialogButton.Secondary</item>
+        <item name="android:buttonBarNeutralButtonStyle">@style/DialogButton.Tertiary</item>
+    </style>
+    <style name="DarkDialogTheme.RadioGroup" parent="DarkDialogTheme">
+        <item name="android:textColorAlertDialogListItem">@color/gray_5</item>
+        <item name="android:textColorSecondary">@color/gray_5</item>
+    </style>
+    <!-- The app's buttons with less padding than a full-width one, so up to three fit on a row, and shorter
+    (no 48dp minimum, so about 36dp). Where they still don't fit, Android stacks them. Keep labels short:
+    Android first measures a dialog at about 320dp wide, and if the buttons stack there, the dialog keeps
+    that taller height even after they fit on one row at its real width. -->
+    <style name="DialogButton.Primary" parent="Button">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_marginStart">@dimen/activity_margin_half</item>
+        <item name="android:minWidth">0dp</item>
+        <item name="android:minHeight">0dp</item>
+        <item name="android:paddingLeft">@dimen/margin_12</item>
+        <item name="android:paddingRight">@dimen/margin_12</item>
+    </style>
+    <style name="DialogButton.Secondary" parent="Button.Three">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_marginStart">@dimen/activity_margin_half</item>
+        <item name="android:minWidth">0dp</item>
+        <item name="android:minHeight">0dp</item>
+        <item name="android:paddingLeft">@dimen/margin_12</item>
+        <item name="android:paddingRight">@dimen/margin_12</item>
+    </style>
+    <style name="DialogButton.Tertiary" parent="Button.Four">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:minWidth">0dp</item>
+        <item name="android:minHeight">0dp</item>
+        <item name="android:paddingLeft">@dimen/activity_margin_half</item>
+        <item name="android:paddingRight">@dimen/activity_margin_half</item>
+    </style>
+    <!-- Around the buttons. Android's button bar pads them 12dp at the sides and 4dp above and below,
+    so with this they line up with the title's 24dp margin and sit 24dp from the bottom, as in Compose. -->
+    <style name="DialogButtonBar" parent="@android:style/Widget.Material.ButtonBar.AlertDialog">
+        <item name="android:paddingStart">@dimen/margin_12</item>
+        <item name="android:paddingEnd">@dimen/margin_12</item>
+        <item name="android:paddingTop">@dimen/activity_margin_half</item>
+        <item name="android:paddingBottom">@dimen/margin_20</item>
+    </style>
+</resources>

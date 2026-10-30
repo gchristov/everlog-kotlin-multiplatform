@@ -169,7 +169,7 @@ class ChartRenderer(context: Context) {
             val pieData = PieData(dataSet)
             pieData.setValueFormatter(PercentFormatter())
             pieData.setValueTextSize(12f)
-            pieData.setValueTextColor(ContextCompat.getColor(chart.context, R.color.white_base))
+            pieData.setValueTextColor(ContextCompat.getColor(chart.context, DesignR.color.white_base))
             pieData.setValueTypeface(Typeface.create("sans-serif", Typeface.BOLD))
             chart.data = pieData
         }
@@ -266,7 +266,7 @@ class ChartRenderer(context: Context) {
         chart.holeRadius = 56f
         chart.transparentCircleRadius = 59f
         chart.setTransparentCircleAlpha(110)
-        chart.setTransparentCircleColor(ContextCompat.getColor(chart.context, R.color.white_base))
+        chart.setTransparentCircleColor(ContextCompat.getColor(chart.context, DesignR.color.white_base))
         chart.setDrawCenterText(true)
         chart.centerText = getPieCenterText(chart.context)
         chart.rotationAngle = 0F

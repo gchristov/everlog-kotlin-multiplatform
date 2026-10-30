@@ -10,9 +10,9 @@ import com.everlog.databinding.ViewNotificationHomeBinding
 import com.everlog.managers.analytics.AnalyticsManager
 import com.everlog.managers.apprate.AppLaunchManager
 import com.everlog.ui.activities.home.HomeActivity
-import com.everlog.ui.views.base.BaseView
-import com.everlog.ui.views.base.BaseViewMvpView
-import com.everlog.ui.views.base.BaseViewPresenter
+import com.everlog.android.common.mvp.view.BaseView
+import com.everlog.android.common.mvp.view.BaseViewMvpView
+import com.everlog.android.common.mvp.view.BaseViewPresenter
 import com.everlog.utils.glide.ELGlideModule
 import com.jakewharton.rxbinding.view.RxView
 import rx.Observable

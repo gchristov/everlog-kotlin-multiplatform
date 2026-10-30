@@ -9,14 +9,17 @@ import com.android.billingclient.api.BillingResult
 import com.android.billingclient.api.Purchase
 import com.android.billingclient.api.SkuDetails
 import com.everlog.R
+import com.everlog.android.common.mvp.MvpBroadcasts
 import com.everlog.android.pro.data.model.ELProSkuDetails
 import com.everlog.constants.ELConstants
 import com.everlog.managers.analytics.AnalyticsManager
+import com.everlog.managers.auth.LocalUserManager
 import com.everlog.managers.billing.BillingBridge
 import com.everlog.managers.billing.BillingManager
-import com.everlog.ui.activities.base.BaseActivityPresenter
+import com.everlog.android.common.mvp.activity.BaseActivityPresenter
 import com.everlog.ui.activities.home.congratulate.CongratulateActivity
 import com.everlog.ui.adapters.ProUpgradeAdapter
+import com.everlog.ui.navigator.navigator
 import timber.log.Timber
 
 class PresenterPro : BaseActivityPresenter<MvpViewPro>() {
@@ -200,7 +203,7 @@ class PresenterPro : BaseActivityPresenter<MvpViewPro>() {
             override fun onPurchasesRestored() {
                 if (isAttachedToView) {
                     mvpView?.toggleLoadingOverlay(false)
-                    if (userAccount?.isPro() == true) {
+                    if (LocalUserManager.getUser()?.isPro() == true) {
                         mvpView?.showLongToast(R.string.pro_restore_success)
                         mvpView?.closeScreen()
                     } else {
@@ -251,7 +254,7 @@ class PresenterPro : BaseActivityPresenter<MvpViewPro>() {
     private fun handlePurchaseAlreadyOwned() {
         if (isAttachedToView) {
             AnalyticsManager.manager.proBuyAlreadyOwned()
-            sendBroadcast(Intent(ELConstants.BROADCAST_PRO_CHANGED))
+            sendBroadcast(Intent(MvpBroadcasts.PRO_CHANGED))
             mvpView.closeScreen()
         }
     }

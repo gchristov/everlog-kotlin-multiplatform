@@ -16,8 +16,8 @@ import com.everlog.android.common.data.model.exercise.ELRoutineExercise
 import com.everlog.android.common.data.model.set.ELSet
 import com.everlog.android.common.data.model.workout.ELWorkout
 import com.everlog.android.common.data.model.workout.ELWorkoutState
+import com.everlog.android.common.mvp.MvpBroadcasts
 import com.everlog.android.settings.data.SettingsManager
-import com.everlog.constants.ELConstants
 import com.everlog.data.controllers.workoutprefill.BaseWorkoutPrefillController.PrefillSource
 import com.everlog.data.controllers.workoutprefill.WorkoutPrefillController
 import com.everlog.data.datastores.ELDatastore
@@ -29,7 +29,8 @@ import com.everlog.managers.apprate.AppLaunchManager
 import com.everlog.ui.activities.home.exercisegroup.PresenterCreateExerciseGroups
 import com.everlog.ui.activities.home.workout.utils.*
 import com.everlog.ui.activities.home.workout.utils.TickTimeController.OnTimeTick
-import com.everlog.utils.Utils
+import com.everlog.ui.navigator.navigator
+import com.everlog.android.common.mvp.util.Utils
 import com.google.firebase.firestore.SetOptions
 // import icepick.State
 import rx.Observable
@@ -72,7 +73,7 @@ class PresenterWorkout : PresenterCreateExerciseGroups<MvpViewWorkout>() {
         observeServiceCompleteSetClick()
 
         notifyWorkoutServiceStart()
-        LocalBroadcastManager.getInstance(mvpView.context).sendBroadcast(Intent(ELConstants.BROADCAST_WORKOUT_STARTED))
+        LocalBroadcastManager.getInstance(mvpView.context).sendBroadcast(Intent(MvpBroadcasts.WORKOUT_STARTED))
         loadWorkout()
     }
 

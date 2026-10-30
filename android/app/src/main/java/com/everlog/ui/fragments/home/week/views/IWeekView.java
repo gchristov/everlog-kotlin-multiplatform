@@ -2,7 +2,7 @@ package com.everlog.ui.fragments.home.week.views;
 
 import android.view.View;
 
-import com.everlog.ui.activities.base.BaseActivity;
+import com.everlog.android.common.mvp.activity.BaseActivity;
 import com.everlog.ui.fragments.home.week.WeekViewState;
 
 public interface IWeekView {

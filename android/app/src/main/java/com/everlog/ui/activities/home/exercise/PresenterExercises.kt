@@ -17,14 +17,16 @@ import com.everlog.constants.ELConstants
 import com.everlog.data.datastores.ELDatastore
 import com.everlog.data.datastores.exercises.ELExercisesStore.*
 import com.everlog.managers.analytics.AnalyticsManager
-import com.everlog.ui.activities.base.BaseActivityPresenter
+import com.everlog.managers.auth.LocalUserManager
+import com.everlog.android.common.mvp.activity.BaseActivityPresenter
 import com.everlog.ui.activities.home.exercise.details.ExerciseDetailsActivity
 import com.everlog.ui.adapters.exercise.ExerciseAdapter
 import com.everlog.ui.adapters.exercise.ExerciseAdapter.OnExerciseListener
-import com.everlog.ui.dialog.DialogBuilder
+import com.everlog.ui.dialog.AppDialogs
+import com.everlog.ui.navigator.navigator
 import com.everlog.ui.views.revealcircle.FilterExercisesView
 import com.everlog.utils.ArrayResourceTypeUtils
-import com.everlog.utils.input.KeyboardUtils
+import com.everlog.android.common.mvp.util.KeyboardUtils
 import com.google.firebase.firestore.SetOptions
 // import icepick.State
 import org.greenrobot.eventbus.Subscribe
@@ -178,7 +180,7 @@ class PresenterExercises : BaseActivityPresenter<MvpViewExercises>() {
     private fun observeExerciseSuggestionCategory(suggestion: ExerciseSuggestion) {
         KeyboardUtils.hideKeyboard(mvpView.getActivity())
         val utils = ArrayResourceTypeUtils.withExerciseCategories()
-        subscriptions.add(mvpView.showPickerMultipleChoice(utils.titles, -1, DialogBuilder.MultipleChoiceDialogType.EXERCISE_CATEGORY)
+        subscriptions.add(mvpView.showPickerMultipleChoice(utils.titles, -1, AppDialogs.MultipleChoiceDialogType.EXERCISE_CATEGORY)
                 .compose(applyUISchedulers())
                 .subscribe({ value -> handleSaveExerciseSuggestion(suggestion, utils.types[value]) }, { throwable -> handleError(throwable) }))
     }
@@ -243,7 +245,7 @@ class PresenterExercises : BaseActivityPresenter<MvpViewExercises>() {
 
     private fun handleSaveExerciseSuggestion(suggestion: ExerciseSuggestion, category: String) {
         // Add new exercise directly to list for speed
-        val toSave = ELExercise.newExercise(getUserAccount()!!.id!!, suggestion, category)
+        val toSave = ELExercise.newExercise(LocalUserManager.getUser()!!.id!!, suggestion, category)
         mExercises.add(toSave)
         mLastFilter.categories.clear() // In case another category has been selected
         // Refresh list

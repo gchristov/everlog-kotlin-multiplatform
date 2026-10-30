@@ -49,7 +49,7 @@ class ExerciseCategoryAdapter {
         }
 
         private fun renderSelection() {
-            binding.title.setTextColor(ContextCompat.getColor(itemView.context, if (item.selected) DesignR.color.background_card else R.color.white_base))
+            binding.title.setTextColor(ContextCompat.getColor(itemView.context, if (item.selected) DesignR.color.background_card else DesignR.color.white_base))
             binding.title.setBackgroundResource(if (item.selected) R.drawable.rounded_corners_exercise_muscle_group_selected else R.drawable.rounded_corners_exercise_muscle_group_unselected)
         }
     }

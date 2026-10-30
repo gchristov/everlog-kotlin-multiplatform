@@ -21,12 +21,13 @@ import com.everlog.android.common.data.model.workout.RangeType;
 import com.everlog.managers.PlanManager;
 import com.everlog.managers.analytics.AnalyticsManager;
 import com.everlog.managers.apprate.RatePromptTrigger;
-import com.everlog.ui.activities.base.BaseActivityPresenter;
+import com.everlog.android.common.mvp.activity.BaseActivityPresenter;
+import com.everlog.android.common.mvp.util.Utils;
 import com.everlog.ui.activities.home.exercisegroup.DefaultCreateExerciseGroupsActivity;
 import com.everlog.ui.adapters.WorkoutDetailsStatsAdapter;
 import com.everlog.ui.adapters.exercise.group.ExerciseGroupSummaryAdapter;
-import com.everlog.ui.dialog.DialogBuilder;
-import com.everlog.utils.Utils;
+import com.everlog.ui.dialog.AppDialogs;
+import com.everlog.ui.navigator.PresenterNavigator;
 import com.google.firebase.firestore.SetOptions;
 
 import org.apache.commons.lang3.SerializationUtils;
@@ -111,7 +112,7 @@ public class PresenterWorkoutDetails extends BaseActivityPresenter<MvpViewWorkou
                         Utils.runWithDelay(() -> {
                             handleCheckWeeklyGoalComplete();
                         }, 500);
-                        navigator.requestRatePrompt(new RatePromptTrigger.WorkoutCompleted(toEdit), RATE_PROMPT_DELAY_MILLIS);
+                        PresenterNavigator.getNavigator(this).requestRatePrompt(new RatePromptTrigger.WorkoutCompleted(toEdit), RATE_PROMPT_DELAY_MILLIS);
                     }
                 }
                 mLoadedItemOnce = true;
@@ -130,7 +131,7 @@ public class PresenterWorkoutDetails extends BaseActivityPresenter<MvpViewWorkou
                 .compose(applyUISchedulers())
                 .subscribe(action -> {
                     AnalyticsManager.manager.workoutDetailsShared();
-                    navigator.shareWorkout(toEdit);
+                    PresenterNavigator.getNavigator(this).shareWorkout(toEdit);
                 }, throwable -> handleError(throwable)));
     }
 
@@ -173,7 +174,7 @@ public class PresenterWorkoutDetails extends BaseActivityPresenter<MvpViewWorkou
     }
 
     private void observeEditNameConfirm() {
-        subscriptions.add(getMvpView().showStringPrompt(toEdit.getName(), DialogBuilder.StringDialogType.WORKOUT_NAME)
+        subscriptions.add(getMvpView().showStringPrompt(toEdit.getName(), AppDialogs.StringDialogType.WORKOUT_NAME)
                 .compose(applyUISchedulers())
                 .subscribe(newName -> {
                     toEdit.setName(newName);
@@ -198,7 +199,7 @@ public class PresenterWorkoutDetails extends BaseActivityPresenter<MvpViewWorkou
     }
 
     private void observeEditNoteConfirm() {
-        subscriptions.add(getMvpView().showStringPrompt(toEdit.getNote(), DialogBuilder.StringDialogType.WORKOUT_NOTE)
+        subscriptions.add(getMvpView().showStringPrompt(toEdit.getNote(), AppDialogs.StringDialogType.WORKOUT_NOTE)
                 .compose(applyUISchedulers())
                 .subscribe(note -> {
                     toEdit.setNote(TextUtils.isEmpty(note) ? null : note);
@@ -340,7 +341,7 @@ public class PresenterWorkoutDetails extends BaseActivityPresenter<MvpViewWorkou
             @Override
             public void onClickEditExercises(ELWorkout workout) {
                 AnalyticsManager.manager.workoutDetailsExercisesModified();
-                navigator.openEditExerciseGroups(new DefaultCreateExerciseGroupsActivity.Companion.Properties()
+                PresenterNavigator.getNavigator(PresenterWorkoutDetails.this).openEditExerciseGroups(new DefaultCreateExerciseGroupsActivity.Companion.Properties()
                         .groups(workout.getExerciseGroups()));
             }
 

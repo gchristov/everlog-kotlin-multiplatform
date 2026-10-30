@@ -3,6 +3,7 @@ package com.everlog.ui.fragments.home.exercise.statistics
 import com.everlog.config.FeedbackSource
 import com.everlog.managers.RemoteConfigManager
 import com.everlog.ui.fragments.home.exercise.BasePresenterExerciseTab
+import com.everlog.ui.navigator.navigator
 
 class PresenterExerciseStatistics : BasePresenterExerciseTab<MvpViewExerciseStatistics>() {
 

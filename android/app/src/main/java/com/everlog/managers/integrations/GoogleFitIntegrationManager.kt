@@ -10,7 +10,7 @@ import com.everlog.constants.ELActivityRequestCodes
 import com.everlog.data.datastores.ELDatastore
 import com.everlog.managers.analytics.AnalyticsManager
 import com.everlog.managers.auth.LocalUserManager
-import com.everlog.ui.fragments.base.BaseFragmentMvpView
+import com.everlog.android.common.mvp.fragment.BaseFragmentMvpView
 import com.everlog.ui.navigator.ELNavigator
 import com.everlog.utils.device.DeviceUtils
 import com.google.android.gms.auth.api.signin.GoogleSignIn

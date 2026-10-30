@@ -47,13 +47,13 @@ public class WeekDayView extends LinearLayout {
             binding.containerLayout.setBackgroundResource(R.drawable.rounded_corners_week_day);
         } else if (today == day.getDate().getDayOfMonth()) {
             // Today
-            binding.nameLbl.setTextColor(ContextCompat.getColor(getContext(), R.color.white_base));
-            binding.dateLbl.setTextColor(ContextCompat.getColor(getContext(), R.color.white_base));
+            binding.nameLbl.setTextColor(ContextCompat.getColor(getContext(), com.everlog.android.common.design.R.color.white_base));
+            binding.dateLbl.setTextColor(ContextCompat.getColor(getContext(), com.everlog.android.common.design.R.color.white_base));
             binding.containerLayout.setBackground(null);
         } else {
             // Inactive
-            binding.dateLbl.setTextColor(ContextCompat.getColor(getContext(), R.color.gray_5));
-            binding.nameLbl.setTextColor(ContextCompat.getColor(getContext(), R.color.gray_5));
+            binding.dateLbl.setTextColor(ContextCompat.getColor(getContext(), com.everlog.android.common.design.R.color.gray_5));
+            binding.nameLbl.setTextColor(ContextCompat.getColor(getContext(), com.everlog.android.common.design.R.color.gray_5));
             binding.containerLayout.setBackground(null);
         }
     }

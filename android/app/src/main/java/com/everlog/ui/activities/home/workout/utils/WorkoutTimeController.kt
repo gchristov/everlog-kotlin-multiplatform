@@ -12,7 +12,7 @@ import com.everlog.managers.analytics.AnalyticsManager
 import com.everlog.ui.activities.home.workout.MvpViewWorkout
 import com.everlog.ui.navigator.Navigator
 import com.everlog.ui.views.revealcircle.WorkoutTimerView
-import com.everlog.utils.Utils
+import com.everlog.android.common.mvp.util.Utils
 
 class WorkoutTimeController(mvpView: MvpViewWorkout?,
                             workout: ELWorkout,

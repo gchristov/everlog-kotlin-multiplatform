@@ -3,6 +3,7 @@ package com.everlog.ui.dialog
 import android.app.Dialog
 import android.content.Context
 import com.everlog.R
+import com.everlog.android.common.mvp.dialog.DialogBuilder
 import com.everlog.managers.auth.LocalUserManager
 import rx.Observable
 
@@ -13,7 +14,7 @@ internal class AppBlockerDialogs {
         private var mDialog: Dialog? = null
 
         @JvmStatic
-        fun showAppBlockerDialog(context: Context, type: DialogBuilder.AppBlockerDialogType): Observable<Int> {
+        fun showAppBlockerDialog(context: Context, type: AppDialogs.AppBlockerDialogType): Observable<Int> {
             try {
                 mDialog?.dismiss()
             } catch (e: Exception) {
@@ -24,7 +25,7 @@ internal class AppBlockerDialogs {
             var yes = ""
             var no = ""
             when (type) {
-                DialogBuilder.AppBlockerDialogType.NEWSLETTER -> {
+                AppDialogs.AppBlockerDialogType.NEWSLETTER -> {
                     title = context.getString(R.string.notifications_newsletter_title)
                     message = context.getString(R.string.notifications_newsletter_prompt, LocalUserManager.getUser()!!.getFirstName())
                     yes = context.getString(R.string.notifications_newsletter_prompt_yes)

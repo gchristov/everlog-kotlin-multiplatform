@@ -1,7 +1,7 @@
 package com.everlog.ui.activities.home.plan.create
 
 import com.everlog.android.plan.data.model.ELPlan
-import com.everlog.ui.activities.base.BaseActivityMvpView
+import com.everlog.android.common.mvp.activity.BaseActivityMvpView
 import rx.Observable
 
 interface MvpViewCreatePlan : BaseActivityMvpView {

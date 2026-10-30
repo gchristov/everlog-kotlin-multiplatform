@@ -12,8 +12,9 @@ import com.everlog.ui.adapters.CreatorAdapter
 import com.everlog.ui.adapters.items.Creator
 import com.everlog.ui.adapters.plan.PlanAdapter
 import com.everlog.ui.adapters.routine.RoutineAdapter
-import com.everlog.ui.fragments.base.BaseFragmentPresenter
-import com.everlog.utils.Utils
+import com.everlog.ui.navigator.navigator
+import com.everlog.android.common.mvp.fragment.BaseFragmentPresenter
+import com.everlog.android.common.mvp.util.Utils
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
 

@@ -4,8 +4,8 @@ import android.content.Intent
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.everlog.android.auth.data.model.ELUser
 import com.everlog.android.common.kotlin.AppContext
+import com.everlog.android.common.mvp.MvpBroadcasts
 import com.everlog.android.settings.data.SettingsManager
-import com.everlog.constants.ELConstants
 import com.everlog.data.datastores.base.ELDocumentStore
 import com.everlog.data.datastores.events.document.ELDocStoreItemLoadedEvent
 import com.everlog.managers.auth.LocalUserManager
@@ -42,7 +42,7 @@ class ELUserStore : ELDocumentStore<ELUser>() {
                 checkProDependentFeatures()
             }
             // Notify interested listeners of subscription change
-            LocalBroadcastManager.getInstance(AppContext).sendBroadcast(Intent(ELConstants.BROADCAST_PRO_CHANGED))
+            LocalBroadcastManager.getInstance(AppContext).sendBroadcast(Intent(MvpBroadcasts.PRO_CHANGED))
         }
     }
 

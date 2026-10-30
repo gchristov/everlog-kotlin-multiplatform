@@ -12,7 +12,6 @@ import android.view.WindowManager.LayoutParams;
 import android.widget.ImageView;
 
 import com.everlog.R;
-import com.everlog.utils.device.DeviceUtils;
 import com.everlog.utils.glide.ELGlideModule;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -31,11 +30,6 @@ public class ActivityUtils {
             ELGlideModule.loadImage(imageResId, background);
         }
     }
-
-	public static void setOrientation(Activity a) {
-		if ( !DeviceUtils.isTablet(a) )
-            a.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-	}
 
 	public static void setCurrentOrientationAsFixed(AppCompatActivity a) {
         if (a.getResources().getConfiguration().orientation == ActivityInfo.SCREEN_ORIENTATION_PORTRAIT)
@@ -76,7 +70,7 @@ public class ActivityUtils {
             Drawable drawable = menuItem.getIcon();
             if (drawable != null) {
                 drawable.mutate();
-                drawable.setColorFilter(context.getResources().getColor(R.color.white_base), PorterDuff.Mode.SRC_ATOP);
+                drawable.setColorFilter(context.getResources().getColor(com.everlog.android.common.design.R.color.white_base), PorterDuff.Mode.SRC_ATOP);
             }
         }
 	}

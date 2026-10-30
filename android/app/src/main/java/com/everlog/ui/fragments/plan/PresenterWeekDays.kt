@@ -8,7 +8,8 @@ import com.everlog.android.plan.data.model.ELPlanDay
 import com.everlog.managers.PlanManager
 import com.everlog.ui.adapters.plan.PlanDayAdapter
 import com.everlog.ui.adapters.plan.applyProLock
-import com.everlog.ui.fragments.base.BaseFragmentPresenter
+import com.everlog.ui.navigator.navigator
+import com.everlog.android.common.mvp.fragment.BaseFragmentPresenter
 
 class PresenterWeekDays : BaseFragmentPresenter<MvpViewWeekDays>() {
 

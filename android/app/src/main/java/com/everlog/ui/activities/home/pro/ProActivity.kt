@@ -7,9 +7,9 @@ import com.everlog.R
 import com.everlog.android.pro.data.model.ELProSkuDetails
 import com.everlog.databinding.ActivityProBinding
 import com.everlog.managers.analytics.AnalyticsConstants
-import com.everlog.ui.activities.base.BaseActivity
-import com.everlog.ui.activities.base.BaseActivityMvpView
-import com.everlog.ui.activities.base.BaseActivityPresenter
+import com.everlog.android.common.mvp.activity.BaseActivity
+import com.everlog.android.common.mvp.activity.BaseActivityMvpView
+import com.everlog.android.common.mvp.activity.BaseActivityPresenter
 import com.everlog.utils.ActivityUtils
 import com.everlog.utils.text.TextViewUtils
 import com.everlog.utils.text.TouchableSpan

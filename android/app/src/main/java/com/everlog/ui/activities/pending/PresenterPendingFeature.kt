@@ -1,6 +1,6 @@
 package com.everlog.ui.activities.pending
 
-import com.everlog.ui.activities.base.BaseActivityPresenter
+import com.everlog.android.common.mvp.activity.BaseActivityPresenter
 
 abstract class PresenterPendingFeature<T: MvpViewPendingFeature> : BaseActivityPresenter<T>() {
 

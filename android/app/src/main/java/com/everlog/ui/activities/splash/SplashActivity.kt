@@ -7,9 +7,9 @@ import com.everlog.R
 import com.everlog.managers.AppUsageReminderManager
 import com.everlog.managers.analytics.AnalyticsConstants
 import com.everlog.managers.analytics.AnalyticsManager
-import com.everlog.ui.activities.base.BaseActivity
-import com.everlog.ui.activities.base.BaseActivityMvpView
-import com.everlog.ui.activities.base.BaseActivityPresenter
+import com.everlog.android.common.mvp.activity.BaseActivity
+import com.everlog.android.common.mvp.activity.BaseActivityMvpView
+import com.everlog.android.common.mvp.activity.BaseActivityPresenter
 
 class SplashActivity : BaseActivity(), MvpViewSplash {
 

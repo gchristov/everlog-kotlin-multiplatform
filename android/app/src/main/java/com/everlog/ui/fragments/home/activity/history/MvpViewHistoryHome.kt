@@ -1,6 +1,6 @@
 package com.everlog.ui.fragments.home.activity.history
 
-import com.everlog.ui.fragments.base.BaseFragmentMvpView
+import com.everlog.android.common.mvp.fragment.BaseFragmentMvpView
 import org.threeten.bp.LocalDate
 import rx.Observable
 import java.util.*

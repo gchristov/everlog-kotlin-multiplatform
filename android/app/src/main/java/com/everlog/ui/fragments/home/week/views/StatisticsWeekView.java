@@ -9,7 +9,7 @@ import com.everlog.android.common.kotlin.DateExtKt;
 import com.everlog.android.common.kotlin.format.StatsFormatUtils;
 import com.everlog.android.settings.data.SettingsManager;
 import com.everlog.data.controllers.statistics.UserStatsController;
-import com.everlog.ui.activities.base.BaseActivity;
+import com.everlog.android.common.mvp.activity.BaseActivity;
 import com.everlog.ui.fragments.home.week.WeekViewState;
 import com.everlog.ui.views.WeekDay;
 import com.everlog.ui.views.WeekDayView;

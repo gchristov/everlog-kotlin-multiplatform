@@ -49,6 +49,8 @@ tapTargetView = "1.15.0"
 maskableLayout = "1.3.2"
 circularProgressView = "0.1.2"
 eventbus = "3.3.1"
+# The version Firebase already brought in
+localbroadcastmanager = "1.0.0"
 timber = "5.0.1"
 # The version Retrofit's converter already brought in
 gson = "2.10.1"
@@ -167,6 +169,7 @@ taptargetview = { group = "com.getkeepsafe.taptargetview", name = "taptargetview
 maskable-layout = { group = "com.github.christophesmet", name = "android_maskable_layout", version.ref = "maskableLayout" }
 circular-progress-view = { group = "com.github.VaibhavLakhera", name = "Circular-Progress-View", version.ref = "circularProgressView" }
 eventbus = { group = "org.greenrobot", name = "eventbus", version.ref = "eventbus" }
+androidx-localbroadcastmanager = { group = "androidx.localbroadcastmanager", name = "localbroadcastmanager", version.ref = "localbroadcastmanager" }
 timber = { group = "com.jakewharton.timber", name = "timber", version.ref = "timber" }
 gson = { group = "com.google.code.gson", name = "gson", version.ref = "gson" }
 hyperlog = { group = "com.github.hypertrack", name = "hyperlog-android", version.ref = "hyperlog" }

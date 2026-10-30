@@ -11,9 +11,9 @@ import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.everlog.R
 import com.everlog.databinding.ActivityCoverImagePickerBinding
 import com.everlog.managers.analytics.AnalyticsConstants
-import com.everlog.ui.activities.base.BaseActivity
-import com.everlog.ui.activities.base.BaseActivityMvpView
-import com.everlog.ui.activities.base.BaseActivityPresenter
+import com.everlog.android.common.mvp.activity.BaseActivity
+import com.everlog.android.common.mvp.activity.BaseActivityMvpView
+import com.everlog.android.common.mvp.activity.BaseActivityPresenter
 import com.everlog.ui.views.recyclerview.infinitescroll.InfiniteRecyclerView
 import com.everlog.utils.ViewUtils
 import com.everlog.utils.device.DeviceUtils

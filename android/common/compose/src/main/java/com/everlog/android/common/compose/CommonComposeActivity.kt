@@ -9,6 +9,7 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.runtime.Composable
 import com.everlog.android.common.compose.theme.Theme
+import com.everlog.android.common.kotlin.hasRequiredExtras
 import com.everlog.android.common.design.R as DesignR
 
 abstract class CommonComposeActivity : ComponentActivity() {

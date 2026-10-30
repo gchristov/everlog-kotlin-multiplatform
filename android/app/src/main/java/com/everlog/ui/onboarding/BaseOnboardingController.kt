@@ -4,7 +4,7 @@ import android.app.Activity
 import android.graphics.Point
 import android.graphics.Rect
 import android.view.View
-import com.everlog.utils.Utils
+import com.everlog.android.common.mvp.util.Utils
 import com.everlog.utils.device.DeviceUtils
 import com.everlog.utils.ViewUtils
 import com.getkeepsafe.taptargetview.TapTarget

@@ -23,4 +23,6 @@
     <color name="warning">#F2B84B</color>
     <color name="warning_faded_1">#2A2210</color>
     <color name="warning_faded_2">#6B5420</color>
+    <color name="gray_5">#c0c0c0</color>
+    <color name="white_base">#fff</color>
 </resources>

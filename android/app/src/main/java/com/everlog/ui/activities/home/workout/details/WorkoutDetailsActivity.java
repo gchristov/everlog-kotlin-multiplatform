@@ -6,10 +6,10 @@ import android.view.View;
 
 import com.everlog.R;
 import com.everlog.android.common.data.model.workout.ELWorkout;
+import com.everlog.android.common.mvp.activity.BaseActivity;
+import com.everlog.android.common.mvp.activity.BaseActivityPresenter;
 import com.everlog.databinding.ActivityWorkoutDetailsBinding;
-import com.everlog.ui.activities.base.BaseActivity;
-import com.everlog.ui.activities.base.BaseActivityPresenter;
-import com.everlog.ui.dialog.DialogBuilder;
+import com.everlog.ui.dialog.AppDialogs;
 import com.everlog.utils.ActivityUtils;
 import com.google.android.material.appbar.AppBarLayout;
 
@@ -185,13 +185,13 @@ public class WorkoutDetailsActivity extends BaseActivity implements MvpViewWorko
     }
 
     @Override
-    public Observable<String> showStringPrompt(String name, DialogBuilder.StringDialogType type) {
-        return DialogBuilder.showInputStringDialog(this, name, type);
+    public Observable<String> showStringPrompt(String name, AppDialogs.StringDialogType type) {
+        return AppDialogs.showInputStringDialog(this, name, type);
     }
 
     @Override
     public Observable<Date> showDatePrompt(Date date) {
-        return DialogBuilder.showDateTimeDialog(this, date);
+        return AppDialogs.showDateTimeDialog(this, date);
     }
 
     @Override

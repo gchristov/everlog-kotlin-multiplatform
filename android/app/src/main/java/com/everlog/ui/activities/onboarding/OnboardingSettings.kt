@@ -4,8 +4,8 @@ import android.content.Context
 import android.content.Intent
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.everlog.android.common.kotlin.WeightUnit
+import com.everlog.android.common.mvp.MvpBroadcasts
 import com.everlog.android.settings.data.SettingsManager
-import com.everlog.constants.ELConstants
 import com.everlog.managers.analytics.AnalyticsManager
 
 /**
@@ -37,6 +37,6 @@ class RealOnboardingSettings(context: Context) : OnboardingSettings {
 
     // As the Settings screen does, so open screens show the new value
     private fun notifyChanged() {
-        LocalBroadcastManager.getInstance(context).sendBroadcast(Intent(ELConstants.BROADCAST_PREFERENCES_CHANGED))
+        LocalBroadcastManager.getInstance(context).sendBroadcast(Intent(MvpBroadcasts.PREFERENCES_CHANGED))
     }
 }

@@ -8,7 +8,7 @@ import androidx.fragment.app.FragmentManager
 import androidx.viewpager.widget.ViewPager
 import com.everlog.R
 import com.everlog.databinding.ViewTabsBinding
-import com.everlog.ui.fragments.base.BaseTabFragment
+import com.everlog.android.common.mvp.fragment.BaseTabFragment
 import com.everlog.ui.views.viewpager.ELFragmentPagerAdapter
 import com.google.android.material.tabs.TabLayout
 

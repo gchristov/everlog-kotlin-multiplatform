@@ -19,12 +19,14 @@ import com.everlog.data.datastores.ELDatastore
 import com.everlog.data.datastores.plans.ELDocStorePlanLoadedEvent
 import com.everlog.managers.PlanManager
 import com.everlog.managers.analytics.AnalyticsManager
-import com.everlog.ui.activities.base.BaseActivityPresenter
+import com.everlog.managers.auth.LocalUserManager
+import com.everlog.android.common.mvp.activity.BaseActivityPresenter
 import com.everlog.ui.adapters.plan.PlanDayAdapter
 import com.everlog.ui.adapters.plan.PlanWeekAdapter
 import com.everlog.ui.adapters.plan.applyProLock
-import com.everlog.utils.Utils
-import com.everlog.utils.input.KeyboardUtils
+import com.everlog.ui.navigator.navigator
+import com.everlog.android.common.mvp.util.Utils
+import com.everlog.android.common.mvp.util.KeyboardUtils
 import com.google.firebase.firestore.SetOptions
 import com.imagepick.dialog.ELPickerDialog
 // import icepick.State
@@ -449,7 +451,7 @@ class PresenterCreatePlan : BaseActivityPresenter<MvpViewCreatePlan>() {
              of days and workouts attached, which will definitely go over at some point.
             */
             if (toEdit == null) {
-                toEdit = ELPlan.newPlan(userAccount!!.id)
+                toEdit = ELPlan.newPlan(LocalUserManager.getUser()!!.id)
                 ELDatastore.planStore().create(toEdit!!, SetOptions.merge())
             }
         }

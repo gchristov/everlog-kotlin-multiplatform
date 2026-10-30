@@ -9,9 +9,9 @@ import androidx.core.widget.ImageViewCompat
 import com.everlog.R
 import com.everlog.config.AppConfig
 import com.everlog.databinding.ViewNotificationWarningBinding
-import com.everlog.ui.views.base.BaseView
-import com.everlog.ui.views.base.BaseViewMvpView
-import com.everlog.ui.views.base.BaseViewPresenter
+import com.everlog.android.common.mvp.view.BaseView
+import com.everlog.android.common.mvp.view.BaseViewMvpView
+import com.everlog.android.common.mvp.view.BaseViewPresenter
 import com.everlog.utils.ViewUtils
 import com.jakewharton.rxbinding.view.RxView
 import rx.Observable

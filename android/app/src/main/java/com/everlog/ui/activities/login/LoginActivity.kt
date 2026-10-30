@@ -14,13 +14,13 @@ import com.everlog.R
 import com.everlog.android.common.kotlin.AppContext
 import com.everlog.databinding.ActivityLoginBinding
 import com.everlog.managers.analytics.AnalyticsConstants
-import com.everlog.ui.activities.base.BaseActivity
-import com.everlog.ui.activities.base.BaseActivityMvpView
-import com.everlog.ui.activities.base.BaseActivityPresenter
+import com.everlog.android.common.mvp.activity.BaseActivity
+import com.everlog.android.common.mvp.activity.BaseActivityMvpView
+import com.everlog.android.common.mvp.activity.BaseActivityPresenter
 import com.everlog.ui.views.CheckBoxTriStates
-import com.everlog.utils.Utils
+import com.everlog.android.common.mvp.util.Utils
 import com.everlog.utils.ViewUtils
-import com.everlog.utils.input.KeyboardUtils
+import com.everlog.android.common.mvp.util.KeyboardUtils
 import com.everlog.utils.text.TextViewUtils
 import com.everlog.utils.text.TouchableSpan
 import com.github.leandroborgesferreira.loadingbutton.customViews.CircularProgressButton
@@ -200,9 +200,9 @@ class LoginActivity : BaseActivity(), MvpViewLogin {
 
     override fun showGoogleLoading(state: LoadingState) {
         if (binding.formLogin.root.visibility == View.VISIBLE) {
-            setButtonLoading(binding.formLogin.loginGoogleBtn, state, R.color.white_base, com.google.android.gms.base.R.drawable.googleg_disabled_color_18)
+            setButtonLoading(binding.formLogin.loginGoogleBtn, state, DesignR.color.white_base, com.google.android.gms.base.R.drawable.googleg_disabled_color_18)
         } else {
-            setButtonLoading(binding.formRegister.registerGoogleBtn, state, R.color.white_base, com.google.android.gms.base.R.drawable.googleg_disabled_color_18)
+            setButtonLoading(binding.formRegister.registerGoogleBtn, state, DesignR.color.white_base, com.google.android.gms.base.R.drawable.googleg_disabled_color_18)
         }
     }
 

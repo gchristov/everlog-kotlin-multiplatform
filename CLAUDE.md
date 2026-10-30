@@ -66,10 +66,10 @@ The Android app is split into Gradle modules under `android/`: `app`, `common/<n
 
 ### Pattern: MVP + RxJava 1 + EventBus (not MVVM/coroutines)
 
-- `ui/mvp/BasePresenter` / `BaseMvpView` — every screen has a Presenter attached/detached with the view lifecycle (`attachView`/`detachView`). Presenters hold a `CompositeSubscription` for RxJava subscriptions and register themselves on the global `EventBus` (greenrobot) for cross-screen notifications (e.g. data store updates).
+- `BasePresenter` / `BaseMvpView` (`common:mvp`, with the base activity, fragments, bottom sheets and views, `DialogBuilder`'s generic prompts and EventBus) — every screen has a Presenter attached/detached with the view lifecycle (`attachView`/`detachView`). Presenters hold a `CompositeSubscription` for RxJava subscriptions and register themselves on the global `EventBus` (greenrobot) for cross-screen notifications (e.g. data store updates).
 - Async work uses RxJava 1 schedulers (`applySchedulers()`/`applyIOSchedulers()`/`applyUISchedulers()` helpers on `BasePresenter`), not coroutines/Flow.
-- Screen-to-screen navigation is abstracted behind the `Navigator` interface (`ui/navigator/Navigator.java`), implemented by `ELNavigator`. Presenters navigate via `this.navigator`, never by constructing `Intent`s directly.
-- `ui/activities`, `ui/fragments`, `ui/adapters`, `ui/bottomsheets`, `ui/dialog`, `ui/views` are organized by feature area under `home/` (e.g. `home/workout`, `home/plan`, `home/routine`, `home/exercise`, `home/statistics` via fragments, `home/pro` for paid features).
+- Screen-to-screen navigation is abstracted behind the `Navigator` interface (`ui/navigator/Navigator.java`), implemented by `ELNavigator`. The app's presenters navigate via the `navigator` extension (`ui/navigator/PresenterNavigator.kt`), never by constructing `Intent`s directly; a feature module's presenters go through their feature's dependencies.
+- `ui/activities`, `ui/fragments`, `ui/adapters`, `ui/bottomsheets`, `ui/dialog` (`AppDialogs`, the app's own pickers and inputs), `ui/views` are organized by feature area under `home/` (e.g. `home/workout`, `home/plan`, `home/routine`, `home/exercise`, `home/statistics` via fragments, `home/pro` for paid features).
 
 ### Data layer: Firestore-backed stores, not a local DB
 

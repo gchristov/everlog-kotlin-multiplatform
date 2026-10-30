@@ -12,8 +12,10 @@ import com.everlog.constants.ELConstants
 import com.everlog.data.datastores.ELDatastore
 import com.everlog.managers.PlanManager
 import com.everlog.managers.analytics.AnalyticsManager
+import com.everlog.managers.auth.LocalUserManager
 import com.everlog.ui.activities.home.exercisegroup.PresenterCreateExerciseGroups
 import com.everlog.ui.adapters.routine.RoutineCreateHeaderAdapter
+import com.everlog.ui.navigator.navigator
 import com.google.firebase.firestore.SetOptions
 // import icepick.State
 import java.util.*
@@ -133,7 +135,7 @@ class PresenterCreateRoutine : PresenterCreateExerciseGroups<MvpViewCreateRoutin
         if (toEdit == null) {
             toEdit = mvpView?.getItemToEdit()
             if (toEdit == null) {
-                toEdit = buildNewRoutine(getUserAccount()?.id!!)
+                toEdit = buildNewRoutine(LocalUserManager.getUser()?.id!!)
             } else {
                 // If we're editing a routine, don't assume changes made
                 mLocalChangesMade = false

@@ -1,5 +1,6 @@
 package com.everlog.ui.adapters.plan
 
+import com.everlog.android.common.design.R as DesignR
 import android.content.Context
 import android.graphics.Typeface
 import android.view.LayoutInflater
@@ -120,7 +121,7 @@ class PlanDayAdapter {
             } else {
                 binding.dayInfoFieldComplete.text = if (item.getRoutine() != null) item.getRoutine()?.name else itemView.context.getText(R.string.plan_details_rest_title)
                 binding.dayInfoFieldComplete.setTypeface(null, Typeface.NORMAL)
-                binding.dayInfoFieldComplete.setTextColor(ContextCompat.getColor(itemView.context, R.color.gray_5))
+                binding.dayInfoFieldComplete.setTextColor(ContextCompat.getColor(itemView.context, DesignR.color.gray_5))
             }
             binding.dayInfoFieldIncomplete.text = binding.dayInfoFieldComplete.text
             binding.dayInfoFieldIncomplete.typeface = binding.dayInfoFieldComplete.typeface

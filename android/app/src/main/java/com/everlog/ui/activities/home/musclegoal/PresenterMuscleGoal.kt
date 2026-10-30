@@ -3,14 +3,16 @@ package com.everlog.ui.activities.home.musclegoal
 import android.content.Intent
 import com.ahamed.multiviewadapter.DataListManager
 import com.ahamed.multiviewadapter.RecyclerAdapter
+import com.everlog.android.common.mvp.MvpBroadcasts
 import com.everlog.android.settings.data.SettingsManager
 import com.everlog.config.FeedbackSource
-import com.everlog.constants.ELConstants
 import com.everlog.managers.RemoteConfigManager
 import com.everlog.managers.analytics.AnalyticsManager
-import com.everlog.ui.activities.base.BaseActivityPresenter
+import com.everlog.managers.auth.LocalUserManager
+import com.everlog.android.common.mvp.activity.BaseActivityPresenter
 import com.everlog.ui.adapters.MuscleGoalAdapter
-import com.everlog.utils.Utils
+import com.everlog.ui.navigator.navigator
+import com.everlog.android.common.mvp.util.Utils
 
 class PresenterMuscleGoal : BaseActivityPresenter<MvpViewMuscleGoal>() {
 
@@ -57,7 +59,7 @@ class PresenterMuscleGoal : BaseActivityPresenter<MvpViewMuscleGoal>() {
         mAdapter.notifyDataSetChanged()
         mvpView?.showData()
         // Check for pending Pro selection
-        if (mPendingMuscleGoal?.proLocked() == true && userAccount?.isPro() == true) {
+        if (mPendingMuscleGoal?.proLocked() == true && LocalUserManager.getUser()?.isPro() == true) {
             setMuscleGoal(mPendingMuscleGoal!!, false)
         }
     }
@@ -93,7 +95,7 @@ class PresenterMuscleGoal : BaseActivityPresenter<MvpViewMuscleGoal>() {
     }
 
     private fun notifyPreferencesChanged() {
-        sendBroadcast(Intent(ELConstants.BROADCAST_PREFERENCES_CHANGED))
+        sendBroadcast(Intent(MvpBroadcasts.PREFERENCES_CHANGED))
     }
 
     // Setup

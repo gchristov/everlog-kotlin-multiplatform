@@ -4,7 +4,7 @@ import com.everlog.android.common.data.model.ELRoutine
 import com.everlog.android.plan.data.model.ELPlan
 import com.everlog.data.datastores.routines.ELRoutineDecorator
 import com.everlog.managers.firebase.FirestorePathManager
-import com.everlog.utils.Utils
+import com.everlog.android.common.mvp.util.Utils
 import com.google.android.gms.tasks.Tasks
 import com.google.firebase.firestore.FieldPath
 import com.google.firebase.firestore.Source

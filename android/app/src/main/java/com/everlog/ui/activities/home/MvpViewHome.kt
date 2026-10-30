@@ -2,7 +2,7 @@ package com.everlog.ui.activities.home
 
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.IntentSenderRequest
-import com.everlog.ui.activities.base.BaseActivityMvpView
+import com.everlog.android.common.mvp.activity.BaseActivityMvpView
 import rx.Observable
 
 interface MvpViewHome : BaseActivityMvpView {

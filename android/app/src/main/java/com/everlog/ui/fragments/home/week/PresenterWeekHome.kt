@@ -23,8 +23,9 @@ import com.everlog.managers.PlanManager
 import com.everlog.managers.RemoteConfigManager
 import com.everlog.managers.analytics.AnalyticsManager
 import com.everlog.ui.activities.home.congratulate.CongratulateActivity
-import com.everlog.ui.fragments.base.BaseFragmentPresenter
-import com.everlog.utils.Utils
+import com.everlog.ui.navigator.navigator
+import com.everlog.android.common.mvp.fragment.BaseFragmentPresenter
+import com.everlog.android.common.mvp.util.Utils
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
 import rx.subjects.PublishSubject

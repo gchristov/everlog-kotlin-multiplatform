@@ -1,5 +1,6 @@
 package com.everlog.ui.views
 
+import com.everlog.android.common.design.R as DesignR
 import android.content.Context
 import android.graphics.Outline
 import android.util.AttributeSet
@@ -41,7 +42,7 @@ class FloatingFooterView @JvmOverloads constructor(
         content = findViewById(R.id.floatingFooterContent)
 
         val margin = resources.getDimensionPixelSize(R.dimen.activity_margin)
-        val bottomMargin = resources.getDimensionPixelSize(R.dimen.activity_margin_half)
+        val bottomMargin = resources.getDimensionPixelSize(DesignR.dimen.activity_margin_half)
         updatePadding(left = margin, right = margin, bottom = bottomMargin)
         ViewCompat.setOnApplyWindowInsetsListener(this) { _, insets ->
             val navigationBars = insets.getInsets(WindowInsetsCompat.Type.navigationBars())
