@@ -5,8 +5,8 @@ import android.app.TimePickerDialog
 import android.content.Context
 import android.widget.DatePicker
 import android.widget.TimePicker
+import com.everlog.android.common.kotlin.toLocalDateTime
 import com.everlog.managers.preferences.SettingsManager
-import com.everlog.utils.toLocalDateTime
 import org.threeten.bp.DateTimeUtils
 import org.threeten.bp.LocalDateTime
 import org.threeten.bp.ZoneId

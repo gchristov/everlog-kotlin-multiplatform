@@ -9,6 +9,7 @@ import android.widget.TextView
 import androidx.core.content.ContextCompat
 import com.everlog.BuildConfig
 import com.everlog.R
+import com.everlog.android.common.kotlin.format.FormatUtils
 import com.everlog.data.model.ELIntegration
 import com.everlog.data.model.ELUser
 import com.everlog.databinding.FragmentHomeSettingsBinding
@@ -22,7 +23,6 @@ import com.everlog.ui.fragments.base.BaseFragmentPresenter
 import com.everlog.ui.fragments.base.BaseTabFragment
 import com.everlog.ui.views.CheckBoxTriStates
 import com.everlog.utils.ViewUtils
-import com.everlog.utils.format.FormatUtils
 import com.everlog.utils.glide.ELGlideModule
 import com.jakewharton.rxbinding.view.RxView
 import org.threeten.bp.DayOfWeek

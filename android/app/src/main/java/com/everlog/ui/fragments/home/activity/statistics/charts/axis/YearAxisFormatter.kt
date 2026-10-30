@@ -1,6 +1,6 @@
 package com.everlog.ui.fragments.home.activity.statistics.charts.axis
 
-import com.everlog.utils.format.FormatUtils
+import com.everlog.android.common.kotlin.format.FormatUtils
 import com.github.mikephil.charting.formatter.ValueFormatter
 import timber.log.Timber
 

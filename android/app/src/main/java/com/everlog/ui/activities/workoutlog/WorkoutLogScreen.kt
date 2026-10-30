@@ -52,6 +52,7 @@ import com.everlog.android.common.compose.elements.keypad.AppKeypadTimer
 import com.everlog.android.common.compose.elements.keypad.AppKeypadTimerStyle
 import com.everlog.android.common.compose.elements.keypad.AppKeypadToggle
 import com.everlog.android.common.compose.theme.Theme
+import com.everlog.android.common.kotlin.UnitUtils
 import com.everlog.data.controllers.workoutsession.SetMode
 import com.everlog.data.controllers.workoutsession.SetRef
 import com.everlog.data.controllers.workoutsession.ValueField
@@ -73,7 +74,6 @@ import com.everlog.ui.components.exercisetable.SuggestedMark
 import com.everlog.ui.components.exercisetable.TableView
 import com.everlog.ui.components.exercisetable.exerciseName
 import com.everlog.ui.components.exercisetable.focusLabel
-import com.everlog.utils.UnitUtils
 import com.everlog.utils.format.formatClock
 import com.everlog.utils.format.displayWeight
 import com.everlog.utils.format.formatWeight

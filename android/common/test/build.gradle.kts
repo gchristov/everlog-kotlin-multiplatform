@@ -13,6 +13,5 @@ dependencies {
     api(libs.junit)
     api(libs.kotlin.test.junit)
     api(libs.truth)
-    api(libs.threetenbp)
     api(libs.kotlinx.coroutines.android)
 }

@@ -1,7 +1,7 @@
-package com.everlog.utils.format
+package com.everlog.android.common.kotlin.format
 
-import com.everlog.utils.NumberUtils
-import com.everlog.utils.isSameYear
+import com.everlog.android.common.kotlin.NumberUtils
+import com.everlog.android.common.kotlin.isSameYear
 import org.apache.commons.lang3.time.DurationFormatUtils
 import org.threeten.bp.Instant
 import org.threeten.bp.ZoneId

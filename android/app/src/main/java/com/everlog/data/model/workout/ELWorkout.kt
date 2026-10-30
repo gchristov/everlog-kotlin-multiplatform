@@ -2,6 +2,17 @@ package com.everlog.data.model.workout
 
 import com.everlog.R
 import com.everlog.android.common.kotlin.AppContext
+import com.everlog.android.common.kotlin.append
+import com.everlog.android.common.kotlin.format.FormatUtils
+import com.everlog.android.common.kotlin.format.StatsFormatUtils
+import com.everlog.android.common.kotlin.isSameDay
+import com.everlog.android.common.kotlin.isSameMonth
+import com.everlog.android.common.kotlin.isSameWeek
+import com.everlog.android.common.kotlin.isSameYear
+import com.everlog.android.common.kotlin.toDayOfMonthWithMonthOnlyTimestamp
+import com.everlog.android.common.kotlin.toDayOfMonthWithNoHourTimestamp
+import com.everlog.android.common.kotlin.toDayOfMonthWithYearOnlyTimestamp
+import com.everlog.android.common.kotlin.toLocalDate
 import com.everlog.constants.ELConstants
 import com.everlog.data.model.ELFirestoreModel
 import com.everlog.data.model.ELRoutine
@@ -11,9 +22,6 @@ import com.everlog.data.model.exercise.ELRoutineExercise
 import com.everlog.data.model.set.ELSet
 import com.everlog.managers.preferences.SettingsManager
 import com.everlog.ui.fragments.home.activity.statistics.StatisticsHomeFragment
-import com.everlog.utils.*
-import com.everlog.utils.format.FormatUtils
-import com.everlog.utils.format.StatsFormatUtils
 import com.google.firebase.firestore.Exclude
 import org.apache.commons.lang3.SerializationUtils
 import org.threeten.bp.Instant
@@ -256,7 +264,7 @@ data class ELWorkout(
     }
 
     private fun isThisWeek(): Boolean {
-        return Date().isSameWeek(completedDate)
+        return Date().isSameWeek(completedDate, SettingsManager.manager.firstDayOfWeek())
     }
 
     private fun isThisMonth(): Boolean {

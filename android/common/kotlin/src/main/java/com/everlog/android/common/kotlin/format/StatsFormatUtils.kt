@@ -1,4 +1,4 @@
-package com.everlog.utils.format
+package com.everlog.android.common.kotlin.format
 
 class StatsFormatUtils {
 

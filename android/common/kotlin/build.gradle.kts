@@ -9,4 +9,7 @@ android {
 dependencies {
     api(libs.kotlinx.coroutines.android)
     api(libs.arrow.core)
+    api(libs.threetenabp)
+    implementation(libs.commons.lang3)
+    implementation(libs.timber)
 }

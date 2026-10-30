@@ -2,12 +2,12 @@ package com.everlog.data.model.exercise
 
 import com.everlog.R
 import com.everlog.android.common.kotlin.AppContext
+import com.everlog.android.common.kotlin.append
+import com.everlog.android.common.kotlin.format.StatsFormatUtils
 import com.everlog.constants.ELConstants
 import com.everlog.data.model.ELFirestoreModel
 import com.everlog.data.model.set.ELSet
 import com.everlog.managers.preferences.SettingsManager
-import com.everlog.utils.append
-import com.everlog.utils.format.StatsFormatUtils
 import org.apache.commons.lang3.SerializationUtils
 import java.io.Serializable
 import java.util.*

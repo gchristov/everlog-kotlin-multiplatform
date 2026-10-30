@@ -2,11 +2,11 @@ package com.everlog.data.model
 
 import com.everlog.R
 import com.everlog.android.common.kotlin.AppContext
+import com.everlog.android.common.kotlin.append
+import com.everlog.android.common.kotlin.timeOfDayMessage
 import com.everlog.constants.ELConstants
 import com.everlog.data.model.exercise.ELExercise
 import com.everlog.data.model.exercise.ELExerciseGroup
-import com.everlog.utils.append
-import com.everlog.utils.timeOfDayMessage
 import java.io.Serializable
 import java.util.*
 

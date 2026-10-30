@@ -5,6 +5,8 @@ import android.view.View;
 import android.widget.TextView;
 
 import com.everlog.R;
+import com.everlog.android.common.kotlin.DateExtKt;
+import com.everlog.android.common.kotlin.format.StatsFormatUtils;
 import com.everlog.data.controllers.statistics.UserStatsController;
 import com.everlog.data.model.WeekDay;
 import com.everlog.managers.preferences.SettingsManager;
@@ -12,10 +14,8 @@ import com.everlog.ui.activities.base.BaseActivity;
 import com.everlog.ui.fragments.home.week.WeekViewState;
 import com.everlog.ui.views.WeekDayView;
 import com.everlog.ui.views.summarycard.SummaryCardWeek;
-import com.everlog.utils.DateExtKt;
 import com.everlog.utils.DayOfWeekExtKt;
 import com.everlog.utils.ViewUtils;
-import com.everlog.utils.format.StatsFormatUtils;
 import com.facebook.shimmer.ShimmerFrameLayout;
 import com.vaibhavlakhera.circularprogressview.CircularProgressView;
 

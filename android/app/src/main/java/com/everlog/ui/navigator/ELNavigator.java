@@ -65,7 +65,7 @@ import com.everlog.ui.activities.workoutlog.WorkoutLogActivity;
 import com.everlog.ui.dialog.DialogBuilder;
 import com.everlog.ui.dialog.ToastBuilder;
 import com.everlog.utils.ViewUtils;
-import com.everlog.utils.format.StatsFormatUtils;
+import com.everlog.android.common.kotlin.format.StatsFormatUtils;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 import com.imagepick.share.ELImageShare;

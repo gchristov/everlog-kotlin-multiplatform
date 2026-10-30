@@ -1,4 +1,4 @@
-package com.everlog.utils;
+package com.everlog.android.common.kotlin;
 
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
