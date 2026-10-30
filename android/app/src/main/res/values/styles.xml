@@ -258,9 +258,4 @@
 
     <!-- BottomSheet theme. -->
 
-    <style name="BottomSheet.StyleDialog.Dark" parent="BottomSheet.Dialog">
-        <item name="android:textColorPrimary">#d0d0d0</item>
-        <item name="android:textColorSecondary">#a0a0a0</item>
-        <item name="bs_dialogBackground">@color/background_base</item>
-    </style>
 </resources>

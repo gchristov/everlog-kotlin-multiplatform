@@ -10,7 +10,7 @@ import android.view.MenuItem;
 import android.view.ViewGroup;
 
 import com.cocosw.bottomsheet.BottomSheet;
-import com.everlog.R;
+import com.everlog.android.common.mvp.R;
 
 public final class MenuUtils {
 

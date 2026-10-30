@@ -27,6 +27,8 @@ dependencies {
     // ExerciseImageView shows ELExercise
     api(projects.android.common.data)
     implementation(libs.textDrawable)
+    implementation(libs.ucrop)
+    implementation(libs.bottomSheet)
     implementation(libs.maskable.layout) {
         isTransitive = false
     }

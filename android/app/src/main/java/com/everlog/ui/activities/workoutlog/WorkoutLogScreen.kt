@@ -304,7 +304,7 @@ private fun Header(state: WorkoutLogState, viewModel: WorkoutLogViewModel, onOpe
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(Theme.spacing.small),
     ) {
-        AppIconButton(onClick = viewModel::onClose, icon = ImageVector.vectorResource(R.drawable.ic_remove), contentDescription = stringResource(R.string.workout_log_close))
+        AppIconButton(onClick = viewModel::onClose, icon = ImageVector.vectorResource(DesignR.drawable.ic_remove), contentDescription = stringResource(R.string.workout_log_close))
         Column(modifier = Modifier.weight(1f)) {
             AppText(text = formatClock(state.elapsedSeconds), style = Theme.typography.heading.copy(fontFeatureSettings = "tnum"), maxLines = 1)
             if (state.name.isNotEmpty()) {

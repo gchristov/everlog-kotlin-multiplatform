@@ -11,7 +11,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
-import com.everlog.R
+import com.everlog.android.common.mvp.R
 import com.imagepick.dialog.ELPickerDialog
 import com.yalantis.ucrop.UCrop
 import com.everlog.android.common.design.R as DesignR
