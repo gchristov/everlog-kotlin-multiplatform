@@ -1,6 +1,6 @@
 package com.everlog.data.datastores.exercises
 
-import com.everlog.constants.ELConstants
+import com.everlog.android.common.firebase.FirestoreFields
 import com.everlog.data.datastores.base.ELCollectionStore
 import com.everlog.data.datastores.events.collection.ELColStoreItemAddedEvent
 import com.everlog.data.datastores.events.collection.ELColStoreItemModifiedEvent
@@ -46,7 +46,7 @@ class ELExercisesStore : ELCollectionStore<ELExercise>() {
 
     override fun getQuery(): Query {
         return FirestorePathManager.globalExercisesCollection
-                .orderBy(ELConstants.FIELD_NAME)
+                .orderBy(FirestoreFields.NAME)
     }
 
     override fun getTag(): String {

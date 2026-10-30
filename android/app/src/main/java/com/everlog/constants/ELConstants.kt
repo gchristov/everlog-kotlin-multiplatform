@@ -9,11 +9,6 @@ object ELConstants {
     const val URL_PRIVACY = "https://www.termsfeed.com/privacy-policy/68420a39232d3fc1b3e6d56275fed431"
     const val URL_PING = "https://google.com"
 
-    const val FIELD_CREATED_DATE = "createdDate"
-    const val FIELD_CREATED_BY_USER_ID = "createdByUserId"
-    const val FIELD_TYPE = "type"
-    const val FIELD_NAME = "name"
-    const val FIELD_UUID = "uuid"
     const val FIELD_CRASHLYTICS_USER_ID = "user_id"
 
     const val EXTRA_ROUTINE = "EXTRA_ROUTINE"

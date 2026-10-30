@@ -1,7 +1,7 @@
 package com.everlog.data.model.exercise
 
+import com.everlog.android.common.firebase.FirestoreFields
 import com.everlog.android.common.kotlin.WeightUnit
-import com.everlog.constants.ELConstants
 import com.everlog.data.model.ELFirestoreModel
 import com.everlog.data.model.set.ELSet
 import org.apache.commons.lang3.SerializationUtils
@@ -36,7 +36,7 @@ data class ELRoutineExercise(
 
     override fun asMap(): MutableMap<String, Any?> {
         val map: MutableMap<String, Any?> = HashMap()
-        map[ELConstants.FIELD_UUID] = uuid
+        map[FirestoreFields.UUID] = uuid
         map["exercise"] = exercise?.asMap()
         map["sets"] = ELFirestoreModel.asMappedList(sets)
         return map

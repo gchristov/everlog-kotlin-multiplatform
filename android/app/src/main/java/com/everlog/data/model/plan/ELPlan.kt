@@ -1,7 +1,6 @@
 package com.everlog.data.model.plan
 
-import com.everlog.config.AppConfig
-import com.everlog.constants.ELConstants
+import com.everlog.android.common.firebase.FirestoreFields
 import com.everlog.data.model.ELFirestoreModel
 import com.everlog.data.model.ELRoutine
 import org.apache.commons.lang3.SerializationUtils
@@ -23,6 +22,8 @@ data class ELPlan (
 
     companion object {
 
+        const val MAX_WEEKS = 20
+
         fun newPlan(userId: String?): ELPlan {
             val plan = ELPlan()
             plan.setCreatedDateAsDate(Date())
@@ -40,17 +41,17 @@ data class ELPlan (
 
     override fun asMap(): MutableMap<String, Any?> {
         val map: MutableMap<String, Any?> = HashMap()
-        map[ELConstants.FIELD_UUID] = uuid
+        map[FirestoreFields.UUID] = uuid
         map["imageUrl"] = imageUrl
-        map[ELConstants.FIELD_CREATED_BY_USER_ID] = createdByUserId
+        map[FirestoreFields.CREATED_BY_USER_ID] = createdByUserId
         map["privateToUser"] = privateToUser
         val list: MutableList<Map<String, Any?>> = ArrayList()
         for (week in weeks) {
             list.add(week.asMap())
         }
         map["weeks"] = list
-        map[ELConstants.FIELD_NAME] = name
-        map[ELConstants.FIELD_CREATED_DATE] = createdDate
+        map[FirestoreFields.NAME] = name
+        map[FirestoreFields.CREATED_DATE] = createdDate
         return map
     }
 
@@ -80,7 +81,7 @@ data class ELPlan (
     }
 
     private fun canAddWeek(): Boolean {
-        return weeks.size < AppConfig.configuration.maxPlanWeeks
+        return weeks.size < MAX_WEEKS
     }
 
     fun resolveRoutines(routineMap: Map<String, ELRoutine>): Boolean {

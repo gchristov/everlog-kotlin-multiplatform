@@ -1,9 +1,8 @@
 package com.everlog.data.model.exercise
 
+import com.everlog.android.common.firebase.FirestoreFields
 import com.everlog.android.common.kotlin.NumberUtils
 import com.everlog.android.common.kotlin.WeightUnit
-import com.everlog.config.AppConfig
-import com.everlog.constants.ELConstants
 import com.everlog.data.model.ELFirestoreModel
 import com.everlog.data.model.set.ELSet
 import com.everlog.data.model.set.ELSetType
@@ -17,11 +16,12 @@ data class ELExerciseGroup (
         var uuid: String? = null,
         var type: String? = null,
         var exercises: MutableList<ELRoutineExercise> = ArrayList(),
-        var restTimeSeconds: Int = AppConfig.configuration.defaultRestTimeSeconds
+        var restTimeSeconds: Int = DEFAULT_REST_TIME_SECONDS
 
 ) : Serializable, ELFirestoreModel {
 
     companion object {
+        const val DEFAULT_REST_TIME_SECONDS = 60
 
         @JvmStatic
         fun buildDefault(type: ELSetType): ELExerciseGroup {
@@ -38,8 +38,8 @@ data class ELExerciseGroup (
 
     override fun asMap(): MutableMap<String, Any?> {
         val map: MutableMap<String, Any?> = HashMap()
-        map[ELConstants.FIELD_UUID] = uuid
-        map[ELConstants.FIELD_TYPE] = type
+        map[FirestoreFields.UUID] = uuid
+        map[FirestoreFields.TYPE] = type
         map["exercises"] = ELFirestoreModel.asMappedList(exercises)
         map["restTimeSeconds"] = restTimeSeconds
         return map

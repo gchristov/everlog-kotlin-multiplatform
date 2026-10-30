@@ -6,9 +6,9 @@ import com.everlog.android.common.datasync.DataSync
 import com.everlog.android.common.datasync.FirestoreCollection
 import com.everlog.android.common.datasync.Range
 import com.everlog.android.common.datasync.SyncPlan
+import com.everlog.android.common.firebase.FirestoreFields
 import com.everlog.android.common.kotlin.Load
 import com.everlog.config.AppConfig
-import com.everlog.constants.ELConstants
 import com.everlog.data.model.workout.ELWorkout
 import com.everlog.managers.auth.LocalUserManager
 import com.everlog.managers.firebase.FirestorePathManager
@@ -48,11 +48,11 @@ class RealWorkoutRepository(
             CollectionSource(
                 "workouts",
                 userId,
-                SyncPlan.Recent(dateField = ELConstants.FIELD_CREATED_DATE, months = AppConfig.configuration.workoutSyncMonths),
+                SyncPlan.Recent(dateField = FirestoreFields.CREATED_DATE, months = AppConfig.configuration.workoutSyncMonths),
                 FirestoreCollection(
                     FirestorePathManager.workoutsCollection,
-                    order = { it.orderBy(ELConstants.FIELD_CREATED_DATE, Query.Direction.DESCENDING) },
-                    dateField = ELConstants.FIELD_CREATED_DATE,
+                    order = { it.orderBy(FirestoreFields.CREATED_DATE, Query.Direction.DESCENDING) },
+                    dateField = FirestoreFields.CREATED_DATE,
                     dispatcher = dispatcher,
                 ) { it.toObject(ELWorkout::class.java) },
             ),

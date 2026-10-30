@@ -2,9 +2,9 @@ package com.everlog.data.model.pro
 
 import com.android.billingclient.api.Purchase
 import com.android.billingclient.api.Purchase.PurchaseState
+import com.everlog.android.common.firebase.FirestoreFields
 import com.everlog.android.common.kotlin.calendarDaysDifference
 import com.everlog.android.common.kotlin.timestampWithAddedDays
-import com.everlog.constants.ELConstants
 import com.everlog.data.model.ELFirestoreModel
 import java.io.Serializable
 import java.util.*
@@ -49,8 +49,8 @@ data class ELProSubscription (
 
     override fun asMap(): MutableMap<String, Any?> {
         val map: MutableMap<String, Any?> = HashMap()
-        map[ELConstants.FIELD_UUID] = uuid
-        map[ELConstants.FIELD_CREATED_DATE] = createdDate
+        map[FirestoreFields.UUID] = uuid
+        map[FirestoreFields.CREATED_DATE] = createdDate
         map["active"] = active
         map["freeTrialEndDate"] = freeTrialEndDate
         map["orderId"] = orderId

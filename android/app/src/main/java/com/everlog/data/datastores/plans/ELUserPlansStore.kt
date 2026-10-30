@@ -1,6 +1,6 @@
 package com.everlog.data.datastores.plans
 
-import com.everlog.constants.ELConstants
+import com.everlog.android.common.firebase.FirestoreFields
 import com.everlog.data.datastores.base.ELCollectionStore
 import com.everlog.data.datastores.events.collection.ELColStoreItemAddedEvent
 import com.everlog.data.datastores.events.collection.ELColStoreItemModifiedEvent
@@ -19,8 +19,8 @@ class ELUserPlansStore : ELCollectionStore<ELPlan>() {
 
     override fun getQuery(): Query {
         return FirestorePathManager.plansCollection
-                .whereEqualTo(ELConstants.FIELD_CREATED_BY_USER_ID, LocalUserManager.getUser()!!.id)
-                .orderBy(ELConstants.FIELD_NAME)
+                .whereEqualTo(FirestoreFields.CREATED_BY_USER_ID, LocalUserManager.getUser()!!.id)
+                .orderBy(FirestoreFields.NAME)
     }
 
     override fun getTag(): String {
