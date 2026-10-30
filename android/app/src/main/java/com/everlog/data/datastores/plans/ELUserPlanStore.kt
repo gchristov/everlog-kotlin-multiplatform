@@ -1,8 +1,8 @@
 package com.everlog.data.datastores.plans
 
+import com.everlog.android.plan.data.model.ELPlan
 import com.everlog.data.datastores.base.ELDocumentStore
 import com.everlog.data.datastores.events.document.ELDocStoreItemLoadedEvent
-import com.everlog.data.model.plan.ELPlan
 import com.everlog.managers.firebase.FirestorePathManager
 import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.FieldPath

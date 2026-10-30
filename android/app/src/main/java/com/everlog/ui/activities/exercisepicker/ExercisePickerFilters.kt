@@ -2,8 +2,8 @@ package com.everlog.ui.activities.exercisepicker
 
 import androidx.annotation.StringRes
 import com.everlog.R
-import com.everlog.data.model.exercise.library.ExerciseLibrary
-import com.everlog.data.model.exercise.library.LibraryExercise
+import com.everlog.android.exercise.data.model.library.ExerciseLibrary
+import com.everlog.android.exercise.data.model.library.LibraryExercise
 import java.text.Normalizer
 
 // The picker's filters and search over the exercise library. The spec is on the Everlog canvas
@@ -116,7 +116,7 @@ internal class PickerIndex(val library: ExerciseLibrary, me: FilterValue) {
     fun searchEntry(exercise: LibraryExercise): SearchEntry =
         searchIndex[exercise.uuid] ?: SearchEntry(searchWords(exercise.name), searchWords(exercise.name))
 
-    private fun com.everlog.data.model.exercise.library.ExerciseRegistry.Entry.toValue() =
+    private fun com.everlog.android.exercise.data.model.library.ExerciseRegistry.Entry.toValue() =
         FilterValue(id = id, name = name, aliases = aliases)
 }
 

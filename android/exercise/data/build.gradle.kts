@@ -4,6 +4,9 @@ plugins {
 
 android {
     namespace = "com.everlog.android.exercise.data"
+    defaultConfig {
+        consumerProguardFiles("consumer-rules.pro")
+    }
 }
 
 dependencies {

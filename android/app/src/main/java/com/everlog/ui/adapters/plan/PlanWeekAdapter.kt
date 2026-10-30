@@ -9,7 +9,7 @@ import androidx.core.content.ContextCompat
 import com.ahamed.multiviewadapter.ItemBinder
 import com.ahamed.multiviewadapter.ItemViewHolder
 import com.everlog.R
-import com.everlog.data.model.plan.ELPlanWeek
+import com.everlog.android.plan.data.model.ELPlanWeek
 import com.everlog.databinding.RowPlanWeekBinding
 import com.everlog.ui.adapters.OnListItemListener
 import com.everlog.ui.views.showPopupMenu

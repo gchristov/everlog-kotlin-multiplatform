@@ -1,9 +1,9 @@
 package com.everlog.data.datastores
 
 import com.everlog.android.common.firebase.FirestoreFields
+import com.everlog.android.settings.data.model.ELIntegration
 import com.everlog.data.datastores.base.ELDocumentStore
 import com.everlog.data.datastores.events.document.ELDocStoreItemLoadedEvent
-import com.everlog.data.model.ELIntegration
 import com.everlog.managers.auth.LocalUserManager
 import com.everlog.managers.firebase.FirestorePathManager
 import com.google.firebase.firestore.CollectionReference

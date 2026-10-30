@@ -9,11 +9,11 @@ import android.widget.TextView
 import androidx.core.content.ContextCompat
 import com.everlog.BuildConfig
 import com.everlog.R
+import com.everlog.android.auth.data.model.ELUser
 import com.everlog.android.common.kotlin.WeightUnit
 import com.everlog.android.common.kotlin.format.FormatUtils
 import com.everlog.android.settings.data.SettingsManager
-import com.everlog.data.model.ELIntegration
-import com.everlog.data.model.ELUser
+import com.everlog.android.settings.data.model.ELIntegration
 import com.everlog.databinding.FragmentHomeSettingsBinding
 import com.everlog.managers.RemoteConfigManager
 import com.everlog.managers.analytics.AnalyticsConstants

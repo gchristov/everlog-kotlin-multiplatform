@@ -28,11 +28,11 @@ import com.everlog.android.common.data.model.exercise.ELRoutineExercise
 import com.everlog.android.common.data.model.set.ELSet
 import com.everlog.android.common.data.model.set.ELSetType
 import com.everlog.android.common.kotlin.Load
+import com.everlog.android.exercise.data.model.library.LibraryExercise
 import com.everlog.config.AppConfig
 import com.everlog.data.controllers.templatesession.LoadTemplateUseCase
 import com.everlog.data.controllers.templatesession.SaveTemplateUseCase
 import com.everlog.data.controllers.templatesession.TemplateNotFoundException
-import com.everlog.data.model.exercise.library.LibraryExercise
 import com.everlog.ui.components.exercisetable.ExerciseTab
 import com.google.common.truth.Truth.assertThat
 import java.util.concurrent.TimeUnit

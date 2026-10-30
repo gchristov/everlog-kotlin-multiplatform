@@ -6,7 +6,7 @@ import com.everlog.android.common.data.model.exercise.ELExerciseGroup
 import com.everlog.android.common.data.model.exercise.ELRoutineExercise
 import com.everlog.android.common.data.model.set.ELSet
 import com.everlog.android.common.kotlin.Load
-import com.everlog.data.model.exercise.library.LibraryExercise
+import com.everlog.android.exercise.data.model.library.LibraryExercise
 import com.everlog.testutil.FakeExerciseRepository
 import com.everlog.testutil.FakeRoutineRepository
 import com.google.common.truth.Truth.assertThat

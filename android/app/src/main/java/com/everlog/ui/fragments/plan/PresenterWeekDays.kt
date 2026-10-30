@@ -3,8 +3,8 @@ package com.everlog.ui.fragments.plan
 import com.ahamed.multiviewadapter.DataListManager
 import com.ahamed.multiviewadapter.RecyclerAdapter
 import com.everlog.R
-import com.everlog.data.model.plan.ELPlan
-import com.everlog.data.model.plan.ELPlanDay
+import com.everlog.android.plan.data.model.ELPlan
+import com.everlog.android.plan.data.model.ELPlanDay
 import com.everlog.managers.PlanManager
 import com.everlog.ui.adapters.plan.PlanDayAdapter
 import com.everlog.ui.adapters.plan.applyProLock

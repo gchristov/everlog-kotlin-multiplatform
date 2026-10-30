@@ -4,8 +4,8 @@ import com.android.billingclient.api.BillingClient
 import com.android.billingclient.api.BillingResult
 import com.android.billingclient.api.Purchase
 import com.android.billingclient.api.SkuDetails
-import com.everlog.data.model.pro.ELProSkuDetails
-import com.everlog.data.model.pro.ELProSubscription
+import com.everlog.android.pro.data.model.ELProSkuDetails
+import com.everlog.android.pro.data.model.ELProSubscription
 import com.everlog.managers.auth.AuthManager
 import com.everlog.managers.auth.LocalUserManager
 import timber.log.Timber

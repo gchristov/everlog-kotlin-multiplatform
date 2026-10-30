@@ -6,7 +6,7 @@ import android.view.ViewGroup
 import com.ahamed.multiviewadapter.ItemBinder
 import com.ahamed.multiviewadapter.ItemViewHolder
 import com.everlog.R
-import com.everlog.data.model.plan.ELPlan
+import com.everlog.android.plan.data.model.ELPlan
 import com.everlog.databinding.RowPlanBinding
 import com.everlog.ui.adapters.OnListItemListener
 import com.everlog.utils.glide.ELGlideModule

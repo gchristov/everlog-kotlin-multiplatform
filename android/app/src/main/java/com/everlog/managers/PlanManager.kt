@@ -7,9 +7,9 @@ import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.everlog.android.common.data.model.ELRoutine
 import com.everlog.android.common.data.model.workout.ELWorkout
 import com.everlog.android.common.persistence.PreferencesManager
+import com.everlog.android.plan.data.model.ELPlan
+import com.everlog.android.plan.data.model.ELPlanState
 import com.everlog.constants.ELConstants
-import com.everlog.data.model.plan.ELPlan
-import com.everlog.data.model.plan.ELPlanState
 import com.everlog.managers.analytics.AnalyticsManager
 import com.google.gson.Gson
 

@@ -2,7 +2,7 @@ package com.everlog.utils.format
 
 import androidx.annotation.DrawableRes
 import com.everlog.R
-import com.everlog.data.model.ELIntegration
+import com.everlog.android.settings.data.model.ELIntegration
 
 @DrawableRes
 fun ELIntegration.Type.getIcon(): Int? {

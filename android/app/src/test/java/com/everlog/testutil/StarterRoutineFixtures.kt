@@ -4,9 +4,9 @@ import arrow.core.Either
 import com.everlog.android.common.data.model.ELRoutine
 import com.everlog.android.common.data.model.exercise.ELExercise
 import com.everlog.android.common.kotlin.Load
+import com.everlog.android.exercise.data.model.library.ExerciseRegistry
+import com.everlog.android.exercise.data.model.library.LibraryExercise
 import com.everlog.data.controllers.starterroutines.StarterWeek
-import com.everlog.data.model.exercise.library.ExerciseRegistry
-import com.everlog.data.model.exercise.library.LibraryExercise
 import com.everlog.data.repositories.ExerciseRepository
 import com.everlog.data.repositories.RoutineRepository
 import kotlinx.coroutines.flow.Flow

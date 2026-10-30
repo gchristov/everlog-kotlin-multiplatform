@@ -1,9 +1,9 @@
 package com.everlog.ui.activities.exercisepicker
 
 import com.everlog.android.common.data.model.set.ELSetType
-import com.everlog.testutil.LibraryFixtures.barbellBench
-import com.everlog.testutil.LibraryFixtures.barbellRow
-import com.everlog.testutil.LibraryFixtures.own
+import com.everlog.android.exercise.testfixtures.LibraryFixtures.barbellBench
+import com.everlog.android.exercise.testfixtures.LibraryFixtures.barbellRow
+import com.everlog.android.exercise.testfixtures.LibraryFixtures.own
 import com.google.common.truth.Truth.assertThat
 import org.junit.Test
 

@@ -2,7 +2,7 @@ package com.everlog.utils.format
 
 import android.content.Context
 import com.everlog.R
-import com.everlog.data.model.pro.ELProSkuDetails
+import com.everlog.android.pro.data.model.ELProSkuDetails
 import org.threeten.bp.Period
 
 fun ELProSkuDetails.priceSummary(context: Context): String {

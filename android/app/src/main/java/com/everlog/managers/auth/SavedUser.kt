@@ -1,6 +1,6 @@
 package com.everlog.managers.auth
 
-import com.everlog.data.model.ELUser
+import com.everlog.android.auth.data.model.ELUser
 
 /**
  * The user saved on this phone when it's the one signed in, to carry on with at launch without waiting for their

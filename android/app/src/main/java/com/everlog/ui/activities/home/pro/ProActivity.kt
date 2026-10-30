@@ -4,7 +4,7 @@ import android.view.View
 import androidx.core.widget.NestedScrollView
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.everlog.R
-import com.everlog.data.model.pro.ELProSkuDetails
+import com.everlog.android.pro.data.model.ELProSkuDetails
 import com.everlog.databinding.ActivityProBinding
 import com.everlog.managers.analytics.AnalyticsConstants
 import com.everlog.ui.activities.base.BaseActivity

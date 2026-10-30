@@ -1,6 +1,6 @@
 package com.everlog.ui.activities.home.pro
 
-import com.everlog.data.model.pro.ELProSkuDetails
+import com.everlog.android.pro.data.model.ELProSkuDetails
 import com.everlog.ui.activities.base.BaseActivityMvpView
 import rx.Observable
 

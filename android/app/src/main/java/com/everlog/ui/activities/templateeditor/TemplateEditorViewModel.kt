@@ -6,6 +6,8 @@ import com.everlog.android.common.data.model.set.ELSetType
 import com.everlog.android.common.kotlin.Load
 import com.everlog.android.common.kotlin.WeightUnit
 import com.everlog.android.common.mvvm.CommonViewModel
+import com.everlog.android.exercise.data.model.library.LibraryExercise
+import com.everlog.android.exercise.data.model.library.toELExercise
 import com.everlog.config.AppConfig
 import com.everlog.data.controllers.templatesession.LoadTemplateUseCase
 import com.everlog.data.controllers.templatesession.SaveTemplateUseCase
@@ -28,8 +30,6 @@ import com.everlog.data.controllers.workoutsession.restore
 import com.everlog.data.controllers.workoutsession.set
 import com.everlog.data.controllers.workoutsession.setValue
 import com.everlog.data.controllers.workoutsession.withExercises
-import com.everlog.data.model.exercise.library.LibraryExercise
-import com.everlog.data.model.exercise.library.toELExercise
 import com.everlog.ui.components.exercisetable.CellFocus
 import com.everlog.ui.components.exercisetable.parse
 import com.everlog.ui.components.exercisetable.steppedValue

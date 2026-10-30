@@ -2,7 +2,7 @@ package com.everlog.ui.activities.home.integration
 
 import android.content.DialogInterface
 import com.everlog.R
-import com.everlog.data.model.ELIntegration
+import com.everlog.android.settings.data.model.ELIntegration
 import com.everlog.managers.integrations.GoogleFitIntegrationManager
 import com.everlog.ui.activities.base.BaseActivityPresenter
 

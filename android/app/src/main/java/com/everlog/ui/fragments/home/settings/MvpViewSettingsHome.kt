@@ -1,6 +1,6 @@
 package com.everlog.ui.fragments.home.settings
 
-import com.everlog.data.model.ELUser
+import com.everlog.android.auth.data.model.ELUser
 import com.everlog.ui.dialog.DialogBuilder
 import com.everlog.ui.fragments.base.BaseFragmentMvpView
 import rx.Observable

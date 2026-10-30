@@ -4,8 +4,8 @@ import android.content.Context
 import android.content.Intent
 import android.view.View
 import com.everlog.R
+import com.everlog.android.settings.data.model.ELIntegration
 import com.everlog.constants.ELConstants
-import com.everlog.data.model.ELIntegration
 import com.everlog.databinding.ActivityIntegrationBinding
 import com.everlog.managers.analytics.AnalyticsConstants
 import com.everlog.ui.activities.base.BaseActivity

@@ -1,6 +1,6 @@
 package com.everlog.ui.activities.exercisepicker
 
-import com.everlog.data.model.exercise.library.LibraryExercise
+import com.everlog.android.exercise.data.model.library.LibraryExercise
 
 // What the screen shows, worked out from the state off the main thread
 

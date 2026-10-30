@@ -5,9 +5,9 @@ import android.app.Activity
 import android.content.Intent
 import com.everlog.R
 import com.everlog.android.common.kotlin.AppContext
+import com.everlog.android.settings.data.model.ELIntegration
 import com.everlog.constants.ELActivityRequestCodes
 import com.everlog.data.datastores.ELDatastore
-import com.everlog.data.model.ELIntegration
 import com.everlog.managers.analytics.AnalyticsManager
 import com.everlog.managers.auth.LocalUserManager
 import com.everlog.ui.fragments.base.BaseFragmentMvpView

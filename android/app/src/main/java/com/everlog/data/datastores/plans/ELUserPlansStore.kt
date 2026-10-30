@@ -1,12 +1,12 @@
 package com.everlog.data.datastores.plans
 
 import com.everlog.android.common.firebase.FirestoreFields
+import com.everlog.android.plan.data.model.ELPlan
 import com.everlog.data.datastores.base.ELCollectionStore
 import com.everlog.data.datastores.events.collection.ELColStoreItemAddedEvent
 import com.everlog.data.datastores.events.collection.ELColStoreItemModifiedEvent
 import com.everlog.data.datastores.events.collection.ELColStoreItemRemovedEvent
 import com.everlog.data.datastores.events.collection.ELColStoreItemsLoadedEvent
-import com.everlog.data.model.plan.ELPlan
 import com.everlog.managers.auth.LocalUserManager
 import com.everlog.managers.firebase.FirestorePathManager
 import com.google.firebase.firestore.Query

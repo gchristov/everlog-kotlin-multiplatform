@@ -2,10 +2,10 @@ package com.everlog.data.controllers.exerciselibrary
 
 import arrow.core.getOrElse
 import com.everlog.android.common.kotlin.Load
+import com.everlog.android.exercise.data.model.library.ExerciseLibrary
+import com.everlog.android.exercise.data.model.library.ExerciseRegistry
+import com.everlog.android.exercise.data.model.library.LibraryExercise
 import com.everlog.data.controllers.starterroutines.ExerciseLibraryEmptyException
-import com.everlog.data.model.exercise.library.ExerciseLibrary
-import com.everlog.data.model.exercise.library.ExerciseRegistry
-import com.everlog.data.model.exercise.library.LibraryExercise
 import com.everlog.data.repositories.ExerciseRepository
 import com.everlog.data.repositories.RoutineRepository
 import com.everlog.data.repositories.WorkoutRepository

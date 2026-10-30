@@ -4,11 +4,11 @@ import android.content.DialogInterface
 import android.content.Intent
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.everlog.R
+import com.everlog.android.plan.data.model.ELPlan
 import com.everlog.constants.ELConstants
 import com.everlog.data.datastores.ELDatastore
 import com.everlog.data.datastores.base.ELDocumentStore
 import com.everlog.data.datastores.plans.ELDocStorePlanLoadedEvent
-import com.everlog.data.model.plan.ELPlan
 import com.everlog.managers.PlanManager
 import com.everlog.managers.analytics.AnalyticsManager
 import com.everlog.ui.activities.base.BaseActivityPresenter

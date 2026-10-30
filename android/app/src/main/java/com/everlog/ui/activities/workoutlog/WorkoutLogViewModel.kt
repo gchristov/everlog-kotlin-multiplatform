@@ -4,6 +4,8 @@ import com.everlog.android.common.data.model.exercise.ELExerciseGroup
 import com.everlog.android.common.data.model.workout.ELWorkout
 import com.everlog.android.common.data.model.workout.ELWorkoutState
 import com.everlog.android.common.mvvm.CommonViewModel
+import com.everlog.android.exercise.data.model.library.LibraryExercise
+import com.everlog.android.exercise.data.model.library.toELExercise
 import com.everlog.config.AppConfig
 import com.everlog.data.controllers.workoutprefill.BaseWorkoutPrefillController.PrefillSource
 import com.everlog.data.controllers.workoutprefill.LoadPrefillSourcesUseCase
@@ -35,8 +37,6 @@ import com.everlog.data.controllers.workoutsession.withAddedRoundFilled
 import com.everlog.data.controllers.workoutsession.withExercises
 import com.everlog.data.controllers.workoutsession.withRestSeconds
 import com.everlog.data.controllers.workoutsession.withSessionBlocks
-import com.everlog.data.model.exercise.library.LibraryExercise
-import com.everlog.data.model.exercise.library.toELExercise
 import com.everlog.data.repositories.OngoingWorkoutRepository
 import com.everlog.services.workout.ShownSet
 import com.everlog.ui.components.exercisetable.CellFocus
