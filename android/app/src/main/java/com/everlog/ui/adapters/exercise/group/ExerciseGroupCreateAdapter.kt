@@ -19,6 +19,7 @@ import com.ahamed.multiviewadapter.ItemBinder
 import com.ahamed.multiviewadapter.ItemViewHolder
 import com.ahamed.multiviewadapter.RecyclerAdapter
 import com.everlog.R
+import com.everlog.android.common.kotlin.NumberUtils
 import com.everlog.android.common.kotlin.format.FormatUtils.Companion.formatDurationShort
 import com.everlog.android.common.kotlin.format.FormatUtils.Companion.formatSetWeight
 import com.everlog.config.AppConfig
@@ -440,7 +441,9 @@ class ExerciseGroupCreateAdapter {
 
             override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
                 // TODO: Optimisation
-                groupVH.item.setUpdateWeightFromInput(item, set, binding.weightField.text.toString())
+                val input = binding.weightField.text.toString()
+                groupVH.item.setUpdateWeightFromInput(item, set, input)
+                AnalyticsManager.manager.setWeightModified(NumberUtils.parseFloat(input))
                 render()
                 if (prevVisibility != binding.weightPanel.visibility) {
                     groupVH.render()
@@ -458,7 +461,10 @@ class ExerciseGroupCreateAdapter {
 
             override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
                 // TODO: Optimisation
-                groupVH.item.setUpdateRepsFromInput(item, set, binding.repsField.text.toString(), builder.allowSetTemplates)
+                val input = binding.repsField.text.toString()
+                groupVH.item.setUpdateRepsFromInput(item, set, input, builder.allowSetTemplates)
+                val reps = NumberUtils.parseFloat(input).toInt()
+                if (builder.allowSetTemplates) AnalyticsManager.manager.setRequiredRepsModified(reps) else AnalyticsManager.manager.setRepsModified(reps)
                 render()
                 if (prevVisibility != binding.repsPanel.visibility) {
                     groupVH.render()
@@ -476,7 +482,10 @@ class ExerciseGroupCreateAdapter {
 
             override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
                 // TODO: Optimisation
-                val set = groupVH.item.setUpdateTimeFromInput(item, set, binding.timeField.text.toString(), builder.allowSetTemplates)
+                val input = binding.timeField.text.toString()
+                val set = groupVH.item.setUpdateTimeFromInput(item, set, input, builder.allowSetTemplates)
+                val seconds = NumberUtils.parseFloat(input).toInt()
+                if (builder.allowSetTemplates) AnalyticsManager.manager.setRequiredTimeModified(seconds) else AnalyticsManager.manager.setTimeModified(seconds)
                 render()
                 if (prevVisibility != binding.timePanel.visibility) {
                     groupVH.render()
