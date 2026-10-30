@@ -1,18 +1,16 @@
-package com.everlog.data.datastores.events.collection;
+package com.everlog.android.common.data.store.events;
 
-import com.everlog.android.common.mvp.BaseEvent;
-
-public class ELColStoreItemAddedEvent<T> extends BaseEvent {
+public class ELColStoreItemRemovedEvent<T> {
 
     private int position;
     private T item;
     private boolean hasPendingWrites;
     private boolean fromCache;
 
-    public ELColStoreItemAddedEvent(int position,
-                                    T item,
-                                    boolean hasPendingWrites,
-                                    boolean fromCache) {
+    public ELColStoreItemRemovedEvent(int position,
+                                      T item,
+                                      boolean hasPendingWrites,
+                                      boolean fromCache) {
         this.position = position;
         this.item = item;
         this.hasPendingWrites = hasPendingWrites;
@@ -40,7 +38,7 @@ public class ELColStoreItemAddedEvent<T> extends BaseEvent {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        ELColStoreItemAddedEvent<?> that = (ELColStoreItemAddedEvent<?>) o;
+        ELColStoreItemRemovedEvent<?> that = (ELColStoreItemRemovedEvent<?>) o;
 
         if (position != that.position) return false;
         if (hasPendingWrites != that.hasPendingWrites) return false;

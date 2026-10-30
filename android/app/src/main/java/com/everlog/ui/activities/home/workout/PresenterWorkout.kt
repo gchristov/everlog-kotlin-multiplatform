@@ -30,7 +30,7 @@ import com.everlog.ui.activities.home.exercisegroup.PresenterCreateExerciseGroup
 import com.everlog.ui.activities.home.workout.utils.*
 import com.everlog.ui.activities.home.workout.utils.TickTimeController.OnTimeTick
 import com.everlog.ui.navigator.navigator
-import com.everlog.android.common.mvp.util.Utils
+import com.everlog.android.common.kotlin.Utils
 import com.google.firebase.firestore.SetOptions
 // import icepick.State
 import rx.Observable

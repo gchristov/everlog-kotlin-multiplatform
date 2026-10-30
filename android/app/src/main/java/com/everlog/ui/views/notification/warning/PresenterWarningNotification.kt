@@ -1,6 +1,6 @@
 package com.everlog.ui.views.notification.warning
 
-import com.everlog.android.common.mvp.util.Utils
+import com.everlog.android.common.kotlin.Utils
 import com.everlog.android.common.mvp.view.BaseViewPresenter
 import com.everlog.ui.navigator.navigator
 

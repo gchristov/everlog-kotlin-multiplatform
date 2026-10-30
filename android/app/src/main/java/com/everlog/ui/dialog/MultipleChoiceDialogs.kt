@@ -6,7 +6,7 @@ import android.content.Context
 import android.content.DialogInterface
 import com.everlog.R
 import com.everlog.ui.dialog.AppDialogs.MultipleChoiceDialogType
-import com.everlog.android.common.mvp.util.Utils
+import com.everlog.android.common.kotlin.Utils
 import rx.Observable
 import rx.subjects.PublishSubject
 

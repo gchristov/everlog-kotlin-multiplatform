@@ -24,7 +24,7 @@ import com.everlog.managers.billing.BillingManager
 import com.everlog.ui.navigator.navigator
 import com.everlog.android.common.mvp.activity.BaseActivityPresenter
 import com.everlog.utils.FCMUtils
-import com.everlog.android.common.mvp.util.Utils
+import com.everlog.android.common.kotlin.Utils
 import com.imagepick.dialog.ELPickerDialog
 
 class PresenterHome : BaseActivityPresenter<MvpViewHome>() {

@@ -1,4 +1,4 @@
-package com.everlog.data.datastores.base
+package com.everlog.android.common.data.store
 
 import java.io.ByteArrayInputStream
 import java.io.ByteArrayOutputStream

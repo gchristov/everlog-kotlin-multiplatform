@@ -1,4 +1,4 @@
-package com.everlog.data.datastores.base;
+package com.everlog.android.common.data.store;
 
 public interface OnDecorationListener<T> {
 

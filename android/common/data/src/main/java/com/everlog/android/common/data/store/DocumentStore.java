@@ -1,4 +1,4 @@
-package com.everlog.data.datastores.base;
+package com.everlog.android.common.data.store;
 
 import com.google.firebase.firestore.SetOptions;
 

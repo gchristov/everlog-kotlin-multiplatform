@@ -8,7 +8,7 @@ import com.everlog.android.common.data.model.workout.ELWorkout
 import com.everlog.data.controllers.statistics.BaseStatsController
 import com.everlog.data.controllers.workoutprefill.BaseWorkoutPrefillController.PrefillSource
 import com.everlog.data.datastores.ELDatastore
-import com.everlog.data.datastores.base.OnStoreItemsListener
+import com.everlog.android.common.data.store.OnStoreItemsListener
 import rx.Observable
 import rx.android.schedulers.AndroidSchedulers
 import rx.schedulers.Schedulers

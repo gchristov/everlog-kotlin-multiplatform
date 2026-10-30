@@ -1,4 +1,4 @@
-package com.everlog.android.common.mvp.util;
+package com.everlog.android.common.kotlin;
 
 import android.app.Activity;
 import android.content.Context;

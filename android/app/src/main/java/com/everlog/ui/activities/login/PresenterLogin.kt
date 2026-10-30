@@ -12,7 +12,7 @@ import com.everlog.managers.auth.AuthManager
 import com.everlog.ui.navigator.navigator
 import com.everlog.android.common.mvp.activity.BaseActivityPresenter
 import com.everlog.android.common.mvp.dialog.ToastBuilder
-import com.everlog.android.common.mvp.util.Utils
+import com.everlog.android.common.kotlin.Utils
 import com.everlog.android.common.mvp.util.KeyboardUtils
 import com.everlog.utils.input.ValidationUtils
 import rx.Observable

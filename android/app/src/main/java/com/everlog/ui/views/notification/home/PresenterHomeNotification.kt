@@ -5,7 +5,7 @@ import com.everlog.managers.analytics.AnalyticsManager
 import com.everlog.managers.apprate.AppLaunchManager
 import com.everlog.ui.navigator.navigator
 import com.everlog.android.common.mvp.view.BaseViewPresenter
-import com.everlog.android.common.mvp.util.Utils
+import com.everlog.android.common.kotlin.Utils
 import timber.log.Timber
 
 class PresenterHomeNotification : BaseViewPresenter<MvpViewHomeNotification>() {

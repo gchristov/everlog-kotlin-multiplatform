@@ -7,7 +7,7 @@ import com.everlog.R
 import com.everlog.android.plan.data.model.ELPlan
 import com.everlog.constants.ELConstants
 import com.everlog.data.datastores.ELDatastore
-import com.everlog.data.datastores.base.ELDocumentStore
+import com.everlog.android.common.data.store.ELDocumentStore
 import com.everlog.data.datastores.plans.ELDocStorePlanLoadedEvent
 import com.everlog.managers.PlanManager
 import com.everlog.managers.analytics.AnalyticsManager

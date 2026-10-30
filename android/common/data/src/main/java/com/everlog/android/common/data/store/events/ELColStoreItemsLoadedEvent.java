@@ -1,10 +1,8 @@
-package com.everlog.data.datastores.events.collection;
-
-import com.everlog.android.common.mvp.BaseEvent;
+package com.everlog.android.common.data.store.events;
 
 import java.util.List;
 
-public class ELColStoreItemsLoadedEvent<T> extends BaseEvent {
+public class ELColStoreItemsLoadedEvent<T> {
 
     private List<T> items;
     private Throwable error;
