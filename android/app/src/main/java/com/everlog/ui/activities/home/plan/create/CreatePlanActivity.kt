@@ -30,6 +30,7 @@ import com.jakewharton.rxbinding.view.RxView
 import com.jakewharton.rxbinding.widget.RxTextView
 import rx.Observable
 import com.everlog.android.common.design.R as DesignR
+import com.everlog.android.common.mvp.R as MvpR
 
 class CreatePlanActivity : BaseActivity(), MvpViewCreatePlan {
 
@@ -51,13 +52,13 @@ class CreatePlanActivity : BaseActivity(), MvpViewCreatePlan {
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
 
             // Weeks container: Padding for list and Margin for FAB
-            binding.weeksContainer.weeksList.updatePadding(bottom = systemBars.bottom + resources.getDimensionPixelSize(R.dimen.footer_bottom_padding))
+            binding.weeksContainer.weeksList.updatePadding(bottom = systemBars.bottom + resources.getDimensionPixelSize(DesignR.dimen.footer_bottom_padding))
             binding.weeksContainer.addBtn.updateLayoutParams<ViewGroup.MarginLayoutParams> {
                 bottomMargin = systemBars.bottom + resources.getDimensionPixelSize(DesignR.dimen.activity_margin)
             }
 
             // Days container: Padding for list and Margin for Pro prompt
-            binding.daysContainer.daysList.updatePadding(bottom = systemBars.bottom + resources.getDimensionPixelSize(R.dimen.footer_bottom_padding))
+            binding.daysContainer.daysList.updatePadding(bottom = systemBars.bottom + resources.getDimensionPixelSize(DesignR.dimen.footer_bottom_padding))
             binding.daysContainer.proUpgradePrompt.updateLayoutParams<ViewGroup.MarginLayoutParams> {
                 bottomMargin = systemBars.bottom
             }
@@ -109,7 +110,7 @@ class CreatePlanActivity : BaseActivity(), MvpViewCreatePlan {
     }
 
     override fun onClickSave(): Observable<Void> {
-        return RxView.clicks(binding.root.findViewById(R.id.saveBtn))
+        return RxView.clicks(binding.root.findViewById(MvpR.id.saveBtn))
     }
 
     override fun onClickCover(): Observable<Void> {
@@ -144,9 +145,9 @@ class CreatePlanActivity : BaseActivity(), MvpViewCreatePlan {
                 binding.weeksContainer.root.visibility = View.GONE
                 binding.daysContainer.root.visibility = View.GONE
                 binding.weeksContainer.weeksList.layoutManager?.scrollToPosition(0)
-                binding.root.findViewById<Button>(R.id.saveBtn).setText(R.string.save)
-                binding.root.findViewById<Button>(R.id.saveBtn).setBackgroundResource(DesignR.drawable.rounded_corners_btn_one)
-                binding.root.findViewById<Button>(R.id.saveBtn).setTextColor(ContextCompat.getColor(this, DesignR.color.background_card))
+                binding.root.findViewById<Button>(MvpR.id.saveBtn).setText(DesignR.string.save)
+                binding.root.findViewById<Button>(MvpR.id.saveBtn).setBackgroundResource(DesignR.drawable.rounded_corners_btn_one)
+                binding.root.findViewById<Button>(MvpR.id.saveBtn).setTextColor(ContextCompat.getColor(this, DesignR.color.background_card))
             }
             Flow.WEEKS -> {
                 supportActionBar?.title = getString(R.string.create_plan_weeks)
@@ -154,9 +155,9 @@ class CreatePlanActivity : BaseActivity(), MvpViewCreatePlan {
                 binding.weeksContainer.root.visibility = View.VISIBLE
                 binding.daysContainer.root.visibility = View.GONE
                 binding.weeksContainer.weeksList.layoutManager?.scrollToPosition(0)
-                binding.root.findViewById<Button>(R.id.saveBtn).setText(R.string.done)
-                binding.root.findViewById<Button>(R.id.saveBtn).setBackgroundResource(DesignR.drawable.rounded_corners_btn_three)
-                binding.root.findViewById<Button>(R.id.saveBtn).setTextColor(ContextCompat.getColor(this, DesignR.color.main_accent))
+                binding.root.findViewById<Button>(MvpR.id.saveBtn).setText(R.string.done)
+                binding.root.findViewById<Button>(MvpR.id.saveBtn).setBackgroundResource(DesignR.drawable.rounded_corners_btn_three)
+                binding.root.findViewById<Button>(MvpR.id.saveBtn).setTextColor(ContextCompat.getColor(this, DesignR.color.main_accent))
             }
             Flow.DAYS -> {
                 supportActionBar?.title = String.format("Week %d", weekNumber + 1)
@@ -164,9 +165,9 @@ class CreatePlanActivity : BaseActivity(), MvpViewCreatePlan {
                 binding.weeksContainer.root.visibility = View.GONE
                 binding.daysContainer.root.visibility = View.VISIBLE
                 binding.daysContainer.daysList.layoutManager?.scrollToPosition(0)
-                binding.root.findViewById<Button>(R.id.saveBtn).setText(R.string.done)
-                binding.root.findViewById<Button>(R.id.saveBtn).setBackgroundResource(DesignR.drawable.rounded_corners_btn_three)
-                binding.root.findViewById<Button>(R.id.saveBtn).setTextColor(ContextCompat.getColor(this, DesignR.color.main_accent))
+                binding.root.findViewById<Button>(MvpR.id.saveBtn).setText(R.string.done)
+                binding.root.findViewById<Button>(MvpR.id.saveBtn).setBackgroundResource(DesignR.drawable.rounded_corners_btn_three)
+                binding.root.findViewById<Button>(MvpR.id.saveBtn).setTextColor(ContextCompat.getColor(this, DesignR.color.main_accent))
             }
         }
     }

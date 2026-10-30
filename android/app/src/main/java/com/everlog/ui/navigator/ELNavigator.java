@@ -41,8 +41,8 @@ import com.everlog.ui.activities.home.HomeActivity;
 import com.everlog.ui.activities.onboarding.OnboardingActivity;
 import com.everlog.ui.activities.home.congratulate.CongratulateActivity;
 import com.everlog.ui.activities.home.cover.CoverImagePickerActivity;
-import com.everlog.ui.activities.home.exercise.create.CreateExerciseActivity;
-import com.everlog.ui.activities.home.exercise.details.ExerciseDetailsActivity;
+import com.everlog.android.exercise.feature.create.CreateExerciseActivity;
+import com.everlog.android.exercise.feature.details.ExerciseDetailsActivity;
 import com.everlog.ui.activities.home.exercisegroup.DefaultCreateExerciseGroupsActivity;
 import com.everlog.ui.activities.home.integration.IntegrationActivity;
 import com.everlog.ui.activities.home.musclegoal.MuscleGoalActivity;
@@ -166,20 +166,12 @@ public class ELNavigator implements Navigator {
 
     @Override
     public void openEditExercise(ELExercise exercise) {
-        Intent intent = new Intent(mContext, CreateExerciseActivity.class);
-        if (exercise != null) {
-            intent.putExtra(EXTRA_EXERCISE, exercise);
-        }
-        startActivityForResult(intent, ELActivityRequestCodes.REQUEST_EDIT_EXERCISE);
+        startActivityForResult(CreateExerciseActivity.editIntent(mContext, exercise), ELActivityRequestCodes.REQUEST_EDIT_EXERCISE);
     }
 
     @Override
     public void openCreateExercise(@Nullable String name) {
-        Intent intent = new Intent(mContext, CreateExerciseActivity.class);
-        if (name != null) {
-            intent.putExtra(ELConstants.EXTRA_EXERCISE_NAME, name);
-        }
-        startActivityForResult(intent, ELActivityRequestCodes.REQUEST_EDIT_EXERCISE);
+        startActivityForResult(CreateExerciseActivity.createIntent(mContext, name), ELActivityRequestCodes.REQUEST_EDIT_EXERCISE);
     }
 
     @Override
@@ -486,7 +478,7 @@ public class ELNavigator implements Navigator {
                 mContext.getString(R.string.everlog_app_name),
                 mContext.getString(rationaleTextResId),
                 mContext.getString(R.string.settings_permission_grant),
-                mContext.getString(R.string.cancel))
+                mContext.getString(com.everlog.android.common.design.R.string.cancel))
                 .subscribe(integer -> {
                     if (integer == DialogInterface.BUTTON_POSITIVE) {
                         Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);

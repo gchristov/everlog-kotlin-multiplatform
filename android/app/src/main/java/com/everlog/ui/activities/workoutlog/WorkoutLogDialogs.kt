@@ -1,5 +1,6 @@
 package com.everlog.ui.activities.workoutlog
 
+import com.everlog.android.common.design.R as DesignR
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
@@ -18,7 +19,7 @@ internal fun WorkoutLogDialogs(state: WorkoutLogState, viewModel: WorkoutLogView
             body = stringResource(R.string.workout_log_finish_body),
             onDismissRequest = viewModel::onDialogDismissed,
             primaryAction = AppDialogAction(stringResource(R.string.workout_finish), viewModel::onFinishConfirmed),
-            secondaryAction = AppDialogAction(stringResource(R.string.cancel), viewModel::onDialogDismissed),
+            secondaryAction = AppDialogAction(stringResource(DesignR.string.cancel), viewModel::onDialogDismissed),
         )
         WorkoutLogDialog.RestTimer -> AppDialog(
             title = stringResource(R.string.workout_log_rest_timer),
@@ -35,7 +36,7 @@ internal fun WorkoutLogDialogs(state: WorkoutLogState, viewModel: WorkoutLogView
                 body = stringResource(R.string.workout_log_delete_exercise_body),
                 onDismissRequest = viewModel::onDialogDismissed,
                 primaryAction = AppDialogAction(stringResource(R.string.workout_log_delete)) { viewModel.onDeleteExerciseConfirmed(dialog.blockId) },
-                secondaryAction = AppDialogAction(stringResource(R.string.cancel), viewModel::onDialogDismissed),
+                secondaryAction = AppDialogAction(stringResource(DesignR.string.cancel), viewModel::onDialogDismissed),
             )
         }
         is WorkoutLogDialog.Discard -> if (dialog.setsCompleted > 0) {
@@ -49,7 +50,7 @@ internal fun WorkoutLogDialogs(state: WorkoutLogState, viewModel: WorkoutLogView
                 body = body,
                 onDismissRequest = viewModel::onDialogDismissed,
                 primaryAction = AppDialogAction(stringResource(R.string.workout_discard_finish), viewModel::onDiscardFinish),
-                secondaryAction = AppDialogAction(stringResource(R.string.discard), viewModel::onDiscardConfirmed),
+                secondaryAction = AppDialogAction(stringResource(DesignR.string.discard), viewModel::onDiscardConfirmed),
                 tertiaryAction = AppDialogAction(stringResource(R.string.workout_discard_keep_going), viewModel::onDialogDismissed),
             )
         } else {
@@ -58,7 +59,7 @@ internal fun WorkoutLogDialogs(state: WorkoutLogState, viewModel: WorkoutLogView
                 body = stringResource(R.string.workout_discard_nothing_logged),
                 onDismissRequest = viewModel::onDialogDismissed,
                 primaryAction = AppDialogAction(stringResource(R.string.workout_discard_keep_going), viewModel::onDialogDismissed),
-                secondaryAction = AppDialogAction(stringResource(R.string.discard), viewModel::onDiscardConfirmed),
+                secondaryAction = AppDialogAction(stringResource(DesignR.string.discard), viewModel::onDiscardConfirmed),
             )
         }
     }

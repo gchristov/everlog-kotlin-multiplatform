@@ -55,8 +55,8 @@ internal class InputDialogs {
 
             // Attach buttons.
             builder
-                    .setPositiveButton(context.getString(R.string.save), null)
-                    .setNegativeButton(context.getString(R.string.cancel), null)
+                    .setPositiveButton(context.getString(DesignR.string.save), null)
+                    .setNegativeButton(context.getString(DesignR.string.cancel), null)
             if (type == StringDialogType.WORKOUT_NOTE) {
                 builder.setNeutralButton(context.getString(R.string.clear), null)
             }
@@ -135,8 +135,8 @@ internal class InputDialogs {
             builder.setTitle(title)
 
             // Attach buttons.
-            builder.setPositiveButton(context.getString(R.string.save), null)
-                    .setNegativeButton(context.getString(R.string.cancel), null)
+            builder.setPositiveButton(context.getString(DesignR.string.save), null)
+                    .setNegativeButton(context.getString(DesignR.string.cancel), null)
                     .setNeutralButton(context.getString(R.string.clear), null)
 
             // Set custom layout.

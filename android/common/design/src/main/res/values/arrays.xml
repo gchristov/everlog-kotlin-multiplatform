@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="statistics_durations_titles">
+        <item>@string/range_today</item>
+        <item>@string/range_week</item>
+        <item>@string/range_month</item>
+        <item>@string/range_year</item>
+        <item>@string/range_overall</item>
+    </string-array>
+</resources>

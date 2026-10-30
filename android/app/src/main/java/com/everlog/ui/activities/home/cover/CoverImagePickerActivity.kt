@@ -41,7 +41,7 @@ class CoverImagePickerActivity : BaseActivity(), MvpViewCoverImagePicker {
             appBar?.updatePadding(top = systemBars.top)
             
             // Bottom inset for RecyclerView
-            binding.recyclerView.updatePadding(bottom = systemBars.bottom + ViewUtils.dpToPxFromRaw(this, R.dimen.margin_10))
+            binding.recyclerView.updatePadding(bottom = systemBars.bottom + ViewUtils.dpToPxFromRaw(this, DesignR.dimen.margin_10))
             
             insets
         }
@@ -101,7 +101,7 @@ class CoverImagePickerActivity : BaseActivity(), MvpViewCoverImagePicker {
     private fun setupListView() {
         binding.recyclerView.layoutManager = StaggeredGridLayoutManager(if (DeviceUtils.isTablet(this)) 3 else 2, StaggeredGridLayoutManager.VERTICAL)
         binding.recyclerView.adapter = mPresenter?.getListAdapter()
-        binding.recyclerView.addItemDecoration(SpacesItemDecoration(ViewUtils.dpToPxFromRaw(this, R.dimen.margin_10)))
+        binding.recyclerView.addItemDecoration(SpacesItemDecoration(ViewUtils.dpToPxFromRaw(this, DesignR.dimen.margin_10)))
     }
 
     class SpacesItemDecoration(private val mSpace: Int) : RecyclerView.ItemDecoration() {

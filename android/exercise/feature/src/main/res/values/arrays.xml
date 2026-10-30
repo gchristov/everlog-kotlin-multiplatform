@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="exercise_category_titles_with_none">
+        <item>@string/create_exercise_select_category</item>
+        <item>@string/category_abs</item>
+        <item>@string/category_arms</item>
+        <item>@string/category_back</item>
+        <item>@string/category_chest</item>
+        <item>@string/category_legs</item>
+        <item>@string/category_shoulders</item>
+    </string-array>
+</resources>

@@ -168,7 +168,7 @@ private fun Header(state: TemplateEditorState, viewModel: TemplateEditorViewMode
             AppButton(
                 modifier = Modifier.testTag(TemplateEditorTags.Save),
                 onClick = viewModel::onSave,
-                text = stringResource(R.string.save),
+                text = stringResource(DesignR.string.save),
                 enabled = !state.saving,
             )
         }

@@ -14,4 +14,26 @@
     </plurals>
     <string name="kg">kg</string>
     <string name="statistics_muscles_trained_tap_prompt">Tap for details</string>
+    <string name="cancel">Cancel</string>
+    <string name="create_exercise_select_category">Select Muscle Group</string>
+    <string name="delete">Delete</string>
+    <string name="delete_title">Delete</string>
+    <string name="discard">Discard</string>
+    <string name="discard_prompt">You have unsaved changes. Are you sure you want to proceed?</string>
+    <string name="discard_title">Unsaved changes</string>
+    <string name="exercises_footer_link">Let us know</string>
+    <string name="history_empty_prompt">Your history will appear here once you log workout sessions</string>
+    <string name="history_title">History</string>
+    <string name="home_week_weight_lifted">Volume\nLifted</string>
+    <string name="range_month">This month</string>
+    <string name="range_overall">Overall</string>
+    <string name="range_today">Today</string>
+    <string name="range_week">This week</string>
+    <string name="range_year">This year</string>
+    <string name="reps">Reps</string>
+    <string name="save">Save</string>
+    <string name="statistics_footer_text">Need more stats?</string>
+    <string name="statistics_title">Statistics</string>
+    <string name="weight">Weight</string>
+    <string name="workout_details_max_weight">Max weight</string>
 </resources>

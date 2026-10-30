@@ -19,7 +19,7 @@ import com.everlog.android.common.mvp.activity.BaseActivity
 import com.everlog.android.common.mvp.activity.BaseActivityMvpView
 import com.everlog.android.common.mvp.activity.BaseActivityPresenter
 import com.everlog.ui.fragments.plan.WeekDaysFragment
-import com.everlog.ui.views.viewpager.ELFragmentPagerAdapter
+import com.everlog.android.common.mvp.view.tab.ELFragmentPagerAdapter
 import com.everlog.android.common.mvp.util.ELGlideModule
 import com.google.android.material.appbar.SubtitleCollapsingToolbarLayout
 import com.jakewharton.rxbinding.view.RxView

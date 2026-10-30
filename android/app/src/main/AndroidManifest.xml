@@ -142,13 +142,13 @@
             android:windowSoftInputMode="stateHidden"
             android:exported="false" />
         <activity
-            android:name=".ui.activities.home.exercise.create.CreateExerciseActivity"
+            android:name="com.everlog.android.exercise.feature.create.CreateExerciseActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:theme="@style/AppTheme.NoActionBar"
             android:windowSoftInputMode="stateHidden|adjustResize"
             android:exported="false" />
         <activity
-            android:name=".ui.activities.home.exercise.details.ExerciseDetailsActivity"
+            android:name="com.everlog.android.exercise.feature.details.ExerciseDetailsActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:theme="@style/AppTheme.NoActionBar"
             android:windowSoftInputMode="stateHidden"

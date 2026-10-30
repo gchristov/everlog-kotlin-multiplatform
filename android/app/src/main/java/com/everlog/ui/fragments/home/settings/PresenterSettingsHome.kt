@@ -1,5 +1,6 @@
 package com.everlog.ui.fragments.home.settings
 
+import com.everlog.android.common.design.R as DesignR
 import android.content.DialogInterface
 import android.content.Intent
 import com.everlog.R
@@ -160,7 +161,7 @@ class PresenterSettingsHome : BaseFragmentPresenter<MvpViewSettingsHome>() {
     }
 
     private fun observeLogoutConfirm() {
-        subscriptions.add(mvpView.showDestructivePrompt(R.string.settings_logout, R.string.settings_logout_prompt, R.string.settings_logout, R.string.cancel)
+        subscriptions.add(mvpView.showDestructivePrompt(R.string.settings_logout, R.string.settings_logout_prompt, R.string.settings_logout, DesignR.string.cancel)
                 .compose(applyUISchedulers())
                 .subscribe({ action ->
                     if (action == DialogInterface.BUTTON_POSITIVE) {

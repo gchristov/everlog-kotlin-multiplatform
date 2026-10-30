@@ -1,5 +1,6 @@
 package com.everlog.ui.activities.home.plan.create
 
+import com.everlog.android.common.design.R as DesignR
 import android.app.Activity
 import android.app.Activity.RESULT_OK
 import android.content.DialogInterface
@@ -197,7 +198,7 @@ class PresenterCreatePlan : BaseActivityPresenter<MvpViewCreatePlan>() {
     }
 
     private fun observeDiscard() {
-        subscriptions.add(mvpView.showDestructivePrompt(R.string.discard_title, R.string.discard_prompt, R.string.discard, R.string.cancel)
+        subscriptions.add(mvpView.showDestructivePrompt(DesignR.string.discard_title, DesignR.string.discard_prompt, DesignR.string.discard, DesignR.string.cancel)
                 .compose(applyUISchedulers())
                 .subscribe({ action ->
                     if (action == DialogInterface.BUTTON_POSITIVE) {

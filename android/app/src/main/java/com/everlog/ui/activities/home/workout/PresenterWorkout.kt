@@ -1,5 +1,6 @@
 package com.everlog.ui.activities.home.workout
 
+import com.everlog.android.common.design.R as DesignR
 import android.Manifest
 import android.content.DialogInterface
 import android.content.Intent
@@ -229,13 +230,13 @@ class PresenterWorkout : PresenterCreateExerciseGroups<MvpViewWorkout>() {
             mvpView.showChoicePrompt(context.getString(R.string.workout_discard_title),
                     message,
                     context.getString(R.string.workout_discard_finish),
-                    context.getString(R.string.discard),
+                    context.getString(DesignR.string.discard),
                     context.getString(R.string.workout_discard_keep_going))
         } else {
             mvpView.showChoicePrompt(context.getString(R.string.workout_discard_title),
                     context.getString(R.string.workout_discard_nothing_logged),
                     context.getString(R.string.workout_discard_keep_going),
-                    context.getString(R.string.discard),
+                    context.getString(DesignR.string.discard),
                     null)
         }
         AnalyticsManager.manager.workoutDiscardPromptShown(AnalyticsConstants.DISCARD_PROMPT_SOURCE_WORKOUT, setsCompleted)
@@ -269,7 +270,7 @@ class PresenterWorkout : PresenterCreateExerciseGroups<MvpViewWorkout>() {
             saveWorkout()
         } else {
             // Nudge to tick the rest, even ones with prefilled reps or time that would be saved as done anyway
-            subscriptions.add(mvpView.showPrompt(R.string.workout_finish_title, R.string.workout_finish_subtitle, R.string.workout_finish, R.string.cancel)
+            subscriptions.add(mvpView.showPrompt(R.string.workout_finish_title, R.string.workout_finish_subtitle, R.string.workout_finish, DesignR.string.cancel)
                     .compose(applyUISchedulers())
                     .subscribe({ action: Int ->
                         if (action == DialogInterface.BUTTON_POSITIVE) {

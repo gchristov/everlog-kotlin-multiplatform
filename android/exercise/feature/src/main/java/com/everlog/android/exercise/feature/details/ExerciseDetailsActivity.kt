@@ -1,0 +1,188 @@
+package com.everlog.android.exercise.feature.details
+
+import com.everlog.android.common.design.R as DesignR
+import android.content.Context
+import android.content.Intent
+import android.view.Menu
+import android.view.MenuItem
+import android.view.View
+import androidx.appcompat.widget.Toolbar
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.updatePadding
+import com.everlog.android.common.data.model.exercise.ELExercise
+import com.everlog.android.common.data.model.workout.RangeType
+import com.everlog.android.auth.data.LocalUserManager
+import com.everlog.android.common.mvp.activity.BaseActivity
+import com.everlog.android.common.mvp.activity.BaseActivityMvpView
+import com.everlog.android.common.mvp.activity.BaseActivityPresenter
+import com.everlog.android.exercise.feature.ExerciseExtras
+import com.everlog.android.exercise.feature.ExerciseFeature
+import com.everlog.android.exercise.feature.ExerciseScreenNames
+import com.everlog.android.exercise.feature.R
+import com.everlog.android.exercise.feature.databinding.ActivityExerciseDetailsBinding
+import com.everlog.android.exercise.feature.details.BaseExerciseTabFragment
+import com.everlog.android.exercise.feature.details.history.ExerciseHistoryFragment
+import com.everlog.android.exercise.feature.details.info.ExerciseInfoFragment
+import com.everlog.android.exercise.feature.details.info.LegacyExerciseInfoFragment
+import com.everlog.android.exercise.feature.details.statistics.ExerciseStatisticsFragment
+import com.everlog.android.exercise.feature.details.statistics.ExerciseStatsController
+import com.google.android.material.tabs.TabLayout
+import rx.Observable
+import rx.subjects.PublishSubject
+
+class ExerciseDetailsActivity : BaseActivity(), MvpViewExerciseDetails {
+
+    private var mPresenter: PresenterExerciseDetails? = null
+    private lateinit var binding: ActivityExerciseDetailsBinding
+
+    private var mAllowDelete = false
+    private var mLastType: Type? = null
+    // Read once, so a Remote Config refresh doesn't swap the tab while the screen is open
+    private val mDetailsV2 = ExerciseFeature.dependencies.exerciseDetailsV2()
+    // Built once: reloads update them, as replacing them lost each tab's state and scroll position
+    private var mTabs: List<BaseExerciseTabFragment>? = null
+
+    private val mOnClickEdit = PublishSubject.create<Void>()
+    private val mOnClickDelete = PublishSubject.create<Void>()
+
+    companion object {
+
+        enum class Type {
+            INFO,
+            STATISTICS,
+            HISTORY,
+        }
+
+        class Properties {
+            lateinit var exercise: ELExercise
+                private set
+            var type: Type = Type.INFO
+                private set
+            fun exercise(exercise: ELExercise) = apply { this.exercise = exercise }
+            fun type(type: Type) = apply { this.type = type }
+        }
+
+        @JvmStatic
+        fun launchIntent(context: Context, properties: Properties): Intent {
+            val intent = Intent(context, ExerciseDetailsActivity::class.java)
+            intent.putExtra(ExerciseExtras.EXERCISE, properties.exercise)
+            intent.putExtra(ExerciseExtras.DETAILS_TAB, properties.type)
+            return intent
+        }
+    }
+
+    override fun onActivityCreated() {
+        setupTopBar()
+    }
+
+    override fun getRequiredExtras(): List<String> {
+        return listOf(ExerciseExtras.EXERCISE, ExerciseExtras.DETAILS_TAB)
+    }
+
+    override fun getAnalyticsScreenName(): String {
+        return ExerciseScreenNames.DETAILS
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu): Boolean {
+        if (mAllowDelete) {
+            menuInflater.inflate(R.menu.menu_activity_exercise_details, menu)
+        }
+        return true
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        val id = item.itemId
+        if (id == R.id.action_edit) {
+            mOnClickEdit.onNext(null)
+            return true
+        } else if (id == R.id.action_delete) {
+            mOnClickDelete.onNext(null)
+            return true
+        }
+        return super.onOptionsItemSelected(item)
+    }
+
+    override fun getLayoutResId(): Int {
+        return R.layout.activity_exercise_details
+    }
+
+    override fun getBindingView(): View? {
+        binding = ActivityExerciseDetailsBinding.inflate(layoutInflater)
+        return binding.root
+    }
+
+    override fun <T : BaseActivityMvpView> getPresenter(): BaseActivityPresenter<T>? {
+        return mPresenter as? BaseActivityPresenter<T>
+    }
+
+    override fun getExercise(): ELExercise {
+        return intent.getSerializableExtra(ExerciseExtras.EXERCISE) as ELExercise
+    }
+
+    override fun getType(): Type {
+        return intent.getSerializableExtra(ExerciseExtras.DETAILS_TAB) as Type
+    }
+
+    override fun onClickEdit(): Observable<Void> {
+        return mOnClickEdit
+    }
+
+    override fun onClickDelete(): Observable<Void> {
+        return mOnClickDelete
+    }
+
+    override fun loadExerciseDetails(exercise: ELExercise,
+                                     stats: ExerciseStatsController.StatsResult?,
+                                     range: RangeType) {
+        supportActionBar?.title = exercise.name
+        supportActionBar?.subtitle = exercise.category?.lowercase()?.capitalize()
+        mAllowDelete = exercise.isEditable(LocalUserManager.getUser()?.id)
+        invalidateOptionsMenu()
+        // Tabs
+        mTabs?.let { tabs ->
+            tabs.filterIsInstance<ExerciseStatisticsFragment>().forEach { it.updateRange(range) }
+            tabs.forEach { it.update(exercise, stats) }
+            return
+        }
+        val fragments = ArrayList<BaseExerciseTabFragment>()
+        Type.values().forEach {
+            when (it) {
+                Type.INFO -> fragments.add(if (mDetailsV2) ExerciseInfoFragment(exercise, stats) else LegacyExerciseInfoFragment(exercise, stats))
+                Type.STATISTICS -> fragments.add(ExerciseStatisticsFragment(exercise, stats, range))
+                Type.HISTORY -> fragments.add(ExerciseHistoryFragment(exercise, stats))
+            }
+        }
+        mTabs = fragments
+        if (mLastType == null) mLastType = getType()
+        binding.tabsPage.setTabs(supportFragmentManager, fragments, Type.values().indexOf(mLastType), object : TabLayout.OnTabSelectedListener {
+            override fun onTabSelected(tab: TabLayout.Tab) {
+                mLastType = Type.values()[tab.position]
+            }
+
+            override fun onTabUnselected(tab: TabLayout.Tab) {}
+
+            override fun onTabReselected(tab: TabLayout.Tab) {}
+        })
+    }
+
+    // Setup
+
+    override fun setupPresenter() {
+        mPresenter = PresenterExerciseDetails()
+    }
+
+    private fun setupTopBar() {
+        val appBar = binding.root.findViewById<View>(DesignR.id.toolbar).parent as? View
+        setSupportActionBar(binding.root.findViewById(DesignR.id.toolbar))
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+
+        appBar?.let {
+            ViewCompat.setOnApplyWindowInsetsListener(it) { v, insets ->
+                val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
+                v.updatePadding(top = systemBars.top)
+                insets
+            }
+        }
+    }
+}

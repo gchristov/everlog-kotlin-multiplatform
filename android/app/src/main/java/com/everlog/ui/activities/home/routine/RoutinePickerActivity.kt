@@ -40,7 +40,7 @@ class RoutinePickerActivity : BaseActivity(), MvpViewRoutinePicker {
             }
 
             binding.recyclerView.updatePadding(
-                bottom = systemBars.bottom + resources.getDimensionPixelSize(R.dimen.footer_bottom_padding)
+                bottom = systemBars.bottom + resources.getDimensionPixelSize(DesignR.dimen.footer_bottom_padding)
             )
 
             binding.addBtn.updateLayoutParams<android.widget.FrameLayout.LayoutParams> {

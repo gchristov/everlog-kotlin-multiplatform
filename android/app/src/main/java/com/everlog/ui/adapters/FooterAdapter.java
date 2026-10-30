@@ -8,9 +8,8 @@ import android.view.ViewGroup;
 
 import com.ahamed.multiviewadapter.ItemBinder;
 import com.ahamed.multiviewadapter.ItemViewHolder;
-import com.everlog.R;
 import com.everlog.android.common.mvp.list.OnListItemListener;
-import com.everlog.databinding.RowFooterLinkBinding;
+import com.everlog.android.common.mvp.databinding.RowFooterLinkBinding;
 import com.everlog.ui.adapters.items.Footer;
 
 public class FooterAdapter {
@@ -25,7 +24,7 @@ public class FooterAdapter {
 
         @Override
         public ViewHolder create(LayoutInflater inflater, ViewGroup parent) {
-            return new ViewHolder(inflater.inflate(R.layout.row_footer_link, parent, false));
+            return new ViewHolder(inflater.inflate(com.everlog.android.common.mvp.R.layout.row_footer_link, parent, false));
         }
 
         @Override
