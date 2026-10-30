@@ -33,6 +33,9 @@ class AndroidBasePlugin : Plugin<Project> {
             }
             dependencies {
                 add("coreLibraryDesugaring", catalogLibrary("desugar-jdk-libs"))
+                // ThreeTenABP only loads its time-zone data on Android, so JVM unit tests use the plain threetenbp,
+                // which carries it. Instrumented tests mustn't get it: it duplicates ThreeTenABP's classes there.
+                add("testImplementation", catalogLibrary("threetenbp"))
             }
             // JUnit 4 and Espresso still depend on Hamcrest 1.3's hamcrest-core and hamcrest-library. Since 2.1 Hamcrest
             // ships as the single hamcrest artifact, which the tests use directly, so without this both versions' classes
