@@ -1,10 +1,7 @@
 package com.everlog.data.model
 
 import com.everlog.constants.ELConstants
-import com.everlog.managers.DeviceManager
-import com.everlog.utils.device.DeviceUtils
 import java.io.Serializable
-import java.util.*
 
 data class ELDevice (
 
@@ -18,12 +15,12 @@ data class ELDevice (
     companion object {
 
         @JvmStatic
-        fun newDevice(token: String?): ELDevice {
+        fun newDevice(uuid: String?, name: String?, token: String?, createdDate: Long): ELDevice {
             val device = ELDevice()
-            device.uuid = DeviceManager.manager.deviceId()
-            device.createdDate = Date().time
+            device.uuid = uuid
+            device.createdDate = createdDate
             device.token = token
-            device.name = DeviceUtils.getDeviceName()
+            device.name = name
             return device
         }
     }

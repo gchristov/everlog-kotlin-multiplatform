@@ -2,7 +2,7 @@ package com.everlog.data.controllers.statistics
 
 import com.everlog.config.AppConfig
 import com.everlog.data.model.workout.ELWorkout
-import com.everlog.ui.fragments.home.activity.statistics.StatisticsHomeFragment
+import com.everlog.data.model.workout.RangeType
 import com.github.mikephil.charting.data.BarEntry
 import com.github.mikephil.charting.data.Entry
 import com.github.mikephil.charting.data.PieEntry
@@ -15,7 +15,7 @@ import kotlin.math.max
 
 class UserStatsController : BaseStatsController() {
 
-    fun loadStats(range: StatisticsHomeFragment.RangeType,
+    fun loadStats(range: RangeType,
                   history: List<ELWorkout>,
                   listener: OnCompleteListener?) {
         Observable.just(calculateStats(range, history)
@@ -27,7 +27,7 @@ class UserStatsController : BaseStatsController() {
                 }, { throwable -> listener?.onError(throwable) }))
     }
 
-    private fun calculateStats(range: StatisticsHomeFragment.RangeType, history: List<ELWorkout>): Observable<StatsResult> {
+    private fun calculateStats(range: RangeType, history: List<ELWorkout>): Observable<StatsResult> {
         return Observable.fromCallable {
             val stats = StatsResult()
             val categoryCounts: MutableMap<String, PieEntry> = HashMap()
@@ -74,7 +74,7 @@ class UserStatsController : BaseStatsController() {
 
     data class StatsResult (
 
-            var range: StatisticsHomeFragment.RangeType = AppConfig.configuration.defaultStatsRange,
+            var range: RangeType = AppConfig.configuration.defaultStatsRange,
 
             var dayWorkoutMap: Map<Int, Int> = HashMap(),
 

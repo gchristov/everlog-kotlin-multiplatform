@@ -2,9 +2,9 @@ package com.everlog.managers.analytics
 
 import com.everlog.BuildConfig
 import com.everlog.data.model.set.ELSetType
+import com.everlog.data.model.workout.RangeType
 import com.everlog.managers.appupdate.AppUpdateController
 import com.everlog.managers.preferences.SettingsManager.MuscleGoal
-import com.everlog.ui.fragments.home.activity.statistics.StatisticsHomeFragment
 import com.everlog.utils.device.DeviceUtils
 import timber.log.Timber
 import java.util.*
@@ -251,7 +251,7 @@ class AnalyticsManager : Analytic {
         }
     }
 
-    override fun statisticsRangeModified(rangeType: StatisticsHomeFragment.RangeType) {
+    override fun statisticsRangeModified(rangeType: RangeType) {
         Timber.tag(TAG).i("Statistics range modified: type=%s", rangeType)
         mAnalytics?.forEach {
             it.statisticsRangeModified(rangeType)

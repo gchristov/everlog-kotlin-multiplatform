@@ -1,9 +1,9 @@
 package com.everlog.managers.analytics
 
 import com.everlog.data.model.set.ELSetType
+import com.everlog.data.model.workout.RangeType
 import com.everlog.managers.appupdate.AppUpdateController
 import com.everlog.managers.preferences.SettingsManager.MuscleGoal
-import com.everlog.ui.fragments.home.activity.statistics.StatisticsHomeFragment.RangeType
 
 interface Analytic {
 

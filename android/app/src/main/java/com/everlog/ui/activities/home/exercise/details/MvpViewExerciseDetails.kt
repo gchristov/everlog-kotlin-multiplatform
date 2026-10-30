@@ -2,8 +2,8 @@ package com.everlog.ui.activities.home.exercise.details
 
 import com.everlog.data.controllers.statistics.ExerciseStatsController
 import com.everlog.data.model.exercise.ELExercise
+import com.everlog.data.model.workout.RangeType
 import com.everlog.ui.activities.base.BaseActivityMvpView
-import com.everlog.ui.fragments.home.activity.statistics.StatisticsHomeFragment
 import rx.Observable
 
 interface MvpViewExerciseDetails : BaseActivityMvpView {
@@ -18,5 +18,5 @@ interface MvpViewExerciseDetails : BaseActivityMvpView {
 
     fun loadExerciseDetails(exercise: ELExercise,
                             stats: ExerciseStatsController.StatsResult?,
-                            range: StatisticsHomeFragment.RangeType)
+                            range: RangeType)
 }

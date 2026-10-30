@@ -16,6 +16,7 @@ import com.everlog.data.datastores.history.ELDocStoreWorkoutLoadedEvent;
 import com.everlog.data.model.ELRoutine;
 import com.everlog.data.model.exercise.ELExerciseGroup;
 import com.everlog.data.model.workout.ELWorkout;
+import com.everlog.data.model.workout.RangeType;
 import com.everlog.managers.PlanManager;
 import com.everlog.managers.analytics.AnalyticsManager;
 import com.everlog.managers.apprate.RatePromptTrigger;
@@ -25,7 +26,6 @@ import com.everlog.ui.activities.home.exercisegroup.DefaultCreateExerciseGroupsA
 import com.everlog.ui.adapters.WorkoutDetailsStatsAdapter;
 import com.everlog.ui.adapters.exercise.group.ExerciseGroupSummaryAdapter;
 import com.everlog.ui.dialog.DialogBuilder;
-import com.everlog.ui.fragments.home.activity.statistics.StatisticsHomeFragment;
 import com.everlog.utils.Utils;
 import com.google.firebase.firestore.SetOptions;
 
@@ -277,7 +277,7 @@ public class PresenterWorkoutDetails extends BaseActivityPresenter<MvpViewWorkou
             @Override
             public void onItemsLoaded(List<ELWorkout> items, boolean fromCache) {
                 // Calculate weekly stats.
-                new UserStatsController().loadStats(StatisticsHomeFragment.RangeType.WEEK,
+                new UserStatsController().loadStats(RangeType.WEEK,
                         items,
                         new UserStatsController.OnCompleteListener() {
 

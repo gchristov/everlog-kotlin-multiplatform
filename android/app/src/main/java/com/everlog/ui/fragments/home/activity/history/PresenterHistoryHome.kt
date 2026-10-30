@@ -6,7 +6,6 @@ import com.everlog.R
 import com.everlog.android.common.kotlin.toLocalDate
 import com.everlog.data.datastores.ELDatastore
 import com.everlog.data.datastores.history.ELColStoreWorkoutsLoadedEvent
-import com.everlog.data.model.util.HistoryCalendarContainer
 import com.everlog.data.model.workout.ELWorkout
 import com.everlog.ui.adapters.history.BaseTimelineViewHolder
 import com.everlog.ui.adapters.history.HistoryAdapter

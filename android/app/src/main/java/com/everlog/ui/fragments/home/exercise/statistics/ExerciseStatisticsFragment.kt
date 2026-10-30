@@ -13,11 +13,11 @@ import com.everlog.android.common.kotlin.makeSingleLine
 import com.everlog.data.controllers.statistics.BaseStatsController
 import com.everlog.data.controllers.statistics.ExerciseStatsController
 import com.everlog.data.model.exercise.ELExercise
+import com.everlog.data.model.workout.RangeType
 import com.everlog.databinding.FragmentExerciseStatisticsBinding
 import com.everlog.managers.analytics.AnalyticsConstants
 import com.everlog.managers.preferences.SettingsManager
 import com.everlog.ui.activities.base.BaseActivity
-import com.everlog.ui.fragments.home.activity.statistics.StatisticsHomeFragment
 import com.everlog.ui.fragments.home.activity.statistics.charts.ChartRenderer
 import com.everlog.ui.fragments.home.exercise.BaseExerciseTabFragment
 import com.everlog.ui.fragments.home.exercise.BasePresenterExerciseTab
@@ -29,7 +29,7 @@ import com.everlog.android.common.design.R as DesignR
 
 class ExerciseStatisticsFragment(exercise: ELExercise,
                                  stats: ExerciseStatsController.StatsResult?,
-                                 private var range: StatisticsHomeFragment.RangeType) : BaseExerciseTabFragment(exercise, stats), MvpViewExerciseStatistics {
+                                 private var range: RangeType) : BaseExerciseTabFragment(exercise, stats), MvpViewExerciseStatistics {
 
     private var mPresenter: PresenterExerciseStatistics? = null
     private var _binding: FragmentExerciseStatisticsBinding? = null
@@ -39,7 +39,7 @@ class ExerciseStatisticsFragment(exercise: ELExercise,
 
     companion object {
 
-        val onRangeChanged: PublishSubject<StatisticsHomeFragment.RangeType> = PublishSubject.create()
+        val onRangeChanged: PublishSubject<RangeType> = PublishSubject.create()
     }
 
     override fun onFragmentCreated() {
@@ -87,7 +87,7 @@ class ExerciseStatisticsFragment(exercise: ELExercise,
     }
 
     // The range picked in the spinner, set before the update with its stats
-    fun updateRange(range: StatisticsHomeFragment.RangeType) {
+    fun updateRange(range: RangeType) {
         this.range = range
     }
 
@@ -132,15 +132,15 @@ class ExerciseStatisticsFragment(exercise: ELExercise,
                 arrayOf(ChartRenderer.ChartDataDescriptor(stats.ormCounts)))
     }
 
-    private fun renderRange(rangeType: StatisticsHomeFragment.RangeType) {
+    private fun renderRange(rangeType: RangeType) {
         binding.rangeSpinner.onItemSelectedListener = null
-        binding.rangeSpinner.setSelection(StatisticsHomeFragment.RangeType.values().indexOf(rangeType))
+        binding.rangeSpinner.setSelection(RangeType.values().indexOf(rangeType))
         binding.rangeSpinner.post {
             // The fragment's view may have been destroyed by the time this runs
             if (_binding == null) return@post
             binding.rangeSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
                 override fun onItemSelected(parent: AdapterView<*>, view: View?, position: Int, id: Long) {
-                    onRangeChanged.onNext(StatisticsHomeFragment.RangeType.values()[position])
+                    onRangeChanged.onNext(RangeType.values()[position])
                 }
 
                 override fun onNothingSelected(parent: AdapterView<*>) {}

@@ -6,7 +6,7 @@ import com.everlog.data.model.exercise.ELExercise
 import com.everlog.data.model.exercise.ELExerciseHistory
 import com.everlog.data.model.set.ELSet
 import com.everlog.data.model.workout.ELWorkout
-import com.everlog.ui.fragments.home.activity.statistics.StatisticsHomeFragment
+import com.everlog.data.model.workout.RangeType
 import com.github.mikephil.charting.data.Entry
 import rx.Observable
 import rx.android.schedulers.AndroidSchedulers
@@ -17,7 +17,7 @@ import kotlin.math.max
 
 class ExerciseStatsController : BaseStatsController() {
 
-    fun loadStats(range: StatisticsHomeFragment.RangeType,
+    fun loadStats(range: RangeType,
                   exercise: ELExercise,
                   listener: OnCompleteListener?) {
         ELDatastore.workoutsStore().getItems(object : OnStoreItemsListener<ELWorkout> {
@@ -41,7 +41,7 @@ class ExerciseStatsController : BaseStatsController() {
         })
     }
 
-    fun calculateStats(range: StatisticsHomeFragment.RangeType,
+    fun calculateStats(range: RangeType,
                        exercises: List<ELExercise>,
                        history: List<ELWorkout>,
                        allowHistoryOutOfRange: Boolean): Observable<Map<String, StatsResult>> {

@@ -6,6 +6,7 @@ import com.everlog.data.controllers.statistics.UserStatsController
 import com.everlog.data.datastores.ELDatastore
 import com.everlog.data.datastores.history.ELColStoreWorkoutsLoadedEvent
 import com.everlog.data.model.workout.ELWorkout
+import com.everlog.data.model.workout.RangeType
 import com.everlog.managers.RemoteConfigManager
 import com.everlog.managers.analytics.AnalyticsManager
 import com.everlog.ui.fragments.base.BaseFragmentPresenter
@@ -85,7 +86,7 @@ class PresenterStatisticsHome : BaseFragmentPresenter<MvpViewStatisticsHome>() {
         ELDatastore.workoutsStore().getItems()
     }
 
-    private fun handleHistoryReady(range: StatisticsHomeFragment.RangeType, history: List<ELWorkout>) {
+    private fun handleHistoryReady(range: RangeType, history: List<ELWorkout>) {
         mvpView?.toggleLoadingOverlay(true)
         Utils.runWithDelay({
             if (isAttachedToView) {

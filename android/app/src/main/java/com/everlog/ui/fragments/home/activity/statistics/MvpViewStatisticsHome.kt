@@ -1,6 +1,7 @@
 package com.everlog.ui.fragments.home.activity.statistics
 
 import com.everlog.data.controllers.statistics.UserStatsController
+import com.everlog.data.model.workout.RangeType
 import com.everlog.ui.fragments.base.BaseFragmentMvpView
 import rx.Observable
 
@@ -10,7 +11,7 @@ interface MvpViewStatisticsHome : BaseFragmentMvpView {
 
     fun showFeedback(visible: Boolean)
 
-    fun onRangeChanged(): Observable<StatisticsHomeFragment.RangeType>
+    fun onRangeChanged(): Observable<RangeType>
 
     fun setStatsData(stats: UserStatsController.StatsResult)
 }

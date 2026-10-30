@@ -3,10 +3,10 @@ package com.everlog.config
 import androidx.core.content.ContextCompat
 import com.everlog.BuildConfig
 import com.everlog.R
+import com.everlog.data.model.workout.RangeType
 import com.everlog.managers.ErrorManager
 import com.everlog.managers.analytics.AnalyticsManager
 import com.everlog.ui.fragments.home.activity.history.HistoryHomeFragment
-import com.everlog.ui.fragments.home.activity.statistics.StatisticsHomeFragment
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.firestoreSettings
 import com.google.firebase.firestore.persistentCacheSettings
@@ -17,8 +17,8 @@ class AppConfig {
     val defaultRestTimeOffsetSeconds = 10
     val defaultExerciseTimeSeconds = 30
 
-    val defaultStatsRange = StatisticsHomeFragment.RangeType.WEEK
-    val defaultStatsExerciseRange = StatisticsHomeFragment.RangeType.MONTH
+    val defaultStatsRange = RangeType.WEEK
+    val defaultStatsExerciseRange = RangeType.MONTH
 
     val defaultHistoryViewType = HistoryHomeFragment.ViewType.CALENDAR
 

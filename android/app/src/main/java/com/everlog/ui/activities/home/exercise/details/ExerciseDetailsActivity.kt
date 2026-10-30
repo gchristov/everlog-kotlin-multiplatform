@@ -14,6 +14,7 @@ import com.everlog.constants.ELConstants.EXTRA_EXERCISE
 import com.everlog.constants.ELConstants.EXTRA_TYPE
 import com.everlog.data.controllers.statistics.ExerciseStatsController
 import com.everlog.data.model.exercise.ELExercise
+import com.everlog.data.model.workout.RangeType
 import com.everlog.databinding.ActivityExerciseDetailsBinding
 import com.everlog.managers.RemoteConfigManager
 import com.everlog.managers.analytics.AnalyticsConstants
@@ -21,7 +22,6 @@ import com.everlog.ui.activities.base.BaseActivity
 import com.everlog.ui.activities.base.BaseActivityMvpView
 import com.everlog.ui.activities.base.BaseActivityPresenter
 import com.everlog.ui.fragments.home.exercise.BaseExerciseTabFragment
-import com.everlog.ui.fragments.home.activity.statistics.StatisticsHomeFragment
 import com.everlog.ui.fragments.home.exercise.history.ExerciseHistoryFragment
 import com.everlog.ui.fragments.home.exercise.info.ExerciseInfoFragment
 import com.everlog.ui.fragments.home.exercise.info.LegacyExerciseInfoFragment
@@ -133,7 +133,7 @@ class ExerciseDetailsActivity : BaseActivity(), MvpViewExerciseDetails {
 
     override fun loadExerciseDetails(exercise: ELExercise,
                                      stats: ExerciseStatsController.StatsResult?,
-                                     range: StatisticsHomeFragment.RangeType) {
+                                     range: RangeType) {
         supportActionBar?.title = exercise.name
         supportActionBar?.subtitle = exercise.category?.lowercase()?.capitalize()
         mAllowDelete = exercise.isEditable()

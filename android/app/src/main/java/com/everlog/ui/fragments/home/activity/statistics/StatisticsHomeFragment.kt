@@ -13,6 +13,7 @@ import com.everlog.android.common.kotlin.makeSingleLine
 import com.everlog.config.AppConfig
 import com.everlog.data.controllers.statistics.BaseStatsController
 import com.everlog.data.controllers.statistics.UserStatsController
+import com.everlog.data.model.workout.RangeType
 import com.everlog.databinding.FragmentHomeStatisticsBinding
 import com.everlog.managers.analytics.AnalyticsConstants
 import com.everlog.managers.preferences.SettingsManager
@@ -27,14 +28,6 @@ import rx.subjects.PublishSubject
 import com.everlog.android.common.design.R as DesignR
 
 class StatisticsHomeFragment : BaseTabFragment(), MvpViewStatisticsHome {
-
-    enum class RangeType {
-        TODAY,
-        WEEK,
-        MONTH,
-        YEAR,
-        OVERALL
-    }
 
     private var mPresenter: PresenterStatisticsHome? = null
     private var _binding: FragmentHomeStatisticsBinding? = null
