@@ -1,5 +1,6 @@
 package com.everlog.gradleplugins.android
 
+import com.android.build.api.dsl.LibraryExtension
 import com.everlog.gradleplugins.android
 import com.everlog.gradleplugins.catalogLibrary
 import com.everlog.gradleplugins.libs
@@ -26,10 +27,16 @@ class AndroidBasePlugin : Plugin<Project> {
                 jvmToolchain(20)
             }
             with(android) {
-                compileSdk = 36
+                compileSdk = SDK
                 defaultConfig.minSdk = 24
                 defaultConfig.testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
                 compileOptions.isCoreLibraryDesugaringEnabled = true
+            }
+            // A library's test APK and lint would otherwise target its min SDK, and a test APK targeting an old SDK
+            // runs in compatibility mode on new devices
+            extensions.findByType(LibraryExtension::class.java)?.apply {
+                testOptions.targetSdk = SDK
+                lint.targetSdk = SDK
             }
             dependencies {
                 add("coreLibraryDesugaring", catalogLibrary("desugar-jdk-libs"))
@@ -50,3 +57,6 @@ class AndroidBasePlugin : Plugin<Project> {
         }
     }
 }
+
+// The SDK the app and every module compile against and target
+internal const val SDK = 36

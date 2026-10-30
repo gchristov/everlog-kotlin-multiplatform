@@ -16,7 +16,8 @@ dependencies {
     api(libs.androidx.compose.ui.test.junit4)
     api(libs.androidx.test.runner)
     api(libs.androidx.test.ext.junit)
+    api(libs.espresso.core)
     api(libs.truth)
-    // Gives Compose tests an activity to host their content in
-    debugApi(libs.androidx.compose.ui.test.manifest)
+    // Gives Compose tests an activity to host their content in. Not debugApi: consumers' androidTest wouldn't get it
+    api(libs.androidx.compose.ui.test.manifest)
 }
