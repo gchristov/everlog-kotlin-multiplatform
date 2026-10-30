@@ -68,6 +68,7 @@ dependencies {
     implementation(projects.android.common.mvp)
     implementation(projects.android.common.mvvm)
     implementation(projects.android.common.persistence)
+    implementation(projects.android.settings.data)
     implementation(projects.android.auth.feature)
     implementation(projects.android.exercise.feature)
     implementation(projects.android.history.feature)
@@ -80,6 +81,7 @@ dependencies {
     implementation(projects.android.workout.feature)
 
     testImplementation(projects.android.common.test)
+    testImplementation(projects.android.settings.testFixtures)
 
     androidTestImplementation(libs.androidx.test.runner)
     androidTestImplementation(libs.androidx.test.ext.junit)

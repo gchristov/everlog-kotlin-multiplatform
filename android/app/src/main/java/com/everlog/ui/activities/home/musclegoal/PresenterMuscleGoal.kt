@@ -3,11 +3,11 @@ package com.everlog.ui.activities.home.musclegoal
 import android.content.Intent
 import com.ahamed.multiviewadapter.DataListManager
 import com.ahamed.multiviewadapter.RecyclerAdapter
+import com.everlog.android.settings.data.SettingsManager
 import com.everlog.config.FeedbackSource
 import com.everlog.constants.ELConstants
 import com.everlog.managers.RemoteConfigManager
 import com.everlog.managers.analytics.AnalyticsManager
-import com.everlog.managers.preferences.SettingsManager
 import com.everlog.ui.activities.base.BaseActivityPresenter
 import com.everlog.ui.adapters.MuscleGoalAdapter
 import com.everlog.utils.Utils

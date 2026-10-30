@@ -35,6 +35,7 @@ import arrow.core.right
 import com.everlog.android.common.compose.theme.Theme
 import com.everlog.android.common.kotlin.UnitUtils
 import com.everlog.android.common.kotlin.WeightUnit
+import com.everlog.android.settings.data.SettingsManager.MuscleGoal
 import com.everlog.config.AppConfig
 import com.everlog.constants.ELConstants
 import com.everlog.data.controllers.workoutprefill.BaseWorkoutPrefillController.PrefillSource
@@ -60,7 +61,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableSharedFlow
 import org.junit.After
 import org.junit.Before
-import com.everlog.managers.preferences.SettingsManager.MuscleGoal
 import com.everlog.ui.components.exercisetable.ExerciseTab
 import com.everlog.ui.components.exercisetable.ExerciseTableTags
 import org.junit.Rule

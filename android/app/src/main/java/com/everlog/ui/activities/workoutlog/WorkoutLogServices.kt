@@ -2,12 +2,12 @@ package com.everlog.ui.activities.workoutlog
 
 import android.content.Context
 import com.everlog.android.common.kotlin.WeightUnit
+import com.everlog.android.settings.data.SettingsManager
 import com.everlog.data.controllers.workoutsession.ValueField
 import com.everlog.data.model.set.ELSetType
 import com.everlog.data.model.workout.ELWorkout
 import com.everlog.managers.analytics.AnalyticsConstants
 import com.everlog.managers.analytics.AnalyticsManager
-import com.everlog.managers.preferences.SettingsManager
 import com.everlog.services.workout.ShownSet
 import com.everlog.ui.navigator.Navigator
 import com.everlog.utils.SoundUtils

@@ -1,4 +1,4 @@
-package com.everlog.testutil
+package com.everlog.android.settings.testfixtures
 
 import com.everlog.android.common.persistence.PreferencesManager
 import com.everlog.android.common.test.InMemorySharedPreferences

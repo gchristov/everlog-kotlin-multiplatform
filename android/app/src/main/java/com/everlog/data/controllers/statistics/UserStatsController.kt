@@ -1,6 +1,6 @@
 package com.everlog.data.controllers.statistics
 
-import com.everlog.managers.preferences.SettingsManager
+import com.everlog.android.settings.data.SettingsManager
 import com.everlog.config.AppConfig
 import com.everlog.data.model.workout.ELWorkout
 import com.everlog.data.model.workout.RangeType

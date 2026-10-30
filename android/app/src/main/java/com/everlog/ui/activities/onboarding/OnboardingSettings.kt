@@ -4,9 +4,9 @@ import android.content.Context
 import android.content.Intent
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.everlog.android.common.kotlin.WeightUnit
+import com.everlog.android.settings.data.SettingsManager
 import com.everlog.constants.ELConstants
 import com.everlog.managers.analytics.AnalyticsManager
-import com.everlog.managers.preferences.SettingsManager
 
 /**
  * The app settings some answers set, written as soon as the question is answered: the units, and

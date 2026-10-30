@@ -22,6 +22,7 @@ import com.everlog.R
 import com.everlog.android.common.kotlin.NumberUtils
 import com.everlog.android.common.kotlin.format.FormatUtils.Companion.formatDurationShort
 import com.everlog.android.common.kotlin.format.FormatUtils.Companion.formatSetWeight
+import com.everlog.android.settings.data.SettingsManager
 import com.everlog.config.AppConfig
 import com.everlog.data.model.exercise.ELExerciseGroup
 import com.everlog.data.model.exercise.ELRoutineExercise
@@ -32,7 +33,6 @@ import com.everlog.databinding.RowExerciseWithinSetCreateBinding
 import com.everlog.databinding.RowSetCreateBinding
 import com.everlog.managers.analytics.AnalyticsConstants
 import com.everlog.managers.analytics.AnalyticsManager
-import com.everlog.managers.preferences.SettingsManager
 import com.everlog.ui.activities.home.exercise.details.ExerciseDetailsActivity
 import com.everlog.ui.dialog.DialogBuilder
 import com.everlog.ui.dialog.ToastBuilder
@@ -43,6 +43,7 @@ import com.everlog.utils.ArrayResourceTypeUtils
 import com.everlog.utils.Throttler
 import com.everlog.utils.Utils
 import com.everlog.utils.ViewUtils
+import com.everlog.utils.format.weightUnitAbbreviation
 import rx.Observable
 import com.everlog.android.common.design.R as DesignR
 import java.util.LinkedList
@@ -673,7 +674,7 @@ class ExerciseGroupCreateAdapter {
         private fun renderWeight() {
             binding.weightField.text = formatSetWeight(getSet().getWeight(SettingsManager.manager.weightUnit()))
             binding.weightPanel.visibility = if (!builder.allowSetTemplates && getSet().isWeightEntered()) View.VISIBLE else View.GONE
-            binding.weightUnit.text = String.format("(%s)", SettingsManager.weightUnitAbbreviation())
+            binding.weightUnit.text = String.format("(%s)", weightUnitAbbreviation(SettingsManager.manager.weightUnit()))
         }
 
         private fun renderReps() {

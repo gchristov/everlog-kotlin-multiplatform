@@ -11,12 +11,12 @@ import com.everlog.BuildConfig
 import com.everlog.R
 import com.everlog.android.common.kotlin.WeightUnit
 import com.everlog.android.common.kotlin.format.FormatUtils
+import com.everlog.android.settings.data.SettingsManager
 import com.everlog.data.model.ELIntegration
 import com.everlog.data.model.ELUser
 import com.everlog.databinding.FragmentHomeSettingsBinding
 import com.everlog.managers.RemoteConfigManager
 import com.everlog.managers.analytics.AnalyticsConstants
-import com.everlog.managers.preferences.SettingsManager
 import com.everlog.ui.activities.setsuggestions.SetSuggestion
 import com.everlog.ui.dialog.DialogBuilder
 import com.everlog.ui.fragments.base.BaseFragmentMvpView
@@ -25,6 +25,7 @@ import com.everlog.ui.fragments.base.BaseTabFragment
 import com.everlog.ui.views.CheckBoxTriStates
 import com.everlog.utils.ViewUtils
 import com.everlog.utils.format.getIcon
+import com.everlog.utils.format.weightUnitAbbreviation
 import com.everlog.utils.glide.ELGlideModule
 import com.jakewharton.rxbinding.view.RxView
 import org.threeten.bp.DayOfWeek
@@ -136,7 +137,7 @@ class SettingsHomeFragment : BaseTabFragment(), MvpViewSettingsHome {
 
     override fun showSettings(viewModel: SettingsViewModel) {
         showMuscleGoal(viewModel.muscleGoal)
-        binding.root.findViewById<TextView>(R.id.weightIncreaseField).text = String.format("%s %s", FormatUtils.formatSetWeight(viewModel.weightIncrease!!), SettingsManager.weightUnitAbbreviation())
+        binding.root.findViewById<TextView>(R.id.weightIncreaseField).text = String.format("%s %s", FormatUtils.formatSetWeight(viewModel.weightIncrease!!), weightUnitAbbreviation(SettingsManager.manager.weightUnit()))
         binding.root.findViewById<TextView>(R.id.weeklyGoalField).text = String.format("%d", viewModel.weeklyGoals)
         binding.root.findViewById<CheckBoxTriStates>(R.id.keepScreenOnCheckbox).setChecked(viewModel.keepScreenOn)
         // Units

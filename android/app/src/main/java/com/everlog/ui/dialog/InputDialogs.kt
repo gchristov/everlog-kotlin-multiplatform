@@ -13,10 +13,11 @@ import android.widget.EditText
 import android.widget.FrameLayout
 import android.widget.TextView
 import com.everlog.R
-import com.everlog.managers.preferences.SettingsManager
+import com.everlog.android.settings.data.SettingsManager
 import com.everlog.ui.dialog.DialogBuilder.MetricDialogType
 import com.everlog.ui.dialog.DialogBuilder.StringDialogType
 import com.everlog.utils.Utils
+import com.everlog.utils.format.weightUnitAbbreviation
 import com.everlog.utils.input.KeyboardUtils
 import rx.Observable
 import rx.subjects.PublishSubject
@@ -116,7 +117,7 @@ internal class InputDialogs {
             var inputType = InputType.TYPE_CLASS_NUMBER
             when (type) {
                 MetricDialogType.WEIGHT -> {
-                    title = String.format("%s (%s)", context.getString(R.string.exercise_sets_performed_weight), SettingsManager.weightUnitAbbreviation())
+                    title = String.format("%s (%s)", context.getString(R.string.exercise_sets_performed_weight), weightUnitAbbreviation(SettingsManager.manager.weightUnit()))
                     inputType = inputType or InputType.TYPE_NUMBER_FLAG_DECIMAL
                 }
                 MetricDialogType.REPS -> {

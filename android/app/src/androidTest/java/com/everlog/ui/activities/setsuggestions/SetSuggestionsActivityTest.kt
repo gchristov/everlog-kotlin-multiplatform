@@ -6,8 +6,8 @@ import androidx.compose.ui.test.performClick
 import androidx.test.core.app.ActivityScenario
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
-import com.everlog.managers.preferences.SettingsManager
-import com.everlog.managers.preferences.SettingsManager.MuscleGoal
+import com.everlog.android.settings.data.SettingsManager
+import com.everlog.android.settings.data.SettingsManager.MuscleGoal
 import java.util.concurrent.TimeUnit
 import org.junit.After
 import org.junit.Before

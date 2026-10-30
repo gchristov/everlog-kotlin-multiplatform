@@ -10,9 +10,10 @@ import com.ahamed.multiviewadapter.ItemViewHolder;
 import com.everlog.R;
 import com.everlog.android.common.kotlin.DateExtKt;
 import com.everlog.android.common.kotlin.format.StatsFormatUtils;
+import com.everlog.android.settings.data.SettingsManager;
 import com.everlog.data.model.workout.ELWorkout;
 import com.everlog.databinding.RowHeaderWorkoutDetailsBinding;
-import com.everlog.managers.preferences.SettingsManager;
+import com.everlog.utils.format.WorkoutSetFormatKt;
 
 public class WorkoutDetailsStatsAdapter {
 
@@ -102,9 +103,9 @@ public class WorkoutDetailsStatsAdapter {
             // Weight
             float weight = item.getTotalWeight(SettingsManager.manager.weightUnit());
             binding.totalWeightSummary.setVisibility(weight > 0 ? View.VISIBLE : View.GONE);
-            binding.totalWeightSummary.setSummary(StatsFormatUtils.Companion.formatWeightStatsLabel(weight), SettingsManager.weightUnitAbbreviation(), getContext().getString(R.string.weight));
+            binding.totalWeightSummary.setSummary(StatsFormatUtils.Companion.formatWeightStatsLabel(weight), WorkoutSetFormatKt.weightUnitAbbreviation(SettingsManager.manager.weightUnit()), getContext().getString(R.string.weight));
             binding.maxWeightSummary.setVisibility(weight > 0 ? View.VISIBLE : View.GONE);
-            binding.maxWeightSummary.setSummary(StatsFormatUtils.Companion.formatWeightStatsLabel(item.getMaxWeight(SettingsManager.manager.weightUnit())), SettingsManager.weightUnitAbbreviation(), getContext().getString(R.string.workout_details_max_weight));
+            binding.maxWeightSummary.setSummary(StatsFormatUtils.Companion.formatWeightStatsLabel(item.getMaxWeight(SettingsManager.manager.weightUnit())), WorkoutSetFormatKt.weightUnitAbbreviation(SettingsManager.manager.weightUnit()), getContext().getString(R.string.workout_details_max_weight));
             // Exercises
             binding.exercisesSummary.setVisibility(weight > 0 ? View.GONE : View.VISIBLE);
             binding.exercisesSummary.setSummary(item.getTotalExercises() + "", null, getContext().getString(R.string.exercises_title));

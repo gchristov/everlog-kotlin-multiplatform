@@ -10,10 +10,10 @@ import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.everlog.R
 import com.everlog.android.common.kotlin.toLocalDate
+import com.everlog.android.settings.data.SettingsManager
 import com.everlog.config.AppConfig
 import com.everlog.databinding.FragmentHistoryHomeBinding
 import com.everlog.managers.analytics.AnalyticsConstants
-import com.everlog.managers.preferences.SettingsManager
 import com.everlog.ui.activities.base.BaseActivity
 import com.everlog.ui.adapters.CalendarAdapter
 import com.everlog.ui.fragments.base.BaseFragmentMvpView

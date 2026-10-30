@@ -6,11 +6,11 @@ import android.view.ViewGroup
 import com.ahamed.multiviewadapter.ItemBinder
 import com.ahamed.multiviewadapter.ItemViewHolder
 import com.everlog.R
+import com.everlog.android.settings.data.SettingsManager
+import com.everlog.android.settings.data.SettingsManager.MuscleGoal
 import com.everlog.constants.ELConstants
 import com.everlog.databinding.RowSettingsMuscleGoalBinding
 import com.everlog.managers.auth.LocalUserManager
-import com.everlog.managers.preferences.SettingsManager
-import com.everlog.managers.preferences.SettingsManager.MuscleGoal
 
 class MuscleGoalAdapter {
 

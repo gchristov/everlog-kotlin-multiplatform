@@ -35,12 +35,12 @@ import com.everlog.android.common.compose.elements.AppScreen
 import com.everlog.android.common.compose.elements.rememberAppBarScrollBehavior
 import com.everlog.android.common.compose.theme.Theme
 import com.everlog.android.common.mvvm.createViewModelFactory
+import com.everlog.android.settings.data.SettingsManager
 import com.everlog.data.controllers.starterroutines.RealBuildStarterRoutinesUseCase
 import com.everlog.data.controllers.starterroutines.RealSaveStarterRoutinesUseCase
 import com.everlog.data.repositories.RealExerciseRepository
 import com.everlog.data.sync.AppDataSync
 import com.everlog.data.repositories.RealRoutineRepository
-import com.everlog.managers.preferences.SettingsManager
 import com.everlog.ui.activities.home.routine.create.CreateRoutineActivity
 import com.everlog.ui.activities.templateeditor.TemplateEditorActivity
 import kotlinx.coroutines.Dispatchers

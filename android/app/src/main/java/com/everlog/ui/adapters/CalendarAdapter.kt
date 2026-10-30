@@ -10,9 +10,9 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.core.content.ContextCompat
 import com.everlog.R
+import com.everlog.android.settings.data.SettingsManager
 import com.everlog.databinding.RowCalendarDayBinding
 import com.everlog.databinding.RowCalendarMonthBinding
-import com.everlog.managers.preferences.SettingsManager
 import com.everlog.utils.buildWeekDays
 import com.everlog.utils.fromJava
 import com.everlog.utils.toJava

@@ -7,5 +7,6 @@ android {
 }
 
 dependencies {
+    api(projects.android.common.persistence)
     testImplementation(projects.android.settings.testFixtures)
 }
