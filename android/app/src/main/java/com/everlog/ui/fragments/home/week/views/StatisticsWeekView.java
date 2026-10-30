@@ -15,7 +15,7 @@ import com.everlog.ui.views.WeekDay;
 import com.everlog.ui.views.WeekDayView;
 import com.everlog.ui.views.summarycard.SummaryCardWeek;
 import com.everlog.utils.DayOfWeekExtKt;
-import com.everlog.utils.ViewUtils;
+import com.everlog.android.common.mvp.util.ViewUtils;
 import com.everlog.utils.format.WorkoutSetFormatKt;
 import com.facebook.shimmer.ShimmerFrameLayout;
 import com.vaibhavlakhera.circularprogressview.CircularProgressView;

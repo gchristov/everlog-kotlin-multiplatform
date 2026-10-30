@@ -44,7 +44,7 @@ class RoutinePickerActivity : BaseActivity(), MvpViewRoutinePicker {
             )
 
             binding.addBtn.updateLayoutParams<android.widget.FrameLayout.LayoutParams> {
-                bottomMargin = systemBars.bottom + resources.getDimensionPixelSize(R.dimen.activity_margin)
+                bottomMargin = systemBars.bottom + resources.getDimensionPixelSize(DesignR.dimen.activity_margin)
             }
 
             insets

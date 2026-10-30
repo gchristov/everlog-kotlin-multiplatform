@@ -21,7 +21,7 @@ import com.everlog.android.common.mvp.activity.BaseActivity
 import com.everlog.android.common.mvp.fragment.BaseFragmentMvpView
 import com.everlog.android.common.mvp.fragment.BaseFragmentPresenter
 import com.everlog.android.common.mvp.fragment.BaseTabFragment
-import com.everlog.ui.fragments.home.activity.statistics.charts.ChartRenderer
+import com.everlog.android.common.mvp.chart.ChartRenderer
 import com.everlog.utils.format.weightUnitAbbreviation
 import com.jakewharton.rxbinding.view.RxView
 import rx.Observable

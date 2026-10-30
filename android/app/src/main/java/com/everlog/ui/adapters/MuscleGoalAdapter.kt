@@ -11,6 +11,7 @@ import com.everlog.android.settings.data.SettingsManager.MuscleGoal
 import com.everlog.constants.ELConstants
 import com.everlog.databinding.RowSettingsMuscleGoalBinding
 import com.everlog.android.auth.data.LocalUserManager
+import com.everlog.android.common.mvp.list.OnListItemListener
 
 class MuscleGoalAdapter {
 

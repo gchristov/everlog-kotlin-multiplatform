@@ -33,14 +33,14 @@
                 android:clipChildren="false"
                 android:orientation="horizontal">
 
-                <com.everlog.ui.views.summarycard.SummaryCardStatistics
+                <com.everlog.android.common.mvp.view.SummaryCardStatistics
                     android:id="@+id/workoutsCompletedSummary"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginRight="@dimen/margin_22"
                     android:layout_weight="1" />
 
-                <com.everlog.ui.views.summarycard.SummaryCardStatistics
+                <com.everlog.android.common.mvp.view.SummaryCardStatistics
                     android:id="@+id/totalWeightSummary"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
@@ -54,14 +54,14 @@
                 android:clipChildren="false"
                 android:orientation="horizontal">
 
-                <com.everlog.ui.views.summarycard.SummaryCardStatistics
+                <com.everlog.android.common.mvp.view.SummaryCardStatistics
                     android:id="@+id/totalTimeSummary"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginRight="@dimen/margin_22"
                     android:layout_weight="1" />
 
-                <com.everlog.ui.views.summarycard.SummaryCardStatistics
+                <com.everlog.android.common.mvp.view.SummaryCardStatistics
                     android:id="@+id/averageTimeSummary"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
@@ -75,14 +75,14 @@
                 android:clipChildren="false"
                 android:orientation="horizontal">
 
-                <com.everlog.ui.views.summarycard.SummaryCardStatistics
+                <com.everlog.android.common.mvp.view.SummaryCardStatistics
                     android:id="@+id/longestSessionSummary"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginRight="@dimen/margin_22"
                     android:layout_weight="1" />
 
-                <com.everlog.ui.views.summarycard.SummaryCardStatistics
+                <com.everlog.android.common.mvp.view.SummaryCardStatistics
                     android:id="@+id/maxWeightSummary"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"

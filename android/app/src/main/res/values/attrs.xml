@@ -41,7 +41,4 @@
         <attr name="lvShadow" format="boolean"/>
     </declare-styleable>
 
-    <declare-styleable name="SummaryCardStatistics">
-        <attr name="scsLayout" format="reference"/>
-    </declare-styleable>
 </resources>

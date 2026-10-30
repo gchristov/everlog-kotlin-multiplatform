@@ -7,6 +7,8 @@ package com.everlog.android.common.mvp
 interface CommonMvpDependencies {
     fun screenViewed(name: String)
     fun hasUser(): Boolean
+    // Test Lab and Play pre-launch runs skip screen tips, which block Robo scripts
+    fun isTestLabRun(): Boolean
 }
 
 object CommonMvp {

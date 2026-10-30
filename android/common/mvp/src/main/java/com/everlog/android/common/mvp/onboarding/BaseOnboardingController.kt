@@ -1,12 +1,12 @@
-package com.everlog.ui.onboarding
+package com.everlog.android.common.mvp.onboarding
 
 import android.app.Activity
 import android.graphics.Point
 import android.graphics.Rect
 import android.view.View
 import com.everlog.android.common.kotlin.Utils
-import com.everlog.utils.device.DeviceUtils
-import com.everlog.utils.ViewUtils
+import com.everlog.android.common.mvp.CommonMvp
+import com.everlog.android.common.mvp.util.ViewUtils
 import com.getkeepsafe.taptargetview.TapTarget
 import com.getkeepsafe.taptargetview.TapTargetSequence
 import com.getkeepsafe.taptargetview.TapTargetView
@@ -33,7 +33,7 @@ abstract class BaseOnboardingController<T : Activity> constructor(context: T) {
 
     fun checkOnboarding() {
         // Tips overlay the screen outside the view hierarchy, which blocks Robo scripts
-        if (DeviceUtils.isFirebaseTestLabRun()) {
+        if (CommonMvp.dependencies.isTestLabRun()) {
             return
         }
         Utils.runWithDelay({

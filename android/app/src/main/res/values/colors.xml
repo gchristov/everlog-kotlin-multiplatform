@@ -2,8 +2,6 @@
 <resources>
     <color name="background_toolbar">#0A0E09</color>
 
-    <color name="gray_2">#D0D0D0</color>
-    <color name="gray_3">#808080</color>
     <color name="gray_4">#505050</color>
 
 
@@ -14,14 +12,6 @@
 
     <color name="calendar_out_of_range">#656B74</color>
 
-    <color name="pie_chart_1">#003f5c</color>
-    <color name="pie_chart_2">#005a79</color>
-    <color name="pie_chart_3">#00778f</color>
-    <color name="pie_chart_4">#00949b</color>
-    <color name="pie_chart_5">#00b19c</color>
-    <color name="pie_chart_6">#00cd93</color>
-    <color name="pie_chart_7">#65e882</color>
-    <color name="pie_chart_8">#b1ff6d</color>
 
     <color name="konfetti_lt_yellow">#fce18a</color>
     <color name="konfetti_lt_orange">#ff726d</color>

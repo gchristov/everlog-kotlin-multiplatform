@@ -2,9 +2,12 @@ package com.everlog.ui.onboarding
 
 import android.view.View
 import com.everlog.R
-import com.everlog.managers.OnboardManager
+import com.everlog.android.common.mvp.onboarding.OnboardManager
 import com.everlog.ui.activities.home.workout.WorkoutActivity
 import com.getkeepsafe.taptargetview.TapTargetView
+
+private const val SEEN_ONBOARD_WORKOUT_GOALS = "SEEN_ONBOARD_WORKOUT_GOALS"
+private const val SEEN_ONBOARD_WORKOUT_SET_TIMER = "SEEN_ONBOARD_WORKOUT_SET_TIMER"
 
 class WorkoutOnboardingController(context: WorkoutActivity) : ExerciseGroupsOnboardingController<WorkoutActivity>(context) {
 
@@ -14,7 +17,7 @@ class WorkoutOnboardingController(context: WorkoutActivity) : ExerciseGroupsOnbo
         }
         val goalView = getMuscleGoalView()
         val timerView = getExerciseTimerView()
-        if (!OnboardManager.manager.seenOnboard(OnboardManager.PreferenceKeys.SEEN_ONBOARD_WORKOUT_GOALS) && goalView != null) {
+        if (!OnboardManager.manager.seenOnboard(SEEN_ONBOARD_WORKOUT_GOALS) && goalView != null) {
             val target = buildTapTarget(goalView,
                     "Muscle Training Goals",
                     "Set a training goal and take your workouts to the next level with our optimised weight suggestions",
@@ -25,9 +28,9 @@ class WorkoutOnboardingController(context: WorkoutActivity) : ExerciseGroupsOnbo
                     checkOnboarding()
                 }
             })) {
-                OnboardManager.manager.setSeenOnboard(OnboardManager.PreferenceKeys.SEEN_ONBOARD_WORKOUT_GOALS, true)
+                OnboardManager.manager.setSeenOnboard(SEEN_ONBOARD_WORKOUT_GOALS, true)
             }
-        } else if (!OnboardManager.manager.seenOnboard(OnboardManager.PreferenceKeys.SEEN_ONBOARD_WORKOUT_SET_TIMER) && timerView != null) {
+        } else if (!OnboardManager.manager.seenOnboard(SEEN_ONBOARD_WORKOUT_SET_TIMER) && timerView != null) {
             val target = buildTapTarget(timerView,
                     "Exercise Timer",
                     "Tap to start a timer for this exercise",
@@ -38,7 +41,7 @@ class WorkoutOnboardingController(context: WorkoutActivity) : ExerciseGroupsOnbo
                     checkOnboarding()
                 }
             })) {
-                OnboardManager.manager.setSeenOnboard(OnboardManager.PreferenceKeys.SEEN_ONBOARD_WORKOUT_SET_TIMER, true)
+                OnboardManager.manager.setSeenOnboard(SEEN_ONBOARD_WORKOUT_SET_TIMER, true)
             }
         } else {
             super.doCheckOnboarding()

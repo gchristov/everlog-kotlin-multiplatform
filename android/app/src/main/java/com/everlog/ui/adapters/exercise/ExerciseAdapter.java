@@ -11,7 +11,7 @@ import com.everlog.R;
 import com.everlog.android.common.data.model.exercise.ELExercise;
 import com.everlog.android.common.data.model.exercise.ExerciseSuggestion;
 import com.everlog.databinding.RowExerciseBinding;
-import com.everlog.ui.adapters.OnListItemListener;
+import com.everlog.android.common.mvp.list.OnListItemListener;
 
 import androidx.core.content.ContextCompat;
 

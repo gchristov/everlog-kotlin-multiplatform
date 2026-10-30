@@ -36,7 +36,6 @@
         <item quantity="one">%1$d year</item>
         <item quantity="other">%1$d years</item>
     </plurals>
-    <string name="kg">kg</string>
     <string name="lb">lb</string>
     <string name="hour">h</string>
     <string name="sets">Sets</string>
@@ -261,11 +260,6 @@
     <string name="statistics_title">Statistics</string>
     <string name="statistics_longest_session">longest session</string>
     <string name="statistics_muscles_trained">Muscles Trained</string>
-    <string name="statistics_muscles_trained_tap_prompt">Tap for details</string>
-    <plurals name="statistics_category_exercises">
-        <item quantity="one">%1$s\n%2$d exercise</item>
-        <item quantity="other">%1$s\n%2$d exercises</item>
-    </plurals>
     <string name="statistics_session_duration">Session Duration</string>
     <string name="statistics_session_duration_avg">Avg. Session Duration</string>
     <string name="statistics_minutes">Minutes</string>

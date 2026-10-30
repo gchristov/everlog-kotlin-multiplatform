@@ -18,7 +18,7 @@ import com.everlog.data.controllers.statistics.ExerciseStatsController
 import com.everlog.databinding.FragmentExerciseStatisticsBinding
 import com.everlog.managers.analytics.AnalyticsConstants
 import com.everlog.android.common.mvp.activity.BaseActivity
-import com.everlog.ui.fragments.home.activity.statistics.charts.ChartRenderer
+import com.everlog.android.common.mvp.chart.ChartRenderer
 import com.everlog.ui.fragments.home.exercise.BaseExerciseTabFragment
 import com.everlog.ui.fragments.home.exercise.BasePresenterExerciseTab
 import com.everlog.utils.format.weightUnitAbbreviation
@@ -114,7 +114,7 @@ class ExerciseStatisticsFragment(exercise: ELExercise,
         repsDataDescriptor.title = "Reps"
         val weightDataDescriptor = ChartRenderer.ChartDataDescriptor(stats.weightCounts)
         weightDataDescriptor.axisDependency = YAxis.AxisDependency.RIGHT
-        weightDataDescriptor.colorResId = R.color.pie_chart_4
+        weightDataDescriptor.colorResId = DesignR.color.pie_chart_4
         weightDataDescriptor.title = "Weight"
         binding.repWeightAxisRightTitleLbl.text = String.format("%s (%s)", getString(R.string.weight), weightUnitAbbreviation(SettingsManager.manager.weightUnit()))
         mChartRenderer?.renderLineChart(binding.repWeightChart,

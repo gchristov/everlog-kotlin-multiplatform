@@ -1,9 +1,12 @@
 package com.everlog.ui.onboarding
 
 import android.view.View
-import com.everlog.managers.OnboardManager
+import com.everlog.android.common.mvp.onboarding.BaseOnboardingController
+import com.everlog.android.common.mvp.onboarding.OnboardManager
 import com.everlog.ui.activities.home.exercise.ExercisesActivity
 import com.getkeepsafe.taptargetview.TapTargetView
+
+private const val SEEN_ONBOARD_EXERCISES_FILTER = "SEEN_ONBOARD_EXERCISES_FILTER"
 
 class ExercisesOnboardingController constructor(context: ExercisesActivity): BaseOnboardingController<ExercisesActivity>(context) {
 
@@ -11,7 +14,7 @@ class ExercisesOnboardingController constructor(context: ExercisesActivity): Bas
         if (!onboardingViewsVisible()) {
             return
         }
-        if (!OnboardManager.manager.seenOnboard(OnboardManager.PreferenceKeys.SEEN_ONBOARD_EXERCISES_FILTER)) {
+        if (!OnboardManager.manager.seenOnboard(SEEN_ONBOARD_EXERCISES_FILTER)) {
             val target = buildTapTarget(getFiltersView()!!,
                     "Filter Exercises",
                     "Tap to filter exercises based on muscle group",
@@ -22,7 +25,7 @@ class ExercisesOnboardingController constructor(context: ExercisesActivity): Bas
                     getFiltersView()?.performClick()
                 }
             })) {
-                OnboardManager.manager.setSeenOnboard(OnboardManager.PreferenceKeys.SEEN_ONBOARD_EXERCISES_FILTER, true)
+                OnboardManager.manager.setSeenOnboard(SEEN_ONBOARD_EXERCISES_FILTER, true)
             }
         }
     }

@@ -1,5 +1,6 @@
 package com.everlog.ui.activities.onboarding
 
+import com.everlog.android.common.design.R as DesignR
 import androidx.annotation.PluralsRes
 import androidx.annotation.StringRes
 import com.everlog.R
@@ -89,7 +90,7 @@ internal object OnboardingQuestions {
             title = R.string.onboarding_units_title,
             helper = R.string.onboarding_units_helper,
             options = listOf(
-                OnboardingQuestion.Option(Kilograms, R.string.kg, R.string.onboarding_units_kilograms, summary = R.string.onboarding_units_kilograms),
+                OnboardingQuestion.Option(Kilograms, DesignR.string.kg, R.string.onboarding_units_kilograms, summary = R.string.onboarding_units_kilograms),
                 OnboardingQuestion.Option(Pounds, R.string.lb, R.string.onboarding_units_pounds, summary = R.string.onboarding_units_pounds),
             ),
             sideBySide = true,

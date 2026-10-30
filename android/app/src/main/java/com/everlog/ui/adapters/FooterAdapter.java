@@ -9,6 +9,7 @@ import android.view.ViewGroup;
 import com.ahamed.multiviewadapter.ItemBinder;
 import com.ahamed.multiviewadapter.ItemViewHolder;
 import com.everlog.R;
+import com.everlog.android.common.mvp.list.OnListItemListener;
 import com.everlog.databinding.RowFooterLinkBinding;
 import com.everlog.ui.adapters.items.Footer;
 

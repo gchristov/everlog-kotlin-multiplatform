@@ -65,7 +65,7 @@ import com.everlog.ui.activities.templateeditor.TemplateEditorActivity;
 import com.everlog.ui.activities.workoutlog.WorkoutLogActivity;
 import com.everlog.android.common.mvp.dialog.DialogBuilder;
 import com.everlog.android.common.mvp.dialog.ToastBuilder;
-import com.everlog.utils.ViewUtils;
+import com.everlog.android.common.mvp.util.ViewUtils;
 import com.everlog.utils.format.WorkoutSetFormatKt;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;

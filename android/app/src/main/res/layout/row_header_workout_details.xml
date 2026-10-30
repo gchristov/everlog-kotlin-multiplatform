@@ -28,7 +28,7 @@
             android:paddingTop="@dimen/settings_row_padding_top"
             android:paddingBottom="@dimen/settings_row_padding_bottom">
 
-            <com.everlog.ui.views.summarycard.SummaryCardStatistics
+            <com.everlog.android.common.mvp.view.SummaryCardStatistics
                 android:id="@+id/totalTimeSummary"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -40,14 +40,14 @@
                 android:layout_height="34dp"
                 android:background="@drawable/separator_line" />
 
-            <com.everlog.ui.views.summarycard.SummaryCardStatistics
+            <com.everlog.android.common.mvp.view.SummaryCardStatistics
                 android:id="@+id/totalWeightSummary"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 app:scsLayout="@layout/view_summary_card_workout_details" />
 
-            <com.everlog.ui.views.summarycard.SummaryCardStatistics
+            <com.everlog.android.common.mvp.view.SummaryCardStatistics
                 android:id="@+id/exercisesSummary"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -60,7 +60,7 @@
                 android:layout_height="34dp"
                 android:background="@drawable/separator_line" />
 
-            <com.everlog.ui.views.summarycard.SummaryCardStatistics
+            <com.everlog.android.common.mvp.view.SummaryCardStatistics
                 android:id="@+id/maxWeightSummary"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"

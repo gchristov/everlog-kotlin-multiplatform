@@ -8,8 +8,8 @@ import com.ahamed.multiviewadapter.ItemViewHolder
 import com.everlog.R
 import com.everlog.android.plan.data.model.ELPlan
 import com.everlog.databinding.RowPlanBinding
-import com.everlog.ui.adapters.OnListItemListener
-import com.everlog.utils.glide.ELGlideModule
+import com.everlog.android.common.mvp.list.OnListItemListener
+import com.everlog.android.common.mvp.util.ELGlideModule
 
 class PlanAdapter {
 

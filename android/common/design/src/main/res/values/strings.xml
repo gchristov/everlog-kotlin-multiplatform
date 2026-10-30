@@ -8,4 +8,10 @@
     <string name="feedback_send">Send feedback</string>
     <string name="ok">OK</string>
     <string name="processing">Processing…</string>
+    <plurals name="statistics_category_exercises">
+        <item quantity="one">%1$s\n%2$d exercise</item>
+        <item quantity="other">%1$s\n%2$d exercises</item>
+    </plurals>
+    <string name="kg">kg</string>
+    <string name="statistics_muscles_trained_tap_prompt">Tap for details</string>
 </resources>

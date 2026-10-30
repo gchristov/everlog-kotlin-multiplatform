@@ -10,7 +10,7 @@ import com.everlog.managers.analytics.AnalyticsConstants
 import com.everlog.android.common.mvp.activity.BaseActivity
 import com.everlog.android.common.mvp.activity.BaseActivityMvpView
 import com.everlog.android.common.mvp.activity.BaseActivityPresenter
-import com.everlog.utils.ViewUtils
+import com.everlog.android.common.mvp.util.ViewUtils
 import com.jakewharton.rxbinding.view.RxView
 import rx.Observable
 

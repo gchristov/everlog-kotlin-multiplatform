@@ -12,7 +12,7 @@ import android.view.WindowManager.LayoutParams;
 import android.widget.ImageView;
 
 import com.everlog.R;
-import com.everlog.utils.glide.ELGlideModule;
+import com.everlog.android.common.mvp.util.ELGlideModule;
 
 import androidx.appcompat.app.AppCompatActivity;
 

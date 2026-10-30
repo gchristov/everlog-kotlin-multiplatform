@@ -15,7 +15,7 @@ import com.everlog.android.common.mvp.activity.BaseActivity
 import com.everlog.android.common.mvp.activity.BaseActivityMvpView
 import com.everlog.android.common.mvp.activity.BaseActivityPresenter
 import com.everlog.ui.views.recyclerview.infinitescroll.InfiniteRecyclerView
-import com.everlog.utils.ViewUtils
+import com.everlog.android.common.mvp.util.ViewUtils
 import com.everlog.utils.device.DeviceUtils
 import rx.Observable
 import com.everlog.android.common.design.R as DesignR

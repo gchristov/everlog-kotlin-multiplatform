@@ -167,7 +167,7 @@ public class CreateExerciseActivity extends BaseActivity implements MvpViewCreat
                 R.array.exercise_category_titles_with_none, R.layout.view_spinner_row);
         adapter.setDropDownViewResource(R.layout.view_spinner_row_dropdown);
         ViewCompat.setBackgroundTintList(binding.categorySpinner, ColorStateList.valueOf(ContextCompat
-                .getColor(this, R.color.gray_3)));
+                .getColor(this, com.everlog.android.common.design.R.color.gray_3)));
         binding.categorySpinner.setAdapter(adapter);
     }
 }
