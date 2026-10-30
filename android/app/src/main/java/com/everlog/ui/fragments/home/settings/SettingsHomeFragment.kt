@@ -12,16 +12,16 @@ import com.everlog.R
 import com.everlog.android.auth.data.model.ELUser
 import com.everlog.android.common.kotlin.WeightUnit
 import com.everlog.android.common.kotlin.format.FormatUtils
+import com.everlog.android.common.mvp.fragment.BaseFragmentMvpView
+import com.everlog.android.common.mvp.fragment.BaseFragmentPresenter
+import com.everlog.android.common.mvp.fragment.BaseTabFragment
 import com.everlog.android.settings.data.SettingsManager
 import com.everlog.android.settings.data.model.ELIntegration
 import com.everlog.databinding.FragmentHomeSettingsBinding
 import com.everlog.managers.RemoteConfigManager
 import com.everlog.managers.analytics.AnalyticsConstants
 import com.everlog.ui.activities.setsuggestions.SetSuggestion
-import com.everlog.ui.dialog.DialogBuilder
-import com.everlog.ui.fragments.base.BaseFragmentMvpView
-import com.everlog.ui.fragments.base.BaseFragmentPresenter
-import com.everlog.ui.fragments.base.BaseTabFragment
+import com.everlog.ui.dialog.AppDialogs
 import com.everlog.ui.views.CheckBoxTriStates
 import com.everlog.utils.ViewUtils
 import com.everlog.utils.format.getIcon
@@ -183,7 +183,7 @@ class SettingsHomeFragment : BaseTabFragment(), MvpViewSettingsHome {
         binding.root.findViewById<View>(R.id.proBadge).visibility = if (paying) View.VISIBLE else View.GONE
         binding.root.findViewById<View>(R.id.manageProBtn).visibility = if (paying) View.VISIBLE else View.GONE
         binding.root.findViewById<Button>(R.id.manageProBtn).setTextColor(ContextCompat.getColor(requireContext(), if (paying) DesignR.color.main_accent else DesignR.color.background_card))
-        binding.root.findViewById<Button>(R.id.manageProBtn).setBackgroundResource(if (paying) R.drawable.rounded_corners_btn_three else R.drawable.rounded_corners_btn_one)
+        binding.root.findViewById<Button>(R.id.manageProBtn).setBackgroundResource(if (paying) DesignR.drawable.rounded_corners_btn_three else DesignR.drawable.rounded_corners_btn_one)
         binding.root.findViewById<Button>(R.id.manageProBtn).setText(if (paying) R.string.settings_pro_manage else R.string.settings_pro_upgrade)
         val trialDaysLeft = user.proFreeTrialDaysRemaining()
         binding.root.findViewById<View>(R.id.proFreeTrialSummary).visibility = if (user.isProWithinFreeTrial()) View.VISIBLE else View.GONE
@@ -194,15 +194,15 @@ class SettingsHomeFragment : BaseTabFragment(), MvpViewSettingsHome {
     }
 
     override fun showPickerWeight(value: Float): Observable<Float> {
-        return DialogBuilder.showWeightIncreaseDialog(context, value)
+        return AppDialogs.showWeightIncreaseDialog(context, value)
     }
 
-    override fun showPickerNumber(value: Int, type: DialogBuilder.NumberPickerDialogType): Observable<Int> {
-        return DialogBuilder.showPickerNumberDialog(context, value, type)
+    override fun showPickerNumber(value: Int, type: AppDialogs.NumberPickerDialogType): Observable<Int> {
+        return AppDialogs.showPickerNumberDialog(context, value, type)
     }
 
-    override fun showPickerMultipleChoice(values: Array<String>, selectedIndex: Int, type: DialogBuilder.MultipleChoiceDialogType): Observable<Int> {
-        return DialogBuilder.showPickerMultipleChoiceDialog(context, values, selectedIndex, type)
+    override fun showPickerMultipleChoice(values: Array<String>, selectedIndex: Int, type: AppDialogs.MultipleChoiceDialogType): Observable<Int> {
+        return AppDialogs.showPickerMultipleChoiceDialog(context, values, selectedIndex, type)
     }
 
     // Setup
@@ -248,4 +248,7 @@ class SettingsHomeFragment : BaseTabFragment(), MvpViewSettingsHome {
         fun integrationGoogleFitEnabled(integrationGoogleFitEnabled: Boolean) = apply { this.integrationGoogleFitEnabled = integrationGoogleFitEnabled }
         fun notificationNewsletterEnabled(notificationNewsletterEnabled: Boolean?) = apply { this.notificationNewsletterEnabled = notificationNewsletterEnabled }
     }
+
+    override fun showAppBlockerPrompt(type: AppDialogs.AppBlockerDialogType): Observable<Int> =
+        AppDialogs.showAppBlockerDialog(requireActivity(), type)
 }

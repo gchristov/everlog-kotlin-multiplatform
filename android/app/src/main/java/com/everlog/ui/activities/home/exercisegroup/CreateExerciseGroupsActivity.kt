@@ -12,14 +12,14 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.everlog.R
 import com.everlog.android.common.data.model.exercise.ELExerciseGroup
+import com.everlog.android.common.mvp.activity.BaseActivity
+import com.everlog.android.common.mvp.activity.BaseActivityMvpView
+import com.everlog.android.common.mvp.activity.BaseActivityPresenter
 import com.everlog.constants.ELConstants
 import com.everlog.managers.analytics.AnalyticsConstants
-import com.everlog.ui.activities.base.BaseActivity
-import com.everlog.ui.activities.base.BaseActivityMvpView
-import com.everlog.ui.activities.base.BaseActivityPresenter
-import com.everlog.ui.dialog.DialogBuilder
+import com.everlog.ui.dialog.AppDialogs
 import com.everlog.ui.onboarding.ExerciseGroupsOnboardingController
-import com.everlog.utils.Utils
+import com.everlog.android.common.mvp.util.Utils
 import com.jakewharton.rxbinding.view.RxView
 import rx.Observable
 import rx.subjects.PublishSubject
@@ -111,8 +111,8 @@ abstract class CreateExerciseGroupsActivity : BaseActivity(), MvpViewCreateExerc
         return intent?.extras?.getSerializable(ELConstants.EXTRA_EXERCISE_GROUPS) as? List<ELExerciseGroup>
     }
 
-    override fun showPickerDuration(value: Int, type: DialogBuilder.DurationPickerDialogType): Observable<Int> {
-        return DialogBuilder.showPickerDurationDialog(this, value, type)
+    override fun showPickerDuration(value: Int, type: AppDialogs.DurationPickerDialogType): Observable<Int> {
+        return AppDialogs.showPickerDurationDialog(this, value, type)
     }
 
     override fun toggleContextToolbar(visible: Boolean, selectedCount: Int) {

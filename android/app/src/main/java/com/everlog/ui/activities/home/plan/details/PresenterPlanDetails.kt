@@ -11,7 +11,8 @@ import com.everlog.data.datastores.base.ELDocumentStore
 import com.everlog.data.datastores.plans.ELDocStorePlanLoadedEvent
 import com.everlog.managers.PlanManager
 import com.everlog.managers.analytics.AnalyticsManager
-import com.everlog.ui.activities.base.BaseActivityPresenter
+import com.everlog.ui.navigator.navigator
+import com.everlog.android.common.mvp.activity.BaseActivityPresenter
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
 

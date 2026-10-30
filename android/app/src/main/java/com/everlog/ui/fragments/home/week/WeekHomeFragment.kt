@@ -8,11 +8,11 @@ import com.everlog.config.HomeNotification
 import com.everlog.databinding.FragmentHomeWeekBinding
 import com.everlog.managers.PlanManager
 import com.everlog.managers.analytics.AnalyticsConstants
-import com.everlog.ui.activities.base.BaseActivity
+import com.everlog.android.common.mvp.activity.BaseActivity
 import com.everlog.ui.activities.home.HomeActivity
-import com.everlog.ui.fragments.base.BaseFragmentMvpView
-import com.everlog.ui.fragments.base.BaseFragmentPresenter
-import com.everlog.ui.fragments.base.BaseTabFragment
+import com.everlog.android.common.mvp.fragment.BaseFragmentMvpView
+import com.everlog.android.common.mvp.fragment.BaseFragmentPresenter
+import com.everlog.android.common.mvp.fragment.BaseTabFragment
 import com.everlog.ui.fragments.home.week.views.PlanWeekView
 import com.everlog.ui.fragments.home.week.views.PlanWeekView.PlanWeekListener
 import com.everlog.ui.fragments.home.week.views.StatisticsWeekView

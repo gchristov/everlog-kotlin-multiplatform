@@ -4,9 +4,9 @@ import android.os.Bundle
 import com.everlog.android.common.data.model.exercise.ELExercise
 import com.everlog.constants.ELConstants
 import com.everlog.data.controllers.statistics.ExerciseStatsController
-import com.everlog.ui.fragments.base.BaseFragmentMvpView
-import com.everlog.ui.fragments.base.BaseFragmentPresenter
-import com.everlog.ui.fragments.base.BaseTabFragment
+import com.everlog.android.common.mvp.fragment.BaseFragmentMvpView
+import com.everlog.android.common.mvp.fragment.BaseFragmentPresenter
+import com.everlog.android.common.mvp.fragment.BaseTabFragment
 
 abstract class BaseExerciseTabFragment(exercise: ELExercise, private var stats: ExerciseStatsController.StatsResult?) : BaseTabFragment(), BaseMvpViewExerciseTab {
 

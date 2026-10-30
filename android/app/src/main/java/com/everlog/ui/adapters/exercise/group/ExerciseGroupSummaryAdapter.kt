@@ -29,7 +29,7 @@ import com.everlog.databinding.RowSetSummaryBinding
 import com.everlog.ui.activities.home.exercise.details.ExerciseDetailsActivity
 import com.everlog.ui.navigator.ELNavigator
 import com.everlog.utils.ArrayResourceTypeUtils
-import com.everlog.utils.Utils
+import com.everlog.android.common.mvp.util.Utils
 import com.everlog.utils.format.getExerciseSetSummary
 import com.everlog.utils.format.getWorkoutDetailsSummary
 import com.everlog.utils.format.summary
@@ -57,7 +57,7 @@ class ExerciseGroupSummaryAdapter {
                 val index = if (txt.contains("x")) txt.indexOf("x") else txt.indexOf("•")
                 val xPos = max(index + 1, 0)
                 str.setSpan(StyleSpan(Typeface.BOLD), xPos, txt.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
-                str.setSpan(ForegroundColorSpan(ContextCompat.getColor(context, R.color.white_base)), xPos, txt.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+                str.setSpan(ForegroundColorSpan(ContextCompat.getColor(context, DesignR.color.white_base)), xPos, txt.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
                 str.setSpan(StyleSpan(Typeface.NORMAL), 0, xPos, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
                 str.setSpan(ForegroundColorSpan(ContextCompat.getColor(context, DesignR.color.gray_1)), 0, xPos, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
                 summaryView?.text = str
@@ -243,7 +243,7 @@ class ExerciseGroupSummaryAdapter {
             } else {
                 binding.setSummary.text = txt
                 binding.setSummary.setTypeface(null, Typeface.NORMAL)
-                binding.setSummary.setTextColor(ContextCompat.getColor(itemView.context, R.color.white_base))
+                binding.setSummary.setTextColor(ContextCompat.getColor(itemView.context, DesignR.color.white_base))
             }
         }
     }

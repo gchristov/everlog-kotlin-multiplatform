@@ -14,9 +14,9 @@ import com.everlog.constants.ELConstants.EXTRA_ROUTINE
 import com.everlog.constants.ELConstants.EXTRA_VIEW_ONLY
 import com.everlog.databinding.ActivityRoutineDetailsBinding
 import com.everlog.managers.analytics.AnalyticsConstants
-import com.everlog.ui.activities.base.BaseActivity
-import com.everlog.ui.activities.base.BaseActivityMvpView
-import com.everlog.ui.activities.base.BaseActivityPresenter
+import com.everlog.android.common.mvp.activity.BaseActivity
+import com.everlog.android.common.mvp.activity.BaseActivityMvpView
+import com.everlog.android.common.mvp.activity.BaseActivityPresenter
 import com.everlog.ui.views.summarycard.SummaryCardCollapsing
 import com.everlog.utils.ActivityUtils
 import com.google.android.material.appbar.AppBarLayout

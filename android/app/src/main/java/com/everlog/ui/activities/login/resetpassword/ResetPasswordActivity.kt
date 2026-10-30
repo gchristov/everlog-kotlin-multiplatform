@@ -10,12 +10,12 @@ import androidx.core.view.updatePadding
 import com.everlog.R
 import com.everlog.databinding.ActivityResetPasswordBinding
 import com.everlog.managers.analytics.AnalyticsConstants
-import com.everlog.ui.activities.base.BaseActivity
-import com.everlog.ui.activities.base.BaseActivityMvpView
-import com.everlog.ui.activities.base.BaseActivityPresenter
+import com.everlog.android.common.mvp.activity.BaseActivity
+import com.everlog.android.common.mvp.activity.BaseActivityMvpView
+import com.everlog.android.common.mvp.activity.BaseActivityPresenter
 import com.everlog.ui.activities.login.LoginActivity
 import com.everlog.ui.activities.login.LoginActivity.Companion.setupLoadingButton
-import com.everlog.utils.input.KeyboardUtils
+import com.everlog.android.common.mvp.util.KeyboardUtils
 import com.github.leandroborgesferreira.loadingbutton.customViews.CircularProgressButton
 import com.jakewharton.rxbinding.view.RxView
 import rx.Observable

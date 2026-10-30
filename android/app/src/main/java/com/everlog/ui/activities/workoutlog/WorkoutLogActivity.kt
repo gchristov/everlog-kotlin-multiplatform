@@ -15,6 +15,7 @@ import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.everlog.R
 import com.everlog.android.common.data.model.exercise.ELExerciseGroup
 import com.everlog.android.common.data.model.workout.ELWorkout
+import com.everlog.android.common.mvp.MvpBroadcasts
 import com.everlog.config.FeedbackSource
 import com.everlog.constants.ELActivityRequestCodes
 import com.everlog.constants.ELConstants
@@ -78,7 +79,7 @@ class WorkoutLogActivity : SignedInComposeActivity() {
         if (!isOpened) return
         if (savedInstanceState == null) {
             // Closes screens that shouldn't stay under a workout
-            LocalBroadcastManager.getInstance(this).sendBroadcast(Intent(ELConstants.BROADCAST_WORKOUT_STARTED))
+            LocalBroadcastManager.getInstance(this).sendBroadcast(Intent(MvpBroadcasts.WORKOUT_STARTED))
         }
         LocalBroadcastManager.getInstance(this).registerReceiver(notificationReceiver, WorkoutLogNotificationReceiver.Filter)
         startNotification()

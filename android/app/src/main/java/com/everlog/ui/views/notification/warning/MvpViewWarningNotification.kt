@@ -1,6 +1,6 @@
 package com.everlog.ui.views.notification.warning
 
-import com.everlog.ui.views.base.BaseViewMvpView
+import com.everlog.android.common.mvp.view.BaseViewMvpView
 import rx.Observable
 
 interface MvpViewWarningNotification : BaseViewMvpView {

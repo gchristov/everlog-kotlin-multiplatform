@@ -2,7 +2,7 @@ package com.everlog.ui.fragments.home.activity.statistics
 
 import com.everlog.android.common.data.model.workout.RangeType
 import com.everlog.data.controllers.statistics.UserStatsController
-import com.everlog.ui.fragments.base.BaseFragmentMvpView
+import com.everlog.android.common.mvp.fragment.BaseFragmentMvpView
 import rx.Observable
 
 interface MvpViewStatisticsHome : BaseFragmentMvpView {

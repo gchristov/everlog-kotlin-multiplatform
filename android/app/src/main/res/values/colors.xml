@@ -5,9 +5,7 @@
     <color name="gray_2">#D0D0D0</color>
     <color name="gray_3">#808080</color>
     <color name="gray_4">#505050</color>
-    <color name="gray_5">#c0c0c0</color>
 
-    <color name="white_base">#fff</color>
 
     <color name="pager_active">@color/main_accent</color>
     <color name="pager_inactive">@color/gray_4</color>

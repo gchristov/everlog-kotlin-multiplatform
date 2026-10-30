@@ -210,7 +210,7 @@ class ImagePickerActivity : AppCompatActivity() {
                 setCompressionQuality(80)
                 setToolbarColor(ContextCompat.getColor(this@ImagePickerActivity, DesignR.color.background_card))
                 setStatusBarColor(ContextCompat.getColor(this@ImagePickerActivity, DesignR.color.background_card))
-                setToolbarWidgetColor(ContextCompat.getColor(this@ImagePickerActivity, R.color.white_base))
+                setToolbarWidgetColor(ContextCompat.getColor(this@ImagePickerActivity, DesignR.color.white_base))
                 setToolbarTitle(getString(R.string.select_image))
                 setActiveControlsWidgetColor(ContextCompat.getColor(this@ImagePickerActivity, DesignR.color.main_accent))
                 

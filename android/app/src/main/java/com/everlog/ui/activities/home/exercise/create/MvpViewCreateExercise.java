@@ -1,7 +1,7 @@
 package com.everlog.ui.activities.home.exercise.create;
 
 import com.everlog.android.common.data.model.exercise.ELExercise;
-import com.everlog.ui.activities.base.BaseActivityMvpView;
+import com.everlog.android.common.mvp.activity.BaseActivityMvpView;
 import com.imagepick.ImagePickerOptions;
 import com.imagepick.ImagePickerResult;
 

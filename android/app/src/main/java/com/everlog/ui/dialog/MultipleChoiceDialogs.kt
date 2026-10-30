@@ -1,11 +1,12 @@
 package com.everlog.ui.dialog
 
+import com.everlog.android.common.design.R as DesignR
 import android.app.AlertDialog
 import android.content.Context
 import android.content.DialogInterface
 import com.everlog.R
-import com.everlog.ui.dialog.DialogBuilder.MultipleChoiceDialogType
-import com.everlog.utils.Utils
+import com.everlog.ui.dialog.AppDialogs.MultipleChoiceDialogType
+import com.everlog.android.common.mvp.util.Utils
 import rx.Observable
 import rx.subjects.PublishSubject
 
@@ -30,7 +31,7 @@ internal class MultipleChoiceDialogs {
             }
 
             // Create dialog.
-            val builder = AlertDialog.Builder(context, R.style.DarkDialogTheme_RadioGroup)
+            val builder = AlertDialog.Builder(context, DesignR.style.DarkDialogTheme_RadioGroup)
             builder.setTitle(titleResId)
 
             // Attach buttons.

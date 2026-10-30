@@ -12,7 +12,7 @@ import com.everlog.data.controllers.statistics.ExerciseStatsController
 import com.everlog.databinding.FragmentExerciseStatisticsBinding
 import com.everlog.databinding.FragmentHistoryExerciseBinding
 import com.everlog.managers.analytics.AnalyticsConstants
-import com.everlog.ui.activities.base.BaseActivity
+import com.everlog.android.common.mvp.activity.BaseActivity
 import com.everlog.ui.fragments.home.exercise.BaseExerciseTabFragment
 import com.everlog.ui.fragments.home.exercise.BasePresenterExerciseTab
 import com.facebook.shimmer.ShimmerFrameLayout

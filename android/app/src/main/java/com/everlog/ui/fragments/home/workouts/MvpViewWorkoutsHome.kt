@@ -1,6 +1,6 @@
 package com.everlog.ui.fragments.home.workouts
 
-import com.everlog.ui.fragments.base.BaseFragmentMvpView
+import com.everlog.android.common.mvp.fragment.BaseFragmentMvpView
 import rx.Observable
 
 interface MvpViewWorkoutsHome : BaseFragmentMvpView {

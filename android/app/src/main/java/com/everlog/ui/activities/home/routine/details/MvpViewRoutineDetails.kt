@@ -1,7 +1,7 @@
 package com.everlog.ui.activities.home.routine.details
 
 import com.everlog.android.common.data.model.ELRoutine
-import com.everlog.ui.activities.base.BaseActivityMvpView
+import com.everlog.android.common.mvp.activity.BaseActivityMvpView
 import rx.Observable
 
 interface MvpViewRoutineDetails : BaseActivityMvpView {

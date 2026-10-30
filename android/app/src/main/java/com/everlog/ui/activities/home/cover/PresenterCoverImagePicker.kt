@@ -8,7 +8,7 @@ import com.everlog.constants.ELConstants
 import com.everlog.managers.api.ApiManager
 import com.everlog.managers.api.coverimages.response.CoverImage
 import com.everlog.managers.api.coverimages.response.CoverImagesResponse
-import com.everlog.ui.activities.base.BaseActivityPresenter
+import com.everlog.android.common.mvp.activity.BaseActivityPresenter
 import com.everlog.ui.adapters.CoverImageAdapter
 import com.everlog.ui.views.recyclerview.infinitescroll.InfiniteRecyclerAdapter
 

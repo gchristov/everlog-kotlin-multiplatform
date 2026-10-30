@@ -4,9 +4,9 @@ import android.content.Context
 import android.content.Intent
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.everlog.android.common.kotlin.WeightUnit
+import com.everlog.android.common.mvp.MvpBroadcasts
 import com.everlog.android.settings.data.SettingsManager
 import com.everlog.android.settings.data.SettingsManager.MuscleGoal
-import com.everlog.constants.ELConstants
 import com.everlog.managers.analytics.AnalyticsConstants
 import com.everlog.managers.analytics.AnalyticsManager
 
@@ -29,7 +29,7 @@ class RealSetSuggestionsSettings(context: Context) : SetSuggestionsSettings {
     override fun setMuscleGoal(goal: MuscleGoal) {
         SettingsManager.manager.setMuscleGoal(goal)
         // As the Settings screen does, so open screens show the new value
-        LocalBroadcastManager.getInstance(context).sendBroadcast(Intent(ELConstants.BROADCAST_PREFERENCES_CHANGED))
+        LocalBroadcastManager.getInstance(context).sendBroadcast(Intent(MvpBroadcasts.PREFERENCES_CHANGED))
         AnalyticsManager.manager.settingsMuscleGoalModified(goal)
     }
 

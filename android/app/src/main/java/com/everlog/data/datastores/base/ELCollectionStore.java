@@ -4,7 +4,7 @@ import com.everlog.data.datastores.events.collection.ELColStoreItemAddedEvent;
 import com.everlog.data.datastores.events.collection.ELColStoreItemModifiedEvent;
 import com.everlog.data.datastores.events.collection.ELColStoreItemRemovedEvent;
 import com.everlog.data.datastores.events.collection.ELColStoreItemsLoadedEvent;
-import com.everlog.utils.Utils;
+import com.everlog.android.common.mvp.util.Utils;
 import com.google.firebase.firestore.DocumentChange;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.ListenerRegistration;

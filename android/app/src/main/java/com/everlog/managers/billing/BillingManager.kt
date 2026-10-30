@@ -6,7 +6,7 @@ import com.android.billingclient.api.*
 import com.android.billingclient.api.BillingClient.SkuType
 import com.everlog.BuildConfig
 import com.everlog.android.common.kotlin.AppContext
-import com.everlog.ui.dialog.ToastBuilder
+import com.everlog.android.common.mvp.dialog.ToastBuilder
 import rx.Observable
 import rx.subjects.PublishSubject
 import timber.log.Timber

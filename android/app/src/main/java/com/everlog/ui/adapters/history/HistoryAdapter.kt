@@ -1,5 +1,6 @@
 package com.everlog.ui.adapters.history
 
+import com.everlog.android.common.design.R as DesignR
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -63,7 +64,7 @@ class HistoryAdapter {
                 setMargins(binding.routinePicker.routineContainer, 0, 0, 0, elevation)
             } else {
                 // Add bottom padding if the workouts are not in the same day
-                val margin = dpToPx(getRawDimension(itemView.context, R.dimen.margin_12))
+                val margin = dpToPx(getRawDimension(itemView.context, DesignR.dimen.margin_12))
                 setMargins(binding.routinePicker.routineContainer, 0, 0, 0, margin)
             }
         }

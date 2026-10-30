@@ -11,7 +11,6 @@ import android.text.style.StyleSpan;
 import android.text.style.UnderlineSpan;
 import android.widget.TextView;
 
-import com.everlog.R;
 
 import androidx.core.content.ContextCompat;
 
@@ -49,7 +48,7 @@ public class TextViewUtils {
                                          int start,
                                          int end) {
         Spannable spannedTitle = new SpannableString(text);
-        spannedTitle.setSpan(new ForegroundColorSpan(ContextCompat.getColor(textView.getContext(), R.color.white_base)), start, end, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+        spannedTitle.setSpan(new ForegroundColorSpan(ContextCompat.getColor(textView.getContext(), com.everlog.android.common.design.R.color.white_base)), start, end, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
         spannedTitle.setSpan(new StyleSpan(Typeface.BOLD), start, end, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
         textView.setText(spannedTitle);
     }

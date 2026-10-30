@@ -7,10 +7,10 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.everlog.R
 import com.everlog.databinding.FragmentHomeWorkoutsBinding
 import com.everlog.managers.analytics.AnalyticsConstants
-import com.everlog.ui.activities.base.BaseActivity
-import com.everlog.ui.fragments.base.BaseFragmentMvpView
-import com.everlog.ui.fragments.base.BaseFragmentPresenter
-import com.everlog.ui.fragments.base.BaseTabFragment
+import com.everlog.android.common.mvp.activity.BaseActivity
+import com.everlog.android.common.mvp.fragment.BaseFragmentMvpView
+import com.everlog.android.common.mvp.fragment.BaseFragmentPresenter
+import com.everlog.android.common.mvp.fragment.BaseTabFragment
 import com.jakewharton.rxbinding.view.RxView
 import rx.Observable
 

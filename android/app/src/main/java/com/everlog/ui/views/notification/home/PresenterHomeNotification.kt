@@ -3,8 +3,9 @@ package com.everlog.ui.views.notification.home
 import com.everlog.config.HomeNotification
 import com.everlog.managers.analytics.AnalyticsManager
 import com.everlog.managers.apprate.AppLaunchManager
-import com.everlog.ui.views.base.BaseViewPresenter
-import com.everlog.utils.Utils
+import com.everlog.ui.navigator.navigator
+import com.everlog.android.common.mvp.view.BaseViewPresenter
+import com.everlog.android.common.mvp.util.Utils
 import timber.log.Timber
 
 class PresenterHomeNotification : BaseViewPresenter<MvpViewHomeNotification>() {

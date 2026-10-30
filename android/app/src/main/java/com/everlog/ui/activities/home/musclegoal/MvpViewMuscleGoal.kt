@@ -1,6 +1,6 @@
 package com.everlog.ui.activities.home.musclegoal
 
-import com.everlog.ui.activities.base.BaseActivityMvpView
+import com.everlog.android.common.mvp.activity.BaseActivityMvpView
 import rx.Observable
 
 interface MvpViewMuscleGoal : BaseActivityMvpView {

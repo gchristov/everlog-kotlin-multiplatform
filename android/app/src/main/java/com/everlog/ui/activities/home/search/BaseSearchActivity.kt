@@ -14,7 +14,7 @@ import androidx.appcompat.widget.SearchView
 import androidx.appcompat.widget.Toolbar
 import androidx.core.content.ContextCompat
 import com.everlog.R
-import com.everlog.ui.activities.base.BaseActivity
+import com.everlog.android.common.mvp.activity.BaseActivity
 import rx.subjects.PublishSubject
 import com.everlog.android.common.design.R as DesignR
 

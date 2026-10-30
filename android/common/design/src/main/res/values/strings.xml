@@ -6,4 +6,6 @@
     <string name="keypad_hide">Hide keypad</string>
     <string name="keypad_backspace">Delete</string>
     <string name="feedback_send">Send feedback</string>
+    <string name="ok">OK</string>
+    <string name="processing">Processing…</string>
 </resources>

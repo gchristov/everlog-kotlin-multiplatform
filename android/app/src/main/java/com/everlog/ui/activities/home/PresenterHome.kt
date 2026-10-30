@@ -18,11 +18,13 @@ import com.everlog.managers.WorkoutManager
 import com.everlog.managers.analytics.AnalyticsConstants
 import com.everlog.managers.analytics.AnalyticsManager
 import com.everlog.managers.appupdate.AppUpdateController
+import com.everlog.managers.auth.LocalUserManager
 import com.everlog.managers.billing.BillingBridge
 import com.everlog.managers.billing.BillingManager
-import com.everlog.ui.activities.base.BaseActivityPresenter
+import com.everlog.ui.navigator.navigator
+import com.everlog.android.common.mvp.activity.BaseActivityPresenter
 import com.everlog.utils.FCMUtils
-import com.everlog.utils.Utils
+import com.everlog.android.common.mvp.util.Utils
 import com.imagepick.dialog.ELPickerDialog
 
 class PresenterHome : BaseActivityPresenter<MvpViewHome>() {
@@ -251,8 +253,8 @@ class PresenterHome : BaseActivityPresenter<MvpViewHome>() {
     // Analytics
 
     private fun identifyUser() {
-        AnalyticsManager.manager.userIdentify(getUserAccount()!!.id)
-        ErrorManager.manager.userIdentify(getUserAccount()!!.id)
+        AnalyticsManager.manager.userIdentify(LocalUserManager.getUser()!!.id)
+        ErrorManager.manager.userIdentify(LocalUserManager.getUser()!!.id)
     }
 
     // Setup

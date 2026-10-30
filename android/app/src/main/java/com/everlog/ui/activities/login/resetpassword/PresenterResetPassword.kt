@@ -3,11 +3,11 @@ package com.everlog.ui.activities.login.resetpassword
 import android.text.TextUtils
 import com.everlog.R
 import com.everlog.managers.auth.AuthManager
-import com.everlog.ui.activities.base.BaseActivityPresenter
+import com.everlog.android.common.mvp.activity.BaseActivityPresenter
 import com.everlog.ui.activities.login.LoginActivity
-import com.everlog.ui.dialog.ToastBuilder
-import com.everlog.utils.Utils
-import com.everlog.utils.input.KeyboardUtils
+import com.everlog.android.common.mvp.dialog.ToastBuilder
+import com.everlog.android.common.mvp.util.Utils
+import com.everlog.android.common.mvp.util.KeyboardUtils
 import com.everlog.utils.input.ValidationUtils
 
 class PresenterResetPassword : BaseActivityPresenter<MvpViewResetPassword>() {

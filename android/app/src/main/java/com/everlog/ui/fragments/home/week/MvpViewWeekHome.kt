@@ -1,7 +1,7 @@
 package com.everlog.ui.fragments.home.week
 
 import com.everlog.config.HomeNotification
-import com.everlog.ui.fragments.base.BaseFragmentMvpView
+import com.everlog.android.common.mvp.fragment.BaseFragmentMvpView
 import rx.Observable
 
 interface MvpViewWeekHome : BaseFragmentMvpView {

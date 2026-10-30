@@ -3,7 +3,7 @@ package com.everlog.ui.activities.home.exercise.details
 import com.everlog.android.common.data.model.exercise.ELExercise
 import com.everlog.android.common.data.model.workout.RangeType
 import com.everlog.data.controllers.statistics.ExerciseStatsController
-import com.everlog.ui.activities.base.BaseActivityMvpView
+import com.everlog.android.common.mvp.activity.BaseActivityMvpView
 import rx.Observable
 
 interface MvpViewExerciseDetails : BaseActivityMvpView {

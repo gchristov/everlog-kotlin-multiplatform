@@ -1,8 +1,8 @@
 package com.everlog.ui.activities.home.exercisegroup
 
 import com.everlog.android.common.data.model.exercise.ELExerciseGroup
-import com.everlog.ui.activities.base.BaseActivityMvpView
-import com.everlog.ui.dialog.DialogBuilder.DurationPickerDialogType
+import com.everlog.android.common.mvp.activity.BaseActivityMvpView
+import com.everlog.ui.dialog.AppDialogs.DurationPickerDialogType
 import com.everlog.ui.onboarding.ExerciseGroupsOnboardingController
 import rx.Observable
 

@@ -5,10 +5,11 @@ import android.content.Intent
 import com.everlog.R
 import com.everlog.android.auth.data.model.ELConsent
 import com.everlog.android.common.kotlin.WeightUnit
+import com.everlog.android.common.mvp.MvpBroadcasts
+import com.everlog.android.common.mvp.fragment.BaseFragmentPresenter
 import com.everlog.android.settings.data.SettingsManager
 import com.everlog.android.settings.data.model.ELIntegration
 import com.everlog.config.FeedbackSource
-import com.everlog.constants.ELConstants
 import com.everlog.data.datastores.ELDatastore
 import com.everlog.data.datastores.ELUserConsentStore
 import com.everlog.data.datastores.ELUserIntegrationStore
@@ -16,9 +17,10 @@ import com.everlog.data.datastores.ELUserStore
 import com.everlog.managers.RemoteConfigManager
 import com.everlog.managers.analytics.AnalyticsManager
 import com.everlog.managers.auth.AuthManager
+import com.everlog.managers.auth.LocalUserManager
 import com.everlog.managers.integrations.GoogleFitIntegrationManager
-import com.everlog.ui.dialog.DialogBuilder
-import com.everlog.ui.fragments.base.BaseFragmentPresenter
+import com.everlog.ui.dialog.AppDialogs
+import com.everlog.ui.navigator.navigator
 import com.everlog.utils.ArrayResourceTypeUtils
 import com.everlog.utils.device.DeviceInfo
 import com.google.firebase.firestore.SetOptions
@@ -134,7 +136,7 @@ class PresenterSettingsHome : BaseFragmentPresenter<MvpViewSettingsHome>() {
     }
 
     private fun observeWeeklyGoalConfirm() {
-        subscriptions.add(mvpView.showPickerNumber(SettingsManager.manager.weeklyWorkoutsGoal(), DialogBuilder.NumberPickerDialogType.WEEKLY_GOAL)
+        subscriptions.add(mvpView.showPickerNumber(SettingsManager.manager.weeklyWorkoutsGoal(), AppDialogs.NumberPickerDialogType.WEEKLY_GOAL)
                 .compose(applyUISchedulers())
                 .subscribe({ value -> handleWeeklyGoalChanged(value) }, { throwable -> handleError(throwable) }))
     }
@@ -182,7 +184,7 @@ class PresenterSettingsHome : BaseFragmentPresenter<MvpViewSettingsHome>() {
     private fun observeWeightUnitConfirm() {
         val titles = ArrayResourceTypeUtils.withWeightUnits().titles
         val selectedIndex = ArrayResourceTypeUtils.withWeightUnits().types.indexOf(SettingsManager.manager.weightUnit().name)
-        subscriptions.add(mvpView.showPickerMultipleChoice(titles, selectedIndex, DialogBuilder.MultipleChoiceDialogType.UNIT_WEIGHT)
+        subscriptions.add(mvpView.showPickerMultipleChoice(titles, selectedIndex, AppDialogs.MultipleChoiceDialogType.UNIT_WEIGHT)
                 .compose(applyUISchedulers())
                 .subscribe({ value -> handleWeightUnitChanged(value) }, { throwable -> handleError(throwable) }))
     }
@@ -197,7 +199,7 @@ class PresenterSettingsHome : BaseFragmentPresenter<MvpViewSettingsHome>() {
         val collection = arrayOf(DayOfWeek.MONDAY, DayOfWeek.SUNDAY)
         val titles = collection.map { dayOfWeek -> dayOfWeek.getDisplayName(TextStyle.FULL, Locale.getDefault()) }
         val selectedIndex = collection.indexOf(SettingsManager.manager.firstDayOfWeek())
-        subscriptions.add(mvpView.showPickerMultipleChoice(titles.toTypedArray(), selectedIndex, DialogBuilder.MultipleChoiceDialogType.FIRST_DAY_OF_WEEK)
+        subscriptions.add(mvpView.showPickerMultipleChoice(titles.toTypedArray(), selectedIndex, AppDialogs.MultipleChoiceDialogType.FIRST_DAY_OF_WEEK)
                 .compose(applyUISchedulers())
                 .subscribe({ value -> handleFirstWeekDayChanged(value) }, { throwable -> handleError(throwable) }))
     }
@@ -246,7 +248,7 @@ class PresenterSettingsHome : BaseFragmentPresenter<MvpViewSettingsHome>() {
     }
 
     private fun observeNewsletterConsentConfirm() {
-        subscriptions.add(mvpView.showAppBlockerPrompt(DialogBuilder.AppBlockerDialogType.NEWSLETTER)
+        subscriptions.add(mvpView.showAppBlockerPrompt(AppDialogs.AppBlockerDialogType.NEWSLETTER)
                 .compose(applyUISchedulers())
                 .subscribe({
                     saveConsentDecision(it == DialogInterface.BUTTON_POSITIVE)
@@ -267,7 +269,7 @@ class PresenterSettingsHome : BaseFragmentPresenter<MvpViewSettingsHome>() {
     // Loading
 
     private fun loadData() {
-        mvpView?.showUserInfo(getUserAccount()!!)
+        mvpView?.showUserInfo(LocalUserManager.getUser()!!)
         mvpView?.showAppInfo(DeviceInfo.appInfo)
         showFeedback()
         mvpView?.showSettings(
@@ -308,7 +310,7 @@ class PresenterSettingsHome : BaseFragmentPresenter<MvpViewSettingsHome>() {
     }
 
     private fun saveConsentDecision(granted: Boolean) {
-        val consent = mConsent ?: ELConsent.newConsent(getUserAccount()!!.id, granted)
+        val consent = mConsent ?: ELConsent.newConsent(LocalUserManager.getUser()!!.id, granted)
         consent.updateNewsletter(granted)
         ELDatastore.consentStore().create(consent, SetOptions.merge())
         if (granted) {
@@ -357,6 +359,6 @@ class PresenterSettingsHome : BaseFragmentPresenter<MvpViewSettingsHome>() {
     }
 
     private fun notifyPreferencesChanged() {
-        sendBroadcast(Intent(ELConstants.BROADCAST_PREFERENCES_CHANGED))
+        sendBroadcast(Intent(MvpBroadcasts.PREFERENCES_CHANGED))
     }
 }

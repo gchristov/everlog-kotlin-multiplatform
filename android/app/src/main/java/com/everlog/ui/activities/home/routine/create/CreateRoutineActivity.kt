@@ -8,7 +8,7 @@ import com.everlog.constants.ELConstants
 import com.everlog.managers.analytics.AnalyticsConstants
 import com.everlog.ui.activities.home.exercisegroup.CreateExerciseGroupsActivity
 import com.everlog.ui.activities.home.exercisegroup.PresenterCreateExerciseGroups
-import com.everlog.ui.dialog.DialogBuilder
+import com.everlog.ui.dialog.AppDialogs
 import rx.Observable
 
 class CreateRoutineActivity : CreateExerciseGroupsActivity(), MvpViewCreateRoutine {
@@ -60,7 +60,7 @@ class CreateRoutineActivity : CreateExerciseGroupsActivity(), MvpViewCreateRouti
     }
 
     override fun showNamePrompt(name: String?): Observable<String> {
-        return DialogBuilder.showInputStringDialog(this, name, DialogBuilder.StringDialogType.ROUTINE_NAME)
+        return AppDialogs.showInputStringDialog(this, name, AppDialogs.StringDialogType.ROUTINE_NAME)
     }
 
     private fun isEditMode(): Boolean {

@@ -10,10 +10,11 @@ import com.everlog.config.FeedbackSource
 import com.everlog.constants.ELConstants.EXTRA_SET_TYPE
 import com.everlog.managers.RemoteConfigManager
 import com.everlog.managers.analytics.AnalyticsManager
-import com.everlog.ui.activities.base.BaseActivityPresenter
+import com.everlog.android.common.mvp.activity.BaseActivityPresenter
 import com.everlog.ui.adapters.FooterAdapter
 import com.everlog.ui.adapters.SetTypeAdapter
 import com.everlog.ui.adapters.items.Footer
+import com.everlog.ui.navigator.navigator
 import com.everlog.utils.ArrayResourceTypeUtils
 
 class PresenterSetTypePicker : BaseActivityPresenter<MvpViewSetTypePicker>() {

@@ -8,9 +8,9 @@ import com.everlog.android.settings.data.model.ELIntegration
 import com.everlog.constants.ELConstants
 import com.everlog.databinding.ActivityIntegrationBinding
 import com.everlog.managers.analytics.AnalyticsConstants
-import com.everlog.ui.activities.base.BaseActivity
-import com.everlog.ui.activities.base.BaseActivityMvpView
-import com.everlog.ui.activities.base.BaseActivityPresenter
+import com.everlog.android.common.mvp.activity.BaseActivity
+import com.everlog.android.common.mvp.activity.BaseActivityMvpView
+import com.everlog.android.common.mvp.activity.BaseActivityPresenter
 import com.everlog.utils.format.getIcon
 import com.jakewharton.rxbinding.view.RxView
 import rx.Observable

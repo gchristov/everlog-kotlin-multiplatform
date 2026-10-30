@@ -20,9 +20,9 @@ import com.everlog.constants.ELConstants.EXTRA_PLAN_UUID
 import com.everlog.databinding.ActivityPlanCreateBinding
 import com.everlog.managers.analytics.AnalyticsConstants
 import com.everlog.managers.auth.LocalUserManager
-import com.everlog.ui.activities.base.BaseActivity
-import com.everlog.ui.activities.base.BaseActivityMvpView
-import com.everlog.ui.activities.base.BaseActivityPresenter
+import com.everlog.android.common.mvp.activity.BaseActivity
+import com.everlog.android.common.mvp.activity.BaseActivityMvpView
+import com.everlog.android.common.mvp.activity.BaseActivityPresenter
 import com.everlog.ui.views.notification.warning.WarningNotificationView
 import com.everlog.utils.glide.ELGlideModule
 import com.facebook.shimmer.ShimmerFrameLayout
@@ -145,7 +145,7 @@ class CreatePlanActivity : BaseActivity(), MvpViewCreatePlan {
                 binding.daysContainer.root.visibility = View.GONE
                 binding.weeksContainer.weeksList.layoutManager?.scrollToPosition(0)
                 binding.root.findViewById<Button>(R.id.saveBtn).setText(R.string.save)
-                binding.root.findViewById<Button>(R.id.saveBtn).setBackgroundResource(R.drawable.rounded_corners_btn_one)
+                binding.root.findViewById<Button>(R.id.saveBtn).setBackgroundResource(DesignR.drawable.rounded_corners_btn_one)
                 binding.root.findViewById<Button>(R.id.saveBtn).setTextColor(ContextCompat.getColor(this, DesignR.color.background_card))
             }
             Flow.WEEKS -> {
@@ -155,7 +155,7 @@ class CreatePlanActivity : BaseActivity(), MvpViewCreatePlan {
                 binding.daysContainer.root.visibility = View.GONE
                 binding.weeksContainer.weeksList.layoutManager?.scrollToPosition(0)
                 binding.root.findViewById<Button>(R.id.saveBtn).setText(R.string.done)
-                binding.root.findViewById<Button>(R.id.saveBtn).setBackgroundResource(R.drawable.rounded_corners_btn_three)
+                binding.root.findViewById<Button>(R.id.saveBtn).setBackgroundResource(DesignR.drawable.rounded_corners_btn_three)
                 binding.root.findViewById<Button>(R.id.saveBtn).setTextColor(ContextCompat.getColor(this, DesignR.color.main_accent))
             }
             Flow.DAYS -> {
@@ -165,7 +165,7 @@ class CreatePlanActivity : BaseActivity(), MvpViewCreatePlan {
                 binding.daysContainer.root.visibility = View.VISIBLE
                 binding.daysContainer.daysList.layoutManager?.scrollToPosition(0)
                 binding.root.findViewById<Button>(R.id.saveBtn).setText(R.string.done)
-                binding.root.findViewById<Button>(R.id.saveBtn).setBackgroundResource(R.drawable.rounded_corners_btn_three)
+                binding.root.findViewById<Button>(R.id.saveBtn).setBackgroundResource(DesignR.drawable.rounded_corners_btn_three)
                 binding.root.findViewById<Button>(R.id.saveBtn).setTextColor(ContextCompat.getColor(this, DesignR.color.main_accent))
             }
         }

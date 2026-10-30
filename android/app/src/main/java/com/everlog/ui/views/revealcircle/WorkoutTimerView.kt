@@ -1,5 +1,6 @@
 package com.everlog.ui.views.revealcircle
 
+import com.everlog.android.common.design.R as DesignR
 import android.content.Context
 import android.text.TextUtils
 import android.view.View
@@ -49,7 +50,7 @@ class WorkoutTimerView(context: Context,
         separatorLbl.measure(unspecified, unspecified)
         timeField.measure(unspecified, unspecified)
         val toolbarSize = ViewUtils.getToolbarSize(context)
-        val titleMarginStart = resources.getDimensionPixelSize(R.dimen.activity_margin_half)
+        val titleMarginStart = resources.getDimensionPixelSize(DesignR.dimen.activity_margin_half)
         val fixedWidth = (toolbarSize * 3) + separatorLbl.measuredWidth + timeField.measuredWidth + titleMarginStart
         val maxWidth = (width - fixedWidth).coerceAtLeast(0)
         if (titleLbl.maxWidth != maxWidth) {

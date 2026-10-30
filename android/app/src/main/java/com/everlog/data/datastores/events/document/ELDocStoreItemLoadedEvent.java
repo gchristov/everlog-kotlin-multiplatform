@@ -1,6 +1,6 @@
 package com.everlog.data.datastores.events.document;
 
-import com.everlog.data.datastores.events.BaseEvent;
+import com.everlog.android.common.mvp.BaseEvent;
 
 public abstract class ELDocStoreItemLoadedEvent<T> extends BaseEvent {
 

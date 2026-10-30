@@ -1,7 +1,8 @@
 package com.everlog.ui.activities.home.exercise
 
-import com.everlog.ui.activities.base.BaseActivityMvpView
-import com.everlog.ui.dialog.DialogBuilder
+import com.everlog.ui.dialog.AppDialogs
+
+import com.everlog.android.common.mvp.activity.BaseActivityMvpView
 import com.everlog.ui.onboarding.ExerciseGroupsOnboardingController
 import com.everlog.ui.onboarding.ExercisesOnboardingController
 import com.everlog.ui.views.revealcircle.FilterExercisesView
@@ -43,5 +44,5 @@ interface MvpViewExercises : BaseActivityMvpView {
 
     fun setScrollPosition(position: Int)
 
-    fun showPickerMultipleChoice(values: Array<String>, selectedIndex: Int, type: DialogBuilder.MultipleChoiceDialogType): Observable<Int>
+    fun showPickerMultipleChoice(values: Array<String>, selectedIndex: Int, type: AppDialogs.MultipleChoiceDialogType): Observable<Int>
 }

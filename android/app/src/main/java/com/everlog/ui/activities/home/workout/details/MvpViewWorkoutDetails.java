@@ -1,8 +1,8 @@
 package com.everlog.ui.activities.home.workout.details;
 
 import com.everlog.android.common.data.model.workout.ELWorkout;
-import com.everlog.ui.activities.base.BaseActivityMvpView;
-import com.everlog.ui.dialog.DialogBuilder;
+import com.everlog.android.common.mvp.activity.BaseActivityMvpView;
+import com.everlog.ui.dialog.AppDialogs;
 
 import java.util.Date;
 
@@ -18,7 +18,7 @@ public interface MvpViewWorkoutDetails extends BaseActivityMvpView {
 
     ELWorkout getItemToEdit();
 
-    Observable<String> showStringPrompt(String name, DialogBuilder.StringDialogType type);
+    Observable<String> showStringPrompt(String name, AppDialogs.StringDialogType type);
 
     Observable<Date> showDatePrompt(Date date);
 

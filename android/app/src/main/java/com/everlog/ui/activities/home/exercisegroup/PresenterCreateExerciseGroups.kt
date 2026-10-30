@@ -19,12 +19,13 @@ import com.everlog.constants.ELConstants
 import com.everlog.data.datastores.exercises.ELExercisesStore.ELColStoreExerciseModifiedEvent
 import com.everlog.managers.analytics.AnalyticsManager
 // import icepick.State
-import com.everlog.ui.activities.base.BaseActivityPresenter
+import com.everlog.android.common.mvp.activity.BaseActivityPresenter
 import com.everlog.ui.activities.home.exercise.details.ExerciseDetailsActivity
 import com.everlog.ui.adapters.exercise.group.ExerciseGroupCreateAdapter
 import com.everlog.ui.adapters.exercise.group.ExerciseGroupCreateHeaderAdapter
 import com.everlog.ui.adapters.items.ExerciseGroupCreateHeader
-import com.everlog.ui.dialog.DialogBuilder
+import com.everlog.ui.dialog.AppDialogs
+import com.everlog.ui.navigator.navigator
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
 
@@ -145,7 +146,7 @@ abstract class PresenterCreateExerciseGroups<T : MvpViewCreateExerciseGroups> : 
     }
 
     private fun observeRestTimeConfirm() {
-        subscriptions.add(mvpView.showPickerDuration(mSelectedCommonRestTimeSeconds, if (!allowSetTemplates()) DialogBuilder.DurationPickerDialogType.REST_TIME else DialogBuilder.DurationPickerDialogType.REST_TIME_REQUIRED)
+        subscriptions.add(mvpView.showPickerDuration(mSelectedCommonRestTimeSeconds, if (!allowSetTemplates()) AppDialogs.DurationPickerDialogType.REST_TIME else AppDialogs.DurationPickerDialogType.REST_TIME_REQUIRED)
                 .compose(applyUISchedulers())
                 .subscribe({ value: Int ->
                     mSelectedCommonRestTimeSeconds = value
@@ -157,7 +158,7 @@ abstract class PresenterCreateExerciseGroups<T : MvpViewCreateExerciseGroups> : 
 
     private fun observeExerciseTimeConfirm() {
         val default = if (mSelectedCommonExerciseTimeSeconds <= 0) AppConfig.configuration.defaultExerciseTimeSeconds else mSelectedCommonExerciseTimeSeconds
-        subscriptions.add(mvpView.showPickerDuration(default, if (!allowSetTemplates()) DialogBuilder.DurationPickerDialogType.EXERCISE_TIME else DialogBuilder.DurationPickerDialogType.EXERCISE_TIME_REQUIRED)
+        subscriptions.add(mvpView.showPickerDuration(default, if (!allowSetTemplates()) AppDialogs.DurationPickerDialogType.EXERCISE_TIME else AppDialogs.DurationPickerDialogType.EXERCISE_TIME_REQUIRED)
                 .compose(applyUISchedulers())
                 .subscribe({ value: Int ->
                     mSelectedCommonExerciseTimeSeconds = value

@@ -2,7 +2,7 @@ package com.everlog.ui.fragments.home.exercise
 
 import com.everlog.android.common.data.model.exercise.ELExercise
 import com.everlog.data.controllers.statistics.ExerciseStatsController
-import com.everlog.ui.fragments.base.BaseFragmentMvpView
+import com.everlog.android.common.mvp.fragment.BaseFragmentMvpView
 
 interface BaseMvpViewExerciseTab : BaseFragmentMvpView {
 

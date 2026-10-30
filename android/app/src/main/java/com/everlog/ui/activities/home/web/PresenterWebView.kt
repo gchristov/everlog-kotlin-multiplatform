@@ -1,6 +1,6 @@
 package com.everlog.ui.activities.home.web
 
-import com.everlog.ui.activities.base.BaseActivityPresenter
+import com.everlog.android.common.mvp.activity.BaseActivityPresenter
 
 class PresenterWebView : BaseActivityPresenter<MvpViewWeb>() {
 

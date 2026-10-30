@@ -9,7 +9,8 @@ import com.everlog.data.datastores.ELDatastore
 import com.everlog.data.datastores.history.ELColStoreWorkoutsLoadedEvent
 import com.everlog.ui.adapters.history.BaseTimelineViewHolder
 import com.everlog.ui.adapters.history.HistoryAdapter
-import com.everlog.ui.fragments.base.BaseFragmentPresenter
+import com.everlog.ui.navigator.navigator
+import com.everlog.android.common.mvp.fragment.BaseFragmentPresenter
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
 import org.threeten.bp.Instant

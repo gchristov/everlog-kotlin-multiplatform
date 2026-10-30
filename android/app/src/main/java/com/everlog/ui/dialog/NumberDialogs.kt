@@ -1,5 +1,6 @@
 package com.everlog.ui.dialog
 
+import com.everlog.android.common.design.R as DesignR
 import android.app.Activity
 import android.app.AlertDialog
 import android.content.Context
@@ -10,11 +11,11 @@ import android.widget.TextView
 import com.everlog.R
 import com.everlog.android.common.kotlin.NumberUtils
 import com.everlog.android.settings.data.SettingsManager
-import com.everlog.ui.dialog.DialogBuilder.DurationPickerDialogType
-import com.everlog.ui.dialog.DialogBuilder.NumberPickerDialogType
-import com.everlog.utils.Utils
+import com.everlog.ui.dialog.AppDialogs.DurationPickerDialogType
+import com.everlog.ui.dialog.AppDialogs.NumberPickerDialogType
+import com.everlog.android.common.mvp.util.Utils
 import com.everlog.utils.format.weightUnitAbbreviation
-import com.everlog.utils.input.KeyboardUtils
+import com.everlog.android.common.mvp.util.KeyboardUtils
 import com.github.stephenvinouze.materialnumberpickercore.MaterialNumberPicker
 import rx.Observable
 import rx.subjects.PublishSubject
@@ -35,7 +36,7 @@ internal class NumberDialogs {
             val fPart = ((value - iPart) * 100).toInt() // Convert decimal part to number.
             val decimals: List<String> = ArrayList(listOf("0", "25", "50", "75"))
             // Create dialog
-            val builder = AlertDialog.Builder(context, R.style.DarkDialogTheme)
+            val builder = AlertDialog.Builder(context, DesignR.style.DarkDialogTheme)
             builder.setTitle(titleResId)
             // Attach buttons
             builder.setPositiveButton(context.getString(R.string.save), null)
@@ -95,7 +96,7 @@ internal class NumberDialogs {
                 NumberPickerDialogType.WEEKLY_GOAL -> titleResId = R.string.settings_weekly_goal
             }
             // Create dialog
-            val builder = AlertDialog.Builder(context, R.style.DarkDialogTheme)
+            val builder = AlertDialog.Builder(context, DesignR.style.DarkDialogTheme)
             builder.setTitle(titleResId)
             // Attach buttons
             builder.setPositiveButton(context.getString(R.string.save), null)
@@ -160,7 +161,7 @@ internal class NumberDialogs {
                 }
             }
             // Create dialog
-            val builder = AlertDialog.Builder(context, R.style.DarkDialogTheme)
+            val builder = AlertDialog.Builder(context, DesignR.style.DarkDialogTheme)
             builder.setTitle(titleResId)
             // Attach buttons
             builder

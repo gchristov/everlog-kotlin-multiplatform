@@ -9,7 +9,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import com.everlog.BuildConfig
 import com.everlog.managers.analytics.AnalyticsManager
-import com.everlog.ui.dialog.ToastBuilder
+import com.everlog.android.common.mvp.dialog.ToastBuilder
 import com.google.android.play.core.review.ReviewInfo
 import com.google.android.play.core.review.ReviewManager
 import com.google.android.play.core.review.ReviewManagerFactory

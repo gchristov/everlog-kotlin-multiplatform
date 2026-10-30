@@ -3,7 +3,7 @@ package com.everlog.ui.activities.pending
 import android.view.View
 import com.everlog.R
 import com.everlog.databinding.ActivityPendingFeatureBinding
-import com.everlog.ui.activities.base.BaseActivity
+import com.everlog.android.common.mvp.activity.BaseActivity
 import rx.Observable
 
 abstract class PendingFeatureActivity : BaseActivity(), MvpViewPendingFeature {

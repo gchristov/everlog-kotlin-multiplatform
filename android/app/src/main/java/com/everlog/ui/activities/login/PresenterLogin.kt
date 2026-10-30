@@ -9,10 +9,11 @@ import com.everlog.android.settings.data.SettingsManager
 import com.everlog.constants.ELActivityRequestCodes
 import com.everlog.constants.ELConstants
 import com.everlog.managers.auth.AuthManager
-import com.everlog.ui.activities.base.BaseActivityPresenter
-import com.everlog.ui.dialog.ToastBuilder
-import com.everlog.utils.Utils
-import com.everlog.utils.input.KeyboardUtils
+import com.everlog.ui.navigator.navigator
+import com.everlog.android.common.mvp.activity.BaseActivityPresenter
+import com.everlog.android.common.mvp.dialog.ToastBuilder
+import com.everlog.android.common.mvp.util.Utils
+import com.everlog.android.common.mvp.util.KeyboardUtils
 import com.everlog.utils.input.ValidationUtils
 import rx.Observable
 
