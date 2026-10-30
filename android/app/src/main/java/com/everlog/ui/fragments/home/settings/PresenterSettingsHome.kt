@@ -184,7 +184,7 @@ class PresenterSettingsHome : BaseFragmentPresenter<MvpViewSettingsHome>() {
     private fun observeWeightUnitConfirm() {
         val titles = ArrayResourceTypeUtils.withWeightUnits().titles
         val selectedIndex = ArrayResourceTypeUtils.withWeightUnits().types.indexOf(SettingsManager.manager.weightUnit().name)
-        subscriptions.add(mvpView.showPickerMultipleChoice(titles, selectedIndex, AppDialogs.MultipleChoiceDialogType.UNIT_WEIGHT)
+        subscriptions.add(mvpView.showPickerMultipleChoice(R.string.settings_unit_weight, titles, selectedIndex)
                 .compose(applyUISchedulers())
                 .subscribe({ value -> handleWeightUnitChanged(value) }, { throwable -> handleError(throwable) }))
     }
@@ -199,7 +199,7 @@ class PresenterSettingsHome : BaseFragmentPresenter<MvpViewSettingsHome>() {
         val collection = arrayOf(DayOfWeek.MONDAY, DayOfWeek.SUNDAY)
         val titles = collection.map { dayOfWeek -> dayOfWeek.getDisplayName(TextStyle.FULL, Locale.getDefault()) }
         val selectedIndex = collection.indexOf(SettingsManager.manager.firstDayOfWeek())
-        subscriptions.add(mvpView.showPickerMultipleChoice(titles.toTypedArray(), selectedIndex, AppDialogs.MultipleChoiceDialogType.FIRST_DAY_OF_WEEK)
+        subscriptions.add(mvpView.showPickerMultipleChoice(R.string.settings_first_week_day, titles.toTypedArray(), selectedIndex)
                 .compose(applyUISchedulers())
                 .subscribe({ value -> handleFirstWeekDayChanged(value) }, { throwable -> handleError(throwable) }))
     }

@@ -26,6 +26,7 @@ import com.everlog.ui.views.CheckBoxTriStates
 import com.everlog.android.common.mvp.util.ViewUtils
 import com.everlog.utils.format.getIcon
 import com.everlog.android.common.kotlin.format.weightUnitAbbreviation
+import com.everlog.android.common.mvp.dialog.showChoiceList
 import com.everlog.android.common.mvp.util.ELGlideModule
 import com.jakewharton.rxbinding.view.RxView
 import org.threeten.bp.DayOfWeek
@@ -202,8 +203,8 @@ class SettingsHomeFragment : BaseTabFragment(), MvpViewSettingsHome {
         return AppDialogs.showPickerNumberDialog(context, value, type)
     }
 
-    override fun showPickerMultipleChoice(values: Array<String>, selectedIndex: Int, type: AppDialogs.MultipleChoiceDialogType): Observable<Int> {
-        return AppDialogs.showPickerMultipleChoiceDialog(context, values, selectedIndex, type)
+    override fun showPickerMultipleChoice(titleResId: Int, values: Array<String>, selectedIndex: Int): Observable<Int> {
+        return showChoiceList(requireContext(), titleResId, values, selectedIndex)
     }
 
     // Setup

@@ -25,11 +25,6 @@ public class AppDialogs {
         EXERCISE_TIME_REQUIRED
     }
 
-    public enum MultipleChoiceDialogType {
-        UNIT_WEIGHT,
-        FIRST_DAY_OF_WEEK,
-        EXERCISE_CATEGORY
-    }
 
     public enum StringDialogType {
         ROUTINE_NAME,
@@ -69,12 +64,6 @@ public class AppDialogs {
         return NumberDialogs.showPickerDurationDialog(context, valueSeconds, type);
     }
 
-    public static Observable<Integer> showPickerMultipleChoiceDialog(Context context,
-                                                                     String[] options,
-                                                                     int selectedIndex,
-                                                                     MultipleChoiceDialogType type) {
-        return MultipleChoiceDialogs.showPickerMultipleChoiceDialog(context, options, selectedIndex, type);
-    }
 
     public static Observable<Date> showDateTimeDialog(Context context, Date date) {
         return DateTimeDialogs.showDateDialog(context, date);

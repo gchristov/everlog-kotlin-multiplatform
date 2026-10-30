@@ -1,19 +1,12 @@
 package com.everlog.ui.adapters.exercise.group
 
-import android.content.Context
 import android.graphics.Typeface
-import android.text.Spannable
-import android.text.SpannableStringBuilder
 import android.text.TextUtils
-import android.text.style.ForegroundColorSpan
-import android.text.style.StyleSpan
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import com.ahamed.multiviewadapter.DataListManager
 import com.ahamed.multiviewadapter.ItemBinder
 import com.ahamed.multiviewadapter.ItemViewHolder
@@ -32,40 +25,15 @@ import com.everlog.ui.navigator.ELNavigator
 import com.everlog.android.common.kotlin.format.ArrayResourceTypeUtils
 import com.everlog.android.common.kotlin.format.exerciseSummary
 import com.everlog.android.common.kotlin.format.setSummary
+import com.everlog.android.common.mvp.view.renderCompleteSetSummary
 import com.everlog.android.settings.data.SettingsManager
 import com.everlog.android.common.kotlin.Utils
 import com.everlog.android.common.design.R as DesignR
 import java.util.*
-import kotlin.math.max
 
 class ExerciseGroupSummaryAdapter {
 
     private lateinit var builder: Builder
-
-    companion object {
-
-        @JvmStatic
-        fun renderCompleteSetSummary(context: Context,
-                                     set: ELSet,
-                                     summaryView: TextView?) {
-            val txt = if (set.isWithoutData()) "Skipped" else setSummary(context, set.summaryValues(useTemplate = false), SettingsManager.manager.weightUnit()) ?: ""
-            if (set.isWithoutData()) {
-                summaryView?.text = txt
-                summaryView?.setTypeface(null, Typeface.ITALIC)
-                summaryView?.setTextColor(ContextCompat.getColor(context, R.color.gray_4))
-            } else {
-                val str = SpannableStringBuilder(txt)
-                val index = if (txt.contains("x")) txt.indexOf("x") else txt.indexOf("•")
-                val xPos = max(index + 1, 0)
-                str.setSpan(StyleSpan(Typeface.BOLD), xPos, txt.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
-                str.setSpan(ForegroundColorSpan(ContextCompat.getColor(context, DesignR.color.white_base)), xPos, txt.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
-                str.setSpan(StyleSpan(Typeface.NORMAL), 0, xPos, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
-                str.setSpan(ForegroundColorSpan(ContextCompat.getColor(context, DesignR.color.gray_1)), 0, xPos, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
-                summaryView?.text = str
-                summaryView?.setTypeface(null, Typeface.NORMAL)
-            }
-        }
-    }
 
     fun build(builder: Builder): GroupBinder {
         this.builder = builder
@@ -228,7 +196,7 @@ class ExerciseGroupSummaryAdapter {
             if (builder.showTemplates) {
                 renderTemplate()
             } else {
-                renderCompleteSetSummary(itemView.context, item, binding.setSummary)
+                renderCompleteSetSummary(itemView.context, item, SettingsManager.manager.weightUnit(), binding.setSummary)
             }
         }
 
@@ -241,7 +209,7 @@ class ExerciseGroupSummaryAdapter {
             if (TextUtils.isEmpty(txt)) {
                 binding.setSummary.text = "Template not set"
                 binding.setSummary.setTypeface(null, Typeface.ITALIC)
-                binding.setSummary.setTextColor(ContextCompat.getColor(itemView.context, R.color.gray_4))
+                binding.setSummary.setTextColor(ContextCompat.getColor(itemView.context, DesignR.color.gray_4))
             } else {
                 binding.setSummary.text = txt
                 binding.setSummary.setTypeface(null, Typeface.NORMAL)

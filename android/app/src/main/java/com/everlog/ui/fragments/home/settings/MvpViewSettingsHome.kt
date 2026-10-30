@@ -53,5 +53,5 @@ interface MvpViewSettingsHome : BaseFragmentMvpView {
 
     fun showPickerNumber(value: Int, type: AppDialogs.NumberPickerDialogType): Observable<Int>
 
-    fun showPickerMultipleChoice(values: Array<String>, selectedIndex: Int, type: AppDialogs.MultipleChoiceDialogType): Observable<Int>
+    fun showPickerMultipleChoice(titleResId: Int, values: Array<String>, selectedIndex: Int): Observable<Int>
 }

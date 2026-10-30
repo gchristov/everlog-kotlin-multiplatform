@@ -31,7 +31,7 @@
         android:paddingRight="@dimen/activity_margin_half"
         android:paddingBottom="@dimen/margin_10">
 
-        <com.everlog.ui.views.ExerciseImageView
+        <com.everlog.android.common.mvp.view.ExerciseImageView
             android:id="@+id/exerciseImg"
             android:layout_width="60dp"
             android:layout_height="60dp"

@@ -24,7 +24,7 @@
             android:layout_marginLeft="-2dp"
             android:padding="2dp">
 
-            <com.everlog.ui.views.ExerciseImageView
+            <com.everlog.android.common.mvp.view.ExerciseImageView
                 android:id="@+id/exerciseImg"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"

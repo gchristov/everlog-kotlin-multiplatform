@@ -1,4 +1,4 @@
-package com.everlog.ui.views;
+package com.everlog.android.common.mvp.view;
 
 import android.content.Context;
 import android.content.res.TypedArray;
@@ -11,11 +11,9 @@ import android.widget.LinearLayout;
 
 import com.amulyakhare.textdrawable.TextDrawable;
 import com.christophesmet.android.views.maskableframelayout.MaskableFrameLayout;
-import com.everlog.R;
+import com.everlog.android.common.mvp.R;
 import com.everlog.android.common.data.model.exercise.ELExercise;
 import com.everlog.android.common.data.model.exercise.ExerciseSuggestion;
-import com.everlog.ui.activities.home.exercise.details.ExerciseDetailsActivity;
-import com.everlog.ui.navigator.ELNavigator;
 import com.everlog.android.common.mvp.util.ELGlideModule;
 
 import androidx.annotation.Nullable;
@@ -27,10 +25,8 @@ public class ExerciseImageView extends LinearLayout {
     View mImageViewContainer;
     ImageView mImageView;
 
-    private ELExercise mExercise;
     private boolean mSquareHeight;
     private boolean mSquareWidth;
-    private boolean mClickable;
     private boolean mShowLetter;
     private boolean mFitCenter;
 
@@ -62,16 +58,9 @@ public class ExerciseImageView extends LinearLayout {
 
     private void init(AttributeSet attrs, int defStyle) {
         setupLayout(attrs, defStyle);
-        setOnClickListener(v -> {
-            if (mClickable && mExercise != null) {
-                new ELNavigator(getContext()).openExerciseDetails(new ExerciseDetailsActivity.Companion.Properties()
-                        .exercise(mExercise));
-            }
-        });
     }
 
     public void setExercise(ELExercise exercise) {
-        this.mExercise = exercise;
         if (TextUtils.isEmpty(exercise.getImageUrl())) {
             mImageView.setImageDrawable(null);
             if (!TextUtils.isEmpty(exercise.getName()) && mShowLetter) {
@@ -117,7 +106,6 @@ public class ExerciseImageView extends LinearLayout {
             try {
                 mSquareHeight = typedArray.getBoolean(R.styleable.ExerciseImageView_eivSquareHeight, true);
                 mSquareWidth = typedArray.getBoolean(R.styleable.ExerciseImageView_eivSquareWidth, false);
-                mClickable = typedArray.getBoolean(R.styleable.ExerciseImageView_eivClickable, true);
                 mShowLetter = typedArray.getBoolean(R.styleable.ExerciseImageView_eivShowLetter, true);
                 mFitCenter = typedArray.getBoolean(R.styleable.ExerciseImageView_eivFitCenter, false);
             } finally {

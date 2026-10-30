@@ -13,7 +13,7 @@ import com.everlog.android.common.kotlin.format.StatsFormatUtils
 import com.everlog.android.common.kotlin.makeSingleLine
 import com.everlog.android.settings.data.SettingsManager
 import com.everlog.config.AppConfig
-import com.everlog.data.controllers.statistics.BaseStatsController
+import com.everlog.android.common.mvp.chart.BaseStatsController
 import com.everlog.data.controllers.statistics.UserStatsController
 import com.everlog.databinding.FragmentHomeStatisticsBinding
 import com.everlog.managers.analytics.AnalyticsConstants

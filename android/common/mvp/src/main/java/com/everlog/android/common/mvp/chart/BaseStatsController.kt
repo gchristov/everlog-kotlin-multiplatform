@@ -1,10 +1,7 @@
-package com.everlog.data.controllers.statistics
+package com.everlog.android.common.mvp.chart
 
-import com.everlog.android.common.data.model.exercise.ELRoutineExercise
-import com.everlog.android.common.data.model.set.ELSet
 import com.everlog.android.common.data.model.workout.ELWorkout
 import com.everlog.android.common.data.model.workout.RangeType
-import com.everlog.android.settings.data.SettingsManager
 import com.everlog.android.common.mvp.chart.axis.DateAxisFormatter
 import com.everlog.android.common.mvp.chart.axis.MonthAxisFormatter
 import com.everlog.android.common.mvp.chart.axis.YearAxisFormatter
@@ -21,9 +18,6 @@ abstract class BaseStatsController {
 
     companion object {
 
-        // 1RM formulas are only reliable up to ~10 reps, beyond that they wildly overestimate
-        private const val ORM_MAX_REPS = 10
-
         fun chartGranularity(): Float {
             return 1F // Because we're using days
         }
@@ -35,27 +29,6 @@ abstract class BaseStatsController {
                 else -> DateAxisFormatter()
             }
         }
-
-        /**
-         * Estimates an exercise's 1RM from its heaviest set that has weight and at most
-         * [ORM_MAX_REPS] reps. Returns 0 if there's no such set.
-         */
-        fun calculate1RM(exercise: ELRoutineExercise): Float {
-            val heaviestSet = exercise.sets
-                    .filter { it.isWeightEntered() && it.getReps() in 1..ORM_MAX_REPS }
-                    .maxByOrNull { it.getWeight(SettingsManager.manager.weightUnit()) }
-            return if (heaviestSet != null) calculate1RM(heaviestSet) else 0f
-        }
-
-        private fun calculate1RM(maxWeightSet: ELSet?): Float {
-            // w and r could be -1, depending on set, as they are the default values
-            return estimate1RM(maxWeightSet?.getWeight(SettingsManager.manager.weightUnit()) ?: 0f, maxWeightSet?.getReps() ?: 0)
-        }
-
-        /**
-         * Brzycki's estimate, in the unit of [weight] - https://en.wikipedia.org/wiki/One-repetition_maximum
-         */
-        fun estimate1RM(weight: Float, reps: Int): Float = max(0f, weight / (1.0278f - 0.0278f * reps))
     }
 
     protected fun calculateCategoryCounts(currentValues: MutableMap<String, PieEntry>, newValues: Map<String, Int>) {

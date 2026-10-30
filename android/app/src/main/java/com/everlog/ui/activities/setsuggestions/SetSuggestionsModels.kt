@@ -5,7 +5,7 @@ import androidx.annotation.StringRes
 import com.everlog.R
 import com.everlog.android.common.kotlin.WeightUnit
 import com.everlog.android.settings.data.SettingsManager.MuscleGoal
-import com.everlog.data.controllers.statistics.BaseStatsController
+import com.everlog.android.common.kotlin.estimate1RM
 import com.everlog.data.controllers.workoutprefill.goalWeight
 import com.everlog.data.controllers.workoutprefill.rounded1RM
 import kotlin.math.roundToInt
@@ -64,7 +64,7 @@ data class GoalWeightExample(
 
         fun of(unit: WeightUnit): GoalWeightExample {
             val weight = if (unit == WeightUnit.POUND) 180f else 80f
-            val oneRepMax = BaseStatsController.estimate1RM(weight, Reps)
+            val oneRepMax = estimate1RM(weight, Reps)
             return GoalWeightExample(
                 weight = weight,
                 reps = Reps,

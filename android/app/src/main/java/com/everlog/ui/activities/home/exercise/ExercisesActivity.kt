@@ -15,11 +15,10 @@ import com.everlog.databinding.ActivityExercisesBinding
 import com.everlog.managers.analytics.AnalyticsConstants
 import com.everlog.android.common.mvp.activity.BaseActivityMvpView
 import com.everlog.android.common.mvp.activity.BaseActivityPresenter
+import com.everlog.android.common.mvp.dialog.showChoiceList
 import com.everlog.ui.activities.home.search.BaseSearchActivity
-import com.everlog.ui.dialog.AppDialogs
 import com.everlog.ui.onboarding.ExercisesOnboardingController
 import com.everlog.ui.views.revealcircle.FilterExercisesView
-import com.facebook.shimmer.ShimmerFrameLayout
 import com.jakewharton.rxbinding.view.RxView
 import rx.Observable
 import rx.subjects.PublishSubject
@@ -221,8 +220,8 @@ class ExercisesActivity : BaseSearchActivity(), MvpViewExercises {
         binding.recyclerView.layoutManager?.scrollToPosition(0)
     }
 
-    override fun showPickerMultipleChoice(values: Array<String>, selectedIndex: Int, type: AppDialogs.MultipleChoiceDialogType): Observable<Int> {
-        return AppDialogs.showPickerMultipleChoiceDialog(this, values, selectedIndex, type)
+    override fun showPickerMultipleChoice(titleResId: Int, values: Array<String>, selectedIndex: Int): Observable<Int> {
+        return showChoiceList(this, titleResId, values, selectedIndex)
     }
 
     fun getFiltersMenu(): View? {

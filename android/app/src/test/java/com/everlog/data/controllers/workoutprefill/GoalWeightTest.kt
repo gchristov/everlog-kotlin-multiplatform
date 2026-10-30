@@ -1,7 +1,7 @@
 package com.everlog.data.controllers.workoutprefill
 
 import com.everlog.android.settings.data.SettingsManager.MuscleGoal
-import com.everlog.data.controllers.statistics.BaseStatsController
+import com.everlog.android.common.kotlin.estimate1RM
 import com.google.common.truth.Truth.assertThat
 import org.junit.Test
 
@@ -17,7 +17,7 @@ class GoalWeightTest {
     @Test
     fun `float noise in the estimate doesn't add a kg`() {
         // Brzycki gives 90.01 for 80 x 5, and 80% of that would round up to 73
-        val oneRepMax = BaseStatsController.estimate1RM(80f, 5)
+        val oneRepMax = estimate1RM(80f, 5)
 
         assertThat(oneRepMax).isGreaterThan(90f)
         assertThat(goalWeight(oneRepMax, MuscleGoal.GROWTH)).isEqualTo(72f)

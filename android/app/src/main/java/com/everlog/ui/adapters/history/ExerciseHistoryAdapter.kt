@@ -17,7 +17,7 @@ import com.everlog.android.common.mvp.list.BaseTimelineViewHolder.OnTimelineList
 import com.everlog.android.settings.data.SettingsManager
 import com.everlog.databinding.RowHistoryExerciseBinding
 import com.everlog.databinding.RowSetSummaryBinding
-import com.everlog.ui.adapters.exercise.group.ExerciseGroupSummaryAdapter.Companion.renderCompleteSetSummary
+import com.everlog.android.common.mvp.view.renderCompleteSetSummary
 import java.util.Date
 
 class ExerciseHistoryAdapter {
@@ -107,7 +107,7 @@ class ExerciseHistoryAdapter {
 
         fun render() {
             binding.setNumber.text = String.format("%d", absoluteAdapterPosition + 1)
-            renderCompleteSetSummary(itemView.context, item, binding.setSummary)
+            renderCompleteSetSummary(itemView.context, item, SettingsManager.manager.weightUnit(), binding.setSummary)
         }
     }
 }

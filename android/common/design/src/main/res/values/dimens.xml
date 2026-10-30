@@ -15,4 +15,6 @@
     <dimen name="margin_6">6dp</dimen>
     <dimen name="timeline_dot_size">8dp</dimen>
     <dimen name="timeline_width">2dp</dimen>
+    <!-- Smaller rounded controls -->
+    <dimen name="card_radius_default">10dp</dimen>
 </resources>

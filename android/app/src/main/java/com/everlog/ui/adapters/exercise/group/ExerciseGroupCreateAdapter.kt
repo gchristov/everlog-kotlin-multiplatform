@@ -43,6 +43,7 @@ import com.everlog.android.common.kotlin.format.ArrayResourceTypeUtils
 import com.everlog.utils.Throttler
 import com.everlog.android.common.kotlin.Utils
 import com.everlog.android.common.mvp.util.ViewUtils
+import com.everlog.android.common.mvp.view.renderCompleteSetSummary
 import com.everlog.android.common.kotlin.format.weightUnitAbbreviation
 import rx.Observable
 import com.everlog.android.common.design.R as DesignR
@@ -667,7 +668,7 @@ class ExerciseGroupCreateAdapter {
             val selectMode = builder.hasSelections()
             binding.completeContainer.visibility = if (selectMode) View.GONE else View.VISIBLE
             binding.incompleteContainer.visibility = View.GONE
-            ExerciseGroupSummaryAdapter.renderCompleteSetSummary(itemView.context, getSet(), binding.completeContainer)
+            renderCompleteSetSummary(itemView.context, getSet(), SettingsManager.manager.weightUnit(), binding.completeContainer)
         }
 
         private fun renderWeight() {

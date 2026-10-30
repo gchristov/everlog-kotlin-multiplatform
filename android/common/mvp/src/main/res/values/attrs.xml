@@ -3,4 +3,10 @@
     <declare-styleable name="SummaryCardStatistics">
         <attr name="scsLayout" format="reference"/>
     </declare-styleable>
+    <declare-styleable name="ExerciseImageView">
+        <attr name="eivSquareHeight" format="boolean"/>
+        <attr name="eivSquareWidth" format="boolean"/>
+        <attr name="eivShowLetter" format="boolean"/>
+        <attr name="eivFitCenter" format="boolean"/>
+    </declare-styleable>
 </resources>
