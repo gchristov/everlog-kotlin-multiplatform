@@ -1,4 +1,4 @@
-package com.everlog.utils
+package com.everlog.android.common.mvp.util
 
 import android.content.Context
 import android.content.res.Resources

@@ -9,7 +9,7 @@ import com.ahamed.multiviewadapter.ItemViewHolder;
 import com.everlog.R;
 import com.everlog.databinding.RowHeaderExerciseGroupCreateBinding;
 import com.everlog.android.common.kotlin.format.FormatUtils;
-import com.everlog.ui.adapters.OnListItemListener;
+import com.everlog.android.common.mvp.list.OnListItemListener;
 import com.everlog.ui.adapters.items.ExerciseGroupCreateHeader;
 
 public class ExerciseGroupCreateHeaderAdapter {

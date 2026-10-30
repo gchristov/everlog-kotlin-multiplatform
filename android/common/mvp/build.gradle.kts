@@ -4,6 +4,9 @@ plugins {
 
 android {
     namespace = "com.everlog.android.common.mvp"
+    buildFeatures {
+        viewBinding = true
+    }
 }
 
 dependencies {
@@ -18,5 +21,9 @@ dependencies {
     api(libs.rxjava)
     api(libs.rxandroid)
     api(libs.shimmer)
+    api(libs.mpandroidchart)
+    api(libs.glide)
+    api(libs.taptargetview)
+    implementation(projects.android.common.persistence)
     implementation(libs.timber)
 }

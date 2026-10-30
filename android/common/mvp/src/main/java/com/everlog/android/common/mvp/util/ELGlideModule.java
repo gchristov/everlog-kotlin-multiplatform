@@ -1,4 +1,4 @@
-package com.everlog.utils.glide;
+package com.everlog.android.common.mvp.util;
 
 import android.graphics.Bitmap;
 import android.widget.ImageView;

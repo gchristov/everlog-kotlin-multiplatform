@@ -24,7 +24,7 @@ import com.everlog.android.common.mvp.activity.BaseActivity
 import com.everlog.android.common.mvp.activity.BaseActivityMvpView
 import com.everlog.android.common.mvp.activity.BaseActivityPresenter
 import com.everlog.ui.views.notification.warning.WarningNotificationView
-import com.everlog.utils.glide.ELGlideModule
+import com.everlog.android.common.mvp.util.ELGlideModule
 import com.facebook.shimmer.ShimmerFrameLayout
 import com.jakewharton.rxbinding.view.RxView
 import com.jakewharton.rxbinding.widget.RxTextView
@@ -53,7 +53,7 @@ class CreatePlanActivity : BaseActivity(), MvpViewCreatePlan {
             // Weeks container: Padding for list and Margin for FAB
             binding.weeksContainer.weeksList.updatePadding(bottom = systemBars.bottom + resources.getDimensionPixelSize(R.dimen.footer_bottom_padding))
             binding.weeksContainer.addBtn.updateLayoutParams<ViewGroup.MarginLayoutParams> {
-                bottomMargin = systemBars.bottom + resources.getDimensionPixelSize(R.dimen.activity_margin)
+                bottomMargin = systemBars.bottom + resources.getDimensionPixelSize(DesignR.dimen.activity_margin)
             }
 
             // Days container: Padding for list and Margin for Pro prompt

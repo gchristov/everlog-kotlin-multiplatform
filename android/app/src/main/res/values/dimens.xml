@@ -1,13 +1,8 @@
 <resources>
 
-    <dimen name="activity_margin">16dp</dimen>
-    <dimen name="activity_margin_half_half">4dp</dimen>
-    <dimen name="activity_margin_half_half_half">2dp</dimen>
     <dimen name="activity_margin_triple">48dp</dimen>
 
-    <dimen name="margin_6">6dp</dimen>
     <dimen name="margin_10">10dp</dimen>
-    <dimen name="margin_14">14dp</dimen>
     <dimen name="margin_18">18dp</dimen>
     <dimen name="margin_22">22dp</dimen>
     <dimen name="margin_24">24dp</dimen>
@@ -19,10 +14,7 @@
 
     <dimen name="toolbar_progress_height">3dp</dimen>
 
-    <dimen name="card_elevation_default">2dp</dimen>
     <dimen name="snackbar_elevation">6dp</dimen>
-    <!-- Cards -->
-    <dimen name="card_radius_large">24dp</dimen>
     <!-- Smaller rounded controls -->
     <dimen name="card_radius_default">10dp</dimen>
     <!-- AppChip -->
@@ -40,8 +32,6 @@
 
     <dimen name="options_menu_icon_size">35dp</dimen>
 
-    <dimen name="timeline_width">2dp</dimen>
-    <dimen name="timeline_dot_size">8dp</dimen>
 
     <dimen name="card_week_statistics_width">154dp</dimen>
     <dimen name="card_week_statistics_height">170dp</dimen>

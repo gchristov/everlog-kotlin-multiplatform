@@ -5,4 +5,14 @@
     <dimen name="activity_margin_half">8dp</dimen>
     <dimen name="margin_12">12dp</dimen>
     <dimen name="margin_20">20dp</dimen>
+    <dimen name="activity_margin">16dp</dimen>
+    <dimen name="activity_margin_half_half">4dp</dimen>
+    <dimen name="activity_margin_half_half_half">2dp</dimen>
+    <dimen name="card_elevation_default">2dp</dimen>
+    <!-- Cards -->
+    <dimen name="card_radius_large">24dp</dimen>
+    <dimen name="margin_14">14dp</dimen>
+    <dimen name="margin_6">6dp</dimen>
+    <dimen name="timeline_dot_size">8dp</dimen>
+    <dimen name="timeline_width">2dp</dimen>
 </resources>

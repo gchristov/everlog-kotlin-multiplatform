@@ -6,6 +6,7 @@ import android.view.ViewGroup;
 
 import com.ahamed.multiviewadapter.ItemBinder;
 import com.ahamed.multiviewadapter.ItemViewHolder;
+import com.everlog.android.common.mvp.list.OnListItemListener;
 import com.everlog.ui.adapters.items.Creator;
 
 public class CreatorAdapter {

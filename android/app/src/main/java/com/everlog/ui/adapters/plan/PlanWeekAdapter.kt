@@ -12,7 +12,7 @@ import com.ahamed.multiviewadapter.ItemViewHolder
 import com.everlog.R
 import com.everlog.android.plan.data.model.ELPlanWeek
 import com.everlog.databinding.RowPlanWeekBinding
-import com.everlog.ui.adapters.OnListItemListener
+import com.everlog.android.common.mvp.list.OnListItemListener
 import com.everlog.ui.views.showPopupMenu
 
 class PlanWeekAdapter {
@@ -63,7 +63,7 @@ class PlanWeekAdapter {
             binding.titleField.text = String.format("Week %d", absoluteAdapterPosition + 1)
             binding.detailsLbl.text = if (item.isValid()) itemView.context.resources.getQuantityString(R.plurals.workouts, workouts, workouts) else itemView.context.getText(R.string.tap_to_setup)
             binding.detailsLbl.setTypeface(null, if (item.isValid()) Typeface.NORMAL else Typeface.ITALIC)
-            binding.detailsLbl.setTextColor(ContextCompat.getColor(itemView.context, if (item.isValid()) DesignR.color.gray_5 else R.color.gray_3))
+            binding.detailsLbl.setTextColor(ContextCompat.getColor(itemView.context, if (item.isValid()) DesignR.color.gray_5 else DesignR.color.gray_3))
         }
     }
 

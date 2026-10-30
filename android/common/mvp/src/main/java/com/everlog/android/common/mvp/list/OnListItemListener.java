@@ -1,4 +1,4 @@
-package com.everlog.ui.adapters;
+package com.everlog.android.common.mvp.list;
 
 public interface OnListItemListener<T> {
 

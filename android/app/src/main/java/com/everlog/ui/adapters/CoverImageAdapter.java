@@ -7,9 +7,10 @@ import android.view.ViewGroup;
 import com.ahamed.multiviewadapter.ItemBinder;
 import com.ahamed.multiviewadapter.ItemViewHolder;
 import com.everlog.R;
+import com.everlog.android.common.mvp.list.OnListItemListener;
 import com.everlog.databinding.RowCoverImageBinding;
 import com.everlog.managers.api.coverimages.response.CoverImage;
-import com.everlog.utils.glide.ELGlideModule;
+import com.everlog.android.common.mvp.util.ELGlideModule;
 
 public class CoverImageAdapter {
 

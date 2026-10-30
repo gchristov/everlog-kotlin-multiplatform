@@ -200,7 +200,7 @@ class HomeActivity : BaseActivity(), MvpViewHome {
      * The AppCompat theme gives snackbars the legacy full-width style, so make it a floating card.
      */
     private fun styleAsCard(snackbarView: View) {
-        val margin = resources.getDimensionPixelSize(R.dimen.activity_margin)
+        val margin = resources.getDimensionPixelSize(DesignR.dimen.activity_margin)
         snackbarView.background = ContextCompat.getDrawable(this, R.drawable.rounded_corners_snackbar)
         snackbarView.elevation = resources.getDimension(R.dimen.snackbar_elevation)
         snackbarView.layoutParams = (snackbarView.layoutParams as ViewGroup.MarginLayoutParams).apply {
@@ -223,7 +223,7 @@ class HomeActivity : BaseActivity(), MvpViewHome {
             snackbarView.getLocationInWindow(snackbarLocation)
             binding.tabBar.getLocationInWindow(tabBarLocation)
             val btnRestingBottom = tabBarLocation[1] - (btn.layoutParams as ViewGroup.MarginLayoutParams).bottomMargin
-            val spacing = resources.getDimensionPixelSize(R.dimen.activity_margin)
+            val spacing = resources.getDimensionPixelSize(DesignR.dimen.activity_margin)
             offset = minOf(0, snackbarLocation[1] - spacing - btnRestingBottom).toFloat()
         }
         if (animate) {

@@ -16,7 +16,7 @@ import com.everlog.android.common.data.model.exercise.ELExercise;
 import com.everlog.android.common.data.model.exercise.ExerciseSuggestion;
 import com.everlog.ui.activities.home.exercise.details.ExerciseDetailsActivity;
 import com.everlog.ui.navigator.ELNavigator;
-import com.everlog.utils.glide.ELGlideModule;
+import com.everlog.android.common.mvp.util.ELGlideModule;
 
 import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;

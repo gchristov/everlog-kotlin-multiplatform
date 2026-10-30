@@ -10,6 +10,7 @@ import com.ahamed.multiviewadapter.ItemViewHolder;
 import com.everlog.R;
 import com.everlog.android.common.kotlin.DateExtKt;
 import com.everlog.android.common.kotlin.format.StatsFormatUtils;
+import com.everlog.android.common.mvp.list.OnListItemListener;
 import com.everlog.android.settings.data.SettingsManager;
 import com.everlog.android.common.data.model.workout.ELWorkout;
 import com.everlog.databinding.RowHeaderWorkoutDetailsBinding;

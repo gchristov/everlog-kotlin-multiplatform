@@ -4,7 +4,7 @@ import com.ahamed.multiviewadapter.DataListManager
 import com.ahamed.multiviewadapter.RecyclerAdapter
 import com.everlog.android.common.data.model.exercise.ELExerciseHistory
 import com.everlog.data.controllers.statistics.ExerciseStatsController
-import com.everlog.ui.adapters.history.BaseTimelineViewHolder
+import com.everlog.android.common.mvp.list.BaseTimelineViewHolder
 import com.everlog.ui.adapters.history.ExerciseHistoryAdapter
 import com.everlog.ui.fragments.home.exercise.BasePresenterExerciseTab
 

@@ -14,7 +14,7 @@ import com.everlog.android.plan.data.model.ELPlanDay
 import com.everlog.constants.ELConstants
 import com.everlog.databinding.RowPlanDayBinding
 import com.everlog.managers.analytics.AnalyticsManager
-import com.everlog.ui.adapters.OnListItemListener
+import com.everlog.android.common.mvp.list.OnListItemListener
 import com.everlog.ui.navigator.ELNavigator
 import com.everlog.ui.views.showPopupMenu
 
@@ -117,7 +117,7 @@ class PlanDayAdapter {
             if (edit && item.isEmpty()) {
                 binding.dayInfoFieldComplete.setText(R.string.tap_to_setup)
                 binding.dayInfoFieldComplete.setTypeface(null, Typeface.ITALIC)
-                binding.dayInfoFieldComplete.setTextColor(ContextCompat.getColor(itemView.context, R.color.gray_3))
+                binding.dayInfoFieldComplete.setTextColor(ContextCompat.getColor(itemView.context, DesignR.color.gray_3))
             } else {
                 binding.dayInfoFieldComplete.text = if (item.getRoutine() != null) item.getRoutine()?.name else itemView.context.getText(R.string.plan_details_rest_title)
                 binding.dayInfoFieldComplete.setTypeface(null, Typeface.NORMAL)

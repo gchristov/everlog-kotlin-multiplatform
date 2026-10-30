@@ -23,10 +23,10 @@ import com.everlog.managers.analytics.AnalyticsConstants
 import com.everlog.ui.activities.setsuggestions.SetSuggestion
 import com.everlog.ui.dialog.AppDialogs
 import com.everlog.ui.views.CheckBoxTriStates
-import com.everlog.utils.ViewUtils
+import com.everlog.android.common.mvp.util.ViewUtils
 import com.everlog.utils.format.getIcon
 import com.everlog.utils.format.weightUnitAbbreviation
-import com.everlog.utils.glide.ELGlideModule
+import com.everlog.android.common.mvp.util.ELGlideModule
 import com.jakewharton.rxbinding.view.RxView
 import org.threeten.bp.DayOfWeek
 import org.threeten.bp.format.TextStyle
@@ -173,7 +173,7 @@ class SettingsHomeFragment : BaseTabFragment(), MvpViewSettingsHome {
             binding.root.findViewById<View>(R.id.userAvatar).setPadding(0, 0, 0, 0)
             ELGlideModule.loadImage(user.photoUrl, binding.root.findViewById(R.id.userAvatar))
         } else {
-            val p = ViewUtils.dpToPxFromRaw(requireContext(), R.dimen.activity_margin)
+            val p = ViewUtils.dpToPxFromRaw(requireContext(), DesignR.dimen.activity_margin)
             binding.root.findViewById<View>(R.id.userAvatar).setPadding(p, p, p, p)
         }
         // Pro

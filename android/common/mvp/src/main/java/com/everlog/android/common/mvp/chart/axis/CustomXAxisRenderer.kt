@@ -1,4 +1,4 @@
-package com.everlog.ui.fragments.home.activity.statistics.charts.axis
+package com.everlog.android.common.mvp.chart.axis
 
 import android.graphics.Canvas
 import com.github.mikephil.charting.components.XAxis

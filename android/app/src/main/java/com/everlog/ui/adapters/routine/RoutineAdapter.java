@@ -9,7 +9,7 @@ import com.ahamed.multiviewadapter.ItemViewHolder;
 import com.everlog.R;
 import com.everlog.android.common.data.model.ELRoutine;
 import com.everlog.databinding.RowRoutineBinding;
-import com.everlog.ui.adapters.OnListItemListener;
+import com.everlog.android.common.mvp.list.OnListItemListener;
 
 public class RoutineAdapter {
 

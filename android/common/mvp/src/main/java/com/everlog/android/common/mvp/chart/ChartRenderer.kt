@@ -1,4 +1,4 @@
-package com.everlog.ui.fragments.home.activity.statistics.charts
+package com.everlog.android.common.mvp.chart
 
 import android.content.Context
 import android.graphics.Color
@@ -9,8 +9,7 @@ import android.text.style.ForegroundColorSpan
 import android.text.style.RelativeSizeSpan
 import android.text.style.StyleSpan
 import android.view.View
-import com.everlog.R
-import com.everlog.ui.fragments.home.activity.statistics.charts.axis.CustomXAxisRenderer
+import com.everlog.android.common.mvp.chart.axis.CustomXAxisRenderer
 import com.github.mikephil.charting.charts.BarChart
 import com.github.mikephil.charting.charts.BarLineChartBase
 import com.github.mikephil.charting.charts.LineChart
@@ -126,7 +125,7 @@ class ChartRenderer(context: Context) {
                     if (set.isDrawFilledEnabled) {
                         if (Utils.getSDKInt() >= 18) {
                             // Fill drawable only supported on api level 18 and above
-                            val drawable = ContextCompat.getDrawable(chart.context, R.drawable.chart_gradient)
+                            val drawable = ContextCompat.getDrawable(chart.context, DesignR.drawable.chart_gradient)
                             set.fillDrawable = drawable
                         } else {
                             set.fillColor = ContextCompat.getColor(chart.context, DesignR.color.main_accent)
@@ -180,7 +179,7 @@ class ChartRenderer(context: Context) {
     }
 
     private fun getPieCenterText(context: Context): SpannableString {
-        val txt = context.getString(R.string.statistics_muscles_trained_tap_prompt)
+        val txt = context.getString(DesignR.string.statistics_muscles_trained_tap_prompt)
         val s = SpannableString(txt)
         s.setSpan(RelativeSizeSpan(1f), 0, s.length, 0)
         s.setSpan(ForegroundColorSpan(ContextCompat.getColor(context, DesignR.color.gray_1)), 0, s.length, 0)
@@ -190,7 +189,7 @@ class ChartRenderer(context: Context) {
     private fun getPieCenterSelectedText(context: Context,
                                          category: String,
                                          exercises: Int): SpannableString {
-        val txt = context.resources.getQuantityString(R.plurals.statistics_category_exercises, exercises, category, exercises)
+        val txt = context.resources.getQuantityString(DesignR.plurals.statistics_category_exercises, exercises, category, exercises)
         val catIndex = txt.indexOf(category)
         val exIndex = txt.indexOf(exercises.toString())
         val s = SpannableString(txt)
@@ -205,14 +204,14 @@ class ChartRenderer(context: Context) {
     // Setup
 
     private fun setupChartColors(context: Context) {
-        mChartColors.add(ContextCompat.getColor(context, R.color.pie_chart_8))
-        mChartColors.add(ContextCompat.getColor(context, R.color.pie_chart_7))
-        mChartColors.add(ContextCompat.getColor(context, R.color.pie_chart_6))
-        mChartColors.add(ContextCompat.getColor(context, R.color.pie_chart_5))
-        mChartColors.add(ContextCompat.getColor(context, R.color.pie_chart_4))
-        mChartColors.add(ContextCompat.getColor(context, R.color.pie_chart_3))
-        mChartColors.add(ContextCompat.getColor(context, R.color.pie_chart_2))
-        mChartColors.add(ContextCompat.getColor(context, R.color.pie_chart_1))
+        mChartColors.add(ContextCompat.getColor(context, DesignR.color.pie_chart_8))
+        mChartColors.add(ContextCompat.getColor(context, DesignR.color.pie_chart_7))
+        mChartColors.add(ContextCompat.getColor(context, DesignR.color.pie_chart_6))
+        mChartColors.add(ContextCompat.getColor(context, DesignR.color.pie_chart_5))
+        mChartColors.add(ContextCompat.getColor(context, DesignR.color.pie_chart_4))
+        mChartColors.add(ContextCompat.getColor(context, DesignR.color.pie_chart_3))
+        mChartColors.add(ContextCompat.getColor(context, DesignR.color.pie_chart_2))
+        mChartColors.add(ContextCompat.getColor(context, DesignR.color.pie_chart_1))
     }
 
     private fun setupBarChart(chart: BarLineChartBase<*>) {
@@ -232,7 +231,7 @@ class ChartRenderer(context: Context) {
         val xAxis = chart.xAxis
         xAxis?.position = XAxis.XAxisPosition.BOTTOM
         xAxis?.setDrawGridLines(false)
-        xAxis?.textColor = ContextCompat.getColor(chart.context, R.color.gray_2)
+        xAxis?.textColor = ContextCompat.getColor(chart.context, DesignR.color.gray_2)
         xAxis?.textSize = 12f
         xAxis?.yOffset = 14F
         chart.axisLeft?.setDrawGridLines(false)
@@ -249,7 +248,7 @@ class ChartRenderer(context: Context) {
         chart.legend.horizontalAlignment = Legend.LegendHorizontalAlignment.LEFT
         chart.legend.orientation = Legend.LegendOrientation.HORIZONTAL
         chart.legend.setDrawInside(false)
-        chart.legend.textColor = ContextCompat.getColor(chart.context, R.color.gray_2)
+        chart.legend.textColor = ContextCompat.getColor(chart.context, DesignR.color.gray_2)
         chart.legend.textSize = 12f
         chart.legend.xEntrySpace = 10f
         chart.legend.yEntrySpace = 0f
@@ -289,7 +288,7 @@ class ChartRenderer(context: Context) {
         chart.legend.horizontalAlignment = Legend.LegendHorizontalAlignment.LEFT
         chart.legend.orientation = Legend.LegendOrientation.HORIZONTAL
         chart.legend.setDrawInside(false)
-        chart.legend.textColor = ContextCompat.getColor(chart.context, R.color.gray_2)
+        chart.legend.textColor = ContextCompat.getColor(chart.context, DesignR.color.gray_2)
         chart.legend.textSize = 12f
         chart.legend.xEntrySpace = 10f
         chart.legend.yEntrySpace = 0f
@@ -299,7 +298,7 @@ class ChartRenderer(context: Context) {
     data class ChartDataDescriptor<T>(
 
             var entries: List<T> = ArrayList(),
-            var colorResId: Int = R.color.pie_chart_8,
+            var colorResId: Int = DesignR.color.pie_chart_8,
             var axisDependency: YAxis.AxisDependency = YAxis.AxisDependency.LEFT,
             var title: String? = null
     )

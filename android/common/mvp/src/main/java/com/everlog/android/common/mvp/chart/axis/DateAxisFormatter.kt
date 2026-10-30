@@ -1,18 +1,19 @@
-package com.everlog.ui.fragments.home.activity.statistics.charts.axis
+package com.everlog.android.common.mvp.chart.axis
 
 import com.everlog.android.common.kotlin.format.FormatUtils
 import com.github.mikephil.charting.formatter.ValueFormatter
 import timber.log.Timber
+import java.util.concurrent.TimeUnit
 
-class MonthAxisFormatter: ValueFormatter() {
+class DateAxisFormatter: ValueFormatter() {
 
-    private val TAG = "MonthAxisFormatter"
+    private val TAG = "DateAxisFormatter"
 
     override fun getFormattedValue(value: Float): String {
         var string: String
         try {
             // Entries are displayed as DAYS so convert to MILLIS.
-            string = FormatUtils.formatChartXAxisMonthString(value.toInt())
+            string = FormatUtils.formatChartXAxisDayString(TimeUnit.DAYS.toMillis(value.toLong()))
         } catch (e: Exception) {
             string = "--"
             e.printStackTrace()

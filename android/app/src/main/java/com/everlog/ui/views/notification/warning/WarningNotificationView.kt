@@ -12,7 +12,7 @@ import com.everlog.databinding.ViewNotificationWarningBinding
 import com.everlog.android.common.mvp.view.BaseView
 import com.everlog.android.common.mvp.view.BaseViewMvpView
 import com.everlog.android.common.mvp.view.BaseViewPresenter
-import com.everlog.utils.ViewUtils
+import com.everlog.android.common.mvp.util.ViewUtils
 import com.jakewharton.rxbinding.view.RxView
 import rx.Observable
 import com.everlog.android.common.design.R as DesignR

@@ -16,7 +16,7 @@ import com.everlog.databinding.RowProFeatureBinding
 import com.everlog.databinding.RowProQuestionBinding
 import com.everlog.ui.activities.home.pro.ELProFeature
 import com.everlog.ui.activities.home.pro.ELProQuestion
-import com.everlog.utils.ViewUtils
+import com.everlog.android.common.mvp.util.ViewUtils
 
 class ProUpgradeAdapter {
 

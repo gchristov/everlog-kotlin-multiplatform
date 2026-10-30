@@ -141,7 +141,7 @@ abstract class BaseSearchActivity : BaseActivity() {
         // set hint and the text colors
         val txtSearch = searchView.findViewById<EditText>(androidx.appcompat.R.id.search_src_text)
         txtSearch?.setHint(getString(R.string.exercises_search))
-        txtSearch?.setHintTextColor(ContextCompat.getColor(this, R.color.gray_3))
+        txtSearch?.setHintTextColor(ContextCompat.getColor(this, DesignR.color.gray_3))
         txtSearch?.setTextColor(ContextCompat.getColor(this, DesignR.color.background_base))
 
         searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {

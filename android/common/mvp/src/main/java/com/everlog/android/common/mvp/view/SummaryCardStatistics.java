@@ -1,4 +1,4 @@
-package com.everlog.ui.views.summarycard;
+package com.everlog.android.common.mvp.view;
 
 import android.content.Context;
 import android.content.res.TypedArray;
@@ -8,7 +8,7 @@ import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.everlog.R;
+import com.everlog.android.common.mvp.R;
 
 import androidx.annotation.Nullable;
 

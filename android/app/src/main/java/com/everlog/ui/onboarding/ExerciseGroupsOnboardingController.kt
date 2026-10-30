@@ -3,11 +3,15 @@ package com.everlog.ui.onboarding
 import android.view.View
 import androidx.recyclerview.widget.RecyclerView
 import com.everlog.R
-import com.everlog.managers.OnboardManager
+import com.everlog.android.common.mvp.onboarding.BaseOnboardingController
+import com.everlog.android.common.mvp.onboarding.OnboardManager
 import com.everlog.ui.activities.home.exercisegroup.CreateExerciseGroupsActivity
 import com.everlog.ui.adapters.exercise.group.ExerciseGroupCreateAdapter
 import com.getkeepsafe.taptargetview.TapTargetView
 import kotlin.math.max
+
+private const val SEEN_ONBOARD_GROUPS_OPTIONS_EXERCISE = "SEEN_ONBOARD_GROUPS_OPTIONS_EXERCISE"
+private const val SEEN_ONBOARD_GROUPS_OPTIONS_SET = "SEEN_ONBOARD_GROUPS_OPTIONS_SET"
 
 open class ExerciseGroupsOnboardingController<T : CreateExerciseGroupsActivity> constructor(context: T): BaseOnboardingController<T>(context) {
 
@@ -23,7 +27,7 @@ open class ExerciseGroupsOnboardingController<T : CreateExerciseGroupsActivity> 
         }
         val targetOptionsExercise = getExerciseOptionsView()
         val targetOptionsSet = getSetOptionsView()
-        if (!OnboardManager.manager.seenOnboard(OnboardManager.PreferenceKeys.SEEN_ONBOARD_GROUPS_OPTIONS_EXERCISE) && targetOptionsExercise != null) {
+        if (!OnboardManager.manager.seenOnboard(SEEN_ONBOARD_GROUPS_OPTIONS_EXERCISE) && targetOptionsExercise != null) {
             val target = buildTapTarget(targetOptionsExercise,
                     "Combine Exercises",
                     "Tap to combine two or more exercises into super-sets or to reorder",
@@ -34,9 +38,9 @@ open class ExerciseGroupsOnboardingController<T : CreateExerciseGroupsActivity> 
                     targetOptionsExercise.performClick()
                 }
             })) {
-                OnboardManager.manager.setSeenOnboard(OnboardManager.PreferenceKeys.SEEN_ONBOARD_GROUPS_OPTIONS_EXERCISE, true)
+                OnboardManager.manager.setSeenOnboard(SEEN_ONBOARD_GROUPS_OPTIONS_EXERCISE, true)
             }
-        } else if (!OnboardManager.manager.seenOnboard(OnboardManager.PreferenceKeys.SEEN_ONBOARD_GROUPS_OPTIONS_SET) && targetOptionsSet != null) {
+        } else if (!OnboardManager.manager.seenOnboard(SEEN_ONBOARD_GROUPS_OPTIONS_SET) && targetOptionsSet != null) {
             val target = buildTapTarget(targetOptionsSet,
                     "Manage Sets",
                     "Tap to duplicate or delete sets",
@@ -47,7 +51,7 @@ open class ExerciseGroupsOnboardingController<T : CreateExerciseGroupsActivity> 
                     targetOptionsSet.performClick()
                 }
             })) {
-                OnboardManager.manager.setSeenOnboard(OnboardManager.PreferenceKeys.SEEN_ONBOARD_GROUPS_OPTIONS_SET, true)
+                OnboardManager.manager.setSeenOnboard(SEEN_ONBOARD_GROUPS_OPTIONS_SET, true)
             }
         }
     }

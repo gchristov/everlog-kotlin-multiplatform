@@ -5,9 +5,9 @@ import com.everlog.android.common.data.model.set.ELSet
 import com.everlog.android.common.data.model.workout.ELWorkout
 import com.everlog.android.common.data.model.workout.RangeType
 import com.everlog.android.settings.data.SettingsManager
-import com.everlog.ui.fragments.home.activity.statistics.charts.axis.DateAxisFormatter
-import com.everlog.ui.fragments.home.activity.statistics.charts.axis.MonthAxisFormatter
-import com.everlog.ui.fragments.home.activity.statistics.charts.axis.YearAxisFormatter
+import com.everlog.android.common.mvp.chart.axis.DateAxisFormatter
+import com.everlog.android.common.mvp.chart.axis.MonthAxisFormatter
+import com.everlog.android.common.mvp.chart.axis.YearAxisFormatter
 import com.everlog.utils.ArrayResourceTypeUtils
 import com.github.mikephil.charting.data.BarEntry
 import com.github.mikephil.charting.data.Entry

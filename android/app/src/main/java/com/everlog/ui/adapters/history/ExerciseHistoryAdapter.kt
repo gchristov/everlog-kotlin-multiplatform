@@ -11,10 +11,11 @@ import com.ahamed.multiviewadapter.RecyclerAdapter
 import com.everlog.R
 import com.everlog.android.common.data.model.exercise.ELExerciseHistory
 import com.everlog.android.common.data.model.set.ELSet
+import com.everlog.android.common.mvp.list.BaseTimelineViewHolder
+import com.everlog.android.common.mvp.list.BaseTimelineViewHolder.OnTimelineListener
 import com.everlog.databinding.RowHistoryExerciseBinding
 import com.everlog.databinding.RowSetSummaryBinding
 import com.everlog.ui.adapters.exercise.group.ExerciseGroupSummaryAdapter.Companion.renderCompleteSetSummary
-import com.everlog.ui.adapters.history.BaseTimelineViewHolder.OnTimelineListener
 import com.everlog.utils.format.summary
 import java.util.Date
 

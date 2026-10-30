@@ -32,7 +32,7 @@ class FloatingFooterView @JvmOverloads constructor(
     init {
         inflate(context, R.layout.view_floating_footer, this)
         val card = findViewById<View>(R.id.floatingFooterCard)
-        val radius = resources.getDimension(R.dimen.card_radius_large)
+        val radius = resources.getDimension(DesignR.dimen.card_radius_large)
         card.outlineProvider = object : ViewOutlineProvider() {
             override fun getOutline(view: View, outline: Outline) {
                 outline.setRoundRect(0, 0, view.width, view.height, radius)
@@ -41,7 +41,7 @@ class FloatingFooterView @JvmOverloads constructor(
         card.clipToOutline = true
         content = findViewById(R.id.floatingFooterContent)
 
-        val margin = resources.getDimensionPixelSize(R.dimen.activity_margin)
+        val margin = resources.getDimensionPixelSize(DesignR.dimen.activity_margin)
         val bottomMargin = resources.getDimensionPixelSize(DesignR.dimen.activity_margin_half)
         updatePadding(left = margin, right = margin, bottom = bottomMargin)
         ViewCompat.setOnApplyWindowInsetsListener(this) { _, insets ->

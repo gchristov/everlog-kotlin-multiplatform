@@ -13,7 +13,7 @@ import com.everlog.ui.activities.home.HomeActivity
 import com.everlog.android.common.mvp.view.BaseView
 import com.everlog.android.common.mvp.view.BaseViewMvpView
 import com.everlog.android.common.mvp.view.BaseViewPresenter
-import com.everlog.utils.glide.ELGlideModule
+import com.everlog.android.common.mvp.util.ELGlideModule
 import com.jakewharton.rxbinding.view.RxView
 import rx.Observable
 

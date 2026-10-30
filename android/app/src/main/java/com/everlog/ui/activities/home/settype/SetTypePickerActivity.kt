@@ -39,7 +39,7 @@ class SetTypePickerActivity : BaseActivity(), MvpViewSetTypePicker {
             }
 
             binding.recyclerView.updatePadding(
-                bottom = systemBars.bottom + resources.getDimensionPixelSize(R.dimen.activity_margin)
+                bottom = systemBars.bottom + resources.getDimensionPixelSize(DesignR.dimen.activity_margin)
             )
             insets
         }

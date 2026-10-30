@@ -1,19 +1,18 @@
-package com.everlog.ui.fragments.home.activity.statistics.charts.axis
+package com.everlog.android.common.mvp.chart.axis
 
 import com.everlog.android.common.kotlin.format.FormatUtils
 import com.github.mikephil.charting.formatter.ValueFormatter
 import timber.log.Timber
-import java.util.concurrent.TimeUnit
 
-class DateAxisFormatter: ValueFormatter() {
+class YearAxisFormatter: ValueFormatter() {
 
-    private val TAG = "DateAxisFormatter"
+    private val TAG = "YearAxisFormatter"
 
     override fun getFormattedValue(value: Float): String {
         var string: String
         try {
-            // Entries are displayed as DAYS so convert to MILLIS.
-            string = FormatUtils.formatChartXAxisDayString(TimeUnit.DAYS.toMillis(value.toLong()))
+            // Entries are displayed as YEARS.
+            string = FormatUtils.formatChartXAxisYearString(value.toInt())
         } catch (e: Exception) {
             string = "--"
             e.printStackTrace()

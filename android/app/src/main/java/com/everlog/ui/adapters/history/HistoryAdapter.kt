@@ -8,11 +8,12 @@ import com.ahamed.multiviewadapter.ItemBinder
 import com.everlog.R
 import com.everlog.android.common.data.model.workout.ELWorkout
 import com.everlog.android.common.kotlin.isSameDay
+import com.everlog.android.common.mvp.list.BaseTimelineViewHolder
+import com.everlog.android.common.mvp.list.BaseTimelineViewHolder.OnTimelineListener
+import com.everlog.android.common.mvp.util.ViewUtils.dpToPx
+import com.everlog.android.common.mvp.util.ViewUtils.getRawDimension
+import com.everlog.android.common.mvp.util.ViewUtils.setMargins
 import com.everlog.databinding.RowHistoryBinding
-import com.everlog.ui.adapters.history.BaseTimelineViewHolder.OnTimelineListener
-import com.everlog.utils.ViewUtils.dpToPx
-import com.everlog.utils.ViewUtils.getRawDimension
-import com.everlog.utils.ViewUtils.setMargins
 import com.everlog.utils.format.summary
 import java.util.*
 
@@ -60,7 +61,7 @@ class HistoryAdapter {
         private fun renderGroups() {
             if (getDate().isSameDay(getListener()?.dateOfNextItem(absoluteAdapterPosition) ?: 0)) {
                 // Do not add bottom padding if the workouts are in the same day
-                val elevation = dpToPx(getRawDimension(itemView.context, R.dimen.card_elevation_default))
+                val elevation = dpToPx(getRawDimension(itemView.context, DesignR.dimen.card_elevation_default))
                 setMargins(binding.routinePicker.routineContainer, 0, 0, 0, elevation)
             } else {
                 // Add bottom padding if the workouts are not in the same day
