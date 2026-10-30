@@ -6,7 +6,6 @@ import com.everlog.constants.ELConstants
 import com.everlog.data.model.ELFirestoreModel
 import com.everlog.data.model.set.ELSet
 import com.everlog.data.model.set.ELSetType
-import com.everlog.managers.analytics.AnalyticsManager
 import java.io.Serializable
 import java.util.*
 import kotlin.collections.ArrayList
@@ -161,7 +160,6 @@ data class ELExerciseGroup (
         } else {
             set.updateWeight(value)
         }
-        AnalyticsManager.manager.setWeightModified(value)
         return set
     }
 
@@ -184,7 +182,6 @@ data class ELExerciseGroup (
                 set.updateRequiredReps(value)
             }
         }
-        if (!useTemplate) AnalyticsManager.manager.setRepsModified(value) else AnalyticsManager.manager.setRequiredRepsModified(value)
         return set
     }
 
@@ -210,7 +207,6 @@ data class ELExerciseGroup (
                 set.updateRequiredTimeSeconds(value)
             }
         }
-        if (!useTemplate) AnalyticsManager.manager.setTimeModified(value) else AnalyticsManager.manager.setRequiredTimeModified(value)
         return set
     }
 
