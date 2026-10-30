@@ -14,6 +14,7 @@ import com.everlog.constants.ELConstants.EXTRA_PLAN_UUID
 import com.everlog.data.model.plan.ELPlan
 import com.everlog.databinding.ActivityPlanDetailsBinding
 import com.everlog.managers.analytics.AnalyticsConstants
+import com.everlog.managers.auth.LocalUserManager
 import com.everlog.ui.activities.base.BaseActivity
 import com.everlog.ui.activities.base.BaseActivityMvpView
 import com.everlog.ui.activities.base.BaseActivityPresenter
@@ -109,7 +110,7 @@ class PlanDetailsActivity : BaseActivity(), MvpViewPlanDetails {
         } else {
             binding.root.findViewById<ImageView>(R.id.coverImage).setImageDrawable(null)
         }
-        mAllowDelete = plan.isEditable()
+        mAllowDelete = plan.isEditable(LocalUserManager.getUser()?.id)
         invalidateOptionsMenu()
         // Start/Stop
         binding.root.findViewById<Button>(R.id.toggleStartBtn).setText(if (showStop) R.string.plan_details_stop else R.string.plan_details_start)

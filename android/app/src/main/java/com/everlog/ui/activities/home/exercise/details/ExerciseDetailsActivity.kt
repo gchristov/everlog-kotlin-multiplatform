@@ -18,6 +18,7 @@ import com.everlog.data.model.workout.RangeType
 import com.everlog.databinding.ActivityExerciseDetailsBinding
 import com.everlog.managers.RemoteConfigManager
 import com.everlog.managers.analytics.AnalyticsConstants
+import com.everlog.managers.auth.LocalUserManager
 import com.everlog.ui.activities.base.BaseActivity
 import com.everlog.ui.activities.base.BaseActivityMvpView
 import com.everlog.ui.activities.base.BaseActivityPresenter
@@ -136,7 +137,7 @@ class ExerciseDetailsActivity : BaseActivity(), MvpViewExerciseDetails {
                                      range: RangeType) {
         supportActionBar?.title = exercise.name
         supportActionBar?.subtitle = exercise.category?.lowercase()?.capitalize()
-        mAllowDelete = exercise.isEditable()
+        mAllowDelete = exercise.isEditable(LocalUserManager.getUser()?.id)
         invalidateOptionsMenu()
         // Tabs
         mTabs?.let { tabs ->

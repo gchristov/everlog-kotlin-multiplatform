@@ -2,7 +2,6 @@ package com.everlog.data.model.exercise
 
 import com.everlog.constants.ELConstants
 import com.everlog.data.model.ELFirestoreModel
-import com.everlog.managers.auth.LocalUserManager
 import java.io.Serializable
 import java.util.*
 
@@ -74,8 +73,8 @@ data class ELExercise (
         return name?.get(0).toString()
     }
 
-    fun isEditable(): Boolean {
-        return createdByUserId == LocalUserManager.getUser()?.id
+    fun isEditable(userId: String?): Boolean {
+        return createdByUserId == userId
     }
 
     fun isLowerBody(): Boolean {

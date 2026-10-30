@@ -16,6 +16,7 @@ import com.everlog.data.model.exercise.ELExercise
 import com.everlog.data.repositories.RealExerciseRepository
 import com.everlog.data.sync.AppDataSync
 import com.everlog.managers.analytics.AnalyticsConstants
+import com.everlog.managers.auth.LocalUserManager
 import com.everlog.ui.fragments.home.exercise.BaseExerciseTabFragment
 import com.everlog.ui.fragments.home.exercise.BasePresenterExerciseTab
 import kotlinx.coroutines.Dispatchers
@@ -92,5 +93,5 @@ private fun ELExercise.toInfoExercise() = ExerciseInfoViewModel.Exercise(
     uuid = uuid.orEmpty(),
     name = name.orEmpty(),
     imageUrl = imageUrl,
-    own = isEditable(),
+    own = isEditable(LocalUserManager.getUser()?.id),
 )

@@ -13,6 +13,7 @@ import com.everlog.data.model.plan.ELPlanDay;
 import com.everlog.data.model.plan.ELPlanState;
 import com.everlog.ui.activities.base.BaseActivity;
 import com.everlog.ui.adapters.plan.PlanDayAdapter;
+import com.everlog.ui.adapters.plan.PlanProLockKt;
 import com.everlog.ui.dialog.DialogBuilder;
 import com.everlog.ui.fragments.home.week.WeekViewState;
 import com.everlog.ui.navigator.ELNavigator;
@@ -141,6 +142,7 @@ public class PlanWeekView implements IWeekView {
                 // If we've passed the last week, use the last plan week
                 week = plan.getWeeks().size() - 1;
             }
+            PlanProLockKt.applyProLock(plan.getWeeks().get(week));
             ELPlanDay day = plan.getWeeks().get(week).getDays().get(currentDay % 7);
             day.setNext(true);
             mPlanWeekLbl.setText(String.format("Week %d of %d", week + 1, plan.getWeeks().size()));
