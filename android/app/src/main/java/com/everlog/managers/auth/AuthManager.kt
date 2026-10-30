@@ -4,6 +4,7 @@ import android.content.Intent
 import android.text.TextUtils
 import com.everlog.BuildConfig
 import com.everlog.R
+import com.everlog.android.auth.data.LocalUserManager
 import com.everlog.android.auth.data.model.ELConsent.Companion.newConsent
 import com.everlog.android.auth.data.model.ELUser
 import com.everlog.android.common.kotlin.AppContext

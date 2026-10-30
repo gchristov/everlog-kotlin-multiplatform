@@ -26,7 +26,7 @@ Common modules:
 | `common:compose-test` | Compose UI test dependencies, test manifest and finders |
 | `common:mvvm` | `CommonViewModel`, `ViewModelFactory` |
 | `common:mvp` | The XML/MVP bases: presenters, base activities, fragments, bottom sheets and views, the generic prompts, EventBus and the broadcasts every presenter listens to, the vendored adapter |
-| `common:firebase` | Firebase, `FirestorePathManager`, the analytics interface |
+| `common:firebase` | Firebase, the field names and `FirestorePaths` (each user's collections take the user id) |
 | `common:persistence` | `PreferencesManager`, the app's key-value storage. The user's settings (`SettingsManager`) go to `settings:data` |
 | `common:datasync` | `DataSync`, the cache-first sync layer (the app wires its instance in `AppDataSync`) |
 | `common:data` | The models every feature shares (sets, exercises, routines, workouts), with their R8 keep rule, until they're split into the features' `data` modules. Feature-only models live in their feature's `data` module, each with its own keep rule |

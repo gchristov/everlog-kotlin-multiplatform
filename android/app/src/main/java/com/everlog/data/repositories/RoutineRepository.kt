@@ -9,7 +9,7 @@ import com.everlog.android.common.datasync.SyncPlan
 import com.everlog.android.common.kotlin.Load
 import com.everlog.android.common.kotlin.map
 import com.everlog.data.datastores.ELDatastore
-import com.everlog.managers.auth.LocalUserManager
+import com.everlog.android.auth.data.LocalUserManager
 import com.everlog.managers.firebase.FirestorePathManager
 import com.everlog.utils.device.DeviceUtils
 import com.google.firebase.firestore.FirebaseFirestore

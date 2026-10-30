@@ -13,7 +13,7 @@ import com.everlog.android.common.mvp.MvpBroadcasts
 import com.everlog.android.pro.data.model.ELProSkuDetails
 import com.everlog.constants.ELConstants
 import com.everlog.managers.analytics.AnalyticsManager
-import com.everlog.managers.auth.LocalUserManager
+import com.everlog.android.auth.data.LocalUserManager
 import com.everlog.managers.billing.BillingBridge
 import com.everlog.managers.billing.BillingManager
 import com.everlog.android.common.mvp.activity.BaseActivityPresenter

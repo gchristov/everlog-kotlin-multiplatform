@@ -2,7 +2,7 @@ package com.everlog.application.features
 
 import com.everlog.android.common.mvp.CommonMvpDependencies
 import com.everlog.managers.analytics.AnalyticsManager
-import com.everlog.managers.auth.LocalUserManager
+import com.everlog.android.auth.data.LocalUserManager
 
 class AppCommonMvpDependencies : CommonMvpDependencies {
 

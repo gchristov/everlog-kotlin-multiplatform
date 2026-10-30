@@ -2,7 +2,7 @@ package com.everlog.ui.adapters.plan
 
 import com.everlog.android.plan.data.model.ELPlanWeek
 import com.everlog.config.AppConfig
-import com.everlog.managers.auth.LocalUserManager
+import com.everlog.android.auth.data.LocalUserManager
 
 // Before a week's days are shown: without a signed-in user nothing is locked
 fun ELPlanWeek.applyProLock() {

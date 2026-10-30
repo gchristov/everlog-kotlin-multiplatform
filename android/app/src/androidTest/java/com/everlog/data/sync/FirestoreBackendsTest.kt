@@ -6,7 +6,7 @@ import com.everlog.BuildConfig
 import com.everlog.android.common.datasync.Chunk
 import com.everlog.android.common.datasync.FirestoreCollection
 import com.everlog.android.common.datasync.FirestoreDocument
-import com.everlog.managers.auth.LocalUserManager
+import com.everlog.android.auth.data.LocalUserManager
 import com.everlog.testutil.E2EAccount
 import com.google.common.truth.Truth.assertThat
 import com.google.firebase.FirebaseApp

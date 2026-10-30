@@ -9,7 +9,7 @@ import com.everlog.data.datastores.ELDatastore
 import com.everlog.data.datastores.ELUserStore
 import com.everlog.data.datastores.exercises.ELUserExerciseStore
 import com.everlog.managers.analytics.AnalyticsManager
-import com.everlog.managers.auth.LocalUserManager
+import com.everlog.android.auth.data.LocalUserManager
 import com.everlog.managers.firebase.FirebaseStorageManager
 import com.everlog.android.common.mvp.activity.BaseActivityPresenter
 import com.everlog.ui.fragments.home.exercise.statistics.ExerciseStatisticsFragment

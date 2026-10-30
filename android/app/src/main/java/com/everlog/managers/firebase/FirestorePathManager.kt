@@ -1,89 +1,43 @@
 package com.everlog.managers.firebase
 
-import com.everlog.BuildConfig
-import com.everlog.android.auth.data.model.ELUser
-import com.everlog.managers.auth.LocalUserManager
+import com.everlog.android.auth.data.LocalUserManager
+import com.everlog.android.common.firebase.FirestorePaths
 import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.DocumentReference
-import com.google.firebase.firestore.FirebaseFirestore
 
+// The paths for the signed-in user, for code that reads the user from the app's session
 object FirestorePathManager {
 
-    private val firestore: FirebaseFirestore = FirebaseFirestore.getInstance()
-
-    init {
-        FirebaseFirestore.setLoggingEnabled(BuildConfig.DEBUG)
-    }
-
     val globalExercisesCollection: CollectionReference
-        get() = getCollectionReference("global/exercises/all")
+        get() = FirestorePaths.globalExercises
 
-    // The ids the exercise library uses, with their names (tools/exercises/README.md)
     val exerciseRegistryDocument: DocumentReference
-        get() = firestore.document("global/exercises/registry/current")
+        get() = FirestorePaths.exerciseRegistry
 
     val usersCollection: CollectionReference
-        get() = getCollectionReference("users")
+        get() = FirestorePaths.users
 
     val exercisesCollection: CollectionReference
-        get() {
-            val user = LocalUserManager.getUser()
-                    ?: throw IllegalStateException("User missing or invalid")
-            return getCollectionReference(buildUserSpecificPath(user, "exercises"))
-        }
+        get() = FirestorePaths.exercises(userId())
 
     val devicesCollection: CollectionReference
-        get() {
-            val user = LocalUserManager.getUser()
-                    ?: throw IllegalStateException("User missing or invalid")
-            return getCollectionReference(buildUserSpecificPath(user, "devices"))
-        }
+        get() = FirestorePaths.devices(userId())
 
     val routinesCollection: CollectionReference
-        get() {
-            val user = LocalUserManager.getUser()
-                    ?: throw IllegalStateException("User missing or invalid")
-            return getCollectionReference(buildUserSpecificPath(user, "routines"))
-        }
+        get() = FirestorePaths.routines(userId())
 
     val workoutsCollection: CollectionReference
-        get() {
-            val user = LocalUserManager.getUser()
-                    ?: throw IllegalStateException("User missing or invalid")
-            return getCollectionReference(buildUserSpecificPath(user, "history"))
-        }
+        get() = FirestorePaths.workouts(userId())
 
     val plansCollection: CollectionReference
-        get() = getCollectionReference(buildPlansPath())
+        get() = FirestorePaths.plans
 
     val integrationsCollection: CollectionReference
-        get() = getCollectionReference(buildIntegrationsPath())
+        get() = FirestorePaths.integrations
 
     val consentCollection: CollectionReference
-        get() = getCollectionReference(buildConsentPath())
+        get() = FirestorePaths.consent
 
-    // Utils
-
-    private fun getCollectionReference(path: String?): CollectionReference {
-        if (path != null) {
-            return firestore.collection(path)
-        }
-        throw IllegalStateException("Collection path missing or invalid")
-    }
-
-    private fun buildPlansPath(): String {
-        return "plans"
-    }
-
-    private fun buildIntegrationsPath(): String {
-        return "integrations"
-    }
-
-    private fun buildConsentPath(): String {
-        return "consent"
-    }
-
-    private fun buildUserSpecificPath(user: ELUser, path: String): String {
-        return String.format("users/%s/%s", user.id, path)
-    }
+    private fun userId(): String =
+        LocalUserManager.getUser()?.id ?: throw IllegalStateException("User missing or invalid")
 }

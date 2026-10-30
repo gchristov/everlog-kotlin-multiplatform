@@ -11,7 +11,7 @@ import com.everlog.data.migration.Migration;
 import com.everlog.data.migration.MultiPartUpdateExercise;
 import com.everlog.android.common.data.model.exercise.ELExercise;
 import com.everlog.managers.analytics.AnalyticsManager;
-import com.everlog.managers.auth.LocalUserManager;
+import com.everlog.android.auth.data.LocalUserManager;
 import com.everlog.managers.firebase.FirebaseStorageManager;
 import com.everlog.managers.firebase.FirestorePathManager;
 import com.everlog.ui.navigator.PresenterNavigator;

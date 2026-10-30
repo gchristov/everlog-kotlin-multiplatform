@@ -12,5 +12,8 @@ android {
 dependencies {
     api(libs.firebase.auth)
     api(projects.android.pro.data)
+    // LocalUserManager is a PreferencesManager
+    api(projects.android.common.persistence)
+    implementation(libs.gson)
     testImplementation(projects.android.auth.testFixtures)
 }

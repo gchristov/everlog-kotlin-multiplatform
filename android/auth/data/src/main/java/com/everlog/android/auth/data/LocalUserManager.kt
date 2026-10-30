@@ -1,4 +1,4 @@
-package com.everlog.managers.auth
+package com.everlog.android.auth.data
 
 import android.text.TextUtils
 import com.everlog.android.auth.data.model.ELUser

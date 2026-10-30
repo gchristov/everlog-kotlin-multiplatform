@@ -10,7 +10,7 @@ import com.everlog.android.settings.data.SettingsManager
 import com.everlog.android.settings.data.SettingsManager.MuscleGoal
 import com.everlog.constants.ELConstants
 import com.everlog.databinding.RowSettingsMuscleGoalBinding
-import com.everlog.managers.auth.LocalUserManager
+import com.everlog.android.auth.data.LocalUserManager
 
 class MuscleGoalAdapter {
 

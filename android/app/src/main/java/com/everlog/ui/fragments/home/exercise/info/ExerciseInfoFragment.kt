@@ -16,7 +16,7 @@ import com.everlog.data.controllers.statistics.ExerciseStatsController
 import com.everlog.data.repositories.RealExerciseRepository
 import com.everlog.data.sync.AppDataSync
 import com.everlog.managers.analytics.AnalyticsConstants
-import com.everlog.managers.auth.LocalUserManager
+import com.everlog.android.auth.data.LocalUserManager
 import com.everlog.ui.fragments.home.exercise.BaseExerciseTabFragment
 import com.everlog.ui.fragments.home.exercise.BasePresenterExerciseTab
 import kotlinx.coroutines.Dispatchers

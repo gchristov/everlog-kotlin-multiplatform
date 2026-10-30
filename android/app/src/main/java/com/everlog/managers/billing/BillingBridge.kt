@@ -7,7 +7,7 @@ import com.android.billingclient.api.SkuDetails
 import com.everlog.android.pro.data.model.ELProSkuDetails
 import com.everlog.android.pro.data.model.ELProSubscription
 import com.everlog.managers.auth.AuthManager
-import com.everlog.managers.auth.LocalUserManager
+import com.everlog.android.auth.data.LocalUserManager
 import timber.log.Timber
 
 class BillingBridge {

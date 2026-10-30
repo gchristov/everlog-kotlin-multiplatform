@@ -4,7 +4,7 @@ import android.app.Dialog
 import android.content.Context
 import com.everlog.R
 import com.everlog.android.common.mvp.dialog.DialogBuilder
-import com.everlog.managers.auth.LocalUserManager
+import com.everlog.android.auth.data.LocalUserManager
 import rx.Observable
 
 internal class AppBlockerDialogs {
