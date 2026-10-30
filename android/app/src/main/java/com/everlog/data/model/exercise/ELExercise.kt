@@ -1,6 +1,6 @@
 package com.everlog.data.model.exercise
 
-import com.everlog.constants.ELConstants
+import com.everlog.android.common.firebase.FirestoreFields
 import com.everlog.data.model.ELFirestoreModel
 import java.io.Serializable
 import java.util.*
@@ -50,14 +50,14 @@ data class ELExercise (
 
     override fun asMap(): MutableMap<String, Any?> {
         val map: MutableMap<String, Any?> = HashMap()
-        map[ELConstants.FIELD_UUID] = uuid
+        map[FirestoreFields.UUID] = uuid
         map["splitSides"] = splitSides
         map["category"] = category
         map["imageUrl"] = imageUrl
-        map[ELConstants.FIELD_CREATED_BY_USER_ID] = createdByUserId
+        map[FirestoreFields.CREATED_BY_USER_ID] = createdByUserId
         map["privateToUser"] = privateToUser
-        map[ELConstants.FIELD_NAME] = name
-        map[ELConstants.FIELD_CREATED_DATE] = createdDate
+        map[FirestoreFields.NAME] = name
+        map[FirestoreFields.CREATED_DATE] = createdDate
         return map
     }
 

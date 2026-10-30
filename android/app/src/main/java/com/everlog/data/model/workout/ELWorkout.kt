@@ -1,5 +1,6 @@
 package com.everlog.data.model.workout
 
+import com.everlog.android.common.firebase.FirestoreFields
 import com.everlog.android.common.kotlin.WeightUnit
 import com.everlog.android.common.kotlin.format.FormatUtils
 import com.everlog.android.common.kotlin.isSameDay
@@ -10,7 +11,6 @@ import com.everlog.android.common.kotlin.toDayOfMonthWithMonthOnlyTimestamp
 import com.everlog.android.common.kotlin.toDayOfMonthWithNoHourTimestamp
 import com.everlog.android.common.kotlin.toDayOfMonthWithYearOnlyTimestamp
 import com.everlog.android.common.kotlin.toLocalDate
-import com.everlog.constants.ELConstants
 import com.everlog.data.model.ELFirestoreModel
 import com.everlog.data.model.ELRoutine
 import com.everlog.data.model.exercise.ELExercise
@@ -64,10 +64,10 @@ data class ELWorkout(
 
     override fun asMap(): MutableMap<String, Any?> {
         val map: MutableMap<String, Any?> = HashMap()
-        map[ELConstants.FIELD_UUID] = uuid
+        map[FirestoreFields.UUID] = uuid
         map["completedDate"] = completedDate
         map["routine"] = routine?.asMap()
-        map[ELConstants.FIELD_CREATED_DATE] = createdDate
+        map[FirestoreFields.CREATED_DATE] = createdDate
         map["fromRoutine"] = fromRoutine
         map["note"] = note
         return map

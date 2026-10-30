@@ -1,7 +1,7 @@
 package com.everlog.data.model
 
+import com.everlog.android.common.firebase.FirestoreFields
 import com.everlog.android.common.kotlin.timeOfDayMessage
-import com.everlog.constants.ELConstants
 import com.everlog.data.model.exercise.ELExercise
 import com.everlog.data.model.exercise.ELExerciseGroup
 import java.io.Serializable
@@ -43,14 +43,14 @@ data class ELRoutine(
 
     override fun asMap(): MutableMap<String, Any?> {
         val map: MutableMap<String, Any?> = HashMap()
-        map[ELConstants.FIELD_UUID] = uuid
+        map[FirestoreFields.UUID] = uuid
         val list: MutableList<Map<String, Any?>> = ArrayList()
         for (setGroup in exerciseGroups) {
             list.add(setGroup.asMap())
         }
         map["exerciseGroups"] = list
-        map[ELConstants.FIELD_NAME] = name
-        map[ELConstants.FIELD_CREATED_DATE] = createdDate
+        map[FirestoreFields.NAME] = name
+        map[FirestoreFields.CREATED_DATE] = createdDate
         return map
     }
 

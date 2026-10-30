@@ -1,7 +1,7 @@
 package com.everlog.data.model
 
 import android.text.TextUtils
-import com.everlog.constants.ELConstants
+import com.everlog.android.common.firebase.FirestoreFields
 import com.everlog.data.model.pro.ELProSubscription
 import com.google.firebase.auth.FirebaseUser
 import java.io.Serializable
@@ -47,7 +47,7 @@ data class ELUser (
         map["displayName"] = displayName
         map["email"] = email
         map["photoUrl"] = photoUrl
-        map[ELConstants.FIELD_CREATED_DATE] = createdDate
+        map[FirestoreFields.CREATED_DATE] = createdDate
         if (subscription != null) {
             map["subscription"] = subscription?.asMap()
         }

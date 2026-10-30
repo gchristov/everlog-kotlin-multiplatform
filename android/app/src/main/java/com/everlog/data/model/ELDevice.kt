@@ -1,6 +1,6 @@
 package com.everlog.data.model
 
-import com.everlog.constants.ELConstants
+import com.everlog.android.common.firebase.FirestoreFields
 import java.io.Serializable
 
 data class ELDevice (
@@ -31,10 +31,10 @@ data class ELDevice (
 
     override fun asMap(): MutableMap<String, Any?> {
         val map: MutableMap<String, Any?> = HashMap()
-        map[ELConstants.FIELD_UUID] = uuid
+        map[FirestoreFields.UUID] = uuid
         map["token"] = token
-        map[ELConstants.FIELD_NAME] = name
-        map[ELConstants.FIELD_CREATED_DATE] = createdDate
+        map[FirestoreFields.NAME] = name
+        map[FirestoreFields.CREATED_DATE] = createdDate
         return map
     }
 }

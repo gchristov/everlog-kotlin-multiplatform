@@ -3,6 +3,7 @@ package com.everlog.config
 import androidx.core.content.ContextCompat
 import com.everlog.BuildConfig
 import com.everlog.R
+import com.everlog.data.model.exercise.ELExerciseGroup
 import com.everlog.data.model.workout.RangeType
 import com.everlog.managers.ErrorManager
 import com.everlog.managers.analytics.AnalyticsManager
@@ -13,7 +14,7 @@ import com.google.firebase.firestore.persistentCacheSettings
 
 class AppConfig {
 
-    val defaultRestTimeSeconds = 60
+    val defaultRestTimeSeconds = ELExerciseGroup.DEFAULT_REST_TIME_SECONDS
     val defaultRestTimeOffsetSeconds = 10
     val defaultExerciseTimeSeconds = 30
 
@@ -22,7 +23,6 @@ class AppConfig {
 
     val defaultHistoryViewType = HistoryHomeFragment.ViewType.CALENDAR
 
-    val maxPlanWeeks = 20
     val maxPlanWeekDaysFree = 1
     val maxExerciseSelection = 10
     val maxExerciseSets = 14

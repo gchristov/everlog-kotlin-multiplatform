@@ -1,6 +1,6 @@
 package com.everlog.data.datastores
 
-import com.everlog.constants.ELConstants
+import com.everlog.android.common.firebase.FirestoreFields
 import com.everlog.data.datastores.base.ELDocumentStore
 import com.everlog.data.datastores.events.document.ELDocStoreItemLoadedEvent
 import com.everlog.data.model.ELIntegration
@@ -17,8 +17,8 @@ class ELUserIntegrationStore : ELDocumentStore<ELIntegration>() {
 
     override fun getQuery(integrationType: String): Query {
         return parentCollection
-                .whereEqualTo(ELConstants.FIELD_CREATED_BY_USER_ID, LocalUserManager.getUser()!!.id)
-                .whereEqualTo(ELConstants.FIELD_TYPE, integrationType)
+                .whereEqualTo(FirestoreFields.CREATED_BY_USER_ID, LocalUserManager.getUser()!!.id)
+                .whereEqualTo(FirestoreFields.TYPE, integrationType)
     }
 
     override fun getParentCollection(): CollectionReference {
