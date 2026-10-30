@@ -7,6 +7,7 @@ import com.everlog.android.common.data.store.CollectionStore
 import com.everlog.android.common.data.store.DocumentStore
 import com.everlog.android.exercise.data.store.ELExercisesStore
 import com.everlog.android.exercise.data.store.ELUserExerciseStore
+import com.everlog.android.exercise.data.store.ExerciseStores
 import com.everlog.data.datastores.history.ELUserWorkoutInMemoryStore
 import com.everlog.data.datastores.history.ELUserWorkoutStore
 import com.everlog.data.datastores.history.ELUserWorkoutsInMemoryStore
@@ -29,8 +30,6 @@ class ELDatastore {
         private var mWorkoutStore: DocumentStore<ELWorkout>? = null
         private var mRoutinesStore: CollectionStore<ELRoutine>? = null
         private var mRoutineStore: DocumentStore<ELRoutine>? = null
-        private var mExercisesStore: ELExercisesStore? = null
-        private var mExerciseStore: ELUserExerciseStore? = null
         private var mUserStore: ELUserStore? = null
         private var mPlansStore: CollectionStore<ELPlan>? = null
         private var mPlanStore: DocumentStore<ELPlan>? = null
@@ -75,22 +74,10 @@ class ELDatastore {
         }
 
         @JvmStatic
-        @Synchronized
-        fun exercisesStore(): ELExercisesStore {
-            if (mExercisesStore == null) {
-                mExercisesStore = ELExercisesStore()
-            }
-            return mExercisesStore!!
-        }
+        fun exercisesStore(): ELExercisesStore = ExerciseStores.exercisesStore()
 
         @JvmStatic
-        @Synchronized
-        fun exerciseStore(): ELUserExerciseStore {
-            if (mExerciseStore == null) {
-                mExerciseStore = ELUserExerciseStore()
-            }
-            return mExerciseStore!!
-        }
+        fun exerciseStore(): ELUserExerciseStore = ExerciseStores.exerciseStore()
 
         @JvmStatic
         @Synchronized
@@ -161,10 +148,7 @@ class ELDatastore {
             mRoutinesStore = null
             mRoutineStore?.destroy()
             mRoutineStore = null
-            mExercisesStore?.destroy()
-            mExercisesStore = null
-            mExerciseStore?.destroy()
-            mExerciseStore = null
+            ExerciseStores.destroy()
             mUserStore?.destroy()
             mUserStore = null
             mPlansStore?.destroy()

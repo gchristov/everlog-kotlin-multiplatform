@@ -12,7 +12,7 @@ import com.everlog.data.migration.MultiPartUpdateExercise;
 import com.everlog.android.common.data.model.exercise.ELExercise;
 import com.everlog.managers.analytics.AnalyticsManager;
 import com.everlog.android.auth.data.LocalUserManager;
-import com.everlog.managers.firebase.FirebaseStorageManager;
+import com.everlog.android.exercise.data.ExerciseImageStorage;
 import com.everlog.managers.firebase.FirestorePathManager;
 import com.everlog.ui.navigator.PresenterNavigator;
 import com.everlog.android.common.mvp.activity.BaseActivityPresenter;
@@ -132,10 +132,10 @@ public class PresenterCreateExercise extends BaseActivityPresenter<MvpViewCreate
                 }
                 // Upload image.
                 if (mPickedImageUri != null) {
-                    FirebaseStorageManager.uploadExerciseImage(mPickedImageUri, toSave);
+                    ExerciseImageStorage.uploadExerciseImage(mPickedImageUri, toSave);
                 }
                 if (toSave.getImageUrl() == null) {
-                    FirebaseStorageManager.deleteExerciseImage(toSave);
+                    ExerciseImageStorage.deleteExerciseImage(toSave);
                 }
                 // Update routines and history.
                 handleMigrateRoutinesAndHistory(toSave);

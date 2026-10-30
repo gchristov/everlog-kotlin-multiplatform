@@ -19,7 +19,7 @@ import com.everlog.constants.ELConstants
 import com.everlog.databinding.ActivityHomeBinding
 import com.everlog.managers.analytics.AnalyticsConstants
 import com.everlog.managers.apprate.AppLaunchManager
-import com.everlog.managers.firebase.FirebaseStorageManager
+import com.everlog.android.exercise.data.ExerciseImageStorage
 import com.everlog.android.common.mvp.activity.BaseActivity
 import com.everlog.android.common.mvp.activity.BaseActivityMvpView
 import com.everlog.android.common.mvp.activity.BaseActivityPresenter
@@ -71,7 +71,7 @@ class HomeActivity : BaseActivity(), MvpViewHome {
         }, 10)
         Utils.runInBackground {
             // Resume any pending image uploads
-            FirebaseStorageManager.resumePendingUploads()
+            ExerciseImageStorage.resumePendingUploads()
             // Do app rate checks here because we might have to show it due to app launches trigger reached
             AppLaunchManager.manager.launchApp()
         }
