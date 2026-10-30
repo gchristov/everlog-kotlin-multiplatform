@@ -5,8 +5,8 @@ import com.everlog.android.common.test.FakeCoroutineDispatcher
 import com.everlog.data.controllers.starterroutines.RealBuildStarterRoutinesUseCase
 import com.everlog.data.controllers.starterroutines.RealSaveStarterRoutinesUseCase
 import com.everlog.data.controllers.starterroutines.StarterRoutineGenerator
-import com.everlog.testutil.FakeExerciseRepository
-import com.everlog.testutil.FakeRoutineRepository
+import com.everlog.android.exercise.testfixtures.FakeExerciseRepository
+import com.everlog.android.template.testfixtures.FakeRoutineRepository
 import com.everlog.testutil.exerciseLibrary
 import com.google.common.truth.Truth.assertThat
 import org.junit.Test

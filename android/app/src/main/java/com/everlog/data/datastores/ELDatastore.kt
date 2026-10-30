@@ -5,8 +5,8 @@ import com.everlog.android.common.data.model.workout.ELWorkout
 import com.everlog.android.plan.data.model.ELPlan
 import com.everlog.android.common.data.store.CollectionStore
 import com.everlog.android.common.data.store.DocumentStore
-import com.everlog.data.datastores.exercises.ELExercisesStore
-import com.everlog.data.datastores.exercises.ELUserExerciseStore
+import com.everlog.android.exercise.data.store.ELExercisesStore
+import com.everlog.android.exercise.data.store.ELUserExerciseStore
 import com.everlog.data.datastores.history.ELUserWorkoutInMemoryStore
 import com.everlog.data.datastores.history.ELUserWorkoutStore
 import com.everlog.data.datastores.history.ELUserWorkoutsInMemoryStore

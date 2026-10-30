@@ -8,13 +8,14 @@ import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import com.everlog.R
 import com.everlog.android.common.data.model.exercise.ELExerciseGroup
+import com.everlog.android.exercise.data.RealExerciseRepository
 import com.everlog.constants.ELActivityRequestCodes
 import com.everlog.constants.ELConstants
 import com.everlog.data.controllers.templatesession.RealLoadTemplateUseCase
 import com.everlog.data.controllers.templatesession.RealSaveTemplateUseCase
-import com.everlog.data.repositories.RealExerciseRepository
+import com.everlog.data.datastores.ELDatastore
 import com.everlog.data.repositories.RealOngoingPlanRepository
-import com.everlog.data.repositories.RealRoutineRepository
+import com.everlog.android.template.data.RealRoutineRepository
 import com.everlog.data.sync.AppDataSync
 import com.everlog.managers.RemoteConfigManager
 import com.everlog.ui.activities.base.SignedInComposeActivity
@@ -32,7 +33,7 @@ class TemplateEditorActivity : SignedInComposeActivity() {
     private val viewModel by viewModels<TemplateEditorViewModel> {
         viewModelFactory {
             initializer {
-                val routines = RealRoutineRepository(Dispatchers.IO, AppDataSync.instance)
+                val routines = RealRoutineRepository(Dispatchers.IO, AppDataSync.instance) { ELDatastore.routineStore() }
                 val exercises = RealExerciseRepository(Dispatchers.IO, AppDataSync.instance)
                 TemplateEditorViewModel(
                     dispatcher = Dispatchers.Main,

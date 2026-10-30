@@ -6,8 +6,8 @@ import com.everlog.android.common.kotlin.optional
 import com.everlog.android.common.kotlin.zip
 import com.everlog.android.exercise.data.model.library.LibraryExercise
 import com.everlog.android.exercise.data.model.library.toELExercise
-import com.everlog.data.repositories.ExerciseRepository
-import com.everlog.data.repositories.RoutineRepository
+import com.everlog.android.exercise.data.ExerciseRepository
+import com.everlog.android.template.data.RoutineRepository
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine

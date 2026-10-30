@@ -11,9 +11,9 @@ import androidx.lifecycle.viewmodel.viewModelFactory
 import com.everlog.R
 import com.everlog.android.common.compose.theme.Theme
 import com.everlog.android.common.data.model.exercise.ELExercise
-import com.everlog.data.controllers.exerciseguide.RealLoadExerciseGuideUseCase
+import com.everlog.android.exercise.data.RealLoadExerciseGuideUseCase
 import com.everlog.data.controllers.statistics.ExerciseStatsController
-import com.everlog.data.repositories.RealExerciseRepository
+import com.everlog.android.exercise.data.RealExerciseRepository
 import com.everlog.data.sync.AppDataSync
 import com.everlog.managers.analytics.AnalyticsConstants
 import com.everlog.android.auth.data.LocalUserManager

@@ -1,4 +1,4 @@
-package com.everlog.data.repositories
+package com.everlog.android.exercise.data
 
 import arrow.core.Either
 import com.everlog.android.common.data.model.exercise.ELExercise
@@ -15,7 +15,7 @@ import com.everlog.android.exercise.data.model.library.ExerciseRegistryDto
 import com.everlog.android.exercise.data.model.library.LibraryExercise
 import com.everlog.android.exercise.data.model.library.LibraryExerciseDto
 import com.everlog.android.auth.data.LocalUserManager
-import com.everlog.managers.firebase.FirestorePathManager
+import com.everlog.android.common.firebase.FirestorePaths
 import com.google.firebase.firestore.DocumentSnapshot
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
@@ -67,12 +67,12 @@ class RealExerciseRepository(
         "globalExercises",
         userId = null,
         SyncPlan.Whole,
-        FirestoreCollection(FirestorePathManager.globalExercisesCollection, dispatcher = dispatcher) { it.toStoredExercise(own = false) },
+        FirestoreCollection(FirestorePaths.globalExercises, dispatcher = dispatcher) { it.toStoredExercise(own = false) },
     )
 
     override suspend fun globalExercises(): Either<Throwable, List<ELExercise>> = withContext(dispatcher) {
         Either.catch {
-            FirestorePathManager.globalExercisesCollection.get().await().toObjects(ELExercise::class.java)
+            FirestorePaths.globalExercises.get().await().toObjects(ELExercise::class.java)
         }
     }
 
@@ -81,7 +81,7 @@ class RealExerciseRepository(
 
     // Its own document, so opening one exercise doesn't sync the whole library
     override fun libraryExercise(uuid: String): Flow<Load<LibraryExercise?>> = dataSync.observe(
-        DocumentSource("globalExercise/$uuid", userId = null, FirestoreDocument(FirestorePathManager.globalExercisesCollection.document(uuid), dispatcher) {
+        DocumentSource("globalExercise/$uuid", userId = null, FirestoreDocument(FirestorePaths.globalExercises.document(uuid), dispatcher) {
             it.toStoredExercise(own = false)?.exercise
         })
     )
@@ -89,7 +89,7 @@ class RealExerciseRepository(
     override fun ownExercises(): Flow<Load<List<LibraryExercise>>> {
         val userId = LocalUserManager.getUser()?.id ?: return flowOf(Load.Ready(emptyList()))
         return dataSync.observe(
-            CollectionSource("exercises", userId, SyncPlan.Whole, FirestoreCollection(FirestorePathManager.exercisesCollection, dispatcher = dispatcher) {
+            CollectionSource("exercises", userId, SyncPlan.Whole, FirestoreCollection(FirestorePaths.exercises(userId), dispatcher = dispatcher) {
                 it.toStoredExercise(own = true)
             })
         ).map { load -> load.map { it.visible() } }
@@ -99,7 +99,7 @@ class RealExerciseRepository(
         ownExercises().transform { load -> if (load is Load.Ready) emit(load.value) }
 
     override fun registry(): Flow<Load<ExerciseRegistry?>> = dataSync.observe(
-        DocumentSource("exerciseRegistry", userId = null, FirestoreDocument(FirestorePathManager.exerciseRegistryDocument, dispatcher) {
+        DocumentSource("exerciseRegistry", userId = null, FirestoreDocument(FirestorePaths.exerciseRegistry, dispatcher) {
             it.toObject(ExerciseRegistryDto::class.java)?.toRegistry()
         })
     )

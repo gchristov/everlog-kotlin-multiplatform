@@ -6,7 +6,7 @@ import com.everlog.android.exercise.data.ExerciseLibraryEmptyException
 import com.everlog.data.controllers.starterroutines.StarterProfile.Experience
 import com.everlog.data.controllers.starterroutines.StarterProfile.Goal
 import com.everlog.data.controllers.starterroutines.StarterProfile.Place
-import com.everlog.testutil.FakeExerciseRepository
+import com.everlog.android.exercise.testfixtures.FakeExerciseRepository
 import com.everlog.testutil.exerciseLibrary
 import com.google.common.truth.Truth.assertThat
 import kotlinx.coroutines.CoroutineScope

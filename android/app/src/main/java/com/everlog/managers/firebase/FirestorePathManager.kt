@@ -18,16 +18,16 @@ object FirestorePathManager {
         get() = FirestorePaths.users
 
     val exercisesCollection: CollectionReference
-        get() = FirestorePaths.exercises(userId())
+        get() = FirestorePaths.exercises(LocalUserManager.requireUserId())
 
     val devicesCollection: CollectionReference
-        get() = FirestorePaths.devices(userId())
+        get() = FirestorePaths.devices(LocalUserManager.requireUserId())
 
     val routinesCollection: CollectionReference
-        get() = FirestorePaths.routines(userId())
+        get() = FirestorePaths.routines(LocalUserManager.requireUserId())
 
     val workoutsCollection: CollectionReference
-        get() = FirestorePaths.workouts(userId())
+        get() = FirestorePaths.workouts(LocalUserManager.requireUserId())
 
     val plansCollection: CollectionReference
         get() = FirestorePaths.plans
@@ -37,7 +37,4 @@ object FirestorePathManager {
 
     val consentCollection: CollectionReference
         get() = FirestorePaths.consent
-
-    private fun userId(): String =
-        LocalUserManager.getUser()?.id ?: throw IllegalStateException("User missing or invalid")
 }

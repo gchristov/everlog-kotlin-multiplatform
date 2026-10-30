@@ -3,7 +3,7 @@ package com.everlog.ui.fragments.home.exercise.info
 import com.everlog.android.common.kotlin.Load
 import com.everlog.android.common.test.FakeCoroutineDispatcher
 import com.everlog.android.exercise.data.model.library.ExerciseGuide
-import com.everlog.data.controllers.exerciseguide.LoadExerciseGuideUseCase
+import com.everlog.android.exercise.data.LoadExerciseGuideUseCase
 import com.google.common.truth.Truth.assertThat
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow

@@ -1,4 +1,4 @@
-package com.everlog.data.repositories
+package com.everlog.android.workout.data
 
 import com.everlog.android.common.data.model.exercise.ELExercise
 import com.everlog.android.common.datatest.loggedSet

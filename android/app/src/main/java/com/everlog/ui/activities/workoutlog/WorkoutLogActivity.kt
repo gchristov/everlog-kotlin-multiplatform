@@ -16,13 +16,14 @@ import com.everlog.R
 import com.everlog.android.common.data.model.exercise.ELExerciseGroup
 import com.everlog.android.common.data.model.workout.ELWorkout
 import com.everlog.android.common.mvp.MvpBroadcasts
+import com.everlog.android.exercise.data.RealExerciseRepository
+import com.everlog.android.workout.data.RealWorkoutRepository
+import com.everlog.config.AppConfig
 import com.everlog.config.FeedbackSource
 import com.everlog.constants.ELActivityRequestCodes
 import com.everlog.constants.ELConstants
 import com.everlog.data.controllers.workoutprefill.RealLoadPrefillSourcesUseCase
 import com.everlog.data.controllers.workoutsession.RealWorkoutSetPrefill
-import com.everlog.data.repositories.RealExerciseRepository
-import com.everlog.data.repositories.RealWorkoutRepository
 import com.everlog.data.sync.AppDataSync
 import com.everlog.data.repositories.RealOngoingWorkoutRepository
 import com.everlog.ui.activities.base.SignedInComposeActivity
@@ -53,7 +54,7 @@ class WorkoutLogActivity : SignedInComposeActivity() {
                     analytics = RealWorkoutLogAnalytics(),
                     alerts = RealWorkoutLogAlerts(applicationContext),
                     notification = RealWorkoutLogNotification(ELNavigator(applicationContext)),
-                    loadPrefillSources = RealLoadPrefillSourcesUseCase(Dispatchers.Default, RealWorkoutRepository(Dispatchers.IO, AppDataSync.instance)),
+                    loadPrefillSources = RealLoadPrefillSourcesUseCase(Dispatchers.Default, RealWorkoutRepository(Dispatchers.IO, AppDataSync.instance, AppConfig.configuration.workoutSyncMonths)),
                     prefill = RealWorkoutSetPrefill(),
                     ownExerciseUpdates = RealExerciseRepository(Dispatchers.IO, AppDataSync.instance)::ownExerciseUpdates,
                 )

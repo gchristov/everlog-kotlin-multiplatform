@@ -4,7 +4,7 @@ import arrow.core.Either
 import arrow.core.raise.either
 import arrow.core.raise.ensure
 import com.everlog.android.common.data.model.ELRoutine
-import com.everlog.data.repositories.RoutineRepository
+import com.everlog.android.template.data.RoutineRepository
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.withContext
 

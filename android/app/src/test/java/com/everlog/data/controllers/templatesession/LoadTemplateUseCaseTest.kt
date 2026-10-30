@@ -7,8 +7,8 @@ import com.everlog.android.common.data.model.exercise.ELRoutineExercise
 import com.everlog.android.common.data.model.set.ELSet
 import com.everlog.android.common.kotlin.Load
 import com.everlog.android.exercise.data.model.library.LibraryExercise
-import com.everlog.testutil.FakeExerciseRepository
-import com.everlog.testutil.FakeRoutineRepository
+import com.everlog.android.exercise.testfixtures.FakeExerciseRepository
+import com.everlog.android.template.testfixtures.FakeRoutineRepository
 import com.google.common.truth.Truth.assertThat
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.first

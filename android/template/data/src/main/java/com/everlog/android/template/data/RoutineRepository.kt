@@ -1,17 +1,18 @@
-package com.everlog.data.repositories
+package com.everlog.android.template.data
 
 import arrow.core.Either
 import com.everlog.android.common.data.model.ELRoutine
+import com.everlog.android.common.data.store.DocumentStore
 import com.everlog.android.common.datasync.CollectionSource
 import com.everlog.android.common.datasync.DataSync
 import com.everlog.android.common.datasync.FirestoreCollection
 import com.everlog.android.common.datasync.SyncPlan
+import com.everlog.android.common.datasync.getCacheFirst
+import com.everlog.android.common.firebase.FirestorePaths
 import com.everlog.android.common.kotlin.Load
 import com.everlog.android.common.kotlin.map
-import com.everlog.data.datastores.ELDatastore
 import com.everlog.android.auth.data.LocalUserManager
-import com.everlog.managers.firebase.FirestorePathManager
-import com.everlog.utils.device.DeviceUtils
+import com.everlog.android.common.data.CommonData
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.SetOptions
 import kotlinx.coroutines.CoroutineDispatcher
@@ -51,9 +52,14 @@ interface RoutineRepository {
     }
 }
 
+/**
+ * @param testLabRoutines Where routines go during Test Lab runs, which keep them in memory so robots don't
+ * create data
+ */
 class RealRoutineRepository(
     private val dispatcher: CoroutineDispatcher,
     private val dataSync: DataSync,
+    private val testLabRoutines: () -> DocumentStore<ELRoutine>,
 ) : RoutineRepository {
 
     override fun routine(uuid: String): Flow<Load<ELRoutine?>> = routines().map { load -> load.map { routines -> routines.firstOrNull { it.uuid == uuid } } }
@@ -61,7 +67,7 @@ class RealRoutineRepository(
     private fun routines(): Flow<Load<List<ELRoutine>>> {
         val userId = LocalUserManager.getUser()?.id ?: return flowOf(Load.Ready(emptyList()))
         return dataSync.observe(
-            CollectionSource("routines", userId, SyncPlan.Whole, FirestoreCollection(FirestorePathManager.routinesCollection, dispatcher = dispatcher) {
+            CollectionSource("routines", userId, SyncPlan.Whole, FirestoreCollection(FirestorePaths.routines(userId), dispatcher = dispatcher) {
                 it.toObject(ELRoutine::class.java)
             }),
         )
@@ -69,12 +75,11 @@ class RealRoutineRepository(
 
     override suspend fun saveRoutines(routines: List<ELRoutine>): Either<Throwable, Unit> = withContext(dispatcher) {
         Either.catch {
-            // Firebase Test Lab runs keep routines in memory, so robots don't create data
-            if (DeviceUtils.isFirebaseTestLabRun()) {
-                routines.forEach { ELDatastore.routineStore().create(it, SetOptions.merge()) }
+            if (CommonData.dependencies.isTestLabRun()) {
+                routines.forEach { testLabRoutines().create(it, SetOptions.merge()) }
                 return@catch
             }
-            val collection = FirestorePathManager.routinesCollection
+            val collection = FirestorePaths.routines(LocalUserManager.requireUserId())
             val batch = FirebaseFirestore.getInstance().batch()
             routines.forEach { batch.set(collection.document(it.documentId()), it.asMap(), SetOptions.merge()) }
             val confirmed = withTimeoutOrNull(RoutineRepository.ServerTimeout) { batch.commit().await() }
@@ -85,7 +90,7 @@ class RealRoutineRepository(
     override suspend fun exerciseTemplateCounts(): Either<Throwable, Map<String, Int>> = withContext(dispatcher) {
         Either.catch {
             // The routines store keeps the cache current while the app runs
-            FirestorePathManager.routinesCollection.getCacheFirst(emptyIsAnswer = true)
+            FirestorePaths.routines(LocalUserManager.requireUserId()).getCacheFirst(emptyIsAnswer = true)
                 .documents
                 .mapNotNull { document ->
                     runCatching { document.toObject(ELRoutine::class.java) }
