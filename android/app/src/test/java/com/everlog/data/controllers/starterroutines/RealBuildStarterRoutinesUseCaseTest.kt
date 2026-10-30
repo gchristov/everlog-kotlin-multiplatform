@@ -2,6 +2,7 @@ package com.everlog.data.controllers.starterroutines
 
 import arrow.core.Either
 import com.everlog.android.common.test.FakeCoroutineDispatcher
+import com.everlog.android.exercise.data.ExerciseLibraryEmptyException
 import com.everlog.data.controllers.starterroutines.StarterProfile.Experience
 import com.everlog.data.controllers.starterroutines.StarterProfile.Goal
 import com.everlog.data.controllers.starterroutines.StarterProfile.Place

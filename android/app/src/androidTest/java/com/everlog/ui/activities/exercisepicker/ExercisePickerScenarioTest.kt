@@ -16,10 +16,10 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.everlog.android.common.compose.theme.Theme
 import com.everlog.android.common.data.model.set.ELSetType
 import com.everlog.android.common.kotlin.Load
+import com.everlog.android.exercise.data.LoadExerciseLibraryUseCase
 import com.everlog.android.exercise.data.model.library.ExerciseLibrary
 import com.everlog.android.exercise.data.model.library.ExerciseRegistry
 import com.everlog.android.exercise.data.model.library.LibraryExercise
-import com.everlog.data.controllers.exerciselibrary.LoadExerciseLibraryUseCase
 import com.google.common.truth.Truth.assertThat
 import java.util.concurrent.TimeUnit
 import kotlinx.coroutines.Dispatchers
