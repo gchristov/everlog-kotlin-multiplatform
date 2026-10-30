@@ -22,7 +22,6 @@ import com.everlog.android.common.mvp.activity.BaseActivityPresenter
 import com.everlog.ui.activities.home.exercise.details.ExerciseDetailsActivity
 import com.everlog.ui.adapters.exercise.ExerciseAdapter
 import com.everlog.ui.adapters.exercise.ExerciseAdapter.OnExerciseListener
-import com.everlog.ui.dialog.AppDialogs
 import com.everlog.ui.navigator.navigator
 import com.everlog.ui.views.revealcircle.FilterExercisesView
 import com.everlog.android.common.kotlin.format.ArrayResourceTypeUtils
@@ -180,7 +179,7 @@ class PresenterExercises : BaseActivityPresenter<MvpViewExercises>() {
     private fun observeExerciseSuggestionCategory(suggestion: ExerciseSuggestion) {
         KeyboardUtils.hideKeyboard(mvpView.getActivity())
         val utils = ArrayResourceTypeUtils.withExerciseCategories()
-        subscriptions.add(mvpView.showPickerMultipleChoice(utils.titles, -1, AppDialogs.MultipleChoiceDialogType.EXERCISE_CATEGORY)
+        subscriptions.add(mvpView.showPickerMultipleChoice(R.string.create_exercise_select_category, utils.titles, -1)
                 .compose(applyUISchedulers())
                 .subscribe({ value -> handleSaveExerciseSuggestion(suggestion, utils.types[value]) }, { throwable -> handleError(throwable) }))
     }

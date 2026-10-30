@@ -3,12 +3,13 @@ package com.everlog.data.controllers.workoutprefill
 import com.everlog.android.common.data.model.exercise.ELExercise
 import com.everlog.android.common.data.model.exercise.ELExerciseHistory
 import com.everlog.android.common.data.model.exercise.ELRoutineExercise
+import com.everlog.android.common.data.model.exercise.estimated1RM
 import com.everlog.android.common.data.model.set.ELSet
 import com.everlog.android.common.data.model.workout.ELWorkout
-import com.everlog.data.controllers.statistics.BaseStatsController
 import com.everlog.data.controllers.workoutprefill.BaseWorkoutPrefillController.PrefillSource
 import com.everlog.data.datastores.ELDatastore
 import com.everlog.android.common.data.store.OnStoreItemsListener
+import com.everlog.android.settings.data.SettingsManager
 import rx.Observable
 import rx.android.schedulers.AndroidSchedulers
 import rx.schedulers.Schedulers
@@ -143,7 +144,7 @@ class WorkoutPrefillController {
         }
 
         private fun best1RM(sessions: List<ELExerciseHistory>): Float {
-            return sessions.maxOfOrNull { BaseStatsController.calculate1RM(it.exercise!!) } ?: 0f
+            return sessions.maxOfOrNull { it.exercise!!.estimated1RM(SettingsManager.manager.weightUnit()) } ?: 0f
         }
     }
 

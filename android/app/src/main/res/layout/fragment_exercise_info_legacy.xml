@@ -14,11 +14,10 @@
         android:gravity="end"
         android:orientation="vertical">
 
-        <com.everlog.ui.views.ExerciseImageView
+        <com.everlog.android.common.mvp.view.ExerciseImageView
             android:id="@+id/exerciseImg"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:eivClickable="false"
             app:eivFitCenter="true"
             app:eivSquareWidth="true" />
     </LinearLayout>

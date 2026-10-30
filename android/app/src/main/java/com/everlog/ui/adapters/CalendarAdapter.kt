@@ -9,7 +9,6 @@ import android.view.ViewGroup
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.core.content.ContextCompat
-import com.everlog.R
 import com.everlog.android.settings.data.SettingsManager
 import com.everlog.databinding.RowCalendarDayBinding
 import com.everlog.databinding.RowCalendarMonthBinding
@@ -91,7 +90,7 @@ class CalendarAdapter {
                 textView.gravity = Gravity.CENTER
                 textView.text = "" + it.day?.first()
                 textView.isAllCaps = true
-                textView.setTextColor(ContextCompat.getColor(view.context, R.color.gray_4))
+                textView.setTextColor(ContextCompat.getColor(view.context, DesignR.color.gray_4))
                 textView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 11f)
                 mWeekDayViews.add(textView)
                 binding.calendarDaysOfWeek.addView(textView, LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f))

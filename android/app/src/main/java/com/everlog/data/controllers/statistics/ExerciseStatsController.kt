@@ -2,12 +2,14 @@ package com.everlog.data.controllers.statistics
 
 import com.everlog.android.common.data.model.exercise.ELExercise
 import com.everlog.android.common.data.model.exercise.ELExerciseHistory
+import com.everlog.android.common.data.model.exercise.estimated1RM
 import com.everlog.android.common.data.model.set.ELSet
 import com.everlog.android.common.data.model.workout.ELWorkout
 import com.everlog.android.common.data.model.workout.RangeType
 import com.everlog.android.settings.data.SettingsManager
 import com.everlog.data.datastores.ELDatastore
 import com.everlog.android.common.data.store.OnStoreItemsListener
+import com.everlog.android.common.mvp.chart.BaseStatsController
 import com.github.mikephil.charting.data.Entry
 import rx.Observable
 import rx.android.schedulers.AndroidSchedulers
@@ -85,7 +87,7 @@ class ExerciseStatsController : BaseStatsController() {
                                     calculateAccumulativeValue(workout, stats.repCountsPerDay, workoutTotalReps, range)
                                     // Add weight stats
                                     calculateMaxValue(workout, stats.maxWeightsPerDay, workoutHeaviestSet.getWeight(SettingsManager.manager.weightUnit()), range)
-                                    val workout1RM = calculate1RM(routineExercise)
+                                    val workout1RM = routineExercise.estimated1RM(SettingsManager.manager.weightUnit())
                                     if (workout1RM > 0) {
                                         // Add 1RM stats only if there's a set to estimate it from
                                         calculateMaxValue(workout, stats.max1RMsPerDay, workout1RM, range)

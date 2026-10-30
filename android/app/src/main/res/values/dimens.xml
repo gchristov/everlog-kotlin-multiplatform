@@ -15,8 +15,6 @@
     <dimen name="toolbar_progress_height">3dp</dimen>
 
     <dimen name="snackbar_elevation">6dp</dimen>
-    <!-- Smaller rounded controls -->
-    <dimen name="card_radius_default">10dp</dimen>
     <!-- AppChip -->
     <dimen name="chip_height">36dp</dimen>
     <!-- Half the height, a pill -->

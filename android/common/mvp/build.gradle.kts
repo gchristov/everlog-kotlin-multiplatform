@@ -24,6 +24,12 @@ dependencies {
     api(libs.mpandroidchart)
     api(libs.glide)
     api(libs.taptargetview)
+    // ExerciseImageView shows ELExercise
+    api(projects.android.common.data)
+    implementation(libs.textDrawable)
+    implementation(libs.maskable.layout) {
+        isTransitive = false
+    }
     implementation(projects.android.common.persistence)
     implementation(libs.timber)
 }

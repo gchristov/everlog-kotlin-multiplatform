@@ -32,39 +32,6 @@ class ExerciseStatsControllerTest {
         InMemorySharedPreferences.uninstall()
     }
 
-    // 1RM estimate
-
-    @Test
-    fun `1RM is estimated from the heaviest set`() {
-        val exercise = routineExercise(loggedSet(8, 60f), loggedSet(5, 70f), loggedSet(8, 65f))
-
-        // 70 / (1.0278 - 0.0278 * 5)
-        assertThat(BaseStatsController.calculate1RM(exercise)).isWithin(0.01f).of(78.76f)
-    }
-
-    @Test
-    fun `1RM ignores sets with more than 10 reps`() {
-        // 80kg x 12 would give a 1RM of 115
-        val exercise = routineExercise(loggedSet(12, 80f), loggedSet(5, 70f))
-
-        assertThat(BaseStatsController.calculate1RM(exercise)).isWithin(0.01f).of(78.76f)
-    }
-
-    @Test
-    fun `1RM counts sets with exactly 10 reps`() {
-        val exercise = routineExercise(loggedSet(10, 80f))
-
-        // 80 / (1.0278 - 0.0278 * 10)
-        assertThat(BaseStatsController.calculate1RM(exercise)).isWithin(0.01f).of(106.70f)
-    }
-
-    @Test
-    fun `1RM is 0 without a set to estimate it from`() {
-        val exercise = routineExercise(loggedSet(30, 20f), ELSet(reps = 5), ELSet(weight = 60f))
-
-        assertThat(BaseStatsController.calculate1RM(exercise)).isEqualTo(0f)
-    }
-
     // Exercise stats
 
     @Test

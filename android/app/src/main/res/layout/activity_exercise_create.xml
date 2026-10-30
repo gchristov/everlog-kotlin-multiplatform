@@ -44,12 +44,11 @@
                             android:clickable="true"
                             android:foreground="?attr/selectableItemBackground">
 
-                            <com.everlog.ui.views.ExerciseImageView
+                            <com.everlog.android.common.mvp.view.ExerciseImageView
                                 android:id="@+id/exerciseImg"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:background="@color/gray_4"
-                                app:eivClickable="false"
                                 app:eivShowLetter="false"
                                 app:eivSquareWidth="true" />
 

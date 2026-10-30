@@ -11,6 +11,8 @@ import com.everlog.R;
 import com.everlog.android.common.data.model.exercise.ELExercise;
 import com.everlog.android.common.data.model.exercise.ExerciseSuggestion;
 import com.everlog.databinding.RowExerciseBinding;
+import com.everlog.ui.activities.home.exercise.details.ExerciseDetailsActivity;
+import com.everlog.ui.navigator.ELNavigator;
 import com.everlog.android.common.mvp.list.OnListItemListener;
 
 import androidx.core.content.ContextCompat;
@@ -105,6 +107,8 @@ public class ExerciseAdapter {
 
         private void renderExercise(ELExercise item) {
             binding.exerciseImg.setExercise(item);
+            binding.exerciseImg.setOnClickListener(v -> new ELNavigator(itemView.getContext())
+                    .openExerciseDetails(new ExerciseDetailsActivity.Companion.Properties().exercise(item)));
             binding.exerciseName.setText(item.getName());
             binding.categoryName.setText(item.getCategory());
         }
