@@ -10,7 +10,7 @@ import com.everlog.data.datastores.ELUserStore
 import com.everlog.android.exercise.data.store.ELUserExerciseStore
 import com.everlog.managers.analytics.AnalyticsManager
 import com.everlog.android.auth.data.LocalUserManager
-import com.everlog.managers.firebase.FirebaseStorageManager
+import com.everlog.android.exercise.data.ExerciseImageStorage
 import com.everlog.android.common.mvp.activity.BaseActivityPresenter
 import com.everlog.ui.fragments.home.exercise.statistics.ExerciseStatisticsFragment
 import com.everlog.ui.navigator.navigator
@@ -139,7 +139,7 @@ class PresenterExerciseDetails : BaseActivityPresenter<MvpViewExerciseDetails>()
     private fun handleDeleteExercise() {
         AnalyticsManager.manager.exerciseDeleted()
         ELDatastore.exerciseStore().delete(toEdit!!)
-        FirebaseStorageManager.deleteExerciseImage(toEdit!!)
+        ExerciseImageStorage.deleteExerciseImage(toEdit!!)
         mvpView.closeScreen()
     }
 

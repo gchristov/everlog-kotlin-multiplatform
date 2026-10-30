@@ -1,11 +1,9 @@
-package com.everlog.managers.firebase
+package com.everlog.android.exercise.data
 
 import android.net.Uri
 import com.everlog.android.common.data.model.exercise.ELExercise
 import com.everlog.android.common.persistence.PreferencesManager
-import com.everlog.data.datastores.ELDatastore.Companion.exerciseStore
-import com.everlog.data.migration.Migration
-import com.everlog.data.migration.MultiPartUpdateExercise
+import com.everlog.android.exercise.data.store.ExerciseStores
 import com.everlog.android.auth.data.LocalUserManager
 import com.google.android.gms.tasks.Task
 import com.google.firebase.firestore.SetOptions
@@ -16,9 +14,10 @@ import com.google.gson.Gson
 import timber.log.Timber
 import java.util.*
 
-object FirebaseStorageManager : PreferencesManager() {
+// Uploads the user's exercise images, resuming the ones a closed app left unfinished
+object ExerciseImageStorage : PreferencesManager() {
 
-    private const val TAG = "FirebaseStorageManager"
+    private const val TAG = "ExerciseImageStorage"
 
     private enum class PreferenceKeys {
         EXERCISE_UPLOAD_TASK_IDS
@@ -67,8 +66,6 @@ object FirebaseStorageManager : PreferencesManager() {
         return String.format("exercises/%s/%s", LocalUserManager.getUser()!!.id, exercise.uuid)
     }
 
-    // Exercises
-
     private fun resumePendingExercises() {
         val exerciseUploadKeys = getPreference(PreferenceKeys.EXERCISE_UPLOAD_TASK_IDS.name, HashSet())
         for (uploadKey in exerciseUploadKeys) {
@@ -96,18 +93,12 @@ object FirebaseStorageManager : PreferencesManager() {
                 .addOnSuccessListener { uri: Uri ->
                     // Set the image url to the exercise and refresh Firestore.
                     exercise.imageUrl = uri.toString()
-                    exerciseStore().create(exercise, SetOptions.merge())
+                    ExerciseStores.exerciseStore().create(exercise, SetOptions.merge())
                     Timber.tag(TAG).i("Updated exercise image in Firestore")
-                    migrateRoutinesAndHistory(exercise)
+                    ExerciseData.dependencies.updateCopies(exercise)
                 }
     }
 
-    private fun migrateRoutinesAndHistory(changed: ELExercise) {
-        val migration: Migration = MultiPartUpdateExercise(changed)
-        migration.migrate(FirestorePathManager)
-    }
-
-    // Storage
 
     private fun saveStorageUpload(uploadUrl: String?,
                                   dataJson: String,
