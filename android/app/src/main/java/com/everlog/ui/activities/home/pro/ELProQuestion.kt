@@ -1,4 +1,4 @@
-package com.everlog.data.model.pro
+package com.everlog.ui.activities.home.pro
 
 data class ELProQuestion (
 

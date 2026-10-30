@@ -8,8 +8,8 @@ import com.ahamed.multiviewadapter.ItemBinder;
 import com.ahamed.multiviewadapter.ItemViewHolder;
 import com.everlog.R;
 import com.everlog.android.common.kotlin.StringExtKt;
-import com.everlog.data.model.util.Header;
 import com.everlog.databinding.RowHeaderRoutinePerformBinding;
+import com.everlog.ui.adapters.items.Header;
 
 public class PerformRoutineHeaderAdapter {
 

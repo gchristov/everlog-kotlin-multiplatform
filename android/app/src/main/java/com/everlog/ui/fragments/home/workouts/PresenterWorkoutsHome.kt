@@ -7,9 +7,9 @@ import com.everlog.data.datastores.ELDatastore
 import com.everlog.data.datastores.plans.ELColStorePlansLoadedEvent
 import com.everlog.data.datastores.routines.ELColStoreRoutinesLoadedEvent
 import com.everlog.data.model.plan.ELPlan
-import com.everlog.data.model.util.Creator
 import com.everlog.ui.activities.home.routine.create.CreateRoutineActivity
 import com.everlog.ui.adapters.CreatorAdapter
+import com.everlog.ui.adapters.items.Creator
 import com.everlog.ui.adapters.plan.PlanAdapter
 import com.everlog.ui.adapters.routine.RoutineAdapter
 import com.everlog.ui.fragments.base.BaseFragmentPresenter

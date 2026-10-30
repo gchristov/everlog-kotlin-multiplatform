@@ -1,7 +1,7 @@
 package com.everlog.utils
 
 import com.everlog.android.settings.data.SettingsManager
-import com.everlog.data.model.WeekDay
+import com.everlog.ui.views.WeekDay
 import org.threeten.bp.DayOfWeek
 import org.threeten.bp.LocalDate
 import org.threeten.bp.format.TextStyle

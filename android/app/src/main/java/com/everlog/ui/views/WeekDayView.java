@@ -5,7 +5,6 @@ import android.util.AttributeSet;
 import android.view.LayoutInflater;
 
 import com.everlog.R;
-import com.everlog.data.model.WeekDay;
 import com.everlog.databinding.ViewWeekDayBinding;
 
 import org.threeten.bp.LocalDateTime;

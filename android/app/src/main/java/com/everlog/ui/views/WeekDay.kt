@@ -1,4 +1,4 @@
-package com.everlog.data.model
+package com.everlog.ui.views
 
 import org.threeten.bp.LocalDate
 import java.io.Serializable
