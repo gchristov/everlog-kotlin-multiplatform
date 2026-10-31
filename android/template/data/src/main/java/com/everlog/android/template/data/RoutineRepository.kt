@@ -82,7 +82,8 @@ class RealRoutineRepository(
             val collection = FirestorePaths.routines(LocalUserManager.requireUserId())
             val batch = FirebaseFirestore.getInstance().batch()
             routines.forEach { batch.set(collection.document(it.documentId()), it.asMap(), SetOptions.merge()) }
-            val confirmed = withTimeoutOrNull(RoutineRepository.ServerTimeout) { batch.commit().await() }
+            // commit() completes with null, so a plain await() can't tell a confirmed write from a timeout
+            val confirmed = withTimeoutOrNull(RoutineRepository.ServerTimeout) { batch.commit().await(); true }
             if (confirmed == null) Timber.tag(TAG).w("Saved %d routines offline, they sync once back online", routines.size)
         }
     }

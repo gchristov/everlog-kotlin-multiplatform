@@ -115,6 +115,19 @@ class DataSyncTest {
     }
 
     @Test
+    fun `a reader after the listener stopped sees writes made meanwhile, not the last reader's copy`() {
+        val backend = FakeCollectionBackend(server = listOf(bench))
+        val firstReader = readers.launch { dataSync.observe(whole(backend)).collect {} }
+        firstReader.cancel()
+        val renamed = bench.copy(name = "Bench press")
+
+        backend.write(renamed)
+        val loads = read(dataSync.observe(whole(backend)))
+
+        assertThat(loads.first()).isEqualTo(Load.Ready(listOf(renamed)))
+    }
+
+    @Test
     fun `readers at the same time share one sync`() {
         val backend = FakeCollectionBackend(server = listOf(bench)).holdingServer()
         val first = read(dataSync.observe(whole(backend)))
