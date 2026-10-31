@@ -1,16 +1,16 @@
-package com.everlog.ui.activities.home.cover
+package com.everlog.android.plan.cover
 
 import android.app.Activity
 import android.content.Intent
 import com.ahamed.multiviewadapter.DataListManager
 import com.ahamed.multiviewadapter.RecyclerAdapter
-import com.everlog.constants.ELConstants
 import com.everlog.android.plan.data.cover.ApiManager
 import com.everlog.android.plan.data.model.cover.CoverImage
 import com.everlog.android.plan.data.model.cover.CoverImagesResponse
 import com.everlog.android.common.mvp.activity.BaseActivityPresenter
-import com.everlog.ui.adapters.CoverImageAdapter
-import com.everlog.ui.views.recyclerview.infinitescroll.InfiniteRecyclerAdapter
+import com.everlog.android.plan.PlanExtras
+import com.everlog.android.plan.cover.CoverImageAdapter
+import com.everlog.android.plan.cover.InfiniteRecyclerAdapter
 
 class PresenterCoverImagePicker : BaseActivityPresenter<MvpViewCoverImagePicker>() {
 
@@ -101,7 +101,7 @@ class PresenterCoverImagePicker : BaseActivityPresenter<MvpViewCoverImagePicker>
 
     private fun handleImageSelected(image: CoverImage) {
         val i = Intent()
-        i.putExtra(ELConstants.EXTRA_COVER_IMAGE, image.getUrl())
+        i.putExtra(PlanExtras.COVER_IMAGE, image.getUrl())
         mvpView.setViewResult(Activity.RESULT_OK, i)
         mvpView.closeScreen()
     }

@@ -1,6 +1,7 @@
-package com.everlog.ui.views.recyclerview.infinitescroll
+package com.everlog.android.plan.cover
 
 import com.ahamed.multiviewadapter.RecyclerAdapter
+import com.everlog.android.plan.cover.InfiniteBinder
 
 class InfiniteRecyclerAdapter : RecyclerAdapter() {
 

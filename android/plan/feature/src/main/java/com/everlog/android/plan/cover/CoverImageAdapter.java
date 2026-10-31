@@ -1,4 +1,4 @@
-package com.everlog.ui.adapters;
+package com.everlog.android.plan.cover;
 
 import android.view.LayoutInflater;
 import android.view.View;
@@ -6,11 +6,11 @@ import android.view.ViewGroup;
 
 import com.ahamed.multiviewadapter.ItemBinder;
 import com.ahamed.multiviewadapter.ItemViewHolder;
-import com.everlog.R;
 import com.everlog.android.common.mvp.list.OnListItemListener;
-import com.everlog.databinding.RowCoverImageBinding;
+import com.everlog.android.plan.databinding.RowCoverImageBinding;
 import com.everlog.android.plan.data.model.cover.CoverImage;
 import com.everlog.android.common.mvp.util.ELGlideModule;
+import com.everlog.android.plan.R;
 
 public class CoverImageAdapter {
 

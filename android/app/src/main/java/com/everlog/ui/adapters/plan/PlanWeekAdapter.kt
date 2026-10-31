@@ -13,7 +13,7 @@ import com.everlog.R
 import com.everlog.android.plan.data.model.ELPlanWeek
 import com.everlog.databinding.RowPlanWeekBinding
 import com.everlog.android.common.mvp.list.OnListItemListener
-import com.everlog.ui.views.showPopupMenu
+import com.everlog.android.common.mvp.view.showPopupMenu
 
 class PlanWeekAdapter {
 

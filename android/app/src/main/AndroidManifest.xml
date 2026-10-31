@@ -244,13 +244,13 @@
             android:windowSoftInputMode="stateHidden"
             android:exported="false" />
         <activity
-            android:name="com.everlog.ui.activities.home.congratulate.CongratulateActivity"
+            android:name="com.everlog.android.plan.congratulate.CongratulateActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:theme="@style/AppTheme.NoActionBar"
             android:windowSoftInputMode="stateHidden"
             android:exported="false" />
         <activity
-            android:name="com.everlog.ui.activities.home.cover.CoverImagePickerActivity"
+            android:name="com.everlog.android.plan.cover.CoverImagePickerActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:theme="@style/AppTheme.NoActionBar"
             android:windowSoftInputMode="stateHidden|adjustResize"

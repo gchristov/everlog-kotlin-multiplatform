@@ -1,16 +1,16 @@
-package com.everlog.ui.activities.home.congratulate
+package com.everlog.android.plan.congratulate
 
 import android.content.Context
 import android.content.Intent
 import android.view.View
-import com.everlog.R
-import com.everlog.constants.ELConstants
-import com.everlog.databinding.ActivityCongratulateBinding
-import com.everlog.managers.analytics.AnalyticsConstants
 import com.everlog.android.common.mvp.activity.BaseActivity
 import com.everlog.android.common.mvp.activity.BaseActivityMvpView
 import com.everlog.android.common.mvp.activity.BaseActivityPresenter
 import com.everlog.android.common.mvp.util.ViewUtils
+import com.everlog.android.plan.PlanExtras
+import com.everlog.android.plan.PlanScreenNames
+import com.everlog.android.plan.R
+import com.everlog.android.plan.databinding.ActivityCongratulateBinding
 import com.jakewharton.rxbinding.view.RxView
 import rx.Observable
 
@@ -37,13 +37,13 @@ class CongratulateActivity : BaseActivity(), MvpViewCongratulate {
         @JvmStatic
         fun launchIntent(context: Context, properties: Properties): Intent {
             val intent = Intent(context, CongratulateActivity::class.java)
-            intent.putExtra(ELConstants.EXTRA_TYPE, properties.type)
+            intent.putExtra(PlanExtras.CONGRATULATE_TYPE, properties.type)
             return intent
         }
     }
 
     override fun onActivityCreated() {
-        mType = intent?.extras?.getSerializable(ELConstants.EXTRA_TYPE) as? Type
+        mType = intent?.extras?.getSerializable(PlanExtras.CONGRATULATE_TYPE) as? Type
         setData()
         revealViews()
     }
@@ -58,11 +58,11 @@ class CongratulateActivity : BaseActivity(), MvpViewCongratulate {
     }
 
     override fun getRequiredExtras(): List<String> {
-        return listOf(ELConstants.EXTRA_TYPE)
+        return listOf(PlanExtras.CONGRATULATE_TYPE)
     }
 
     override fun getAnalyticsScreenName(): String {
-        return AnalyticsConstants.SCREEN_CONGRATULATE
+        return PlanScreenNames.CONGRATULATE
     }
 
     override fun <T : BaseActivityMvpView> getPresenter(): BaseActivityPresenter<T>? {

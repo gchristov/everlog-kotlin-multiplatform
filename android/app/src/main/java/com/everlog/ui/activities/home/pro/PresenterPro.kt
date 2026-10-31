@@ -17,7 +17,7 @@ import com.everlog.android.auth.data.LocalUserManager
 import com.everlog.managers.billing.BillingBridge
 import com.everlog.managers.billing.BillingManager
 import com.everlog.android.common.mvp.activity.BaseActivityPresenter
-import com.everlog.ui.activities.home.congratulate.CongratulateActivity
+import com.everlog.android.plan.congratulate.CongratulateActivity
 import com.everlog.ui.adapters.ProUpgradeAdapter
 import com.everlog.ui.navigator.navigator
 import timber.log.Timber

@@ -1,4 +1,4 @@
-package com.everlog.ui.views
+package com.everlog.android.common.mvp.view
 
 import android.annotation.SuppressLint
 import android.content.res.ColorStateList
@@ -12,7 +12,6 @@ import androidx.appcompat.widget.PopupMenu
 import androidx.core.content.ContextCompat
 import androidx.core.view.MenuItemCompat
 import androidx.core.view.forEach
-import com.everlog.R
 import com.everlog.android.common.design.R as DesignR
 
 /**

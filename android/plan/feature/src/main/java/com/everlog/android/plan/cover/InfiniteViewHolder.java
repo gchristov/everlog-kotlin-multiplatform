@@ -1,4 +1,4 @@
-package com.everlog.ui.views.recyclerview.infinitescroll;
+package com.everlog.android.plan.cover;
 
 import android.view.View;
 import android.view.ViewGroup;

@@ -1,4 +1,4 @@
-package com.everlog.ui.activities.home.congratulate
+package com.everlog.android.plan.congratulate
 
 import com.everlog.android.common.mvp.activity.BaseActivityPresenter
 
