@@ -18,12 +18,6 @@
     <string name="error_play_store">Unable to find Play Store app</string>
 
 
-    <string name="pending_feature_title">Coming soon…</string>
-    <string name="pending_feature_subtitle">We are working on this feature and it will be available as an update soon!</string>
-    <string name="pending_feature_action">Got it</string>
-
-
-
     <string name="home_add_title">Start workout</string>
     <string name="home_add_start_routine">From your templates</string>
     <string name="home_add_start_empty">Pick exercises as you go</string>

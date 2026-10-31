@@ -1,19 +1,34 @@
 # Android modules
 
-The app is split into Gradle modules, modelled on [newsfeed-kotlin-multiplatform](https://github.com/gchristov/newsfeed-kotlin-multiplatform) but without dependency injection: modules are wired by hand through view-model factories. Most code still lives in `:android:app` and moves into the modules below bit by bit (TAS-468), leaf modules first.
+The app is split into Gradle modules, modelled on [newsfeed-kotlin-multiplatform](https://github.com/gchristov/newsfeed-kotlin-multiplatform) but without dependency injection: modules are wired by hand through view-model factories. Every feature's screens and data live in its modules (TAS-468). What's left in `:android:app` is the app shell and the old screens still waiting to be removed, see [What stays in the app](#what-stays-in-the-app).
 
 ## Layout
 
 ```
 android/
-  app/                       the application: ELApplication, splash, home, Navigator, managers, FCM, receivers
+  app/                       the app shell and the old screens, see "What stays in the app"
   common/<name>/             setup and code shared by other modules
   <feature>/data/            a feature's repositories, use cases and stores
   <feature>/feature/         a feature's screens and view-models
   <feature>/test-fixtures/   a feature's fakes and test robots, for other modules' tests
 ```
 
-Features: `auth`, `onboarding`, `exercise`, `workout`, `template`, `plan`, `history`, `pro`, `settings` and `showcase` (the design system showcase). Every feature has all three modules, even while one is empty.
+Every feature has all three modules, even while one is empty:
+
+| Feature | `feature` holds | `data` holds |
+| --- | --- | --- |
+| `auth` | Login, reset password | `LocalUserManager`, the user, device and consent stores and models |
+| `onboarding` | The onboarding: welcome, questions, building and the reveal | The starter routines |
+| `exercise` | The exercise picker, detail and create screens | `ExerciseRepository`, the exercise library and guide use cases, the exercise stores, `ExerciseImageStorage` |
+| `workout` | The workout screen, Set suggestions, workout details, `WorkoutService` and its notification | `WorkoutManager`, the ongoing workout, prefill, the workout stores, `WorkoutBroadcasts` |
+| `template` | The template editor, template details, the start-a-workout screen, the template and set type pickers | `RoutineRepository`, the template load and save use cases, the routine stores, `OngoingPlanRepository` |
+| `plan` | Plan create, details and week days, the cover picker, the congratulations screen | `PlanManager`, the plan stores and models, the cover images API, `PlanBroadcasts` |
+| `history` | The Activity tab: statistics and the workouts calendar | Nothing yet: the tab reads `workout:data` |
+| `pro` | The Pro screen, `BillingManager` | The Pro models |
+| `settings` | Settings, the integration screen | `SettingsManager`, the integration store and model |
+| `showcase` | The design system showcase (debug builds only) | |
+
+Each `data` module gives its stores one entry point, e.g. `WorkoutStores` or `PlanStores`, which the app's `ELDatastore` hands out to the code still using it.
 
 Common modules:
 
@@ -53,6 +68,15 @@ A feature module can't see the app, but some of what it needs lives there for no
 `common:mvp` does the same for what its bases need (screen views and the signed-in user check), with `CommonMvpDependencies`.
 
 This stands in for dependency injection while the app is split into modules. Each interface is shaped like constructor injection, a list of what the feature needs, so introducing a DI framework after the modularisation (TAS-468) only replaces how the app registers them; the interfaces and the features stay as they are.
+
+## What stays in the app
+
+`:android:app` keeps what ties the features together or belongs to no single one, and what's due to be deleted rather than moved:
+
+- **The shell**: `ELApplication` with each feature's dependencies (`application/features`), `SplashActivity` (the launcher, which keeps its class name), Home with its Week and Workouts tabs and home notifications, the `Navigator`, `AppConfig` and Remote Config, the data migrations, `AppDataSync`, FCM, the alarm receivers and their notifications, and the web view.
+- **Managers on the app's services**: `AuthManager`, `AnalyticsManager`, the rating prompt, in-app updates, `BillingBridge`, `FirestorePathManager`, Google Fit, `ELUserStore` and `ELDatastore`.
+- **Shared XML pieces only the app uses**: `AppDialogs` and the other pickers and inputs in `ui/dialog`, and the views and adapters the screens above use.
+- **The old screens behind v2 flags** (`CreateRoutineActivity`, `CreateExerciseGroupsActivity`, `MuscleGoalActivity` and their adapters), which go when their flags are removed (TAS-465) rather than moving into modules.
 
 ## Convention plugins
 

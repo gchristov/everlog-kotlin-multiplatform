@@ -31,9 +31,7 @@ object ELConstants {
     const val EXTRA_SHOW_DETAILS_ON_SUCCESS = "EXTRA_SHOW_DETAILS_ON_SUCCESS"
     const val EXTRA_NUMBER_OF_ITEMS = "EXTRA_NUMBER_OF_ITEMS"
     const val EXTRA_INTEGRATION = "EXTRA_INTEGRATION"
-    const val EXTRA_SELECTION = "EXTRA_SELECTION"
     const val EXTRA_TITLE = "EXTRA_TITLE"
-    const val EXTRA_SUBTITLE = "EXTRA_SUBTITLE"
 
 
     const val FIREBASE_TEST_LAB_EMAIL = "hello@cloudtestlabaccounts.com"
