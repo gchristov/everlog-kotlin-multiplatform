@@ -25,8 +25,10 @@ import com.everlog.android.common.mvp.activity.BaseActivityPresenter;
 import com.everlog.android.common.kotlin.Utils;
 import com.everlog.ui.activities.home.exercisegroup.DefaultCreateExerciseGroupsActivity;
 import com.everlog.ui.adapters.WorkoutDetailsStatsAdapter;
-import com.everlog.ui.adapters.exercise.group.ExerciseGroupSummaryAdapter;
+import com.everlog.android.common.mvp.list.ExerciseGroupSummaryAdapter;
+import com.everlog.android.exercise.feature.details.ExerciseDetailsActivity;
 import com.everlog.ui.dialog.AppDialogs;
+import com.everlog.ui.navigator.ELNavigator;
 import com.everlog.ui.navigator.PresenterNavigator;
 import com.google.firebase.firestore.SetOptions;
 
@@ -37,6 +39,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
+import kotlin.Unit;
 
 import static android.app.Activity.RESULT_OK;
 import static com.everlog.constants.ELConstants.EXTRA_EXERCISE_GROUPS;
@@ -349,6 +352,11 @@ public class PresenterWorkoutDetails extends BaseActivityPresenter<MvpViewWorkou
             public void onItemClicked(ELWorkout item, int position) {}
         }), new ExerciseGroupSummaryAdapter().build(new ExerciseGroupSummaryAdapter.Builder()
                 .setShowTemplates(false)
+                .setWeightUnit(SettingsManager.manager.weightUnit())
+                .setOnExerciseClicked((context, exercise) -> {
+                    new ELNavigator(context).openExerciseDetails(new ExerciseDetailsActivity.Companion.Properties().exercise(exercise));
+                    return Unit.INSTANCE;
+                })
         ));
     }
 
