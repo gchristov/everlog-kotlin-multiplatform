@@ -185,7 +185,6 @@ dependencies {
     implementation(libs.textinlineimage)
 
 
-    implementation(libs.shapeOfView)
     implementation(libs.ucrop)
     implementation(libs.bottomSheet)
     implementation(libs.blurView)

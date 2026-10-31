@@ -21,8 +21,8 @@ import com.everlog.android.common.mvp.view.CheckBoxTriStates
 import com.everlog.android.common.kotlin.Utils
 import com.everlog.android.common.mvp.util.ViewUtils
 import com.everlog.android.common.mvp.util.KeyboardUtils
-import com.everlog.utils.text.TextViewUtils
-import com.everlog.utils.text.TouchableSpan
+import com.everlog.android.common.mvp.util.TextViewUtils
+import com.everlog.android.common.mvp.util.TouchableSpan
 import com.github.leandroborgesferreira.loadingbutton.customViews.CircularProgressButton
 import com.jakewharton.rxbinding.view.RxView
 import rx.Observable
@@ -308,7 +308,7 @@ class LoginActivity : BaseActivity(), MvpViewLogin {
                 mOnClickPrivacy.onNext(null)
             }
         }
-        TextViewUtils.addClickableSpans(binding.formRegister.termsLbl, arrayOf(termsSpan, privacySpan), getString(R.string.login_terms_full), arrayOf(getString(R.string.login_terms), getString(R.string.login_terms_privacy)))
+        TextViewUtils.addClickableSpans(binding.formRegister.termsLbl, arrayOf(termsSpan, privacySpan), getString(R.string.login_terms_full), arrayOf(getString(DesignR.string.login_terms), getString(DesignR.string.login_terms_privacy)))
     }
 
     private fun setupFormNavigation() {

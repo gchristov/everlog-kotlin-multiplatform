@@ -1,12 +1,15 @@
-package com.everlog.managers.billing
+package com.everlog.android.pro.billing
 
 import android.app.Activity
 import android.content.Context
 import com.android.billingclient.api.*
+import com.android.billingclient.api.BillingClient
 import com.android.billingclient.api.BillingClient.SkuType
-import com.everlog.BuildConfig
+import com.android.billingclient.api.BillingResult
+import com.android.billingclient.api.SkuDetails
 import com.everlog.android.common.kotlin.AppContext
 import com.everlog.android.common.mvp.dialog.ToastBuilder
+import com.everlog.android.pro.data.model.ELProSkuDetails
 import rx.Observable
 import rx.subjects.PublishSubject
 import timber.log.Timber
@@ -28,6 +31,15 @@ class BillingManager private constructor(context: Context) : PurchasesUpdatedLis
     private val SKUS = hashMapOf(SkuType.SUBS to listOf(SKU_SUB_MONTH, SKU_SUB_YEAR))
 
     companion object {
+        fun convertSkus(result: BillingResult, skuDetailsList: List<SkuDetails>?): List<ELProSkuDetails> {
+            val results = ArrayList<ELProSkuDetails>()
+            if (result.responseCode == BillingClient.BillingResponseCode.OK) {
+                skuDetailsList?.forEach {
+                    results.add(ELProSkuDetails.withSkuDetails(it))
+                }
+            }
+            return results
+        }
 
         const val TAG = "BillingManager"
 

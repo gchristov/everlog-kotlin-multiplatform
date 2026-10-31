@@ -21,7 +21,7 @@ import com.everlog.managers.analytics.AnalyticsManager
 import com.everlog.managers.appupdate.AppUpdateController
 import com.everlog.android.auth.data.LocalUserManager
 import com.everlog.managers.billing.BillingBridge
-import com.everlog.managers.billing.BillingManager
+import com.everlog.android.pro.billing.BillingManager
 import com.everlog.ui.navigator.navigator
 import com.everlog.android.common.mvp.activity.BaseActivityPresenter
 import com.everlog.android.plan.data.PlanBroadcasts

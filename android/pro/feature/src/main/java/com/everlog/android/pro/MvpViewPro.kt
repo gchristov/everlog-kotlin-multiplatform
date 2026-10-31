@@ -1,4 +1,4 @@
-package com.everlog.ui.activities.home.pro
+package com.everlog.android.pro
 
 import com.everlog.android.pro.data.model.ELProSkuDetails
 import com.everlog.android.common.mvp.activity.BaseActivityMvpView

@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="pro_error_purchase">Your purchase could not be completed at this time. Please try again.</string>
+    <string name="pro_error_restore">We couldn\'t find a membership on this account.</string>
+    <string name="pro_feature_1">Unlimited history &amp; workouts</string>
+    <string name="pro_feature_2">Historic weight suggestions</string>
+    <string name="pro_feature_3">Statistics</string>
+    <string name="pro_feature_4">Workout plans</string>
+    <string name="pro_feature_5">Muscle training goals *</string>
+    <string name="pro_feature_6">Decimal weight increments</string>
+    <string name="pro_free_trial">7-DAY FREE TRIAL</string>
+    <string name="pro_free_trial_highlight">FREE TRIAL</string>
+    <string name="pro_muscle_goals">* Goals give you tailored weight recommendations based on your 1RM</string>
+    <string name="pro_question_1">Can I cancel at any time?</string>
+    <string name="pro_question_1_answer">Absolutely. Subscriptions run on a monthly or yearly basis and can be cancelled at any time from our Everlog Pro link in Settings.</string>
+    <string name="pro_question_2">Can I get a trial first?</string>
+    <string name="pro_question_2_answer">Yes, you can sign up for a 7-day free trial during which your subscription can be cancelled free of charge at any time.</string>
+    <string name="pro_question_3">What are my paying options?</string>
+    <string name="pro_question_3_answer">You can pay quickly and securely with your Google Pay account.</string>
+    <string name="pro_question_4">Can I browse existing workout plans?</string>
+    <string name="pro_question_4_answer">At the moment we only support custom workout plans so you would have to create it yourself. However, we are working towards making the plans shareable very soon.</string>
+    <string name="pro_questions">Common Questions</string>
+    <string name="pro_restore">Restore Membership</string>
+    <string name="pro_restore_success">Your previous membership has been restored successfully!</string>
+    <string name="pro_subtitle">Train smarter with our workout plans and muscle goals</string>
+    <string name="pro_title">Everlog Pro</string>
+    <string name="pro_why">Why Pro</string>
+    <plurals name="months">
+        <item quantity="one">%1$d month</item>
+        <item quantity="other">%1$d months</item>
+    </plurals>
+    <plurals name="years">
+        <item quantity="one">%1$d year</item>
+        <item quantity="other">%1$d years</item>
+    </plurals>
+</resources>

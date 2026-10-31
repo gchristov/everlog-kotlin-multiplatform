@@ -99,4 +99,6 @@
     <string name="settings_weekly_goal">Weekly workouts goal</string>
     <string name="settings_weight_increase">Weight increment</string>
     <string name="settings_workouts">Workouts</string>
+    <string name="login_terms">Terms &amp; Conditions</string>
+    <string name="login_terms_privacy">Privacy Policy</string>
 </resources>

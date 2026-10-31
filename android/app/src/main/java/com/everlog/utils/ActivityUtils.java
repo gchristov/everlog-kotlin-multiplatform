@@ -17,14 +17,6 @@ import androidx.appcompat.app.AppCompatActivity;
 
 public class ActivityUtils {
 
-    public static void setupBackgroundImage(Activity activity,
-                                            int imageResId,
-                                            int backgroundResId) {
-        if (activity.findViewById(backgroundResId) != null) {
-            ImageView background = activity.findViewById(backgroundResId);
-            ELGlideModule.loadImage(imageResId, background);
-        }
-    }
 
 	public static void setCurrentOrientationAsFixed(AppCompatActivity a) {
         if (a.getResources().getConfiguration().orientation == ActivityInfo.SCREEN_ORIENTATION_PORTRAIT)

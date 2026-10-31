@@ -1,18 +1,18 @@
-package com.everlog.ui.activities.home.pro
+package com.everlog.android.pro
 
+import com.everlog.android.common.design.R as DesignR
 import android.view.View
 import androidx.core.widget.NestedScrollView
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.everlog.R
+import com.everlog.android.pro.R
 import com.everlog.android.pro.data.model.ELProSkuDetails
-import com.everlog.databinding.ActivityProBinding
-import com.everlog.managers.analytics.AnalyticsConstants
+import com.everlog.android.pro.databinding.ActivityProBinding
 import com.everlog.android.common.mvp.activity.BaseActivity
 import com.everlog.android.common.mvp.activity.BaseActivityMvpView
 import com.everlog.android.common.mvp.activity.BaseActivityPresenter
-import com.everlog.utils.ActivityUtils
-import com.everlog.utils.text.TextViewUtils
-import com.everlog.utils.text.TouchableSpan
+import com.everlog.android.common.mvp.util.ELGlideModule
+import com.everlog.android.common.mvp.util.TextViewUtils
+import com.everlog.android.common.mvp.util.TouchableSpan
 import rx.Observable
 import rx.subjects.PublishSubject
 
@@ -46,7 +46,7 @@ class ProActivity : BaseActivity(), MvpViewPro {
     }
 
     override fun getAnalyticsScreenName(): String {
-        return AnalyticsConstants.SCREEN_PRO
+        return ProScreenNames.PRO
     }
 
     override fun <T : BaseActivityMvpView> getPresenter(): BaseActivityPresenter<T>? {
@@ -125,14 +125,14 @@ class ProActivity : BaseActivity(), MvpViewPro {
                 mOnClickTerms.onNext(null)
             }
         }
-        TextViewUtils.addClickableSpans(binding.termsLbl, arrayOf(termsSpan), getString(R.string.login_terms), arrayOf(getString(R.string.login_terms)))
+        TextViewUtils.addClickableSpans(binding.termsLbl, arrayOf(termsSpan), getString(DesignR.string.login_terms), arrayOf(getString(DesignR.string.login_terms)))
         // Privacy
         val privacySpan = object : TouchableSpan(binding.privacyLbl.currentTextColor) {
             override fun onClick(widget: View) {
                 mOnClickPrivacy.onNext(null)
             }
         }
-        TextViewUtils.addClickableSpans(binding.privacyLbl, arrayOf(privacySpan), getString(R.string.login_terms_privacy), arrayOf(getString(R.string.login_terms_privacy)))
+        TextViewUtils.addClickableSpans(binding.privacyLbl, arrayOf(privacySpan), getString(DesignR.string.login_terms_privacy), arrayOf(getString(DesignR.string.login_terms_privacy)))
     }
 
     private fun setupScrollView() {
@@ -152,7 +152,7 @@ class ProActivity : BaseActivity(), MvpViewPro {
     }
 
     private fun setupBackgroundImage() {
-        ActivityUtils.setupBackgroundImage(this, R.drawable.background_pro, R.id.backgroundView)
+        ELGlideModule.loadImage(R.drawable.background_pro, findViewById(R.id.backgroundView))
     }
 
     private fun setupFreeTrial() {

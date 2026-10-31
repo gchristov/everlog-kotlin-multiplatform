@@ -238,7 +238,7 @@
             android:windowSoftInputMode="stateHidden"
             android:exported="false" />
         <activity
-            android:name=".ui.activities.home.pro.ProActivity"
+            android:name="com.everlog.android.pro.ProActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:theme="@style/AppTheme.NoActionBar"
             android:windowSoftInputMode="stateHidden"
