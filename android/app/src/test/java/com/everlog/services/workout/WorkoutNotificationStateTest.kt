@@ -12,6 +12,7 @@ import com.everlog.android.common.datatest.workout
 import com.everlog.android.common.kotlin.WeightUnit
 import com.everlog.android.common.test.InMemorySharedPreferences
 import com.everlog.android.settings.data.SettingsManager
+import com.everlog.android.workout.data.notification.ShownSet
 import com.everlog.android.common.test.install
 import com.everlog.android.common.test.uninstall
 import com.everlog.services.workout.WorkoutNotificationState.Done

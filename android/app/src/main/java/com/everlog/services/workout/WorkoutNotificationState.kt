@@ -5,13 +5,7 @@ import com.everlog.android.common.data.model.workout.ELWorkout
 import com.everlog.android.common.data.model.workout.ELWorkoutState
 import com.everlog.android.common.session.SetMode
 import com.everlog.android.common.session.toSessionSet
-import java.io.Serializable
-
-/**
- * The set the workout screen has selected, which the notification shows, and whether its main button starts the
- * set's timer rather than completing it.
- */
-data class ShownSet(val position: ELWorkoutState, val startsTimer: Boolean) : Serializable
+import com.everlog.android.workout.data.notification.ShownSet
 
 /**
  * What the ongoing workout notification should show, independent of how it's rendered or which

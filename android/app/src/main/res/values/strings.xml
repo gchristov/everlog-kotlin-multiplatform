@@ -155,43 +155,6 @@
     <string name="statistics_session_duration_avg">Avg. Session Duration</string>
     <string name="statistics_minutes">Minutes</string>
 
-    <string name="workout_discard_title">Discard workout?</string>
-    <string name="workout_discard_nothing_logged">Nothing\'s been logged yet.</string>
-    <plurals name="workout_discard_sets_logged">
-        <item quantity="one">You\'ve completed %1$d set. Discarding deletes it.</item>
-        <item quantity="other">You\'ve completed %1$d sets. Discarding deletes them.</item>
-    </plurals>
-    <plurals name="workout_discard_unticked_saved">
-        <item quantity="one">Finishing also saves %1$d set you haven\'t ticked as done.</item>
-        <item quantity="other">Finishing also saves %1$d sets you haven\'t ticked as done.</item>
-    </plurals>
-    <string name="workout_discard_finish">Finish</string>
-    <!-- The Compose workout screen (TAS-455) -->
-    <string name="workout_log_close">Close</string>
-    <string name="workout_log_finish_title">Finish workout?</string>
-    <string name="workout_log_finish_body">Some sets aren\'t ticked off yet. Sets with reps or a time are saved as done.</string>
-    <string name="workout_log_suggested">%1$s Suggested from last time</string>
-    <string name="workout_log_suggested_goal">%1$s %2$s %3$s for %4$s, %5$d%% of your 1RM</string>
-    <string name="workout_log_suggestions_change">Change</string>
-    <string name="workout_log_next">Next</string>
-    <string name="workout_log_rest">REST</string>
-    <string name="workout_log_set_timer">SET TIMER</string>
-    <string name="workout_log_timer_less">−10s</string>
-    <string name="workout_log_timer_more">+10s</string>
-    <string name="workout_log_skip">Skip</string>
-    <string name="workout_log_options">Workout options</string>
-    <string name="workout_log_rest_timer">Rest timer</string>
-    <string name="workout_log_rest_timer_subtitle">%1$s after each set</string>
-    <string name="workout_log_rest_timer_body">The rest after each set, for every exercise.</string>
-    <string name="workout_log_edit">Edit workout</string>
-    <string name="workout_log_edit_subtitle">Reorder or delete exercises</string>
-    <string name="workout_log_edit_hint">Drag the grip to move an exercise. Tap the bin to delete it.</string>
-    <string name="workout_log_discard">Discard workout</string>
-    <string name="workout_log_delete_exercise_title">Delete %1$s?</string>
-    <string name="workout_log_delete_exercise_body">Its sets go with it.</string>
-    <string name="workout_log_stop">Stop</string>
-    <string name="workout_log_empty_hint">Add an exercise to start</string>
-    <string name="workout_discard_keep_going">Keep going</string>
     <string name="workout_metric_prompt_missing">Please enter a value</string>
     <string name="workout_rest_time">"Rest • %1$s"</string>
     <string name="workout_empty_action">Add exercises</string>
@@ -215,10 +178,8 @@
     <string name="workout_notification_start_timer">Start timer</string>
     <string name="workout_notification_stop_timer">Stop timer</string>
     <string name="workout_exercises">Session Exercises</string>
-    <string name="workout_finish">Finish</string>
     <string name="workout_finish_title">Finish Workout</string>
     <string name="workout_finish_subtitle">Some sets aren\'t ticked off yet. Finish anyway? Sets with reps or a time are saved as done.</string>
-    <string name="workout_error_no_permissions">We need permission to show notifications and track your activity to provide live workout updates and timers. Please enable these in Settings.</string>
 
     <string name="settings_title">Settings</string>
     <string name="settings_pro_upgrade">Upgrade to pro</string>
@@ -228,8 +189,6 @@
         <item quantity="one">Your free trial ends tomorrow</item>
         <item quantity="other">Your free trial ends in %1$d days</item>
     </plurals>
-    <string name="feedback_workout_subtitle">What works, what gets in the way</string>
-    <string name="feedback_set_suggestions_subtitle">Were the weights right for you? Tell us</string>
     <string name="settings_play_store_prompt">Review us on Google Play</string>
     <string name="settings_logout">Logout</string>
     <string name="settings_share">Share Everlog</string>
@@ -315,28 +274,6 @@
     <string name="muscle_goal_footer">Need more goals?</string>
     <string name="muscle_goal_prompt">Training goals give you history-based weight suggestions during workouts to ensure your muscles are working in the most effective way.</string>
     <string name="muscle_goal_1rm">1RM goals suggest a percentage of your 1RM - the max weight you can lift for one repetition - estimated from your recent sets of up to 10 reps. If you haven\'t done an exercise in 3 months, your last session\'s weights are used instead.</string>
-    <string name="set_suggestions_title">Set suggestions</string>
-    <string name="set_suggestions_off">Off</string>
-    <string name="set_suggestions_off_subtitle">Start from your template and type the rest</string>
-    <string name="set_suggestions_last_time">From last time</string>
-    <string name="set_suggestions_last_time_subtitle">Fill in the reps and weight you did last time</string>
-    <string name="set_suggestions_goals">Train for a goal</string>
-    <string name="set_suggestions_build_muscle">Build muscle</string>
-    <string name="set_suggestions_get_stronger">Get stronger</string>
-    <string name="set_suggestions_speed_power">Speed and power</string>
-    <string name="set_suggestions_goal_subtitle">%1$d%% of your 1RM</string>
-    <string name="set_suggestions_how">How goal weights are worked out</string>
-    <string name="set_suggestions_how_1rm">Your 1RM is the most you could lift for one rep. Everlog estimates it for each exercise from your recent sets of up to 10 reps, over the last 3 months, so you never have to test it.</string>
-    <string name="set_suggestions_how_goal">Your goal then sets the weight as a share of that 1RM. Reps stay as they were last time. Suggestions only fill in what your template leaves empty.</string>
-    <string name="set_suggestions_how_example">Example · %1$s</string>
-    <string name="set_suggestions_how_example_exercise">Barbell Bench Press</string>
-    <string name="set_suggestions_how_set">Best recent set</string>
-    <string name="set_suggestions_how_set_value">%1$s %2$s × %3$d</string>
-    <string name="set_suggestions_how_estimate">Estimated 1RM</string>
-    <string name="set_suggestions_how_goal_row">%1$s, %2$d%%</string>
-    <string name="set_suggestions_how_weight_value">%1$s %2$s</string>
-    <string name="set_suggestions_how_rounding">Weights are rounded up to the next whole %1$s. No sets of up to 10 reps in the last 3 months? The weight comes from last time instead.</string>
-    <string name="set_suggestions_how_done">Got it</string>
 
     <string name="integrations_title">Integrations</string>
     <string name="integrations_disconnect_prompt">Disabling this won\'t affect your history or remove data from this destination.\n\nAre you sure you want to disable this integration?</string>

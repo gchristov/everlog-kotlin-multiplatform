@@ -184,7 +184,7 @@
             android:windowSoftInputMode="stateHidden"
             android:exported="false" />
         <activity
-            android:name=".ui.activities.workoutlog.WorkoutLogActivity"
+            android:name="com.everlog.android.workout.feature.log.WorkoutLogActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:launchMode="singleTask"
             android:theme="@style/AppTheme.NoActionBar"
@@ -229,7 +229,7 @@
             android:theme="@style/AppTheme.NoActionBar"
             android:exported="false" />
         <activity
-            android:name="com.everlog.ui.activities.setsuggestions.SetSuggestionsActivity"
+            android:name="com.everlog.android.workout.feature.setsuggestions.SetSuggestionsActivity"
             android:theme="@style/AppTheme.NoActionBar"
             android:exported="false" />
         <activity

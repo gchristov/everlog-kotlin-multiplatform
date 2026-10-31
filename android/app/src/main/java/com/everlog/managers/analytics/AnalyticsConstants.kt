@@ -19,8 +19,6 @@ class AnalyticsConstants {
         const val SCREEN_EXERCISE_GROUPS_CREATE = "screen_create_exercise_groups"
         const val SCREEN_ROUTINE_CREATE = "screen_create_routine"
         const val SCREEN_WORKOUT = "screen_workout"
-        // The Compose workout screen (TAS-455), beside the old one while workout_screen_v2 rolls out
-        const val SCREEN_WORKOUT_V2 = "screen_workout_v2"
         const val SCREEN_WORKOUT_DETAILS = "screen_workout_details"
         const val SCREEN_WEB_VIEW = "screen_web_view"
         const val SCREEN_PRO = "screen_pro"
@@ -38,8 +36,6 @@ class AnalyticsConstants {
         // The exercise picker, named apart from the old list's screen_exercises and screen_exercise_picker
         const val SCREEN_EXERCISES_V2 = "screen_exercises_v2"
         const val SCREEN_EXERCISE_PICKER_V2 = "screen_exercise_picker_v2"
-        // The Compose screen that replaces SCREEN_MUSCLE_GOAL while set_suggestions_v2 rolls out
-        const val SCREEN_SET_SUGGESTIONS = "screen_settings_set_suggestions"
 
         // Events
 
