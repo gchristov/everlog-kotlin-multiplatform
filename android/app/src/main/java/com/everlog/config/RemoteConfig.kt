@@ -11,8 +11,6 @@ data class RemoteConfig (
         var notificationAppUsage: AppUsageNotification? = null,
         // The exercise detail in Compose (TAS-452): for now its Info tab, with the library's instructions and tips
         var exerciseDetailsV2: Boolean = false,
-        // The workout screen in Compose (TAS-455), for workouts started while it's on
-        var workoutScreenV2: Boolean = false,
         // The Set suggestions screen in Compose instead of MuscleGoalActivity, from every entry point
         var setSuggestionsV2: Boolean = false,
         // The template editor in Compose instead of CreateRoutineActivity, from every entry point
@@ -28,7 +26,6 @@ data class RemoteConfig (
     private val NOTIFICATION_HOME = "notification_home"
     private val NOTIFICATION_APP_USAGE = "notification_app_usage"
     private val EXERCISE_DETAILS_V2 = "exercise_details_v2"
-    private val WORKOUT_SCREEN_V2 = "workout_screen_v2"
     private val SET_SUGGESTIONS_V2 = "set_suggestions_v2"
     private val TEMPLATE_EDITOR_V2 = "template_editor_v2"
     private val FEEDBACK_FORMS = "feedback_forms"
@@ -39,7 +36,6 @@ data class RemoteConfig (
         notificationHome = getObjectFromRemoteConfig(NOTIFICATION_HOME, HomeNotification::class.java, config)
         notificationAppUsage = getObjectFromRemoteConfig(NOTIFICATION_APP_USAGE, AppUsageNotification::class.java, config)
         exerciseDetailsV2 = config.getBoolean(EXERCISE_DETAILS_V2)
-        workoutScreenV2 = config.getBoolean(WORKOUT_SCREEN_V2)
         setSuggestionsV2 = config.getBoolean(SET_SUGGESTIONS_V2)
         templateEditorV2 = config.getBoolean(TEMPLATE_EDITOR_V2)
         feedbackForms = getObjectFromRemoteConfig(FEEDBACK_FORMS, FeedbackForms::class.java, config)

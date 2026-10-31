@@ -346,8 +346,6 @@ class WorkoutLogScenarioTest {
         assertThat(bench[0].getCompletedDate()).isEqualTo(now)
         assertThat(bench[1].getTimeSeconds()).isEqualTo(110)
         assertThat(finished.getExerciseGroups().map { it.exercises.first().exercise?.name }).containsExactly("Cable fly", "Bench press").inOrder()
-        // Which screen it ran on stays on the device
-        assertThat(finished.asMap().keys).doesNotContain("workoutScreenV2")
         assertThat(WorkoutManager.manager.ongoingWorkout()).isNull()
         assertThat(exit).isEqualTo(WorkoutLogExit.Finished(finished))
         assertThat(analytics.events.last()).isEqualTo("workout_completed")

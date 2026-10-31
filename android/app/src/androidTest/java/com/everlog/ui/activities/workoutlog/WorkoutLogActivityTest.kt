@@ -79,7 +79,7 @@ class WorkoutLogActivityTest {
         uuid = "e2e-workout-${System.currentTimeMillis()}",
         createdDate = System.currentTimeMillis(),
         routine = ELRoutine(name = "E2E", exerciseGroups = mutableListOf(group("e2e-bench", "Bench press"))),
-    ).apply { workoutScreenV2 = true }
+    )
 
     @Before
     fun setUp() {

@@ -22,9 +22,6 @@ import com.everlog.android.common.mvp.activity.SignedInComposeActivity
 import kotlinx.coroutines.Dispatchers
 import com.everlog.android.common.design.R as DesignR
 
-/**
- * For workouts started while Remote Config's workout_screen_v2 is on.
- */
 class WorkoutLogActivity : SignedInComposeActivity() {
     private val dependencies = WorkoutFeature.dependencies
 

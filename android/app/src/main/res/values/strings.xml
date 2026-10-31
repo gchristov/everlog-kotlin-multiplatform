@@ -178,8 +178,6 @@
     <string name="workout_notification_start_timer">Start timer</string>
     <string name="workout_notification_stop_timer">Stop timer</string>
     <string name="workout_exercises">Session Exercises</string>
-    <string name="workout_finish_title">Finish Workout</string>
-    <string name="workout_finish_subtitle">Some sets aren\'t ticked off yet. Finish anyway? Sets with reps or a time are saved as done.</string>
 
     <string name="settings_title">Settings</string>
     <string name="settings_pro_upgrade">Upgrade to pro</string>

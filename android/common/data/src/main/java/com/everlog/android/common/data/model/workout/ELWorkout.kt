@@ -17,7 +17,6 @@ import com.everlog.android.common.kotlin.toDayOfMonthWithMonthOnlyTimestamp
 import com.everlog.android.common.kotlin.toDayOfMonthWithNoHourTimestamp
 import com.everlog.android.common.kotlin.toDayOfMonthWithYearOnlyTimestamp
 import com.everlog.android.common.kotlin.toLocalDate
-import com.google.firebase.firestore.Exclude
 import org.apache.commons.lang3.SerializationUtils
 import org.threeten.bp.DayOfWeek
 import org.threeten.bp.Instant
@@ -37,11 +36,6 @@ data class ELWorkout(
         var note: String? = null
 
 ) : Serializable, ELFirestoreModel {
-
-    // Which workout screen it runs on: the Compose one (TAS-455) when true. Decided as it starts, so a Remote Config
-    // change can't move a workout that's under way. Only the ongoing workout has it, it's never saved to Firestore.
-    @get:Exclude @set:Exclude
-    var workoutScreenV2: Boolean = false
 
     companion object {
 
