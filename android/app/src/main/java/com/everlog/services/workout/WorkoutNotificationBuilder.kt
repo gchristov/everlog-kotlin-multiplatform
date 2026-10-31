@@ -18,7 +18,7 @@ import com.everlog.services.workout.WorkoutNotificationState.Done
 import com.everlog.services.workout.WorkoutNotificationState.NextSet
 import com.everlog.services.workout.WorkoutNotificationState.NoExercises
 import com.everlog.services.workout.WorkoutNotificationState.Rest
-import com.everlog.ui.navigator.ELNavigator
+import com.everlog.android.workout.feature.log.WorkoutLogActivity
 import com.everlog.android.common.kotlin.format.ArrayResourceTypeUtils
 import com.everlog.android.common.kotlin.format.EmptyValue
 import com.everlog.android.common.kotlin.format.displayWeight
@@ -199,7 +199,7 @@ class WorkoutNotificationBuilder(private val context: Context) {
     // Intents
 
     private fun openWorkoutIntent(workout: ELWorkout?): PendingIntent {
-        val intent = Intent(context, ELNavigator.workoutActivity(workout))
+        val intent = Intent(context, WorkoutLogActivity::class.java)
         intent.putExtra(ELConstants.EXTRA_WORKOUT, workout)
         intent.action = WorkoutService.ACTION_OPEN_WORKOUT
         return PendingIntent.getActivity(context, REQUEST_OPEN_WORKOUT, intent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)

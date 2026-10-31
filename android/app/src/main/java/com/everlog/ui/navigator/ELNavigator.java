@@ -56,7 +56,6 @@ import com.everlog.android.template.feature.settype.SetTypePickerActivity;
 import com.everlog.android.workout.data.notification.ShownSet;
 import com.everlog.android.workout.data.notification.WorkoutBroadcasts;
 import com.everlog.ui.activities.home.web.WebViewActivity;
-import com.everlog.ui.activities.home.workout.WorkoutActivity;
 import com.everlog.ui.activities.home.workout.details.WorkoutDetailsActivity;
 import com.everlog.ui.activities.login.LoginActivity;
 import com.everlog.ui.activities.login.resetpassword.ResetPasswordActivity;
@@ -205,26 +204,17 @@ public class ELNavigator implements Navigator {
         AnalyticsManager.manager.workoutStarted(getWorkoutSource(fromRoutine, fromPlan));
         // Build workout from routine.
         ELWorkout workout = ELWorkout.getWorkoutFromRoutine(routine, fromRoutine);
-        // The new screen (TAS-455) when Remote Config turns it on. The workout keeps it until it ends.
-        workout.setWorkoutScreenV2(RemoteConfigManager.manager.workoutScreenV2());
         // Start workout.
-        Intent intent = new Intent(mContext, workoutActivity(workout));
+        Intent intent = new Intent(mContext, WorkoutLogActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
         intent.putExtra(EXTRA_WORKOUT, workout);
         intent.putExtra(EXTRA_WORKOUT_FROM_PLAN, fromPlan);
         startActivity(intent);
     }
 
-    /**
-     * The screen the workout runs on, decided when it started.
-     */
-    public static Class<? extends Activity> workoutActivity(ELWorkout workout) {
-        return workout != null && workout.getWorkoutScreenV2() ? WorkoutLogActivity.class : WorkoutActivity.class;
-    }
-
     @Override
     public void resumeWorkout(ELWorkout workout) {
-        Intent intent = new Intent(mContext, workoutActivity(workout));
+        Intent intent = new Intent(mContext, WorkoutLogActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
         intent.putExtra(EXTRA_WORKOUT, workout);
         startActivity(intent);

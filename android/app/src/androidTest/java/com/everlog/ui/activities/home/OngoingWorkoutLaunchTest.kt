@@ -34,9 +34,9 @@ import com.everlog.android.common.data.model.workout.ELWorkout
 import com.everlog.constants.ELConstants
 import com.everlog.android.workout.data.WorkoutManager
 import com.everlog.testutil.E2EAccount
-import com.everlog.ui.activities.home.workout.WorkoutActivity
 import com.everlog.android.workout.feature.log.WorkoutLogActivity
 import com.google.common.truth.Truth.assertThat
+import com.google.gson.Gson
 import java.util.concurrent.TimeUnit
 import org.junit.After
 import org.junit.Before
@@ -81,7 +81,7 @@ class OngoingWorkoutLaunchTest {
 
     @Test
     fun theOngoingWorkoutOpensWithItsSetsAndNotification() {
-        val workout = workout(screenV2 = true)
+        val workout = workout()
         WorkoutManager.manager.setOngoingWorkout(workout)
         val workoutScreen = watch(WorkoutLogActivity::class.java)
         val home = watch(HomeActivity::class.java)
@@ -106,32 +106,36 @@ class OngoingWorkoutLaunchTest {
     }
 
     @Test
-    fun aWorkoutStartedOnTheOldScreenOpensThere() {
-        WorkoutManager.manager.setOngoingWorkout(workout(screenV2 = false))
-        val oldScreen = watch(WorkoutActivity::class.java)
-        val newScreen = watch(WorkoutLogActivity::class.java)
+    fun aWorkoutAnOlderVersionStartedOnTheOldScreenOpensOnTheWorkoutScreen() {
+        val workout = workout()
+        // As versions up to 2.21 saved it, marked for the old workout screen
+        val saved = Gson().toJson(workout).replaceFirst("{", "{\"workoutScreenV2\":false,")
+        context.getSharedPreferences("EverlogPreferences", Context.MODE_PRIVATE).edit().putString("ONGOING_WORKOUT", saved).commit()
+        val workoutScreen = watch(WorkoutLogActivity::class.java)
 
         launchFromLauncher()
 
-        awaitOpened(oldScreen)
-        assertThat(newScreen.hits).isEqualTo(0)
+        val opened = awaitOpened(workoutScreen)
+        assertThat((opened.intent.getSerializableExtra(ELConstants.EXTRA_WORKOUT) as ELWorkout).uuid).isEqualTo(workout.uuid)
+        compose.onNodeWithText("Bench press").assertExists()
+        assertThat(WorkoutManager.manager.ongoingWorkout()?.getCompletedSetsCount()).isEqualTo(1)
     }
 
     @Test
     fun withoutAnOngoingWorkoutTheAppOpensOnHome() {
         val home = watch(HomeActivity::class.java)
-        val workoutScreens = listOf(watch(WorkoutLogActivity::class.java), watch(WorkoutActivity::class.java))
+        val workoutScreen = watch(WorkoutLogActivity::class.java)
 
         launchFromLauncher()
 
         compose.waitUntil(TIMEOUT) { home.lastActivity?.let(::isResumed) == true }
-        assertThat(workoutScreens.sumOf { it.hits }).isEqualTo(0)
+        assertThat(workoutScreen.hits).isEqualTo(0)
     }
 
     @Test
     fun homeShownAgainWithTheWorkoutOngoingPromptsInsteadOfLooping() {
         // The workout screen opened from home closing without ending the workout, e.g. if it ever couldn't load
-        WorkoutManager.manager.setOngoingWorkout(workout(screenV2 = true))
+        WorkoutManager.manager.setOngoingWorkout(workout())
         val workoutScreen = watch(WorkoutLogActivity::class.java)
         val home = watch(HomeActivity::class.java)
         launchFromLauncher()
@@ -172,7 +176,7 @@ class OngoingWorkoutLaunchTest {
     private fun workoutNotificationShows(): Boolean =
         context.getSystemService(NotificationManager::class.java).activeNotifications.any { it.packageName == context.packageName }
 
-    private fun workout(screenV2: Boolean) = ELWorkout(
+    private fun workout() = ELWorkout(
         uuid = "e2e-workout-${System.currentTimeMillis()}",
         createdDate = System.currentTimeMillis(),
         routine = ELRoutine(name = "E2E", exerciseGroups = mutableListOf(
@@ -185,7 +189,7 @@ class OngoingWorkoutLaunchTest {
                 ))),
             ),
         )),
-    ).apply { workoutScreenV2 = screenV2 }
+    )
 
     private companion object {
         const val TIMEOUT = 10_000L
