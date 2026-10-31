@@ -73,7 +73,8 @@ class CoverImagesApi {
                 Timber.tag(TAG).i(message)
             }
         }
-        interceptor.level = HttpLoggingInterceptor.Level.BODY
+        // The request and its status are enough: each page of covers is a large body nothing needs in the logs
+        interceptor.level = HttpLoggingInterceptor.Level.BASIC
         return interceptor
     }
 
