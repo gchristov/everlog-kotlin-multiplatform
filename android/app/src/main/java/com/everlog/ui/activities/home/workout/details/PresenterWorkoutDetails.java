@@ -166,7 +166,7 @@ public class PresenterWorkoutDetails extends BaseActivityPresenter<MvpViewWorkou
     }
 
     private void observeDeleteConfirm(ELWorkout workout) {
-        subscriptions.add(getMvpView().showPrompt(com.everlog.android.common.design.R.string.delete_title, R.string.delete_prompt, com.everlog.android.common.design.R.string.delete, com.everlog.android.common.design.R.string.cancel)
+        subscriptions.add(getMvpView().showPrompt(com.everlog.android.common.design.R.string.delete_title, com.everlog.android.common.design.R.string.delete_prompt, com.everlog.android.common.design.R.string.delete, com.everlog.android.common.design.R.string.cancel)
                 .compose(applyUISchedulers())
                 .subscribe(action -> {
                     if (action == DialogInterface.BUTTON_POSITIVE) {

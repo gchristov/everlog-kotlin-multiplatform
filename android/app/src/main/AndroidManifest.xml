@@ -160,7 +160,7 @@
             android:windowSoftInputMode="stateHidden"
             android:exported="false" />
         <activity
-            android:name=".ui.activities.home.routine.RoutinePickerActivity"
+            android:name="com.everlog.android.template.feature.picker.RoutinePickerActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:theme="@style/AppTheme.NoActionBar"
             android:windowSoftInputMode="stateHidden"
@@ -178,7 +178,7 @@
             android:windowSoftInputMode="stateHidden|adjustNothing"
             android:exported="false" />
         <activity
-            android:name=".ui.activities.home.routine.details.RoutineDetailsActivity"
+            android:name="com.everlog.android.template.feature.details.RoutineDetailsActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:theme="@style/AppTheme.NoActionBar"
             android:windowSoftInputMode="stateHidden"
@@ -204,7 +204,7 @@
             android:windowSoftInputMode="stateHidden"
             android:exported="false" />
         <activity
-            android:name=".ui.activities.home.routine.perform.PerformRoutineActivity"
+            android:name="com.everlog.android.template.feature.perform.PerformRoutineActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:theme="@style/AppTheme.NoActionBar"
             android:windowSoftInputMode="stateHidden"
@@ -239,7 +239,7 @@
             android:windowSoftInputMode="stateHidden"
             android:exported="false" />
         <activity
-            android:name="com.everlog.ui.activities.home.settype.SetTypePickerActivity"
+            android:name="com.everlog.android.template.feature.settype.SetTypePickerActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:theme="@style/AppTheme.NoActionBar"
             android:windowSoftInputMode="stateHidden"

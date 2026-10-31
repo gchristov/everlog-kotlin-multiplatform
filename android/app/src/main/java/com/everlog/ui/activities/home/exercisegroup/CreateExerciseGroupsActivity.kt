@@ -68,7 +68,7 @@ abstract class CreateExerciseGroupsActivity : BaseActivity(), MvpViewCreateExerc
             }
 
             recyclerView?.updatePadding(
-                bottom = systemBars.bottom + resources.getDimensionPixelSize(R.dimen.footer_bottom_padding_double)
+                bottom = systemBars.bottom + resources.getDimensionPixelSize(DesignR.dimen.footer_bottom_padding_double)
             )
 
             // The footer keeps itself above the navigation bar

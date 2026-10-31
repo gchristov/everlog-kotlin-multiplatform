@@ -32,4 +32,10 @@
     <dimen name="chip_radius">18dp</dimen>
     <dimen name="margin_30">30dp</dimen>
     <dimen name="exercise_group_create_side_spacing">@dimen/activity_margin</dimen>
+    <dimen name="footer_bottom_padding_double">180dp</dimen>
+    <dimen name="margin_18">18dp</dimen>
+    <dimen name="margin_24">24dp</dimen>
+    <dimen name="settings_arrow_icon_margin_left">10dp</dimen>
+    <item name="cover_text_shadow_d" format="integer" type="integer">2</item>
+    <item name="cover_text_shadow_radius" format="integer" type="integer">20</item>
 </resources>

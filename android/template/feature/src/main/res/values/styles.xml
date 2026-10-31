@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="Toolbar.HomeSubtitle.Expanded.Invisible">
+        <item name="android:textColor">@android:color/transparent</item>
+    </style>
+    <style name="Toolbar.HomeTitle.Expanded.Invisible">
+        <item name="android:textColor">@android:color/transparent</item>
+    </style>
+</resources>

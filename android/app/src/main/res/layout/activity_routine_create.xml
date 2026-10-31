@@ -26,7 +26,7 @@
         tools:itemCount="1"
         tools:listitem="@layout/row_exercise_group_create" />
 
-    <com.everlog.ui.views.FloatingFooterView
+    <com.everlog.android.common.mvp.view.FloatingFooterView
         android:id="@+id/addBtnContainer"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -41,5 +41,5 @@
             android:layout_marginEnd="@dimen/activity_margin"
             android:layout_marginBottom="@dimen/activity_margin"
             android:text="@string/workout_empty_action" />
-    </com.everlog.ui.views.FloatingFooterView>
+    </com.everlog.android.common.mvp.view.FloatingFooterView>
 </RelativeLayout>

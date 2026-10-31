@@ -18,10 +18,6 @@ class AnalyticsConstants {
         const val SCREEN_HOME_HISTORY = "screen_history"
         const val SCREEN_EXERCISE_GROUPS_CREATE = "screen_create_exercise_groups"
         const val SCREEN_ROUTINE_CREATE = "screen_create_routine"
-        const val SCREEN_ROUTINE_DETAILS = "screen_routine_details"
-        const val SCREEN_ROUTINE_PERFORM = "screen_perform_routine"
-        const val SCREEN_ROUTINE_PICKER = "screen_routine_picker"
-        const val SCREEN_SET_TYPE_PICKER = "screen_set_type_picker"
         const val SCREEN_WORKOUT = "screen_workout"
         // The Compose workout screen (TAS-455), beside the old one while workout_screen_v2 rolls out
         const val SCREEN_WORKOUT_V2 = "screen_workout_v2"

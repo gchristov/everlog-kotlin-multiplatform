@@ -101,7 +101,7 @@ class PresenterPlanDetails : BaseActivityPresenter<MvpViewPlanDetails>() {
     }
 
     private fun observeDeleteConfirm(plan: ELPlan) {
-        subscriptions.add(mvpView.showDestructivePrompt(DesignR.string.delete_title, R.string.delete_prompt, DesignR.string.delete, DesignR.string.cancel)
+        subscriptions.add(mvpView.showDestructivePrompt(DesignR.string.delete_title, DesignR.string.delete_prompt, DesignR.string.delete, DesignR.string.cancel)
                 .compose(applyUISchedulers())
                 .subscribe({ action ->
                     if (action == DialogInterface.BUTTON_POSITIVE) {

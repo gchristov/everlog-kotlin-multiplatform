@@ -1,5 +1,6 @@
 package com.everlog.ui.components.reorder
 
+import com.everlog.android.common.design.R as DesignR
 import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.border
 import androidx.compose.foundation.gestures.detectDragGestures
@@ -132,7 +133,7 @@ internal fun ReorderGrip(modifier: Modifier = Modifier) {
         contentAlignment = Alignment.Center,
     ) {
         AppIcon(
-            imageVector = ImageVector.vectorResource(R.drawable.ic_drag),
+            imageVector = ImageVector.vectorResource(DesignR.drawable.ic_drag),
             tint = Theme.contentColors.secondary,
             contentDescription = stringResource(R.string.workout_log_move),
         )

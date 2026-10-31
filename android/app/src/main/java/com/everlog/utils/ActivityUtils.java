@@ -11,7 +11,6 @@ import android.view.Window;
 import android.view.WindowManager.LayoutParams;
 import android.widget.ImageView;
 
-import com.everlog.R;
 import com.everlog.android.common.mvp.util.ELGlideModule;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -19,7 +18,7 @@ import androidx.appcompat.app.AppCompatActivity;
 public class ActivityUtils {
 
     public static void setupWorkoutCoverImage(ImageView imageView) {
-        ELGlideModule.loadImage(R.drawable.background_workout, imageView);
+        ELGlideModule.loadImage(com.everlog.android.common.design.R.drawable.background_workout, imageView);
     }
 
     public static void setupBackgroundImage(Activity activity,

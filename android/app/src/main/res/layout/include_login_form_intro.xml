@@ -47,7 +47,7 @@
             android:textStyle="bold" />
     </LinearLayout>
 
-    <com.everlog.ui.views.FloatingFooterView
+    <com.everlog.android.common.mvp.view.FloatingFooterView
         android:id="@+id/introFooter"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
@@ -81,5 +81,5 @@
             android:paddingLeft="0dp"
             android:paddingRight="0dp"
             android:text="@string/login_existing" />
-    </com.everlog.ui.views.FloatingFooterView>
+    </com.everlog.android.common.mvp.view.FloatingFooterView>
 </androidx.constraintlayout.widget.ConstraintLayout>

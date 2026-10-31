@@ -36,4 +36,6 @@
     <string name="statistics_title">Statistics</string>
     <string name="weight">Weight</string>
     <string name="workout_details_max_weight">Max weight</string>
+    <string name="delete_prompt">Are you sure you want to delete this item?</string>
+    <string name="routine_picker_title">Choose template</string>
 </resources>

@@ -10,7 +10,7 @@
     tools:background="@color/background_base"
     tools:shimmer_base_alpha="1">
 
-    <com.everlog.ui.views.FloatingFooterView
+    <com.everlog.android.common.mvp.view.FloatingFooterView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true">
@@ -49,5 +49,5 @@
                 android:visibility="gone"
                 tools:visibility="visible" />
         </LinearLayout>
-    </com.everlog.ui.views.FloatingFooterView>
+    </com.everlog.android.common.mvp.view.FloatingFooterView>
 </com.facebook.shimmer.ShimmerFrameLayout>
