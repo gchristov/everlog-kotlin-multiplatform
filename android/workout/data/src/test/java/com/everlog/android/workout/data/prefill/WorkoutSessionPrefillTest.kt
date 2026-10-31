@@ -1,4 +1,4 @@
-package com.everlog.data.controllers.workoutsession
+package com.everlog.android.workout.data.prefill
 
 import com.everlog.android.common.data.model.exercise.ELExercise
 import com.everlog.android.common.session.ValueField
@@ -6,7 +6,8 @@ import com.everlog.android.common.session.WorkoutBlock
 import com.everlog.android.common.session.WorkoutExercise
 import com.everlog.android.common.session.WorkoutRound
 import com.everlog.android.common.session.WorkoutSet
-import com.everlog.data.controllers.workoutprefill.BaseWorkoutPrefillController.PrefillSource
+import com.everlog.android.workout.data.prefill.BaseWorkoutPrefillController.PrefillSource
+import com.everlog.android.workout.data.prefill.WorkoutSetPrefill
 import com.google.common.truth.Truth.assertThat
 import org.junit.Test
 

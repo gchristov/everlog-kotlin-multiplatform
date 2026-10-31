@@ -1,4 +1,4 @@
-package com.everlog.data.controllers.workoutprefill
+package com.everlog.android.workout.data.prefill
 
 import arrow.core.Either
 import com.everlog.android.common.data.model.exercise.ELExercise
@@ -15,6 +15,7 @@ import com.everlog.android.settings.data.SettingsManager
 import com.everlog.android.common.test.install
 import com.everlog.android.common.test.uninstall
 import com.everlog.android.workout.data.WorkoutRepository
+import com.everlog.android.workout.data.prefill.RealLoadPrefillSourcesUseCase
 import com.google.common.truth.Truth.assertThat
 import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.Flow

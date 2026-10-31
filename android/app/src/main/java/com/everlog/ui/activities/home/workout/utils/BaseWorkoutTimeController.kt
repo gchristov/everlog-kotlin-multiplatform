@@ -6,7 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import com.everlog.android.common.data.model.workout.ELWorkout
 import com.everlog.config.AppConfig
-import com.everlog.managers.WorkoutManager
+import com.everlog.android.workout.data.WorkoutManager
 import com.everlog.ui.activities.home.workout.MvpViewWorkout
 import com.everlog.ui.views.revealcircle.WorkoutTimerView
 import com.everlog.utils.SoundUtils

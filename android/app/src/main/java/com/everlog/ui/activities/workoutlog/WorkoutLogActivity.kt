@@ -22,8 +22,8 @@ import com.everlog.config.AppConfig
 import com.everlog.config.FeedbackSource
 import com.everlog.constants.ELActivityRequestCodes
 import com.everlog.constants.ELConstants
-import com.everlog.data.controllers.workoutprefill.RealLoadPrefillSourcesUseCase
-import com.everlog.data.controllers.workoutsession.RealWorkoutSetPrefill
+import com.everlog.android.workout.data.prefill.RealLoadPrefillSourcesUseCase
+import com.everlog.android.workout.data.prefill.RealWorkoutSetPrefill
 import com.everlog.data.sync.AppDataSync
 import com.everlog.data.repositories.RealOngoingWorkoutRepository
 import com.everlog.android.common.mvp.activity.SignedInComposeActivity

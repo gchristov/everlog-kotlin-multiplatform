@@ -1,4 +1,4 @@
-package com.everlog.data.controllers.workoutprefill
+package com.everlog.android.workout.data.prefill
 
 import com.everlog.android.common.data.model.exercise.ELExercise
 import com.everlog.android.common.data.model.exercise.ELExerciseHistory
@@ -6,8 +6,8 @@ import com.everlog.android.common.data.model.exercise.ELRoutineExercise
 import com.everlog.android.common.data.model.exercise.estimated1RM
 import com.everlog.android.common.data.model.set.ELSet
 import com.everlog.android.common.data.model.workout.ELWorkout
-import com.everlog.data.controllers.workoutprefill.BaseWorkoutPrefillController.PrefillSource
-import com.everlog.data.datastores.ELDatastore
+import com.everlog.android.workout.data.prefill.BaseWorkoutPrefillController.PrefillSource
+import com.everlog.android.workout.data.store.WorkoutStores
 import com.everlog.android.common.data.store.OnStoreItemsListener
 import com.everlog.android.settings.data.SettingsManager
 import rx.Observable
@@ -36,7 +36,7 @@ class WorkoutPrefillController {
             // Read before leaving the main thread, the workout screen keeps changing the exercises
             val toLoad = exercises.mapNotNull { it.exercise }
             // Fetch user history
-            ELDatastore.workoutsStore().getItems(object : OnStoreItemsListener<ELWorkout> {
+            WorkoutStores.workoutsStore().getItems(object : OnStoreItemsListener<ELWorkout> {
                 override fun onItemsLoaded(history: MutableList<ELWorkout>, fromCache: Boolean) {
                     // Copy before leaving this thread, as the store keeps updating its list
                     val snapshot = ArrayList(history)

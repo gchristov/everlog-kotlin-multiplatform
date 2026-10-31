@@ -1,4 +1,4 @@
-package com.everlog.data.datastores.history
+package com.everlog.android.workout.data.store
 
 import com.everlog.android.common.data.model.workout.ELWorkout
 import com.everlog.android.common.data.store.InMemoryCollectionStore

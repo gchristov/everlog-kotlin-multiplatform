@@ -1,4 +1,4 @@
-package com.everlog.managers
+package com.everlog.android.workout.data
 
 import com.everlog.android.common.data.model.workout.ELWorkout
 import com.everlog.android.common.persistence.PreferencesManager

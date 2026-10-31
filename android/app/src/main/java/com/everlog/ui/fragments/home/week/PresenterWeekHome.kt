@@ -19,7 +19,7 @@ import com.everlog.constants.ELConstants
 import com.everlog.data.controllers.statistics.UserStatsController
 import com.everlog.data.controllers.statistics.UserStatsController.OnCompleteListener
 import com.everlog.data.datastores.ELDatastore
-import com.everlog.data.datastores.history.ELColStoreWorkoutsLoadedEvent
+import com.everlog.android.workout.data.store.ELColStoreWorkoutsLoadedEvent
 import com.everlog.managers.PlanManager
 import com.everlog.managers.RemoteConfigManager
 import com.everlog.managers.analytics.AnalyticsManager

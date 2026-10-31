@@ -13,7 +13,7 @@ import com.everlog.constants.ELActivityRequestCodes;
 import com.everlog.data.controllers.statistics.UserStatsController;
 import com.everlog.data.datastores.ELDatastore;
 import com.everlog.android.common.data.store.OnStoreItemsListener;
-import com.everlog.data.datastores.history.ELDocStoreWorkoutLoadedEvent;
+import com.everlog.android.workout.data.store.ELDocStoreWorkoutLoadedEvent;
 import com.everlog.android.common.data.model.ELRoutine;
 import com.everlog.android.common.data.model.exercise.ELExerciseGroup;
 import com.everlog.android.common.data.model.workout.ELWorkout;
