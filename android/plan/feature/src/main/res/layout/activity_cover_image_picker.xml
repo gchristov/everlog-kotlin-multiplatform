@@ -31,7 +31,7 @@
                 app:evTitle="@string/cover_picker_title"
                 tools:visibility="visible"/>
 
-            <com.everlog.ui.views.recyclerview.infinitescroll.InfiniteRecyclerView
+            <com.everlog.android.plan.cover.InfiniteRecyclerView
                 android:id="@+id/recyclerView"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"

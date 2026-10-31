@@ -24,7 +24,7 @@ import com.everlog.android.workout.data.store.ELColStoreWorkoutsLoadedEvent
 import com.everlog.android.plan.data.PlanManager
 import com.everlog.managers.RemoteConfigManager
 import com.everlog.managers.analytics.AnalyticsManager
-import com.everlog.ui.activities.home.congratulate.CongratulateActivity
+import com.everlog.android.plan.congratulate.CongratulateActivity
 import com.everlog.ui.navigator.navigator
 import com.everlog.android.common.mvp.fragment.BaseFragmentPresenter
 import com.everlog.android.common.kotlin.Utils

@@ -1,10 +1,11 @@
-package com.everlog.ui.views.recyclerview.infinitescroll;
+package com.everlog.android.plan.cover;
 
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 
 import com.ahamed.multiviewadapter.ItemBinder;
-import com.everlog.R;
+import com.everlog.android.plan.R;
+import com.everlog.android.plan.cover.InfiniteViewHolder;
 
 public class InfiniteBinder extends ItemBinder<Object, InfiniteViewHolder> {
 

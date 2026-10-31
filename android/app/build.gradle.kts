@@ -179,7 +179,6 @@ dependencies {
     implementation(libs.volley)
 
     implementation(libs.collapsingtoolbar.subtitle)
-    implementation(libs.aspect)
     implementation(libs.scrollingpagerindicator)
 
     implementation(libs.flexbox)

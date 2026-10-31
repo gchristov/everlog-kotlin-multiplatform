@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="cover_picker_subtitle">We couldn\'t find any related images.</string>
+    <string name="cover_picker_title">No images</string>
+    <string name="plan_details_complete_subtitle">Congratulations! You are now closer than ever to your fitness goals.</string>
+    <string name="plan_details_complete_title">Plan complete</string>
+    <string name="pro_confirm_cta">Nice!</string>
+    <string name="pro_confirm_subtitle">By joining our Pro community you have come a step closer to your fitness goals!</string>
+    <string name="pro_confirm_title">You are now pro</string>
+    <string name="retry">Retry</string>
+</resources>

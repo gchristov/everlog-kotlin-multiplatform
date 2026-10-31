@@ -37,7 +37,7 @@ import com.everlog.managers.analytics.AnalyticsManager
 import com.everlog.android.exercise.details.ExerciseDetailsActivity
 import com.everlog.ui.dialog.AppDialogs
 import com.everlog.ui.navigator.ELNavigator
-import com.everlog.ui.views.showPopupMenu
+import com.everlog.android.common.mvp.view.showPopupMenu
 import com.everlog.ui.views.viewpager.wrap.ObjectAtPositionPagerAdapter
 import com.everlog.android.common.kotlin.format.ArrayResourceTypeUtils
 import com.everlog.utils.Throttler

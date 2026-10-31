@@ -1,7 +1,7 @@
-package com.everlog.ui.activities.home.cover
+package com.everlog.android.plan.cover
 
 import com.everlog.android.common.mvp.activity.BaseActivityMvpView
-import com.everlog.ui.views.recyclerview.infinitescroll.InfiniteRecyclerView
+import com.everlog.android.plan.cover.InfiniteRecyclerView
 import rx.Observable
 
 interface MvpViewCoverImagePicker : BaseActivityMvpView {

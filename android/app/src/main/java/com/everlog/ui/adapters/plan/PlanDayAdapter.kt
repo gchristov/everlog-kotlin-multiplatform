@@ -16,7 +16,7 @@ import com.everlog.databinding.RowPlanDayBinding
 import com.everlog.managers.analytics.AnalyticsManager
 import com.everlog.android.common.mvp.list.OnListItemListener
 import com.everlog.ui.navigator.ELNavigator
-import com.everlog.ui.views.showPopupMenu
+import com.everlog.android.common.mvp.view.showPopupMenu
 
 class PlanDayAdapter {
 

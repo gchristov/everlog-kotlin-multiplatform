@@ -1,4 +1,4 @@
-package com.everlog.ui.activities.home.cover
+package com.everlog.android.plan.cover
 
 import android.graphics.Rect
 import android.view.View
@@ -8,17 +8,17 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.updatePadding
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
-import com.everlog.R
-import com.everlog.databinding.ActivityCoverImagePickerBinding
-import com.everlog.managers.analytics.AnalyticsConstants
 import com.everlog.android.common.mvp.activity.BaseActivity
 import com.everlog.android.common.mvp.activity.BaseActivityMvpView
 import com.everlog.android.common.mvp.activity.BaseActivityPresenter
-import com.everlog.ui.views.recyclerview.infinitescroll.InfiniteRecyclerView
 import com.everlog.android.common.mvp.util.ViewUtils
-import com.everlog.utils.device.DeviceUtils
+import com.everlog.android.plan.PlanScreenNames
+import com.everlog.android.plan.R
+import com.everlog.android.plan.cover.InfiniteRecyclerView
+import com.everlog.android.plan.databinding.ActivityCoverImagePickerBinding
 import rx.Observable
 import com.everlog.android.common.design.R as DesignR
+import com.everlog.android.common.mvp.R as MvpR
 
 class CoverImagePickerActivity : BaseActivity(), MvpViewCoverImagePicker {
 
@@ -36,7 +36,7 @@ class CoverImagePickerActivity : BaseActivity(), MvpViewCoverImagePicker {
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
             
             // Top inset for AppBar
-            val toolbar = binding.root.findViewById<Toolbar>(R.id.toolbar)
+            val toolbar = binding.root.findViewById<Toolbar>(MvpR.id.toolbar)
             val appBar = toolbar.parent as? View
             appBar?.updatePadding(top = systemBars.top)
             
@@ -57,7 +57,7 @@ class CoverImagePickerActivity : BaseActivity(), MvpViewCoverImagePicker {
     }
 
     override fun getAnalyticsScreenName(): String {
-        return AnalyticsConstants.SCREEN_COVER_IMAGE_PICKER
+        return PlanScreenNames.COVER_IMAGE_PICKER
     }
 
     override fun <T : BaseActivityMvpView> getPresenter(): BaseActivityPresenter<T>? {
@@ -92,14 +92,14 @@ class CoverImagePickerActivity : BaseActivity(), MvpViewCoverImagePicker {
     }
 
     private fun setupTopBar() {
-        binding.root.findViewById<Toolbar>(R.id.toolbar).setNavigationIcon(DesignR.drawable.ic_clear_white)
-        setSupportActionBar(binding.root.findViewById(R.id.toolbar))
+        binding.root.findViewById<Toolbar>(MvpR.id.toolbar).setNavigationIcon(DesignR.drawable.ic_clear_white)
+        setSupportActionBar(binding.root.findViewById(MvpR.id.toolbar))
         supportActionBar?.title = "Choose Cover"
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
     }
 
     private fun setupListView() {
-        binding.recyclerView.layoutManager = StaggeredGridLayoutManager(if (DeviceUtils.isTablet(this)) 3 else 2, StaggeredGridLayoutManager.VERTICAL)
+        binding.recyclerView.layoutManager = StaggeredGridLayoutManager(if (resources.getBoolean(DesignR.bool.isTablet)) 3 else 2, StaggeredGridLayoutManager.VERTICAL)
         binding.recyclerView.adapter = mPresenter?.getListAdapter()
         binding.recyclerView.addItemDecoration(SpacesItemDecoration(ViewUtils.dpToPxFromRaw(this, DesignR.dimen.margin_10)))
     }
