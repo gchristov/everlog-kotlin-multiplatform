@@ -6,6 +6,9 @@ runs:
       uses: ./.github/actions/setup-gradle
       with:
         ndk: 'false'
+    - name: Test version codes
+      shell: bash
+      run: bash tools/versioning/version_code_test.sh
     - name: Test
       shell: bash
       run: |
