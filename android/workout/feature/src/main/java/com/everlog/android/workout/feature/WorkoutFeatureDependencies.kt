@@ -13,6 +13,7 @@ import com.everlog.android.workout.data.prefill.LoadPrefillSourcesUseCase
 import com.everlog.android.workout.feature.log.WorkoutLogAlerts
 import com.everlog.android.workout.feature.log.WorkoutLogAnalytics
 import com.everlog.android.workout.feature.log.WorkoutLogNotification
+import com.everlog.android.workout.feature.notification.WorkoutServiceAnalytics
 import com.everlog.android.workout.feature.setsuggestions.SetSuggestionsAnalytics
 import com.everlog.android.workout.feature.setsuggestions.SetSuggestionsSettings
 import kotlinx.coroutines.flow.Flow
@@ -36,6 +37,8 @@ interface WorkoutFeatureDependencies {
     fun workoutNotification(context: Context): WorkoutLogNotification
 
     fun timerAlerts(context: Context): WorkoutLogAlerts
+
+    fun workoutServiceAnalytics(): WorkoutServiceAnalytics
 
     fun openExercisePicker(activity: Activity)
 

@@ -1,4 +1,4 @@
-package com.everlog.services.workout
+package com.everlog.android.workout.feature.notification
 
 import com.everlog.android.common.kotlin.R as KotlinR
 import android.app.Notification
@@ -6,14 +6,15 @@ import android.os.Build
 import androidx.core.app.NotificationCompat
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
-import com.everlog.R
 import com.everlog.android.common.data.model.set.ELSet
+import com.everlog.android.common.kotlin.AppContext
 import com.everlog.android.common.kotlin.WeightUnit
 import com.everlog.android.settings.data.SettingsManager
-import com.everlog.services.workout.WorkoutNotificationState.Done
-import com.everlog.services.workout.WorkoutNotificationState.NextSet
-import com.everlog.services.workout.WorkoutNotificationState.NoExercises
-import com.everlog.services.workout.WorkoutNotificationState.Rest
+import com.everlog.android.workout.feature.R
+import com.everlog.android.workout.feature.notification.WorkoutNotificationState.Done
+import com.everlog.android.workout.feature.notification.WorkoutNotificationState.NextSet
+import com.everlog.android.workout.feature.notification.WorkoutNotificationState.NoExercises
+import com.everlog.android.workout.feature.notification.WorkoutNotificationState.Rest
 import com.google.common.truth.Truth.assertThat
 import org.junit.After
 import org.junit.Assume.assumeTrue
@@ -37,6 +38,8 @@ class WorkoutNotificationBuilderTest {
 
     @Before
     fun setUp() {
+        // Set by the app at startup, which a library's tests don't run
+        AppContext = InstrumentationRegistry.getInstrumentation().targetContext.applicationContext
         originalWeightUnit = SettingsManager.manager.weightUnit()
         SettingsManager.manager.setWeightUnit(WeightUnit.KILOGRAM)
     }

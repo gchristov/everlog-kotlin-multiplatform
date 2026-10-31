@@ -1,4 +1,4 @@
-package com.everlog.services.workout
+package com.everlog.android.workout.feature.notification
 
 import com.everlog.android.common.data.model.ELRoutine
 import com.everlog.android.common.data.model.exercise.ELExercise
@@ -13,13 +13,14 @@ import com.everlog.android.common.kotlin.WeightUnit
 import com.everlog.android.common.test.InMemorySharedPreferences
 import com.everlog.android.settings.data.SettingsManager
 import com.everlog.android.workout.data.notification.ShownSet
+import com.everlog.android.workout.feature.notification.WorkoutNotificationState
 import com.everlog.android.common.test.install
 import com.everlog.android.common.test.uninstall
-import com.everlog.services.workout.WorkoutNotificationState.Done
-import com.everlog.services.workout.WorkoutNotificationState.NextSet
-import com.everlog.services.workout.WorkoutNotificationState.NoExercises
-import com.everlog.services.workout.WorkoutNotificationState.Rest
-import com.everlog.services.workout.WorkoutNotificationState.RestTimer
+import com.everlog.android.workout.feature.notification.WorkoutNotificationState.Done
+import com.everlog.android.workout.feature.notification.WorkoutNotificationState.NextSet
+import com.everlog.android.workout.feature.notification.WorkoutNotificationState.NoExercises
+import com.everlog.android.workout.feature.notification.WorkoutNotificationState.Rest
+import com.everlog.android.workout.feature.notification.WorkoutNotificationState.RestTimer
 import com.google.common.truth.Truth.assertThat
 import org.junit.After
 import org.junit.Before

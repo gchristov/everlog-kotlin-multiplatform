@@ -17,12 +17,14 @@ import com.everlog.android.workout.feature.WorkoutFeatureDependencies
 import com.everlog.android.workout.feature.log.WorkoutLogAlerts
 import com.everlog.android.workout.feature.log.WorkoutLogAnalytics
 import com.everlog.android.workout.feature.log.WorkoutLogNotification
+import com.everlog.android.workout.feature.notification.WorkoutServiceAnalytics
 import com.everlog.android.workout.feature.setsuggestions.SetSuggestionsAnalytics
 import com.everlog.android.workout.feature.setsuggestions.SetSuggestionsSettings
 import com.everlog.config.AppConfig
 import com.everlog.config.FeedbackSource
 import com.everlog.data.repositories.RealOngoingWorkoutRepository
 import com.everlog.data.sync.AppDataSync
+import com.everlog.managers.analytics.AnalyticsManager
 import com.everlog.ui.navigator.ELNavigator
 import com.everlog.ui.navigator.feedbackFormLauncher
 import kotlinx.coroutines.Dispatchers
@@ -46,6 +48,22 @@ class AppWorkoutFeatureDependencies : WorkoutFeatureDependencies {
     override fun workoutNotification(context: Context): WorkoutLogNotification = AppWorkoutLogNotification(ELNavigator(context))
 
     override fun timerAlerts(context: Context): WorkoutLogAlerts = AppWorkoutLogAlerts(context)
+
+    override fun workoutServiceAnalytics(): WorkoutServiceAnalytics = object : WorkoutServiceAnalytics {
+        private val analytics = AnalyticsManager.manager
+
+        override fun weightModified() = analytics.workoutServiceWeightModified()
+
+        override fun repsModified() = analytics.workoutServiceRepsModified()
+
+        override fun timerStartedExercise() = analytics.workoutServiceTimerStartedExercise()
+
+        override fun timerStoppedExercise() = analytics.workoutServiceTimerStoppedExercise()
+
+        override fun timerStoppedRest() = analytics.workoutServiceTimerStoppedRest()
+
+        override fun nextExercise() = analytics.workoutServiceNextExercise()
+    }
 
     override fun openExercisePicker(activity: Activity) = templates.openExercisePicker(activity)
 

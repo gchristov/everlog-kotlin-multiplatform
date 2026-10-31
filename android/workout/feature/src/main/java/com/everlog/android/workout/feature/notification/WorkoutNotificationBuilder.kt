@@ -1,4 +1,4 @@
-package com.everlog.services.workout
+package com.everlog.android.workout.feature.notification
 
 import android.app.Notification
 import android.app.PendingIntent
@@ -8,17 +8,18 @@ import android.view.View
 import android.widget.RemoteViews
 import androidx.core.app.NotificationCompat
 import androidx.core.content.ContextCompat
-import com.everlog.R
+import com.everlog.android.workout.feature.R
 import com.everlog.android.common.data.model.set.ELSetType
 import com.everlog.android.common.data.model.workout.ELWorkout
 import com.everlog.android.settings.data.SettingsManager
-import com.everlog.constants.ELConstants
+import com.everlog.android.workout.feature.WorkoutExtras
 import com.everlog.android.common.session.toSessionSet
-import com.everlog.services.workout.WorkoutNotificationState.Done
-import com.everlog.services.workout.WorkoutNotificationState.NextSet
-import com.everlog.services.workout.WorkoutNotificationState.NoExercises
-import com.everlog.services.workout.WorkoutNotificationState.Rest
 import com.everlog.android.workout.feature.log.WorkoutLogActivity
+import com.everlog.android.workout.feature.notification.WorkoutNotificationState.Done
+import com.everlog.android.workout.feature.notification.WorkoutNotificationState.NextSet
+import com.everlog.android.workout.feature.notification.WorkoutNotificationState.NoExercises
+import com.everlog.android.workout.feature.notification.WorkoutNotificationState.Rest
+import com.everlog.services.workout.WorkoutService
 import com.everlog.android.common.kotlin.format.ArrayResourceTypeUtils
 import com.everlog.android.common.kotlin.format.EmptyValue
 import com.everlog.android.common.kotlin.format.displayWeight
@@ -57,7 +58,7 @@ class WorkoutNotificationBuilder(private val context: Context) {
 
     fun build(channelId: String, state: WorkoutNotificationState, workout: ELWorkout?): Notification {
         val builder = NotificationCompat.Builder(context, channelId)
-                .setSmallIcon(R.drawable.ic_notification)
+                .setSmallIcon(DesignR.drawable.ic_notification)
                 .setColor(ContextCompat.getColor(context, DesignR.color.main_accent))
                 .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
                 .setPriority(NotificationCompat.PRIORITY_HIGH)
@@ -200,7 +201,7 @@ class WorkoutNotificationBuilder(private val context: Context) {
 
     private fun openWorkoutIntent(workout: ELWorkout?): PendingIntent {
         val intent = Intent(context, WorkoutLogActivity::class.java)
-        intent.putExtra(ELConstants.EXTRA_WORKOUT, workout)
+        intent.putExtra(WorkoutExtras.WORKOUT, workout)
         intent.action = WorkoutService.ACTION_OPEN_WORKOUT
         return PendingIntent.getActivity(context, REQUEST_OPEN_WORKOUT, intent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
     }

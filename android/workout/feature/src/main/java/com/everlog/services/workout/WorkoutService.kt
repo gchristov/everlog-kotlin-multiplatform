@@ -1,20 +1,23 @@
 package com.everlog.services.workout
 
 import android.app.Notification
+import android.app.Service
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
+import android.os.IBinder
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
-import com.everlog.R
 import com.everlog.android.common.data.model.workout.ELWorkout
 import com.everlog.android.common.data.model.workout.ELWorkoutState
+import com.everlog.android.common.kotlin.notification.ELNotificationManager
 import com.everlog.android.workout.data.notification.ShownSet
 import com.everlog.android.workout.data.notification.WorkoutBroadcasts
-import com.everlog.constants.ELConstants
-import com.everlog.managers.ELNotificationManager
-import com.everlog.managers.analytics.AnalyticsManager
-import com.everlog.services.BaseService
+import com.everlog.android.workout.feature.R
+import com.everlog.android.workout.feature.WorkoutExtras
+import com.everlog.android.workout.feature.WorkoutFeature
+import com.everlog.android.workout.feature.notification.WorkoutNotificationBuilder
+import com.everlog.android.workout.feature.notification.WorkoutNotificationState
 import timber.log.Timber
 
 /**
@@ -25,7 +28,8 @@ import timber.log.Timber
  * mode change, doesn't count. The notification's buttons are handled by the screen, so the service never runs
  * without it. Opening the app again offers to resume the workout.
  */
-class WorkoutService : BaseService() {
+// Keeps its package, as the system knows services by their full class name
+class WorkoutService : Service() {
 
     // State
 
@@ -43,6 +47,7 @@ class WorkoutService : BaseService() {
     private var mReceiver: BroadcastReceiver? = null
 
     companion object {
+        private const val TAG = "WorkoutService"
         // One workout at a time, so one fixed id: each start replaces the same notification
         private const val NOTIFICATION_ID = 0x1611
 
@@ -62,26 +67,28 @@ class WorkoutService : BaseService() {
 
     }
 
+    private val analytics = WorkoutFeature.dependencies.workoutServiceAnalytics()
+
     override fun onCreate() {
         super.onCreate()
+        Timber.tag(TAG).i("Service started")
         setupBroadcastReceivers()
     }
 
     override fun onDestroy() {
         mReceiver?.let { LocalBroadcastManager.getInstance(this).unregisterReceiver(it) }
+        Timber.tag(TAG).i("Service destroyed")
         super.onDestroy()
     }
 
-    override fun tag(): String {
-        return "WorkoutService"
-    }
+    override fun onBind(intent: Intent?): IBinder? = null
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         if (!mStarted && intent?.action != ACTION_SERVICE_START) {
             // No workout screen to run for, e.g. Android restarting the service (no intent) after the app's
             // process was killed mid-workout, which leaves the notification showing, or a tap on one of that
             // notification's buttons. Stopping removes the notification.
-            Timber.tag(tag()).i("Stopping, not started for a workout: action=%s", intent?.action)
+            Timber.tag(TAG).i("Stopping, not started for a workout: action=%s", intent?.action)
             handleStopService(startId)
             return START_STICKY
         }
@@ -131,14 +138,14 @@ class WorkoutService : BaseService() {
     }
 
     private fun handleWeightChange(increase: Boolean) {
-        AnalyticsManager.manager.workoutServiceWeightModified()
+        analytics.weightModified()
         val intent = Intent(if (increase) WorkoutBroadcasts.REQUEST_INCREASE_WEIGHT else WorkoutBroadcasts.REQUEST_DECREASE_WEIGHT)
         intent.putExtra(WorkoutBroadcasts.EXTRA_WORKOUT_STATE, mNextState)
         LocalBroadcastManager.getInstance(this).sendBroadcast(intent)
     }
 
     private fun handleRepsChange(increase: Boolean) {
-        AnalyticsManager.manager.workoutServiceRepsModified()
+        analytics.repsModified()
         val intent = Intent(if (increase) WorkoutBroadcasts.REQUEST_INCREASE_REPS else WorkoutBroadcasts.REQUEST_DECREASE_REPS)
         intent.putExtra(WorkoutBroadcasts.EXTRA_WORKOUT_STATE, mNextState)
         LocalBroadcastManager.getInstance(this).sendBroadcast(intent)
@@ -152,7 +159,7 @@ class WorkoutService : BaseService() {
     }
 
     private fun handleStopExerciseTimer() {
-        AnalyticsManager.manager.workoutServiceTimerStoppedExercise()
+        analytics.timerStoppedExercise()
         val intent = Intent(WorkoutBroadcasts.REQUEST_TIMER_EXERCISE_STOP)
         intent.putExtra(WorkoutBroadcasts.EXTRA_WORKOUT_STATE, mNextState)
         LocalBroadcastManager.getInstance(this).sendBroadcast(intent)
@@ -161,9 +168,9 @@ class WorkoutService : BaseService() {
     // The main button, which starts a timed set's timer first, like the workout screen's
     private fun handleComplete() {
         if (mShown?.startsTimer == true) {
-            AnalyticsManager.manager.workoutServiceTimerStartedExercise()
+            analytics.timerStartedExercise()
         } else {
-            AnalyticsManager.manager.workoutServiceNextExercise()
+            analytics.nextExercise()
         }
         val intent = Intent(WorkoutBroadcasts.REQUEST_COMPLETE_SET)
         intent.putExtra(WorkoutBroadcasts.EXTRA_WORKOUT_STATE, mNextState)
@@ -171,7 +178,7 @@ class WorkoutService : BaseService() {
     }
 
     private fun handleStopRestTimer() {
-        AnalyticsManager.manager.workoutServiceTimerStoppedRest()
+        analytics.timerStoppedRest()
         LocalBroadcastManager.getInstance(this).sendBroadcast(Intent(WorkoutBroadcasts.REQUEST_TIMER_REST_STOP))
     }
 
@@ -230,7 +237,7 @@ class WorkoutService : BaseService() {
                     remainingPercent = intent.getIntExtra(WorkoutBroadcasts.EXTRA_REST_TIMER_PROGRESS, 100))
         } else {
             mRestTimer = null
-            mWorkout = intent?.getSerializableExtra(ELConstants.EXTRA_WORKOUT) as? ELWorkout
+            mWorkout = intent?.getSerializableExtra(WorkoutExtras.WORKOUT) as? ELWorkout
             // The old workout screen doesn't say which set to show
             mShown = intent?.getSerializableExtra(WorkoutBroadcasts.EXTRA_SHOWN_SET) as? ShownSet
             mNextState = mShown?.position ?: mWorkout?.getNextIncompleteState()

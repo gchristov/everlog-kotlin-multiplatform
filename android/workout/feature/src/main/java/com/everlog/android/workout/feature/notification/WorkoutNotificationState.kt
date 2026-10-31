@@ -1,4 +1,4 @@
-package com.everlog.services.workout
+package com.everlog.android.workout.feature.notification
 
 import com.everlog.android.common.data.model.set.ELSet
 import com.everlog.android.common.data.model.workout.ELWorkout
