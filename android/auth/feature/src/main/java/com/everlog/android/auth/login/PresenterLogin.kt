@@ -1,21 +1,20 @@
-package com.everlog.ui.activities.login
+package com.everlog.android.auth.login
 
 import com.everlog.android.common.design.R as DesignR
 import android.app.Activity
 import android.content.Intent
 import android.text.TextUtils
-import com.everlog.R
+import com.everlog.android.auth.AuthFeature
+import com.everlog.android.auth.AuthRequestCodes
+import com.everlog.android.auth.R
+import com.everlog.android.auth.data.AuthActionListener
 import com.everlog.android.auth.data.model.ELUser
-import com.everlog.android.settings.data.SettingsManager
-import com.everlog.constants.ELActivityRequestCodes
-import com.everlog.constants.ELConstants
-import com.everlog.managers.auth.AuthManager
-import com.everlog.ui.navigator.navigator
 import com.everlog.android.common.mvp.activity.BaseActivityPresenter
 import com.everlog.android.common.mvp.dialog.ToastBuilder
 import com.everlog.android.common.kotlin.Utils
 import com.everlog.android.common.mvp.util.KeyboardUtils
-import com.everlog.utils.input.ValidationUtils
+import com.everlog.android.auth.login.ValidationUtils
+import com.everlog.android.auth.resetpassword.ResetPasswordActivity
 import rx.Observable
 
 class PresenterLogin : BaseActivityPresenter<MvpViewLogin>() {
@@ -33,14 +32,14 @@ class PresenterLogin : BaseActivityPresenter<MvpViewLogin>() {
         // APP STARTUP: Delay to not block
         Utils.runWithDelay({
             // Make sure to cancel the app use notification if we're not logged in
-            navigator.cancelAppUseNotification()
+            mvpView?.context?.let(AuthFeature.dependencies::cancelAppUseReminder)
         }, 10)
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        AuthManager.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == ELActivityRequestCodes.REQUEST_ONBOARDING) {
+        AuthFeature.dependencies.authActivityResult(requestCode, resultCode, data)
+        if (requestCode == AuthRequestCodes.ONBOARDING) {
             onOnboardingResult(resultCode)
         }
     }
@@ -83,7 +82,7 @@ class PresenterLogin : BaseActivityPresenter<MvpViewLogin>() {
         subscriptions.add(mvpView.onClickTerms()
                 .compose(applyUISchedulers())
                 .subscribe({
-                    navigator.openWebView(ELConstants.URL_TERMS, mvpView.context.getString(DesignR.string.login_terms))
+                    AuthFeature.dependencies.openTerms(mvpView.context, mvpView.context.getString(DesignR.string.login_terms))
                 }) { throwable -> handleError(throwable) })
     }
 
@@ -91,7 +90,7 @@ class PresenterLogin : BaseActivityPresenter<MvpViewLogin>() {
         subscriptions.add(mvpView.onClickPrivacy()
                 .compose(applyUISchedulers())
                 .subscribe({
-                    navigator.openWebView(ELConstants.URL_PRIVACY, mvpView.context.getString(DesignR.string.login_terms_privacy))
+                    AuthFeature.dependencies.openPrivacyPolicy(mvpView.context, mvpView.context.getString(DesignR.string.login_terms_privacy))
                 }) { throwable -> handleError(throwable) })
     }
 
@@ -99,7 +98,7 @@ class PresenterLogin : BaseActivityPresenter<MvpViewLogin>() {
         subscriptions.add(mvpView.onClickResetPassword()
                 .compose(applyUISchedulers())
                 .subscribe({
-                    navigator.openResetPassword()
+                    mvpView?.context?.let { it.startActivity(ResetPasswordActivity.launchIntent(it)) }
                 }) { throwable -> handleError(throwable) })
     }
 
@@ -108,7 +107,7 @@ class PresenterLogin : BaseActivityPresenter<MvpViewLogin>() {
 
     private fun handleLoginGoogle() {
         mvpView?.showGoogleLoading(LoginActivity.LoadingState.LOADING)
-        AuthManager.loginWithGoogle(navigator, object : AuthManager.OnAuthActionListener() {
+        AuthFeature.dependencies.loginWithGoogle(mvpView.getActivity()!!, object : AuthActionListener() {
             override fun onSuccess(user: ELUser, newUser: Boolean) {
                 saveOnboardingPending(newUser)
                 if (isAttachedToView) {
@@ -135,7 +134,7 @@ class PresenterLogin : BaseActivityPresenter<MvpViewLogin>() {
                 && TextUtils.isEmpty(passwordError)) {
             KeyboardUtils.hideKeyboard(mvpView.getActivity())
             mvpView?.showLoginLoading(LoginActivity.LoadingState.LOADING)
-            AuthManager.login(email, password, object : AuthManager.OnAuthActionListener() {
+            AuthFeature.dependencies.login(email, password, object : AuthActionListener() {
                 override fun onSuccess(user: ELUser, newUser: Boolean) {
                     saveOnboardingPending(newUser)
                     if (isAttachedToView) {
@@ -158,7 +157,7 @@ class PresenterLogin : BaseActivityPresenter<MvpViewLogin>() {
 
     private fun handleLoginAnonymous() {
         mvpView?.showGetStartedLoading(LoginActivity.LoadingState.LOADING)
-        AuthManager.loginAnonymously(object : AuthManager.OnAuthActionListener() {
+        AuthFeature.dependencies.loginAnonymously(object : AuthActionListener() {
             override fun onSuccess(user: ELUser, newUser: Boolean) {
                 saveOnboardingPending(newUser)
                 if (isAttachedToView) {
@@ -190,7 +189,7 @@ class PresenterLogin : BaseActivityPresenter<MvpViewLogin>() {
                 if (mvpView?.newsletterDecided() == true) {
                     KeyboardUtils.hideKeyboard(mvpView.getActivity())
                     mvpView.showRegisterLoading(LoginActivity.LoadingState.LOADING)
-                    AuthManager.register(name, email, password, mvpView.newsletterAccepted(), object : AuthManager.OnAuthActionListener() {
+                    AuthFeature.dependencies.register(name, email, password, mvpView.newsletterAccepted(), object : AuthActionListener() {
                         override fun onSuccess(user: ELUser, newUser: Boolean) {
                             saveOnboardingPending(newUser)
                             if (isAttachedToView) {
@@ -220,7 +219,7 @@ class PresenterLogin : BaseActivityPresenter<MvpViewLogin>() {
     // Saved even if the screen has gone, so the next launch still opens onboarding (see PresenterSplash)
     private fun saveOnboardingPending(newUser: Boolean) {
         if (newUser) {
-            SettingsManager.manager.setOnboardingPending(true)
+            AuthFeature.dependencies.setOnboardingPending(true)
         }
     }
 
@@ -228,20 +227,20 @@ class PresenterLogin : BaseActivityPresenter<MvpViewLogin>() {
     // finishing, e.g. the system removed it after the app died, so it's still to do, unless it was
     // finished from another screen in the meantime (see PresenterSplash).
     private fun onOnboardingResult(resultCode: Int) {
-        if (resultCode != Activity.RESULT_OK && SettingsManager.manager.onboardingPending()) {
-            navigator.openOnboarding()
+        if (resultCode != Activity.RESULT_OK && AuthFeature.dependencies.onboardingPending()) {
+            mvpView?.getActivity()?.let(AuthFeature.dependencies::openOnboarding)
         } else {
-            SettingsManager.manager.setOnboardingPending(false)
-            navigator.openHome()
+            AuthFeature.dependencies.setOnboardingPending(false)
+            mvpView?.getActivity()?.let(AuthFeature.dependencies::openHome)
         }
     }
 
     // A new account goes through onboarding first, then home (see onOnboardingResult)
     private fun continueAfterLogin(newUser: Boolean) {
         if (newUser) {
-            navigator.openOnboarding()
+            mvpView?.getActivity()?.let(AuthFeature.dependencies::openOnboarding)
         } else {
-            navigator.openHome()
+            mvpView?.getActivity()?.let(AuthFeature.dependencies::openHome)
         }
     }
 }

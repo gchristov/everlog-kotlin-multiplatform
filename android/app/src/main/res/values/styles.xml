@@ -38,10 +38,6 @@
 
 
 
-    <!-- View width styling -->
-    <style name="LoginContentWidth">
-        <item name="android:layout_width">match_parent</item>
-    </style>
 
     <!-- Workout notification. Text uses the notification text appearances so it follows the system
          notification theme (light/dark) on every Android version. -->

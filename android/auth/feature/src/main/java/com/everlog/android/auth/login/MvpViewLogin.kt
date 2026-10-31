@@ -1,4 +1,4 @@
-package com.everlog.ui.activities.login
+package com.everlog.android.auth.login
 
 import com.everlog.android.common.mvp.activity.BaseActivityMvpView
 import rx.Observable

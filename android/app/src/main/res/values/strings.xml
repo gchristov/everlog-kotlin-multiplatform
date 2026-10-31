@@ -24,23 +24,7 @@
     <string name="pending_feature_subtitle">We are working on this feature and it will be available as an update soon!</string>
     <string name="pending_feature_action">Got it</string>
 
-    <string name="login_get_started">Continue as guest</string>
-    <string name="login_existing">Log in</string>
-    <string name="login_title" translatable="false">Everlog</string>
-    <string name="login_tagline">Your workouts. Simply tracked.</string>
-    <string name="login_sign_in">Log in</string>
-    <string name="login_register">Sign up</string>
-    <string name="login_full_name">Name</string>
-    <string name="login_email">Email</string>
-    <string name="login_password">Password</string>
-    <string name="login_google">Continue with Google</string>
-    <string name="login_google_register">Sign up with Google</string>
-    <string name="login_terms_full">I accept the Terms &amp; Conditions and Privacy Policy</string>
-    <string name="login_terms_not_accepted">"Please accept our Terms &amp; Conditions and Privacy Policy"</string>
-    <string name="login_reset_password">Forgot password?</string>
 
-    <string name="reset_password">Reset password</string>
-    <string name="reset_password_success">Thanks! We have sent instructions on how to reset your password to your email address</string>
 
     <string name="home_add_title">Start workout</string>
     <string name="home_add_start_routine">From your templates</string>
@@ -115,7 +99,6 @@
 
     <string name="integrations_connect_permission_needed">We need your permission to access fitness activity on this device to sync with this integration.</string>
 
-    <string name="notifications_newsletter_not_accepted">Please choose where you\'d ike to receive our newsletter</string>
     <string name="notifications_newsletter_prompt">Hi %1$s,\n\nWe\'d love to send you our occasional newsletter with Pro-tips and tricks, and announcements of new features with your permission.\n\nInterested in getting the best out of Everlog?</string>
     <string name="notifications_newsletter_prompt_yes">Yes, I\'d like to receive updates</string>
     <string name="notifications_newsletter_granted">Perfect, we\'ll keep you up to date!</string>

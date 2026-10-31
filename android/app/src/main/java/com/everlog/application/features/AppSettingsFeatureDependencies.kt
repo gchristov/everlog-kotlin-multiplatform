@@ -3,6 +3,7 @@ package com.everlog.application.features
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
+import com.everlog.android.auth.data.AuthActionListener
 import com.everlog.android.common.mvp.fragment.BaseFragmentMvpView
 import com.everlog.android.settings.SetSuggestionText
 import com.everlog.android.settings.SettingsAnalytics
@@ -61,7 +62,7 @@ class AppSettingsFeatureDependencies : SettingsFeatureDependencies {
 
     override fun openLogin(context: Context) = ELNavigator(context).openLogin()
 
-    override fun logout(onLoggedOut: () -> Unit) = AuthManager.logout(object : AuthManager.OnAuthActionListener() {
+    override fun logout(onLoggedOut: () -> Unit) = AuthManager.logout(object : AuthActionListener() {
         override fun onLogout() = onLoggedOut()
     })
 

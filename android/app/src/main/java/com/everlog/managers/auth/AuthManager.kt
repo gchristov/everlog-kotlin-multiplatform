@@ -4,6 +4,7 @@ import android.content.Intent
 import android.text.TextUtils
 import com.everlog.BuildConfig
 import com.everlog.R
+import com.everlog.android.auth.data.AuthActionListener
 import com.everlog.android.auth.data.LocalUserManager
 import com.everlog.android.auth.data.model.ELConsent.Companion.newConsent
 import com.everlog.android.auth.data.model.ELUser
@@ -41,13 +42,13 @@ object AuthManager : PreferencesManager() {
 
     private var mAuth: FirebaseAuth? = null
     private var mClient: GoogleSignInClient? = null
-    private var mAuthListener: OnAuthActionListener? = null
+    private var mAuthListener: AuthActionListener? = null
 
     init {
         setupGoogleClient()
     }
 
-    fun initialize(listener: OnAuthActionListener) {
+    fun initialize(listener: AuthActionListener) {
         when {
             isLoggedIn -> {
                 val uid = mAuth!!.currentUser!!.uid
@@ -73,7 +74,7 @@ object AuthManager : PreferencesManager() {
                     }
 
                     override fun onItemLoadingError(throwable: Throwable) {
-                        handleAuthError(throwable, object : OnAuthActionListener() {
+                        handleAuthError(throwable, object : AuthActionListener() {
                             override fun onError(throwable: Throwable) {
                                 logout(listener)
                             }
@@ -82,7 +83,7 @@ object AuthManager : PreferencesManager() {
                 })
             }
             SettingsManager.manager.loggedIn() -> {
-                handleAuthError(Exception("User previously logged in but not anymore => logging out"), object : OnAuthActionListener() {
+                handleAuthError(Exception("User previously logged in but not anymore => logging out"), object : AuthActionListener() {
                     override fun onError(throwable: Throwable) {
                         logout(listener)
                     }
@@ -114,7 +115,7 @@ object AuthManager : PreferencesManager() {
 
     fun login(email: String,
               password: String,
-              listener: OnAuthActionListener) {
+              listener: AuthActionListener) {
         var fEmail = email
         var fPassword = password
         mAuthListener = listener
@@ -131,7 +132,7 @@ object AuthManager : PreferencesManager() {
                 ?.addOnCompleteListener(getLoginHandler(AnalyticsConstants.LOGIN_METHOD_EMAIL))
     }
 
-    fun loginAnonymously(listener: OnAuthActionListener) {
+    fun loginAnonymously(listener: AuthActionListener) {
         if (DeviceUtils.isFirebaseTestLabRun()) {
             // Force Firebase Test Lab session to use pre-existing account
             Timber.tag(TAG).i("Redirecting Firebase Test Lab anonymous login to email login")
@@ -145,7 +146,7 @@ object AuthManager : PreferencesManager() {
         }
     }
 
-    fun loginWithGoogle(navigator: Navigator, listener: OnAuthActionListener) {
+    fun loginWithGoogle(navigator: Navigator, listener: AuthActionListener) {
         Timber.tag(TAG).i("Logging in with Google")
         mAuthListener = listener
         navigator.openLoginWithGoogle(mClient)
@@ -155,7 +156,7 @@ object AuthManager : PreferencesManager() {
                  email: String,
                  password: String,
                  newsletterAccepted: Boolean,
-                 listener: OnAuthActionListener) {
+                 listener: AuthActionListener) {
         mAuthListener = listener
         if (DeviceUtils.isFirebaseTestLabRun()) {
             // Force Firebase Test Lab session to use pre-existing account
@@ -169,7 +170,7 @@ object AuthManager : PreferencesManager() {
         }
     }
 
-    fun requestPasswordReset(email: String, listener: OnAuthActionListener) {
+    fun requestPasswordReset(email: String, listener: AuthActionListener) {
         Timber.tag(TAG).i("Requesting password reset for $email")
         mAuthListener = listener
         mAuth
@@ -177,7 +178,7 @@ object AuthManager : PreferencesManager() {
                 ?.addOnCompleteListener(requestPasswordResetHandler(email))
     }
 
-    fun logout(listener: OnAuthActionListener) {
+    fun logout(listener: AuthActionListener) {
         Timber.tag(TAG).i("Logging out")
         // Stores
         ELDatastore.destroy()
@@ -234,7 +235,7 @@ object AuthManager : PreferencesManager() {
         }
     }
 
-    private fun handleAuthError(throwable: Throwable?, listener: OnAuthActionListener?) {
+    private fun handleAuthError(throwable: Throwable?, listener: AuthActionListener?) {
         if (throwable != null) {
             throwable.printStackTrace()
             Timber.tag(TAG).e(throwable)
@@ -376,12 +377,4 @@ object AuthManager : PreferencesManager() {
         mAuth = FirebaseAuth.getInstance()
     }
 
-    open class OnAuthActionListener {
-        open fun onLogout() {}
-        open fun onSuccess(user: ELUser) {}
-        // Login and registration. A new account has no data yet.
-        open fun onSuccess(user: ELUser, newUser: Boolean) = onSuccess(user)
-        open fun onResetPasswordSuccess() {}
-        open fun onError(throwable: Throwable) {}
-    }
 }

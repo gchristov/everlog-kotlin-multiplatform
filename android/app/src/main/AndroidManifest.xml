@@ -124,13 +124,13 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".ui.activities.login.LoginActivity"
+            android:name="com.everlog.android.auth.login.LoginActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:theme="@style/AppTheme.NoActionBar"
             android:windowSoftInputMode="stateHidden|adjustResize"
             android:exported="false" />
         <activity
-                android:name=".ui.activities.login.resetpassword.ResetPasswordActivity"
+                android:name="com.everlog.android.auth.resetpassword.ResetPasswordActivity"
                 android:configChanges="keyboardHidden|orientation|screenSize"
                 android:theme="@style/AppTheme.NoActionBar"
                 android:windowSoftInputMode="stateHidden|adjustResize"

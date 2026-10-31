@@ -2,6 +2,7 @@ package com.everlog.testutil
 
 import androidx.test.platform.app.InstrumentationRegistry
 import com.everlog.BuildConfig
+import com.everlog.android.auth.data.AuthActionListener
 import com.everlog.android.auth.data.model.ELUser
 import com.everlog.managers.auth.AuthManager
 import com.everlog.android.auth.data.LocalUserManager
@@ -20,7 +21,7 @@ object E2EAccount {
         val signedIn = CountDownLatch(1)
         var error: Throwable? = null
         InstrumentationRegistry.getInstrumentation().runOnMainSync {
-            AuthManager.login(BuildConfig.E2E_TEST_USER_EMAIL, BuildConfig.E2E_TEST_USER_PASSWORD, object : AuthManager.OnAuthActionListener() {
+            AuthManager.login(BuildConfig.E2E_TEST_USER_EMAIL, BuildConfig.E2E_TEST_USER_PASSWORD, object : AuthActionListener() {
                 override fun onSuccess(user: ELUser, newUser: Boolean) = signedIn.countDown()
 
                 override fun onError(throwable: Throwable) {

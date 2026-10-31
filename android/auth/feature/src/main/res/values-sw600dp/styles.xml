@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- View width styling -->
+    <style name="LoginContentWidth">
+        <item name="android:layout_width">@dimen/content_width_tablet</item>
+    </style>
+</resources>

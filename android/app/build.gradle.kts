@@ -158,7 +158,6 @@ dependencies {
     implementation(libs.commons.lang3)
     implementation(libs.datetimeutils)
 
-    implementation(libs.loading.button)
 
     implementation(libs.mpandroidchart)
     implementation(libs.threetenabp)
