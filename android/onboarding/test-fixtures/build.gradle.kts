@@ -12,4 +12,7 @@ android {
 dependencies {
     api(projects.android.onboarding.data)
     api(projects.android.common.test)
+    // The onboarding's tests run its use cases on the exercise and template fakes
+    api(projects.android.exercise.testFixtures)
+    api(projects.android.template.testFixtures)
 }

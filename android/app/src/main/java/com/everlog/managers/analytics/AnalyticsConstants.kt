@@ -14,11 +14,6 @@ class AnalyticsConstants {
         const val SCREEN_ROUTINE_CREATE = "screen_create_routine"
         const val SCREEN_WEB_VIEW = "screen_web_view"
         const val SCREEN_MUSCLE_GOAL = "screen_settings_muscle_goals"
-        const val SCREEN_ONBOARDING_WELCOME = "screen_onboarding_welcome"
-        const val SCREEN_ONBOARDING_QUESTIONS = "screen_onboarding_questions"
-        const val SCREEN_ONBOARDING_BUILDING = "screen_onboarding_building"
-        const val SCREEN_ONBOARDING_REVEAL = "screen_onboarding_reveal"
-        const val SCREEN_ONBOARDING_SAVING = "screen_onboarding_saving"
         // The exercise picker, named apart from the old list's screen_exercises and screen_exercise_picker
         const val SCREEN_EXERCISES_V2 = "screen_exercises_v2"
         const val SCREEN_EXERCISE_PICKER_V2 = "screen_exercise_picker_v2"
@@ -264,21 +259,5 @@ class AnalyticsConstants {
 
         // The app opened on the home screen with a workout ongoing, e.g. after it was swiped away mid-workout
         const val WORKOUT_RESUMED_SOURCE_LAUNCH = "launch"
-
-        // Onboarding steps, besides the questions, which are their question's id (e.g. units, days)
-        const val ONBOARDING_STEP_WELCOME = "welcome"
-        const val ONBOARDING_STEP_BUILDING = "building"
-        const val ONBOARDING_STEP_REVEAL = "reveal"
-        const val ONBOARDING_STEP_SAVING = "saving"
-
-        // The reveal's buttons, as its step's completed value
-        const val ONBOARDING_REVEAL_LOOKS_GOOD = "looks_good"
-        const val ONBOARDING_REVEAL_BUILD_OWN = "build_own"
-
-        // How the onboarding ended: the starter templates saved, the user's own template saved, or
-        // skipped (Skip setup, or Skip after building or saving failed)
-        const val ONBOARDING_OUTCOME_STARTER_TEMPLATES = "starter_templates"
-        const val ONBOARDING_OUTCOME_OWN_TEMPLATE = "own_template"
-        const val ONBOARDING_OUTCOME_SKIPPED = "skipped"
     }
 }

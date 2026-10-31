@@ -73,6 +73,8 @@ dependencies {
     implementation(projects.android.common.sessionUi)
     implementation(projects.android.auth.data)
     implementation(projects.android.exercise.data)
+    implementation(projects.android.history.data)
+    implementation(projects.android.onboarding.data)
     implementation(projects.android.plan.data)
     implementation(projects.android.pro.data)
     implementation(projects.android.settings.data)
@@ -136,7 +138,6 @@ dependencies {
     // The app's own Compose tests run in its process, so the host activity has to be in the app's debug manifest
     debugImplementation(libs.androidx.compose.ui.test.manifest)
     implementation(libs.haze)
-    implementation(libs.lottie.compose)
 
     implementation(libs.androidx.lifecycle.viewmodel.ktx)
     implementation(libs.androidx.lifecycle.runtime.compose)
@@ -145,7 +146,6 @@ dependencies {
     implementation(libs.arrow.core)
 
     implementation(libs.glide)
-    implementation(libs.coil.compose)
 
     implementation(libs.rxandroid)
     implementation(libs.rxjava)

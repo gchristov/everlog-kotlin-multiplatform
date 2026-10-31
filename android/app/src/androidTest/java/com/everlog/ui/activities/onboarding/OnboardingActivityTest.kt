@@ -16,6 +16,7 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
 import com.everlog.testutil.E2EAccount
 import com.everlog.ui.activities.home.routine.create.CreateRoutineActivity
+import com.everlog.android.onboarding.OnboardingActivity
 import com.everlog.android.template.editor.TemplateEditorActivity
 import com.google.common.truth.Truth.assertThat
 import java.util.concurrent.TimeUnit
