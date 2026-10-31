@@ -5,7 +5,7 @@ import com.everlog.android.common.data.model.set.ELSetType
 import com.everlog.android.common.data.model.workout.ELWorkout
 import com.everlog.android.common.kotlin.WeightUnit
 import com.everlog.android.settings.data.SettingsManager
-import com.everlog.data.controllers.workoutsession.ValueField
+import com.everlog.android.common.session.ValueField
 import com.everlog.managers.analytics.AnalyticsConstants
 import com.everlog.managers.analytics.AnalyticsManager
 import com.everlog.services.workout.ShownSet

@@ -7,8 +7,8 @@ import androidx.compose.ui.res.stringResource
 import com.everlog.R
 import com.everlog.android.common.compose.elements.AppDialog
 import com.everlog.android.common.compose.elements.AppDialogAction
-import com.everlog.data.controllers.workoutsession.block
-import com.everlog.ui.components.rest.RestStepper
+import com.everlog.android.common.session.block
+import com.everlog.android.common.compose.components.rest.RestStepper
 
 @Composable
 internal fun WorkoutLogDialogs(state: WorkoutLogState, viewModel: WorkoutLogViewModel) {
@@ -35,7 +35,7 @@ internal fun WorkoutLogDialogs(state: WorkoutLogState, viewModel: WorkoutLogView
                 title = stringResource(R.string.workout_log_delete_exercise_title, name),
                 body = stringResource(R.string.workout_log_delete_exercise_body),
                 onDismissRequest = viewModel::onDialogDismissed,
-                primaryAction = AppDialogAction(stringResource(R.string.workout_log_delete)) { viewModel.onDeleteExerciseConfirmed(dialog.blockId) },
+                primaryAction = AppDialogAction(stringResource(DesignR.string.workout_log_delete)) { viewModel.onDeleteExerciseConfirmed(dialog.blockId) },
                 secondaryAction = AppDialogAction(stringResource(DesignR.string.cancel), viewModel::onDialogDismissed),
             )
         }

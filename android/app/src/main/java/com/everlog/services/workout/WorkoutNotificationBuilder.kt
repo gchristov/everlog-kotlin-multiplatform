@@ -13,7 +13,7 @@ import com.everlog.android.common.data.model.set.ELSetType
 import com.everlog.android.common.data.model.workout.ELWorkout
 import com.everlog.android.settings.data.SettingsManager
 import com.everlog.constants.ELConstants
-import com.everlog.data.controllers.workoutsession.toSessionSet
+import com.everlog.android.common.session.toSessionSet
 import com.everlog.services.workout.WorkoutNotificationState.Done
 import com.everlog.services.workout.WorkoutNotificationState.NextSet
 import com.everlog.services.workout.WorkoutNotificationState.NoExercises
@@ -24,7 +24,7 @@ import com.everlog.android.common.kotlin.format.EmptyValue
 import com.everlog.android.common.kotlin.format.displayWeight
 import com.everlog.android.common.kotlin.format.formatClock
 import com.everlog.android.common.kotlin.format.formatWeight
-import com.everlog.utils.format.lastTimeText
+import com.everlog.android.common.sessionui.exercisetable.lastTimeText
 import com.everlog.android.common.kotlin.format.unitLabel
 import com.everlog.android.common.design.R as DesignR
 

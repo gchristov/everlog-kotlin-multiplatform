@@ -33,7 +33,7 @@ import com.everlog.config.AppConfig
 import com.everlog.data.controllers.templatesession.LoadTemplateUseCase
 import com.everlog.data.controllers.templatesession.SaveTemplateUseCase
 import com.everlog.data.controllers.templatesession.TemplateNotFoundException
-import com.everlog.ui.components.exercisetable.ExerciseTab
+import com.everlog.android.common.sessionui.exercisetable.ExerciseTab
 import com.google.common.truth.Truth.assertThat
 import java.util.concurrent.TimeUnit
 import kotlinx.coroutines.Dispatchers

@@ -1,6 +1,11 @@
 package com.everlog.data.controllers.workoutsession
 
 import com.everlog.android.common.data.model.set.ELSet
+import com.everlog.android.common.session.ValueField
+import com.everlog.android.common.session.WorkoutBlock
+import com.everlog.android.common.session.WorkoutSet
+import com.everlog.android.common.session.toELSet
+import com.everlog.android.common.session.toSessionSet
 import com.everlog.android.settings.data.SettingsManager
 import com.everlog.data.controllers.workoutprefill.BaseWorkoutPrefillController.PrefillSource
 import com.everlog.data.controllers.workoutprefill.WorkoutPrefillController

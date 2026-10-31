@@ -28,6 +28,8 @@ Common modules:
 | `common:mvp` | The XML/MVP bases: presenters, base activities, fragments, bottom sheets and views, the generic prompts, EventBus and the broadcasts every presenter listens to, the vendored adapter |
 | `common:firebase` | Firebase, the field names and `FirestorePaths` (each user's collections take the user id) |
 | `common:persistence` | `PreferencesManager`, the app's key-value storage. The user's settings (`SettingsManager`) go to `settings:data` |
+| `common:session` | The workout session model the workout screen and the template editor edit (blocks, rounds, sets) and its rules. A stopgap until each feature owns its part |
+| `common:session-ui` | The exercise table and edit list both screens show. A stopgap until the table has its own UI model and joins the design system |
 | `common:datasync` | `DataSync`, the cache-first sync layer (the app wires its instance in `AppDataSync`) |
 | `common:data` | The models every feature shares (sets, exercises, routines, workouts), with their R8 keep rule, and the store base classes with their EventBus events, until they're split into the features' `data` modules. Feature-only models live in their feature's `data` module, each with its own keep rule |
 | `common:data-test` | Fixtures for building the shared models in tests |

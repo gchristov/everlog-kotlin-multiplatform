@@ -21,7 +21,7 @@ import com.everlog.managers.RemoteConfigManager
 import com.everlog.ui.activities.base.SignedInComposeActivity
 import com.everlog.android.exercise.feature.details.ExerciseDetailsActivity
 import com.everlog.ui.activities.home.routine.create.CreateRoutineActivity
-import com.everlog.ui.components.exercisetable.ExerciseTab
+import com.everlog.android.common.sessionui.exercisetable.ExerciseTab
 import com.everlog.ui.navigator.ELNavigator
 import kotlinx.coroutines.Dispatchers
 

@@ -4,16 +4,16 @@ import com.everlog.android.common.data.model.ELRoutine
 import com.everlog.data.controllers.templatesession.templateRestSeconds
 import com.everlog.data.controllers.templatesession.toTemplateBlocks
 import com.everlog.data.controllers.templatesession.withTemplateBlocks
-import com.everlog.data.controllers.workoutsession.SessionIds
-import com.everlog.data.controllers.workoutsession.SetMode
-import com.everlog.data.controllers.workoutsession.SetRef
-import com.everlog.data.controllers.workoutsession.ValueField
-import com.everlog.data.controllers.workoutsession.WorkoutBlock
-import com.everlog.data.controllers.workoutsession.block
-import com.everlog.data.controllers.workoutsession.refs
-import com.everlog.data.controllers.workoutsession.set
-import com.everlog.ui.components.exercisetable.CellFocus
-import com.everlog.ui.components.exercisetable.countField
+import com.everlog.android.common.session.SessionIds
+import com.everlog.android.common.session.SetMode
+import com.everlog.android.common.session.SetRef
+import com.everlog.android.common.session.ValueField
+import com.everlog.android.common.session.WorkoutBlock
+import com.everlog.android.common.session.block
+import com.everlog.android.common.session.refs
+import com.everlog.android.common.session.set
+import com.everlog.android.common.sessionui.exercisetable.CellFocus
+import com.everlog.android.common.sessionui.exercisetable.countField
 
 internal fun TemplateEditorState.opened(routine: ELRoutine, ids: SessionIds, defaultName: String): TemplateEditorState {
     val opened = copy(

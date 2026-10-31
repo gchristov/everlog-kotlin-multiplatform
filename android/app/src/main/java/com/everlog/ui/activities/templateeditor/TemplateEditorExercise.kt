@@ -1,5 +1,6 @@
 package com.everlog.ui.activities.templateeditor
 
+import com.everlog.android.common.design.R as DesignR
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -40,24 +41,24 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.everlog.R
+import com.everlog.android.common.compose.components.reorder.ReorderGrip
 import com.everlog.android.common.compose.elements.AppText
 import com.everlog.android.common.compose.elements.AppThumbnail
 import com.everlog.android.common.compose.theme.Theme
 import com.everlog.android.common.data.model.exercise.ELExercise
 import com.everlog.android.common.kotlin.format.formatClock
 import com.everlog.android.common.kotlin.format.setTypeTitle
-import com.everlog.data.controllers.workoutsession.SetMode
-import com.everlog.data.controllers.workoutsession.SetRef
-import com.everlog.data.controllers.workoutsession.WorkoutBlock
-import com.everlog.data.controllers.workoutsession.WorkoutSet
-import com.everlog.ui.components.exercisetable.CellFocus
-import com.everlog.ui.components.exercisetable.ExerciseTab
-import com.everlog.ui.components.exercisetable.GroupThumbnail
-import com.everlog.ui.components.exercisetable.GroupThumbnailSizes
-import com.everlog.ui.components.exercisetable.InsetDeleteButton
-import com.everlog.ui.components.exercisetable.countField
-import com.everlog.ui.components.exercisetable.typedSeconds
-import com.everlog.ui.components.reorder.ReorderGrip
+import com.everlog.android.common.session.SetMode
+import com.everlog.android.common.session.SetRef
+import com.everlog.android.common.session.WorkoutBlock
+import com.everlog.android.common.session.WorkoutSet
+import com.everlog.android.common.sessionui.exercisetable.CellFocus
+import com.everlog.android.common.sessionui.exercisetable.ExerciseTab
+import com.everlog.android.common.sessionui.exercisetable.GroupThumbnail
+import com.everlog.android.common.sessionui.exercisetable.GroupThumbnailSizes
+import com.everlog.android.common.sessionui.exercisetable.InsetDeleteButton
+import com.everlog.android.common.sessionui.exercisetable.countField
+import com.everlog.android.common.sessionui.exercisetable.typedSeconds
 
 private object ExerciseSizes {
     val ThumbnailCorner = 12.dp
@@ -220,15 +221,15 @@ private fun ExerciseHeader(
 private fun ColumnLabels(block: WorkoutBlock, modifier: Modifier) {
     val modes = block.rounds.flatMap { round -> round.sets.filterNot { it.removed }.map { it.mode } }.toSet()
     val count = when {
-        modes == setOf(SetMode.Time) -> stringResource(R.string.workout_log_column_time)
-        SetMode.Time in modes -> stringResource(R.string.workout_log_column_reps_time)
-        else -> stringResource(R.string.workout_log_column_reps)
+        modes == setOf(SetMode.Time) -> stringResource(DesignR.string.workout_log_column_time)
+        SetMode.Time in modes -> stringResource(DesignR.string.workout_log_column_reps_time)
+        else -> stringResource(DesignR.string.workout_log_column_reps)
     }
     Row(
         modifier = modifier.padding(horizontal = ExerciseSizes.RowPadding),
         horizontalArrangement = Arrangement.spacedBy(ExerciseSizes.ColumnGap),
     ) {
-        ColumnLabel(stringResource(R.string.workout_log_column_set), Modifier.width(ExerciseSizes.SetColumn))
+        ColumnLabel(stringResource(DesignR.string.workout_log_column_set), Modifier.width(ExerciseSizes.SetColumn))
         ColumnLabel(count, Modifier.width(ExerciseSizes.Cell))
     }
 }

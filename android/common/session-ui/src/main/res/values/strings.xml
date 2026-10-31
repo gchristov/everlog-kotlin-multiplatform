@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="workout_log_column_last_time">LAST TIME</string>
+    <string name="workout_log_example">EXAMPLE · NOT YOUR DATA</string>
+    <string name="workout_log_exercise_history">%1$s history</string>
+    <string name="workout_log_history">History</string>
+    <string name="workout_log_keypad_label">SET %1$d OF %2$d · %3$s</string>
+    <string name="workout_log_keypad_label_group">SET %1$d OF %2$d · %3$d OF %4$d · %5$s</string>
+    <string name="workout_log_undo_set">Undo set</string>
+</resources>

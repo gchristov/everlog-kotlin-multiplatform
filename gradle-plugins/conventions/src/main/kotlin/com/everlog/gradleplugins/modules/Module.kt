@@ -5,7 +5,7 @@ internal sealed interface Module {
     object App : Module
 
     data class Common(val name: String) : Module {
-        val isUi = name in setOf("compose", "compose-test", "design", "mvp")
+        val isUi = name in setOf("compose", "compose-test", "design", "mvp", "session-ui")
     }
 
     data class Feature(val feature: String, val type: FeatureModuleType) : Module

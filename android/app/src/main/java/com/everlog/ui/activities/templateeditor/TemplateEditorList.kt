@@ -1,5 +1,6 @@
 package com.everlog.ui.activities.templateeditor
 
+import com.everlog.android.common.design.R as DesignR
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -24,11 +25,11 @@ import com.everlog.android.common.compose.elements.list.AppListGroup
 import com.everlog.android.common.compose.elements.list.AppListItem
 import com.everlog.android.common.compose.theme.Theme
 import com.everlog.android.common.data.model.exercise.ELExercise
-import com.everlog.ui.components.exercisetable.ExerciseTab
-import com.everlog.ui.components.reorder.rememberReorderState
-import com.everlog.ui.components.reorder.reorderGrip
-import com.everlog.ui.components.reorder.reorderItem
-import com.everlog.ui.components.reorder.reorderViewport
+import com.everlog.android.common.sessionui.exercisetable.ExerciseTab
+import com.everlog.android.common.compose.components.reorder.rememberReorderState
+import com.everlog.android.common.compose.components.reorder.reorderGrip
+import com.everlog.android.common.compose.components.reorder.reorderItem
+import com.everlog.android.common.compose.components.reorder.reorderViewport
 import com.everlog.android.common.kotlin.format.formatClock
 
 /**
@@ -134,7 +135,7 @@ internal fun ExerciseActions(index: Int, onAddSet: () -> Unit, onJoin: (() -> Un
         AppTertiaryButton(
             modifier = Modifier.testTag(TemplateEditorTags.addSet(index)),
             onClick = onAddSet,
-            text = stringResource(R.string.workout_log_add_set),
+            text = stringResource(DesignR.string.workout_log_add_set),
             contentPadding = padding,
         )
         if (onJoin != null) {
