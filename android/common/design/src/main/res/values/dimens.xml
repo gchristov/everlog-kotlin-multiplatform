@@ -31,4 +31,5 @@
     <!-- Half the height, a pill -->
     <dimen name="chip_radius">18dp</dimen>
     <dimen name="margin_30">30dp</dimen>
+    <dimen name="exercise_group_create_side_spacing">@dimen/activity_margin</dimen>
 </resources>

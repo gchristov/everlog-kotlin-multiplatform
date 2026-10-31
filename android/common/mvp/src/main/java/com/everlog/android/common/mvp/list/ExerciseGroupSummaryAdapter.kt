@@ -1,5 +1,6 @@
-package com.everlog.ui.adapters.exercise.group
+package com.everlog.android.common.mvp.list
 
+import android.content.Context
 import android.graphics.Typeface
 import android.text.TextUtils
 import android.view.LayoutInflater
@@ -11,23 +12,22 @@ import com.ahamed.multiviewadapter.DataListManager
 import com.ahamed.multiviewadapter.ItemBinder
 import com.ahamed.multiviewadapter.ItemViewHolder
 import com.ahamed.multiviewadapter.RecyclerAdapter
-import com.everlog.R
+import com.everlog.android.common.data.model.exercise.ELExercise
+import com.everlog.android.common.mvp.R
 import com.everlog.android.common.data.model.exercise.ELExerciseGroup
 import com.everlog.android.common.data.model.exercise.ELRoutineExercise
 import com.everlog.android.common.data.model.set.ELSet
 import com.everlog.android.common.data.model.set.ELSetType
 import com.everlog.android.common.data.model.set.summaryValues
-import com.everlog.databinding.RowExerciseGroupSummaryBinding
-import com.everlog.databinding.RowExerciseWithinSetSummaryBinding
+import com.everlog.android.common.mvp.databinding.RowExerciseGroupSummaryBinding
+import com.everlog.android.common.mvp.databinding.RowExerciseWithinSetSummaryBinding
 import com.everlog.android.common.mvp.databinding.RowSetSummaryBinding
-import com.everlog.android.exercise.feature.details.ExerciseDetailsActivity
-import com.everlog.ui.navigator.ELNavigator
 import com.everlog.android.common.kotlin.format.ArrayResourceTypeUtils
 import com.everlog.android.common.kotlin.format.exerciseSummary
 import com.everlog.android.common.kotlin.format.setSummary
 import com.everlog.android.common.mvp.view.renderCompleteSetSummary
-import com.everlog.android.settings.data.SettingsManager
 import com.everlog.android.common.kotlin.Utils
+import com.everlog.android.common.kotlin.WeightUnit
 import com.everlog.android.common.design.R as DesignR
 import com.everlog.android.common.mvp.R as MvpR
 import java.util.*
@@ -43,8 +43,21 @@ class ExerciseGroupSummaryAdapter {
 
     class Builder {
         internal var showTemplates = true
+        internal var weightUnit = WeightUnit.KILOGRAM
+        internal var onExerciseClicked: (Context, ELExercise) -> Unit = { _, _ -> }
+
         fun setShowTemplates(showTemplates: Boolean): Builder {
             this.showTemplates = showTemplates
+            return this
+        }
+
+        fun setWeightUnit(weightUnit: WeightUnit): Builder {
+            this.weightUnit = weightUnit
+            return this
+        }
+
+        fun setOnExerciseClicked(onExerciseClicked: (Context, ELExercise) -> Unit): Builder {
+            this.onExerciseClicked = onExerciseClicked
             return this
         }
     }
@@ -132,9 +145,9 @@ class ExerciseGroupSummaryAdapter {
             renderSets()
             // Clicks
             val click = {
-                if (Utils.isValidContext(itemView.context) && item.exercise != null) {
-                    ELNavigator(itemView.context).openExerciseDetails(ExerciseDetailsActivity.Companion.Properties()
-                            .exercise(item.exercise!!))
+                val exercise = item.exercise
+                if (Utils.isValidContext(itemView.context) && exercise != null) {
+                    builder.onExerciseClicked(itemView.context, exercise)
                 }
             }
             binding.exerciseImg.setOnClickListener { click() }
@@ -148,10 +161,10 @@ class ExerciseGroupSummaryAdapter {
         private fun renderExercise() {
             binding.exerciseName.text = item.getName()
             binding.exerciseImg.setExercise(item.exercise)
-            binding.exerciseImg.applyMask(R.drawable.mask_circle)
+            binding.exerciseImg.applyMask(DesignR.drawable.mask_circle)
             binding.exerciseSummary.visibility = if (builder.showTemplates) View.GONE else View.VISIBLE
             if (!builder.showTemplates) {
-                val unit = SettingsManager.manager.weightUnit()
+                val unit = builder.weightUnit
                 binding.exerciseSummary.text = exerciseSummary(binding.root.context, item.getTotalWeight(unit), item.getTotalReps(), item.getTotalTimeSeconds(), unit)
             }
         }
@@ -197,7 +210,7 @@ class ExerciseGroupSummaryAdapter {
             if (builder.showTemplates) {
                 renderTemplate()
             } else {
-                renderCompleteSetSummary(itemView.context, item, SettingsManager.manager.weightUnit(), binding.setSummary)
+                renderCompleteSetSummary(itemView.context, item, builder.weightUnit, binding.setSummary)
             }
         }
 
@@ -206,7 +219,7 @@ class ExerciseGroupSummaryAdapter {
         }
 
         private fun renderTemplate() {
-            val txt = setSummary(itemView.context, item.summaryValues(builder.showTemplates), SettingsManager.manager.weightUnit())
+            val txt = setSummary(itemView.context, item.summaryValues(builder.showTemplates), builder.weightUnit)
             if (TextUtils.isEmpty(txt)) {
                 binding.setSummary.text = "Template not set"
                 binding.setSummary.setTypeface(null, Typeface.ITALIC)

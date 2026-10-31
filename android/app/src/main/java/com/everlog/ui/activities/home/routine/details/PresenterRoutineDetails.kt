@@ -12,7 +12,10 @@ import com.everlog.managers.PlanManager
 import com.everlog.managers.analytics.AnalyticsManager
 import com.everlog.android.common.mvp.activity.BaseActivityPresenter
 import com.everlog.ui.activities.home.routine.create.CreateRoutineActivity
-import com.everlog.ui.adapters.exercise.group.ExerciseGroupSummaryAdapter
+import com.everlog.ui.navigator.ELNavigator
+import com.everlog.android.common.mvp.list.ExerciseGroupSummaryAdapter
+import com.everlog.android.exercise.feature.details.ExerciseDetailsActivity
+import com.everlog.android.settings.data.SettingsManager
 import com.everlog.ui.navigator.navigator
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
@@ -152,6 +155,10 @@ open class PresenterRoutineDetails<T : MvpViewRoutineDetails> : BaseActivityPres
         mAdapter.addDataManager(mDataListManager)
         mAdapter.registerBinders(ExerciseGroupSummaryAdapter().build(ExerciseGroupSummaryAdapter.Builder()
                 .setShowTemplates(true)
+                .setWeightUnit(SettingsManager.manager.weightUnit())
+                .setOnExerciseClicked { context, exercise ->
+                    ELNavigator(context).openExerciseDetails(ExerciseDetailsActivity.Companion.Properties().exercise(exercise))
+                }
         ))
     }
 

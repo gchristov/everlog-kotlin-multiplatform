@@ -304,9 +304,9 @@ class ExerciseGroupCreateAdapter {
             myVH.binding.recyclerView.layoutManager = LinearLayoutManager(myVH.view.context)
             myVH.binding.recyclerView.adapter = adapter
             if (!builder.allowSetCompletion) {
-                myVH.binding.recyclerView.setBackgroundResource(R.drawable.rounded_corners_exercise_group_full)
+                myVH.binding.recyclerView.setBackgroundResource(DesignR.drawable.rounded_corners_exercise_group_full)
             } else {
-                myVH.binding.recyclerView.setBackgroundResource(if (builder.hasSelections()) R.drawable.rounded_corners_exercise_group_full else R.drawable.rounded_corners_exercise_group)
+                myVH.binding.recyclerView.setBackgroundResource(if (builder.hasSelections()) DesignR.drawable.rounded_corners_exercise_group_full else R.drawable.rounded_corners_exercise_group)
             }
         }
 
@@ -655,7 +655,7 @@ class ExerciseGroupCreateAdapter {
         private fun renderExercise() {
             binding.exerciseName.text = item.getName()
             binding.exerciseImg.setExercise(item.exercise)
-            binding.exerciseImg.applyMask(R.drawable.mask_circle)
+            binding.exerciseImg.applyMask(DesignR.drawable.mask_circle)
         }
 
         private fun renderIncompleteSet() {
