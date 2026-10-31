@@ -18,7 +18,7 @@ class AppConfig {
 
     val defaultRestTimeSeconds = ELExerciseGroup.DEFAULT_REST_TIME_SECONDS
     val defaultRestTimeOffsetSeconds = SessionDefaults.TIME_STEP_SECONDS
-    val defaultExerciseTimeSeconds = 30
+    val defaultExerciseTimeSeconds = SessionDefaults.EXERCISE_TIME_SECONDS
 
     val defaultStatsRange = RangeType.WEEK
     val defaultStatsExerciseRange = RangeType.MONTH
@@ -27,7 +27,7 @@ class AppConfig {
 
     val maxPlanWeekDaysFree = 1
     val maxExerciseSelection = ExercisePickerActivity.MAX_PICKS
-    val maxExerciseSets = 14
+    val maxExerciseSets = SessionDefaults.MAX_EXERCISE_SETS
 
     // Qualifying actions needed before each rating prompt, from any trigger. Its size caps the prompts.
     val ratePromptActionGoals = listOf(3, 3, 4)

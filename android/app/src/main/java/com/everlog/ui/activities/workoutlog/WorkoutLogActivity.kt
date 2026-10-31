@@ -26,7 +26,7 @@ import com.everlog.data.controllers.workoutprefill.RealLoadPrefillSourcesUseCase
 import com.everlog.data.controllers.workoutsession.RealWorkoutSetPrefill
 import com.everlog.data.sync.AppDataSync
 import com.everlog.data.repositories.RealOngoingWorkoutRepository
-import com.everlog.ui.activities.base.SignedInComposeActivity
+import com.everlog.android.common.mvp.activity.SignedInComposeActivity
 import com.everlog.android.exercise.feature.details.ExerciseDetailsActivity
 import com.everlog.android.common.sessionui.exercisetable.ExerciseTab
 import com.everlog.ui.navigator.ELNavigator

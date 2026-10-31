@@ -43,7 +43,7 @@ import com.everlog.data.datastores.ELDatastore
 import com.everlog.data.sync.AppDataSync
 import com.everlog.android.template.data.RealRoutineRepository
 import com.everlog.ui.activities.home.routine.create.CreateRoutineActivity
-import com.everlog.ui.activities.templateeditor.TemplateEditorActivity
+import com.everlog.ui.activities.home.routine.create.templateEditorIntent
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.android.awaitFrame
 
@@ -86,7 +86,7 @@ class OnboardingActivity : CommonComposeActivity() {
         viewModel = viewModel,
         onOpenRoutineBuilder = {
             // Not the routine's details after saving: the screen decides what comes next
-            routineBuilder.launch(TemplateEditorActivity.editIntent(this, CreateRoutineActivity.Companion.Properties().showDetailsOnSuccess(false)))
+            routineBuilder.launch(templateEditorIntent(this, CreateRoutineActivity.Companion.Properties().showDetailsOnSuccess(false)))
         },
         onClose = {
             setResult(RESULT_OK)

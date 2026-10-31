@@ -19,4 +19,28 @@
     <string name="select_set_type">Select Set Type</string>
     <string name="select_set_type_error_exercises">Too many or not enough selected exercises for this set type</string>
     <string name="select_set_type_footer">Need more set types?</string>
+    <string name="template_editor_close">Close</string>
+    <string name="template_editor_default_name">My template</string>
+    <string name="template_editor_delete_set">Delete set</string>
+    <string name="template_editor_details">Details</string>
+    <string name="template_editor_edit">Edit template</string>
+    <string name="template_editor_empty_hint">Add the exercises you want in this template</string>
+    <string name="template_editor_exercise_deleted">Exercise deleted</string>
+    <string name="template_editor_exercises">Exercises</string>
+    <string name="template_editor_keep_editing">Keep editing</string>
+    <string name="template_editor_leave_title">Save your changes?</string>
+    <string name="template_editor_load_failed">Couldn\'t load this template.</string>
+    <string name="template_editor_name">Name</string>
+    <!-- Template editor -->
+    <string name="template_editor_new">New template</string>
+    <string name="template_editor_next_set">Next set</string>
+    <string name="template_editor_not_found">This template has been deleted.</string>
+    <string name="template_editor_rest">Rest after each set</string>
+    <string name="template_editor_rest_body">How long the rest timer counts down after each set, in workouts started from this template.</string>
+    <string name="template_editor_retry">Try again</string>
+    <string name="template_editor_same_time">Use %1$s for every set</string>
+    <string name="template_editor_same_time_apply">Apply</string>
+    <string name="template_editor_save_failed">Couldn\'t save the template. Try again.</string>
+    <string name="template_editor_split">Split</string>
+    <string name="template_editor_superset_with_next">Superset with next</string>
 </resources>

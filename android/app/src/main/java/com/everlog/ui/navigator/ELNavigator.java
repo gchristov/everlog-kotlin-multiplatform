@@ -60,7 +60,7 @@ import com.everlog.ui.activities.home.workout.details.WorkoutDetailsActivity;
 import com.everlog.ui.activities.login.LoginActivity;
 import com.everlog.ui.activities.login.resetpassword.ResetPasswordActivity;
 import com.everlog.ui.activities.setsuggestions.SetSuggestionsActivity;
-import com.everlog.ui.activities.templateeditor.TemplateEditorActivity;
+import com.everlog.ui.activities.home.routine.create.TemplateEditorRoutingKt;
 import com.everlog.ui.activities.workoutlog.WorkoutLogActivity;
 import com.everlog.android.common.mvp.dialog.DialogBuilder;
 import com.everlog.android.common.mvp.dialog.ToastBuilder;
@@ -181,15 +181,12 @@ public class ELNavigator implements Navigator {
 
     @Override
     public void openEditRoutine(CreateRoutineActivity.Companion.@NotNull Properties properties) {
-        startActivityForResult(TemplateEditorActivity.editIntent(mContext, properties), ELActivityRequestCodes.REQUEST_EDIT_ROUTINE);
+        startActivityForResult(TemplateEditorRoutingKt.templateEditorIntent(mContext, properties), ELActivityRequestCodes.REQUEST_EDIT_ROUTINE);
     }
 
     @Override
     public void openRoutineDetails(ELRoutine routine, boolean viewOnly) {
-        Intent intent = new Intent(mContext, RoutineDetailsActivity.class);
-        intent.putExtra(EXTRA_ROUTINE, routine);
-        intent.putExtra(EXTRA_VIEW_ONLY, viewOnly);
-        startActivity(intent);
+        startActivity(RoutineDetailsActivity.Companion.launchIntent(mContext, routine, viewOnly));
     }
 
     @Override

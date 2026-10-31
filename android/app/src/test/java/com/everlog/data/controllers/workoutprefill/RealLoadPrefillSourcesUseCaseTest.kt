@@ -12,8 +12,8 @@ import com.everlog.android.common.kotlin.WeightUnit
 import com.everlog.android.common.test.FakeCoroutineDispatcher
 import com.everlog.android.common.test.InMemorySharedPreferences
 import com.everlog.android.settings.data.SettingsManager
-import com.everlog.android.settings.testfixtures.install
-import com.everlog.android.settings.testfixtures.uninstall
+import com.everlog.android.common.test.install
+import com.everlog.android.common.test.uninstall
 import com.everlog.android.workout.data.WorkoutRepository
 import com.google.common.truth.Truth.assertThat
 import kotlinx.coroutines.async

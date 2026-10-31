@@ -12,6 +12,8 @@ android {
 dependencies {
     api(projects.android.common.kotlin)
     api(projects.android.common.design)
+    // SignedInComposeActivity is a CommonComposeActivity
+    api(projects.android.common.compose)
     api(libs.androidx.recyclerview)
     api(libs.androidx.appcompat)
     api(libs.material)

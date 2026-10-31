@@ -137,7 +137,7 @@ internal fun WorkoutLogScreen(
         viewModel.onSetSuggestionsTapped()
         onOpenSetSuggestions()
     }
-    val addExercise = AppKeypadAction(stringResource(R.string.workout_log_add_exercise), onClick = onAddExercise)
+    val addExercise = AppKeypadAction(stringResource(DesignR.string.workout_log_add_exercise), onClick = onAddExercise)
     val empty = state.blocks.isEmpty()
 
     AppScreen(
@@ -148,8 +148,8 @@ internal fun WorkoutLogScreen(
                     modifier = Modifier.testTag(WorkoutLogTags.EditFooter),
                     header = stringResource(R.string.workout_log_edit_hint),
                     actions = listOf(
-                        AppFooterAction(text = stringResource(R.string.workout_log_done), onClick = viewModel::onEditDone),
-                        AppFooterAction(text = stringResource(R.string.workout_log_add_exercise), onClick = onAddExercise, style = AppFooterAction.Style.Secondary),
+                        AppFooterAction(text = stringResource(DesignR.string.workout_log_done), onClick = viewModel::onEditDone),
+                        AppFooterAction(text = stringResource(DesignR.string.workout_log_add_exercise), onClick = onAddExercise, style = AppFooterAction.Style.Secondary),
                     ),
                 )
             } else {
@@ -218,8 +218,8 @@ internal fun WorkoutLogScreen(
 @Composable
 private fun Messages(state: WorkoutLogState, viewModel: WorkoutLogViewModel, modifier: Modifier) {
     val snackbar = remember { SnackbarHostState() }
-    val deleted = stringResource(R.string.workout_log_set_deleted)
-    val undo = stringResource(R.string.workout_log_undo)
+    val deleted = stringResource(DesignR.string.workout_log_set_deleted)
+    val undo = stringResource(DesignR.string.workout_log_undo)
     LaunchedEffect(state.deletion) {
         if (state.deletion == null) {
             // Another change ended the undo
@@ -230,7 +230,7 @@ private fun Messages(state: WorkoutLogState, viewModel: WorkoutLogViewModel, mod
         if (result == SnackbarResult.ActionPerformed) viewModel.onUndoDelete() else viewModel.onUndoGone()
     }
     val message = when (val it = state.message) {
-        is WorkoutLogMessage.TooManySets -> stringResource(R.string.exercises_max_sets, it.max)
+        is WorkoutLogMessage.TooManySets -> stringResource(DesignR.string.exercises_max_sets, it.max)
         null -> null
     }
     // Shown outside the effect: clearing the message restarts the effect, which would cancel the snackbar with it
@@ -269,7 +269,7 @@ private fun keypadEntry(state: WorkoutLogState, viewModel: WorkoutLogViewModel):
         title = exerciseName(state.blocks, focus.ref),
         decimal = focus.field == ValueField.Weight,
         toggle = AppKeypadToggle(
-            options = listOf(stringResource(R.string.workout_log_reps), stringResource(R.string.workout_log_time)),
+            options = listOf(stringResource(DesignR.string.workout_log_reps), stringResource(DesignR.string.workout_log_time)),
             selected = if (set.mode == SetMode.Time) 1 else 0,
             onSelect = { viewModel.onModeSelected(if (it == 1) SetMode.Time else SetMode.Reps) },
         ),
@@ -279,7 +279,7 @@ private fun keypadEntry(state: WorkoutLogState, viewModel: WorkoutLogViewModel):
                     KeypadMainKey.Next -> R.string.workout_log_next
                     KeypadMainKey.CompleteSet -> DesignR.string.workout_log_complete_set
                     KeypadMainKey.StartTimer -> DesignR.string.workout_log_start_timer
-                    KeypadMainKey.Done -> R.string.workout_log_done
+                    KeypadMainKey.Done -> DesignR.string.workout_log_done
                 },
             ),
             // The tick's and the timer button's icons, for the keys that press them
@@ -324,7 +324,7 @@ private fun Header(state: WorkoutLogState, viewModel: WorkoutLogViewModel, onOpe
 // A faded example of what the table becomes, which can't be touched
 @Composable
 private fun EmptyTable(contentPadding: PaddingValues, unit: WeightUnit) {
-    val name = stringResource(R.string.workout_log_example_exercise)
+    val name = stringResource(DesignR.string.workout_log_example_exercise)
     val example = remember(name, unit) {
         // A round number in either unit
         val weightKg = if (unit == WeightUnit.POUND) UnitUtils.lbToKg(45f) else 20f

@@ -14,4 +14,6 @@ dependencies {
     api(libs.kotlin.test.junit)
     api(libs.truth)
     api(libs.kotlinx.coroutines.android)
+    // The preferences fakes install themselves in PreferencesManager
+    api(projects.android.common.persistence)
 }

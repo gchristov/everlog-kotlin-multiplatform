@@ -49,4 +49,12 @@
     <string name="workout_log_move">Move</string>
     <string name="workout_log_rest_less">Less rest</string>
     <string name="workout_log_rest_more">More rest</string>
+    <string name="exercises_max_sets">You cannot add more than %1$d sets per exercise</string>
+    <string name="workout_log_add_exercise">Add exercise</string>
+    <string name="workout_log_done">Done</string>
+    <string name="workout_log_example_exercise">Example exercise</string>
+    <string name="workout_log_reps">Reps</string>
+    <string name="workout_log_set_deleted">Set deleted</string>
+    <string name="workout_log_time">Time</string>
+    <string name="workout_log_undo">Undo</string>
 </resources>
