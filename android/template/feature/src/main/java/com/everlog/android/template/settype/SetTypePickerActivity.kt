@@ -1,0 +1,88 @@
+package com.everlog.android.template.settype
+
+import android.view.View
+import androidx.appcompat.widget.Toolbar
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.updateLayoutParams
+import androidx.core.view.updatePadding
+import androidx.recyclerview.widget.LinearLayoutManager
+import com.everlog.android.common.mvp.activity.BaseActivity
+import com.everlog.android.common.mvp.activity.BaseActivityMvpView
+import com.everlog.android.common.mvp.activity.BaseActivityPresenter
+import com.everlog.android.template.R
+import com.everlog.android.template.TemplateExtras
+import com.everlog.android.template.TemplateScreenNames
+import com.everlog.android.template.databinding.ActivitySetTypePickerBinding
+import com.everlog.android.common.design.R as DesignR
+
+class SetTypePickerActivity : BaseActivity(), MvpViewSetTypePicker {
+
+    private var mPresenter: PresenterSetTypePicker? = null
+    private lateinit var binding: ActivitySetTypePickerBinding
+
+    override fun onActivityCreated() {
+        setupInsets()
+        setupTopBar()
+        setupListView()
+    }
+
+    private fun setupInsets() {
+        ViewCompat.setOnApplyWindowInsetsListener(binding.root) { _, insets ->
+            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
+            val toolbarHeight = resources.getDimensionPixelSize(androidx.appcompat.R.dimen.abc_action_bar_default_height_material)
+
+            val appBar = binding.root.findViewById<View>(R.id.appBar)
+            appBar?.updatePadding(top = systemBars.top)
+            appBar?.updateLayoutParams {
+                height = toolbarHeight + systemBars.top
+            }
+
+            binding.recyclerView.updatePadding(
+                bottom = systemBars.bottom + resources.getDimensionPixelSize(DesignR.dimen.activity_margin)
+            )
+            insets
+        }
+    }
+
+    override fun getLayoutResId(): Int {
+        return R.layout.activity_set_type_picker
+    }
+
+    override fun getBindingView(): View? {
+        binding = ActivitySetTypePickerBinding.inflate(layoutInflater)
+        return binding.root
+    }
+
+    override fun <T : BaseActivityMvpView> getPresenter(): BaseActivityPresenter<T>? {
+        return mPresenter as? BaseActivityPresenter<T>
+    }
+
+    override fun getAnalyticsScreenName(): String {
+        return TemplateScreenNames.SET_TYPE_PICKER
+    }
+
+    override fun getSelectedExercisesCount(): Int {
+        return intent?.getIntExtra(TemplateExtras.EXERCISE_COUNT, 1) ?: 1
+    }
+
+    // Setup
+
+    override fun setupPresenter() {
+        mPresenter = PresenterSetTypePicker()
+    }
+
+    private fun setupTopBar() {
+        binding.root.findViewById<Toolbar>(R.id.toolbar).setNavigationIcon(DesignR.drawable.ic_clear_white)
+        setSupportActionBar(binding.root.findViewById(R.id.toolbar))
+        supportActionBar?.setTitle(R.string.select_set_type)
+        supportActionBar?.subtitle = resources.getQuantityString(R.plurals.select_set_type_subtitle, getSelectedExercisesCount(), getSelectedExercisesCount())
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+    }
+
+    private fun setupListView() {
+        val mLayoutManager = LinearLayoutManager(this)
+        binding.recyclerView.layoutManager = mLayoutManager
+        binding.recyclerView.adapter = mPresenter?.getListAdapter()
+    }
+}

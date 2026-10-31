@@ -6,7 +6,7 @@ import com.everlog.R
 import com.everlog.android.common.data.model.exercise.ELExerciseGroup
 import com.everlog.android.common.data.model.workout.RangeType
 import com.everlog.android.common.session.SessionDefaults
-import com.everlog.android.exercise.feature.picker.ExercisePickerActivity
+import com.everlog.android.exercise.picker.ExercisePickerActivity
 import com.everlog.managers.ErrorManager
 import com.everlog.managers.analytics.AnalyticsManager
 import com.everlog.ui.fragments.home.activity.history.HistoryHomeFragment

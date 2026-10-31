@@ -3,7 +3,7 @@ plugins {
 }
 
 android {
-    namespace = "com.everlog.android.template.feature"
+    namespace = "com.everlog.android.template"
     buildFeatures {
         viewBinding = true
     }

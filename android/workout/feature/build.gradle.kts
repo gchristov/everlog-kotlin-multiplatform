@@ -3,7 +3,7 @@ plugins {
 }
 
 android {
-    namespace = "com.everlog.android.workout.feature"
+    namespace = "com.everlog.android.workout"
 }
 
 dependencies {

@@ -7,9 +7,9 @@ import com.everlog.android.common.kotlin.WeightUnit
 import com.everlog.android.common.mvp.MvpBroadcasts
 import com.everlog.android.settings.data.SettingsManager
 import com.everlog.android.settings.data.SettingsManager.MuscleGoal
-import com.everlog.android.workout.feature.WorkoutScreenNames
-import com.everlog.android.workout.feature.setsuggestions.SetSuggestionsAnalytics
-import com.everlog.android.workout.feature.setsuggestions.SetSuggestionsSettings
+import com.everlog.android.workout.WorkoutScreenNames
+import com.everlog.android.workout.setsuggestions.SetSuggestionsAnalytics
+import com.everlog.android.workout.setsuggestions.SetSuggestionsSettings
 import com.everlog.managers.analytics.AnalyticsManager
 
 class AppSetSuggestionsSettings(context: Context) : SetSuggestionsSettings {

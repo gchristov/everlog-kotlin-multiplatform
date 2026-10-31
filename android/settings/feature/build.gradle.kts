@@ -3,7 +3,7 @@ plugins {
 }
 
 android {
-    namespace = "com.everlog.android.settings.feature"
+    namespace = "com.everlog.android.settings"
 }
 
 dependencies {

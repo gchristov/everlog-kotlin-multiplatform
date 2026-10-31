@@ -3,7 +3,7 @@ plugins {
 }
 
 android {
-    namespace = "com.everlog.android.exercise.feature"
+    namespace = "com.everlog.android.exercise"
     buildFeatures {
         viewBinding = true
     }

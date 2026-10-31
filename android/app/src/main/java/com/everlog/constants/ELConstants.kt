@@ -1,8 +1,8 @@
 package com.everlog.constants
 
 import com.everlog.BuildConfig
-import com.everlog.android.exercise.feature.ExerciseExtras
-import com.everlog.android.exercise.feature.picker.ExercisePickerActivity
+import com.everlog.android.exercise.ExerciseExtras
+import com.everlog.android.exercise.picker.ExercisePickerActivity
 
 object ELConstants {
 

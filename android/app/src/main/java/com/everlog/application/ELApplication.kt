@@ -5,9 +5,9 @@ import com.everlog.android.common.data.CommonData
 import com.everlog.android.common.kotlin.AppContext
 import com.everlog.android.common.mvp.CommonMvp
 import com.everlog.android.exercise.data.ExerciseData
-import com.everlog.android.exercise.feature.ExerciseFeature
-import com.everlog.android.template.feature.TemplateFeature
-import com.everlog.android.workout.feature.WorkoutFeature
+import com.everlog.android.exercise.ExerciseFeature
+import com.everlog.android.template.TemplateFeature
+import com.everlog.android.workout.WorkoutFeature
 import com.everlog.application.features.AppCommonDataDependencies
 import com.everlog.application.features.AppCommonMvpDependencies
 import com.everlog.application.features.AppExerciseDataDependencies

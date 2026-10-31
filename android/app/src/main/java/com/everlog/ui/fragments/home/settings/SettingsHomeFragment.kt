@@ -20,7 +20,7 @@ import com.everlog.android.settings.data.model.ELIntegration
 import com.everlog.databinding.FragmentHomeSettingsBinding
 import com.everlog.managers.RemoteConfigManager
 import com.everlog.managers.analytics.AnalyticsConstants
-import com.everlog.android.workout.feature.setsuggestions.SetSuggestion
+import com.everlog.android.workout.setsuggestions.SetSuggestion
 import com.everlog.ui.dialog.AppDialogs
 import com.everlog.ui.views.CheckBoxTriStates
 import com.everlog.android.common.mvp.util.ViewUtils

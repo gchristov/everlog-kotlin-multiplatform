@@ -89,7 +89,7 @@
         <!-- Services -->
 
         <service
-            android:name="com.everlog.android.workout.feature.notification.WorkoutService"
+            android:name="com.everlog.android.workout.notification.WorkoutService"
             android:exported="false"
             android:foregroundServiceType="health" />
         <service
@@ -142,13 +142,13 @@
             android:windowSoftInputMode="stateHidden"
             android:exported="false" />
         <activity
-            android:name="com.everlog.android.exercise.feature.create.CreateExerciseActivity"
+            android:name="com.everlog.android.exercise.create.CreateExerciseActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:theme="@style/AppTheme.NoActionBar"
             android:windowSoftInputMode="stateHidden|adjustResize"
             android:exported="false" />
         <activity
-            android:name="com.everlog.android.exercise.feature.details.ExerciseDetailsActivity"
+            android:name="com.everlog.android.exercise.details.ExerciseDetailsActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:theme="@style/AppTheme.NoActionBar"
             android:windowSoftInputMode="stateHidden"
@@ -160,7 +160,7 @@
             android:windowSoftInputMode="stateHidden"
             android:exported="false" />
         <activity
-            android:name="com.everlog.android.template.feature.picker.RoutinePickerActivity"
+            android:name="com.everlog.android.template.picker.RoutinePickerActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:theme="@style/AppTheme.NoActionBar"
             android:windowSoftInputMode="stateHidden"
@@ -172,19 +172,19 @@
             android:windowSoftInputMode="stateHidden"
             android:exported="false" />
         <activity
-            android:name="com.everlog.android.template.feature.editor.TemplateEditorActivity"
+            android:name="com.everlog.android.template.editor.TemplateEditorActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:theme="@style/AppTheme.NoActionBar"
             android:windowSoftInputMode="stateHidden|adjustNothing"
             android:exported="false" />
         <activity
-            android:name="com.everlog.android.template.feature.details.RoutineDetailsActivity"
+            android:name="com.everlog.android.template.details.RoutineDetailsActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:theme="@style/AppTheme.NoActionBar"
             android:windowSoftInputMode="stateHidden"
             android:exported="false" />
         <activity
-            android:name="com.everlog.android.workout.feature.log.WorkoutLogActivity"
+            android:name="com.everlog.android.workout.log.WorkoutLogActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:launchMode="singleTask"
             android:theme="@style/AppTheme.NoActionBar"
@@ -197,7 +197,7 @@
             android:windowSoftInputMode="stateHidden"
             android:exported="false" />
         <activity
-            android:name="com.everlog.android.template.feature.perform.PerformRoutineActivity"
+            android:name="com.everlog.android.template.perform.PerformRoutineActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:theme="@style/AppTheme.NoActionBar"
             android:windowSoftInputMode="stateHidden"
@@ -209,11 +209,11 @@
             android:windowSoftInputMode="stateHidden"
             android:exported="false" />
         <activity
-            android:name="com.everlog.android.showcase.feature.DesignSystemActivity"
+            android:name="com.everlog.android.showcase.DesignSystemActivity"
             android:theme="@style/AppTheme.NoActionBar"
             android:exported="false" />
         <activity
-            android:name="com.everlog.android.exercise.feature.picker.ExercisePickerActivity"
+            android:name="com.everlog.android.exercise.picker.ExercisePickerActivity"
             android:theme="@style/AppTheme.NoActionBar"
             android:windowSoftInputMode="adjustResize"
             android:exported="false" />
@@ -222,7 +222,7 @@
             android:theme="@style/AppTheme.NoActionBar"
             android:exported="false" />
         <activity
-            android:name="com.everlog.android.workout.feature.setsuggestions.SetSuggestionsActivity"
+            android:name="com.everlog.android.workout.setsuggestions.SetSuggestionsActivity"
             android:theme="@style/AppTheme.NoActionBar"
             android:exported="false" />
         <activity
@@ -232,7 +232,7 @@
             android:windowSoftInputMode="stateHidden"
             android:exported="false" />
         <activity
-            android:name="com.everlog.android.template.feature.settype.SetTypePickerActivity"
+            android:name="com.everlog.android.template.settype.SetTypePickerActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:theme="@style/AppTheme.NoActionBar"
             android:windowSoftInputMode="stateHidden"

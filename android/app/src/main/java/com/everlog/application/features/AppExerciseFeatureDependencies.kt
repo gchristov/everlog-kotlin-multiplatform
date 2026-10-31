@@ -12,10 +12,10 @@ import com.everlog.android.exercise.data.LoadExerciseLibraryUseCase
 import com.everlog.android.exercise.data.RealExerciseRepository
 import com.everlog.android.exercise.data.RealLoadExerciseGuideUseCase
 import com.everlog.android.exercise.data.RealLoadExerciseLibraryUseCase
-import com.everlog.android.exercise.feature.ExerciseAnalytics
-import com.everlog.android.exercise.feature.ExerciseFeatureDependencies
-import com.everlog.android.exercise.feature.ExerciseFeedbackForm
-import com.everlog.android.exercise.feature.picker.ExercisePickerAnalytics
+import com.everlog.android.exercise.ExerciseAnalytics
+import com.everlog.android.exercise.ExerciseFeatureDependencies
+import com.everlog.android.exercise.ExerciseFeedbackForm
+import com.everlog.android.exercise.picker.ExercisePickerAnalytics
 import com.everlog.android.template.data.RealRoutineRepository
 import com.everlog.android.workout.data.RealWorkoutRepository
 import com.everlog.config.AppConfig
@@ -25,7 +25,7 @@ import com.everlog.constants.ELConstants
 import com.everlog.data.datastores.ELDatastore
 import com.everlog.data.sync.AppDataSync
 import com.everlog.managers.RemoteConfigManager
-import com.everlog.android.exercise.feature.details.ExerciseDetailsActivity
+import com.everlog.android.exercise.details.ExerciseDetailsActivity
 import com.everlog.ui.navigator.ELNavigator
 import com.everlog.ui.navigator.feedbackFormLauncher
 import kotlinx.coroutines.Dispatchers

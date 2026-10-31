@@ -1,7 +1,7 @@
 package com.everlog.application.features
 
-import com.everlog.android.exercise.feature.picker.ExercisePickerAnalytics
-import com.everlog.android.exercise.feature.picker.PickerMode
+import com.everlog.android.exercise.picker.ExercisePickerAnalytics
+import com.everlog.android.exercise.picker.PickerMode
 import com.everlog.managers.analytics.AnalyticsConstants
 import com.everlog.managers.analytics.AnalyticsManager
 

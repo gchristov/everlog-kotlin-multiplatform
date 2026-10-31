@@ -3,7 +3,7 @@ plugins {
 }
 
 android {
-    namespace = "com.everlog.android.history.feature"
+    namespace = "com.everlog.android.history"
 }
 
 dependencies {

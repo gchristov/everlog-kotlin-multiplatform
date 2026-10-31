@@ -20,7 +20,7 @@ import com.everlog.android.exercise.data.store.ELExercisesStore.ELColStoreExerci
 import com.everlog.managers.analytics.AnalyticsManager
 // import icepick.State
 import com.everlog.android.common.mvp.activity.BaseActivityPresenter
-import com.everlog.android.exercise.feature.details.ExerciseDetailsActivity
+import com.everlog.android.exercise.details.ExerciseDetailsActivity
 import com.everlog.ui.adapters.exercise.group.ExerciseGroupCreateAdapter
 import com.everlog.ui.adapters.exercise.group.ExerciseGroupCreateHeaderAdapter
 import com.everlog.ui.adapters.items.ExerciseGroupCreateHeader

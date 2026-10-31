@@ -3,7 +3,7 @@ plugins {
 }
 
 android {
-    namespace = "com.everlog.android.showcase.feature"
+    namespace = "com.everlog.android.showcase"
 }
 
 dependencies {

@@ -2,7 +2,7 @@ package com.everlog.ui.activities.home.routine.create
 
 import android.content.Context
 import android.content.Intent
-import com.everlog.android.template.feature.editor.TemplateEditorActivity
+import com.everlog.android.template.editor.TemplateEditorActivity
 import com.everlog.managers.RemoteConfigManager
 
 /**

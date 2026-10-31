@@ -3,7 +3,7 @@ plugins {
 }
 
 android {
-    namespace = "com.everlog.android.onboarding.feature"
+    namespace = "com.everlog.android.onboarding"
 }
 
 dependencies {

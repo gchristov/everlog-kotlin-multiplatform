@@ -8,9 +8,9 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
 import com.everlog.android.settings.data.SettingsManager
 import com.everlog.android.settings.data.SettingsManager.MuscleGoal
-import com.everlog.android.workout.feature.setsuggestions.SetSuggestion
-import com.everlog.android.workout.feature.setsuggestions.SetSuggestionsActivity
-import com.everlog.android.workout.feature.setsuggestions.SetSuggestionsTags
+import com.everlog.android.workout.setsuggestions.SetSuggestion
+import com.everlog.android.workout.setsuggestions.SetSuggestionsActivity
+import com.everlog.android.workout.setsuggestions.SetSuggestionsTags
 import java.util.concurrent.TimeUnit
 import org.junit.After
 import org.junit.Before
