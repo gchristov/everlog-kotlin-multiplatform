@@ -191,7 +191,7 @@
             android:windowSoftInputMode="stateHidden|adjustNothing"
             android:exported="false" />
         <activity
-            android:name=".ui.activities.home.workout.details.WorkoutDetailsActivity"
+            android:name="com.everlog.android.workout.details.WorkoutDetailsActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:theme="@style/AppTheme.NoActionBar"
             android:windowSoftInputMode="stateHidden"

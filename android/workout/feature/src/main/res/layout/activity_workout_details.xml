@@ -41,8 +41,7 @@
                 android:focusable="false"
                 android:focusableInTouchMode="false"
                 android:paddingBottom="@dimen/footer_bottom_padding_double"
-                tools:itemCount="1"
-                tools:listitem="@layout/row_exercise_group_create" />
+                tools:itemCount="1" />
         </FrameLayout>
     </LinearLayout>
 

@@ -44,7 +44,7 @@ class ResetPasswordActivity : BaseActivity(), MvpViewResetPassword {
                 height = toolbarHeight + systemBars.top
             }
 
-            val extraPadding = resources.getDimensionPixelSize(R.dimen.activity_margin_triple)
+            val extraPadding = resources.getDimensionPixelSize(DesignR.dimen.activity_margin_triple)
             binding.contentLayout.updatePadding(
                 top = systemBars.top + toolbarHeight + extraPadding,
                 bottom = systemBars.bottom

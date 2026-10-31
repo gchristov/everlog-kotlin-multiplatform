@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="konfetti_lt_orange">#ff726d</color>
+    <color name="konfetti_lt_pink">#f4306d</color>
+    <color name="konfetti_lt_purple">#b48def</color>
+    <color name="konfetti_lt_yellow">#fce18a</color>
+</resources>

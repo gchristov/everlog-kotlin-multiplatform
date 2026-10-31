@@ -1,6 +1,5 @@
 <resources>
 
-    <dimen name="activity_margin_triple">48dp</dimen>
 
 
 
@@ -28,9 +27,6 @@
     <dimen name="settings_card_content_margin_left">@dimen/activity_margin</dimen>
     <dimen name="settings_category_title_margin_vertical">@dimen/activity_margin</dimen>
     <dimen name="settings_row_padding_right">10dp</dimen>
-    <dimen name="settings_row_padding_top">@dimen/activity_margin</dimen>
-    <dimen name="settings_row_padding_bottom">@dimen/activity_margin</dimen>
-    <dimen name="settings_row_text_size">16sp</dimen>
     <dimen name="settings_row_subtitle_text_size">13sp</dimen>
     <dimen name="settings_item_icon_size">30dp</dimen>
 

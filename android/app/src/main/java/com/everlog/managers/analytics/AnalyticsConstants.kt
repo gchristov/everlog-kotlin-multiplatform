@@ -18,7 +18,6 @@ class AnalyticsConstants {
         const val SCREEN_HOME_HISTORY = "screen_history"
         const val SCREEN_EXERCISE_GROUPS_CREATE = "screen_create_exercise_groups"
         const val SCREEN_ROUTINE_CREATE = "screen_create_routine"
-        const val SCREEN_WORKOUT_DETAILS = "screen_workout_details"
         const val SCREEN_WEB_VIEW = "screen_web_view"
         const val SCREEN_PRO = "screen_pro"
         const val SCREEN_COVER_IMAGE_PICKER = "screen_cover_image_picker"

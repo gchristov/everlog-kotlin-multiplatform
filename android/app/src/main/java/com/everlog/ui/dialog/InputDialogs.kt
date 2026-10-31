@@ -44,7 +44,7 @@ internal class InputDialogs {
                     layoutResId = R.layout.dialog_input_string
                 }
                 StringDialogType.WORKOUT_NOTE -> {
-                    title = context.getString(R.string.notes)
+                    title = context.getString(DesignR.string.notes)
                     layoutResId = R.layout.dialog_input_string_multiline
                 }
             }
@@ -79,7 +79,7 @@ internal class InputDialogs {
                         positiveButtonPublish.onNext(text)
                         dialog.dismiss()
                     } else {
-                        ToastBuilder.showToast(context, context.getString(R.string.create_routine_error_no_title))
+                        ToastBuilder.showToast(context, context.getString(DesignR.string.create_routine_error_no_title))
                     }
                 }
                 val negativeBtn = dialog.getButton(AlertDialog.BUTTON_NEGATIVE)

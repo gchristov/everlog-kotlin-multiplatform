@@ -179,4 +179,18 @@
         <item name="android:shadowDy">@integer/cover_text_shadow_d</item>
         <item name="android:shadowRadius">@integer/cover_text_shadow_radius</item>
     </style>
+    <style name="SettingsTitle">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textColor">@color/white_darker</item>
+        <item name="android:textSize">@dimen/settings_row_text_size</item>
+    </style>
+    <style name="SettingsValue">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textColor">@color/main_accent</item>
+        <item name="android:textSize">@dimen/settings_row_text_size</item>
+        <item name="android:layout_marginRight">@dimen/activity_margin_half_half_half</item>
+        <item name="android:textStyle">bold</item>
+    </style>
 </resources>

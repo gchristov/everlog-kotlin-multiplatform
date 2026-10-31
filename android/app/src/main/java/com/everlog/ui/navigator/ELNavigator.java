@@ -56,7 +56,7 @@ import com.everlog.android.template.settype.SetTypePickerActivity;
 import com.everlog.android.workout.data.notification.ShownSet;
 import com.everlog.android.workout.data.notification.WorkoutBroadcasts;
 import com.everlog.ui.activities.home.web.WebViewActivity;
-import com.everlog.ui.activities.home.workout.details.WorkoutDetailsActivity;
+import com.everlog.android.workout.details.WorkoutDetailsActivity;
 import com.everlog.ui.activities.login.LoginActivity;
 import com.everlog.ui.activities.login.resetpassword.ResetPasswordActivity;
 import com.everlog.android.workout.setsuggestions.SetSuggestionsActivity;

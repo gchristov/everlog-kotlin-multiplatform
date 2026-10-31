@@ -64,26 +64,12 @@
     <style name="SettingsCategory.Large">
         <item name="android:textSize">18sp</item>
     </style>
-    <style name="SettingsTitle">
-        <item name="android:layout_width">match_parent</item>
-        <item name="android:layout_height">wrap_content</item>
-        <item name="android:textColor">@color/white_darker</item>
-        <item name="android:textSize">@dimen/settings_row_text_size</item>
-    </style>
     <style name="SettingsSubtitle">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:textColor">@color/gray_1</item>
         <item name="android:textSize">@dimen/settings_row_subtitle_text_size</item>
         <item name="android:layout_marginTop">@dimen/activity_margin_half_half</item>
-    </style>
-    <style name="SettingsValue">
-        <item name="android:layout_width">wrap_content</item>
-        <item name="android:layout_height">wrap_content</item>
-        <item name="android:textColor">@color/main_accent</item>
-        <item name="android:textSize">@dimen/settings_row_text_size</item>
-        <item name="android:layout_marginRight">@dimen/activity_margin_half_half_half</item>
-        <item name="android:textStyle">bold</item>
     </style>
     <style name="SettingsIcon">
         <item name="android:layout_width">@dimen/settings_item_icon_size</item>

@@ -1,5 +1,6 @@
 package com.everlog.ui.dialog
 
+import com.everlog.android.common.design.R as DesignR
 import android.app.Dialog
 import android.content.Context
 import com.everlog.R
@@ -29,7 +30,7 @@ internal class AppBlockerDialogs {
                     title = context.getString(R.string.notifications_newsletter_title)
                     message = context.getString(R.string.notifications_newsletter_prompt, LocalUserManager.getUser()!!.getFirstName())
                     yes = context.getString(R.string.notifications_newsletter_prompt_yes)
-                    no = context.getString(R.string.no_thanks)
+                    no = context.getString(DesignR.string.no_thanks)
                 }
             }
             val data = DialogBuilder.buildPrompt(context, title, message, yes, no)

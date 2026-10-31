@@ -5,7 +5,6 @@ import android.app.Activity
 import android.content.DialogInterface
 import android.content.Intent
 import com.ahamed.multiviewadapter.DataListManager
-import com.everlog.R
 import com.everlog.android.common.data.model.ELRoutine
 import com.everlog.android.common.data.model.ELRoutine.Companion.buildNewRoutine
 import com.everlog.android.common.data.model.exercise.ELExerciseGroup
@@ -97,12 +96,12 @@ class PresenterCreateRoutine : PresenterCreateExerciseGroups<MvpViewCreateRoutin
     override fun performSave(exerciseGroups: ArrayList<ELExerciseGroup>) {
         val name = toEdit?.name
         if (name?.isEmpty() == true) {
-            mvpView?.showToast(R.string.create_routine_error_no_title)
+            mvpView?.showToast(DesignR.string.create_routine_error_no_title)
         } else {
             if (mLocalChangesMade) {
                 val toSave = buildChangedItem(exerciseGroups)
                 ELDatastore.routineStore().create(toSave, SetOptions.merge())
-                mvpView?.showToast(R.string.create_routine_saved)
+                mvpView?.showToast(DesignR.string.create_routine_saved)
                 if (mEditMode) {
                     AnalyticsManager.manager.routineModified()
                     // Replace routine for ongoing plan

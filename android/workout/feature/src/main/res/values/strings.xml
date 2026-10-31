@@ -69,4 +69,12 @@
     <string name="workout_notification_tap_to_edit">Tap to edit</string>
     <string name="workout_notification_up_next">"Next: %1$s • %2$s"</string>
     <string name="workout_rest_time">"Rest • %1$s"</string>
+    <string name="date">Date</string>
+    <string name="name">Name</string>
+    <string name="workout_details_breakdown">@string/exercises_title</string>
+    <string name="workout_details_date_future_error">You cannot set date in the future</string>
+    <string name="workout_details_save_prompt">Would you like to save this session as a template so you can quickly perform it again next time?</string>
+    <string name="workout_details_save_success">Successfully saved to Your Workouts</string>
+    <string name="workout_details_save_title">Save Template</string>
+    <string name="workout_details_title">Session Summary</string>
 </resources>
