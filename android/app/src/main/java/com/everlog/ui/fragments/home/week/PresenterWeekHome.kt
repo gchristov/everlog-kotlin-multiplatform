@@ -166,7 +166,7 @@ class PresenterWeekHome : BaseFragmentPresenter<MvpViewWeekHome>() {
     }
 
     private fun observePlanSkipConfirm() {
-        subscriptions.add(mvpView.showPrompt(R.string.home_week_plan_skip, R.string.home_week_plan_skip_prompt, R.string.home_week_plan_skip, DesignR.string.cancel)
+        subscriptions.add(mvpView.showPrompt(DesignR.string.home_week_plan_skip, R.string.home_week_plan_skip_prompt, DesignR.string.home_week_plan_skip, DesignR.string.cancel)
                 .compose(applyUISchedulers())
                 .subscribe({ action: Int ->
                     if (action == DialogInterface.BUTTON_POSITIVE) {

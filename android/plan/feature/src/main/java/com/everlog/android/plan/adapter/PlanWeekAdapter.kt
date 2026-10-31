@@ -1,4 +1,4 @@
-package com.everlog.ui.adapters.plan
+package com.everlog.android.plan.adapter
 
 import com.everlog.android.common.design.R as DesignR
 import android.content.Context
@@ -9,9 +9,9 @@ import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import com.ahamed.multiviewadapter.ItemBinder
 import com.ahamed.multiviewadapter.ItemViewHolder
-import com.everlog.R
+import com.everlog.android.plan.R
 import com.everlog.android.plan.data.model.ELPlanWeek
-import com.everlog.databinding.RowPlanWeekBinding
+import com.everlog.android.plan.databinding.RowPlanWeekBinding
 import com.everlog.android.common.mvp.list.OnListItemListener
 import com.everlog.android.common.mvp.view.showPopupMenu
 

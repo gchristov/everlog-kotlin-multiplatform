@@ -20,7 +20,7 @@
         tools:itemCount="1"
         tools:listitem="@layout/row_plan_day" />
 
-    <com.everlog.ui.views.notification.warning.WarningNotificationView
+    <com.everlog.android.plan.create.WarningNotificationView
         android:id="@+id/proUpgradePrompt"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

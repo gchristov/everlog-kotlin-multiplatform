@@ -1,4 +1,4 @@
-package com.everlog.ui.activities.home.plan.details
+package com.everlog.android.plan.details
 
 import com.everlog.android.plan.data.model.ELPlan
 import com.everlog.android.common.mvp.activity.BaseActivityMvpView

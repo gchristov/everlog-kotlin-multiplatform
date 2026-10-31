@@ -73,7 +73,7 @@
                 tools:text="Build: CHEST + TRIS" />
         </LinearLayout>
 
-        <com.everlog.ui.views.badge.ProLockBadge
+        <com.everlog.android.common.mvp.view.ProLockBadge
             android:id="@+id/proBadgeComplete"
             android:layout_width="@dimen/options_menu_icon_size"
             android:layout_height="@dimen/options_menu_icon_size"
@@ -147,7 +147,7 @@
                             tools:text="Build: CHEST + TRIS" />
                     </LinearLayout>
 
-                    <com.everlog.ui.views.badge.ProLockBadge
+                    <com.everlog.android.common.mvp.view.ProLockBadge
                         android:id="@+id/proBadgeIncomplete"
                         android:layout_width="@dimen/options_menu_icon_size"
                         android:layout_height="@dimen/options_menu_icon_size"

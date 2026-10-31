@@ -178,7 +178,6 @@ dependencies {
     implementation(libs.hyperlog)
     implementation(libs.volley)
 
-    implementation(libs.collapsingtoolbar.subtitle)
     implementation(libs.scrollingpagerindicator)
 
     implementation(libs.flexbox)

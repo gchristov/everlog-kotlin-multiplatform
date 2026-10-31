@@ -413,7 +413,7 @@ internal fun OnboardingFooter(
             AppFooterAction(text = stringResource(R.string.onboarding_skip), onClick = viewModel::onSkip, style = AppFooterAction.Style.Secondary),
         )
         FooterMode.Editing -> listOf(
-            AppFooterAction(text = stringResource(R.string.done), onClick = viewModel::onSubmit, enabled = state.canContinue),
+            AppFooterAction(text = stringResource(DesignR.string.done), onClick = viewModel::onSubmit, enabled = state.canContinue),
             AppFooterAction(text = stringResource(DesignR.string.cancel), onClick = viewModel::onCancel, style = AppFooterAction.Style.Tertiary),
         )
         FooterMode.Reminders -> listOf(

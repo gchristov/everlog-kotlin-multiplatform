@@ -45,8 +45,8 @@ import com.everlog.android.exercise.details.ExerciseDetailsActivity;
 import com.everlog.ui.activities.home.exercisegroup.DefaultCreateExerciseGroupsActivity;
 import com.everlog.ui.activities.home.integration.IntegrationActivity;
 import com.everlog.ui.activities.home.musclegoal.MuscleGoalActivity;
-import com.everlog.ui.activities.home.plan.create.CreatePlanActivity;
-import com.everlog.ui.activities.home.plan.details.PlanDetailsActivity;
+import com.everlog.android.plan.create.CreatePlanActivity;
+import com.everlog.android.plan.details.PlanDetailsActivity;
 import com.everlog.ui.activities.home.pro.ProActivity;
 import com.everlog.android.template.picker.RoutinePickerActivity;
 import com.everlog.ui.activities.home.routine.create.CreateRoutineActivity;
@@ -79,7 +79,6 @@ import rx.Observable;
 import timber.log.Timber;
 
 import static com.everlog.constants.ELConstants.EXTRA_EXERCISE;
-import static com.everlog.constants.ELConstants.EXTRA_PLAN_UUID;
 import static com.everlog.constants.ELConstants.EXTRA_ROUTINE;
 import static com.everlog.constants.ELConstants.EXTRA_VIEW_ONLY;
 import static com.everlog.constants.ELConstants.EXTRA_WEB_TITLE;
@@ -430,24 +429,17 @@ public class ELNavigator implements Navigator {
 
     @Override
     public void openCoverImagePicker() {
-        Intent intent = new Intent(mContext, CoverImagePickerActivity.class);
-        startActivityForResult(intent, ELActivityRequestCodes.REQUEST_PICK_COVER_IMAGE);
+        startActivityForResult(CoverImagePickerActivity.launchIntent(mContext), ELActivityRequestCodes.REQUEST_PICK_COVER_IMAGE);
     }
 
     @Override
     public void openEditPlan(ELPlan plan) {
-        Intent intent = new Intent(mContext, CreatePlanActivity.class);
-        if (plan != null) {
-            intent.putExtra(EXTRA_PLAN_UUID, plan.getUuid());
-        }
-        startActivity(intent);
+        startActivity(CreatePlanActivity.launchIntent(mContext, plan));
     }
 
     @Override
     public void openPlanDetails(ELPlan plan) {
-        Intent intent = new Intent(mContext, PlanDetailsActivity.class);
-        intent.putExtra(EXTRA_PLAN_UUID, plan.getUuid());
-        startActivity(intent);
+        startActivity(PlanDetailsActivity.launchIntent(mContext, plan));
     }
 
     @Override

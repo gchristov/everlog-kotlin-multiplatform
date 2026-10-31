@@ -3,18 +3,6 @@
 
     <string name="notification_channel_normal">my_channel_id_02</string>
 
-    <plurals name="workouts">
-        <item quantity="one">%1$d workout</item>
-        <item quantity="other">%1$d workouts</item>
-    </plurals>
-    <plurals name="days">
-        <item quantity="one">%1$d day</item>
-        <item quantity="other">%1$d days</item>
-    </plurals>
-    <plurals name="weeks">
-        <item quantity="one">%1$d week</item>
-        <item quantity="other">%1$d weeks</item>
-    </plurals>
     <plurals name="months">
         <item quantity="one">%1$d month</item>
         <item quantity="other">%1$d months</item>
@@ -25,19 +13,13 @@
     </plurals>
     <string name="lb">lb</string>
     <string name="sets">Sets</string>
-    <string name="stop">Stop</string>
     <string name="start">Start</string>
     <string name="resume">Resume</string>
     <string name="disable">Disable</string>
     <string name="edit">Edit</string>
-    <string name="done">Done</string>
-    <string name="tap_to_setup">Tap to setup</string>
-    <string name="tap_to_setup_upgrade">Pro upgrade required</string>
-    <string name="continue_">Continue</string>
     <string name="clear">Clear</string>
     <string name="add">Add</string>
     <string name="time">Time</string>
-    <string name="complete">Complete</string>
 
 
 
@@ -89,8 +71,6 @@
     <string name="home_week_goal_achieved">Goal\nachieved!</string>
     <string name="home_week_goal_left">more to go!</string>
     <string name="home_week_plan">Plan</string>
-    <string name="home_week_plan_start">Start day</string>
-    <string name="home_week_plan_skip">Skip</string>
     <string name="home_week_plan_skip_prompt">Once a day is skipped you will not be able to go back and redo it. Are you sure you want to skip this day?</string>
     <string name="home_week_plan_finish">Finish plan</string>
     <string name="home_week_empty_title">Ready to train?</string>
@@ -179,38 +159,10 @@
     <string name="pro_restore_success">Your previous membership has been restored successfully!</string>
     <string name="pro_free_trial">7-DAY FREE TRIAL</string>
     <string name="pro_free_trial_highlight">FREE TRIAL</string>
-    <string name="pro_prompt_plan_title">Free plans are limited to %1$d day a week</string>
-    <string name="pro_prompt_plan_subtitle">Tap to upgrade and unlock unlimited plan schedules</string>
-    <string name="pro_prompt_muscle_goals_title">Training goals are locked</string>
-    <string name="pro_prompt_muscle_goals_subtitle">Tap to upgrade and unlock weight suggestions based on your One Rep Max</string>
 
 
-    <string name="cover_picker_edit_image_title">Edit image</string>
 
-    <string name="create_plan_title">New Plan</string>
-    <string name="create_plan_title_edit">Edit Plan</string>
-    <string name="create_plan_name">Name your plan</string>
-    <string name="create_plan_weeks">Workout Schedule</string>
-    <string name="create_plan_error_no_title">Please enter a title for your plan</string>
-    <string name="create_plan_saved">Plan saved</string>
-    <string name="create_plan_add_week_prompt">Add new week</string>
-    <string name="create_plan_new_week">New week</string>
-    <string name="create_plan_cannot_be_empty_prompt">Plans must have at least one week</string>
-    <string name="create_plan_error_max_weeks">You cannot add more weeks to this plan</string>
-    <string name="create_plan_week_deleted">Week deleted</string>
 
-    <string name="plan_details_start">Start plan</string>
-    <string name="plan_details_start_no_workouts">Plan must have at least one workout to be started</string>
-    <string name="plan_details_stop">Stop plan</string>
-    <string name="plan_details_stop_prompt">Are you sure you want to stop this plan?\n\nYour history will not be affected.</string>
-    <string name="plan_details_switch">Switch plan</string>
-    <string name="plan_details_switch_prompt">Another plan already started. Are you sure you want to switch to this plan?\n\nYour history will not be affected.</string>
-    <string name="plan_details_week">Week %1$s</string>
-    <string name="plan_details_not_found">Plan not found</string>
-    <string name="plan_details_not_found_prompt">It looks like we couldn\'t find this plan.</string>
-    <string name="plan_details_not_found_prompt_current">It looks like we couldn\'t find your current plan. Would you like to stop it?</string>
-    <string name="plan_details_rest_title">Rest Day</string>
-    <string name="plan_details_rest_prompt">Make sure to take enough time to recover during your rest day.\n\nPro tip: Muscle is built while resting, not while training.</string>
 
     <string name="muscle_goal_title">Muscle training goal</string>
     <string name="muscle_goal_benefits">Goals</string>

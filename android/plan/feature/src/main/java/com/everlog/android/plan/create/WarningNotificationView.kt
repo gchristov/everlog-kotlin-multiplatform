@@ -1,4 +1,4 @@
-package com.everlog.ui.views.notification.warning
+package com.everlog.android.plan.create
 
 import android.content.Context
 import android.content.res.ColorStateList
@@ -6,12 +6,12 @@ import android.util.AttributeSet
 import android.view.LayoutInflater
 import androidx.core.content.ContextCompat
 import androidx.core.widget.ImageViewCompat
-import com.everlog.R
-import com.everlog.config.AppConfig
-import com.everlog.databinding.ViewNotificationWarningBinding
 import com.everlog.android.common.mvp.view.BaseView
 import com.everlog.android.common.mvp.view.BaseViewMvpView
 import com.everlog.android.common.mvp.view.BaseViewPresenter
+import com.everlog.android.plan.R
+import com.everlog.android.plan.adapter.MAX_FREE_WEEK_DAYS
+import com.everlog.android.plan.databinding.ViewNotificationWarningBinding
 import com.everlog.android.common.mvp.util.ViewUtils
 import com.jakewharton.rxbinding.view.RxView
 import rx.Observable
@@ -76,11 +76,11 @@ class WarningNotificationView(context: Context, attrs: AttributeSet?) : BaseView
             WarningType.PRO_MUSCLE_GOALS-> {
                 val p = ViewUtils.dpToPx(6)
                 binding.imageView.setPadding(p, p, p, p)
-                binding.imageView.setImageResource(R.drawable.ic_lock)
-                binding.imageView.setBackgroundResource(R.drawable.ic_hexagon)
+                binding.imageView.setImageResource(DesignR.drawable.ic_lock)
+                binding.imageView.setBackgroundResource(DesignR.drawable.ic_hexagon)
                 ImageViewCompat.setImageTintList(binding.imageView, ColorStateList.valueOf(ContextCompat.getColor(context, DesignR.color.background_card_lighter)));
                 if (mType == WarningType.PRO_PLAN_DAYS) {
-                    binding.titleLbl.text = context?.getString(R.string.pro_prompt_plan_title, AppConfig.configuration.maxPlanWeekDaysFree)
+                    binding.titleLbl.text = context?.getString(R.string.pro_prompt_plan_title, MAX_FREE_WEEK_DAYS)
                     binding.descriptionLbl.text = context?.getString(R.string.pro_prompt_plan_subtitle)
                 } else if (mType == WarningType.PRO_MUSCLE_GOALS) {
                     binding.titleLbl.text = context?.getString(R.string.pro_prompt_muscle_goals_title)

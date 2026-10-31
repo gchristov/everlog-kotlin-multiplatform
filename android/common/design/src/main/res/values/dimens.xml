@@ -42,4 +42,7 @@
     <dimen name="settings_row_padding_bottom">@dimen/activity_margin</dimen>
     <dimen name="settings_row_padding_top">@dimen/activity_margin</dimen>
     <dimen name="settings_row_text_size">16sp</dimen>
+    <dimen name="card_plan_height">170dp</dimen>
+    <dimen name="card_plan_width">260dp</dimen>
+    <dimen name="settings_card_content_margin_left">@dimen/activity_margin</dimen>
 </resources>

@@ -39,4 +39,5 @@
     <color name="image_overlay">#50000000</color>
     <color name="pager_active">@color/main_accent</color>
     <color name="pager_inactive">@color/gray_4</color>
+    <color name="background_toolbar">#0A0E09</color>
 </resources>

@@ -1,15 +1,15 @@
-package com.everlog.ui.fragments.plan
+package com.everlog.android.plan.details
 
+import com.everlog.android.common.design.R as DesignR
 import com.ahamed.multiviewadapter.DataListManager
 import com.ahamed.multiviewadapter.RecyclerAdapter
-import com.everlog.R
 import com.everlog.android.plan.data.model.ELPlan
 import com.everlog.android.plan.data.model.ELPlanDay
 import com.everlog.android.plan.data.PlanManager
-import com.everlog.ui.adapters.plan.PlanDayAdapter
-import com.everlog.ui.adapters.plan.applyProLock
-import com.everlog.ui.navigator.navigator
 import com.everlog.android.common.mvp.fragment.BaseFragmentPresenter
+import com.everlog.android.plan.PlanFeature
+import com.everlog.android.plan.adapter.PlanDayAdapter
+import com.everlog.android.plan.adapter.applyProLock
 
 class PresenterWeekDays : BaseFragmentPresenter<MvpViewWeekDays>() {
 
@@ -53,10 +53,11 @@ class PresenterWeekDays : BaseFragmentPresenter<MvpViewWeekDays>() {
         mAdapter.addDataManager(mDataListManager)
         mAdapter.registerBinder(PlanDayAdapter.Binder(object : PlanDayAdapter.OnPlanDayListener {
             override fun onItemClicked(item: ELPlanDay, position: Int) {
-                if (item.getRoutine() != null) {
-                    navigator.openRoutineDetails(item.getRoutine(), true)
+                val routine = item.getRoutine()
+                if (routine != null) {
+                    context?.let { PlanFeature.dependencies.openTemplateDetails(it, routine) }
                 } else {
-                    mvpView.showOK(R.string.plan_details_rest_title, R.string.plan_details_rest_prompt)
+                    mvpView.showOK(DesignR.string.plan_details_rest_title, DesignR.string.plan_details_rest_prompt)
                 }
             }
 

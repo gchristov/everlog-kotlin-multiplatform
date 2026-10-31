@@ -25,7 +25,6 @@ object ELConstants {
     const val EXTRA_WEB_URL = "EXTRA_WEB_URL"
     const val EXTRA_WEB_TITLE = "EXTRA_WEB_TITLE"
     const val EXTRA_SET_TYPE = "EXTRA_SET_TYPE"
-    const val EXTRA_PLAN_UUID = "EXTRA_PLAN_UUID"
     const val EXTRA_COVER_IMAGE = "EXTRA_COVER_IMAGE"
     const val EXTRA_VIEW_ONLY = "EXTRA_VIEW_ONLY"
     const val EXTRA_TYPE = "EXTRA_TYPE"
@@ -36,7 +35,6 @@ object ELConstants {
     const val EXTRA_TITLE = "EXTRA_TITLE"
     const val EXTRA_SUBTITLE = "EXTRA_SUBTITLE"
 
-    const val BROADCAST_CURRENT_PLAN_STARTED = BuildConfig.APPLICATION_ID + ".BROADCAST_CURRENT_PLAN_STARTED"
 
     const val FIREBASE_TEST_LAB_EMAIL = "hello@cloudtestlabaccounts.com"
     const val FIREBASE_TEST_LAB_PASSWORD = "KTI4We2uSTfl"

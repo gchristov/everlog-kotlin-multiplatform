@@ -12,8 +12,8 @@ import com.everlog.android.plan.data.model.ELPlan;
 import com.everlog.android.plan.data.model.ELPlanDay;
 import com.everlog.android.plan.data.model.ELPlanState;
 import com.everlog.android.common.mvp.activity.BaseActivity;
-import com.everlog.ui.adapters.plan.PlanDayAdapter;
-import com.everlog.ui.adapters.plan.PlanProLockKt;
+import com.everlog.android.plan.adapter.PlanDayAdapter;
+import com.everlog.android.plan.adapter.PlanProLockKt;
 import com.everlog.android.common.mvp.dialog.DialogBuilder;
 import com.everlog.ui.fragments.home.week.WeekViewState;
 import com.everlog.ui.navigator.ELNavigator;
@@ -184,8 +184,8 @@ public class PlanWeekView implements IWeekView {
                     new ELNavigator(mContext).openRoutineDetails(item.getRoutine(), true);
                 } else {
                     DialogBuilder.showOKPrompt(mContext,
-                            mContext.getString(R.string.plan_details_rest_title),
-                            getString(R.string.plan_details_rest_prompt));
+                            mContext.getString(com.everlog.android.common.design.R.string.plan_details_rest_title),
+                            getString(com.everlog.android.common.design.R.string.plan_details_rest_prompt));
                 }
             }
 

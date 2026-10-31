@@ -1,19 +1,19 @@
-package com.everlog.ui.activities.home.plan.details
+package com.everlog.android.plan.details
 
 import com.everlog.android.common.design.R as DesignR
 import android.content.DialogInterface
 import android.content.Intent
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
-import com.everlog.R
 import com.everlog.android.plan.data.model.ELPlan
-import com.everlog.constants.ELConstants
-import com.everlog.data.datastores.ELDatastore
 import com.everlog.android.common.data.store.ELDocumentStore
 import com.everlog.android.plan.data.store.ELDocStorePlanLoadedEvent
+import com.everlog.android.plan.data.store.PlanStores
 import com.everlog.android.plan.data.PlanManager
-import com.everlog.managers.analytics.AnalyticsManager
-import com.everlog.ui.navigator.navigator
 import com.everlog.android.common.mvp.activity.BaseActivityPresenter
+import com.everlog.android.plan.PlanFeature
+import com.everlog.android.plan.R
+import com.everlog.android.plan.create.CreatePlanActivity
+import com.everlog.android.plan.data.PlanBroadcasts
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
 
@@ -31,7 +31,7 @@ class PresenterPlanDetails : BaseActivityPresenter<MvpViewPlanDetails>() {
     }
 
     override fun detachView() {
-        ELDatastore.planStore().destroy()
+        PlanStores.planStore().destroy()
         super.detachView()
     }
 
@@ -85,7 +85,7 @@ class PresenterPlanDetails : BaseActivityPresenter<MvpViewPlanDetails>() {
                 .compose(applyUISchedulers())
                 .subscribe {
                     if (toEdit != null) {
-                        navigator.openEditPlan(toEdit)
+                        mvpView?.getActivity()?.let { it.startActivity(CreatePlanActivity.launchIntent(it, toEdit)) }
                     }
                 })
     }
@@ -118,7 +118,7 @@ class PresenterPlanDetails : BaseActivityPresenter<MvpViewPlanDetails>() {
                         PlanManager.manager.clearOngoingPlan()
                         toEdit = mRealPlan
                         loadViewData()
-                        AnalyticsManager.manager.planStopped()
+                        PlanFeature.dependencies.planAnalytics().stopped()
                     }
                 }, { throwable -> handleError(throwable) }))
     }
@@ -160,7 +160,7 @@ class PresenterPlanDetails : BaseActivityPresenter<MvpViewPlanDetails>() {
     private fun loadPlan() {
         mvpView?.toggleLoadingOverlay(true)
         // Listen for item changes.
-        ELDatastore.planStore().getItem(mvpView.getItemToEditUuid())
+        PlanStores.planStore().getItem(mvpView.getItemToEditUuid())
     }
 
     private fun loadViewData() {
@@ -197,15 +197,15 @@ class PresenterPlanDetails : BaseActivityPresenter<MvpViewPlanDetails>() {
 
     private fun handleStartPlan() {
         PlanManager.manager.setOngoingPlan(toEdit)
-        AnalyticsManager.manager.planStarted()
-        LocalBroadcastManager.getInstance(mvpView.context).sendBroadcast(Intent(ELConstants.BROADCAST_CURRENT_PLAN_STARTED))
-        navigator.openHome()
+        PlanFeature.dependencies.planAnalytics().started()
+        LocalBroadcastManager.getInstance(mvpView.context).sendBroadcast(Intent(PlanBroadcasts.CURRENT_PLAN_STARTED))
+        mvpView?.getActivity()?.let(PlanFeature.dependencies::openHome)
     }
 
     private fun handleDeletePlan(plan: ELPlan) {
         // Delete plan from database
-        ELDatastore.planStore().delete(plan)
-        AnalyticsManager.manager.planDeleted()
+        PlanStores.planStore().delete(plan)
+        PlanFeature.dependencies.planAnalytics().deleted()
         // If local plan is the same, clear it too
         if (PlanManager.manager.isOngoing(plan)) {
             PlanManager.manager.clearOngoingPlan()

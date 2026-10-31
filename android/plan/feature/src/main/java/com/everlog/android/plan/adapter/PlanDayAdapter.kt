@@ -1,4 +1,4 @@
-package com.everlog.ui.adapters.plan
+package com.everlog.android.plan.adapter
 
 import com.everlog.android.common.design.R as DesignR
 import android.content.Context
@@ -9,14 +9,12 @@ import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import com.ahamed.multiviewadapter.ItemBinder
 import com.ahamed.multiviewadapter.ItemViewHolder
-import com.everlog.R
+import com.everlog.android.plan.R
 import com.everlog.android.plan.data.model.ELPlanDay
-import com.everlog.constants.ELConstants
-import com.everlog.databinding.RowPlanDayBinding
-import com.everlog.managers.analytics.AnalyticsManager
+import com.everlog.android.plan.databinding.RowPlanDayBinding
 import com.everlog.android.common.mvp.list.OnListItemListener
-import com.everlog.ui.navigator.ELNavigator
 import com.everlog.android.common.mvp.view.showPopupMenu
+import com.everlog.android.plan.PlanFeature
 
 class PlanDayAdapter {
 
@@ -75,7 +73,7 @@ class PlanDayAdapter {
                     R.id.action_rest -> {
                         item.setRest(true)
                         listener.onDayEdited()
-                        AnalyticsManager.manager.planWeekDaySetRest()
+                        PlanFeature.dependencies.planAnalytics().daySetToRest()
                         renderDay()
                     }
                 }
@@ -83,7 +81,7 @@ class PlanDayAdapter {
         }
 
         private fun proRunLocked(block: Runnable) {
-            if (item.proLocked) ELNavigator(itemView.context).runProFeature(block) else block.run()
+            if (item.proLocked) PlanFeature.dependencies.runProFeature(itemView.context) { block.run() } else block.run()
         }
 
         // Render
@@ -119,7 +117,7 @@ class PlanDayAdapter {
                 binding.dayInfoFieldComplete.setTypeface(null, Typeface.ITALIC)
                 binding.dayInfoFieldComplete.setTextColor(ContextCompat.getColor(itemView.context, DesignR.color.gray_3))
             } else {
-                binding.dayInfoFieldComplete.text = if (item.getRoutine() != null) item.getRoutine()?.name else itemView.context.getText(R.string.plan_details_rest_title)
+                binding.dayInfoFieldComplete.text = if (item.getRoutine() != null) item.getRoutine()?.name else itemView.context.getText(DesignR.string.plan_details_rest_title)
                 binding.dayInfoFieldComplete.setTypeface(null, Typeface.NORMAL)
                 binding.dayInfoFieldComplete.setTextColor(ContextCompat.getColor(itemView.context, DesignR.color.gray_5))
             }
@@ -134,22 +132,22 @@ class PlanDayAdapter {
                 showButtons = item.next
             }
             binding.buttonsLayout.visibility = if (showButtons) View.VISIBLE else View.GONE
-            binding.startBtn.setText(if (item.getRest() || item.isEmpty()) R.string.complete else R.string.home_week_plan_start)
+            binding.startBtn.setText(if (item.getRest() || item.isEmpty()) DesignR.string.complete else R.string.home_week_plan_start)
             binding.planMenuBtn.visibility = if (edit) View.VISIBLE else View.GONE
         }
 
         private fun renderPro() {
             // Complete
             binding.proBadgeComplete.visibility = if (item.proLocked) View.VISIBLE else View.GONE
-            binding.dayFieldComplete.alpha = if (item.proLocked) ELConstants.ALPHA_PRO_FEATURE_DISABLED else 1f
-            binding.dayInfoFieldComplete.alpha = if (item.proLocked) ELConstants.ALPHA_PRO_FEATURE_DISABLED else 1f
+            binding.dayFieldComplete.alpha = if (item.proLocked) PRO_LOCKED_ALPHA else 1f
+            binding.dayInfoFieldComplete.alpha = if (item.proLocked) PRO_LOCKED_ALPHA else 1f
             // Incomplete
             binding.proBadgeIncomplete.visibility = if (item.proLocked) View.VISIBLE else View.GONE
-            binding.dayFieldIncomplete.alpha = if (item.proLocked) ELConstants.ALPHA_PRO_FEATURE_DISABLED else 1f
-            binding.dayInfoFieldIncomplete.alpha = if (item.proLocked) ELConstants.ALPHA_PRO_FEATURE_DISABLED else 1f
-            binding.startBtn.alpha = if (item.proLocked) ELConstants.ALPHA_PRO_FEATURE_DISABLED else 1f
+            binding.dayFieldIncomplete.alpha = if (item.proLocked) PRO_LOCKED_ALPHA else 1f
+            binding.dayInfoFieldIncomplete.alpha = if (item.proLocked) PRO_LOCKED_ALPHA else 1f
+            binding.startBtn.alpha = if (item.proLocked) PRO_LOCKED_ALPHA else 1f
             // Common
-            binding.planMenuBtn.alpha = if (item.proLocked) ELConstants.ALPHA_PRO_FEATURE_DISABLED else 1f
+            binding.planMenuBtn.alpha = if (item.proLocked) PRO_LOCKED_ALPHA else 1f
             if (item.proLocked) {
                 binding.dayInfoFieldComplete.setText(R.string.tap_to_setup_upgrade)
                 binding.dayInfoFieldIncomplete.text = binding.dayInfoFieldComplete.text

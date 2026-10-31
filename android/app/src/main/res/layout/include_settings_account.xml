@@ -28,7 +28,7 @@
             app:riv_corner_radius="45dp"
             app:riv_mutate_background="true" />
 
-        <com.everlog.ui.views.badge.ProBadge
+        <com.everlog.android.common.mvp.view.ProBadge
             android:id="@+id/proBadge"
             android:layout_width="36dp"
             android:layout_height="36dp"

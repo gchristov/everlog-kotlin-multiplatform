@@ -648,7 +648,7 @@ class ExerciseGroupCreateAdapter {
                 binding.checkbox.setBackgroundResource(DesignR.drawable.circle_accent)
             } else {
                 binding.checkbox.setImageDrawable(null)
-                binding.checkbox.setBackgroundResource(R.drawable.circle_border_accent)
+                binding.checkbox.setBackgroundResource(DesignR.drawable.circle_border_accent)
             }
         }
 
