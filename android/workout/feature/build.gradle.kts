@@ -11,6 +11,7 @@ dependencies {
     implementation(projects.android.common.mvp)
     implementation(projects.android.common.sessionUi)
     implementation(libs.timber)
+    testImplementation(projects.android.common.dataTest)
     testImplementation(projects.android.workout.testFixtures)
     androidTestImplementation(projects.android.workout.testFixtures)
 }

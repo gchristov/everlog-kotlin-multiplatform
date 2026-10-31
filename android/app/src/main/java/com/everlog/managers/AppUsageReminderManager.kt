@@ -8,6 +8,7 @@ import android.os.Bundle
 import androidx.core.app.NotificationManagerCompat
 import com.everlog.R
 import com.everlog.android.common.kotlin.AppContext
+import com.everlog.android.common.kotlin.notification.ELNotificationManager
 import com.everlog.android.common.persistence.PreferencesManager
 import com.everlog.android.settings.data.SettingsManager
 import com.everlog.config.AppUsageNotification

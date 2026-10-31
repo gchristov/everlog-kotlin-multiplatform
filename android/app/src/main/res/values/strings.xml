@@ -1,7 +1,6 @@
 <resources>
     <string name="everlog_app_name">Everlog</string>
 
-    <string name="notification_channel_workout">my_channel_id_03</string>
     <string name="notification_channel_normal">my_channel_id_02</string>
 
     <plurals name="workouts">
@@ -156,27 +155,7 @@
     <string name="statistics_minutes">Minutes</string>
 
     <string name="workout_metric_prompt_missing">Please enter a value</string>
-    <string name="workout_rest_time">"Rest • %1$s"</string>
     <string name="workout_empty_action">Add exercises</string>
-    <string name="workout_empty_no_sets">No exercises, yet</string>
-    <string name="workout_empty_no_sets_subtitle">Add exercises to begin your workout</string>
-    <string name="workout_empty_done">All done?</string>
-    <string name="workout_empty_done_subtitle">Add exercises or finish the workout</string>
-    <string name="workout_notification_rest">Rest</string>
-    <string name="workout_notification_set">Set</string>
-    <string name="workout_notification_tap_to_edit">Tap to edit</string>
-    <string name="workout_notification_skip_rest">Skip rest</string>
-    <string name="workout_notification_up_next">"Next: %1$s • %2$s"</string>
-    <string name="workout_notification_complete">Workout complete</string>
-    <string name="workout_notification_complete_set">Complete set</string>
-    <string name="workout_notification_decrease_weight">Decrease weight</string>
-    <string name="workout_notification_increase_weight">Increase weight</string>
-    <string name="workout_notification_decrease_reps">Decrease reps</string>
-    <string name="workout_notification_increase_reps">Increase reps</string>
-    <string name="workout_notification_decrease_time">Decrease time</string>
-    <string name="workout_notification_increase_time">Increase time</string>
-    <string name="workout_notification_start_timer">Start timer</string>
-    <string name="workout_notification_stop_timer">Stop timer</string>
     <string name="workout_exercises">Session Exercises</string>
 
     <string name="settings_title">Settings</string>

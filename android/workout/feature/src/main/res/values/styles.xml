@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- The collapsed notification's main button, in the style of the system's notification actions -->
+    <style name="WorkoutNotificationAction" parent="TextAppearance.Compat.Notification.Title">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">40dp</item>
+        <item name="android:gravity">center</item>
+        <item name="android:maxLines">1</item>
+        <item name="android:paddingStart">@dimen/margin_12</item>
+        <item name="android:paddingEnd">0dp</item>
+        <item name="android:textColor">@color/main_accent</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+    <!-- 40dp wide, rather than 48dp, so the row still fits narrow phones -->
+    <style name="WorkoutNotificationButton">
+        <item name="android:layout_width">40dp</item>
+        <item name="android:layout_height">44dp</item>
+        <item name="android:paddingStart">@dimen/activity_margin_half</item>
+        <item name="android:paddingEnd">@dimen/activity_margin_half</item>
+        <item name="android:scaleType">center</item>
+        <item name="android:tint">@color/main_accent</item>
+    </style>
+    <!-- Grey, like the workout table's column headings -->
+    <style name="WorkoutNotificationLabel" parent="TextAppearance.Compat.Notification.Info">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textColor">@color/gray_1</item>
+        <item name="android:textSize">11sp</item>
+        <item name="android:maxLines">1</item>
+    </style>
+    <!-- The workout notification's values: a label over a pill, between its - and +. The panels
+         share the row, and the pill takes what the buttons leave. -->
+    <style name="WorkoutNotificationPanel">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_weight">1</item>
+        <item name="android:gravity">bottom</item>
+        <item name="android:orientation">horizontal</item>
+    </style>
+    <!-- 32dp tall in the buttons' 44dp -->
+    <style name="WorkoutNotificationValue" parent="TextAppearance.Compat.Notification.Title">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">32dp</item>
+        <item name="android:layout_marginTop">6dp</item>
+        <item name="android:layout_marginBottom">6dp</item>
+        <item name="android:paddingStart">@dimen/activity_margin_half</item>
+        <item name="android:paddingEnd">@dimen/activity_margin_half</item>
+        <item name="android:background">@drawable/bg_notification_value</item>
+        <item name="android:gravity">center</item>
+        <item name="android:maxLines">1</item>
+        <item name="android:textSize">18sp</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+    <!-- The label in the pill's column, so it's centred over it -->
+    <style name="WorkoutNotificationValueColumn">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_weight">1</item>
+        <item name="android:gravity">center_horizontal</item>
+        <item name="android:orientation">vertical</item>
+    </style>
+</resources>

@@ -1,5 +1,6 @@
 package com.everlog.services.fcm
 
+import com.everlog.android.common.design.R as DesignR
 import android.app.Notification
 import android.app.PendingIntent
 import android.content.Intent
@@ -8,8 +9,8 @@ import android.text.TextUtils
 import androidx.core.app.NotificationCompat
 import com.everlog.R
 import com.everlog.android.common.kotlin.AppContext
-import com.everlog.managers.ELNotificationManager.Companion.notify
-import com.everlog.managers.ELNotificationManager.NotificationChannelOptions
+import com.everlog.android.common.kotlin.notification.ELNotificationManager.Companion.notify
+import com.everlog.android.common.kotlin.notification.ELNotificationManager.NotificationChannelOptions
 import com.everlog.ui.activities.splash.SplashActivity
 import com.everlog.utils.FCMUtils
 import com.everlog.utils.device.DeviceUtils
@@ -53,7 +54,7 @@ class ELFirebaseMessagingService : FirebaseMessagingService() {
                     .setAutoCancel(true)
                     .setDefaults(Notification.DEFAULT_ALL)
                     .setWhen(System.currentTimeMillis())
-                    .setSmallIcon(R.drawable.ic_notification)
+                    .setSmallIcon(DesignR.drawable.ic_notification)
                     .setContentIntent(buildOpenAppPendingIntent(openAppExtras))
             if (!DeviceUtils.isAndroidO()) {
                 builder.priority = Notification.PRIORITY_DEFAULT

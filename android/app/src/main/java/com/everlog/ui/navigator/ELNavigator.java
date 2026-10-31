@@ -35,7 +35,7 @@ import com.everlog.managers.analytics.AnalyticsManager;
 import com.everlog.managers.apprate.RatePromptController;
 import com.everlog.managers.apprate.RatePromptTrigger;
 import com.everlog.android.auth.data.LocalUserManager;
-import com.everlog.services.workout.WorkoutService;
+import com.everlog.android.workout.feature.notification.WorkoutService;
 import com.everlog.ui.activities.home.HomeActivity;
 import com.everlog.ui.activities.onboarding.OnboardingActivity;
 import com.everlog.ui.activities.home.congratulate.CongratulateActivity;

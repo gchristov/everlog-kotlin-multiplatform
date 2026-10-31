@@ -1,13 +1,12 @@
-package com.everlog.managers
+package com.everlog.android.common.kotlin.notification
 
 import android.app.Notification
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.Service
 import android.content.pm.ServiceInfo
-import androidx.core.app.NotificationManagerCompat
 import com.everlog.android.common.kotlin.AppContext
-import com.everlog.utils.device.DeviceUtils
+import android.os.Build
 import timber.log.Timber
 
 class ELNotificationManager {
@@ -24,7 +23,7 @@ class ELNotificationManager {
             // Make sure we have a channel
             createNotificationChannel(channelOptions)
             // Then start service
-            if (DeviceUtils.isAndroidU()) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
                 service.startForeground(notificationId, notification, ServiceInfo.FOREGROUND_SERVICE_TYPE_HEALTH)
             } else {
                 service.startForeground(notificationId, notification)
@@ -38,21 +37,21 @@ class ELNotificationManager {
             // Make sure we have a channel
             createNotificationChannel(channelOptions)
             // Then show notification
-            val manager = NotificationManagerCompat.from(AppContext)
+            val manager = AppContext.getSystemService(NotificationManager::class.java)
             manager.notify(notificationId, notification)
             Timber.tag(TAG).d("Notified user with notification")
         }
 
         @JvmStatic
         fun cancel(notificationId: Int) {
-            val manager = NotificationManagerCompat.from(AppContext)
+            val manager = AppContext.getSystemService(NotificationManager::class.java)
             manager.cancel(notificationId)
             Timber.tag(TAG).d("Cancelled notification")
         }
 
         private fun createNotificationChannel(options: NotificationChannelOptions) {
-            if (DeviceUtils.isAndroidO()) {
-                val manager = NotificationManagerCompat.from(AppContext)
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                val manager = AppContext.getSystemService(NotificationManager::class.java)
                 val channel = NotificationChannel(options.id, options.name, if (options.important) NotificationManager.IMPORTANCE_HIGH else NotificationManager.IMPORTANCE_DEFAULT)
                 channel.description = options.description
                 if (options.disableSound) {
