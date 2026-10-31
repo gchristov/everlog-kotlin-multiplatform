@@ -47,7 +47,7 @@
                     android:layout_alignRight="@+id/newsletterTitle"
                     android:text="@string/notifications_newsletter_description" />
 
-                <com.everlog.ui.views.CheckBoxTriStates
+                <com.everlog.android.common.mvp.view.CheckBoxTriStates
                     android:id="@+id/newsletterCheckbox"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"

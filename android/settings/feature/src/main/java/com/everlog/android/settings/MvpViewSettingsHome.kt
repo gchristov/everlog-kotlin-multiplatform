@@ -1,13 +1,10 @@
-package com.everlog.ui.fragments.home.settings
+package com.everlog.android.settings
 
 import com.everlog.android.auth.data.model.ELUser
 import com.everlog.android.common.mvp.fragment.BaseFragmentMvpView
-import com.everlog.ui.dialog.AppDialogs
 import rx.Observable
 
 interface MvpViewSettingsHome : BaseFragmentMvpView {
-
-    fun showAppBlockerPrompt(type: AppDialogs.AppBlockerDialogType): Observable<Int>
 
     fun onClickMuscleGoal(): Observable<Void>
 
@@ -51,7 +48,7 @@ interface MvpViewSettingsHome : BaseFragmentMvpView {
 
     fun showPickerWeight(value: Float): Observable<Float>
 
-    fun showPickerNumber(value: Int, type: AppDialogs.NumberPickerDialogType): Observable<Int>
+    fun showPickerWeeklyGoal(value: Int): Observable<Int>
 
     fun showPickerMultipleChoice(titleResId: Int, values: Array<String>, selectedIndex: Int): Observable<Int>
 }

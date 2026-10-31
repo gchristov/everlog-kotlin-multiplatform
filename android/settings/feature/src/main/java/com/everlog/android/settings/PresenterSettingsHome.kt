@@ -1,29 +1,23 @@
-package com.everlog.ui.fragments.home.settings
+package com.everlog.android.settings
 
 import com.everlog.android.common.design.R as DesignR
 import android.content.DialogInterface
 import android.content.Intent
-import com.everlog.R
+import com.everlog.android.settings.R
 import com.everlog.android.auth.data.model.ELConsent
+import com.everlog.android.auth.data.store.AuthStores
+import com.everlog.android.auth.data.store.ELDocStoreUserLoadedEvent
+import com.everlog.android.auth.data.store.ELUserConsentStore
 import com.everlog.android.common.kotlin.WeightUnit
 import com.everlog.android.common.mvp.MvpBroadcasts
 import com.everlog.android.common.mvp.fragment.BaseFragmentPresenter
 import com.everlog.android.settings.data.SettingsManager
 import com.everlog.android.settings.data.model.ELIntegration
-import com.everlog.config.FeedbackSource
-import com.everlog.data.datastores.ELDatastore
-import com.everlog.data.datastores.ELUserConsentStore
-import com.everlog.data.datastores.ELUserIntegrationStore
-import com.everlog.data.datastores.ELUserStore
-import com.everlog.managers.RemoteConfigManager
-import com.everlog.managers.analytics.AnalyticsManager
-import com.everlog.managers.auth.AuthManager
+import com.everlog.android.settings.data.store.ELUserIntegrationStore
+import com.everlog.android.settings.data.store.SettingsStores
+import com.everlog.android.settings.integration.IntegrationActivity
 import com.everlog.android.auth.data.LocalUserManager
-import com.everlog.managers.integrations.GoogleFitIntegrationManager
-import com.everlog.ui.dialog.AppDialogs
-import com.everlog.ui.navigator.navigator
 import com.everlog.android.common.kotlin.format.ArrayResourceTypeUtils
-import com.everlog.utils.device.DeviceInfo
 import com.google.firebase.firestore.SetOptions
 // import icepick.State
 import org.greenrobot.eventbus.Subscribe
@@ -33,6 +27,9 @@ import org.threeten.bp.format.TextStyle
 import java.util.*
 
 class PresenterSettingsHome : BaseFragmentPresenter<MvpViewSettingsHome>() {
+
+    private val dependencies = SettingsFeature.dependencies
+    private val analytics = dependencies.settingsAnalytics()
 
     // @State
     @JvmField
@@ -65,7 +62,7 @@ class PresenterSettingsHome : BaseFragmentPresenter<MvpViewSettingsHome>() {
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        GoogleFitIntegrationManager.onActivityResult(requestCode, resultCode, data)
+        dependencies.googleFitActivityResult(requestCode, resultCode, data)
     }
 
     override fun onPreferencesChanged() {
@@ -85,7 +82,7 @@ class PresenterSettingsHome : BaseFragmentPresenter<MvpViewSettingsHome>() {
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
-    fun onUserLoaded(event: ELUserStore.ELDocStoreUserLoadedEvent) {
+    fun onUserLoaded(event: ELDocStoreUserLoadedEvent) {
         if (isAttachedToView) {
             loadData()
         }
@@ -103,9 +100,6 @@ class PresenterSettingsHome : BaseFragmentPresenter<MvpViewSettingsHome>() {
     fun onConsentLoaded(event: ELUserConsentStore.ELDocStoreConsentLoadedEvent) {
         if (isAttachedToView) {
             mConsent = if (event.error != null) null else event.item
-            if (!event.isFromCache) {
-                checkConsent()
-            }
             loadData()
         }
     }
@@ -115,7 +109,7 @@ class PresenterSettingsHome : BaseFragmentPresenter<MvpViewSettingsHome>() {
     private fun observeMuscleGoalClick() {
         subscriptions.add(mvpView.onClickMuscleGoal()
                 .compose(applyUISchedulers())
-                .subscribe({ navigator.openMuscleGoal() }, { throwable -> handleError(throwable) }))
+                .subscribe({ context?.let(dependencies::openSetSuggestions) }, { throwable -> handleError(throwable) }))
     }
 
     private fun observeWeightIncreaseClick() {
@@ -137,7 +131,7 @@ class PresenterSettingsHome : BaseFragmentPresenter<MvpViewSettingsHome>() {
     }
 
     private fun observeWeeklyGoalConfirm() {
-        subscriptions.add(mvpView.showPickerNumber(SettingsManager.manager.weeklyWorkoutsGoal(), AppDialogs.NumberPickerDialogType.WEEKLY_GOAL)
+        subscriptions.add(mvpView.showPickerWeeklyGoal(SettingsManager.manager.weeklyWorkoutsGoal())
                 .compose(applyUISchedulers())
                 .subscribe({ value -> handleWeeklyGoalChanged(value) }, { throwable -> handleError(throwable) }))
     }
@@ -151,7 +145,7 @@ class PresenterSettingsHome : BaseFragmentPresenter<MvpViewSettingsHome>() {
     private fun observeGooglePlayClick() {
         subscriptions.add(mvpView.onClickGooglePlay()
                 .compose(applyUISchedulers())
-                .subscribe({ navigator.openPlayStoreAppDetails() }, { throwable -> handleError(throwable) }))
+                .subscribe({ context?.let(dependencies::openPlayStoreAppDetails) }, { throwable -> handleError(throwable) }))
     }
 
     private fun observeLogoutClick() {
@@ -173,7 +167,7 @@ class PresenterSettingsHome : BaseFragmentPresenter<MvpViewSettingsHome>() {
     private fun observeFeedbackClick() {
         subscriptions.add(mvpView.onClickFeedback()
                 .compose(applyUISchedulers())
-                .subscribe({ navigator.openFeedbackForm(FeedbackSource.SETTINGS) }, { throwable -> handleError(throwable) }))
+                .subscribe({ context?.let(dependencies::openSettingsFeedback) }, { throwable -> handleError(throwable) }))
     }
 
     private fun observeWeightUnitClick() {
@@ -208,34 +202,33 @@ class PresenterSettingsHome : BaseFragmentPresenter<MvpViewSettingsHome>() {
     private fun observeShareClick() {
         subscriptions.add(mvpView.onClickShare()
                 .compose(applyUISchedulers())
-                .subscribe({ navigator.shareApp() }, { throwable -> handleError(throwable) }))
+                .subscribe({ context?.let(dependencies::shareApp) }, { throwable -> handleError(throwable) }))
     }
 
     private fun observeManageProClick() {
         subscriptions.add(mvpView.onClickManagePro()
                 .compose(applyUISchedulers())
-                .subscribe({ navigator.openProBuyOrManage() }, { throwable -> handleError(throwable) }))
+                .subscribe({ context?.let(dependencies::openProBuyOrManage) }, { throwable -> handleError(throwable) }))
     }
 
     private fun observeDesignSystemClick() {
         subscriptions.add(mvpView.onClickDesignSystem()
                 .compose(applyUISchedulers())
-                .subscribe({ navigator.openDesignSystem() }, { throwable -> handleError(throwable) }))
+                .subscribe({ context?.let(dependencies::openDesignSystem) }, { throwable -> handleError(throwable) }))
     }
 
     private fun observeManageIntegrationGoogleFitClick() {
         subscriptions.add(mvpView.onClickManageIntegrationGoogleFit()
                 .compose(applyUISchedulers())
                 .subscribe({
-                    if (mIntegrationGoogleFit != null) {
-                        navigator.openIntegration(mIntegrationGoogleFit)
+                    val integration = mIntegrationGoogleFit
+                    if (integration != null) {
+                        openIntegration(integration)
                     } else {
-                        GoogleFitIntegrationManager.connect(mvpView, object : GoogleFitIntegrationManager.OnGoogleFitAccessListener {
-                            override fun onGranted(integration: ELIntegration) {
-                                mIntegrationGoogleFit = integration
-                                navigator.openIntegration(mIntegrationGoogleFit)
-                            }
-                        })
+                        dependencies.connectGoogleFit(mvpView) { granted ->
+                            mIntegrationGoogleFit = granted
+                            openIntegration(granted)
+                        }
                     }
                 }, { throwable -> handleError(throwable) }))
     }
@@ -248,30 +241,20 @@ class PresenterSettingsHome : BaseFragmentPresenter<MvpViewSettingsHome>() {
                 }, { throwable -> handleError(throwable) }))
     }
 
-    private fun observeNewsletterConsentConfirm() {
-        subscriptions.add(mvpView.showAppBlockerPrompt(AppDialogs.AppBlockerDialogType.NEWSLETTER)
-                .compose(applyUISchedulers())
-                .subscribe({
-                    saveConsentDecision(it == DialogInterface.BUTTON_POSITIVE)
-                    mvpView.showLongToast(if (it == DialogInterface.BUTTON_POSITIVE) R.string.notifications_newsletter_granted else R.string.notifications_newsletter_denied)
-                }, { throwable -> handleError(throwable) }))
-    }
 
     private fun logout() {
-        AuthManager.logout(object : AuthManager.OnAuthActionListener() {
-            override fun onLogout() {
-                if (isAttachedToView) {
-                    navigator.openLogin()
-                }
+        dependencies.logout {
+            if (isAttachedToView) {
+                context?.let(dependencies::openLogin)
             }
-        })
+        }
     }
 
     // Loading
 
     private fun loadData() {
         mvpView?.showUserInfo(LocalUserManager.getUser()!!)
-        mvpView?.showAppInfo(DeviceInfo.appInfo)
+        mvpView?.showAppInfo(dependencies.appInfo())
         showFeedback()
         mvpView?.showSettings(
                 SettingsHomeFragment.SettingsViewModel()
@@ -287,38 +270,27 @@ class PresenterSettingsHome : BaseFragmentPresenter<MvpViewSettingsHome>() {
     }
 
     private fun showFeedback() {
-        mvpView?.showFeedback(RemoteConfigManager.manager.feedbackFormUrl(FeedbackSource.SETTINGS) != null)
+        mvpView?.showFeedback(dependencies.hasSettingsFeedback())
     }
 
     private fun loadIntegrationsData() {
         // Listen for item changes
-        ELDatastore.integrationStore().getItem(ELIntegration.Type.GOOGLE_FIT.name)
+        SettingsStores.integrationStore().getItem(ELIntegration.Type.GOOGLE_FIT.name)
     }
 
     private fun loadConsentData() {
         // Listen for item changes
-        ELDatastore.consentStore().getItem(null)
+        AuthStores.consentStore().getItem(null)
     }
 
     // Consent
 
-    private fun checkConsent() {
-        if (mConsent == null) {
-            // No consent has been given yet, so ask user and block app
-            // TODO: Removed this to allow anonymous login
-            // observeNewsletterConsentConfirm()
-        }
-    }
 
     private fun saveConsentDecision(granted: Boolean) {
         val consent = mConsent ?: ELConsent.newConsent(LocalUserManager.getUser()!!.id, granted)
         consent.updateNewsletter(granted)
-        ELDatastore.consentStore().create(consent, SetOptions.merge())
-        if (granted) {
-            AnalyticsManager.manager.consentNewsletterGranted()
-        } else {
-            AnalyticsManager.manager.consentNewsletterDenied()
-        }
+        AuthStores.consentStore().create(consent, SetOptions.merge())
+        if (granted) analytics.newsletterGranted() else analytics.newsletterDenied()
     }
 
     // Handlers
@@ -326,20 +298,20 @@ class PresenterSettingsHome : BaseFragmentPresenter<MvpViewSettingsHome>() {
     private fun handleWeightIncreaseChanged(value: Float) {
         SettingsManager.manager.setWeightIncrease(value)
         loadData()
-        AnalyticsManager.manager.settingsWeightModified(value)
+        analytics.weightIncreaseModified(value)
     }
 
     private fun handleWeeklyGoalChanged(value: Int) {
         SettingsManager.manager.setWeeklyWorkoutsGoal(value)
         loadData()
         notifyPreferencesChanged()
-        AnalyticsManager.manager.settingsWeeklyGoalModified(value)
+        analytics.weeklyGoalModified(value)
     }
 
     private fun handleKeepScreenOnChanged(value: Boolean) {
         SettingsManager.manager.setKeepScreenOn(value)
         loadData()
-        AnalyticsManager.manager.settingsKeepScreenOnModified(value)
+        analytics.keepScreenOnModified(value)
     }
 
     private fun handleWeightUnitChanged(index: Int) {
@@ -347,7 +319,7 @@ class PresenterSettingsHome : BaseFragmentPresenter<MvpViewSettingsHome>() {
         SettingsManager.manager.setWeightUnit(unit)
         loadData()
         notifyPreferencesChanged()
-        AnalyticsManager.manager.settingsWeightUnitModified(unit.name)
+        analytics.weightUnitModified(unit.name)
     }
 
     private fun handleFirstWeekDayChanged(index: Int) {
@@ -356,7 +328,11 @@ class PresenterSettingsHome : BaseFragmentPresenter<MvpViewSettingsHome>() {
         SettingsManager.manager.setFirstDayOfWeek(day)
         loadData()
         notifyPreferencesChanged()
-        AnalyticsManager.manager.settingsFirstWeekDayModified(day.name)
+        analytics.firstWeekDayModified(day.name)
+    }
+
+    private fun openIntegration(integration: ELIntegration) {
+        context?.let { it.startActivity(IntegrationActivity.launchIntent(it, IntegrationActivity.Companion.Properties().integration(integration))) }
     }
 
     private fun notifyPreferencesChanged() {

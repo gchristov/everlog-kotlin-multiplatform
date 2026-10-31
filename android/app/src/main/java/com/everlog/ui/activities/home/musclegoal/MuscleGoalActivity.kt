@@ -89,7 +89,7 @@ class MuscleGoalActivity : BaseActivity(), MvpViewMuscleGoal {
     private fun setupTopBar() {
         binding.appBar.toolbar.setNavigationIcon(DesignR.drawable.ic_clear_white)
         setSupportActionBar(binding.appBar.toolbar)
-        supportActionBar?.setTitle(R.string.muscle_goal_title)
+        supportActionBar?.setTitle(DesignR.string.muscle_goal_title)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
     }
 

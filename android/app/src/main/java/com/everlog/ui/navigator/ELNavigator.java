@@ -43,7 +43,7 @@ import com.everlog.android.plan.cover.CoverImagePickerActivity;
 import com.everlog.android.exercise.create.CreateExerciseActivity;
 import com.everlog.android.exercise.details.ExerciseDetailsActivity;
 import com.everlog.ui.activities.home.exercisegroup.DefaultCreateExerciseGroupsActivity;
-import com.everlog.ui.activities.home.integration.IntegrationActivity;
+import com.everlog.android.settings.integration.IntegrationActivity;
 import com.everlog.ui.activities.home.musclegoal.MuscleGoalActivity;
 import com.everlog.android.plan.create.CreatePlanActivity;
 import com.everlog.android.plan.details.PlanDetailsActivity;

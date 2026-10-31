@@ -3,6 +3,7 @@ package com.everlog.data.datastores
 import android.content.Intent
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.everlog.android.auth.data.model.ELUser
+import com.everlog.android.auth.data.store.ELDocStoreUserLoadedEvent
 import com.everlog.android.common.kotlin.AppContext
 import com.everlog.android.common.mvp.MvpBroadcasts
 import com.everlog.android.settings.data.SettingsManager
@@ -62,8 +63,4 @@ class ELUserStore : ELDocumentStore<ELUser>() {
         return ELDocStoreUserLoadedEvent(item, hasPendingWrites, fromCache, error)
     }
 
-    class ELDocStoreUserLoadedEvent internal constructor(item: ELUser?,
-                                                         hasPendingWrites: Boolean,
-                                                         fromCache: Boolean,
-                                                         error: Throwable?) : ELDocStoreItemLoadedEvent<ELUser?>(item, hasPendingWrites, fromCache, error)
 }

@@ -58,19 +58,6 @@
     <style name="SettingsCategory.Large">
         <item name="android:textSize">18sp</item>
     </style>
-    <style name="SettingsSubtitle">
-        <item name="android:layout_width">match_parent</item>
-        <item name="android:layout_height">wrap_content</item>
-        <item name="android:textColor">@color/gray_1</item>
-        <item name="android:textSize">@dimen/settings_row_subtitle_text_size</item>
-        <item name="android:layout_marginTop">@dimen/activity_margin_half_half</item>
-    </style>
-    <style name="SettingsIcon">
-        <item name="android:layout_width">@dimen/settings_item_icon_size</item>
-        <item name="android:layout_height">@dimen/settings_item_icon_size</item>
-        <item name="android:layout_marginRight">@dimen/settings_arrow_icon_margin_left</item>
-        <item name="android:tint">@color/main_accent</item>
-    </style>
 
     <!-- BottomSheet theme. -->
 

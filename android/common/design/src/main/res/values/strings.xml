@@ -92,4 +92,11 @@
     <string name="home_week_plan_skip">Skip</string>
     <string name="plan_details_rest_prompt">Make sure to take enough time to recover during your rest day.\n\nPro tip: Muscle is built while resting, not while training.</string>
     <string name="plan_details_rest_title">Rest Day</string>
+    <string name="muscle_goal_title">Muscle training goal</string>
+    <string name="notifications_newsletter_description">I\'d like to receive tips and tricks, and announcements of new features</string>
+    <string name="notifications_newsletter_title">Tips &amp; Tricks</string>
+    <string name="settings_title">Settings</string>
+    <string name="settings_weekly_goal">Weekly workouts goal</string>
+    <string name="settings_weight_increase">Weight increment</string>
+    <string name="settings_workouts">Workouts</string>
 </resources>

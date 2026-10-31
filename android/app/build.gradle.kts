@@ -161,7 +161,6 @@ dependencies {
     implementation(libs.loading.button)
 
     implementation(libs.mpandroidchart)
-    implementation(libs.roundedimageview)
     implementation(libs.threetenabp)
     implementation(libs.materialnumberpicker)
     implementation(libs.taptargetview)
