@@ -37,9 +37,6 @@
     <string name="continue_">Continue</string>
     <string name="clear">Clear</string>
     <string name="add">Add</string>
-    <string name="name">Name</string>
-    <string name="date">Date</string>
-    <string name="notes">Notes</string>
     <string name="time">Time</string>
     <string name="complete">Complete</string>
 
@@ -51,7 +48,6 @@
 
     <string name="error_play_store">Unable to find Play Store app</string>
 
-    <string name="no_thanks">No, thanks</string>
 
     <string name="pending_feature_title">Coming soon…</string>
     <string name="pending_feature_subtitle">We are working on this feature and it will be available as an update soon!</string>
@@ -112,7 +108,6 @@
     <string name="home_workouts_routines">Workout Templates</string>
     <string name="home_workouts_view_exercises">View all 220+ exercises</string>
 
-    <string name="exercises_title">Exercises</string>
     <string name="exercises_title_edit">Edit Exercises</string>
 
 
@@ -120,8 +115,6 @@
 
     <string name="create_routine_title">New Template</string>
     <string name="create_routine_title_edit">Edit Template</string>
-    <string name="create_routine_error_no_title">Please enter a value</string>
-    <string name="create_routine_saved">Workout saved</string>
     <string name="create_routine_edit_name_title">Edit name</string>
     <string name="create_routine_add_exercises">Add Exercises</string>
     <string name="create_routine_exercise_duration">Exercise Duration</string>
@@ -140,13 +133,6 @@
 
     <string name="history_empty_day_prompt">No events found for this day</string>
 
-    <string name="workout_details_title">Session Summary</string>
-    <string name="workout_details_breakdown">@string/exercises_title</string>
-    <string name="workout_details_duration">Duration</string>
-    <string name="workout_details_save_success">Successfully saved to Your Workouts</string>
-    <string name="workout_details_save_title">Save Template</string>
-    <string name="workout_details_save_prompt">Would you like to save this session as a template so you can quickly perform it again next time?</string>
-    <string name="workout_details_date_future_error">You cannot set date in the future</string>
 
     <string name="statistics_longest_session">longest session</string>
     <string name="statistics_muscles_trained">Muscles Trained</string>

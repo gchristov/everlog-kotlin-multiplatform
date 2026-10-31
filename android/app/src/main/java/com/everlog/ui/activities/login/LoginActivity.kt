@@ -33,7 +33,7 @@ class LoginActivity : BaseActivity(), MvpViewLogin {
 
     companion object {
         fun setupLoadingButton(): Bitmap {
-            val d = AppContext.resources.getDrawable(R.drawable.ic_check_green)
+            val d = AppContext.resources.getDrawable(DesignR.drawable.ic_check_green)
             d.setColorFilter(ContextCompat.getColor(AppContext, DesignR.color.background_base), PorterDuff.Mode.SRC_ATOP)
             val bitmap = Bitmap.createBitmap(d.intrinsicWidth, d.intrinsicHeight, Bitmap.Config.ARGB_8888)
             val canvas = Canvas(bitmap)

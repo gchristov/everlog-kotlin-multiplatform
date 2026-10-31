@@ -72,4 +72,10 @@
     <string name="workout_discard_title">Discard workout?</string>
     <string name="workout_error_no_permissions">We need permission to show notifications and track your activity to provide live workout updates and timers. Please enable these in Settings.</string>
     <string name="workout_finish">Finish</string>
+    <string name="create_routine_error_no_title">Please enter a value</string>
+    <string name="create_routine_saved">Workout saved</string>
+    <string name="exercises_title">Exercises</string>
+    <string name="no_thanks">No, thanks</string>
+    <string name="notes">Notes</string>
+    <string name="workout_details_duration">Duration</string>
 </resources>

@@ -1,4 +1,4 @@
-package com.everlog.ui.adapters;
+package com.everlog.android.workout.details;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -7,13 +7,13 @@ import android.view.ViewGroup;
 
 import com.ahamed.multiviewadapter.ItemBinder;
 import com.ahamed.multiviewadapter.ItemViewHolder;
-import com.everlog.R;
 import com.everlog.android.common.kotlin.DateExtKt;
 import com.everlog.android.common.kotlin.format.StatsFormatUtils;
 import com.everlog.android.common.mvp.list.OnListItemListener;
 import com.everlog.android.settings.data.SettingsManager;
+import com.everlog.android.workout.R;
 import com.everlog.android.common.data.model.workout.ELWorkout;
-import com.everlog.databinding.RowHeaderWorkoutDetailsBinding;
+import com.everlog.android.workout.databinding.RowHeaderWorkoutDetailsBinding;
 import com.everlog.android.common.kotlin.format.WeightFormatKt;
 
 public class WorkoutDetailsStatsAdapter {
@@ -100,7 +100,7 @@ public class WorkoutDetailsStatsAdapter {
 
         private void renderStats(ELWorkout item) {
             // Duration
-            binding.totalTimeSummary.setSummary(StatsFormatUtils.Companion.formatTimeStatsLabel(item.getDurationMillis()), getContext().getString(com.everlog.android.common.kotlin.R.string.hour), getContext().getString(R.string.workout_details_duration));
+            binding.totalTimeSummary.setSummary(StatsFormatUtils.Companion.formatTimeStatsLabel(item.getDurationMillis()), getContext().getString(com.everlog.android.common.kotlin.R.string.hour), getContext().getString(com.everlog.android.common.design.R.string.workout_details_duration));
             // Weight
             float weight = item.getTotalWeight(SettingsManager.manager.weightUnit());
             binding.totalWeightSummary.setVisibility(weight > 0 ? View.VISIBLE : View.GONE);
@@ -109,7 +109,7 @@ public class WorkoutDetailsStatsAdapter {
             binding.maxWeightSummary.setSummary(StatsFormatUtils.Companion.formatWeightStatsLabel(item.getMaxWeight(SettingsManager.manager.weightUnit())), WeightFormatKt.weightUnitAbbreviation(SettingsManager.manager.weightUnit()), getContext().getString(com.everlog.android.common.design.R.string.workout_details_max_weight));
             // Exercises
             binding.exercisesSummary.setVisibility(weight > 0 ? View.GONE : View.VISIBLE);
-            binding.exercisesSummary.setSummary(item.getTotalExercises() + "", null, getContext().getString(R.string.exercises_title));
+            binding.exercisesSummary.setSummary(item.getTotalExercises() + "", null, getContext().getString(com.everlog.android.common.design.R.string.exercises_title));
             // Separators
             binding.maxWeightSeparator.setVisibility(weight > 0 ? View.VISIBLE : View.GONE);
         }

@@ -1,4 +1,4 @@
-package com.everlog.ui.activities.home.workout.details;
+package com.everlog.android.workout.details;
 
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -6,30 +6,22 @@ import android.text.TextUtils;
 
 import com.ahamed.multiviewadapter.DataListManager;
 import com.ahamed.multiviewadapter.RecyclerAdapter;
-import com.everlog.R;
 import com.everlog.android.common.kotlin.DateExtKt;
 import com.everlog.android.settings.data.SettingsManager;
-import com.everlog.constants.ELActivityRequestCodes;
-import com.everlog.data.controllers.statistics.UserStatsController;
-import com.everlog.data.datastores.ELDatastore;
+import com.everlog.android.template.data.store.TemplateStores;
+import com.everlog.android.workout.R;
+import com.everlog.android.workout.WorkoutFeature;
+import com.everlog.android.workout.WorkoutFeatureDependencies;
 import com.everlog.android.common.data.store.OnStoreItemsListener;
 import com.everlog.android.workout.data.store.ELDocStoreWorkoutLoadedEvent;
+import com.everlog.android.workout.data.store.WorkoutStores;
 import com.everlog.android.common.data.model.ELRoutine;
 import com.everlog.android.common.data.model.exercise.ELExerciseGroup;
 import com.everlog.android.common.data.model.workout.ELWorkout;
-import com.everlog.android.common.data.model.workout.RangeType;
-import com.everlog.managers.PlanManager;
-import com.everlog.managers.analytics.AnalyticsManager;
-import com.everlog.managers.apprate.RatePromptTrigger;
 import com.everlog.android.common.mvp.activity.BaseActivityPresenter;
 import com.everlog.android.common.kotlin.Utils;
-import com.everlog.ui.activities.home.exercisegroup.DefaultCreateExerciseGroupsActivity;
-import com.everlog.ui.adapters.WorkoutDetailsStatsAdapter;
 import com.everlog.android.common.mvp.list.ExerciseGroupSummaryAdapter;
-import com.everlog.android.exercise.details.ExerciseDetailsActivity;
-import com.everlog.ui.dialog.AppDialogs;
-import com.everlog.ui.navigator.ELNavigator;
-import com.everlog.ui.navigator.PresenterNavigator;
+import com.everlog.android.common.sessionui.exercisetable.ExerciseTab;
 import com.google.firebase.firestore.SetOptions;
 
 import org.apache.commons.lang3.SerializationUtils;
@@ -41,10 +33,10 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 import kotlin.Unit;
 
-import static android.app.Activity.RESULT_OK;
-import static com.everlog.constants.ELConstants.EXTRA_EXERCISE_GROUPS;
-
 public class PresenterWorkoutDetails extends BaseActivityPresenter<MvpViewWorkoutDetails> {
+
+    private final WorkoutFeatureDependencies dependencies = WorkoutFeature.INSTANCE.getDependencies();
+    private final WorkoutDetailsAnalytics analytics = dependencies.workoutDetailsAnalytics();
 
     // From the workout loading. Lets the congrats banner, shown about 0.5s in, play before Play's rating
     // dialog covers the screen.
@@ -74,7 +66,7 @@ public class PresenterWorkoutDetails extends BaseActivityPresenter<MvpViewWorkou
 
     @Override
     public void detachView() {
-        ELDatastore.workoutStore().destroy();
+        WorkoutStores.workoutStore().destroy();
         super.detachView();
     }
 
@@ -93,12 +85,9 @@ public class PresenterWorkoutDetails extends BaseActivityPresenter<MvpViewWorkou
     @Override
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == ELActivityRequestCodes.REQUEST_EDIT_EXERCISE_GROUPS) {
-            if (resultCode == RESULT_OK
-                    && data != null
-                    && data.hasExtra(EXTRA_EXERCISE_GROUPS)) {
-                handleEditExercises((List<ELExerciseGroup>) data.getSerializableExtra(EXTRA_EXERCISE_GROUPS));
-            }
+        List<ELExerciseGroup> edited = dependencies.editedExerciseGroups(requestCode, resultCode, data);
+        if (edited != null) {
+            handleEditExercises(edited);
         }
     }
 
@@ -115,7 +104,7 @@ public class PresenterWorkoutDetails extends BaseActivityPresenter<MvpViewWorkou
                         Utils.runWithDelay(() -> {
                             handleCheckWeeklyGoalComplete();
                         }, 500);
-                        PresenterNavigator.getNavigator(this).requestRatePrompt(new RatePromptTrigger.WorkoutCompleted(toEdit), RATE_PROMPT_DELAY_MILLIS);
+                        dependencies.requestRatePrompt(getMvpView().getActivity(), toEdit, RATE_PROMPT_DELAY_MILLIS);
                     }
                 }
                 mLoadedItemOnce = true;
@@ -133,8 +122,8 @@ public class PresenterWorkoutDetails extends BaseActivityPresenter<MvpViewWorkou
         subscriptions.add(getMvpView().onClickShare()
                 .compose(applyUISchedulers())
                 .subscribe(action -> {
-                    AnalyticsManager.manager.workoutDetailsShared();
-                    PresenterNavigator.getNavigator(this).shareWorkout(toEdit);
+                    analytics.shared();
+                    dependencies.shareWorkout(getMvpView().getActivity(), toEdit);
                 }, throwable -> handleError(throwable)));
     }
 
@@ -145,7 +134,7 @@ public class PresenterWorkoutDetails extends BaseActivityPresenter<MvpViewWorkou
     }
 
     private void observeSaveAsRoutineConfirm() {
-        subscriptions.add(getMvpView().showPrompt(R.string.workout_details_save_title, R.string.workout_details_save_prompt, R.string.workout_details_save_title, R.string.no_thanks)
+        subscriptions.add(getMvpView().showPrompt(R.string.workout_details_save_title, R.string.workout_details_save_prompt, R.string.workout_details_save_title, com.everlog.android.common.design.R.string.no_thanks)
                 .compose(applyUISchedulers())
                 .subscribe(action -> {
                     if (action == DialogInterface.BUTTON_POSITIVE) {
@@ -170,14 +159,14 @@ public class PresenterWorkoutDetails extends BaseActivityPresenter<MvpViewWorkou
                 .compose(applyUISchedulers())
                 .subscribe(action -> {
                     if (action == DialogInterface.BUTTON_POSITIVE) {
-                        AnalyticsManager.manager.workoutDetailsDeleted();
+                        analytics.deleted();
                         deleteWorkout(workout);
                     }
                 }, throwable -> handleError(throwable)));
     }
 
     private void observeEditNameConfirm() {
-        subscriptions.add(getMvpView().showStringPrompt(toEdit.getName(), AppDialogs.StringDialogType.WORKOUT_NAME)
+        subscriptions.add(getMvpView().showStringPrompt(toEdit.getName(), WorkoutTextField.Name)
                 .compose(applyUISchedulers())
                 .subscribe(newName -> {
                     toEdit.setName(newName);
@@ -202,7 +191,7 @@ public class PresenterWorkoutDetails extends BaseActivityPresenter<MvpViewWorkou
     }
 
     private void observeEditNoteConfirm() {
-        subscriptions.add(getMvpView().showStringPrompt(toEdit.getNote(), AppDialogs.StringDialogType.WORKOUT_NOTE)
+        subscriptions.add(getMvpView().showStringPrompt(toEdit.getNote(), WorkoutTextField.Note)
                 .compose(applyUISchedulers())
                 .subscribe(note -> {
                     toEdit.setNote(TextUtils.isEmpty(note) ? null : note);
@@ -216,7 +205,7 @@ public class PresenterWorkoutDetails extends BaseActivityPresenter<MvpViewWorkou
     private void loadWorkout() {
         loadViewData();
         // Listen for item changes
-        ELDatastore.workoutStore().getItem(toEdit.getUuid());
+        WorkoutStores.workoutStore().getItem(toEdit.getUuid());
     }
 
     private void loadViewData() {
@@ -232,17 +221,17 @@ public class PresenterWorkoutDetails extends BaseActivityPresenter<MvpViewWorkou
     // Saving
 
     private void deleteWorkout(ELWorkout workout) {
-        ELDatastore.workoutStore().delete(workout);
+        WorkoutStores.workoutStore().delete(workout);
         getMvpView().closeScreen();
     }
 
     private void saveChangesAndCloseScreen() {
         if (TextUtils.isEmpty(toEdit.getName())) {
-            getMvpView().showToast(R.string.create_routine_error_no_title);
+            getMvpView().showToast(com.everlog.android.common.design.R.string.create_routine_error_no_title);
         } else {
             if (mChangesMade) {
-                ELDatastore.workoutStore().create(toEdit, SetOptions.merge());
-                getMvpView().showToast(R.string.create_routine_saved);
+                WorkoutStores.workoutStore().create(toEdit, SetOptions.merge());
+                getMvpView().showToast(com.everlog.android.common.design.R.string.create_routine_saved);
             }
         }
         getMvpView().closeScreen();
@@ -256,13 +245,12 @@ public class PresenterWorkoutDetails extends BaseActivityPresenter<MvpViewWorkou
     // Handlers
 
     private void handleSaveAsRoutine() {
-        AnalyticsManager.manager.workoutDetailsSavedAsRoutine();
+        analytics.savedAsTemplate();
         // Save routine
         ELRoutine toSave = SerializationUtils.clone(toEdit).getRoutineFromWorkout();
-        ELDatastore.routineStore().create(toSave, SetOptions.merge());
-        AnalyticsManager.manager.routineCreated();
+        TemplateStores.routineStore().create(toSave, SetOptions.merge());
         // Replace routine for ongoing plan
-        PlanManager.manager.updateRoutineForPlan(getMvpView().getContext(), toSave);
+        dependencies.replaceRoutineInOngoingPlan(getMvpView().getContext(), toSave);
         getMvpView().showToast(R.string.workout_details_save_success);
         if (mBackPressed) {
             // If we are coming from the BACK workflow, safely close the screen.
@@ -276,32 +264,24 @@ public class PresenterWorkoutDetails extends BaseActivityPresenter<MvpViewWorkou
 
     private void handleCheckWeeklyGoalComplete() {
         // Fetch all workouts.
-        ELDatastore.workoutsStore().getItems(new OnStoreItemsListener<ELWorkout>() {
+        WorkoutStores.workoutsStore().getItems(new OnStoreItemsListener<ELWorkout>() {
 
             @Override
             public void onItemsLoaded(List<ELWorkout> items, boolean fromCache) {
-                // Calculate weekly stats.
-                new UserStatsController().loadStats(RangeType.WEEK,
-                        items,
-                        new UserStatsController.OnCompleteListener() {
-
-                    @Override
-                    public void onComplete(@NotNull UserStatsController.StatsResult result) {
+                dependencies.workoutsThisWeek(items, workoutsThisWeek -> {
                         if (isAttachedToView()) {
                             if (getMvpView().performingFromPlan()) {
                                 getMvpView().showWorkoutCompleteCongrats();
-                            } else if (SettingsManager.manager.weeklyWorkoutsGoal() == result.getWorkoutsCompleted()) {
+                            } else if (SettingsManager.manager.weeklyWorkoutsGoal() == workoutsThisWeek) {
                                 getMvpView().showWeeklyGoalCompleteCongrats();
                             } else {
                                 getMvpView().showWorkoutCompleteCongrats();
                             }
                         }
-                    }
-
-                    @Override
-                    public void onError(@NotNull Throwable throwable) {
-                        handleError(throwable);
-                    }
+                    return Unit.INSTANCE;
+                }, throwable -> {
+                    handleError(throwable);
+                    return Unit.INSTANCE;
                 });
             }
 
@@ -325,27 +305,26 @@ public class PresenterWorkoutDetails extends BaseActivityPresenter<MvpViewWorkou
         mAdapter.registerBinders(new WorkoutDetailsStatsAdapter.Binder(new WorkoutDetailsStatsAdapter.OnWorkoutDetailsStatsListener() {
             @Override
             public void onClickEditName(ELWorkout workout) {
-                AnalyticsManager.manager.workoutDetailsNameModified();
+                analytics.nameModified();
                 observeEditNameConfirm();
             }
 
             @Override
             public void onClickEditDate(ELWorkout workout) {
-                AnalyticsManager.manager.workoutDetailsDateModified();
+                analytics.dateModified();
                 observeEditDateConfirm();
             }
 
             @Override
             public void onClickEditNote(ELWorkout workout) {
-                AnalyticsManager.manager.workoutDetailsNotesModified();
+                analytics.notesModified();
                 observeEditNoteConfirm();
             }
 
             @Override
             public void onClickEditExercises(ELWorkout workout) {
-                AnalyticsManager.manager.workoutDetailsExercisesModified();
-                PresenterNavigator.getNavigator(PresenterWorkoutDetails.this).openEditExerciseGroups(new DefaultCreateExerciseGroupsActivity.Companion.Properties()
-                        .groups(workout.getExerciseGroups()));
+                analytics.exercisesModified();
+                dependencies.openExerciseEditor(getMvpView().getActivity(), workout.getExerciseGroups());
             }
 
             @Override
@@ -354,7 +333,7 @@ public class PresenterWorkoutDetails extends BaseActivityPresenter<MvpViewWorkou
                 .setShowTemplates(false)
                 .setWeightUnit(SettingsManager.manager.weightUnit())
                 .setOnExerciseClicked((context, exercise) -> {
-                    new ELNavigator(context).openExerciseDetails(new ExerciseDetailsActivity.Companion.Properties().exercise(exercise));
+                    dependencies.openExerciseDetails(context, exercise, ExerciseTab.Info);
                     return Unit.INSTANCE;
                 })
         ));

@@ -3,9 +3,11 @@ package com.everlog.application.features
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
+import com.everlog.android.common.data.model.ELRoutine
 import com.everlog.android.common.data.model.exercise.ELExercise
 import com.everlog.android.common.data.model.exercise.ELExerciseGroup
 import com.everlog.android.common.data.model.workout.ELWorkout
+import com.everlog.android.common.data.model.workout.RangeType
 import com.everlog.android.common.sessionui.exercisetable.ExerciseTab
 import com.everlog.android.exercise.data.RealExerciseRepository
 import com.everlog.android.exercise.data.model.library.LibraryExercise
@@ -13,6 +15,8 @@ import com.everlog.android.workout.data.OngoingWorkoutRepository
 import com.everlog.android.workout.data.RealWorkoutRepository
 import com.everlog.android.workout.data.prefill.LoadPrefillSourcesUseCase
 import com.everlog.android.workout.data.prefill.RealLoadPrefillSourcesUseCase
+import com.everlog.android.workout.details.WorkoutDetailsAnalytics
+import com.everlog.android.workout.details.WorkoutTextField
 import com.everlog.android.workout.WorkoutFeatureDependencies
 import com.everlog.android.workout.log.WorkoutLogAlerts
 import com.everlog.android.workout.log.WorkoutLogAnalytics
@@ -22,13 +26,22 @@ import com.everlog.android.workout.setsuggestions.SetSuggestionsAnalytics
 import com.everlog.android.workout.setsuggestions.SetSuggestionsSettings
 import com.everlog.config.AppConfig
 import com.everlog.config.FeedbackSource
+import com.everlog.constants.ELActivityRequestCodes
+import com.everlog.constants.ELConstants
+import com.everlog.data.controllers.statistics.UserStatsController
+import com.everlog.data.repositories.RealOngoingPlanRepository
 import com.everlog.data.repositories.RealOngoingWorkoutRepository
 import com.everlog.data.sync.AppDataSync
 import com.everlog.managers.analytics.AnalyticsManager
+import com.everlog.managers.apprate.RatePromptTrigger
+import com.everlog.ui.activities.home.exercisegroup.DefaultCreateExerciseGroupsActivity
+import com.everlog.ui.dialog.AppDialogs
 import com.everlog.ui.navigator.ELNavigator
 import com.everlog.ui.navigator.feedbackFormLauncher
+import java.util.Date
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
+import rx.Observable
 
 class AppWorkoutFeatureDependencies : WorkoutFeatureDependencies {
     private val templates = AppTemplateFeatureDependencies()
@@ -89,4 +102,59 @@ class AppWorkoutFeatureDependencies : WorkoutFeatureDependencies {
     override fun setSuggestionsSettings(context: Context): SetSuggestionsSettings = AppSetSuggestionsSettings(context)
 
     override fun setSuggestionsAnalytics(): SetSuggestionsAnalytics = AppSetSuggestionsAnalytics()
+
+    override fun workoutDetailsAnalytics(): WorkoutDetailsAnalytics = object : WorkoutDetailsAnalytics {
+        private val analytics = AnalyticsManager.manager
+
+        override fun shared() = analytics.workoutDetailsShared()
+
+        override fun deleted() = analytics.workoutDetailsDeleted()
+
+        override fun nameModified() = analytics.workoutDetailsNameModified()
+
+        override fun dateModified() = analytics.workoutDetailsDateModified()
+
+        override fun notesModified() = analytics.workoutDetailsNotesModified()
+
+        override fun exercisesModified() = analytics.workoutDetailsExercisesModified()
+
+        override fun savedAsTemplate() {
+            analytics.workoutDetailsSavedAsRoutine()
+            analytics.routineCreated()
+        }
+    }
+
+    override fun shareWorkout(activity: Activity, workout: ELWorkout) = ELNavigator(activity).shareWorkout(workout)
+
+    override fun requestRatePrompt(activity: Activity, workout: ELWorkout, delayMillis: Long) =
+        ELNavigator(activity).requestRatePrompt(RatePromptTrigger.WorkoutCompleted(workout), delayMillis)
+
+    override fun replaceRoutineInOngoingPlan(context: Context, routine: ELRoutine) =
+        RealOngoingPlanRepository(context.applicationContext).replaceRoutine(routine)
+
+    override fun workoutsThisWeek(workouts: List<ELWorkout>, onCount: (Int) -> Unit, onError: (Throwable) -> Unit) =
+        UserStatsController().loadStats(RangeType.WEEK, workouts, object : UserStatsController.OnCompleteListener {
+            override fun onComplete(result: UserStatsController.StatsResult) = onCount(result.workoutsCompleted)
+
+            override fun onError(throwable: Throwable) = onError(throwable)
+        })
+
+    override fun showTextPrompt(context: Context, value: String?, field: WorkoutTextField): Observable<String> =
+        AppDialogs.showInputStringDialog(context, value, when (field) {
+            WorkoutTextField.Name -> AppDialogs.StringDialogType.WORKOUT_NAME
+            WorkoutTextField.Note -> AppDialogs.StringDialogType.WORKOUT_NOTE
+        })
+
+    override fun showDateTimePrompt(context: Context, date: Date): Observable<Date> = AppDialogs.showDateTimeDialog(context, date)
+
+    override fun openExerciseEditor(activity: Activity, groups: List<ELExerciseGroup>) =
+        ELNavigator(activity).openEditExerciseGroups(DefaultCreateExerciseGroupsActivity.Companion.Properties().groups(groups))
+
+    override fun editedExerciseGroups(requestCode: Int, resultCode: Int, data: Intent?): List<ELExerciseGroup>? =
+        if (requestCode == ELActivityRequestCodes.REQUEST_EDIT_EXERCISE_GROUPS && resultCode == Activity.RESULT_OK) {
+            @Suppress("DEPRECATION", "UNCHECKED_CAST")
+            data?.getSerializableExtra(ELConstants.EXTRA_EXERCISE_GROUPS) as? List<ELExerciseGroup>
+        } else {
+            null
+        }
 }

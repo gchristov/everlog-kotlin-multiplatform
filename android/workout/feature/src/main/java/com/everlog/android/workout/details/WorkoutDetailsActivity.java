@@ -1,16 +1,18 @@
-package com.everlog.ui.activities.home.workout.details;
+package com.everlog.android.workout.details;
 
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
-import com.everlog.R;
+import com.everlog.android.workout.R;
+import com.everlog.android.workout.WorkoutExtras;
+import com.everlog.android.workout.WorkoutFeature;
+import com.everlog.android.workout.WorkoutScreenNames;
+import com.everlog.android.workout.databinding.ActivityWorkoutDetailsBinding;
 import com.everlog.android.common.data.model.workout.ELWorkout;
 import com.everlog.android.common.mvp.activity.BaseActivity;
 import com.everlog.android.common.mvp.activity.BaseActivityPresenter;
-import com.everlog.databinding.ActivityWorkoutDetailsBinding;
-import com.everlog.ui.dialog.AppDialogs;
-import com.everlog.utils.ActivityUtils;
+import com.everlog.android.common.mvp.util.ELGlideModule;
 import com.google.android.material.appbar.AppBarLayout;
 
 import org.jetbrains.annotations.NotNull;
@@ -29,11 +31,6 @@ import nl.dionsegijn.konfetti.models.Shape;
 import nl.dionsegijn.konfetti.models.Size;
 import rx.Observable;
 import rx.subjects.PublishSubject;
-
-import static com.everlog.constants.ELConstants.EXTRA_WORKOUT;
-import static com.everlog.constants.ELConstants.EXTRA_WORKOUT_FROM_PLAN;
-import static com.everlog.constants.ELConstants.EXTRA_WORKOUT_JUST_FINISHED;
-import static com.everlog.managers.analytics.AnalyticsConstants.SCREEN_WORKOUT_DETAILS;
 
 public class WorkoutDetailsActivity extends BaseActivity implements MvpViewWorkoutDetails {
 
@@ -56,13 +53,13 @@ public class WorkoutDetailsActivity extends BaseActivity implements MvpViewWorko
     @NotNull
     @Override
     public List<String> getRequiredExtras() {
-        return Collections.singletonList(EXTRA_WORKOUT);
+        return Collections.singletonList(WorkoutExtras.WORKOUT);
     }
 
     @NotNull
     @Override
     public String getAnalyticsScreenName() {
-        return SCREEN_WORKOUT_DETAILS;
+        return WorkoutScreenNames.DETAILS;
     }
 
     @Override
@@ -127,17 +124,17 @@ public class WorkoutDetailsActivity extends BaseActivity implements MvpViewWorko
 
     @Override
     public ELWorkout getItemToEdit() {
-        return (ELWorkout) getIntent().getSerializableExtra(EXTRA_WORKOUT);
+        return (ELWorkout) getIntent().getSerializableExtra(WorkoutExtras.WORKOUT);
     }
 
     @Override
     public boolean isJustFinished() {
-        return getIntent().getBooleanExtra(EXTRA_WORKOUT_JUST_FINISHED, false);
+        return getIntent().getBooleanExtra(WorkoutExtras.JUST_FINISHED, false);
     }
 
     @Override
     public boolean performingFromPlan() {
-        return getIntent().getBooleanExtra(EXTRA_WORKOUT_FROM_PLAN, false);
+        return getIntent().getBooleanExtra(WorkoutExtras.FROM_PLAN, false);
     }
 
     @Override
@@ -154,7 +151,7 @@ public class WorkoutDetailsActivity extends BaseActivity implements MvpViewWorko
                 .setMensage("You achieved your weekly goal.")
                 .setTextColor(ContextCompat.getColor(this, com.everlog.android.common.design.R.color.background_card))
                 .setColor(com.everlog.android.common.design.R.color.main_accent_darker)
-                .setIcon(R.drawable.ic_trophy)
+                .setIcon(com.everlog.android.common.design.R.drawable.ic_trophy)
                 .show();
         binding.achievementKonfettiView.build()
                 .addColors(ContextCompat.getColor(this, R.color.konfetti_lt_orange),
@@ -180,23 +177,23 @@ public class WorkoutDetailsActivity extends BaseActivity implements MvpViewWorko
                 .setMensage("You're a step closer to your goal.")
                 .setTextColor(ContextCompat.getColor(this, com.everlog.android.common.design.R.color.background_card))
                 .setColor(com.everlog.android.common.design.R.color.main_accent_darker)
-                .setIcon(R.drawable.ic_trophy)
+                .setIcon(com.everlog.android.common.design.R.drawable.ic_trophy)
                 .show();
     }
 
     @Override
-    public Observable<String> showStringPrompt(String name, AppDialogs.StringDialogType type) {
-        return AppDialogs.showInputStringDialog(this, name, type);
+    public Observable<String> showStringPrompt(String name, WorkoutTextField type) {
+        return WorkoutFeature.INSTANCE.getDependencies().showTextPrompt(this, name, type);
     }
 
     @Override
     public Observable<Date> showDatePrompt(Date date) {
-        return AppDialogs.showDateTimeDialog(this, date);
+        return WorkoutFeature.INSTANCE.getDependencies().showDateTimePrompt(this, date);
     }
 
     @Override
     public void showSaveChangesTick() {
-        ((Toolbar) binding.getRoot().findViewById(R.id.toolbar)).setNavigationIcon(R.drawable.ic_check_green);
+        ((Toolbar) binding.getRoot().findViewById(R.id.toolbar)).setNavigationIcon(com.everlog.android.common.design.R.drawable.ic_check_green);
         ((AppBarLayout) binding.getRoot().findViewById(R.id.appBar)).setExpanded(true);
     }
 
@@ -211,7 +208,7 @@ public class WorkoutDetailsActivity extends BaseActivity implements MvpViewWorko
         ((Toolbar) binding.getRoot().findViewById(R.id.toolbar)).setTitle(R.string.workout_details_title);
         setSupportActionBar(binding.getRoot().findViewById(R.id.toolbar));
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        ActivityUtils.setupWorkoutCoverImage(binding.getRoot().findViewById(R.id.coverImage));
+        ELGlideModule.loadImage(com.everlog.android.common.design.R.drawable.background_workout, binding.getRoot().findViewById(R.id.coverImage));
     }
 
     private void setupListView() {

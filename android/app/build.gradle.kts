@@ -183,7 +183,6 @@ dependencies {
     implementation(libs.hyperlog)
     implementation(libs.volley)
 
-    implementation(libs.konfetti)
     implementation(libs.collapsingtoolbar.subtitle)
     implementation(libs.aspect)
     implementation(libs.scrollingpagerindicator)
@@ -199,6 +198,5 @@ dependencies {
     implementation(libs.ucrop)
     implementation(libs.bottomSheet)
     implementation(libs.blurView)
-    implementation(libs.achievementView)
     implementation(libs.textDrawable)
 }

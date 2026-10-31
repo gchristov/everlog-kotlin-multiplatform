@@ -206,7 +206,7 @@ class ExerciseGroupCreateAdapter {
 
         private fun setupPager() {
             binding.pager.adapter = mAdapter
-            binding.pager.pageMargin = ViewUtils.dpToPxFromRaw(itemView.context, R.dimen.activity_margin_triple)
+            binding.pager.pageMargin = ViewUtils.dpToPxFromRaw(itemView.context, DesignR.dimen.activity_margin_triple)
             binding.pager.offscreenPageLimit = 2
             binding.pager.addOnPageChangeListener(object : ViewPager.OnPageChangeListener {
                 override fun onPageScrollStateChanged(state: Int) {}
@@ -644,7 +644,7 @@ class ExerciseGroupCreateAdapter {
             binding.checkbox.visibility = if (selectMode) View.VISIBLE else View.GONE
             binding.historyBtn.visibility = if (selectMode || !builder.allowSetCompletion) View.GONE else View.VISIBLE
             if (builder.listener?.isSelected(item) == true) {
-                binding.checkbox.setImageResource(R.drawable.ic_check_green)
+                binding.checkbox.setImageResource(DesignR.drawable.ic_check_green)
                 binding.checkbox.setBackgroundResource(R.drawable.circle_accent)
             } else {
                 binding.checkbox.setImageDrawable(null)
