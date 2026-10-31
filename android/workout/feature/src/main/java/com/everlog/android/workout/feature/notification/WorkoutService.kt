@@ -1,4 +1,4 @@
-package com.everlog.services.workout
+package com.everlog.android.workout.feature.notification
 
 import android.app.Notification
 import android.app.Service
@@ -16,8 +16,6 @@ import com.everlog.android.workout.data.notification.WorkoutBroadcasts
 import com.everlog.android.workout.feature.R
 import com.everlog.android.workout.feature.WorkoutExtras
 import com.everlog.android.workout.feature.WorkoutFeature
-import com.everlog.android.workout.feature.notification.WorkoutNotificationBuilder
-import com.everlog.android.workout.feature.notification.WorkoutNotificationState
 import timber.log.Timber
 
 /**
@@ -28,7 +26,6 @@ import timber.log.Timber
  * mode change, doesn't count. The notification's buttons are handled by the screen, so the service never runs
  * without it. Opening the app again offers to resume the workout.
  */
-// Keeps its package, as the system knows services by their full class name
 class WorkoutService : Service() {
 
     // State

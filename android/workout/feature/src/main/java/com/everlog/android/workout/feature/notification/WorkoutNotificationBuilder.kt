@@ -19,7 +19,6 @@ import com.everlog.android.workout.feature.notification.WorkoutNotificationState
 import com.everlog.android.workout.feature.notification.WorkoutNotificationState.NextSet
 import com.everlog.android.workout.feature.notification.WorkoutNotificationState.NoExercises
 import com.everlog.android.workout.feature.notification.WorkoutNotificationState.Rest
-import com.everlog.services.workout.WorkoutService
 import com.everlog.android.common.kotlin.format.ArrayResourceTypeUtils
 import com.everlog.android.common.kotlin.format.EmptyValue
 import com.everlog.android.common.kotlin.format.displayWeight

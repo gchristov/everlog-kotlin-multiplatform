@@ -89,7 +89,7 @@
         <!-- Services -->
 
         <service
-            android:name=".services.workout.WorkoutService"
+            android:name="com.everlog.android.workout.feature.notification.WorkoutService"
             android:exported="false"
             android:foregroundServiceType="health" />
         <service

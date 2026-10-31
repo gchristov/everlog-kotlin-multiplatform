@@ -62,7 +62,7 @@ The Android app is split into Gradle modules under `android/`: `app`, `common/<n
 - **app → feature → data → common**, enforced by the convention plugins: a dependency that breaks a rule fails the build. A feature never depends on another feature (screens open each other through the app's `Navigator`), data may depend on other features' data but never on UI, and test support (`test-fixtures`, `common:test`, `common:compose-test`) is only for tests.
 - **Code moves with its tests**, never ahead of them: a feature's tests go to its modules when its code does, and common modules hold only common code and its tests.
 - **What a feature needs from the app** (services on the app's managers, other features' screens) goes through one `…Dependencies` interface per feature that the app implements and registers in `ELApplication`, e.g. `ExerciseFeatureDependencies`. It stands in for DI until after TAS-468; `android/README.md` explains it.
-- **Moved code takes the module's namespace as its package**, except anything the system knows by its full class name (the launcher activity, services, receivers behind pending alarms and notification intents). R8 keep rules for what Firestore or Gson maps by reflection move to the module's `consumerProguardFiles`; check them with `./gradlew :android:app:minifyReleaseWithR8` and the mapping.
+- **Moved code takes the module's namespace as its package**, except what the system keeps by its full class name outside a running process: the launcher activity (home screen shortcuts), receivers behind scheduled alarms, and anything a notification posted from an alarm points at. A foreground service, its notification and the screens they open can be renamed, as they all go when the process dies, an update included. R8 keep rules for what Firestore or Gson maps by reflection move to the module's `consumerProguardFiles`; check them with `./gradlew :android:app:minifyReleaseWithR8` and the mapping.
 
 ### Pattern: MVP + RxJava 1 + EventBus (not MVVM/coroutines)
 
@@ -105,7 +105,7 @@ New screens are built in Compose: a `CommonComposeActivity` (`common:compose`: w
 
 ### Background work
 
-`WorkoutService` (`workout:feature`, keeping its `com.everlog.services.workout` package as the system knows it by name) and `WorkoutNotificationBuilder` run the active-workout foreground service/notification. `services/fcm/ELFirebaseMessagingService` handles push notifications. `receivers/` holds broadcast receivers.
+`WorkoutService` and `WorkoutNotificationBuilder` (`workout:feature`, package `notification`) run the active-workout foreground service/notification. `services/fcm/ELFirebaseMessagingService` handles push notifications. `receivers/` holds broadcast receivers.
 
 ## Code quality
 
