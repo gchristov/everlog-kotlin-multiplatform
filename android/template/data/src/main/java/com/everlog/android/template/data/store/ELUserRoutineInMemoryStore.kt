@@ -1,37 +1,25 @@
-package com.everlog.data.datastores.routines
+package com.everlog.android.template.data.store
 
 import com.everlog.android.common.data.model.ELRoutine
-import com.everlog.android.common.data.store.ELDocumentStore
+import com.everlog.android.common.data.store.InMemoryDocumentStore
 import com.everlog.android.common.data.store.events.ELDocStoreItemLoadedEvent
-import com.everlog.managers.firebase.FirestorePathManager
-import com.google.firebase.firestore.CollectionReference
-import com.google.firebase.firestore.FieldPath
-import com.google.firebase.firestore.Query
 
-class ELUserRoutineStore : ELDocumentStore<ELRoutine>() {
+/**
+ * [ELUserRoutineStore] for Firebase Test Lab runs, kept in memory.
+ */
+class ELUserRoutineInMemoryStore : InMemoryDocumentStore<ELRoutine>() {
 
     override fun getType(): Class<ELRoutine> {
         return ELRoutine::class.java
     }
 
-    override fun getQuery(itemId: String): Query {
-        return parentCollection
-                .whereEqualTo(FieldPath.documentId(), itemId)
-    }
-
-    override fun getParentCollection(): CollectionReference {
-        return FirestorePathManager.routinesCollection
-    }
-
-    override fun getTag(): String {
-        return "ELUserRoutineStore"
+    override fun getCollection(): String {
+        return ELUserRoutinesInMemoryStore.COLLECTION
     }
 
     override fun decorateItem(item: ELRoutine) {
         ELRoutineDecorator().decorate(item)
     }
-
-    // Events
 
     override fun getDocumentStoreItemLoadedEvent(item: ELRoutine?,
                                                  hasPendingWrites: Boolean,

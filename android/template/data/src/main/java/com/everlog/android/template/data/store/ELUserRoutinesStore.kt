@@ -1,13 +1,14 @@
-package com.everlog.data.datastores.routines
+package com.everlog.android.template.data.store
 
+import com.everlog.android.auth.data.LocalUserManager
 import com.everlog.android.common.data.model.ELRoutine
 import com.everlog.android.common.firebase.FirestoreFields
+import com.everlog.android.common.firebase.FirestorePaths
 import com.everlog.android.common.data.store.ELCollectionStore
 import com.everlog.android.common.data.store.events.ELColStoreItemAddedEvent
 import com.everlog.android.common.data.store.events.ELColStoreItemModifiedEvent
 import com.everlog.android.common.data.store.events.ELColStoreItemRemovedEvent
 import com.everlog.android.common.data.store.events.ELColStoreItemsLoadedEvent
-import com.everlog.managers.firebase.FirestorePathManager
 import com.google.firebase.firestore.Query
 
 class ELUserRoutinesStore : ELCollectionStore<ELRoutine>() {
@@ -17,7 +18,7 @@ class ELUserRoutinesStore : ELCollectionStore<ELRoutine>() {
     }
 
     override fun getQuery(): Query {
-        return FirestorePathManager.routinesCollection
+        return FirestorePaths.routines(LocalUserManager.requireUserId())
                 .orderBy(FirestoreFields.NAME)
     }
 

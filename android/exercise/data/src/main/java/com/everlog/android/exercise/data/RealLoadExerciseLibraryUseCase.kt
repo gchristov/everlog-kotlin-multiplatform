@@ -6,8 +6,6 @@ import com.everlog.android.exercise.data.LoadExerciseLibraryUseCase
 import com.everlog.android.exercise.data.exerciseLibraryOf
 import com.everlog.android.exercise.data.model.library.ExerciseLibrary
 import com.everlog.android.exercise.data.ExerciseRepository
-import com.everlog.android.template.data.RoutineRepository
-import com.everlog.android.workout.data.WorkoutRepository
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
@@ -21,14 +19,13 @@ import timber.log.Timber
 class RealLoadExerciseLibraryUseCase(
     private val dispatcher: CoroutineDispatcher,
     private val exerciseRepository: ExerciseRepository,
-    private val routineRepository: RoutineRepository,
-    private val workoutRepository: WorkoutRepository,
+    private val usage: ExerciseUsage,
 ) : LoadExerciseLibraryUseCase {
 
     override operator fun invoke(): Flow<Load<ExerciseLibrary>> = flow {
         val (counts, lastDone) = coroutineScope {
-            val countsRead = async { routineRepository.exerciseTemplateCounts() }
-            val lastDoneRead = async { workoutRepository.exerciseLastDone() }
+            val countsRead = async { usage.templateCounts() }
+            val lastDoneRead = async { usage.lastDone() }
             countsRead.await().getOrElse { warn("template counts", it); emptyMap() } to
                 lastDoneRead.await().getOrElse { warn("recent workouts", it); emptyMap() }
         }

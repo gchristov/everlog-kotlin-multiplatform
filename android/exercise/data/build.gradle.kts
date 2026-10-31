@@ -16,8 +16,6 @@ dependencies {
     implementation(projects.android.common.persistence)
     implementation(libs.firebase.storage)
     implementation(libs.gson)
-    implementation(projects.android.template.data)
-    implementation(projects.android.workout.data)
     implementation(libs.rxandroid)
     implementation(libs.timber)
     testImplementation(projects.android.exercise.testFixtures)
