@@ -85,8 +85,6 @@
 
 # Remote Config JSON, which Gson maps by reflection. The models are kept by their modules' consumer-rules.pro
 -keep class com.everlog.config.** { *; }
-# Gson doesn't ship R8 rules until 2.11, so without this optimisation can assume the fields are never set
--keep class com.everlog.managers.api.coverimages.response.** { *; }
 
 # Ads
 -keep class com.google.android.gms.common.GooglePlayServicesUtil {*;}

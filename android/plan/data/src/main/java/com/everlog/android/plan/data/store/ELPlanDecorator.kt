@@ -1,9 +1,10 @@
-package com.everlog.data.datastores.plans
+package com.everlog.android.plan.data.store
 
+import com.everlog.android.auth.data.LocalUserManager
 import com.everlog.android.common.data.model.ELRoutine
+import com.everlog.android.common.firebase.FirestorePaths
 import com.everlog.android.plan.data.model.ELPlan
 import com.everlog.android.template.data.store.ELRoutineDecorator
-import com.everlog.managers.firebase.FirestorePathManager
 import com.everlog.android.common.kotlin.Utils
 import com.google.android.gms.tasks.Tasks
 import com.google.firebase.firestore.FieldPath
@@ -59,7 +60,7 @@ class ELPlanDecorator {
 
     private fun resolveRoutine(uuid: String, source: Source): ELRoutine? {
         return try {
-            val snapshot = Tasks.await(FirestorePathManager.routinesCollection.whereEqualTo(FieldPath.documentId(), uuid).get(source))
+            val snapshot = Tasks.await(FirestorePaths.routines(LocalUserManager.requireUserId()).whereEqualTo(FieldPath.documentId(), uuid).get(source))
             if (snapshot.documents.isNotEmpty()) {
                 snapshot.documents.first().toObject(ELRoutine::class.java)
             } else {

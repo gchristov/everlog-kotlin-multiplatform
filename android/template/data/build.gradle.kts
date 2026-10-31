@@ -13,7 +13,6 @@ dependencies {
     // The template editor shows library exercises
     api(projects.android.exercise.data)
     api(projects.android.common.session)
-    implementation(projects.android.plan.data)
     implementation(libs.commons.lang3)
     implementation(libs.timber)
     testImplementation(projects.android.exercise.testFixtures)

@@ -1,4 +1,4 @@
-package com.everlog.managers
+package com.everlog.android.plan.data
 
 import android.content.Context
 import android.content.Intent
@@ -9,8 +9,6 @@ import com.everlog.android.common.data.model.workout.ELWorkout
 import com.everlog.android.common.persistence.PreferencesManager
 import com.everlog.android.plan.data.model.ELPlan
 import com.everlog.android.plan.data.model.ELPlanState
-import com.everlog.constants.ELConstants
-import com.everlog.managers.analytics.AnalyticsManager
 import com.google.gson.Gson
 
 class PlanManager : PreferencesManager() {
@@ -26,8 +24,8 @@ class PlanManager : PreferencesManager() {
         val manager = PlanManager()
     }
 
-    fun checkCompletedWorkout(workout: ELWorkout, performingFromPlan: Boolean) {
-        // Check plan and mark plan day as complete
+    // Marks the plan's next day done, and says whether it did
+    fun checkCompletedWorkout(workout: ELWorkout, performingFromPlan: Boolean): Boolean {
         if (hasOngoingPlan() && performingFromPlan) {
             val state = ongoingPlanState()
             state?.finishWorkout(workout)
@@ -36,8 +34,9 @@ class PlanManager : PreferencesManager() {
             day?.complete = true
             setOngoingPlan(plan)
             setOngoingState(state!!)
-            AnalyticsManager.manager.planDayComplete()
+            return true
         }
+        return false
     }
 
     fun updateRoutineForPlan(context: Context, toSave: ELRoutine) {
@@ -45,7 +44,7 @@ class PlanManager : PreferencesManager() {
             val plan = ongoingPlan()
             plan!!.editRoutine(toSave)
             setOngoingPlan(plan)
-            LocalBroadcastManager.getInstance(context).sendBroadcast(Intent(ELConstants.BROADCAST_CURRENT_PLAN_CHANGED))
+            LocalBroadcastManager.getInstance(context).sendBroadcast(Intent(PlanBroadcasts.CURRENT_PLAN_CHANGED))
         }
     }
 
@@ -54,7 +53,7 @@ class PlanManager : PreferencesManager() {
             val plan = ongoingPlan()
             plan!!.deleteRoutine(toSave)
             setOngoingPlan(plan)
-            LocalBroadcastManager.getInstance(context).sendBroadcast(Intent(ELConstants.BROADCAST_CURRENT_PLAN_CHANGED))
+            LocalBroadcastManager.getInstance(context).sendBroadcast(Intent(PlanBroadcasts.CURRENT_PLAN_CHANGED))
         }
     }
 

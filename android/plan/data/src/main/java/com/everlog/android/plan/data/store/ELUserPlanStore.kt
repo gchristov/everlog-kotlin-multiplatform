@@ -1,9 +1,9 @@
-package com.everlog.data.datastores.plans
+package com.everlog.android.plan.data.store
 
 import com.everlog.android.plan.data.model.ELPlan
 import com.everlog.android.common.data.store.ELDocumentStore
 import com.everlog.android.common.data.store.events.ELDocStoreItemLoadedEvent
-import com.everlog.managers.firebase.FirestorePathManager
+import com.everlog.android.common.firebase.FirestorePaths
 import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.FieldPath
 import com.google.firebase.firestore.Query
@@ -20,7 +20,7 @@ class ELUserPlanStore : ELDocumentStore<ELPlan>() {
     }
 
     override fun getParentCollection(): CollectionReference {
-        return FirestorePathManager.plansCollection
+        return FirestorePaths.plans
     }
 
     override fun getTag(): String {

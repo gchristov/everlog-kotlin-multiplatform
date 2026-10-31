@@ -1,4 +1,4 @@
-package com.everlog.data.datastores.plans
+package com.everlog.android.plan.data.store
 
 import com.everlog.android.plan.data.model.ELPlan
 import com.everlog.android.common.data.store.InMemoryCollectionStore

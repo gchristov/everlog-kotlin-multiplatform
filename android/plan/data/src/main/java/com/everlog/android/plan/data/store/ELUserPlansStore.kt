@@ -1,4 +1,4 @@
-package com.everlog.data.datastores.plans
+package com.everlog.android.plan.data.store
 
 import com.everlog.android.common.firebase.FirestoreFields
 import com.everlog.android.plan.data.model.ELPlan
@@ -8,7 +8,7 @@ import com.everlog.android.common.data.store.events.ELColStoreItemModifiedEvent
 import com.everlog.android.common.data.store.events.ELColStoreItemRemovedEvent
 import com.everlog.android.common.data.store.events.ELColStoreItemsLoadedEvent
 import com.everlog.android.auth.data.LocalUserManager
-import com.everlog.managers.firebase.FirestorePathManager
+import com.everlog.android.common.firebase.FirestorePaths
 import com.google.firebase.firestore.Query
 
 class ELUserPlansStore : ELCollectionStore<ELPlan>() {
@@ -18,7 +18,7 @@ class ELUserPlansStore : ELCollectionStore<ELPlan>() {
     }
 
     override fun getQuery(): Query {
-        return FirestorePathManager.plansCollection
+        return FirestorePaths.plans
                 .whereEqualTo(FirestoreFields.CREATED_BY_USER_ID, LocalUserManager.getUser()!!.id)
                 .orderBy(FirestoreFields.NAME)
     }

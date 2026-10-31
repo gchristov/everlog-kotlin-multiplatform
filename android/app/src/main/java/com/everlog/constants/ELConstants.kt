@@ -9,7 +9,6 @@ object ELConstants {
 
     const val URL_TERMS = "https://www.termsfeed.com/terms-conditions/ab88f4b9d47638276ae7284d4a7ed3f8"
     const val URL_PRIVACY = "https://www.termsfeed.com/privacy-policy/68420a39232d3fc1b3e6d56275fed431"
-    const val URL_PING = "https://google.com"
 
     const val FIELD_CRASHLYTICS_USER_ID = "user_id"
 
@@ -38,13 +37,10 @@ object ELConstants {
     const val EXTRA_SUBTITLE = "EXTRA_SUBTITLE"
 
     const val BROADCAST_CURRENT_PLAN_STARTED = BuildConfig.APPLICATION_ID + ".BROADCAST_CURRENT_PLAN_STARTED"
-    const val BROADCAST_CURRENT_PLAN_CHANGED = BuildConfig.APPLICATION_ID + ".BROADCAST_CURRENT_PLAN_CHANGED"
 
     const val FIREBASE_TEST_LAB_EMAIL = "hello@cloudtestlabaccounts.com"
     const val FIREBASE_TEST_LAB_PASSWORD = "KTI4We2uSTfl"
 
-    const val NETWORK_TIMEOUT_INTERVAL: Long = 60 // 60 seconds
-    const val NETWORK_PING_TIMEOUT_INTERVAL = 5000 // 5 seconds
 
     const val ACTIVITY_RESULT_DELAY = 1000 // 100 ms
 

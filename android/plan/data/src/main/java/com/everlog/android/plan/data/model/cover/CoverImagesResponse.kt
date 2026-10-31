@@ -1,4 +1,4 @@
-package com.everlog.managers.api.coverimages.response
+package com.everlog.android.plan.data.model.cover
 
 import com.google.gson.annotations.SerializedName
 

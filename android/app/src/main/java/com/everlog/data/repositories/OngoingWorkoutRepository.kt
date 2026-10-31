@@ -1,10 +1,11 @@
 package com.everlog.data.repositories
 
 import com.everlog.android.common.data.model.workout.ELWorkout
+import com.everlog.android.plan.data.PlanManager
 import com.everlog.android.workout.data.OngoingWorkoutRepository
 import com.everlog.android.workout.data.WorkoutManager
 import com.everlog.android.workout.data.store.WorkoutStores
-import com.everlog.managers.PlanManager
+import com.everlog.managers.analytics.AnalyticsManager
 import com.everlog.managers.apprate.AppLaunchManager
 import com.google.firebase.firestore.SetOptions
 import java.util.Date
@@ -20,6 +21,6 @@ class RealOngoingWorkoutRepository : OngoingWorkoutRepository {
         // Pushes back the app usage reminder, the user may not pass through the home screen for a while
         AppLaunchManager.manager.recordActivity(Date())
         WorkoutStores.workoutStore().create(workout, SetOptions.merge())
-        PlanManager.manager.checkCompletedWorkout(workout, fromPlan)
+        if (PlanManager.manager.checkCompletedWorkout(workout, fromPlan)) AnalyticsManager.manager.planDayComplete()
     }
 }

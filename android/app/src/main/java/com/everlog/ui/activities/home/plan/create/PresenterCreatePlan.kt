@@ -17,8 +17,8 @@ import com.everlog.constants.ELActivityRequestCodes.REQUEST_PICK_COVER_IMAGE
 import com.everlog.constants.ELConstants
 import com.everlog.constants.ELConstants.EXTRA_ROUTINE
 import com.everlog.data.datastores.ELDatastore
-import com.everlog.data.datastores.plans.ELDocStorePlanLoadedEvent
-import com.everlog.managers.PlanManager
+import com.everlog.android.plan.data.store.ELDocStorePlanLoadedEvent
+import com.everlog.android.plan.data.PlanManager
 import com.everlog.managers.analytics.AnalyticsManager
 import com.everlog.android.auth.data.LocalUserManager
 import com.everlog.android.common.mvp.activity.BaseActivityPresenter
@@ -28,6 +28,7 @@ import com.everlog.ui.adapters.plan.applyProLock
 import com.everlog.ui.navigator.navigator
 import com.everlog.android.common.kotlin.Utils
 import com.everlog.android.common.mvp.util.KeyboardUtils
+import com.everlog.android.plan.data.PlanBroadcasts
 import com.google.firebase.firestore.SetOptions
 import com.imagepick.dialog.ELPickerDialog
 // import icepick.State
@@ -277,7 +278,7 @@ class PresenterCreatePlan : BaseActivityPresenter<MvpViewCreatePlan>() {
             // Update local plan
             if (PlanManager.manager.isOngoing(toEdit)) {
                 PlanManager.manager.setOngoingPlan(toEdit)
-                sendBroadcast(Intent(ELConstants.BROADCAST_CURRENT_PLAN_CHANGED))
+                sendBroadcast(Intent(PlanBroadcasts.CURRENT_PLAN_CHANGED))
             }
             if (mEditMode) {
                 AnalyticsManager.manager.planModified()

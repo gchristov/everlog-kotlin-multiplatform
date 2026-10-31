@@ -1,6 +1,6 @@
-package com.everlog.managers.api
+package com.everlog.android.plan.data.cover
 
-import com.everlog.managers.api.coverimages.CoverImagesApi
+import com.everlog.android.plan.data.cover.CoverImagesApi
 
 object ApiManager {
 

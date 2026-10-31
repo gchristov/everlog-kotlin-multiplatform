@@ -3,30 +3,24 @@ package com.everlog.data.datastores
 import com.everlog.android.common.data.model.ELRoutine
 import com.everlog.android.common.data.model.workout.ELWorkout
 import com.everlog.android.plan.data.model.ELPlan
+import com.everlog.android.plan.data.store.PlanStores
 import com.everlog.android.common.data.store.CollectionStore
 import com.everlog.android.common.data.store.DocumentStore
 import com.everlog.android.exercise.data.store.ELExercisesStore
 import com.everlog.android.exercise.data.store.ELUserExerciseStore
 import com.everlog.android.exercise.data.store.ExerciseStores
-import com.everlog.data.datastores.plans.ELUserPlanInMemoryStore
-import com.everlog.data.datastores.plans.ELUserPlanStore
-import com.everlog.data.datastores.plans.ELUserPlansInMemoryStore
-import com.everlog.data.datastores.plans.ELUserPlansStore
 import com.everlog.android.template.data.store.ELUserRoutineInMemoryStore
 import com.everlog.android.template.data.store.ELUserRoutineStore
 import com.everlog.android.template.data.store.ELUserRoutinesInMemoryStore
 import com.everlog.android.template.data.store.ELUserRoutinesStore
 import com.everlog.android.template.data.store.TemplateStores
 import com.everlog.android.workout.data.store.WorkoutStores
-import com.everlog.utils.device.DeviceUtils
 
 class ELDatastore {
 
     companion object {
 
         private var mUserStore: ELUserStore? = null
-        private var mPlansStore: CollectionStore<ELPlan>? = null
-        private var mPlanStore: DocumentStore<ELPlan>? = null
         private var mIntegrationStore: ELUserIntegrationStore? = null
         private var mConsentStore: ELUserConsentStore? = null
         private var mDeviceStore: ELUserDeviceStore? = null
@@ -59,22 +53,10 @@ class ELDatastore {
         }
 
         @JvmStatic
-        @Synchronized
-        fun plansStore(): CollectionStore<ELPlan> {
-            if (mPlansStore == null) {
-                mPlansStore = if (inMemory()) ELUserPlansInMemoryStore() else ELUserPlansStore()
-            }
-            return mPlansStore!!
-        }
+        fun plansStore(): CollectionStore<ELPlan> = PlanStores.plansStore()
 
         @JvmStatic
-        @Synchronized
-        fun planStore(): DocumentStore<ELPlan> {
-            if (mPlanStore == null) {
-                mPlanStore = if (inMemory()) ELUserPlanInMemoryStore() else ELUserPlanStore()
-            }
-            return mPlanStore!!
-        }
+        fun planStore(): DocumentStore<ELPlan> = PlanStores.planStore()
 
         @JvmStatic
         @Synchronized
@@ -103,11 +85,6 @@ class ELDatastore {
             return mDeviceStore!!
         }
 
-        // Firebase Test Lab runs keep plans in memory, so robots don't create data
-        private fun inMemory(): Boolean {
-            return DeviceUtils.isFirebaseTestLabRun()
-        }
-
         @JvmStatic
         fun destroy() {
             WorkoutStores.destroy()
@@ -115,10 +92,7 @@ class ELDatastore {
             ExerciseStores.destroy()
             mUserStore?.destroy()
             mUserStore = null
-            mPlansStore?.destroy()
-            mPlansStore = null
-            mPlanStore?.destroy()
-            mPlanStore = null
+            PlanStores.destroy()
             mIntegrationStore?.destroy()
             mIntegrationStore = null
             mConsentStore?.destroy()

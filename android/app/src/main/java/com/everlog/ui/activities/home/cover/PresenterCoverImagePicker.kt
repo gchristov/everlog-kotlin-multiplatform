@@ -5,9 +5,9 @@ import android.content.Intent
 import com.ahamed.multiviewadapter.DataListManager
 import com.ahamed.multiviewadapter.RecyclerAdapter
 import com.everlog.constants.ELConstants
-import com.everlog.managers.api.ApiManager
-import com.everlog.managers.api.coverimages.response.CoverImage
-import com.everlog.managers.api.coverimages.response.CoverImagesResponse
+import com.everlog.android.plan.data.cover.ApiManager
+import com.everlog.android.plan.data.model.cover.CoverImage
+import com.everlog.android.plan.data.model.cover.CoverImagesResponse
 import com.everlog.android.common.mvp.activity.BaseActivityPresenter
 import com.everlog.ui.adapters.CoverImageAdapter
 import com.everlog.ui.views.recyclerview.infinitescroll.InfiniteRecyclerAdapter

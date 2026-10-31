@@ -6,7 +6,7 @@ import android.view.ViewGroup
 import com.everlog.R
 import com.everlog.config.HomeNotification
 import com.everlog.databinding.FragmentHomeWeekBinding
-import com.everlog.managers.PlanManager
+import com.everlog.android.plan.data.PlanManager
 import com.everlog.managers.analytics.AnalyticsConstants
 import com.everlog.android.common.mvp.activity.BaseActivity
 import com.everlog.ui.activities.home.HomeActivity

@@ -1,4 +1,4 @@
-package com.everlog.android.plan.data
+package com.everlog.android.template.data.session
 
 import com.everlog.android.common.data.model.ELRoutine
 
