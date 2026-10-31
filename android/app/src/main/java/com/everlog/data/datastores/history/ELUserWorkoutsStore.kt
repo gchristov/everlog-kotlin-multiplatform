@@ -7,7 +7,7 @@ import com.everlog.android.common.data.store.events.ELColStoreItemAddedEvent
 import com.everlog.android.common.data.store.events.ELColStoreItemModifiedEvent
 import com.everlog.android.common.data.store.events.ELColStoreItemRemovedEvent
 import com.everlog.android.common.data.store.events.ELColStoreItemsLoadedEvent
-import com.everlog.data.datastores.routines.ELRoutineDecorator
+import com.everlog.android.template.data.store.ELRoutineDecorator
 import com.everlog.managers.firebase.FirestorePathManager
 import com.google.firebase.firestore.Query
 

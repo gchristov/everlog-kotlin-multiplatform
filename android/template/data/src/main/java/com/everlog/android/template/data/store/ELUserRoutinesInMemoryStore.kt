@@ -1,4 +1,4 @@
-package com.everlog.data.datastores.routines
+package com.everlog.android.template.data.store
 
 import com.everlog.android.common.data.model.ELRoutine
 import com.everlog.android.common.data.store.InMemoryCollectionStore

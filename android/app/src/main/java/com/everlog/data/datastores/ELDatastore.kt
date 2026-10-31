@@ -16,10 +16,11 @@ import com.everlog.data.datastores.plans.ELUserPlanInMemoryStore
 import com.everlog.data.datastores.plans.ELUserPlanStore
 import com.everlog.data.datastores.plans.ELUserPlansInMemoryStore
 import com.everlog.data.datastores.plans.ELUserPlansStore
-import com.everlog.data.datastores.routines.ELUserRoutineInMemoryStore
-import com.everlog.data.datastores.routines.ELUserRoutineStore
-import com.everlog.data.datastores.routines.ELUserRoutinesInMemoryStore
-import com.everlog.data.datastores.routines.ELUserRoutinesStore
+import com.everlog.android.template.data.store.ELUserRoutineInMemoryStore
+import com.everlog.android.template.data.store.ELUserRoutineStore
+import com.everlog.android.template.data.store.ELUserRoutinesInMemoryStore
+import com.everlog.android.template.data.store.ELUserRoutinesStore
+import com.everlog.android.template.data.store.TemplateStores
 import com.everlog.utils.device.DeviceUtils
 
 class ELDatastore {
@@ -28,8 +29,6 @@ class ELDatastore {
 
         private var mWorkoutsStore: CollectionStore<ELWorkout>? = null
         private var mWorkoutStore: DocumentStore<ELWorkout>? = null
-        private var mRoutinesStore: CollectionStore<ELRoutine>? = null
-        private var mRoutineStore: DocumentStore<ELRoutine>? = null
         private var mUserStore: ELUserStore? = null
         private var mPlansStore: CollectionStore<ELPlan>? = null
         private var mPlanStore: DocumentStore<ELPlan>? = null
@@ -56,22 +55,10 @@ class ELDatastore {
         }
 
         @JvmStatic
-        @Synchronized
-        fun routinesStore(): CollectionStore<ELRoutine> {
-            if (mRoutinesStore == null) {
-                mRoutinesStore = if (inMemory()) ELUserRoutinesInMemoryStore() else ELUserRoutinesStore()
-            }
-            return mRoutinesStore!!
-        }
+        fun routinesStore(): CollectionStore<ELRoutine> = TemplateStores.routinesStore()
 
         @JvmStatic
-        @Synchronized
-        fun routineStore(): DocumentStore<ELRoutine> {
-            if (mRoutineStore == null) {
-                mRoutineStore = if (inMemory()) ELUserRoutineInMemoryStore() else ELUserRoutineStore()
-            }
-            return mRoutineStore!!
-        }
+        fun routineStore(): DocumentStore<ELRoutine> = TemplateStores.routineStore()
 
         @JvmStatic
         fun exercisesStore(): ELExercisesStore = ExerciseStores.exercisesStore()
@@ -144,10 +131,7 @@ class ELDatastore {
             mWorkoutsStore = null
             mWorkoutStore?.destroy()
             mWorkoutStore = null
-            mRoutinesStore?.destroy()
-            mRoutinesStore = null
-            mRoutineStore?.destroy()
-            mRoutineStore = null
+            TemplateStores.destroy()
             ExerciseStores.destroy()
             mUserStore?.destroy()
             mUserStore = null

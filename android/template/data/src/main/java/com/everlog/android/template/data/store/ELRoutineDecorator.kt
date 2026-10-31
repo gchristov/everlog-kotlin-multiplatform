@@ -1,10 +1,11 @@
-package com.everlog.data.datastores.routines
+package com.everlog.android.template.data.store
 
+import com.everlog.android.auth.data.LocalUserManager
 import com.everlog.android.common.data.model.ELRoutine
 import com.everlog.android.common.data.model.exercise.ELExercise
 import com.everlog.android.common.data.model.workout.ELWorkout
-import com.everlog.data.datastores.ELDatastore
-import com.everlog.managers.firebase.FirestorePathManager
+import com.everlog.android.common.firebase.FirestorePaths
+import com.everlog.android.exercise.data.store.ExerciseStores
 import com.google.android.gms.tasks.Tasks
 import com.google.firebase.firestore.Source
 import timber.log.Timber
@@ -18,7 +19,7 @@ class ELRoutineDecorator {
     private val TAG = "ELRoutineDecorator"
 
     fun decorate(routine: ELRoutine) {
-        val exerciseMap = ELDatastore.exercisesStore().getMergedItemsMap()
+        val exerciseMap = ExerciseStores.exercisesStore().getMergedItemsMap()
         if (exerciseMap.isNotEmpty()) {
             Timber.tag(TAG).d("Decorating routine: %s", routine.uuid)
             routine.resolveExercises(exerciseMap)
@@ -35,7 +36,7 @@ class ELRoutineDecorator {
     }
 
     fun decorate(workout: ELWorkout) {
-        val exerciseMap = ELDatastore.exercisesStore().getMergedItemsMap()
+        val exerciseMap = ExerciseStores.exercisesStore().getMergedItemsMap()
         if (exerciseMap.isNotEmpty()) {
             Timber.tag(TAG).d("Decorating workout: %s", workout.uuid)
             workout.resolveExercises(exerciseMap)
@@ -65,7 +66,7 @@ class ELRoutineDecorator {
     private fun resolveExercise(uuid: String, source: Source): ELExercise? {
         return try {
             // Try global
-            val globalRef = FirestorePathManager.globalExercisesCollection.document(uuid)
+            val globalRef = FirestorePaths.globalExercises.document(uuid)
             val globalDoc = Tasks.await(globalRef.get(source))
             if (globalDoc.exists()) {
                 return globalDoc.toObject(ELExercise::class.java)
@@ -73,7 +74,7 @@ class ELRoutineDecorator {
 
             // Try user
             val userRef = try {
-                FirestorePathManager.exercisesCollection.document(uuid)
+                FirestorePaths.exercises(LocalUserManager.requireUserId()).document(uuid)
             } catch (e: Exception) {
                 e.printStackTrace()
                 null

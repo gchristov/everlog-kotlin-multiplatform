@@ -3,8 +3,8 @@ package com.everlog.data.datastores.plans
 import com.everlog.android.common.data.model.ELRoutine
 import com.everlog.android.plan.data.model.ELPlan
 import com.everlog.android.common.data.store.InMemoryDatabase
-import com.everlog.data.datastores.routines.ELRoutineDecorator
-import com.everlog.data.datastores.routines.ELUserRoutinesInMemoryStore
+import com.everlog.android.template.data.store.ELRoutineDecorator
+import com.everlog.android.template.data.store.ELUserRoutinesInMemoryStore
 
 /**
  * [ELPlanDecorator] for the in-memory stores, which resolves a plan's routines from memory instead

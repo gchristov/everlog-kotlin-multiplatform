@@ -37,8 +37,10 @@ class AppExerciseFeatureDependencies : ExerciseFeatureDependencies {
         return RealLoadExerciseLibraryUseCase(
             io,
             RealExerciseRepository(io, AppDataSync.instance),
-            RealRoutineRepository(io, AppDataSync.instance) { ELDatastore.routineStore() },
-            RealWorkoutRepository(io, AppDataSync.instance, AppConfig.configuration.workoutSyncMonths),
+            AppExerciseUsage(
+                RealRoutineRepository(io, AppDataSync.instance) { ELDatastore.routineStore() },
+                RealWorkoutRepository(io, AppDataSync.instance, AppConfig.configuration.workoutSyncMonths),
+            ),
         )
     }
 

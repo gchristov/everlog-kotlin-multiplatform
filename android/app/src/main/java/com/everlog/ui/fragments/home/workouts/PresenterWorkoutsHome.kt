@@ -6,7 +6,7 @@ import com.everlog.R
 import com.everlog.android.plan.data.model.ELPlan
 import com.everlog.data.datastores.ELDatastore
 import com.everlog.data.datastores.plans.ELColStorePlansLoadedEvent
-import com.everlog.data.datastores.routines.ELColStoreRoutinesLoadedEvent
+import com.everlog.android.template.data.store.ELColStoreRoutinesLoadedEvent
 import com.everlog.ui.activities.home.routine.create.CreateRoutineActivity
 import com.everlog.ui.adapters.CreatorAdapter
 import com.everlog.ui.adapters.items.Creator

@@ -10,7 +10,7 @@ import com.everlog.android.common.data.model.ELRoutine
 import com.everlog.constants.ELActivityRequestCodes
 import com.everlog.constants.ELConstants
 import com.everlog.data.datastores.ELDatastore
-import com.everlog.data.datastores.routines.ELColStoreRoutinesLoadedEvent
+import com.everlog.android.template.data.store.ELColStoreRoutinesLoadedEvent
 import com.everlog.android.common.mvp.activity.BaseActivityPresenter
 import com.everlog.ui.activities.home.routine.create.CreateRoutineActivity
 import com.everlog.ui.adapters.routine.RoutinePickerAdapter

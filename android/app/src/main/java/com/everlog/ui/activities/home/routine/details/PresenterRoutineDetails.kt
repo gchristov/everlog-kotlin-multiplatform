@@ -7,7 +7,7 @@ import com.ahamed.multiviewadapter.RecyclerAdapter
 import com.everlog.R
 import com.everlog.android.common.data.model.ELRoutine
 import com.everlog.data.datastores.ELDatastore
-import com.everlog.data.datastores.routines.ELDocStoreRoutineLoadedEvent
+import com.everlog.android.template.data.store.ELDocStoreRoutineLoadedEvent
 import com.everlog.managers.PlanManager
 import com.everlog.managers.analytics.AnalyticsManager
 import com.everlog.android.common.mvp.activity.BaseActivityPresenter
