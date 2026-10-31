@@ -7,10 +7,6 @@
 
 
 
-    <string-array name="history_view_type_titles">
-        <item>@string/view_type_calendar</item>
-        <item>@string/view_type_list</item>
-    </string-array>
 
 
 

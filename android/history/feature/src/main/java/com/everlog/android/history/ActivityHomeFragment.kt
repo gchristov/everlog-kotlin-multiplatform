@@ -1,16 +1,15 @@
-package com.everlog.ui.fragments.home.activity
+package com.everlog.android.history
 
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import com.everlog.R
-import com.everlog.databinding.FragmentHomeActivityBinding
-import com.everlog.managers.analytics.AnalyticsConstants
 import com.everlog.android.common.mvp.fragment.BaseFragmentMvpView
 import com.everlog.android.common.mvp.fragment.BaseFragmentPresenter
 import com.everlog.android.common.mvp.fragment.BaseTabFragment
-import com.everlog.ui.fragments.home.activity.history.HistoryHomeFragment
-import com.everlog.ui.fragments.home.activity.statistics.StatisticsHomeFragment
+import com.everlog.android.history.R
+import com.everlog.android.history.databinding.FragmentHomeActivityBinding
+import com.everlog.android.history.statistics.StatisticsHomeFragment
+import com.everlog.android.history.workouts.HistoryHomeFragment
 
 class ActivityHomeFragment : BaseTabFragment(), MvpViewActivityHome {
 
@@ -37,7 +36,7 @@ class ActivityHomeFragment : BaseTabFragment(), MvpViewActivityHome {
     }
 
     override fun getAnalyticsScreenName(): String {
-        return AnalyticsConstants.SCREEN_HOME_ACTIVITY
+        return HistoryScreenNames.ACTIVITY
     }
 
     override fun getTitleResId(): Int {

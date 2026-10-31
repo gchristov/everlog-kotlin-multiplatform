@@ -1,7 +1,7 @@
-package com.everlog.utils
+package com.everlog.android.history.workouts
 
 import com.everlog.android.settings.data.SettingsManager
-import com.everlog.ui.views.WeekDay
+import com.everlog.android.common.kotlin.WeekDay
 import org.threeten.bp.DayOfWeek
 import org.threeten.bp.LocalDate
 import org.threeten.bp.format.TextStyle

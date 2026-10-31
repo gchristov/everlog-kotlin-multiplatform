@@ -1,4 +1,4 @@
-package com.everlog.ui.adapters
+package com.everlog.android.history.workouts
 
 import android.annotation.SuppressLint
 import android.graphics.Typeface
@@ -9,12 +9,11 @@ import android.view.ViewGroup
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.core.content.ContextCompat
+import com.everlog.android.common.kotlin.fromJava
+import com.everlog.android.common.kotlin.toJava
+import com.everlog.android.history.databinding.RowCalendarDayBinding
+import com.everlog.android.history.databinding.RowCalendarMonthBinding
 import com.everlog.android.settings.data.SettingsManager
-import com.everlog.databinding.RowCalendarDayBinding
-import com.everlog.databinding.RowCalendarMonthBinding
-import com.everlog.utils.buildWeekDays
-import com.everlog.utils.fromJava
-import com.everlog.utils.toJava
 import com.kizitonwose.calendarview.CalendarView
 import com.kizitonwose.calendarview.model.CalendarDay
 import com.kizitonwose.calendarview.model.CalendarMonth

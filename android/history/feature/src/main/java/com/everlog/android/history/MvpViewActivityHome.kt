@@ -1,4 +1,4 @@
-package com.everlog.ui.fragments.home.activity
+package com.everlog.android.history
 
 import com.everlog.android.common.mvp.fragment.BaseFragmentMvpView
 

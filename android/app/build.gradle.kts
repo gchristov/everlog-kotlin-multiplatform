@@ -158,7 +158,6 @@ dependencies {
     implementation(libs.retrofit.rxjava)
     implementation(libs.okhttp.logging)
 
-    implementation(libs.calendarview)
 
     implementation(libs.commons.lang3)
     implementation(libs.datetimeutils)
@@ -192,7 +191,6 @@ dependencies {
     implementation(libs.dexter)
     implementation(libs.textinlineimage)
 
-    implementation(libs.rotate.layout)
 
     implementation(libs.shapeOfView)
     implementation(libs.ucrop)

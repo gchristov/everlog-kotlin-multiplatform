@@ -9,7 +9,6 @@ import com.everlog.android.common.session.SessionDefaults
 import com.everlog.android.exercise.picker.ExercisePickerActivity
 import com.everlog.managers.ErrorManager
 import com.everlog.managers.analytics.AnalyticsManager
-import com.everlog.ui.fragments.home.activity.history.HistoryHomeFragment
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.firestoreSettings
 import com.google.firebase.firestore.persistentCacheSettings
@@ -20,10 +19,7 @@ class AppConfig {
     val defaultRestTimeOffsetSeconds = SessionDefaults.TIME_STEP_SECONDS
     val defaultExerciseTimeSeconds = SessionDefaults.EXERCISE_TIME_SECONDS
 
-    val defaultStatsRange = RangeType.WEEK
     val defaultStatsExerciseRange = RangeType.MONTH
-
-    val defaultHistoryViewType = HistoryHomeFragment.ViewType.CALENDAR
 
     val maxPlanWeekDaysFree = 1
     val maxExerciseSelection = ExercisePickerActivity.MAX_PICKS

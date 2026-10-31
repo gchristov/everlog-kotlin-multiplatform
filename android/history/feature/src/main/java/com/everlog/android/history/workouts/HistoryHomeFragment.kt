@@ -1,4 +1,4 @@
-package com.everlog.ui.fragments.home.activity.history
+package com.everlog.android.history.workouts
 
 import android.graphics.PorterDuff
 import android.view.LayoutInflater
@@ -8,18 +8,17 @@ import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.everlog.R
+import com.everlog.android.common.kotlin.toJava
 import com.everlog.android.common.kotlin.toLocalDate
 import com.everlog.android.settings.data.SettingsManager
-import com.everlog.config.AppConfig
-import com.everlog.databinding.FragmentHistoryHomeBinding
-import com.everlog.managers.analytics.AnalyticsConstants
 import com.everlog.android.common.mvp.activity.BaseActivity
-import com.everlog.ui.adapters.CalendarAdapter
+import com.everlog.android.history.workouts.CalendarAdapter
 import com.everlog.android.common.mvp.fragment.BaseFragmentMvpView
 import com.everlog.android.common.mvp.fragment.BaseFragmentPresenter
 import com.everlog.android.common.mvp.fragment.BaseTabFragment
-import com.everlog.utils.toJava
+import com.everlog.android.history.HistoryScreenNames
+import com.everlog.android.history.R
+import com.everlog.android.history.databinding.FragmentHistoryHomeBinding
 import org.threeten.bp.LocalDate
 import rx.Observable
 import rx.subjects.PublishSubject
@@ -33,6 +32,10 @@ class HistoryHomeFragment : BaseTabFragment(), MvpViewHistoryHome {
     enum class ViewType {
         CALENDAR,
         LIST,
+    }
+
+    private companion object {
+        val DEFAULT_VIEW_TYPE = ViewType.CALENDAR
     }
 
     private var mPresenter: PresenterHistoryHome? = null
@@ -71,7 +74,7 @@ class HistoryHomeFragment : BaseTabFragment(), MvpViewHistoryHome {
     }
 
     override fun getAnalyticsScreenName(): String {
-        return AnalyticsConstants.SCREEN_HOME_HISTORY
+        return HistoryScreenNames.HISTORY
     }
 
     override fun <T : BaseFragmentMvpView> getPresenter(): BaseFragmentPresenter<T>? {
@@ -174,7 +177,7 @@ class HistoryHomeFragment : BaseTabFragment(), MvpViewHistoryHome {
         adapter.setDropDownViewResource(MvpR.layout.view_spinner_row_dropdown)
         binding.viewTypeSpinner.background?.setColorFilter(ContextCompat.getColor(requireContext(), DesignR.color.main_accent), PorterDuff.Mode.SRC_ATOP)
         binding.viewTypeSpinner.adapter = adapter
-        binding.viewTypeSpinner.setSelection(ViewType.values().indexOf(AppConfig.configuration.defaultHistoryViewType))
+        binding.viewTypeSpinner.setSelection(ViewType.values().indexOf(DEFAULT_VIEW_TYPE))
         binding.viewTypeSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(parent: AdapterView<*>, view: View?, position: Int, id: Long) {
                 mOnViewTypeChanged.onNext(ViewType.values()[position])

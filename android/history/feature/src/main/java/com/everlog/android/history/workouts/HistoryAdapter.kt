@@ -1,11 +1,10 @@
-package com.everlog.ui.adapters.history
+package com.everlog.android.history.workouts
 
 import com.everlog.android.common.design.R as DesignR
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.ahamed.multiviewadapter.ItemBinder
-import com.everlog.R
 import com.everlog.android.common.data.model.workout.ELWorkout
 import com.everlog.android.common.kotlin.format.workoutSummary
 import com.everlog.android.common.kotlin.isSameDay
@@ -14,8 +13,9 @@ import com.everlog.android.common.mvp.list.BaseTimelineViewHolder.OnTimelineList
 import com.everlog.android.common.mvp.util.ViewUtils.dpToPx
 import com.everlog.android.common.mvp.util.ViewUtils.getRawDimension
 import com.everlog.android.common.mvp.util.ViewUtils.setMargins
+import com.everlog.android.history.R
 import com.everlog.android.settings.data.SettingsManager
-import com.everlog.databinding.RowHistoryBinding
+import com.everlog.android.history.databinding.RowHistoryBinding
 import java.util.*
 
 class HistoryAdapter {

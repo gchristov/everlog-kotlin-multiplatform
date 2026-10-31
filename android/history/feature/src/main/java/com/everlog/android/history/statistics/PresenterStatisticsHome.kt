@@ -1,16 +1,11 @@
-package com.everlog.ui.fragments.home.activity.statistics
+package com.everlog.android.history.statistics
 
 import com.everlog.android.common.data.model.workout.ELWorkout
 import com.everlog.android.common.data.model.workout.RangeType
-import com.everlog.config.AppConfig
-import com.everlog.config.FeedbackSource
-import com.everlog.data.controllers.statistics.UserStatsController
-import com.everlog.data.datastores.ELDatastore
 import com.everlog.android.workout.data.store.ELColStoreWorkoutsLoadedEvent
-import com.everlog.managers.RemoteConfigManager
-import com.everlog.managers.analytics.AnalyticsManager
-import com.everlog.ui.navigator.navigator
+import com.everlog.android.workout.data.store.WorkoutStores
 import com.everlog.android.common.mvp.fragment.BaseFragmentPresenter
+import com.everlog.android.history.HistoryFeature
 import com.everlog.android.common.kotlin.Utils
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
@@ -18,7 +13,7 @@ import java.util.ArrayList
 
 class PresenterStatisticsHome : BaseFragmentPresenter<MvpViewStatisticsHome>() {
 
-    private var mRange = AppConfig.configuration.defaultStatsRange
+    private var mRange = UserStatsController.DEFAULT_RANGE
     private val mHistory: MutableList<ELWorkout> = ArrayList()
 
     override fun onReady() {
@@ -54,7 +49,7 @@ class PresenterStatisticsHome : BaseFragmentPresenter<MvpViewStatisticsHome>() {
     }
 
     private fun showFeedback() {
-        mvpView?.showFeedback(RemoteConfigManager.manager.feedbackFormUrl(FeedbackSource.ACTIVITY_STATISTICS) != null)
+        mvpView?.showFeedback(HistoryFeature.dependencies.hasStatisticsFeedback())
     }
 
     // Observers
@@ -66,7 +61,7 @@ class PresenterStatisticsHome : BaseFragmentPresenter<MvpViewStatisticsHome>() {
                     if (mRange != range) {
                         mRange = range
                         handleHistoryReady(range, mHistory)
-                        AnalyticsManager.manager.statisticsRangeModified(range)
+                        HistoryFeature.dependencies.statisticsRangeModified(range)
                     }
                 })
     }
@@ -75,7 +70,7 @@ class PresenterStatisticsHome : BaseFragmentPresenter<MvpViewStatisticsHome>() {
         subscriptions.add(mvpView.onClickFooter()
                 .compose(applyUISchedulers())
                 .subscribe {
-                    navigator.openFeedbackForm(FeedbackSource.ACTIVITY_STATISTICS)
+                    context?.let(HistoryFeature.dependencies::openStatisticsFeedback)
                 })
     }
 
@@ -84,7 +79,7 @@ class PresenterStatisticsHome : BaseFragmentPresenter<MvpViewStatisticsHome>() {
     private fun loadHistory() {
         mvpView?.toggleLoadingOverlay(true)
         // Load initial items.
-        ELDatastore.workoutsStore().getItems()
+        WorkoutStores.workoutsStore().getItems()
     }
 
     private fun handleHistoryReady(range: RangeType, history: List<ELWorkout>) {

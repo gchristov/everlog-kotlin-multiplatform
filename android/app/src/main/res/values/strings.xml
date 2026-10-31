@@ -43,8 +43,6 @@
 
 
 
-    <string name="view_type_calendar">Calendar</string>
-    <string name="view_type_list">List</string>
 
     <string name="error_play_store">Unable to find Play Store app</string>
 
@@ -82,10 +80,7 @@
     <string name="home_start_workout">Start workout</string>
     <string name="app_update_ready">An update is ready to install</string>
     <string name="app_update_restart">Restart</string>
-    <string name="home_week_workouts_completed">Workouts\nDone</string>
     <string name="home_week_weight_lifted_no_spaces">Volume Lifted</string>
-    <string name="home_week_total_time">Workout\nTime</string>
-    <string name="home_week_average_time">Avg. Session\nDuration</string>
     <string name="home_week_ongoing_workout_prompt_title">Resume Workout</string>
     <string name="home_week_ongoing_workout_prompt_subtitle">You have an ongoing workout. Would you like to resume it?</string>
     <plurals name="home_week_ongoing_workout_prompt_sets_logged">
@@ -102,7 +97,6 @@
     <string name="home_week_empty_title">Ready to train?</string>
     <string name="home_week_empty_subtitle">Pick a workout and go — takes 2 taps.</string>
 
-    <string name="home_activity">Activity</string>
 
     <string name="home_workouts_plans">Plans</string>
     <string name="home_workouts_routines">Workout Templates</string>
@@ -131,14 +125,8 @@
     <string name="exercise_sets_performed_rest_time">Rest Time</string>
     <string name="exercise_sets_performed_weight">Set Weight</string>
 
-    <string name="history_empty_day_prompt">No events found for this day</string>
 
 
-    <string name="statistics_longest_session">longest session</string>
-    <string name="statistics_muscles_trained">Muscles Trained</string>
-    <string name="statistics_session_duration">Session Duration</string>
-    <string name="statistics_session_duration_avg">Avg. Session Duration</string>
-    <string name="statistics_minutes">Minutes</string>
 
     <string name="workout_metric_prompt_missing">Please enter a value</string>
     <string name="workout_empty_action">Add exercises</string>

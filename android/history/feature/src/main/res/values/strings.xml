@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="history_empty_day_prompt">No events found for this day</string>
+    <string name="statistics_longest_session">longest session</string>
+    <string name="statistics_minutes">Minutes</string>
+    <string name="statistics_muscles_trained">Muscles Trained</string>
+    <string name="statistics_session_duration">Session Duration</string>
+    <string name="statistics_session_duration_avg">Avg. Session Duration</string>
+    <string name="view_type_calendar">Calendar</string>
+    <string name="view_type_list">List</string>
+</resources>

@@ -1,15 +1,15 @@
-package com.everlog.ui.fragments.home.activity.history
+package com.everlog.android.history.workouts
 
 import com.ahamed.multiviewadapter.DataListManager
 import com.ahamed.multiviewadapter.RecyclerAdapter
-import com.everlog.R
 import com.everlog.android.common.data.model.workout.ELWorkout
 import com.everlog.android.common.kotlin.toLocalDate
-import com.everlog.data.datastores.ELDatastore
 import com.everlog.android.workout.data.store.ELColStoreWorkoutsLoadedEvent
+import com.everlog.android.workout.data.store.WorkoutStores
 import com.everlog.android.common.mvp.list.BaseTimelineViewHolder
-import com.everlog.ui.adapters.history.HistoryAdapter
-import com.everlog.ui.navigator.navigator
+import com.everlog.android.history.HistoryFeature
+import com.everlog.android.history.R
+import com.everlog.android.history.workouts.HistoryAdapter
 import com.everlog.android.common.mvp.fragment.BaseFragmentPresenter
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
@@ -114,7 +114,7 @@ class PresenterHistoryHome : BaseFragmentPresenter<MvpViewHistoryHome>() {
             mvpView?.toggleLoadingOverlay(true)
         }
         // Load initial items
-        ELDatastore.workoutsStore().getItems()
+        WorkoutStores.workoutsStore().getItems()
     }
 
     // Handlers
@@ -200,7 +200,7 @@ class PresenterHistoryHome : BaseFragmentPresenter<MvpViewHistoryHome>() {
             }
 
             override fun onItemClicked(item: ELWorkout, position: Int) {
-                navigator.openWorkoutDetails(item, false, false)
+                context?.let { HistoryFeature.dependencies.openWorkoutDetails(it, item) }
             }
         }))
     }
