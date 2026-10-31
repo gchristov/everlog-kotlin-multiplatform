@@ -9,7 +9,7 @@ if [[ -z "$TYPE" ]]; then
     exit 1
 fi
 
-# Map string type to index
+# Map string type to index. Releases get a type of their own, above the others.
 case $TYPE in
     "staging")
         TYPE_INDEX=1
@@ -42,17 +42,17 @@ else
     COMMIT_COUNT=$(git rev-list --count "$LATEST_TAG"..HEAD)
 fi
 
-# 3. Calculate Sequence (SS)
 if [[ "$RELEASE_FLAG" == "--release" ]]; then
-    SS=$((80 + (COMMIT_COUNT % 20)))
-else
-    SS=$((COMMIT_COUNT % 80))
+    TYPE_INDEX=4
 fi
+
+# 3. Calculate Sequence (SS)
+SS=$((COMMIT_COUNT % 100))
 
 # 4. Calculate Final Version Code
 # Position: MmmPTSS
 # Base Version is MmmP000 (e.g., 2090000)
-# T is Type Index (100s place)
+# T is Type Index (100s place): 1 staging, 2 nightly, 3 master, 4 release
 # SS is Sequence (units and tens)
 VERSION_CODE=$((BASE_VERSION + (TYPE_INDEX * 100) + SS))
 
