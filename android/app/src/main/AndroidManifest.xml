@@ -172,7 +172,7 @@
             android:windowSoftInputMode="stateHidden"
             android:exported="false" />
         <activity
-            android:name=".ui.activities.templateeditor.TemplateEditorActivity"
+            android:name="com.everlog.android.template.feature.editor.TemplateEditorActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:theme="@style/AppTheme.NoActionBar"
             android:windowSoftInputMode="stateHidden|adjustNothing"

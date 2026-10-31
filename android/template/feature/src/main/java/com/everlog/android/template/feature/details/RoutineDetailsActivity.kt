@@ -1,5 +1,7 @@
 package com.everlog.android.template.feature.details
 
+import android.content.Context
+import android.content.Intent
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
@@ -163,5 +165,12 @@ open class RoutineDetailsActivity : BaseActivity(), MvpViewRoutineDetails {
 
     private fun setupButtons() {
         binding.performBtn.visibility = if (!mViewOnly) View.VISIBLE else View.GONE
+    }
+
+    companion object {
+        fun launchIntent(context: Context, routine: ELRoutine, viewOnly: Boolean): Intent =
+            Intent(context, RoutineDetailsActivity::class.java)
+                .putExtra(TemplateExtras.ROUTINE, routine)
+                .putExtra(TemplateExtras.VIEW_ONLY, viewOnly)
     }
 }

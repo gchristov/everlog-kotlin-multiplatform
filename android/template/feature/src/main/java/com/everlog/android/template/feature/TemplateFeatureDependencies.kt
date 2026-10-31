@@ -2,9 +2,17 @@ package com.everlog.android.template.feature
 
 import android.app.Activity
 import android.content.Context
+import android.content.Intent
 import com.everlog.android.common.data.model.ELRoutine
 import com.everlog.android.common.data.model.exercise.ELExercise
+import com.everlog.android.common.data.model.exercise.ELExerciseGroup
 import com.everlog.android.common.data.model.set.ELSetType
+import com.everlog.android.common.sessionui.exercisetable.ExerciseTab
+import com.everlog.android.exercise.data.model.library.LibraryExercise
+import com.everlog.android.template.data.session.LoadTemplateUseCase
+import com.everlog.android.template.data.session.SaveTemplateUseCase
+import com.everlog.android.template.feature.editor.TemplateEditorAnalytics
+import kotlinx.coroutines.flow.Flow
 
 /**
  * What the template feature needs from the app: services built on the app's managers, and the screens of other
@@ -19,7 +27,21 @@ interface TemplateFeatureDependencies {
 
     fun startWorkout(activity: Activity, routine: ELRoutine, fromPlan: Boolean)
 
-    fun openExerciseDetails(context: Context, exercise: ELExercise)
+    fun openExerciseDetails(context: Context, exercise: ELExercise, tab: ExerciseTab = ExerciseTab.Info)
+
+    fun openExercisePicker(activity: Activity)
+
+    // The exercises the exercise picker hands back, from onActivityResult
+    fun pickedExerciseGroups(requestCode: Int, resultCode: Int, data: Intent?): List<ELExerciseGroup>?
+
+    fun loadTemplate(): LoadTemplateUseCase
+
+    fun saveTemplate(context: Context): SaveTemplateUseCase
+
+    // The user's own exercises as they change, so the editor shows a rename straight away
+    fun ownExerciseUpdates(): Flow<List<LibraryExercise>>
+
+    fun templateEditorAnalytics(): TemplateEditorAnalytics
 
     // Takes a deleted template out of the plan in progress
     fun removeFromOngoingPlan(activity: Activity, routine: ELRoutine)
@@ -44,6 +66,7 @@ object TemplateExtras {
     const val FROM_PLAN = "EXTRA_WORKOUT_FROM_PLAN"
     const val SET_TYPE = "EXTRA_SET_TYPE"
     const val EXERCISE_COUNT = "EXTRA_NUMBER_OF_ITEMS"
+    const val SHOW_DETAILS_ON_SUCCESS = "EXTRA_SHOW_DETAILS_ON_SUCCESS"
 }
 
 object TemplateRequestCodes {
@@ -58,4 +81,5 @@ object TemplateScreenNames {
     const val PERFORM = "screen_perform_routine"
     const val PICKER = "screen_routine_picker"
     const val SET_TYPE_PICKER = "screen_set_type_picker"
+    const val EDITOR = "screen_create_routine_v2"
 }

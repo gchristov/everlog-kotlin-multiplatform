@@ -132,7 +132,7 @@ class ExerciseGroupCreateAdapter {
                 return
             }
             if (item.getTotalSetsCount() >= AppConfig.configuration.maxExerciseSets) {
-                ToastBuilder.showToast(itemView.context, itemView.context.getString(R.string.exercises_max_sets, AppConfig.configuration.maxExerciseSets))
+                ToastBuilder.showToast(itemView.context, itemView.context.getString(DesignR.string.exercises_max_sets, AppConfig.configuration.maxExerciseSets))
                 return
             }
             item.setAdd()
@@ -372,7 +372,7 @@ class ExerciseGroupCreateAdapter {
                 when (menuItem.itemId) {
                     MENU_DUPLICATE -> {
                         if (groupVH.item.getTotalSetsCount() >= AppConfig.configuration.maxExerciseSets) {
-                            ToastBuilder.showToast(myVH.view.context, myVH.view.context.getString(R.string.exercises_max_sets, AppConfig.configuration.maxExerciseSets))
+                            ToastBuilder.showToast(myVH.view.context, myVH.view.context.getString(DesignR.string.exercises_max_sets, AppConfig.configuration.maxExerciseSets))
                         } else {
                             groupVH.item.setDuplicate(set)
                             scrollToLast = true

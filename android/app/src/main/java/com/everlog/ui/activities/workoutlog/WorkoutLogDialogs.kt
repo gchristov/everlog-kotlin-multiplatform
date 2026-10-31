@@ -25,7 +25,7 @@ internal fun WorkoutLogDialogs(state: WorkoutLogState, viewModel: WorkoutLogView
             title = stringResource(R.string.workout_log_rest_timer),
             body = stringResource(R.string.workout_log_rest_timer_body),
             onDismissRequest = viewModel::onDialogDismissed,
-            primaryAction = AppDialogAction(stringResource(R.string.workout_log_done), viewModel::onDialogDismissed),
+            primaryAction = AppDialogAction(stringResource(DesignR.string.workout_log_done), viewModel::onDialogDismissed),
         ) {
             RestStepper(seconds = state.restSeconds, onStep = viewModel::onRestStep)
         }

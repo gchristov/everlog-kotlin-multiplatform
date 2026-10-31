@@ -11,8 +11,8 @@ import com.everlog.android.common.kotlin.WeightUnit
 import com.everlog.android.common.test.InMemorySharedPreferences
 import com.everlog.android.settings.data.SettingsManager
 import com.everlog.android.settings.data.SettingsManager.MuscleGoal
-import com.everlog.android.settings.testfixtures.install
-import com.everlog.android.settings.testfixtures.uninstall
+import com.everlog.android.common.test.install
+import com.everlog.android.common.test.uninstall
 import com.google.common.truth.Truth.assertThat
 import org.junit.After
 import org.junit.Before

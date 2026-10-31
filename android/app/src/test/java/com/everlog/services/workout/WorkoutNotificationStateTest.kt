@@ -12,8 +12,8 @@ import com.everlog.android.common.datatest.workout
 import com.everlog.android.common.kotlin.WeightUnit
 import com.everlog.android.common.test.InMemorySharedPreferences
 import com.everlog.android.settings.data.SettingsManager
-import com.everlog.android.settings.testfixtures.install
-import com.everlog.android.settings.testfixtures.uninstall
+import com.everlog.android.common.test.install
+import com.everlog.android.common.test.uninstall
 import com.everlog.services.workout.WorkoutNotificationState.Done
 import com.everlog.services.workout.WorkoutNotificationState.NextSet
 import com.everlog.services.workout.WorkoutNotificationState.NoExercises

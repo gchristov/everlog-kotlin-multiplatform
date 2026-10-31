@@ -18,8 +18,8 @@ import com.everlog.android.common.test.InMemorySharedPreferences
 import com.everlog.android.exercise.data.model.library.LibraryExercise
 import com.everlog.android.settings.data.SettingsManager
 import com.everlog.android.settings.data.SettingsManager.MuscleGoal
-import com.everlog.android.settings.testfixtures.install
-import com.everlog.android.settings.testfixtures.uninstall
+import com.everlog.android.common.test.install
+import com.everlog.android.common.test.uninstall
 import com.everlog.config.AppConfig
 import com.everlog.data.controllers.workoutprefill.BaseWorkoutPrefillController.PrefillSource
 import com.everlog.data.controllers.workoutprefill.LoadPrefillSourcesUseCase
