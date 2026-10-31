@@ -135,4 +135,48 @@
         <item name="android:paddingLeft">@dimen/activity_margin_half</item>
         <item name="android:paddingRight">@dimen/activity_margin_half</item>
     </style>
+    <!-- Settings -->
+    <style name="SettingsCategory">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:fontFamily">sans-serif-medium</item>
+        <item name="android:textColor">@color/gray_1</item>
+        <item name="android:textSize">15sp</item>
+    </style>
+    <style name="Toolbar.HomeSubtitle" parent="TextAppearance.Widget.AppCompat.Toolbar.Title">
+        <item name="android:textSize">16sp</item>
+        <item name="android:fontFamily">sans-serif</item>
+        <item name="android:textColor">@color/white_darker</item>
+    </style>
+    <style name="Toolbar.HomeSubtitle.Collapsed">
+        <item name="android:shadowColor">#000</item>
+        <item name="android:shadowDx">@integer/cover_text_shadow_d</item>
+        <item name="android:shadowDy">@integer/cover_text_shadow_d</item>
+        <item name="android:shadowRadius">@integer/cover_text_shadow_radius</item>
+        <item name="android:textSize">12sp</item>
+    </style>
+    <style name="Toolbar.HomeSubtitle.Expanded">
+        <item name="android:shadowColor">#000</item>
+        <item name="android:shadowDx">@integer/cover_text_shadow_d</item>
+        <item name="android:shadowDy">@integer/cover_text_shadow_d</item>
+        <item name="android:shadowRadius">@integer/cover_text_shadow_radius</item>
+    </style>
+    <!-- Toolbars -->
+    <style name="Toolbar.HomeTitle" parent="TextAppearance.Widget.AppCompat.Toolbar.Title">
+        <item name="android:textSize">30sp</item>
+        <item name="android:fontFamily">sans-serif-medium</item>
+        <item name="android:textColor">@color/white_base</item>
+    </style>
+    <style name="Toolbar.HomeTitle.Collapsed" parent="TextAppearance.Widget.AppCompat.Toolbar.Title">
+        <item name="android:shadowColor">#000</item>
+        <item name="android:shadowDx">@integer/cover_text_shadow_d</item>
+        <item name="android:shadowDy">@integer/cover_text_shadow_d</item>
+        <item name="android:shadowRadius">@integer/cover_text_shadow_radius</item>
+    </style>
+    <style name="Toolbar.HomeTitle.Expanded">
+        <item name="android:shadowColor">#000</item>
+        <item name="android:shadowDx">@integer/cover_text_shadow_d</item>
+        <item name="android:shadowDy">@integer/cover_text_shadow_d</item>
+        <item name="android:shadowRadius">@integer/cover_text_shadow_radius</item>
+    </style>
 </resources>

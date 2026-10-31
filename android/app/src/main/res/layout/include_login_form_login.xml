@@ -137,7 +137,7 @@
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>
 
-    <com.everlog.ui.views.FloatingFooterView
+    <com.everlog.android.common.mvp.view.FloatingFooterView
         android:id="@+id/loginFooter"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -171,5 +171,5 @@
             app:initialCornerAngle="21dp"
             app:spinning_bar_color="@color/background_base"
             app:spinning_bar_padding="8dp" />
-    </com.everlog.ui.views.FloatingFooterView>
+    </com.everlog.android.common.mvp.view.FloatingFooterView>
 </FrameLayout>

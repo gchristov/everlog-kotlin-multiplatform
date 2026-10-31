@@ -30,6 +30,8 @@ dependencies {
     implementation(libs.ucrop)
     implementation(libs.bottomSheet)
     implementation(libs.textinlineimage)
+    implementation(libs.blurView)
+    implementation(libs.androidx.constraintlayout)
     implementation(libs.maskable.layout) {
         isTransitive = false
     }

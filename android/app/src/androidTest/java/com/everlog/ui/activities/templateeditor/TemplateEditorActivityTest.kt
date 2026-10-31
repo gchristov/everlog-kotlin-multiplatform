@@ -31,7 +31,7 @@ import com.everlog.android.template.data.RealRoutineRepository
 import com.everlog.data.sync.AppDataSync
 import com.everlog.managers.firebase.FirestorePathManager
 import com.everlog.testutil.E2EAccount
-import com.everlog.ui.activities.home.routine.details.RoutineDetailsActivity
+import com.everlog.android.template.feature.details.RoutineDetailsActivity
 import com.google.android.gms.tasks.Tasks
 import com.google.common.truth.Truth.assertThat
 import java.util.concurrent.TimeUnit

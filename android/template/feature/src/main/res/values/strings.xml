@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <plurals name="select_set_type_subtitle">
+        <item quantity="one">%1$d selected exercise</item>
+        <item quantity="other">%1$d selected exercises</item>
+    </plurals>
+    <string name="home_workouts_new_template">New template</string>
+    <string name="perform_routine_protip">Pro tips</string>
+    <string name="perform_routine_protip_1">Stay &lt;b>hydrated&lt;/b></string>
+    <string name="perform_routine_protip_2">Use a &lt;b>towel&lt;/b></string>
+    <string name="routine_details_empty_subtitle">This template does not have any exercises</string>
+    <string name="routine_details_empty_title">No exercises, yet</string>
+    <string name="routine_details_start_workout">Start workout</string>
+    <string name="routines_cannot_perform_prompt">This workout cannot be performed because it does not have any exercises.</string>
+    <string name="routines_cannot_perform_title">Missing exercises</string>
+    <string name="routines_empty_action">Create template</string>
+    <string name="routines_empty_subtitle">Templates are groups of exercises that can be performed multiple times</string>
+    <string name="routines_empty_title">No templates, yet</string>
+    <string name="select_set_type">Select Set Type</string>
+    <string name="select_set_type_error_exercises">Too many or not enough selected exercises for this set type</string>
+    <string name="select_set_type_footer">Need more set types?</string>
+</resources>
