@@ -15,6 +15,8 @@ dependencies {
     implementation(libs.rxbinding)
     implementation(libs.timber)
     implementation(libs.aspect)
+    implementation(libs.collapsingtoolbar.subtitle)
+    implementation(libs.scrollingpagerindicator)
     testImplementation(projects.android.plan.testFixtures)
     androidTestImplementation(projects.android.plan.testFixtures)
 }

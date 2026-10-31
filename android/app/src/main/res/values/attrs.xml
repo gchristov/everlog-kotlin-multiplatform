@@ -6,9 +6,6 @@
         <attr name="psbBackground" format="integer"/>
     </declare-styleable>
 
-    <declare-styleable name="ProBadge">
-        <attr name="pbTextSize" format="dimension"/>
-    </declare-styleable>
 
     <declare-styleable name="LogoView">
         <attr name="lvShadow" format="boolean"/>

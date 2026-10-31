@@ -1,5 +1,7 @@
-package com.everlog.ui.activities.home.plan.details
+package com.everlog.android.plan.details
 
+import android.content.Context
+import android.content.Intent
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
@@ -9,17 +11,17 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.viewpager.widget.ViewPager
-import com.everlog.R
+import com.everlog.android.plan.R
 import com.everlog.android.plan.data.model.ELPlan
-import com.everlog.constants.ELConstants.EXTRA_PLAN_UUID
-import com.everlog.databinding.ActivityPlanDetailsBinding
-import com.everlog.managers.analytics.AnalyticsConstants
+import com.everlog.android.plan.databinding.ActivityPlanDetailsBinding
 import com.everlog.android.auth.data.LocalUserManager
 import com.everlog.android.common.mvp.activity.BaseActivity
 import com.everlog.android.common.mvp.activity.BaseActivityMvpView
 import com.everlog.android.common.mvp.activity.BaseActivityPresenter
-import com.everlog.ui.fragments.plan.WeekDaysFragment
+import com.everlog.android.plan.details.WeekDaysFragment
 import com.everlog.android.common.mvp.view.tab.ELFragmentPagerAdapter
+import com.everlog.android.plan.PlanExtras
+import com.everlog.android.plan.PlanScreenNames
 import com.everlog.android.common.mvp.util.ELGlideModule
 import com.google.android.material.appbar.SubtitleCollapsingToolbarLayout
 import com.jakewharton.rxbinding.view.RxView
@@ -29,6 +31,12 @@ import rx.subjects.PublishSubject
 import com.everlog.android.common.design.R as DesignR
 
 class PlanDetailsActivity : BaseActivity(), MvpViewPlanDetails {
+
+    companion object {
+        @JvmStatic
+        fun launchIntent(context: Context, plan: ELPlan): Intent =
+            Intent(context, PlanDetailsActivity::class.java).putExtra(PlanExtras.PLAN_UUID, plan.uuid)
+    }
 
     private var mPresenter: PresenterPlanDetails? = null
     private lateinit var binding: ActivityPlanDetailsBinding
@@ -90,11 +98,11 @@ class PlanDetailsActivity : BaseActivity(), MvpViewPlanDetails {
 
     override fun toggleLoadingOverlay(show: Boolean) {
         toggleShimmerLayout(binding.root.findViewById(R.id.topShimmerContainer), show, false)
-        toggleShimmerLayout(binding.root.findViewById(R.id.bottomShimmerContainer), show, false, R.color.background_toolbar)
+        toggleShimmerLayout(binding.root.findViewById(R.id.bottomShimmerContainer), show, false, DesignR.color.background_toolbar)
     }
 
     override fun loadPlanDetails(plan: ELPlan, showStop: Boolean) {
-        binding.root.findViewById<SubtitleCollapsingToolbarLayout>(R.id.toolbar_layout).subtitle = (String.format("%s  •  %s  •  %s", plan.name, resources.getQuantityString(R.plurals.weeks, plan.weeks.size, plan.weeks.size), resources.getQuantityString(R.plurals.days, plan.getDaysCount(), plan.getDaysCount())))
+        binding.root.findViewById<SubtitleCollapsingToolbarLayout>(R.id.toolbar_layout).subtitle = (String.format("%s  •  %s  •  %s", plan.name, resources.getQuantityString(R.plurals.weeks, plan.weeks.size, plan.weeks.size), resources.getQuantityString(DesignR.plurals.days, plan.getDaysCount(), plan.getDaysCount())))
         binding.root.findViewById<ScrollingPagerIndicator>(R.id.indicator).visibility = if (plan.weeks.size > 1) View.VISIBLE else View.GONE
         binding.root.findViewById<Button>(R.id.toggleStartBtn).visibility = View.VISIBLE
         // Reattach our pager adapter if the plan changed
@@ -119,7 +127,7 @@ class PlanDetailsActivity : BaseActivity(), MvpViewPlanDetails {
     }
 
     override fun getItemToEditUuid(): String? {
-        return intent.getStringExtra(EXTRA_PLAN_UUID)
+        return intent.getStringExtra(PlanExtras.PLAN_UUID)
     }
 
     private fun setPageTitle() {
@@ -133,11 +141,11 @@ class PlanDetailsActivity : BaseActivity(), MvpViewPlanDetails {
     }
 
     override fun getRequiredExtras(): List<String> {
-        return listOf(EXTRA_PLAN_UUID)
+        return listOf(PlanExtras.PLAN_UUID)
     }
 
     override fun getAnalyticsScreenName(): String {
-        return AnalyticsConstants.SCREEN_PLAN_DETAILS
+        return PlanScreenNames.DETAILS
     }
 
     private fun setupTopBar() {

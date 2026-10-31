@@ -98,8 +98,7 @@
             android:layout_height="wrap_content"
             android:clipToPadding="false"
             android:nestedScrollingEnabled="false"
-            tools:itemCount="1"
-            tools:listitem="@layout/row_plan_day" />
+            tools:itemCount="1" />
 
         <Button
             android:id="@+id/finishPlanBtn"

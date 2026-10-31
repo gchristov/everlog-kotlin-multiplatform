@@ -1,5 +1,7 @@
 package com.everlog.android.plan.cover
 
+import android.content.Context
+import android.content.Intent
 import android.graphics.Rect
 import android.view.View
 import androidx.appcompat.widget.Toolbar
@@ -21,6 +23,12 @@ import com.everlog.android.common.design.R as DesignR
 import com.everlog.android.common.mvp.R as MvpR
 
 class CoverImagePickerActivity : BaseActivity(), MvpViewCoverImagePicker {
+
+    companion object {
+        // Hands back the picked image's URL in PlanExtras.COVER_IMAGE
+        @JvmStatic
+        fun launchIntent(context: Context): Intent = Intent(context, CoverImagePickerActivity::class.java)
+    }
 
     private var mPresenter: PresenterCoverImagePicker? = null
     private lateinit var binding: ActivityCoverImagePickerBinding

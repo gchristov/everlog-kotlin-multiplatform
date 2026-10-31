@@ -17,7 +17,7 @@ import com.everlog.android.common.design.R as DesignR
 /**
  * Opens a ⋮ button's menu below [anchor], the XML twin of the design system's AppMenu: styled by
  * AppTheme.PopupOverlay like the toolbars' overflow menus, with each option's icon in the content
- * colour. [build] adds the options, e.g. `inflate(R.menu.menu_row_plan_week)`.
+ * colour. [build] adds the options, e.g. `inflate(R.menu.menu_row_plan_week)` from a feature.
  */
 @SuppressLint("RestrictedApi")
 fun showPopupMenu(anchor: View, build: PopupMenu.() -> Unit, onItemClick: (MenuItem) -> Unit) {

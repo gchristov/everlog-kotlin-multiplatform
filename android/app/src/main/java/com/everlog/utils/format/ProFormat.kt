@@ -1,5 +1,6 @@
 package com.everlog.utils.format
 
+import com.everlog.android.common.design.R as DesignR
 import android.content.Context
 import com.everlog.R
 import com.everlog.android.pro.data.model.ELProSkuDetails
@@ -14,7 +15,7 @@ private fun durationSummary(context: Context, period: Period?): String? {
         period == null -> null
         period.years > 0 -> context.resources.getQuantityString(R.plurals.years, period.years, period.years)
         period.months > 0 -> context.resources.getQuantityString(R.plurals.months, period.months, period.months)
-        period.days > 0 -> context.resources.getQuantityString(R.plurals.days, period.days, period.days)
+        period.days > 0 -> context.resources.getQuantityString(DesignR.plurals.days, period.days, period.days)
         else -> null
     }
 }

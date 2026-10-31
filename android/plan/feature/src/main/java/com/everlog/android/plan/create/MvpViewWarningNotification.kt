@@ -1,4 +1,4 @@
-package com.everlog.ui.views.notification.warning
+package com.everlog.android.plan.create
 
 import com.everlog.android.common.mvp.view.BaseViewMvpView
 import rx.Observable

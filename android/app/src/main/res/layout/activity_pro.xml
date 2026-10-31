@@ -172,7 +172,7 @@
                             android:paddingTop="@dimen/margin_10"
                             android:paddingBottom="@dimen/margin_10">
 
-                            <com.everlog.ui.views.badge.ProBadge
+                            <com.everlog.android.common.mvp.view.ProBadge
                                 android:layout_width="34dp"
                                 android:layout_height="34dp"
                                 app:pbTextSize="11sp" />

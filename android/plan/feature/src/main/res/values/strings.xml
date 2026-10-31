@@ -8,4 +8,42 @@
     <string name="pro_confirm_subtitle">By joining our Pro community you have come a step closer to your fitness goals!</string>
     <string name="pro_confirm_title">You are now pro</string>
     <string name="retry">Retry</string>
+    <plurals name="weeks">
+        <item quantity="one">%1$d week</item>
+        <item quantity="other">%1$d weeks</item>
+    </plurals>
+    <plurals name="workouts">
+        <item quantity="one">%1$d workout</item>
+        <item quantity="other">%1$d workouts</item>
+    </plurals>
+    <string name="continue_">Continue</string>
+    <string name="cover_picker_edit_image_title">Edit image</string>
+    <string name="create_plan_add_week_prompt">Add new week</string>
+    <string name="create_plan_cannot_be_empty_prompt">Plans must have at least one week</string>
+    <string name="create_plan_error_max_weeks">You cannot add more weeks to this plan</string>
+    <string name="create_plan_error_no_title">Please enter a title for your plan</string>
+    <string name="create_plan_name">Name your plan</string>
+    <string name="create_plan_new_week">New week</string>
+    <string name="create_plan_saved">Plan saved</string>
+    <string name="create_plan_title_edit">Edit Plan</string>
+    <string name="create_plan_week_deleted">Week deleted</string>
+    <string name="create_plan_weeks">Workout Schedule</string>
+    <string name="home_week_plan_start">Start day</string>
+    <string name="plan_details_not_found">Plan not found</string>
+    <string name="plan_details_not_found_prompt">It looks like we couldn\'t find this plan.</string>
+    <string name="plan_details_not_found_prompt_current">It looks like we couldn\'t find your current plan. Would you like to stop it?</string>
+    <string name="plan_details_start">Start plan</string>
+    <string name="plan_details_start_no_workouts">Plan must have at least one workout to be started</string>
+    <string name="plan_details_stop">Stop plan</string>
+    <string name="plan_details_stop_prompt">Are you sure you want to stop this plan?\n\nYour history will not be affected.</string>
+    <string name="plan_details_switch">Switch plan</string>
+    <string name="plan_details_switch_prompt">Another plan already started. Are you sure you want to switch to this plan?\n\nYour history will not be affected.</string>
+    <string name="plan_details_week">Week %1$s</string>
+    <string name="pro_prompt_muscle_goals_subtitle">Tap to upgrade and unlock weight suggestions based on your One Rep Max</string>
+    <string name="pro_prompt_muscle_goals_title">Training goals are locked</string>
+    <string name="pro_prompt_plan_subtitle">Tap to upgrade and unlock unlimited plan schedules</string>
+    <string name="pro_prompt_plan_title">Free plans are limited to %1$d day a week</string>
+    <string name="stop">Stop</string>
+    <string name="tap_to_setup">Tap to setup</string>
+    <string name="tap_to_setup_upgrade">Pro upgrade required</string>
 </resources>

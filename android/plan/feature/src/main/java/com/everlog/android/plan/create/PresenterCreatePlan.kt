@@ -1,4 +1,4 @@
-package com.everlog.ui.activities.home.plan.create
+package com.everlog.android.plan.create
 
 import com.everlog.android.common.design.R as DesignR
 import android.app.Activity
@@ -7,27 +7,26 @@ import android.content.DialogInterface
 import android.content.Intent
 import com.ahamed.multiviewadapter.DataListManager
 import com.ahamed.multiviewadapter.RecyclerAdapter
-import com.everlog.R
 import com.everlog.android.common.data.model.ELRoutine
 import com.everlog.android.plan.data.model.ELPlan
 import com.everlog.android.plan.data.model.ELPlanDay
 import com.everlog.android.plan.data.model.ELPlanWeek
-import com.everlog.constants.ELActivityRequestCodes
-import com.everlog.constants.ELActivityRequestCodes.REQUEST_PICK_COVER_IMAGE
-import com.everlog.constants.ELConstants
-import com.everlog.constants.ELConstants.EXTRA_ROUTINE
-import com.everlog.data.datastores.ELDatastore
 import com.everlog.android.plan.data.store.ELDocStorePlanLoadedEvent
+import com.everlog.android.plan.data.store.PlanStores
+import com.everlog.android.plan.details.PlanDetailsActivity
 import com.everlog.android.plan.data.PlanManager
-import com.everlog.managers.analytics.AnalyticsManager
 import com.everlog.android.auth.data.LocalUserManager
 import com.everlog.android.common.mvp.activity.BaseActivityPresenter
-import com.everlog.ui.adapters.plan.PlanDayAdapter
-import com.everlog.ui.adapters.plan.PlanWeekAdapter
-import com.everlog.ui.adapters.plan.applyProLock
-import com.everlog.ui.navigator.navigator
 import com.everlog.android.common.kotlin.Utils
 import com.everlog.android.common.mvp.util.KeyboardUtils
+import com.everlog.android.plan.PlanExtras
+import com.everlog.android.plan.PlanFeature
+import com.everlog.android.plan.PlanRequestCodes
+import com.everlog.android.plan.R
+import com.everlog.android.plan.adapter.PlanDayAdapter
+import com.everlog.android.plan.adapter.PlanWeekAdapter
+import com.everlog.android.plan.adapter.applyProLock
+import com.everlog.android.plan.cover.CoverImagePickerActivity
 import com.everlog.android.plan.data.PlanBroadcasts
 import com.google.firebase.firestore.SetOptions
 import com.imagepick.dialog.ELPickerDialog
@@ -99,22 +98,19 @@ class PresenterCreatePlan : BaseActivityPresenter<MvpViewCreatePlan>() {
     }
 
     override fun detachView() {
-        ELDatastore.planStore().destroy()
+        PlanStores.planStore().destroy()
         super.detachView()
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        if (requestCode == REQUEST_PICK_COVER_IMAGE) {
+        if (requestCode == PlanRequestCodes.PICK_COVER_IMAGE) {
             if (resultCode == RESULT_OK) {
-                val url = data?.getStringExtra(ELConstants.EXTRA_COVER_IMAGE)
+                val url = data?.getStringExtra(PlanExtras.COVER_IMAGE)
                 handleImagePicked(url)
             }
             return
-        } else if (requestCode == ELActivityRequestCodes.REQUEST_PICK_ROUTINE) {
-            if (resultCode == RESULT_OK) {
-                handleRoutinePicked(data?.getSerializableExtra(EXTRA_ROUTINE) as? ELRoutine)
-            }
         }
+        PlanFeature.dependencies.pickedTemplate(requestCode, resultCode, data)?.let(::handleRoutinePicked)
         super.onActivityResult(requestCode, resultCode, data)
     }
 
@@ -185,7 +181,7 @@ class PresenterCreatePlan : BaseActivityPresenter<MvpViewCreatePlan>() {
                         if (toEdit?.imageUrl != null) {
                             handleChangeImage()
                         } else {
-                            navigator.openCoverImagePicker()
+                            mvpView?.getActivity()?.let { it.startActivityForResult(CoverImagePickerActivity.launchIntent(it), PlanRequestCodes.PICK_COVER_IMAGE) }
                         }
                     }
                 })
@@ -226,7 +222,7 @@ class PresenterCreatePlan : BaseActivityPresenter<MvpViewCreatePlan>() {
         if (mEditMode) {
             mvpView?.toggleLoadingOverlay(true)
             // Listen for item changes
-            ELDatastore.planStore().getItem(getPlanUuid())
+            PlanStores.planStore().getItem(getPlanUuid())
         } else {
             // New plan is already created in firebase, so refresh UI
             mvpView?.toggleLoadingOverlay(false)
@@ -273,7 +269,7 @@ class PresenterCreatePlan : BaseActivityPresenter<MvpViewCreatePlan>() {
         if (mChangesMade) {
             // Save plan.
             val toSave = buildChangedItem()
-            ELDatastore.planStore().create(toSave, SetOptions.merge())
+            PlanStores.planStore().create(toSave, SetOptions.merge())
             mvpView?.showToast(R.string.create_plan_saved)
             // Update local plan
             if (PlanManager.manager.isOngoing(toEdit)) {
@@ -281,10 +277,10 @@ class PresenterCreatePlan : BaseActivityPresenter<MvpViewCreatePlan>() {
                 sendBroadcast(Intent(PlanBroadcasts.CURRENT_PLAN_CHANGED))
             }
             if (mEditMode) {
-                AnalyticsManager.manager.planModified()
+                PlanFeature.dependencies.planAnalytics().modified()
             } else {
-                AnalyticsManager.manager.planCreated()
-                navigator.openPlanDetails(toEdit)
+                PlanFeature.dependencies.planAnalytics().created()
+                toEdit?.let { plan -> mvpView?.getActivity()?.let { it.startActivity(PlanDetailsActivity.launchIntent(it, plan)) } }
             }
         }
         mSavePressed = true
@@ -309,7 +305,7 @@ class PresenterCreatePlan : BaseActivityPresenter<MvpViewCreatePlan>() {
                 .menuLayout(R.menu.menu_sheet_edit_cover_image)
                 .actionListener { which ->
                     if (which == R.id.action_choose) {
-                        navigator.openCoverImagePicker()
+                        mvpView?.getActivity()?.let { it.startActivityForResult(CoverImagePickerActivity.launchIntent(it), PlanRequestCodes.PICK_COVER_IMAGE) }
                     } else if (which == R.id.action_remove) {
                         handleImagePicked(null)
                     }
@@ -337,7 +333,7 @@ class PresenterCreatePlan : BaseActivityPresenter<MvpViewCreatePlan>() {
         toEdit!!.weeks[mSelectedWeek!!].getDays()[mSelectedDay!!].setRoutine(routine)
         refreshInfo()
         refreshLists()
-        AnalyticsManager.manager.planWeekDaySetRoutine()
+        PlanFeature.dependencies.planAnalytics().daySetToTemplate()
     }
 
     private fun showPanel(flow: CreatePlanActivity.Flow, weekNumber: Int = -1) {
@@ -348,7 +344,7 @@ class PresenterCreatePlan : BaseActivityPresenter<MvpViewCreatePlan>() {
     private fun addWeek(week: ELPlanWeek?) {
         if (week != null) {
             mWeeksDataListManager.add(week)
-            AnalyticsManager.manager.planWeekAdded()
+            PlanFeature.dependencies.planAnalytics().weekAdded()
         } else {
             mvpView?.showToast(R.string.create_plan_error_max_weeks)
         }
@@ -358,7 +354,7 @@ class PresenterCreatePlan : BaseActivityPresenter<MvpViewCreatePlan>() {
     private fun deleteWeek(index: Int) {
         toEdit?.removeWeek(index)
         mWeeksDataListManager.remove(index)
-        AnalyticsManager.manager.planWeekDeleted()
+        PlanFeature.dependencies.planAnalytics().weekDeleted()
         mvpView?.showToast(R.string.create_plan_week_deleted)
         refreshInfo()
         Utils.runWithDelay({
@@ -368,7 +364,7 @@ class PresenterCreatePlan : BaseActivityPresenter<MvpViewCreatePlan>() {
 
     private fun checkShouldDiscard() {
         if (!mSavePressed && !mEditMode) {
-            ELDatastore.planStore().delete(toEdit!!)
+            PlanStores.planStore().delete(toEdit!!)
             Utils.runWithDelay({
                 closeScreen()
             }, 300)
@@ -454,7 +450,7 @@ class PresenterCreatePlan : BaseActivityPresenter<MvpViewCreatePlan>() {
             */
             if (toEdit == null) {
                 toEdit = ELPlan.newPlan(LocalUserManager.getUser()!!.id)
-                ELDatastore.planStore().create(toEdit!!, SetOptions.merge())
+                PlanStores.planStore().create(toEdit!!, SetOptions.merge())
             }
         }
     }
@@ -484,7 +480,7 @@ class PresenterCreatePlan : BaseActivityPresenter<MvpViewCreatePlan>() {
         mDaysAdapter.registerBinder(PlanDayAdapter.Binder(object : PlanDayAdapter.OnPlanDayListener {
             override fun onClickChooseRoutine(day: ELPlanDay, position: Int) {
                 mSelectedDay = position
-                navigator.openRoutinePicker()
+                mvpView?.getActivity()?.let(PlanFeature.dependencies::openTemplatePicker)
             }
 
             override fun onDayEdited() {

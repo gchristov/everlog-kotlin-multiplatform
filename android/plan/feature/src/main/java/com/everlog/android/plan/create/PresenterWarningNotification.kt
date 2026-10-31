@@ -1,8 +1,8 @@
-package com.everlog.ui.views.notification.warning
+package com.everlog.android.plan.create
 
 import com.everlog.android.common.kotlin.Utils
 import com.everlog.android.common.mvp.view.BaseViewPresenter
-import com.everlog.ui.navigator.navigator
+import com.everlog.android.plan.PlanFeature
 
 class PresenterWarningNotification : BaseViewPresenter<MvpViewWarningNotification>() {
 
@@ -38,7 +38,7 @@ class PresenterWarningNotification : BaseViewPresenter<MvpViewWarningNotificatio
     private fun handleShowAction() {
         when (mvpView.getType()) {
             WarningNotificationView.WarningType.PRO_PLAN_DAYS,
-            WarningNotificationView.WarningType.PRO_MUSCLE_GOALS-> navigator.openProBuy()
+            WarningNotificationView.WarningType.PRO_MUSCLE_GOALS-> context?.let(PlanFeature.dependencies::openProBuy)
         }
     }
 }

@@ -1,10 +1,10 @@
-package com.everlog.ui.views.badge
+package com.everlog.android.common.mvp.view
 
 import android.content.Context
 import android.util.AttributeSet
 import android.view.LayoutInflater
 import android.widget.LinearLayout
-import com.everlog.databinding.ViewBadgeProLockBinding
+import com.everlog.android.common.mvp.databinding.ViewBadgeProLockBinding
 
 class ProLockBadge : LinearLayout {
 

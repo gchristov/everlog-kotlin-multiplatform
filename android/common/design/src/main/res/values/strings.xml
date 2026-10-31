@@ -82,4 +82,14 @@
     <string name="home_week_average_time">Avg. Session\nDuration</string>
     <string name="home_week_total_time">Workout\nTime</string>
     <string name="home_week_workouts_completed">Workouts\nDone</string>
+    <plurals name="days">
+        <item quantity="one">%1$d day</item>
+        <item quantity="other">%1$d days</item>
+    </plurals>
+    <string name="complete">Complete</string>
+    <string name="create_plan_title">New Plan</string>
+    <string name="done">Done</string>
+    <string name="home_week_plan_skip">Skip</string>
+    <string name="plan_details_rest_prompt">Make sure to take enough time to recover during your rest day.\n\nPro tip: Muscle is built while resting, not while training.</string>
+    <string name="plan_details_rest_title">Rest Day</string>
 </resources>

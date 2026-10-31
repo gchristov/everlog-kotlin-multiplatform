@@ -21,7 +21,6 @@ class AppConfig {
 
     val defaultStatsExerciseRange = RangeType.MONTH
 
-    val maxPlanWeekDaysFree = 1
     val maxExerciseSelection = ExercisePickerActivity.MAX_PICKS
     val maxExerciseSets = SessionDefaults.MAX_EXERCISE_SETS
 

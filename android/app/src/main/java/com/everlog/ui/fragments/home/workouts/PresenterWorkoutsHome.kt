@@ -10,7 +10,7 @@ import com.everlog.android.template.data.store.ELColStoreRoutinesLoadedEvent
 import com.everlog.ui.activities.home.routine.create.CreateRoutineActivity
 import com.everlog.ui.adapters.CreatorAdapter
 import com.everlog.ui.adapters.items.Creator
-import com.everlog.ui.adapters.plan.PlanAdapter
+import com.everlog.android.plan.adapter.PlanAdapter
 import com.everlog.ui.adapters.routine.RoutineAdapter
 import com.everlog.ui.navigator.navigator
 import com.everlog.android.common.mvp.fragment.BaseFragmentPresenter

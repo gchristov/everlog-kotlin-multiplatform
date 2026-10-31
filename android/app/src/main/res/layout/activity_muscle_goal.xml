@@ -122,7 +122,7 @@
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>
 
-    <com.everlog.ui.views.notification.warning.WarningNotificationView
+    <com.everlog.android.plan.create.WarningNotificationView
         android:id="@+id/proUpgradePrompt"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

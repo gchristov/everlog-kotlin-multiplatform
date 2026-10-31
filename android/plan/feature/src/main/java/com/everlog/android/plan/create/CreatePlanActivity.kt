@@ -1,5 +1,7 @@
-package com.everlog.ui.activities.home.plan.create
+package com.everlog.android.plan.create
 
+import android.content.Context
+import android.content.Intent
 import android.view.View
 import android.widget.Button
 import android.widget.EditText
@@ -14,17 +16,17 @@ import androidx.core.view.updateLayoutParams
 import androidx.recyclerview.widget.LinearLayoutManager
 import android.view.ViewGroup
 import android.widget.FrameLayout
-import com.everlog.R
+import com.everlog.android.plan.R
 import com.everlog.android.plan.data.model.ELPlan
-import com.everlog.constants.ELConstants.EXTRA_PLAN_UUID
-import com.everlog.databinding.ActivityPlanCreateBinding
-import com.everlog.managers.analytics.AnalyticsConstants
+import com.everlog.android.plan.databinding.ActivityPlanCreateBinding
 import com.everlog.android.auth.data.LocalUserManager
 import com.everlog.android.common.mvp.activity.BaseActivity
 import com.everlog.android.common.mvp.activity.BaseActivityMvpView
 import com.everlog.android.common.mvp.activity.BaseActivityPresenter
-import com.everlog.ui.views.notification.warning.WarningNotificationView
+import com.everlog.android.plan.create.WarningNotificationView
 import com.everlog.android.common.mvp.util.ELGlideModule
+import com.everlog.android.plan.PlanExtras
+import com.everlog.android.plan.PlanScreenNames
 import com.facebook.shimmer.ShimmerFrameLayout
 import com.jakewharton.rxbinding.view.RxView
 import com.jakewharton.rxbinding.widget.RxTextView
@@ -33,6 +35,13 @@ import com.everlog.android.common.design.R as DesignR
 import com.everlog.android.common.mvp.R as MvpR
 
 class CreatePlanActivity : BaseActivity(), MvpViewCreatePlan {
+
+    companion object {
+        // A new plan when [plan] is null
+        @JvmStatic
+        fun launchIntent(context: Context, plan: ELPlan?): Intent =
+            Intent(context, CreatePlanActivity::class.java).apply { plan?.let { putExtra(PlanExtras.PLAN_UUID, it.uuid) } }
+    }
 
     enum class Flow {
         INFO, WEEKS, DAYS
@@ -81,7 +90,7 @@ class CreatePlanActivity : BaseActivity(), MvpViewCreatePlan {
     }
 
     override fun getAnalyticsScreenName(): String {
-        return AnalyticsConstants.SCREEN_PLAN_CREATE
+        return PlanScreenNames.CREATE
     }
 
     override fun <T : BaseActivityMvpView> getPresenter(): BaseActivityPresenter<T>? {
@@ -106,7 +115,7 @@ class CreatePlanActivity : BaseActivity(), MvpViewCreatePlan {
     }
 
     override fun getItemToEditUuid(): String? {
-        return intent.getStringExtra(EXTRA_PLAN_UUID)
+        return intent.getStringExtra(PlanExtras.PLAN_UUID)
     }
 
     override fun onClickSave(): Observable<Void> {
@@ -140,7 +149,7 @@ class CreatePlanActivity : BaseActivity(), MvpViewCreatePlan {
     override fun togglePanel(flow: Flow, weekNumber: Int) {
         when (flow) {
             Flow.INFO -> {
-                supportActionBar?.title = getString(if (isEditMode()) R.string.create_plan_title_edit else R.string.create_plan_title)
+                supportActionBar?.title = getString(if (isEditMode()) R.string.create_plan_title_edit else DesignR.string.create_plan_title)
                 binding.root.findViewById<ShimmerFrameLayout>(R.id.infoContainer).visibility = View.VISIBLE
                 binding.weeksContainer.root.visibility = View.GONE
                 binding.daysContainer.root.visibility = View.GONE
@@ -155,7 +164,7 @@ class CreatePlanActivity : BaseActivity(), MvpViewCreatePlan {
                 binding.weeksContainer.root.visibility = View.VISIBLE
                 binding.daysContainer.root.visibility = View.GONE
                 binding.weeksContainer.weeksList.layoutManager?.scrollToPosition(0)
-                binding.root.findViewById<Button>(MvpR.id.saveBtn).setText(R.string.done)
+                binding.root.findViewById<Button>(MvpR.id.saveBtn).setText(DesignR.string.done)
                 binding.root.findViewById<Button>(MvpR.id.saveBtn).setBackgroundResource(DesignR.drawable.rounded_corners_btn_three)
                 binding.root.findViewById<Button>(MvpR.id.saveBtn).setTextColor(ContextCompat.getColor(this, DesignR.color.main_accent))
             }
@@ -165,7 +174,7 @@ class CreatePlanActivity : BaseActivity(), MvpViewCreatePlan {
                 binding.weeksContainer.root.visibility = View.GONE
                 binding.daysContainer.root.visibility = View.VISIBLE
                 binding.daysContainer.daysList.layoutManager?.scrollToPosition(0)
-                binding.root.findViewById<Button>(MvpR.id.saveBtn).setText(R.string.done)
+                binding.root.findViewById<Button>(MvpR.id.saveBtn).setText(DesignR.string.done)
                 binding.root.findViewById<Button>(MvpR.id.saveBtn).setBackgroundResource(DesignR.drawable.rounded_corners_btn_three)
                 binding.root.findViewById<Button>(MvpR.id.saveBtn).setTextColor(ContextCompat.getColor(this, DesignR.color.main_accent))
             }
@@ -186,7 +195,7 @@ class CreatePlanActivity : BaseActivity(), MvpViewCreatePlan {
         val toolbar = binding.root.findViewById<Toolbar>(R.id.toolbar)
         toolbar.setNavigationIcon(DesignR.drawable.ic_clear_white)
         setSupportActionBar(toolbar)
-        supportActionBar?.title = getString(if (isEditMode()) R.string.create_plan_title_edit else R.string.create_plan_title)
+        supportActionBar?.title = getString(if (isEditMode()) R.string.create_plan_title_edit else DesignR.string.create_plan_title)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
         val appBar = toolbar.parent as? View

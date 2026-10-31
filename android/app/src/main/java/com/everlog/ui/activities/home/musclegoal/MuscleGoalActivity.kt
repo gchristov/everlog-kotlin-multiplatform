@@ -14,7 +14,7 @@ import com.everlog.android.auth.data.LocalUserManager
 import com.everlog.android.common.mvp.activity.BaseActivity
 import com.everlog.android.common.mvp.activity.BaseActivityMvpView
 import com.everlog.android.common.mvp.activity.BaseActivityPresenter
-import com.everlog.ui.views.notification.warning.WarningNotificationView
+import com.everlog.android.plan.create.WarningNotificationView
 import com.jakewharton.rxbinding.view.RxView
 import rx.Observable
 import com.everlog.android.common.design.R as DesignR

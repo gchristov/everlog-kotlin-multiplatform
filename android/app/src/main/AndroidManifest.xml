@@ -256,13 +256,13 @@
             android:windowSoftInputMode="stateHidden|adjustResize"
             android:exported="false" />
         <activity
-            android:name=".ui.activities.home.plan.create.CreatePlanActivity"
+            android:name="com.everlog.android.plan.create.CreatePlanActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:theme="@style/AppTheme.NoActionBar"
             android:windowSoftInputMode="stateHidden|adjustResize"
             android:exported="false" />
         <activity
-            android:name=".ui.activities.home.plan.details.PlanDetailsActivity"
+            android:name="com.everlog.android.plan.details.PlanDetailsActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:theme="@style/AppTheme.NoActionBar"
             android:windowSoftInputMode="stateHidden|adjustResize"

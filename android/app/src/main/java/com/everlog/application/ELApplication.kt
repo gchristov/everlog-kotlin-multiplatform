@@ -6,6 +6,7 @@ import com.everlog.android.common.kotlin.AppContext
 import com.everlog.android.common.mvp.CommonMvp
 import com.everlog.android.exercise.data.ExerciseData
 import com.everlog.android.history.HistoryFeature
+import com.everlog.android.plan.PlanFeature
 import com.everlog.android.exercise.ExerciseFeature
 import com.everlog.android.template.TemplateFeature
 import com.everlog.android.workout.WorkoutFeature
@@ -14,6 +15,7 @@ import com.everlog.application.features.AppCommonMvpDependencies
 import com.everlog.application.features.AppExerciseDataDependencies
 import com.everlog.application.features.AppExerciseFeatureDependencies
 import com.everlog.application.features.AppHistoryFeatureDependencies
+import com.everlog.application.features.AppPlanFeatureDependencies
 import com.everlog.application.features.AppTemplateFeatureDependencies
 import com.everlog.application.features.AppWorkoutFeatureDependencies
 import com.everlog.config.AppConfig
@@ -31,6 +33,7 @@ class ELApplication : Application() {
         TemplateFeature.dependencies = AppTemplateFeatureDependencies()
         WorkoutFeature.dependencies = AppWorkoutFeatureDependencies()
         HistoryFeature.dependencies = AppHistoryFeatureDependencies()
+        PlanFeature.dependencies = AppPlanFeatureDependencies()
         AndroidThreeTen.init(this)
         AppConfig.configuration.configureApp()
     }

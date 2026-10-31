@@ -24,6 +24,7 @@ import com.everlog.managers.billing.BillingBridge
 import com.everlog.managers.billing.BillingManager
 import com.everlog.ui.navigator.navigator
 import com.everlog.android.common.mvp.activity.BaseActivityPresenter
+import com.everlog.android.plan.data.PlanBroadcasts
 import com.everlog.utils.FCMUtils
 import com.everlog.android.common.kotlin.Utils
 import com.imagepick.dialog.ELPickerDialog
@@ -271,7 +272,7 @@ class PresenterHome : BaseActivityPresenter<MvpViewHome>() {
 
     private fun setupBroadcastReceivers() {
         val filter = IntentFilter()
-        filter.addAction(ELConstants.BROADCAST_CURRENT_PLAN_STARTED)
+        filter.addAction(PlanBroadcasts.CURRENT_PLAN_STARTED)
         LocalBroadcastManager.getInstance(mvpView.context).registerReceiver(mPlanStartedReceiver, filter)
     }
 }

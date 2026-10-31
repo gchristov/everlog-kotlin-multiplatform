@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="CoverText">
+        <item name="android:shadowColor">#000</item>
+        <item name="android:shadowDx">@integer/cover_text_shadow_d</item>
+        <item name="android:shadowDy">@integer/cover_text_shadow_d</item>
+        <item name="android:shadowRadius">@integer/cover_text_shadow_radius</item>
+    </style>
+</resources>

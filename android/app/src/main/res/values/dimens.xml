@@ -16,15 +16,12 @@
 
     <dimen name="card_week_statistics_width">154dp</dimen>
     <dimen name="card_week_statistics_height">170dp</dimen>
-    <dimen name="card_plan_width">260dp</dimen>
-    <dimen name="card_plan_height">170dp</dimen>
 
     <dimen name="exercise_categories_row_size">100dp</dimen>
     <dimen name="exercise_categories_title_text_size">32sp</dimen>
     <dimen name="exercise_categories_title_large_text_size">90sp</dimen>
     <dimen name="exercise_categories_title_large_margin_top">45dp</dimen>
 
-    <dimen name="settings_card_content_margin_left">@dimen/activity_margin</dimen>
     <dimen name="settings_category_title_margin_vertical">@dimen/activity_margin</dimen>
     <dimen name="settings_row_padding_right">10dp</dimen>
     <dimen name="settings_row_subtitle_text_size">13sp</dimen>

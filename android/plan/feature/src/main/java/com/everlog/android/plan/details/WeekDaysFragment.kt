@@ -1,15 +1,15 @@
-package com.everlog.ui.fragments.plan
+package com.everlog.android.plan.details
 
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.everlog.R
 import com.everlog.android.plan.data.model.ELPlan
-import com.everlog.databinding.FragmentPlanWeekBinding
+import com.everlog.android.plan.databinding.FragmentPlanWeekBinding
 import com.everlog.android.common.mvp.fragment.BaseFragment
 import com.everlog.android.common.mvp.fragment.BaseFragmentMvpView
 import com.everlog.android.common.mvp.fragment.BaseFragmentPresenter
+import com.everlog.android.plan.R
 
 class WeekDaysFragment : BaseFragment(), MvpViewWeekDays {
 
