@@ -7,6 +7,7 @@ import com.everlog.android.common.kotlin.AppContext
 import com.everlog.android.common.mvp.CommonMvp
 import com.everlog.android.exercise.data.ExerciseData
 import com.everlog.android.history.HistoryFeature
+import com.everlog.android.onboarding.OnboardingFeature
 import com.everlog.android.plan.PlanFeature
 import com.everlog.android.pro.ProFeature
 import com.everlog.android.settings.SettingsFeature
@@ -19,6 +20,7 @@ import com.everlog.application.features.AppCommonMvpDependencies
 import com.everlog.application.features.AppExerciseDataDependencies
 import com.everlog.application.features.AppExerciseFeatureDependencies
 import com.everlog.application.features.AppHistoryFeatureDependencies
+import com.everlog.application.features.AppOnboardingFeatureDependencies
 import com.everlog.application.features.AppPlanFeatureDependencies
 import com.everlog.application.features.AppProFeatureDependencies
 import com.everlog.application.features.AppSettingsFeatureDependencies
@@ -43,6 +45,7 @@ class ELApplication : Application() {
         SettingsFeature.dependencies = AppSettingsFeatureDependencies()
         ProFeature.dependencies = AppProFeatureDependencies()
         AuthFeature.dependencies = AppAuthFeatureDependencies()
+        OnboardingFeature.dependencies = AppOnboardingFeatureDependencies()
         AndroidThreeTen.init(this)
         AppConfig.configuration.configureApp()
     }

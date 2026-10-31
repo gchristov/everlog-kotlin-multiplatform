@@ -101,4 +101,5 @@
     <string name="settings_workouts">Workouts</string>
     <string name="login_terms">Terms &amp; Conditions</string>
     <string name="login_terms_privacy">Privacy Policy</string>
+    <string name="time">Time</string>
 </resources>

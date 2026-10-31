@@ -37,7 +37,7 @@ import com.everlog.managers.apprate.RatePromptTrigger;
 import com.everlog.android.auth.data.LocalUserManager;
 import com.everlog.android.workout.notification.WorkoutService;
 import com.everlog.ui.activities.home.HomeActivity;
-import com.everlog.ui.activities.onboarding.OnboardingActivity;
+import com.everlog.android.onboarding.OnboardingActivity;
 import com.everlog.android.plan.congratulate.CongratulateActivity;
 import com.everlog.android.plan.cover.CoverImagePickerActivity;
 import com.everlog.android.exercise.create.CreateExerciseActivity;
