@@ -1,4 +1,4 @@
-package com.everlog.ui.fragments.home.activity.history
+package com.everlog.android.history.workouts
 
 import com.everlog.android.common.mvp.fragment.BaseFragmentMvpView
 import org.threeten.bp.LocalDate

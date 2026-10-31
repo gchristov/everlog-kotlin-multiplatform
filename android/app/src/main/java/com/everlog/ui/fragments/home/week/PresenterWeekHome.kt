@@ -16,8 +16,8 @@ import com.everlog.android.plan.data.model.ELPlan
 import com.everlog.android.plan.data.model.ELPlanState
 import com.everlog.constants.ELActivityRequestCodes
 import com.everlog.constants.ELConstants
-import com.everlog.data.controllers.statistics.UserStatsController
-import com.everlog.data.controllers.statistics.UserStatsController.OnCompleteListener
+import com.everlog.android.history.statistics.UserStatsController
+import com.everlog.android.history.statistics.UserStatsController.OnCompleteListener
 import com.everlog.data.datastores.ELDatastore
 import com.everlog.android.workout.data.store.ELColStoreWorkoutsLoadedEvent
 import com.everlog.managers.PlanManager

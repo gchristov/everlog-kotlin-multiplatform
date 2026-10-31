@@ -1,10 +1,9 @@
-package com.everlog.data.controllers.statistics
+package com.everlog.android.history.statistics
 
 import com.everlog.android.common.data.model.workout.ELWorkout
 import com.everlog.android.common.data.model.workout.RangeType
 import com.everlog.android.common.mvp.chart.BaseStatsController
 import com.everlog.android.settings.data.SettingsManager
-import com.everlog.config.AppConfig
 import com.github.mikephil.charting.data.BarEntry
 import com.github.mikephil.charting.data.Entry
 import com.github.mikephil.charting.data.PieEntry
@@ -16,6 +15,10 @@ import java.util.concurrent.TimeUnit
 import kotlin.math.max
 
 class UserStatsController : BaseStatsController() {
+
+    companion object {
+        val DEFAULT_RANGE = RangeType.WEEK
+    }
 
     fun loadStats(range: RangeType,
                   history: List<ELWorkout>,
@@ -76,7 +79,7 @@ class UserStatsController : BaseStatsController() {
 
     data class StatsResult (
 
-            var range: RangeType = AppConfig.configuration.defaultStatsRange,
+            var range: RangeType = DEFAULT_RANGE,
 
             var dayWorkoutMap: Map<Int, Int> = HashMap(),
 

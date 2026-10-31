@@ -78,4 +78,8 @@
     <string name="no_thanks">No, thanks</string>
     <string name="notes">Notes</string>
     <string name="workout_details_duration">Duration</string>
+    <string name="home_activity">Activity</string>
+    <string name="home_week_average_time">Avg. Session\nDuration</string>
+    <string name="home_week_total_time">Workout\nTime</string>
+    <string name="home_week_workouts_completed">Workouts\nDone</string>
 </resources>

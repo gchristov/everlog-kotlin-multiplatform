@@ -1,7 +1,6 @@
-package com.everlog.ui.fragments.home.activity.statistics
+package com.everlog.android.history.statistics
 
 import com.everlog.android.common.data.model.workout.RangeType
-import com.everlog.data.controllers.statistics.UserStatsController
 import com.everlog.android.common.mvp.fragment.BaseFragmentMvpView
 import rx.Observable
 

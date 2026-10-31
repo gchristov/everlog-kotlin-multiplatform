@@ -23,7 +23,7 @@ import com.everlog.android.exercise.data.ExerciseImageStorage
 import com.everlog.android.common.mvp.activity.BaseActivity
 import com.everlog.android.common.mvp.activity.BaseActivityMvpView
 import com.everlog.android.common.mvp.activity.BaseActivityPresenter
-import com.everlog.ui.fragments.home.activity.ActivityHomeFragment
+import com.everlog.android.history.ActivityHomeFragment
 import com.everlog.ui.fragments.home.settings.SettingsHomeFragment
 import com.everlog.ui.fragments.home.week.WeekHomeFragment
 import com.everlog.ui.fragments.home.workouts.WorkoutsHomeFragment

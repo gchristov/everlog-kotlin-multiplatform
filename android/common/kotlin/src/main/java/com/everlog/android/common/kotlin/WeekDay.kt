@@ -1,4 +1,4 @@
-package com.everlog.ui.views
+package com.everlog.android.common.kotlin
 
 import org.threeten.bp.LocalDate
 import java.io.Serializable

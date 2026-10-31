@@ -645,7 +645,7 @@ class ExerciseGroupCreateAdapter {
             binding.historyBtn.visibility = if (selectMode || !builder.allowSetCompletion) View.GONE else View.VISIBLE
             if (builder.listener?.isSelected(item) == true) {
                 binding.checkbox.setImageResource(DesignR.drawable.ic_check_green)
-                binding.checkbox.setBackgroundResource(R.drawable.circle_accent)
+                binding.checkbox.setBackgroundResource(DesignR.drawable.circle_accent)
             } else {
                 binding.checkbox.setImageDrawable(null)
                 binding.checkbox.setBackgroundResource(R.drawable.circle_border_accent)

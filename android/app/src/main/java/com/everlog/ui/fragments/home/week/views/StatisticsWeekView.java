@@ -8,13 +8,13 @@ import com.everlog.R;
 import com.everlog.android.common.kotlin.DateExtKt;
 import com.everlog.android.common.kotlin.format.StatsFormatUtils;
 import com.everlog.android.settings.data.SettingsManager;
-import com.everlog.data.controllers.statistics.UserStatsController;
+import com.everlog.android.history.statistics.UserStatsController;
 import com.everlog.android.common.mvp.activity.BaseActivity;
 import com.everlog.ui.fragments.home.week.WeekViewState;
-import com.everlog.ui.views.WeekDay;
+import com.everlog.android.common.kotlin.WeekDay;
 import com.everlog.ui.views.WeekDayView;
 import com.everlog.ui.views.summarycard.SummaryCardWeek;
-import com.everlog.utils.DayOfWeekExtKt;
+import com.everlog.android.history.workouts.DayOfWeekExtKt;
 import com.everlog.android.common.mvp.util.ViewUtils;
 import com.everlog.android.common.kotlin.format.WeightFormatKt;
 import com.facebook.shimmer.ShimmerFrameLayout;
@@ -151,10 +151,10 @@ public class StatisticsWeekView implements IWeekView {
 
     private void renderSummaryViews(UserStatsController.StatsResult stats) {
         mTotalWeightSummary.setIconPadding(ViewUtils.dpToPx(2));
-        mWorkoutsCompletedSummary.setSummary(R.drawable.ic_check_circle, StatsFormatUtils.Companion.formatNumberStatsLabel(stats.getWorkoutsCompleted()), null, getString(R.string.home_week_workouts_completed));
+        mWorkoutsCompletedSummary.setSummary(R.drawable.ic_check_circle, StatsFormatUtils.Companion.formatNumberStatsLabel(stats.getWorkoutsCompleted()), null, getString(com.everlog.android.common.design.R.string.home_week_workouts_completed));
         mTotalWeightSummary.setSummary(R.drawable.ic_weight, StatsFormatUtils.Companion.formatWeightStatsLabel(stats.getTotalWeightLifted()), WeightFormatKt.weightUnitAbbreviation(SettingsManager.manager.weightUnit()), getString(com.everlog.android.common.design.R.string.home_week_weight_lifted));
-        mTotalTimeSummary.setSummary(R.drawable.ic_time, StatsFormatUtils.Companion.formatTimeStatsLabel(stats.getTotalWorkoutTimeMillis()), getString(com.everlog.android.common.kotlin.R.string.hour), getString(R.string.home_week_total_time));
-        mAverageTimeSummary.setSummary(R.drawable.ic_timelapse, StatsFormatUtils.Companion.formatTimeStatsLabel(stats.getAverageSessionTimeMillis()), getString(com.everlog.android.common.kotlin.R.string.hour), getString(R.string.home_week_average_time));
+        mTotalTimeSummary.setSummary(R.drawable.ic_time, StatsFormatUtils.Companion.formatTimeStatsLabel(stats.getTotalWorkoutTimeMillis()), getString(com.everlog.android.common.kotlin.R.string.hour), getString(com.everlog.android.common.design.R.string.home_week_total_time));
+        mAverageTimeSummary.setSummary(R.drawable.ic_timelapse, StatsFormatUtils.Companion.formatTimeStatsLabel(stats.getAverageSessionTimeMillis()), getString(com.everlog.android.common.kotlin.R.string.hour), getString(com.everlog.android.common.design.R.string.home_week_average_time));
     }
 
     private void renderWeekView(List<WeekDay> days) {

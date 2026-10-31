@@ -1,4 +1,4 @@
-package com.everlog.utils
+package com.everlog.android.common.kotlin
 
 import org.threeten.bp.DayOfWeek
 import org.threeten.bp.LocalDate

@@ -28,7 +28,7 @@ import com.everlog.config.AppConfig
 import com.everlog.config.FeedbackSource
 import com.everlog.constants.ELActivityRequestCodes
 import com.everlog.constants.ELConstants
-import com.everlog.data.controllers.statistics.UserStatsController
+import com.everlog.android.history.statistics.UserStatsController
 import com.everlog.data.repositories.RealOngoingPlanRepository
 import com.everlog.data.repositories.RealOngoingWorkoutRepository
 import com.everlog.data.sync.AppDataSync

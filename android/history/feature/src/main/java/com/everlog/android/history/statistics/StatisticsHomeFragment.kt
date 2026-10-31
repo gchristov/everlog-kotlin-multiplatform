@@ -1,4 +1,4 @@
-package com.everlog.ui.fragments.home.activity.statistics
+package com.everlog.android.history.statistics
 
 import android.graphics.PorterDuff
 import android.view.LayoutInflater
@@ -7,20 +7,18 @@ import android.view.ViewGroup
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import androidx.core.content.ContextCompat
-import com.everlog.R
 import com.everlog.android.common.data.model.workout.RangeType
 import com.everlog.android.common.kotlin.format.StatsFormatUtils
 import com.everlog.android.common.kotlin.makeSingleLine
 import com.everlog.android.settings.data.SettingsManager
-import com.everlog.config.AppConfig
 import com.everlog.android.common.mvp.chart.BaseStatsController
-import com.everlog.data.controllers.statistics.UserStatsController
-import com.everlog.databinding.FragmentHomeStatisticsBinding
-import com.everlog.managers.analytics.AnalyticsConstants
 import com.everlog.android.common.mvp.activity.BaseActivity
 import com.everlog.android.common.mvp.fragment.BaseFragmentMvpView
 import com.everlog.android.common.mvp.fragment.BaseFragmentPresenter
 import com.everlog.android.common.mvp.fragment.BaseTabFragment
+import com.everlog.android.history.HistoryScreenNames
+import com.everlog.android.history.R
+import com.everlog.android.history.databinding.FragmentHomeStatisticsBinding
 import com.everlog.android.common.mvp.chart.ChartRenderer
 import com.everlog.android.common.kotlin.format.weightUnitAbbreviation
 import com.jakewharton.rxbinding.view.RxView
@@ -60,7 +58,7 @@ class StatisticsHomeFragment : BaseTabFragment(), MvpViewStatisticsHome {
     }
 
     override fun getAnalyticsScreenName(): String {
-        return AnalyticsConstants.SCREEN_HOME_STATISTICS
+        return HistoryScreenNames.STATISTICS
     }
 
     override fun <T : BaseFragmentMvpView> getPresenter(): BaseFragmentPresenter<T>? {
@@ -95,10 +93,10 @@ class StatisticsHomeFragment : BaseTabFragment(), MvpViewStatisticsHome {
     }
 
     private fun renderSummaryViews(stats: UserStatsController.StatsResult) {
-        binding.workoutsCompletedSummary.setSummary(StatsFormatUtils.formatNumberStatsLabel(stats.workoutsCompleted), null, requireContext().getString(R.string.home_week_workouts_completed).lowercase().makeSingleLine())
+        binding.workoutsCompletedSummary.setSummary(StatsFormatUtils.formatNumberStatsLabel(stats.workoutsCompleted), null, requireContext().getString(DesignR.string.home_week_workouts_completed).lowercase().makeSingleLine())
         binding.totalWeightSummary.setSummary(StatsFormatUtils.formatWeightStatsLabel(stats.totalWeightLifted), weightUnitAbbreviation(SettingsManager.manager.weightUnit()), requireContext().getString(DesignR.string.home_week_weight_lifted).lowercase().makeSingleLine())
-        binding.totalTimeSummary.setSummary(StatsFormatUtils.formatTimeStatsLabel(stats.totalWorkoutTimeMillis), requireContext().getString(KotlinR.string.hour), requireContext().getString(R.string.home_week_total_time).lowercase().makeSingleLine())
-        binding.averageTimeSummary.setSummary(StatsFormatUtils.formatTimeStatsLabel(stats.averageSessionTimeMillis), requireContext().getString(KotlinR.string.hour), requireContext().getString(R.string.home_week_average_time).lowercase().makeSingleLine())
+        binding.totalTimeSummary.setSummary(StatsFormatUtils.formatTimeStatsLabel(stats.totalWorkoutTimeMillis), requireContext().getString(KotlinR.string.hour), requireContext().getString(DesignR.string.home_week_total_time).lowercase().makeSingleLine())
+        binding.averageTimeSummary.setSummary(StatsFormatUtils.formatTimeStatsLabel(stats.averageSessionTimeMillis), requireContext().getString(KotlinR.string.hour), requireContext().getString(DesignR.string.home_week_average_time).lowercase().makeSingleLine())
         binding.longestSessionSummary.setSummary(StatsFormatUtils.formatTimeStatsLabel(stats.longestSessionTimeMillis), requireContext().getString(KotlinR.string.hour), requireContext().getString(R.string.statistics_longest_session).lowercase().makeSingleLine())
         binding.maxWeightSummary.setSummary(StatsFormatUtils.formatWeightStatsLabel(stats.maxWeightLifted), weightUnitAbbreviation(SettingsManager.manager.weightUnit()), requireContext().getString(DesignR.string.workout_details_max_weight).lowercase().makeSingleLine())
     }
@@ -145,7 +143,7 @@ class StatisticsHomeFragment : BaseTabFragment(), MvpViewStatisticsHome {
         adapter.setDropDownViewResource(MvpR.layout.view_spinner_row_dropdown)
         binding.rangeSpinner.background?.setColorFilter(ContextCompat.getColor(requireContext(), DesignR.color.main_accent), PorterDuff.Mode.SRC_ATOP)
         binding.rangeSpinner.adapter = adapter
-        binding.rangeSpinner.setSelection(RangeType.values().indexOf(AppConfig.configuration.defaultStatsRange))
+        binding.rangeSpinner.setSelection(RangeType.values().indexOf(UserStatsController.DEFAULT_RANGE))
         binding.rangeSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(parent: AdapterView<*>, view: View?, position: Int, id: Long) {
                 mOnRangeChanged.onNext(RangeType.values()[position])
