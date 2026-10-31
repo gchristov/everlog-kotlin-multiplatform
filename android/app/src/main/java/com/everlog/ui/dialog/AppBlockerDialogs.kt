@@ -27,7 +27,7 @@ internal class AppBlockerDialogs {
             var no = ""
             when (type) {
                 AppDialogs.AppBlockerDialogType.NEWSLETTER -> {
-                    title = context.getString(R.string.notifications_newsletter_title)
+                    title = context.getString(DesignR.string.notifications_newsletter_title)
                     message = context.getString(R.string.notifications_newsletter_prompt, LocalUserManager.getUser()!!.getFirstName())
                     yes = context.getString(R.string.notifications_newsletter_prompt_yes)
                     no = context.getString(DesignR.string.no_thanks)

@@ -1,9 +1,9 @@
-package com.everlog.ui.views
+package com.everlog.android.common.mvp.view
 
+import com.everlog.android.common.design.R as DesignR
 import android.content.Context
 import android.util.AttributeSet
 import androidx.appcompat.widget.AppCompatCheckBox
-import com.everlog.R
 import rx.Observable
 import rx.subjects.PublishSubject
 
@@ -49,9 +49,9 @@ class CheckBoxTriStates : AppCompatCheckBox {
 
     private fun updateBtn() {
         val btnDrawable: Int = when (state) {
-            State.UNKNOWN -> R.drawable.ic_checkbox_unknown
-            State.UNCHECKED -> R.drawable.ic_checkbox_unchecked
-            State.CHECKED -> R.drawable.ic_checkbox_checked
+            State.UNKNOWN -> DesignR.drawable.ic_checkbox_unknown
+            State.UNCHECKED -> DesignR.drawable.ic_checkbox_unchecked
+            State.CHECKED -> DesignR.drawable.ic_checkbox_checked
         }
         setButtonDrawable(btnDrawable)
     }

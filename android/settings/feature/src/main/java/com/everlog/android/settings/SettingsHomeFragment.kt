@@ -1,5 +1,6 @@
-package com.everlog.ui.fragments.home.settings
+package com.everlog.android.settings
 
+import android.content.pm.ApplicationInfo
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -7,8 +8,6 @@ import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.core.content.ContextCompat
-import com.everlog.BuildConfig
-import com.everlog.R
 import com.everlog.android.auth.data.model.ELUser
 import com.everlog.android.common.kotlin.WeightUnit
 import com.everlog.android.common.kotlin.format.FormatUtils
@@ -17,14 +16,11 @@ import com.everlog.android.common.mvp.fragment.BaseFragmentPresenter
 import com.everlog.android.common.mvp.fragment.BaseTabFragment
 import com.everlog.android.settings.data.SettingsManager
 import com.everlog.android.settings.data.model.ELIntegration
-import com.everlog.databinding.FragmentHomeSettingsBinding
-import com.everlog.managers.RemoteConfigManager
-import com.everlog.managers.analytics.AnalyticsConstants
-import com.everlog.android.workout.setsuggestions.SetSuggestion
-import com.everlog.ui.dialog.AppDialogs
-import com.everlog.ui.views.CheckBoxTriStates
+import com.everlog.android.settings.databinding.FragmentHomeSettingsBinding
 import com.everlog.android.common.mvp.util.ViewUtils
-import com.everlog.utils.format.getIcon
+import com.everlog.android.common.mvp.view.CheckBoxTriStates
+import com.everlog.android.settings.R
+import com.everlog.android.settings.integration.getIcon
 import com.everlog.android.common.kotlin.format.weightUnitAbbreviation
 import com.everlog.android.common.mvp.dialog.showChoiceList
 import com.everlog.android.common.mvp.util.ELGlideModule
@@ -44,11 +40,11 @@ class SettingsHomeFragment : BaseTabFragment(), MvpViewSettingsHome {
 
     override fun onFragmentCreated() {
         setupButtons()
-        binding.root.findViewById<View>(R.id.developerSection).visibility = if (BuildConfig.DEBUG) View.VISIBLE else View.GONE
+        binding.root.findViewById<View>(R.id.developerSection).visibility = if (requireContext().applicationInfo.flags and ApplicationInfo.FLAG_DEBUGGABLE != 0) View.VISIBLE else View.GONE
     }
 
     override fun getAnalyticsScreenName(): String {
-        return AnalyticsConstants.SCREEN_HOME_SETTINGS
+        return SettingsScreenNames.HOME
     }
 
     override fun getTitleResId(): Int {
@@ -156,12 +152,12 @@ class SettingsHomeFragment : BaseTabFragment(), MvpViewSettingsHome {
     }
 
     private fun showMuscleGoal(goal: SettingsManager.MuscleGoal?) {
-        val v2 = RemoteConfigManager.manager.setSuggestionsV2()
+        val v2 = SettingsFeature.dependencies.setSuggestionsV2()
         // Goals the new screen doesn't offer, which older versions could set, keep their old names
-        val suggestion = goal?.let { SetSuggestion.of(it) }.takeIf { v2 }
-        binding.root.findViewById<TextView>(R.id.muscleGoalTitle).setText(if (v2) DesignR.string.set_suggestions_title else R.string.muscle_goal_title)
-        binding.root.findViewById<TextView>(R.id.muscleGoalField).text = suggestion?.let { getString(it.title) } ?: goal?.valueName(activity)
-        binding.root.findViewById<TextView>(R.id.muscleGoalSubtitle).text = suggestion?.subtitle(requireContext()) ?: goal?.valueSettingsSummary(activity, false)
+        val suggestion = goal?.let { SettingsFeature.dependencies.setSuggestionText(requireContext(), it) }.takeIf { v2 }
+        binding.root.findViewById<TextView>(R.id.muscleGoalTitle).setText(if (v2) DesignR.string.set_suggestions_title else DesignR.string.muscle_goal_title)
+        binding.root.findViewById<TextView>(R.id.muscleGoalField).text = suggestion?.value ?: goal?.valueName(activity)
+        binding.root.findViewById<TextView>(R.id.muscleGoalSubtitle).text = suggestion?.subtitle ?: goal?.valueSettingsSummary(activity, false)
     }
 
     override fun showUserInfo(user: ELUser) {
@@ -195,13 +191,11 @@ class SettingsHomeFragment : BaseTabFragment(), MvpViewSettingsHome {
         binding.root.findViewById<View>(R.id.panelNotifications).visibility = if (user.isAnonymous()) View.GONE else View.VISIBLE
     }
 
-    override fun showPickerWeight(value: Float): Observable<Float> {
-        return AppDialogs.showWeightIncreaseDialog(context, value)
-    }
+    override fun showPickerWeight(value: Float): Observable<Float> =
+        SettingsFeature.dependencies.showWeightIncreasePrompt(requireContext(), value)
 
-    override fun showPickerNumber(value: Int, type: AppDialogs.NumberPickerDialogType): Observable<Int> {
-        return AppDialogs.showPickerNumberDialog(context, value, type)
-    }
+    override fun showPickerWeeklyGoal(value: Int): Observable<Int> =
+        SettingsFeature.dependencies.showWeeklyGoalPrompt(requireContext(), value)
 
     override fun showPickerMultipleChoice(titleResId: Int, values: Array<String>, selectedIndex: Int): Observable<Int> {
         return showChoiceList(requireContext(), titleResId, values, selectedIndex)
@@ -250,7 +244,4 @@ class SettingsHomeFragment : BaseTabFragment(), MvpViewSettingsHome {
         fun integrationGoogleFitEnabled(integrationGoogleFitEnabled: Boolean) = apply { this.integrationGoogleFitEnabled = integrationGoogleFitEnabled }
         fun notificationNewsletterEnabled(notificationNewsletterEnabled: Boolean?) = apply { this.notificationNewsletterEnabled = notificationNewsletterEnabled }
     }
-
-    override fun showAppBlockerPrompt(type: AppDialogs.AppBlockerDialogType): Observable<Int> =
-        AppDialogs.showAppBlockerDialog(requireActivity(), type)
 }

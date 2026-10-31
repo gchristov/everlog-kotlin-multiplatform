@@ -31,7 +31,7 @@ internal class NumberDialogs {
             if (!Utils.isValidContext(context)) {
                 return positiveButtonPublish
             }
-            val titleResId = R.string.settings_weight_increase
+            val titleResId = DesignR.string.settings_weight_increase
             val iPart = value.toInt()
             val fPart = ((value - iPart) * 100).toInt() // Convert decimal part to number.
             val decimals: List<String> = ArrayList(listOf("0", "25", "50", "75"))
@@ -93,7 +93,7 @@ internal class NumberDialogs {
             }
             var titleResId = 0
             when (type) {
-                NumberPickerDialogType.WEEKLY_GOAL -> titleResId = R.string.settings_weekly_goal
+                NumberPickerDialogType.WEEKLY_GOAL -> titleResId = DesignR.string.settings_weekly_goal
             }
             // Create dialog
             val builder = AlertDialog.Builder(context, DesignR.style.DarkDialogTheme)

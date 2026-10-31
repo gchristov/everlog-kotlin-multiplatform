@@ -1,7 +1,7 @@
-package com.everlog.utils.format
+package com.everlog.android.settings.integration
 
 import androidx.annotation.DrawableRes
-import com.everlog.R
+import com.everlog.android.settings.R
 import com.everlog.android.settings.data.model.ELIntegration
 
 @DrawableRes

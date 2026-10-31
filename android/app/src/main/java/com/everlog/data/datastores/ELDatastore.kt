@@ -1,9 +1,14 @@
 package com.everlog.data.datastores
 
+import com.everlog.android.auth.data.store.AuthStores
+import com.everlog.android.auth.data.store.ELUserConsentStore
+import com.everlog.android.auth.data.store.ELUserDeviceStore
 import com.everlog.android.common.data.model.ELRoutine
 import com.everlog.android.common.data.model.workout.ELWorkout
 import com.everlog.android.plan.data.model.ELPlan
 import com.everlog.android.plan.data.store.PlanStores
+import com.everlog.android.settings.data.store.ELUserIntegrationStore
+import com.everlog.android.settings.data.store.SettingsStores
 import com.everlog.android.common.data.store.CollectionStore
 import com.everlog.android.common.data.store.DocumentStore
 import com.everlog.android.exercise.data.store.ELExercisesStore
@@ -15,15 +20,13 @@ import com.everlog.android.template.data.store.ELUserRoutinesInMemoryStore
 import com.everlog.android.template.data.store.ELUserRoutinesStore
 import com.everlog.android.template.data.store.TemplateStores
 import com.everlog.android.workout.data.store.WorkoutStores
+import com.everlog.data.datastores.ELUserStore
 
 class ELDatastore {
 
     companion object {
 
         private var mUserStore: ELUserStore? = null
-        private var mIntegrationStore: ELUserIntegrationStore? = null
-        private var mConsentStore: ELUserConsentStore? = null
-        private var mDeviceStore: ELUserDeviceStore? = null
 
         @JvmStatic
         fun workoutsStore(): CollectionStore<ELWorkout> = WorkoutStores.workoutsStore()
@@ -59,31 +62,13 @@ class ELDatastore {
         fun planStore(): DocumentStore<ELPlan> = PlanStores.planStore()
 
         @JvmStatic
-        @Synchronized
-        fun integrationStore(): ELUserIntegrationStore {
-            if (mIntegrationStore == null) {
-                mIntegrationStore = ELUserIntegrationStore()
-            }
-            return mIntegrationStore!!
-        }
+        fun integrationStore(): ELUserIntegrationStore = SettingsStores.integrationStore()
 
         @JvmStatic
-        @Synchronized
-        fun consentStore(): ELUserConsentStore {
-            if (mConsentStore == null) {
-                mConsentStore = ELUserConsentStore()
-            }
-            return mConsentStore!!
-        }
+        fun consentStore(): ELUserConsentStore = AuthStores.consentStore()
 
         @JvmStatic
-        @Synchronized
-        fun deviceStore(): ELUserDeviceStore {
-            if (mDeviceStore == null) {
-                mDeviceStore = ELUserDeviceStore()
-            }
-            return mDeviceStore!!
-        }
+        fun deviceStore(): ELUserDeviceStore = AuthStores.deviceStore()
 
         @JvmStatic
         fun destroy() {
@@ -93,12 +78,8 @@ class ELDatastore {
             mUserStore?.destroy()
             mUserStore = null
             PlanStores.destroy()
-            mIntegrationStore?.destroy()
-            mIntegrationStore = null
-            mConsentStore?.destroy()
-            mConsentStore = null
-            mDeviceStore?.destroy()
-            mDeviceStore = null
+            SettingsStores.destroy()
+            AuthStores.destroy()
         }
     }
 }

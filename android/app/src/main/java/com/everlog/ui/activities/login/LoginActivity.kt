@@ -17,7 +17,7 @@ import com.everlog.managers.analytics.AnalyticsConstants
 import com.everlog.android.common.mvp.activity.BaseActivity
 import com.everlog.android.common.mvp.activity.BaseActivityMvpView
 import com.everlog.android.common.mvp.activity.BaseActivityPresenter
-import com.everlog.ui.views.CheckBoxTriStates
+import com.everlog.android.common.mvp.view.CheckBoxTriStates
 import com.everlog.android.common.kotlin.Utils
 import com.everlog.android.common.mvp.util.ViewUtils
 import com.everlog.android.common.mvp.util.KeyboardUtils

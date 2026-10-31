@@ -1,17 +1,17 @@
-package com.everlog.ui.activities.home.integration
+package com.everlog.android.settings.integration
 
 import android.content.Context
 import android.content.Intent
 import android.view.View
-import com.everlog.R
+import com.everlog.android.settings.R
+import com.everlog.android.settings.SettingsExtras
+import com.everlog.android.settings.SettingsScreenNames
 import com.everlog.android.settings.data.model.ELIntegration
-import com.everlog.constants.ELConstants
-import com.everlog.databinding.ActivityIntegrationBinding
-import com.everlog.managers.analytics.AnalyticsConstants
+import com.everlog.android.settings.databinding.ActivityIntegrationBinding
 import com.everlog.android.common.mvp.activity.BaseActivity
 import com.everlog.android.common.mvp.activity.BaseActivityMvpView
 import com.everlog.android.common.mvp.activity.BaseActivityPresenter
-import com.everlog.utils.format.getIcon
+import com.everlog.android.settings.integration.getIcon
 import com.jakewharton.rxbinding.view.RxView
 import rx.Observable
 import com.everlog.android.common.design.R as DesignR
@@ -32,7 +32,7 @@ class IntegrationActivity : BaseActivity(), MvpViewIntegration {
         @JvmStatic
         fun launchIntent(context: Context, properties: Properties): Intent {
             val intent = Intent(context, IntegrationActivity::class.java)
-            intent.putExtra(ELConstants.EXTRA_INTEGRATION, properties.integration)
+            intent.putExtra(SettingsExtras.INTEGRATION, properties.integration)
             return intent
         }
     }
@@ -51,11 +51,11 @@ class IntegrationActivity : BaseActivity(), MvpViewIntegration {
     }
 
     override fun getRequiredExtras(): List<String> {
-        return listOf(ELConstants.EXTRA_INTEGRATION)
+        return listOf(SettingsExtras.INTEGRATION)
     }
 
     override fun getAnalyticsScreenName(): String {
-        return AnalyticsConstants.SCREEN_INTEGRATION
+        return SettingsScreenNames.INTEGRATION
     }
 
     override fun <T : BaseActivityMvpView> getPresenter(): BaseActivityPresenter<T>? {
@@ -67,7 +67,7 @@ class IntegrationActivity : BaseActivity(), MvpViewIntegration {
     }
 
     override fun getItemToEdit(): ELIntegration {
-        return intent.getSerializableExtra(ELConstants.EXTRA_INTEGRATION) as ELIntegration
+        return intent.getSerializableExtra(SettingsExtras.INTEGRATION) as ELIntegration
     }
 
     override fun showData(integration: ELIntegration) {

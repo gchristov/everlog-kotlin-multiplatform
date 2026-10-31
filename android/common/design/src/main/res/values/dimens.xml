@@ -45,4 +45,7 @@
     <dimen name="card_plan_height">170dp</dimen>
     <dimen name="card_plan_width">260dp</dimen>
     <dimen name="settings_card_content_margin_left">@dimen/activity_margin</dimen>
+    <dimen name="settings_category_title_margin_vertical">@dimen/activity_margin</dimen>
+    <dimen name="settings_item_icon_size">30dp</dimen>
+    <dimen name="settings_row_subtitle_text_size">13sp</dimen>
 </resources>

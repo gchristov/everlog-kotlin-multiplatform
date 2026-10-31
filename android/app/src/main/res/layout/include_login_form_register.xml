@@ -232,7 +232,7 @@
                 android:layout_height="wrap_content"
                 android:gravity="center">
 
-                <com.everlog.ui.views.CheckBoxTriStates
+                <com.everlog.android.common.mvp.view.CheckBoxTriStates
                     android:id="@+id/newsletterCheckbox"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
