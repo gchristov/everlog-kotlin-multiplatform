@@ -46,6 +46,8 @@ The version code is typically generated during the CI/CD process or local builds
 ./tools/versioning/version_code.sh <staging|nightly|master> [--release]
 ```
 
+`version_code_test.sh` checks the script against throwaway repos with a known number of commits since a tag (`bash tools/versioning/version_code_test.sh`). CI runs it with the unit tests.
+
 When building via Gradle, the suffix can be passed as:
 ```bash
 ./gradlew assembleDebug -PciVersionNameSuffix=my-suffix
