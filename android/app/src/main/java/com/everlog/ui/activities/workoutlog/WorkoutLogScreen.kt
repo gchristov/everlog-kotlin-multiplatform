@@ -55,25 +55,25 @@ import com.everlog.android.common.compose.theme.Theme
 import com.everlog.android.common.data.model.exercise.ELExercise
 import com.everlog.android.common.kotlin.UnitUtils
 import com.everlog.android.common.kotlin.WeightUnit
-import com.everlog.data.controllers.workoutsession.SetMode
-import com.everlog.data.controllers.workoutsession.SetRef
-import com.everlog.data.controllers.workoutsession.ValueField
-import com.everlog.data.controllers.workoutsession.WorkoutBlock
-import com.everlog.data.controllers.workoutsession.WorkoutExercise
-import com.everlog.data.controllers.workoutsession.WorkoutRound
-import com.everlog.data.controllers.workoutsession.WorkoutSet
-import com.everlog.data.controllers.workoutsession.set
+import com.everlog.android.common.session.SetMode
+import com.everlog.android.common.session.SetRef
+import com.everlog.android.common.session.ValueField
+import com.everlog.android.common.session.WorkoutBlock
+import com.everlog.android.common.session.WorkoutExercise
+import com.everlog.android.common.session.WorkoutRound
+import com.everlog.android.common.session.WorkoutSet
+import com.everlog.android.common.session.set
 import com.everlog.ui.activities.setsuggestions.SetSuggestion
-import com.everlog.ui.components.exercisetable.CellFocus
-import com.everlog.ui.components.exercisetable.ExampleTable
-import com.everlog.ui.components.exercisetable.ExerciseEditList
-import com.everlog.ui.components.exercisetable.ExerciseTab
-import com.everlog.ui.components.exercisetable.ExerciseTable
-import com.everlog.ui.components.exercisetable.ExerciseTableActions
-import com.everlog.ui.components.exercisetable.SuggestedMark
-import com.everlog.ui.components.exercisetable.TableView
-import com.everlog.ui.components.exercisetable.exerciseName
-import com.everlog.ui.components.exercisetable.focusLabel
+import com.everlog.android.common.sessionui.exercisetable.CellFocus
+import com.everlog.android.common.sessionui.exercisetable.ExampleTable
+import com.everlog.android.common.sessionui.exercisetable.ExerciseEditList
+import com.everlog.android.common.sessionui.exercisetable.ExerciseTab
+import com.everlog.android.common.sessionui.exercisetable.ExerciseTable
+import com.everlog.android.common.sessionui.exercisetable.ExerciseTableActions
+import com.everlog.android.common.sessionui.exercisetable.SuggestedMark
+import com.everlog.android.common.sessionui.exercisetable.TableView
+import com.everlog.android.common.sessionui.exercisetable.exerciseName
+import com.everlog.android.common.sessionui.exercisetable.focusLabel
 import com.everlog.android.common.kotlin.format.formatClock
 import com.everlog.android.common.kotlin.format.displayWeight
 import com.everlog.android.common.kotlin.format.formatWeight
@@ -166,7 +166,7 @@ internal fun WorkoutLogScreen(
                     primaryAction = when {
                         empty -> addExercise
                         state.target != null -> AppKeypadAction(
-                            text = stringResource(if (state.targetStartsTimer) R.string.workout_log_start_timer else R.string.workout_log_complete_set),
+                            text = stringResource(if (state.targetStartsTimer) DesignR.string.workout_log_start_timer else DesignR.string.workout_log_complete_set),
                             icon = ImageVector.vectorResource(if (state.targetStartsTimer) DesignR.drawable.ic_timer else DesignR.drawable.ic_check),
                             onClick = viewModel::onCompleteTarget,
                         )
@@ -277,8 +277,8 @@ private fun keypadEntry(state: WorkoutLogState, viewModel: WorkoutLogViewModel):
             text = stringResource(
                 when (mainKey) {
                     KeypadMainKey.Next -> R.string.workout_log_next
-                    KeypadMainKey.CompleteSet -> R.string.workout_log_complete_set
-                    KeypadMainKey.StartTimer -> R.string.workout_log_start_timer
+                    KeypadMainKey.CompleteSet -> DesignR.string.workout_log_complete_set
+                    KeypadMainKey.StartTimer -> DesignR.string.workout_log_start_timer
                     KeypadMainKey.Done -> R.string.workout_log_done
                 },
             ),

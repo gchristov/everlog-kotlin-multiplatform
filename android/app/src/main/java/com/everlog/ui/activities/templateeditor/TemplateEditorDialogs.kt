@@ -13,7 +13,7 @@ import com.everlog.R
 import com.everlog.android.common.compose.elements.AppDialog
 import com.everlog.android.common.compose.elements.AppDialogAction
 import com.everlog.android.common.compose.elements.AppTextField
-import com.everlog.ui.components.rest.RestStepper
+import com.everlog.android.common.compose.components.rest.RestStepper
 
 @Composable
 internal fun TemplateEditorDialogs(state: TemplateEditorState, viewModel: TemplateEditorViewModel) {

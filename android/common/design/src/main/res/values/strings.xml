@@ -38,4 +38,15 @@
     <string name="workout_details_max_weight">Max weight</string>
     <string name="delete_prompt">Are you sure you want to delete this item?</string>
     <string name="routine_picker_title">Choose template</string>
+    <string name="workout_log_add_set">Add set</string>
+    <string name="workout_log_column_reps">REPS</string>
+    <string name="workout_log_column_reps_time">REPS/TIME</string>
+    <string name="workout_log_column_set">SET</string>
+    <string name="workout_log_column_time">TIME</string>
+    <string name="workout_log_complete_set">Complete set</string>
+    <string name="workout_log_delete">Delete</string>
+    <string name="workout_log_start_timer">Start timer</string>
+    <string name="workout_log_move">Move</string>
+    <string name="workout_log_rest_less">Less rest</string>
+    <string name="workout_log_rest_more">More rest</string>
 </resources>

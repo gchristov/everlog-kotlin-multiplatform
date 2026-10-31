@@ -69,6 +69,8 @@ dependencies {
     implementation(projects.android.common.mvp)
     implementation(projects.android.common.mvvm)
     implementation(projects.android.common.persistence)
+    implementation(projects.android.common.session)
+    implementation(projects.android.common.sessionUi)
     implementation(projects.android.auth.data)
     implementation(projects.android.exercise.data)
     implementation(projects.android.plan.data)

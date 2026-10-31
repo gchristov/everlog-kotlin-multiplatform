@@ -6,11 +6,11 @@ import com.everlog.android.common.data.model.exercise.ELExerciseGroup
 import com.everlog.android.common.data.model.exercise.ELRoutineExercise
 import com.everlog.android.common.data.model.set.ELSet
 import com.everlog.config.AppConfig
-import com.everlog.data.controllers.workoutsession.SessionIds
-import com.everlog.data.controllers.workoutsession.SetMode
-import com.everlog.data.controllers.workoutsession.SetRef
-import com.everlog.data.controllers.workoutsession.WorkoutSet
-import com.everlog.data.controllers.workoutsession.deleteSet
+import com.everlog.android.common.session.SessionIds
+import com.everlog.android.common.session.SetMode
+import com.everlog.android.common.session.SetRef
+import com.everlog.android.common.session.WorkoutSet
+import com.everlog.android.common.session.deleteSet
 import com.google.common.truth.Truth.assertThat
 import org.junit.Test
 

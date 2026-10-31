@@ -3,8 +3,8 @@ package com.everlog.services.workout
 import com.everlog.android.common.data.model.set.ELSet
 import com.everlog.android.common.data.model.workout.ELWorkout
 import com.everlog.android.common.data.model.workout.ELWorkoutState
-import com.everlog.data.controllers.workoutsession.SetMode
-import com.everlog.data.controllers.workoutsession.toSessionSet
+import com.everlog.android.common.session.SetMode
+import com.everlog.android.common.session.toSessionSet
 import java.io.Serializable
 
 /**

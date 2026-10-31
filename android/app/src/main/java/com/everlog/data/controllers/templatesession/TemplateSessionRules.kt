@@ -3,13 +3,13 @@ package com.everlog.data.controllers.templatesession
 import com.everlog.android.common.data.model.exercise.ELExerciseGroup
 import com.everlog.android.common.data.model.set.ELSetType
 import com.everlog.config.AppConfig
-import com.everlog.data.controllers.workoutsession.ExerciseRef
-import com.everlog.data.controllers.workoutsession.SessionIds
-import com.everlog.data.controllers.workoutsession.SetMode
-import com.everlog.data.controllers.workoutsession.WorkoutBlock
-import com.everlog.data.controllers.workoutsession.WorkoutRound
-import com.everlog.data.controllers.workoutsession.WorkoutSet
-import com.everlog.data.controllers.workoutsession.block
+import com.everlog.android.common.session.ExerciseRef
+import com.everlog.android.common.session.SessionIds
+import com.everlog.android.common.session.SetMode
+import com.everlog.android.common.session.WorkoutBlock
+import com.everlog.android.common.session.WorkoutRound
+import com.everlog.android.common.session.WorkoutSet
+import com.everlog.android.common.session.block
 import java.util.UUID
 
 // How the template editor changes a template's blocks. Adding rounds, deleting sets and moving exercises are the

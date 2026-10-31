@@ -37,7 +37,7 @@ import com.everlog.managers.WorkoutManager
 import com.everlog.testutil.E2EAccount
 import com.everlog.android.exercise.feature.details.ExerciseDetailsActivity
 import com.everlog.ui.activities.home.workout.details.WorkoutDetailsActivity
-import com.everlog.ui.components.exercisetable.ExerciseTableTags
+import com.everlog.android.common.sessionui.exercisetable.ExerciseTableTags
 import com.google.common.truth.Truth.assertThat
 import java.util.concurrent.TimeUnit
 import org.junit.After

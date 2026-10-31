@@ -6,11 +6,11 @@ import com.everlog.android.common.data.model.exercise.ELRoutineExercise
 import com.everlog.android.common.data.model.set.ELSet
 import com.everlog.android.common.data.model.set.ELSetType
 import com.everlog.config.AppConfig
-import com.everlog.data.controllers.workoutsession.SessionIds
-import com.everlog.data.controllers.workoutsession.SetMode
-import com.everlog.data.controllers.workoutsession.WorkoutBlock
-import com.everlog.data.controllers.workoutsession.WorkoutSet
-import com.everlog.data.controllers.workoutsession.toSessionBlock
+import com.everlog.android.common.session.SessionIds
+import com.everlog.android.common.session.SetMode
+import com.everlog.android.common.session.WorkoutBlock
+import com.everlog.android.common.session.WorkoutSet
+import com.everlog.android.common.session.toSessionBlock
 import org.apache.commons.lang3.SerializationUtils
 
 // Maps a routine (a workout template) between ELRoutine and the session's blocks, so the template editor can use the

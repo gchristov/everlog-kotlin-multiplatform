@@ -5,6 +5,7 @@ import com.everlog.BuildConfig
 import com.everlog.R
 import com.everlog.android.common.data.model.exercise.ELExerciseGroup
 import com.everlog.android.common.data.model.workout.RangeType
+import com.everlog.android.common.session.SessionDefaults
 import com.everlog.android.exercise.feature.picker.ExercisePickerActivity
 import com.everlog.managers.ErrorManager
 import com.everlog.managers.analytics.AnalyticsManager
@@ -16,7 +17,7 @@ import com.google.firebase.firestore.persistentCacheSettings
 class AppConfig {
 
     val defaultRestTimeSeconds = ELExerciseGroup.DEFAULT_REST_TIME_SECONDS
-    val defaultRestTimeOffsetSeconds = 10
+    val defaultRestTimeOffsetSeconds = SessionDefaults.TIME_STEP_SECONDS
     val defaultExerciseTimeSeconds = 30
 
     val defaultStatsRange = RangeType.WEEK

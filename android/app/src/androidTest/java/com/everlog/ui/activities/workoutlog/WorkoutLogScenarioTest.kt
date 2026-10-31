@@ -50,7 +50,7 @@ import com.everlog.constants.ELConstants
 import com.everlog.data.controllers.workoutprefill.BaseWorkoutPrefillController.PrefillSource
 import com.everlog.data.controllers.workoutprefill.LoadPrefillSourcesUseCase
 import com.everlog.data.controllers.workoutsession.RealWorkoutSetPrefill
-import com.everlog.data.controllers.workoutsession.ValueField
+import com.everlog.android.common.session.ValueField
 import com.everlog.data.repositories.OngoingWorkoutRepository
 import com.everlog.managers.WorkoutManager
 import com.everlog.services.workout.ShownSet
@@ -61,8 +61,8 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableSharedFlow
 import org.junit.After
 import org.junit.Before
-import com.everlog.ui.components.exercisetable.ExerciseTab
-import com.everlog.ui.components.exercisetable.ExerciseTableTags
+import com.everlog.android.common.sessionui.exercisetable.ExerciseTab
+import com.everlog.android.common.sessionui.exercisetable.ExerciseTableTags
 import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.RuleChain

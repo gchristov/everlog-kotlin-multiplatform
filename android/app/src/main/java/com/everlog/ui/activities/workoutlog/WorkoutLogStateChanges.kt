@@ -1,17 +1,17 @@
 package com.everlog.ui.activities.workoutlog
 
 import com.everlog.android.common.data.model.workout.ELWorkout
-import com.everlog.data.controllers.workoutsession.SessionIds
-import com.everlog.data.controllers.workoutsession.SetRef
-import com.everlog.data.controllers.workoutsession.ValueField
-import com.everlog.data.controllers.workoutsession.WorkoutBlock
-import com.everlog.data.controllers.workoutsession.nextOpenAfter
-import com.everlog.data.controllers.workoutsession.refs
-import com.everlog.data.controllers.workoutsession.set
-import com.everlog.data.controllers.workoutsession.setValue
-import com.everlog.data.controllers.workoutsession.toSessionBlocks
-import com.everlog.ui.components.exercisetable.CellFocus
-import com.everlog.ui.components.exercisetable.countField
+import com.everlog.android.common.session.SessionIds
+import com.everlog.android.common.session.SetRef
+import com.everlog.android.common.session.ValueField
+import com.everlog.android.common.session.WorkoutBlock
+import com.everlog.android.common.session.nextOpenAfter
+import com.everlog.android.common.session.refs
+import com.everlog.android.common.session.set
+import com.everlog.android.common.session.setValue
+import com.everlog.android.common.session.toSessionBlocks
+import com.everlog.android.common.sessionui.exercisetable.CellFocus
+import com.everlog.android.common.sessionui.exercisetable.countField
 import com.everlog.android.common.kotlin.format.storedWeight
 
 // How the workout screen's state changes, as plain functions the view-model builds its events from
