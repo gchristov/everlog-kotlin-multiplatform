@@ -1,13 +1,20 @@
 package com.everlog.application.features
 
 import android.app.Activity
+import android.content.Context
 import android.content.Intent
 import com.everlog.android.common.data.model.exercise.ELExercise
 import com.everlog.android.common.data.model.set.ELSetType
+import com.everlog.android.common.data.model.workout.ELWorkout
+import com.everlog.android.common.data.store.CollectionStore
+import com.everlog.android.exercise.data.LoadExerciseGuideUseCase
 import com.everlog.android.exercise.data.LoadExerciseLibraryUseCase
 import com.everlog.android.exercise.data.RealExerciseRepository
+import com.everlog.android.exercise.data.RealLoadExerciseGuideUseCase
 import com.everlog.android.exercise.data.RealLoadExerciseLibraryUseCase
+import com.everlog.android.exercise.feature.ExerciseAnalytics
 import com.everlog.android.exercise.feature.ExerciseFeatureDependencies
+import com.everlog.android.exercise.feature.ExerciseFeedbackForm
 import com.everlog.android.exercise.feature.picker.ExercisePickerAnalytics
 import com.everlog.android.template.data.RealRoutineRepository
 import com.everlog.android.workout.data.RealWorkoutRepository
@@ -17,7 +24,8 @@ import com.everlog.constants.ELActivityRequestCodes
 import com.everlog.constants.ELConstants
 import com.everlog.data.datastores.ELDatastore
 import com.everlog.data.sync.AppDataSync
-import com.everlog.ui.activities.home.exercise.details.ExerciseDetailsActivity
+import com.everlog.managers.RemoteConfigManager
+import com.everlog.android.exercise.feature.details.ExerciseDetailsActivity
 import com.everlog.ui.navigator.ELNavigator
 import com.everlog.ui.navigator.feedbackFormLauncher
 import kotlinx.coroutines.Dispatchers
@@ -43,8 +51,26 @@ class AppExerciseFeatureDependencies : ExerciseFeatureDependencies {
 
     override fun openSetTypePicker(activity: Activity, exerciseCount: Int) = ELNavigator(activity).openSetTypePicker(exerciseCount)
 
-    override fun sendFeedback(activity: Activity, fromNoResults: Boolean): (() -> Unit)? =
-        activity.feedbackFormLauncher(if (fromNoResults) FeedbackSource.EXERCISE_PICKER_NO_RESULTS else FeedbackSource.EXERCISE_PICKER_MENU)
+    override fun feedbackForm(activity: Activity, form: ExerciseFeedbackForm): (() -> Unit)? = activity.feedbackFormLauncher(
+        when (form) {
+            ExerciseFeedbackForm.PickerMenu -> FeedbackSource.EXERCISE_PICKER_MENU
+            ExerciseFeedbackForm.PickerNoResults -> FeedbackSource.EXERCISE_PICKER_NO_RESULTS
+            ExerciseFeedbackForm.Statistics -> FeedbackSource.EXERCISE_STATISTICS
+        },
+    )
+
+    override fun exerciseAnalytics(): ExerciseAnalytics = AppExerciseAnalytics()
+
+    override fun loadExerciseGuide(): LoadExerciseGuideUseCase {
+        val io = Dispatchers.IO
+        return RealLoadExerciseGuideUseCase(io, RealExerciseRepository(io, AppDataSync.instance))
+    }
+
+    override fun workoutsStore(): CollectionStore<ELWorkout> = ELDatastore.workoutsStore()
+
+    override fun exerciseDetailsV2(): Boolean = RemoteConfigManager.manager.exerciseDetailsV2()
+
+    override fun promptForAppSettings(context: Context, rationaleResId: Int) = ELNavigator(context).promptForAppSettings(rationaleResId)
 
     override fun pickedSetType(requestCode: Int, resultCode: Int, data: Intent?): ELSetType? =
         if (requestCode == ELActivityRequestCodes.REQUEST_PICK_SET_TYPE && resultCode == Activity.RESULT_OK) {

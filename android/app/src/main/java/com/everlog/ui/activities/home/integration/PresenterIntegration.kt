@@ -1,5 +1,6 @@
 package com.everlog.ui.activities.home.integration
 
+import com.everlog.android.common.design.R as DesignR
 import android.content.DialogInterface
 import com.everlog.R
 import com.everlog.android.settings.data.model.ELIntegration
@@ -27,7 +28,7 @@ class PresenterIntegration : BaseActivityPresenter<MvpViewIntegration>() {
         subscriptions.add(mvpView.showPrompt(integration.convertedType()?.getTitle() ?: "Unknown Integration",
                 mvpView.context.getString(R.string.integrations_disconnect_prompt),
                 mvpView.context.getString(R.string.integrations_disconnect),
-                mvpView.context.getString(R.string.cancel))
+                mvpView.context.getString(DesignR.string.cancel))
                 .compose(applyUISchedulers())
                 .subscribe({ action ->
                     if (action == DialogInterface.BUTTON_POSITIVE) {

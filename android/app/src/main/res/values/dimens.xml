@@ -2,12 +2,8 @@
 
     <dimen name="activity_margin_triple">48dp</dimen>
 
-    <dimen name="margin_10">10dp</dimen>
     <dimen name="margin_18">18dp</dimen>
-    <dimen name="margin_22">22dp</dimen>
     <dimen name="margin_24">24dp</dimen>
-    <dimen name="margin_26">26dp</dimen>
-    <dimen name="margin_30">30dp</dimen>
 
     <item name="cover_text_shadow_d" format="integer" type="integer">2</item>
     <item name="cover_text_shadow_radius" format="integer" type="integer">20</item>
@@ -15,20 +11,13 @@
     <dimen name="toolbar_progress_height">3dp</dimen>
 
     <dimen name="snackbar_elevation">6dp</dimen>
-    <!-- AppChip -->
-    <dimen name="chip_height">36dp</dimen>
-    <!-- Half the height, a pill -->
-    <dimen name="chip_radius">18dp</dimen>
 
-    <dimen name="footer_bottom_padding">90dp</dimen>
     <dimen name="footer_bottom_padding_double">180dp</dimen>
 
-    <dimen name="dropdown_text_size">18sp</dimen>
 
     <dimen name="dialog_min_width">100dp</dimen>
     <dimen name="dialog_picker_text_size">20sp</dimen>
 
-    <dimen name="options_menu_icon_size">35dp</dimen>
 
 
     <dimen name="card_week_statistics_width">154dp</dimen>
@@ -53,9 +42,6 @@
     <dimen name="settings_item_icon_size">30dp</dimen>
     <dimen name="settings_arrow_icon_margin_left">10dp</dimen>
 
-    <dimen name="statistics_chart_height">350dp</dimen>
-    <dimen name="statistics_section_title_text_size">15sp</dimen>
-    <dimen name="statistics_vertical_text_size">12sp</dimen>
 
     <dimen name="share_workout_size">300dp</dimen>
 

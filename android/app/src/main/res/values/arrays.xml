@@ -5,23 +5,7 @@
 
 
 
-    <string-array name="exercise_category_titles_with_none">
-        <item>@string/create_exercise_select_category</item>
-        <item>@string/category_abs</item>
-        <item>@string/category_arms</item>
-        <item>@string/category_back</item>
-        <item>@string/category_chest</item>
-        <item>@string/category_legs</item>
-        <item>@string/category_shoulders</item>
-    </string-array>
 
-    <string-array name="statistics_durations_titles">
-        <item>@string/range_today</item>
-        <item>@string/range_week</item>
-        <item>@string/range_month</item>
-        <item>@string/range_year</item>
-        <item>@string/range_overall</item>
-    </string-array>
 
     <string-array name="history_view_type_titles">
         <item>@string/view_type_calendar</item>

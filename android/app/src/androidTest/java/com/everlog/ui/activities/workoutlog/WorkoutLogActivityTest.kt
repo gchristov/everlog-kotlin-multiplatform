@@ -35,7 +35,7 @@ import com.everlog.constants.ELConstants
 import com.everlog.data.datastores.ELDatastore
 import com.everlog.managers.WorkoutManager
 import com.everlog.testutil.E2EAccount
-import com.everlog.ui.activities.home.exercise.details.ExerciseDetailsActivity
+import com.everlog.android.exercise.feature.details.ExerciseDetailsActivity
 import com.everlog.ui.activities.home.workout.details.WorkoutDetailsActivity
 import com.everlog.ui.components.exercisetable.ExerciseTableTags
 import com.google.common.truth.Truth.assertThat

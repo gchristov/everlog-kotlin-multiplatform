@@ -19,7 +19,7 @@ import com.everlog.android.template.data.RealRoutineRepository
 import com.everlog.data.sync.AppDataSync
 import com.everlog.managers.RemoteConfigManager
 import com.everlog.ui.activities.base.SignedInComposeActivity
-import com.everlog.ui.activities.home.exercise.details.ExerciseDetailsActivity
+import com.everlog.android.exercise.feature.details.ExerciseDetailsActivity
 import com.everlog.ui.activities.home.routine.create.CreateRoutineActivity
 import com.everlog.ui.components.exercisetable.ExerciseTab
 import com.everlog.ui.navigator.ELNavigator

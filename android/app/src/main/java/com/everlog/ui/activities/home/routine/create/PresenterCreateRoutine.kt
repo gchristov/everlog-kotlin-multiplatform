@@ -1,5 +1,6 @@
 package com.everlog.ui.activities.home.routine.create
 
+import com.everlog.android.common.design.R as DesignR
 import android.app.Activity
 import android.content.DialogInterface
 import android.content.Intent
@@ -69,7 +70,7 @@ class PresenterCreateRoutine : PresenterCreateExerciseGroups<MvpViewCreateRoutin
     }
 
     private fun observeDiscard() {
-        subscriptions.add(mvpView.showDestructivePrompt(R.string.discard_title, R.string.discard_prompt, R.string.discard, R.string.cancel)
+        subscriptions.add(mvpView.showDestructivePrompt(DesignR.string.discard_title, DesignR.string.discard_prompt, DesignR.string.discard, DesignR.string.cancel)
                 .compose(applyUISchedulers())
                 .subscribe({ action: Int ->
                     if (action == DialogInterface.BUTTON_POSITIVE) {

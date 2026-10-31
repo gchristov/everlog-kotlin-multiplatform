@@ -11,6 +11,7 @@ import androidx.lifecycle.viewmodel.viewModelFactory
 import com.everlog.android.common.compose.CommonComposeActivity
 import com.everlog.android.exercise.data.model.library.toELExercise
 import com.everlog.android.exercise.feature.ExerciseFeature
+import com.everlog.android.exercise.feature.ExerciseFeedbackForm
 import com.everlog.android.exercise.feature.R
 import kotlinx.coroutines.Dispatchers
 
@@ -42,8 +43,8 @@ class ExercisePickerActivity : CommonComposeActivity() {
         }
     }
 
-    private val sendFeedback by lazy { dependencies.sendFeedback(this, fromNoResults = false) }
-    private val reportMissing by lazy { dependencies.sendFeedback(this, fromNoResults = true) }
+    private val sendFeedback by lazy { dependencies.feedbackForm(this, ExerciseFeedbackForm.PickerMenu) }
+    private val reportMissing by lazy { dependencies.feedbackForm(this, ExerciseFeedbackForm.PickerNoResults) }
 
     @Composable
     override fun Content() = ExercisePickerScreen(

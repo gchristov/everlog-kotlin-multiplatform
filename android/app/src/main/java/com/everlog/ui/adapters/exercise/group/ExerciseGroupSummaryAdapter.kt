@@ -19,8 +19,8 @@ import com.everlog.android.common.data.model.set.ELSetType
 import com.everlog.android.common.data.model.set.summaryValues
 import com.everlog.databinding.RowExerciseGroupSummaryBinding
 import com.everlog.databinding.RowExerciseWithinSetSummaryBinding
-import com.everlog.databinding.RowSetSummaryBinding
-import com.everlog.ui.activities.home.exercise.details.ExerciseDetailsActivity
+import com.everlog.android.common.mvp.databinding.RowSetSummaryBinding
+import com.everlog.android.exercise.feature.details.ExerciseDetailsActivity
 import com.everlog.ui.navigator.ELNavigator
 import com.everlog.android.common.kotlin.format.ArrayResourceTypeUtils
 import com.everlog.android.common.kotlin.format.exerciseSummary
@@ -29,6 +29,7 @@ import com.everlog.android.common.mvp.view.renderCompleteSetSummary
 import com.everlog.android.settings.data.SettingsManager
 import com.everlog.android.common.kotlin.Utils
 import com.everlog.android.common.design.R as DesignR
+import com.everlog.android.common.mvp.R as MvpR
 import java.util.*
 
 class ExerciseGroupSummaryAdapter {
@@ -173,7 +174,7 @@ class ExerciseGroupSummaryAdapter {
     inner class SetBinder : ItemBinder<ELSet, SetViewHolder>() {
 
         override fun create(inflater: LayoutInflater, parent: ViewGroup): SetViewHolder {
-            return SetViewHolder(inflater.inflate(R.layout.row_set_summary, parent, false))
+            return SetViewHolder(inflater.inflate(MvpR.layout.row_set_summary, parent, false))
         }
 
         override fun canBindData(item: Any): Boolean {

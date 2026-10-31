@@ -1,5 +1,6 @@
 package com.everlog.ui.activities.templateeditor
 
+import com.everlog.android.common.design.R as DesignR
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -24,8 +25,8 @@ internal fun TemplateEditorDialogs(state: TemplateEditorState, viewModel: Templa
             AppDialog(
                 title = stringResource(R.string.template_editor_name),
                 onDismissRequest = viewModel::onDialogDismissed,
-                primaryAction = AppDialogAction(stringResource(R.string.save), save),
-                secondaryAction = AppDialogAction(stringResource(R.string.cancel), viewModel::onDialogDismissed),
+                primaryAction = AppDialogAction(stringResource(DesignR.string.save), save),
+                secondaryAction = AppDialogAction(stringResource(DesignR.string.cancel), viewModel::onDialogDismissed),
             ) {
                 AppTextField(
                     modifier = Modifier.testTag(TemplateEditorTags.NameField),
@@ -48,8 +49,8 @@ internal fun TemplateEditorDialogs(state: TemplateEditorState, viewModel: Templa
         TemplateEditorDialog.Leave -> AppDialog(
             title = stringResource(R.string.template_editor_leave_title),
             onDismissRequest = viewModel::onDialogDismissed,
-            primaryAction = AppDialogAction(stringResource(R.string.save), viewModel::onSave),
-            secondaryAction = AppDialogAction(stringResource(R.string.discard), viewModel::onDiscard),
+            primaryAction = AppDialogAction(stringResource(DesignR.string.save), viewModel::onSave),
+            secondaryAction = AppDialogAction(stringResource(DesignR.string.discard), viewModel::onDiscard),
             tertiaryAction = AppDialogAction(stringResource(R.string.template_editor_keep_editing), viewModel::onDialogDismissed),
         )
     }

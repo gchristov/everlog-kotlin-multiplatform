@@ -1,5 +1,6 @@
 package com.everlog.ui.activities.home.routine.details
 
+import com.everlog.android.common.design.R as DesignR
 import android.content.DialogInterface
 import com.ahamed.multiviewadapter.DataListManager
 import com.ahamed.multiviewadapter.RecyclerAdapter
@@ -89,7 +90,7 @@ open class PresenterRoutineDetails<T : MvpViewRoutineDetails> : BaseActivityPres
     }
 
     private fun observeDeleteConfirm(routine: ELRoutine) {
-        subscriptions.add(mvpView.showDestructivePrompt(R.string.delete_title, R.string.delete_prompt, R.string.delete, R.string.cancel)
+        subscriptions.add(mvpView.showDestructivePrompt(DesignR.string.delete_title, R.string.delete_prompt, DesignR.string.delete, DesignR.string.cancel)
                 .compose(applyUISchedulers())
                 .subscribe { action: Int ->
                     if (action == DialogInterface.BUTTON_POSITIVE) {

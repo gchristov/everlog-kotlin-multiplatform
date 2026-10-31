@@ -44,7 +44,7 @@ class MuscleGoalActivity : BaseActivity(), MvpViewMuscleGoal {
             }
 
             // Bottom padding for content scroll
-            binding.contentLayout.updatePadding(bottom = systemBars.bottom + resources.getDimensionPixelSize(R.dimen.footer_bottom_padding))
+            binding.contentLayout.updatePadding(bottom = systemBars.bottom + resources.getDimensionPixelSize(DesignR.dimen.footer_bottom_padding))
 
             insets
         }

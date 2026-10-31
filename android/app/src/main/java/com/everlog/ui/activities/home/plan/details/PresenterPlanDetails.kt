@@ -1,5 +1,6 @@
 package com.everlog.ui.activities.home.plan.details
 
+import com.everlog.android.common.design.R as DesignR
 import android.content.DialogInterface
 import android.content.Intent
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
@@ -100,7 +101,7 @@ class PresenterPlanDetails : BaseActivityPresenter<MvpViewPlanDetails>() {
     }
 
     private fun observeDeleteConfirm(plan: ELPlan) {
-        subscriptions.add(mvpView.showDestructivePrompt(R.string.delete_title, R.string.delete_prompt, R.string.delete, R.string.cancel)
+        subscriptions.add(mvpView.showDestructivePrompt(DesignR.string.delete_title, R.string.delete_prompt, DesignR.string.delete, DesignR.string.cancel)
                 .compose(applyUISchedulers())
                 .subscribe({ action ->
                     if (action == DialogInterface.BUTTON_POSITIVE) {
@@ -110,7 +111,7 @@ class PresenterPlanDetails : BaseActivityPresenter<MvpViewPlanDetails>() {
     }
 
     private fun observeStopConfirm() {
-        subscriptions.add(mvpView.showDestructivePrompt(R.string.plan_details_stop, R.string.plan_details_stop_prompt, R.string.stop, R.string.cancel)
+        subscriptions.add(mvpView.showDestructivePrompt(R.string.plan_details_stop, R.string.plan_details_stop_prompt, R.string.stop, DesignR.string.cancel)
                 .compose(applyUISchedulers())
                 .subscribe({ action ->
                     if (action == DialogInterface.BUTTON_POSITIVE) {
@@ -123,7 +124,7 @@ class PresenterPlanDetails : BaseActivityPresenter<MvpViewPlanDetails>() {
     }
 
     private fun observeSwitchConfirm() {
-        subscriptions.add(mvpView.showPrompt(R.string.plan_details_switch, R.string.plan_details_switch_prompt, R.string.plan_details_switch, R.string.cancel)
+        subscriptions.add(mvpView.showPrompt(R.string.plan_details_switch, R.string.plan_details_switch_prompt, R.string.plan_details_switch, DesignR.string.cancel)
                 .compose(applyUISchedulers())
                 .subscribe({ action ->
                     if (action == DialogInterface.BUTTON_POSITIVE) {

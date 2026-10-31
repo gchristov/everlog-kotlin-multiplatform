@@ -10,7 +10,7 @@
     android:focusableInTouchMode="true"
     android:orientation="vertical">
 
-    <com.everlog.ui.views.EmptyView
+    <com.everlog.android.common.mvp.view.EmptyView
         android:id="@+id/emptyView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

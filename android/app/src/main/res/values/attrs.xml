@@ -1,18 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <declare-styleable name="FooterView">
-        <attr name="fvTitle" format="string"/>
-        <attr name="fvLink" format="string"/>
-    </declare-styleable>
 
-    <declare-styleable name="EmptyView">
-        <attr name="evImage" format="integer"/>
-        <attr name="evTitle" format="string"/>
-        <attr name="evSubtitle" format="string"/>
-        <attr name="evActionText" format="string"/>
-        <attr name="evActionSecondaryText" format="string"/>
-    </declare-styleable>
 
     <declare-styleable name="SetTypeSummaryView">
         <attr name="stsvTitle" format="string"/>

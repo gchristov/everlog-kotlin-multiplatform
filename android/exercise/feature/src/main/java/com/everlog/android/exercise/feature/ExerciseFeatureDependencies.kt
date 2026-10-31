@@ -1,9 +1,13 @@
 package com.everlog.android.exercise.feature
 
 import android.app.Activity
+import android.content.Context
 import android.content.Intent
 import com.everlog.android.common.data.model.exercise.ELExercise
 import com.everlog.android.common.data.model.set.ELSetType
+import com.everlog.android.common.data.model.workout.ELWorkout
+import com.everlog.android.common.data.store.CollectionStore
+import com.everlog.android.exercise.data.LoadExerciseGuideUseCase
 import com.everlog.android.exercise.data.LoadExerciseLibraryUseCase
 import com.everlog.android.exercise.feature.picker.ExercisePickerAnalytics
 
@@ -23,8 +27,21 @@ interface ExerciseFeatureDependencies {
 
     fun openSetTypePicker(activity: Activity, exerciseCount: Int)
 
-    // Opens the feedback form, or null when Remote Config has no form for it, so the picker leaves its entry out
-    fun sendFeedback(activity: Activity, fromNoResults: Boolean): (() -> Unit)?
+    // Opens the feedback form, or null when Remote Config has no form for it, so the screen leaves its entry out
+    fun feedbackForm(activity: Activity, form: ExerciseFeedbackForm): (() -> Unit)?
+
+    fun exerciseAnalytics(): ExerciseAnalytics
+
+    fun loadExerciseGuide(): LoadExerciseGuideUseCase
+
+    // The user's workouts, for the exercise's statistics and history
+    fun workoutsStore(): CollectionStore<ELWorkout>
+
+    // The exercise detail in Compose (for now its Info tab), from Remote Config
+    fun exerciseDetailsV2(): Boolean
+
+    // Explains a missing permission, with a way to the app's system settings
+    fun promptForAppSettings(context: Context, rationaleResId: Int)
 
     // What the set type picker and the create exercise screen hand back, from onActivityResult
     fun pickedSetType(requestCode: Int, resultCode: Int, data: Intent?): ELSetType?

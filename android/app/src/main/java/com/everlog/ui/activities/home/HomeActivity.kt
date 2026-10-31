@@ -27,7 +27,7 @@ import com.everlog.ui.fragments.home.activity.ActivityHomeFragment
 import com.everlog.ui.fragments.home.settings.SettingsHomeFragment
 import com.everlog.ui.fragments.home.week.WeekHomeFragment
 import com.everlog.ui.fragments.home.workouts.WorkoutsHomeFragment
-import com.everlog.ui.views.viewpager.ELFragmentPagerAdapter
+import com.everlog.android.common.mvp.view.tab.ELFragmentPagerAdapter
 import com.everlog.android.common.kotlin.Utils
 import com.google.android.material.snackbar.Snackbar
 import com.jakewharton.rxbinding.view.RxView

@@ -1,0 +1,114 @@
+package com.everlog.android.exercise.feature.details.history
+
+import com.everlog.android.common.mvp.R as MvpR
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import androidx.recyclerview.widget.LinearLayoutManager
+import com.ahamed.multiviewadapter.DataListManager
+import com.ahamed.multiviewadapter.ItemBinder
+import com.ahamed.multiviewadapter.ItemViewHolder
+import com.ahamed.multiviewadapter.RecyclerAdapter
+import com.everlog.android.common.data.model.exercise.ELExerciseHistory
+import com.everlog.android.common.data.model.set.ELSet
+import com.everlog.android.common.kotlin.format.exerciseSummary
+import com.everlog.android.common.mvp.list.BaseTimelineViewHolder
+import com.everlog.android.common.mvp.list.BaseTimelineViewHolder.OnTimelineListener
+import com.everlog.android.settings.data.SettingsManager
+import com.everlog.android.exercise.feature.databinding.RowHistoryExerciseBinding
+import com.everlog.android.common.mvp.databinding.RowSetSummaryBinding
+import com.everlog.android.common.mvp.view.renderCompleteSetSummary
+import com.everlog.android.exercise.feature.R
+import java.util.Date
+
+class ExerciseHistoryAdapter {
+
+    class Binder(private val mListener: OnTimelineListener<ELExerciseHistory>) : ItemBinder<ELExerciseHistory, ViewHolder>() {
+
+        override fun create(inflater: LayoutInflater, parent: ViewGroup): ViewHolder {
+            return ViewHolder(inflater.inflate(R.layout.row_history_exercise, parent, false))
+        }
+
+        override fun canBindData(item: Any): Boolean {
+            return item is ELExerciseHistory
+        }
+
+        override fun bind(holder: ViewHolder, item: ELExerciseHistory) {
+            holder.setListener(mListener)
+            holder.render()
+        }
+    }
+
+    class ViewHolder(itemView: View) : BaseTimelineViewHolder<ELExerciseHistory>(itemView) {
+
+        private var mSetBinder = SetBinder()
+        private val binding = RowHistoryExerciseBinding.bind(itemView)
+        private val mAdapter = RecyclerAdapter()
+        private val mDataListManager = DataListManager<ELSet>(mAdapter)
+
+        init {
+            setupListView()
+        }
+
+        override fun getDate(): Date {
+            return item.workout?.getCompletedDateAsDate() ?: Date()
+        }
+
+        // Render
+
+        override fun render() {
+            super.render()
+            renderExercise()
+            renderSets()
+        }
+
+        private fun renderSets() {
+            mDataListManager.set(item.exercise?.getSetsWithData())
+            mAdapter.notifyDataSetChanged()
+        }
+
+        private fun renderExercise() {
+            binding.routineName.text = item.workout?.getName()
+            binding.exerciseSummary.text = item.exercise?.let { exercise ->
+                val unit = SettingsManager.manager.weightUnit()
+                exerciseSummary(binding.root.context, exercise.getTotalWeight(unit), exercise.getTotalReps(), exercise.getTotalTimeSeconds(), unit)
+            }
+        }
+
+        // Setup
+
+        private fun setupListView() {
+            mAdapter.addDataManager(mDataListManager)
+            mAdapter.registerBinder(mSetBinder)
+            binding.recyclerView.layoutManager = LinearLayoutManager(itemView.context)
+            binding.recyclerView.adapter = mAdapter
+        }
+    }
+
+    internal class SetBinder : ItemBinder<ELSet, SetViewHolder>() {
+
+        override fun create(inflater: LayoutInflater, parent: ViewGroup): SetViewHolder {
+            return SetViewHolder(inflater.inflate(MvpR.layout.row_set_summary, parent, false))
+        }
+
+        override fun canBindData(item: Any): Boolean {
+            return item is ELSet
+        }
+
+        override fun bind(holder: SetViewHolder, item: ELSet) {
+            holder.render()
+        }
+    }
+
+    internal class SetViewHolder(itemView: View) : ItemViewHolder<ELSet>(itemView) {
+
+        private val binding = RowSetSummaryBinding.bind(itemView)
+
+        // Render
+
+        fun render() {
+            binding.setNumber.text = String.format("%d", absoluteAdapterPosition + 1)
+            renderCompleteSetSummary(itemView.context, item, SettingsManager.manager.weightUnit(), binding.setSummary)
+        }
+    }
+}

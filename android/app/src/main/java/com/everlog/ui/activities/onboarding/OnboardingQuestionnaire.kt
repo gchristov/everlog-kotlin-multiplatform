@@ -414,7 +414,7 @@ internal fun OnboardingFooter(
         )
         FooterMode.Editing -> listOf(
             AppFooterAction(text = stringResource(R.string.done), onClick = viewModel::onSubmit, enabled = state.canContinue),
-            AppFooterAction(text = stringResource(R.string.cancel), onClick = viewModel::onCancel, style = AppFooterAction.Style.Tertiary),
+            AppFooterAction(text = stringResource(DesignR.string.cancel), onClick = viewModel::onCancel, style = AppFooterAction.Style.Tertiary),
         )
         FooterMode.Reminders -> listOf(
             AppFooterAction(text = stringResource(R.string.onboarding_remind_me), onClick = viewModel::onSubmit, enabled = state.canContinue),
@@ -452,7 +452,7 @@ private fun ReminderTimeDialog(
             text = stringResource(DesignR.string.ok),
             onClick = { onConfirm(pickerState.hour, pickerState.minute) },
         ),
-        secondaryAction = AppDialogAction(text = stringResource(R.string.cancel), onClick = onDismiss),
+        secondaryAction = AppDialogAction(text = stringResource(DesignR.string.cancel), onClick = onDismiss),
     ) {
         TimePicker(
             state = pickerState,

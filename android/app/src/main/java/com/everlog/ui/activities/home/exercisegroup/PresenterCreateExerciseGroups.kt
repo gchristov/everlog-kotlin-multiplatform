@@ -1,5 +1,6 @@
 package com.everlog.ui.activities.home.exercisegroup
 
+import com.everlog.android.common.design.R as DesignR
 import android.app.Activity
 import android.content.DialogInterface
 import android.content.Intent
@@ -7,7 +8,6 @@ import android.os.Bundle
 import androidx.recyclerview.widget.RecyclerView
 import com.ahamed.multiviewadapter.DataListManager
 import com.ahamed.multiviewadapter.RecyclerAdapter
-import com.everlog.R
 import com.everlog.android.common.data.model.exercise.ELExercise
 import com.everlog.android.common.data.model.exercise.ELExerciseGroup
 import com.everlog.android.common.data.model.exercise.ELRoutineExercise
@@ -20,7 +20,7 @@ import com.everlog.android.exercise.data.store.ELExercisesStore.ELColStoreExerci
 import com.everlog.managers.analytics.AnalyticsManager
 // import icepick.State
 import com.everlog.android.common.mvp.activity.BaseActivityPresenter
-import com.everlog.ui.activities.home.exercise.details.ExerciseDetailsActivity
+import com.everlog.android.exercise.feature.details.ExerciseDetailsActivity
 import com.everlog.ui.adapters.exercise.group.ExerciseGroupCreateAdapter
 import com.everlog.ui.adapters.exercise.group.ExerciseGroupCreateHeaderAdapter
 import com.everlog.ui.adapters.items.ExerciseGroupCreateHeader
@@ -207,7 +207,7 @@ abstract class PresenterCreateExerciseGroups<T : MvpViewCreateExerciseGroups> : 
     }
 
     private fun observeDiscard() {
-        subscriptions.add(mvpView.showDestructivePrompt(R.string.discard_title, R.string.discard_prompt, R.string.discard, R.string.cancel)
+        subscriptions.add(mvpView.showDestructivePrompt(DesignR.string.discard_title, DesignR.string.discard_prompt, DesignR.string.discard, DesignR.string.cancel)
                 .compose(applyUISchedulers())
                 .subscribe({ action: Int ->
                     if (action == DialogInterface.BUTTON_POSITIVE) {

@@ -39,8 +39,8 @@ internal class NumberDialogs {
             val builder = AlertDialog.Builder(context, DesignR.style.DarkDialogTheme)
             builder.setTitle(titleResId)
             // Attach buttons
-            builder.setPositiveButton(context.getString(R.string.save), null)
-                    .setNegativeButton(context.getString(R.string.cancel), null)
+            builder.setPositiveButton(context.getString(DesignR.string.save), null)
+                    .setNegativeButton(context.getString(DesignR.string.cancel), null)
             // Set custom layout
             val frameView = FrameLayout(context)
             builder.setView(frameView)
@@ -99,8 +99,8 @@ internal class NumberDialogs {
             val builder = AlertDialog.Builder(context, DesignR.style.DarkDialogTheme)
             builder.setTitle(titleResId)
             // Attach buttons
-            builder.setPositiveButton(context.getString(R.string.save), null)
-                    .setNegativeButton(context.getString(R.string.cancel), null)
+            builder.setPositiveButton(context.getString(DesignR.string.save), null)
+                    .setNegativeButton(context.getString(DesignR.string.cancel), null)
             // Set custom layout
             val frameView = FrameLayout(context)
             builder.setView(frameView)
@@ -165,8 +165,8 @@ internal class NumberDialogs {
             builder.setTitle(titleResId)
             // Attach buttons
             builder
-                    .setPositiveButton(context.getString(R.string.save), null)
-                    .setNegativeButton(context.getString(R.string.cancel), null)
+                    .setPositiveButton(context.getString(DesignR.string.save), null)
+                    .setNegativeButton(context.getString(DesignR.string.cancel), null)
                     .setNeutralButton(context.getString(clearResId), null)
             // Set custom layout
             val frameView = FrameLayout(context)

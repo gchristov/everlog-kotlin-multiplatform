@@ -29,6 +29,7 @@ dependencies {
     implementation(libs.textDrawable)
     implementation(libs.ucrop)
     implementation(libs.bottomSheet)
+    implementation(libs.textinlineimage)
     implementation(libs.maskable.layout) {
         isTransitive = false
     }

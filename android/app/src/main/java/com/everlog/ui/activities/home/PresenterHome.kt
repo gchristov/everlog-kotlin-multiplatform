@@ -1,5 +1,6 @@
 package com.everlog.ui.activities.home
 
+import com.everlog.android.common.design.R as DesignR
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.DialogInterface
@@ -164,7 +165,7 @@ class PresenterHome : BaseActivityPresenter<MvpViewHome>() {
         subscriptions.add(mvpView.showChoicePrompt(context.getString(R.string.home_week_ongoing_workout_prompt_title),
                 message,
                 context.getString(R.string.resume),
-                context.getString(R.string.discard),
+                context.getString(DesignR.string.discard),
                 null)
                 .take(1)
                 .compose(applyUISchedulers())

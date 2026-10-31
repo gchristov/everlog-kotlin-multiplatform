@@ -24,6 +24,7 @@ import org.threeten.bp.LocalDate
 import rx.Observable
 import rx.subjects.PublishSubject
 import com.everlog.android.common.design.R as DesignR
+import com.everlog.android.common.mvp.R as MvpR
 import java.time.YearMonth
 import java.util.*
 
@@ -78,7 +79,7 @@ class HistoryHomeFragment : BaseTabFragment(), MvpViewHistoryHome {
     }
 
     override fun getTitleResId(): Int {
-        return R.string.history_title
+        return DesignR.string.history_title
     }
 
     override fun onViewTypeChanged(): Observable<ViewType> {
@@ -169,8 +170,8 @@ class HistoryHomeFragment : BaseTabFragment(), MvpViewHistoryHome {
     }
 
     private fun setupSpinner() {
-        val adapter = ArrayAdapter.createFromResource(requireContext(), R.array.history_view_type_titles, R.layout.view_spinner_row_statistics)
-        adapter.setDropDownViewResource(R.layout.view_spinner_row_dropdown)
+        val adapter = ArrayAdapter.createFromResource(requireContext(), R.array.history_view_type_titles, MvpR.layout.view_spinner_row_statistics)
+        adapter.setDropDownViewResource(MvpR.layout.view_spinner_row_dropdown)
         binding.viewTypeSpinner.background?.setColorFilter(ContextCompat.getColor(requireContext(), DesignR.color.main_accent), PorterDuff.Mode.SRC_ATOP)
         binding.viewTypeSpinner.adapter = adapter
         binding.viewTypeSpinner.setSelection(ViewType.values().indexOf(AppConfig.configuration.defaultHistoryViewType))

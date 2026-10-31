@@ -19,7 +19,7 @@
         app:title="@string/home_activity"
         app:titleTextAppearance="@style/Toolbar.HomeTitle" />
 
-    <com.everlog.ui.views.tab.TabsPage
+    <com.everlog.android.common.mvp.view.tab.TabsPage
         android:id="@+id/tabsPage"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />

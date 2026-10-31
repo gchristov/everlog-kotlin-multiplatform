@@ -1,6 +1,7 @@
 package com.everlog.constants
 
 import com.everlog.BuildConfig
+import com.everlog.android.exercise.feature.ExerciseExtras
 import com.everlog.android.exercise.feature.picker.ExercisePickerActivity
 
 object ELConstants {
@@ -20,9 +21,9 @@ object ELConstants {
     const val EXTRA_WORKOUT_FROM_PLAN = "EXTRA_WORKOUT_FROM_PLAN"
     const val EXTRA_EXERCISE = "EXTRA_EXERCISE"
     // A new exercise's name to start from, e.g. what was searched for
-    const val EXTRA_EXERCISE_NAME = "EXTRA_EXERCISE_NAME"
+    const val EXTRA_EXERCISE_NAME = ExerciseExtras.EXERCISE_NAME
     // The exercise just created, in the create screen's result
-    const val EXTRA_EXERCISE_UUID = "EXTRA_EXERCISE_UUID"
+    const val EXTRA_EXERCISE_UUID = ExerciseExtras.EXERCISE_UUID
     const val EXTRA_EXERCISE_GROUPS = ExercisePickerActivity.EXTRA_EXERCISE_GROUPS
     const val EXTRA_WEB_URL = "EXTRA_WEB_URL"
     const val EXTRA_WEB_TITLE = "EXTRA_WEB_TITLE"

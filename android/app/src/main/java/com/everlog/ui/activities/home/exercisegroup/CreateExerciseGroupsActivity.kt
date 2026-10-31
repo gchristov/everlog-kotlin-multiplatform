@@ -24,6 +24,7 @@ import com.jakewharton.rxbinding.view.RxView
 import rx.Observable
 import rx.subjects.PublishSubject
 import com.everlog.android.common.design.R as DesignR
+import com.everlog.android.common.mvp.R as MvpR
 import java.io.Serializable
 
 abstract class CreateExerciseGroupsActivity : BaseActivity(), MvpViewCreateExerciseGroups {
@@ -80,7 +81,7 @@ abstract class CreateExerciseGroupsActivity : BaseActivity(), MvpViewCreateExerc
     }
 
     override fun onClickSave(): Observable<Void> {
-        return RxView.clicks(findViewById(R.id.saveBtn))
+        return RxView.clicks(findViewById(MvpR.id.saveBtn))
     }
 
     override fun onClickAdd(): Observable<Void> {

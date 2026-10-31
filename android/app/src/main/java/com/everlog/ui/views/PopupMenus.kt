@@ -22,7 +22,7 @@ import com.everlog.android.common.design.R as DesignR
  */
 @SuppressLint("RestrictedApi")
 fun showPopupMenu(anchor: View, build: PopupMenu.() -> Unit, onItemClick: (MenuItem) -> Unit) {
-    val context = ContextThemeWrapper(anchor.context, R.style.AppTheme_PopupOverlay)
+    val context = ContextThemeWrapper(anchor.context, DesignR.style.AppTheme_PopupOverlay)
     // Its end lines up with the button's, like the toolbars' menus
     val popup = PopupMenu(context, anchor, Gravity.END)
     popup.build()

@@ -9,4 +9,15 @@
         <attr name="eivShowLetter" format="boolean"/>
         <attr name="eivFitCenter" format="boolean"/>
     </declare-styleable>
+    <declare-styleable name="EmptyView">
+        <attr name="evImage" format="integer"/>
+        <attr name="evTitle" format="string"/>
+        <attr name="evSubtitle" format="string"/>
+        <attr name="evActionText" format="string"/>
+        <attr name="evActionSecondaryText" format="string"/>
+    </declare-styleable>
+    <declare-styleable name="FooterView">
+        <attr name="fvTitle" format="string"/>
+        <attr name="fvLink" format="string"/>
+    </declare-styleable>
 </resources>

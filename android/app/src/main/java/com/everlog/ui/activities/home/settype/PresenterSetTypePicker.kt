@@ -1,5 +1,6 @@
 package com.everlog.ui.activities.home.settype
 
+import com.everlog.android.common.design.R as DesignR
 import android.app.Activity.RESULT_OK
 import android.content.Intent
 import com.ahamed.multiviewadapter.DataListManager
@@ -44,7 +45,7 @@ class PresenterSetTypePicker : BaseActivityPresenter<MvpViewSetTypePicker>() {
             items.add(ELSetType.valueOf(typeString))
         }
         if (RemoteConfigManager.manager.feedbackFormUrl(FeedbackSource.SET_TYPES) != null) {
-            items.add(Footer(R.string.select_set_type_footer, R.string.exercises_footer_link))
+            items.add(Footer(R.string.select_set_type_footer, DesignR.string.exercises_footer_link))
         }
         mDataListManager.addAll(items)
     }

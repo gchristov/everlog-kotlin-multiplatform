@@ -1,5 +1,6 @@
 package com.everlog.ui.fragments.home.week
 
+import com.everlog.android.common.design.R as DesignR
 import android.app.Activity
 import android.content.BroadcastReceiver
 import android.content.Context
@@ -164,7 +165,7 @@ class PresenterWeekHome : BaseFragmentPresenter<MvpViewWeekHome>() {
     }
 
     private fun observePlanSkipConfirm() {
-        subscriptions.add(mvpView.showPrompt(R.string.home_week_plan_skip, R.string.home_week_plan_skip_prompt, R.string.home_week_plan_skip, R.string.cancel)
+        subscriptions.add(mvpView.showPrompt(R.string.home_week_plan_skip, R.string.home_week_plan_skip_prompt, R.string.home_week_plan_skip, DesignR.string.cancel)
                 .compose(applyUISchedulers())
                 .subscribe({ action: Int ->
                     if (action == DialogInterface.BUTTON_POSITIVE) {
