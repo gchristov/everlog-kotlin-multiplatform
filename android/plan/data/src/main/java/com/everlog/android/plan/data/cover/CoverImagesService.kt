@@ -1,6 +1,6 @@
-package com.everlog.managers.api.coverimages
+package com.everlog.android.plan.data.cover
 
-import com.everlog.managers.api.coverimages.response.CoverImagesResponse
+import com.everlog.android.plan.data.model.cover.CoverImagesResponse
 import retrofit2.http.GET
 import retrofit2.http.Query
 import rx.Observable

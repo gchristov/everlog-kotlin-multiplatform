@@ -2,7 +2,7 @@ package com.everlog.android.template.data.session
 
 import arrow.core.Either
 import com.everlog.android.common.data.model.ELRoutine
-import com.everlog.android.plan.data.OngoingPlanRepository
+import com.everlog.android.template.data.session.OngoingPlanRepository
 import com.everlog.android.template.data.session.RealSaveTemplateUseCase
 import com.everlog.android.template.testfixtures.FakeRoutineRepository
 import com.google.common.truth.Truth.assertThat

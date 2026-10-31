@@ -1,10 +1,9 @@
-package com.everlog.managers.api.coverimages
+package com.everlog.android.plan.data.cover
 
 import android.text.TextUtils
 import com.everlog.android.common.kotlin.AppContext
-import com.everlog.constants.ELConstants
-import com.everlog.managers.api.coverimages.response.CoverImagesResponse
-import com.everlog.utils.NetworkUtils
+import com.everlog.android.plan.data.cover.NetworkUtils
+import com.everlog.android.plan.data.model.cover.CoverImagesResponse
 import okhttp3.Cache
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
@@ -24,6 +23,7 @@ class CoverImagesApi {
     private val CACHE_TIMEOUT_ONLINE_DAYS = 1L
     private val CACHE_TIMEOUT_OFFLINE_DAYS = 7L
     private val CACHE_SIZE_MB = 10
+    private val TIMEOUT_SECONDS = 60L
 
     private var retrofit: Retrofit? = null
     private var service: CoverImagesService? = null
@@ -56,9 +56,9 @@ class CoverImagesApi {
                 .addInterceptor(setupLoggingInterceptor())
                 .addInterceptor(setupRequestCacheControlInterceptor())
                 .addNetworkInterceptor(setupResponseCacheControlInterceptor())
-                .readTimeout(ELConstants.NETWORK_TIMEOUT_INTERVAL, TimeUnit.SECONDS)
-                .connectTimeout(ELConstants.NETWORK_TIMEOUT_INTERVAL, TimeUnit.SECONDS)
-                .writeTimeout(ELConstants.NETWORK_TIMEOUT_INTERVAL, TimeUnit.SECONDS)
+                .readTimeout(TIMEOUT_SECONDS, TimeUnit.SECONDS)
+                .connectTimeout(TIMEOUT_SECONDS, TimeUnit.SECONDS)
+                .writeTimeout(TIMEOUT_SECONDS, TimeUnit.SECONDS)
                 .build()
     }
 

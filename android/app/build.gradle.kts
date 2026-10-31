@@ -153,10 +153,6 @@ dependencies {
 
     implementation(libs.shimmer)
 
-    implementation(libs.retrofit)
-    implementation(libs.retrofit.gson)
-    implementation(libs.retrofit.rxjava)
-    implementation(libs.okhttp.logging)
 
 
     implementation(libs.commons.lang3)

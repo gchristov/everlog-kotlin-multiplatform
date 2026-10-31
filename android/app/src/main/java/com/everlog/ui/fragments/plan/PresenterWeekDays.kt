@@ -5,7 +5,7 @@ import com.ahamed.multiviewadapter.RecyclerAdapter
 import com.everlog.R
 import com.everlog.android.plan.data.model.ELPlan
 import com.everlog.android.plan.data.model.ELPlanDay
-import com.everlog.managers.PlanManager
+import com.everlog.android.plan.data.PlanManager
 import com.everlog.ui.adapters.plan.PlanDayAdapter
 import com.everlog.ui.adapters.plan.applyProLock
 import com.everlog.ui.navigator.navigator

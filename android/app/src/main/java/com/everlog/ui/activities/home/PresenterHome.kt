@@ -13,7 +13,7 @@ import com.everlog.android.common.data.model.workout.ELWorkout
 import com.everlog.constants.ELConstants
 import com.everlog.data.datastores.ELDatastore
 import com.everlog.managers.ErrorManager
-import com.everlog.managers.PlanManager
+import com.everlog.android.plan.data.PlanManager
 import com.everlog.managers.RemoteConfigManager
 import com.everlog.android.workout.data.WorkoutManager
 import com.everlog.managers.analytics.AnalyticsConstants

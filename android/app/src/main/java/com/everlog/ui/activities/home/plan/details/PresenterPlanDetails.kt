@@ -9,8 +9,8 @@ import com.everlog.android.plan.data.model.ELPlan
 import com.everlog.constants.ELConstants
 import com.everlog.data.datastores.ELDatastore
 import com.everlog.android.common.data.store.ELDocumentStore
-import com.everlog.data.datastores.plans.ELDocStorePlanLoadedEvent
-import com.everlog.managers.PlanManager
+import com.everlog.android.plan.data.store.ELDocStorePlanLoadedEvent
+import com.everlog.android.plan.data.PlanManager
 import com.everlog.managers.analytics.AnalyticsManager
 import com.everlog.ui.navigator.navigator
 import com.everlog.android.common.mvp.activity.BaseActivityPresenter

@@ -10,7 +10,7 @@ import com.everlog.android.common.data.model.ELRoutine.Companion.buildNewRoutine
 import com.everlog.android.common.data.model.exercise.ELExerciseGroup
 import com.everlog.constants.ELConstants
 import com.everlog.data.datastores.ELDatastore
-import com.everlog.managers.PlanManager
+import com.everlog.android.plan.data.PlanManager
 import com.everlog.managers.analytics.AnalyticsManager
 import com.everlog.android.auth.data.LocalUserManager
 import com.everlog.ui.activities.home.exercisegroup.PresenterCreateExerciseGroups

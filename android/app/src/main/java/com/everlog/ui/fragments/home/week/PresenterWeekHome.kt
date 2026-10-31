@@ -18,9 +18,10 @@ import com.everlog.constants.ELActivityRequestCodes
 import com.everlog.constants.ELConstants
 import com.everlog.android.history.statistics.UserStatsController
 import com.everlog.android.history.statistics.UserStatsController.OnCompleteListener
+import com.everlog.android.plan.data.PlanBroadcasts
 import com.everlog.data.datastores.ELDatastore
 import com.everlog.android.workout.data.store.ELColStoreWorkoutsLoadedEvent
-import com.everlog.managers.PlanManager
+import com.everlog.android.plan.data.PlanManager
 import com.everlog.managers.RemoteConfigManager
 import com.everlog.managers.analytics.AnalyticsManager
 import com.everlog.ui.activities.home.congratulate.CongratulateActivity
@@ -38,7 +39,7 @@ class PresenterWeekHome : BaseFragmentPresenter<MvpViewWeekHome>() {
         override fun onReceive(context: Context, intent: Intent) {
             if (isAttachedToView) {
                 when {
-                    ELConstants.BROADCAST_CURRENT_PLAN_CHANGED == intent.action -> {
+                    PlanBroadcasts.CURRENT_PLAN_CHANGED == intent.action -> {
                         handleCurrentPlanChanged()
                     }
                 }
@@ -293,7 +294,7 @@ class PresenterWeekHome : BaseFragmentPresenter<MvpViewWeekHome>() {
 
     private fun setupBroadcastReceivers() {
         val filter = IntentFilter()
-        filter.addAction(ELConstants.BROADCAST_CURRENT_PLAN_CHANGED)
+        filter.addAction(PlanBroadcasts.CURRENT_PLAN_CHANGED)
         LocalBroadcastManager.getInstance(mvpView.context).registerReceiver(mBroadcastReceiver!!, filter)
     }
 }
