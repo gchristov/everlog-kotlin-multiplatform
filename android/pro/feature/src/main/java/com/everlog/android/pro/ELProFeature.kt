@@ -1,4 +1,4 @@
-package com.everlog.ui.activities.home.pro
+package com.everlog.android.pro
 
 data class ELProFeature (
 

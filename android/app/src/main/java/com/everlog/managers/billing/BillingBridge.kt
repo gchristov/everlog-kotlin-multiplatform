@@ -8,6 +8,7 @@ import com.everlog.android.pro.data.model.ELProSkuDetails
 import com.everlog.android.pro.data.model.ELProSubscription
 import com.everlog.managers.auth.AuthManager
 import com.everlog.android.auth.data.LocalUserManager
+import com.everlog.android.pro.billing.BillingManager
 import timber.log.Timber
 
 class BillingBridge {
@@ -59,16 +60,6 @@ class BillingBridge {
                     listener?.onBillingNotAvailable(code)
                 }
             })
-        }
-
-        fun convertSkus(result: BillingResult, skuDetailsList: List<SkuDetails>?): List<ELProSkuDetails> {
-            val results = ArrayList<ELProSkuDetails>()
-            if (result.responseCode == BillingClient.BillingResponseCode.OK) {
-                skuDetailsList?.forEach {
-                    results.add(ELProSkuDetails.withSkuDetails(it))
-                }
-            }
-            return results
         }
     }
 }

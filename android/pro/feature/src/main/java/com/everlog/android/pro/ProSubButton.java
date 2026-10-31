@@ -1,4 +1,4 @@
-package com.everlog.ui.views;
+package com.everlog.android.pro;
 
 import android.content.Context;
 import android.content.res.TypedArray;
@@ -6,12 +6,11 @@ import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.widget.LinearLayout;
 
-import com.everlog.R;
+import com.everlog.android.pro.R;
 import com.everlog.android.pro.data.model.ELProSkuDetails;
-import com.everlog.databinding.ViewBtnProSubBinding;
+import com.everlog.android.pro.databinding.ViewBtnProSubBinding;
 
 import androidx.annotation.Nullable;
-import com.everlog.utils.format.ProFormatKt;
 import rx.Observable;
 import rx.subjects.PublishSubject;
 

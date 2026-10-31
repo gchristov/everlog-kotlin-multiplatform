@@ -15,7 +15,6 @@ class AnalyticsConstants {
         const val SCREEN_EXERCISE_GROUPS_CREATE = "screen_create_exercise_groups"
         const val SCREEN_ROUTINE_CREATE = "screen_create_routine"
         const val SCREEN_WEB_VIEW = "screen_web_view"
-        const val SCREEN_PRO = "screen_pro"
         const val SCREEN_MUSCLE_GOAL = "screen_settings_muscle_goals"
         const val SCREEN_ONBOARDING_WELCOME = "screen_onboarding_welcome"
         const val SCREEN_ONBOARDING_QUESTIONS = "screen_onboarding_questions"

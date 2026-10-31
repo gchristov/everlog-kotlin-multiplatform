@@ -1,4 +1,4 @@
-package com.everlog.utils.text;
+package com.everlog.android.common.mvp.util;
 
 import android.text.Layout;
 import android.text.Selection;

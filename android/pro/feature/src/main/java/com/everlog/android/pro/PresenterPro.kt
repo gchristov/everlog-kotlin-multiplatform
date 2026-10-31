@@ -1,5 +1,6 @@
-package com.everlog.ui.activities.home.pro
+package com.everlog.android.pro
 
+import com.everlog.android.common.design.R as DesignR
 import android.content.Intent
 import androidx.recyclerview.widget.RecyclerView
 import com.ahamed.multiviewadapter.DataListManager
@@ -8,18 +9,12 @@ import com.android.billingclient.api.BillingClient
 import com.android.billingclient.api.BillingResult
 import com.android.billingclient.api.Purchase
 import com.android.billingclient.api.SkuDetails
-import com.everlog.R
 import com.everlog.android.common.mvp.MvpBroadcasts
 import com.everlog.android.pro.data.model.ELProSkuDetails
-import com.everlog.constants.ELConstants
-import com.everlog.managers.analytics.AnalyticsManager
-import com.everlog.android.auth.data.LocalUserManager
-import com.everlog.managers.billing.BillingBridge
-import com.everlog.managers.billing.BillingManager
 import com.everlog.android.common.mvp.activity.BaseActivityPresenter
-import com.everlog.android.plan.congratulate.CongratulateActivity
-import com.everlog.ui.adapters.ProUpgradeAdapter
-import com.everlog.ui.navigator.navigator
+import com.everlog.android.pro.ProUpgradeAdapter
+import com.everlog.android.pro.R
+import com.everlog.android.pro.billing.BillingManager
 import timber.log.Timber
 
 class PresenterPro : BaseActivityPresenter<MvpViewPro>() {
@@ -82,7 +77,7 @@ class PresenterPro : BaseActivityPresenter<MvpViewPro>() {
         subscriptions.add(BillingManager.manager.onPurchaseCancelled()
                 .compose(applyUISchedulers())
                 .subscribe({
-                    AnalyticsManager.manager.proBuyCancelled()
+                    ProFeature.dependencies.proAnalytics().cancelled()
                 }, { throwable -> handleError(throwable) }))
     }
 
@@ -98,7 +93,7 @@ class PresenterPro : BaseActivityPresenter<MvpViewPro>() {
         subscriptions.add(mvpView.onClickSubMonth()
                 .compose(applyUISchedulers())
                 .subscribe({sku ->
-                    AnalyticsManager.manager.proBuyMonth()
+                    ProFeature.dependencies.proAnalytics().buyMonth()
                     handleStartPurchaseFlow(sku)
                 }, { throwable -> handleError(throwable) }))
     }
@@ -107,7 +102,7 @@ class PresenterPro : BaseActivityPresenter<MvpViewPro>() {
         subscriptions.add(mvpView.onClickSubYear()
                 .compose(applyUISchedulers())
                 .subscribe({sku ->
-                    AnalyticsManager.manager.proBuyYear()
+                    ProFeature.dependencies.proAnalytics().buyYear()
                     handleStartPurchaseFlow(sku)
                 }, { throwable -> handleError(throwable) }))
     }
@@ -124,7 +119,7 @@ class PresenterPro : BaseActivityPresenter<MvpViewPro>() {
         subscriptions.add(mvpView.onClickTerms()
                 .compose(applyUISchedulers())
                 .subscribe({
-                    navigator.openWebView(ELConstants.URL_TERMS, mvpView.context.getString(R.string.login_terms))
+                    ProFeature.dependencies.openTerms(mvpView.context, mvpView.context.getString(DesignR.string.login_terms))
                 }, { throwable -> handleError(throwable) }))
     }
 
@@ -132,7 +127,7 @@ class PresenterPro : BaseActivityPresenter<MvpViewPro>() {
         subscriptions.add(mvpView.onClickPrivacy()
                 .compose(applyUISchedulers())
                 .subscribe({
-                    navigator.openWebView(ELConstants.URL_PRIVACY, mvpView.context.getString(R.string.login_terms_privacy))
+                    ProFeature.dependencies.openPrivacyPolicy(mvpView.context, mvpView.context.getString(DesignR.string.login_terms_privacy))
                 }, { throwable -> handleError(throwable) }))
     }
 
@@ -197,13 +192,13 @@ class PresenterPro : BaseActivityPresenter<MvpViewPro>() {
     // Handlers
 
     private fun handleRestoreMembership() {
-        AnalyticsManager.manager.proBuyRestore()
+        ProFeature.dependencies.proAnalytics().restore()
         mvpView.toggleLoadingOverlay(true)
-        BillingBridge.restoreUserPurchases(object : BillingManager.OnPurchasesRestoredListener() {
+        ProFeature.dependencies.restorePurchases(object : BillingManager.OnPurchasesRestoredListener() {
             override fun onPurchasesRestored() {
                 if (isAttachedToView) {
                     mvpView?.toggleLoadingOverlay(false)
-                    if (LocalUserManager.getUser()?.isPro() == true) {
+                    if (ProFeature.dependencies.isUserPro()) {
                         mvpView?.showLongToast(R.string.pro_restore_success)
                         mvpView?.closeScreen()
                     } else {
@@ -221,7 +216,7 @@ class PresenterPro : BaseActivityPresenter<MvpViewPro>() {
 
     private fun handlePurchasesLoaded(result: BillingResult, skuDetailsList: List<SkuDetails>?) {
         if (isAttachedToView) {
-            val skus = BillingBridge.convertSkus(result, skuDetailsList)
+            val skus = BillingManager.convertSkus(result, skuDetailsList)
             val monthSku = if (skus.isNotEmpty()) skus[0] else null
             val yearSku = if (skus.isNotEmpty()) skus[1] else null
             Timber.tag(TAG).i("Sku details: month=%s, year=%s", monthSku, yearSku)
@@ -253,7 +248,7 @@ class PresenterPro : BaseActivityPresenter<MvpViewPro>() {
 
     private fun handlePurchaseAlreadyOwned() {
         if (isAttachedToView) {
-            AnalyticsManager.manager.proBuyAlreadyOwned()
+            ProFeature.dependencies.proAnalytics().alreadyOwned()
             sendBroadcast(Intent(MvpBroadcasts.PRO_CHANGED))
             mvpView.closeScreen()
         }
@@ -261,14 +256,14 @@ class PresenterPro : BaseActivityPresenter<MvpViewPro>() {
 
     private fun handlePurchasesCompleted(purchases: List<Purchase>) {
         if (isAttachedToView) {
-            AnalyticsManager.manager.proBuyPurchased()
-            BillingBridge.processPurchaseCompleted(purchases, mSelectedSku)
+            ProFeature.dependencies.proAnalytics().purchased()
+            ProFeature.dependencies.processPurchaseCompleted(purchases, mSelectedSku)
             if (mSelectedSku != null) {
                 purchases.forEach {
 //                    Qonversion.instance?.purchase(mSelectedSku!!.skuDetails, it)
                 }
             }
-            navigator.openCongratulate(CongratulateActivity.Type.PRO)
+            ProFeature.dependencies.openCongratulate(mvpView.context)
             mvpView?.closeScreen()
         }
     }

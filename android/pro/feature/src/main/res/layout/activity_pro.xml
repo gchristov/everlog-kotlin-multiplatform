@@ -93,14 +93,14 @@
                         android:textColor="@color/gray_2"
                         android:textSize="16sp" />
 
-                    <com.everlog.ui.views.ProSubButton
+                    <com.everlog.android.pro.ProSubButton
                         android:id="@+id/subYearBtn"
                         android:layout_width="250dp"
                         android:layout_height="54dp"
                         android:layout_marginTop="38dp"
                         app:psbBackground="@drawable/rounded_corners_btn_pro_year" />
 
-                    <com.everlog.ui.views.ProSubButton
+                    <com.everlog.android.pro.ProSubButton
                         android:id="@+id/subMonthBtn"
                         android:layout_width="250dp"
                         android:layout_height="54dp"

@@ -1,8 +1,8 @@
-package com.everlog.utils.format
+package com.everlog.android.pro
 
 import com.everlog.android.common.design.R as DesignR
 import android.content.Context
-import com.everlog.R
+import com.everlog.android.pro.R
 import com.everlog.android.pro.data.model.ELProSkuDetails
 import org.threeten.bp.Period
 

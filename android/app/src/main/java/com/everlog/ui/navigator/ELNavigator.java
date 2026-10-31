@@ -47,7 +47,7 @@ import com.everlog.android.settings.integration.IntegrationActivity;
 import com.everlog.ui.activities.home.musclegoal.MuscleGoalActivity;
 import com.everlog.android.plan.create.CreatePlanActivity;
 import com.everlog.android.plan.details.PlanDetailsActivity;
-import com.everlog.ui.activities.home.pro.ProActivity;
+import com.everlog.android.pro.ProActivity;
 import com.everlog.android.template.picker.RoutinePickerActivity;
 import com.everlog.ui.activities.home.routine.create.CreateRoutineActivity;
 import com.everlog.android.template.details.RoutineDetailsActivity;

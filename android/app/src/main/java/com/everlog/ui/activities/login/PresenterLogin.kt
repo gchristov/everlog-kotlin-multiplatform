@@ -1,5 +1,6 @@
 package com.everlog.ui.activities.login
 
+import com.everlog.android.common.design.R as DesignR
 import android.app.Activity
 import android.content.Intent
 import android.text.TextUtils
@@ -82,7 +83,7 @@ class PresenterLogin : BaseActivityPresenter<MvpViewLogin>() {
         subscriptions.add(mvpView.onClickTerms()
                 .compose(applyUISchedulers())
                 .subscribe({
-                    navigator.openWebView(ELConstants.URL_TERMS, mvpView.context.getString(R.string.login_terms))
+                    navigator.openWebView(ELConstants.URL_TERMS, mvpView.context.getString(DesignR.string.login_terms))
                 }) { throwable -> handleError(throwable) })
     }
 
@@ -90,7 +91,7 @@ class PresenterLogin : BaseActivityPresenter<MvpViewLogin>() {
         subscriptions.add(mvpView.onClickPrivacy()
                 .compose(applyUISchedulers())
                 .subscribe({
-                    navigator.openWebView(ELConstants.URL_PRIVACY, mvpView.context.getString(R.string.login_terms_privacy))
+                    navigator.openWebView(ELConstants.URL_PRIVACY, mvpView.context.getString(DesignR.string.login_terms_privacy))
                 }) { throwable -> handleError(throwable) })
     }
 

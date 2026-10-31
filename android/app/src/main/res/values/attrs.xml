@@ -2,9 +2,6 @@
 <resources>
 
 
-    <declare-styleable name="ProSubButton">
-        <attr name="psbBackground" format="integer"/>
-    </declare-styleable>
 
 
     <declare-styleable name="LogoView">
