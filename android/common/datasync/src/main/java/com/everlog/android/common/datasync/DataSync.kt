@@ -123,7 +123,8 @@ class DataSync(
                 loads(statusOf(key))
                     .catch { emit(Load.Unavailable(it)) }
                     .distinctUntilChanged()
-                    .shareIn(scope, SharingStarted.WhileSubscribed(stopTimeoutMillis), replay = 1)
+                    // Once the listener stops, writes don't reach the replayed copy, so the next reader starts from the cache
+                    .shareIn(scope, SharingStarted.WhileSubscribed(stopTimeoutMillis, replayExpirationMillis = 0), replay = 1)
             }
         }
         @Suppress("UNCHECKED_CAST")
