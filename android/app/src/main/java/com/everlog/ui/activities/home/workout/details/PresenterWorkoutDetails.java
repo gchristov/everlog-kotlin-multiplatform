@@ -26,7 +26,7 @@ import com.everlog.android.common.kotlin.Utils;
 import com.everlog.ui.activities.home.exercisegroup.DefaultCreateExerciseGroupsActivity;
 import com.everlog.ui.adapters.WorkoutDetailsStatsAdapter;
 import com.everlog.android.common.mvp.list.ExerciseGroupSummaryAdapter;
-import com.everlog.android.exercise.feature.details.ExerciseDetailsActivity;
+import com.everlog.android.exercise.details.ExerciseDetailsActivity;
 import com.everlog.ui.dialog.AppDialogs;
 import com.everlog.ui.navigator.ELNavigator;
 import com.everlog.ui.navigator.PresenterNavigator;

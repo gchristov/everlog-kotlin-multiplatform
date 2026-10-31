@@ -34,7 +34,7 @@ import com.everlog.databinding.RowExerciseWithinSetCreateBinding
 import com.everlog.databinding.RowSetCreateBinding
 import com.everlog.managers.analytics.AnalyticsConstants
 import com.everlog.managers.analytics.AnalyticsManager
-import com.everlog.android.exercise.feature.details.ExerciseDetailsActivity
+import com.everlog.android.exercise.details.ExerciseDetailsActivity
 import com.everlog.ui.dialog.AppDialogs
 import com.everlog.ui.navigator.ELNavigator
 import com.everlog.ui.views.showPopupMenu

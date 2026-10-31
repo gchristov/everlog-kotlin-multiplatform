@@ -1,7 +1,7 @@
 package com.everlog.constants
 
-import com.everlog.android.exercise.feature.create.CreateExerciseActivity
-import com.everlog.android.template.feature.TemplateRequestCodes
+import com.everlog.android.exercise.create.CreateExerciseActivity
+import com.everlog.android.template.TemplateRequestCodes
 object ELActivityRequestCodes {
 
     const val REQUEST_PICK_EXERCISES = 1

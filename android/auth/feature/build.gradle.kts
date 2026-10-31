@@ -3,7 +3,7 @@ plugins {
 }
 
 android {
-    namespace = "com.everlog.android.auth.feature"
+    namespace = "com.everlog.android.auth"
 }
 
 dependencies {

@@ -1,0 +1,77 @@
+package com.everlog.android.exercise.details.history
+
+import com.ahamed.multiviewadapter.DataListManager
+import com.ahamed.multiviewadapter.RecyclerAdapter
+import com.everlog.android.common.data.model.exercise.ELExerciseHistory
+import com.everlog.android.exercise.details.statistics.ExerciseStatsController
+import com.everlog.android.common.mvp.list.BaseTimelineViewHolder
+import com.everlog.android.exercise.details.history.ExerciseHistoryAdapter
+import com.everlog.android.exercise.details.BasePresenterExerciseTab
+
+class PresenterExerciseHistory : BasePresenterExerciseTab<MvpViewExerciseHistory>() {
+
+    private val mAdapter = RecyclerAdapter()
+    private val mDataListManager = DataListManager<ELExerciseHistory>(mAdapter)
+    // The stats the list shows, so updates with the same stats (e.g. the exercise store answering)
+    // keep the list and its scroll position
+    private var mShownStats: ExerciseStatsController.StatsResult? = null
+
+    override fun init() {
+        super.init()
+        setupListView()
+    }
+
+    internal fun getListAdapter(): RecyclerAdapter? {
+        return mAdapter
+    }
+
+    // Loading
+
+    override fun loadData() {
+        super.loadData()
+        if (stats == null) {
+            mvpView?.toggleLoadingOverlay(true)
+        } else {
+            mvpView?.toggleLoadingOverlay(false)
+            if (stats !== mShownStats) {
+                mShownStats = stats
+                mDataListManager.clear()
+                mDataListManager.addAll(stats!!.history)
+            }
+            handleCheckEmptyState()
+        }
+    }
+
+    // Handlers
+
+    private fun handleCheckEmptyState() {
+        mvpView?.toggleEmptyState(mDataListManager.isEmpty)
+    }
+
+    // Setup
+
+    private fun setupListView() {
+        mAdapter.addDataManager(mDataListManager)
+        mAdapter.registerBinder(ExerciseHistoryAdapter.Binder(object : BaseTimelineViewHolder.OnTimelineListener<ELExerciseHistory> {
+            override fun collectionSize(): Int {
+                return mDataListManager.count
+            }
+
+            override fun dateOfPreviousItem(position: Int): Long? {
+                return if (position > 0) {
+                    mDataListManager.get(position - 1).workout?.completedDate
+                } else null
+            }
+
+            override fun dateOfNextItem(position: Int): Long? {
+                return if (position < mDataListManager.count - 1) {
+                    mDataListManager.get(position + 1).workout?.completedDate
+                } else null
+            }
+
+            override fun onItemClicked(item: ELExerciseHistory?, position: Int) {
+                // No-op
+            }
+        }))
+    }
+}

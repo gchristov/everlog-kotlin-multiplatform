@@ -17,9 +17,9 @@ import androidx.test.core.app.ActivityScenario
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
 import com.everlog.android.common.data.model.exercise.ELExerciseGroup
-import com.everlog.android.exercise.feature.picker.ExercisePickerActivity
+import com.everlog.android.exercise.picker.ExercisePickerActivity
 import com.everlog.constants.ELConstants
-import com.everlog.android.exercise.feature.details.ExerciseDetailsActivity
+import com.everlog.android.exercise.details.ExerciseDetailsActivity
 import com.everlog.testutil.E2EAccount
 import com.google.common.truth.Truth.assertThat
 import java.util.concurrent.TimeUnit

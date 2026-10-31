@@ -1,7 +1,7 @@
 package com.everlog.application.features
 
 import com.everlog.android.common.data.model.workout.RangeType
-import com.everlog.android.exercise.feature.ExerciseAnalytics
+import com.everlog.android.exercise.ExerciseAnalytics
 import com.everlog.managers.analytics.AnalyticsManager
 
 class AppExerciseAnalytics : ExerciseAnalytics {

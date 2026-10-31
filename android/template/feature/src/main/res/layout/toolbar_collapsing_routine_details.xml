@@ -64,19 +64,19 @@
                     android:layout_marginTop="@dimen/margin_24"
                     android:orientation="horizontal">
 
-                    <com.everlog.android.template.feature.details.SummaryCardCollapsing
+                    <com.everlog.android.template.details.SummaryCardCollapsing
                         android:id="@+id/exercisesSummary"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content" />
 
-                    <com.everlog.android.template.feature.details.SummaryCardCollapsing
+                    <com.everlog.android.template.details.SummaryCardCollapsing
                         android:id="@+id/setsSummary"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="50dp"
                         android:layout_marginRight="50dp"/>
 
-                    <com.everlog.android.template.feature.details.SummaryCardCollapsing
+                    <com.everlog.android.template.details.SummaryCardCollapsing
                         android:id="@+id/restSummary"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content" />

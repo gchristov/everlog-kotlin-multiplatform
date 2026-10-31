@@ -1,8 +1,8 @@
 package com.everlog.application.features
 
 import com.everlog.android.common.data.model.set.ELSetType
-import com.everlog.android.template.feature.TemplateScreenNames
-import com.everlog.android.template.feature.editor.TemplateEditorAnalytics
+import com.everlog.android.template.TemplateScreenNames
+import com.everlog.android.template.editor.TemplateEditorAnalytics
 import com.everlog.managers.analytics.AnalyticsManager
 
 class AppTemplateEditorAnalytics : TemplateEditorAnalytics {
