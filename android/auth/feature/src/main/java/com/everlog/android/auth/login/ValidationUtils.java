@@ -1,4 +1,4 @@
-package com.everlog.utils.input;
+package com.everlog.android.auth.login;
 
 import android.content.Context;
 import android.text.TextUtils;

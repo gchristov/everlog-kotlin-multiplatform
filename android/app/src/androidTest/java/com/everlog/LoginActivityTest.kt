@@ -1,5 +1,6 @@
 package com.everlog
 
+import com.everlog.android.auth.R as AuthR
 import android.widget.Button
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.NoMatchingViewException
@@ -14,7 +15,7 @@ import androidx.test.espresso.matcher.ViewMatchers.withId
 import androidx.test.espresso.matcher.ViewMatchers.withText
 import androidx.test.ext.junit.rules.ActivityScenarioRule
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import com.everlog.ui.activities.login.LoginActivity
+import com.everlog.android.auth.login.LoginActivity
 import org.hamcrest.Matchers.allOf
 import org.junit.Rule
 import org.junit.Test
@@ -34,7 +35,7 @@ class LoginActivityTest {
 
     @Test
     fun login_withUser_showsHomeScreen() {
-        onView(withId(R.id.showLoginBtn)).perform(click())
+        onView(withId(AuthR.id.showLoginBtn)).perform(click())
 
         onView(allOf(withHint("Email"), isDisplayed()))
             .perform(typeText(BuildConfig.E2E_TEST_USER_EMAIL), closeSoftKeyboard())
@@ -42,7 +43,7 @@ class LoginActivityTest {
         onView(allOf(withHint("Password"), isDisplayed()))
             .perform(typeText(BuildConfig.E2E_TEST_USER_PASSWORD), closeSoftKeyboard())
 
-        onView(allOf(withId(R.id.loginBtn), isAssignableFrom(Button::class.java))).perform(click())
+        onView(allOf(withId(AuthR.id.loginBtn), isAssignableFrom(Button::class.java))).perform(click())
 
         waitForView(R.id.tabBar)
 

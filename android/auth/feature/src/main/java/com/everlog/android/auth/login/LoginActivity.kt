@@ -1,4 +1,4 @@
-package com.everlog.ui.activities.login
+package com.everlog.android.auth.login
 
 import android.graphics.Bitmap
 import android.graphics.Canvas
@@ -10,10 +10,10 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.updateLayoutParams
 import androidx.core.view.updatePadding
-import com.everlog.R
+import com.everlog.android.auth.AuthScreenNames
+import com.everlog.android.auth.R
+import com.everlog.android.auth.databinding.ActivityLoginBinding
 import com.everlog.android.common.kotlin.AppContext
-import com.everlog.databinding.ActivityLoginBinding
-import com.everlog.managers.analytics.AnalyticsConstants
 import com.everlog.android.common.mvp.activity.BaseActivity
 import com.everlog.android.common.mvp.activity.BaseActivityMvpView
 import com.everlog.android.common.mvp.activity.BaseActivityPresenter
@@ -99,7 +99,7 @@ class LoginActivity : BaseActivity(), MvpViewLogin {
     }
 
     override fun getAnalyticsScreenName(): String {
-        return AnalyticsConstants.SCREEN_LOGIN
+        return AuthScreenNames.LOGIN
     }
 
     override fun onDestroy() {

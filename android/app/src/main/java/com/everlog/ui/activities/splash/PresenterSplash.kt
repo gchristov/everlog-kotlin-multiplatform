@@ -7,7 +7,7 @@ import com.everlog.android.auth.data.model.ELUser
 import com.everlog.android.settings.data.SettingsManager
 import com.everlog.constants.ELActivityRequestCodes
 import com.everlog.managers.auth.AuthManager
-import com.everlog.managers.auth.AuthManager.OnAuthActionListener
+import com.everlog.android.auth.data.AuthActionListener
 import com.everlog.ui.navigator.navigator
 import com.everlog.android.common.mvp.activity.BaseActivityPresenter
 import com.everlog.android.common.kotlin.Utils
@@ -63,7 +63,7 @@ class PresenterSplash : BaseActivityPresenter<MvpViewSplash>() {
     }
 
     private fun checkAccountStatus() {
-        AuthManager.initialize(object : OnAuthActionListener() {
+        AuthManager.initialize(object : AuthActionListener() {
             override fun onError(throwable: Throwable) {
                 isReady = true
                 checkAppStatus()

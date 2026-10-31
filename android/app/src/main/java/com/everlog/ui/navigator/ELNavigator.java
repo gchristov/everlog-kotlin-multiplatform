@@ -57,8 +57,8 @@ import com.everlog.android.workout.data.notification.ShownSet;
 import com.everlog.android.workout.data.notification.WorkoutBroadcasts;
 import com.everlog.ui.activities.home.web.WebViewActivity;
 import com.everlog.android.workout.details.WorkoutDetailsActivity;
-import com.everlog.ui.activities.login.LoginActivity;
-import com.everlog.ui.activities.login.resetpassword.ResetPasswordActivity;
+import com.everlog.android.auth.login.LoginActivity;
+import com.everlog.android.auth.resetpassword.ResetPasswordActivity;
 import com.everlog.android.workout.setsuggestions.SetSuggestionsActivity;
 import com.everlog.ui.activities.home.routine.create.TemplateEditorRoutingKt;
 import com.everlog.android.workout.log.WorkoutLogActivity;
@@ -477,8 +477,7 @@ public class ELNavigator implements Navigator {
 
     @Override
     public void openResetPassword() {
-        Intent intent = new Intent(mContext, ResetPasswordActivity.class);
-        startActivity(intent);
+        startActivity(ResetPasswordActivity.Companion.launchIntent(mContext));
     }
 
     // Utils

@@ -1,5 +1,6 @@
 package com.everlog.constants
 
+import com.everlog.android.auth.AuthRequestCodes
 import com.everlog.android.exercise.create.CreateExerciseActivity
 import com.everlog.android.template.TemplateRequestCodes
 object ELActivityRequestCodes {
@@ -12,5 +13,5 @@ object ELActivityRequestCodes {
     const val REQUEST_EDIT_ROUTINE = TemplateRequestCodes.EDIT
     const val REQUEST_EDIT_EXERCISE_GROUPS = 7
     const val REQUEST_LOGIN_GOOGLE = 8
-    const val REQUEST_ONBOARDING = 9
+    const val REQUEST_ONBOARDING = AuthRequestCodes.ONBOARDING
 }

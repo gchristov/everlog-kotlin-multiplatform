@@ -1,14 +1,15 @@
-package com.everlog.ui.activities.login.resetpassword
+package com.everlog.android.auth.resetpassword
 
 import android.text.TextUtils
-import com.everlog.R
-import com.everlog.managers.auth.AuthManager
 import com.everlog.android.common.mvp.activity.BaseActivityPresenter
-import com.everlog.ui.activities.login.LoginActivity
+import com.everlog.android.auth.AuthFeature
+import com.everlog.android.auth.R
+import com.everlog.android.auth.data.AuthActionListener
+import com.everlog.android.auth.login.LoginActivity
 import com.everlog.android.common.mvp.dialog.ToastBuilder
 import com.everlog.android.common.kotlin.Utils
 import com.everlog.android.common.mvp.util.KeyboardUtils
-import com.everlog.utils.input.ValidationUtils
+import com.everlog.android.auth.login.ValidationUtils
 
 class PresenterResetPassword : BaseActivityPresenter<MvpViewResetPassword>() {
 
@@ -34,7 +35,7 @@ class PresenterResetPassword : BaseActivityPresenter<MvpViewResetPassword>() {
         if (TextUtils.isEmpty(emailError)) {
             KeyboardUtils.hideKeyboard(mvpView.getActivity())
             mvpView?.showResetPasswordLoading(LoginActivity.LoadingState.LOADING)
-            AuthManager.requestPasswordReset(email, object : AuthManager.OnAuthActionListener() {
+            AuthFeature.dependencies.requestPasswordReset(email, object : AuthActionListener() {
                 override fun onResetPasswordSuccess() {
                     if (isAttachedToView) {
                         mvpView?.showResetPasswordLoading(LoginActivity.LoadingState.DONE)

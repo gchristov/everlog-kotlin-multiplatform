@@ -1,5 +1,7 @@
-package com.everlog.ui.activities.login.resetpassword
+package com.everlog.android.auth.resetpassword
 
+import android.content.Context
+import android.content.Intent
 import android.graphics.Bitmap
 import android.view.View
 import androidx.core.content.ContextCompat
@@ -7,14 +9,14 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.updateLayoutParams
 import androidx.core.view.updatePadding
-import com.everlog.R
-import com.everlog.databinding.ActivityResetPasswordBinding
-import com.everlog.managers.analytics.AnalyticsConstants
 import com.everlog.android.common.mvp.activity.BaseActivity
 import com.everlog.android.common.mvp.activity.BaseActivityMvpView
 import com.everlog.android.common.mvp.activity.BaseActivityPresenter
-import com.everlog.ui.activities.login.LoginActivity
-import com.everlog.ui.activities.login.LoginActivity.Companion.setupLoadingButton
+import com.everlog.android.auth.AuthScreenNames
+import com.everlog.android.auth.R
+import com.everlog.android.auth.databinding.ActivityResetPasswordBinding
+import com.everlog.android.auth.login.LoginActivity
+import com.everlog.android.auth.login.LoginActivity.Companion.setupLoadingButton
 import com.everlog.android.common.mvp.util.KeyboardUtils
 import com.github.leandroborgesferreira.loadingbutton.customViews.CircularProgressButton
 import com.jakewharton.rxbinding.view.RxView
@@ -22,6 +24,10 @@ import rx.Observable
 import com.everlog.android.common.design.R as DesignR
 
 class ResetPasswordActivity : BaseActivity(), MvpViewResetPassword {
+
+    companion object {
+        fun launchIntent(context: Context): Intent = Intent(context, ResetPasswordActivity::class.java)
+    }
 
     private var mPresenter: PresenterResetPassword? = null
     private lateinit var binding: ActivityResetPasswordBinding
@@ -64,7 +70,7 @@ class ResetPasswordActivity : BaseActivity(), MvpViewResetPassword {
     }
 
     override fun getAnalyticsScreenName(): String {
-        return AnalyticsConstants.SCREEN_RESET_PASSWORD
+        return AuthScreenNames.RESET_PASSWORD
     }
 
     override fun onDestroy() {
