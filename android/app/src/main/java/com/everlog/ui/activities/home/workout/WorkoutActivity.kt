@@ -1,5 +1,6 @@
 package com.everlog.ui.activities.home.workout
 
+import com.everlog.android.common.design.R as DesignR
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
@@ -9,10 +10,10 @@ import android.view.WindowManager
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.recyclerview.widget.RecyclerView
-import com.everlog.R
 import com.everlog.android.common.data.model.workout.ELWorkout
 import com.everlog.android.common.data.model.workout.ELWorkoutState
 import com.everlog.android.settings.data.SettingsManager
+import com.everlog.android.workout.data.notification.WorkoutBroadcasts
 import com.everlog.constants.ELConstants
 import com.everlog.databinding.ActivityWorkoutBinding
 import com.everlog.managers.analytics.AnalyticsConstants
@@ -169,7 +170,7 @@ class WorkoutActivity : CreateExerciseGroupsActivity(), MvpViewWorkout {
     override fun setupTopBar() {
         super.setupTopBar()
         supportActionBar?.title = "00:00"
-        workoutBinding.topBar.actionBar.saveBtn.setText(R.string.workout_finish)
+        workoutBinding.topBar.actionBar.saveBtn.setText(DesignR.string.workout_finish)
     }
 
     override fun setupListView() {
@@ -195,13 +196,13 @@ class WorkoutActivity : CreateExerciseGroupsActivity(), MvpViewWorkout {
 
     private fun setupBroadcastReceivers() {
         val filter = IntentFilter()
-        filter.addAction(WorkoutService.BROADCAST_REQUEST_COMPLETE_SET)
-        filter.addAction(WorkoutService.BROADCAST_REQUEST_INCREASE_WEIGHT)
-        filter.addAction(WorkoutService.BROADCAST_REQUEST_DECREASE_WEIGHT)
-        filter.addAction(WorkoutService.BROADCAST_REQUEST_INCREASE_REPS)
-        filter.addAction(WorkoutService.BROADCAST_REQUEST_DECREASE_REPS)
-        filter.addAction(WorkoutService.BROADCAST_REQUEST_TIMER_REST_STOP)
-        filter.addAction(WorkoutService.BROADCAST_REQUEST_TIMER_EXERCISE_STOP)
+        filter.addAction(WorkoutBroadcasts.REQUEST_COMPLETE_SET)
+        filter.addAction(WorkoutBroadcasts.REQUEST_INCREASE_WEIGHT)
+        filter.addAction(WorkoutBroadcasts.REQUEST_DECREASE_WEIGHT)
+        filter.addAction(WorkoutBroadcasts.REQUEST_INCREASE_REPS)
+        filter.addAction(WorkoutBroadcasts.REQUEST_DECREASE_REPS)
+        filter.addAction(WorkoutBroadcasts.REQUEST_TIMER_REST_STOP)
+        filter.addAction(WorkoutBroadcasts.REQUEST_TIMER_EXERCISE_STOP)
         mReceiver = WorkoutServiceBroadcastReceiver()
         LocalBroadcastManager.getInstance(this).registerReceiver(mReceiver!!, filter)
     }
@@ -212,35 +213,35 @@ class WorkoutActivity : CreateExerciseGroupsActivity(), MvpViewWorkout {
 
     private inner class WorkoutServiceBroadcastReceiver : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent?) {
-            if (WorkoutService.BROADCAST_REQUEST_INCREASE_WEIGHT == intent?.action) {
-                val state = intent.getSerializableExtra(ELConstants.EXTRA_WORKOUT_STATE) as? ELWorkoutState
+            if (WorkoutBroadcasts.REQUEST_INCREASE_WEIGHT == intent?.action) {
+                val state = intent.getSerializableExtra(WorkoutBroadcasts.EXTRA_WORKOUT_STATE) as? ELWorkoutState
                 if (state != null) {
                     mOnRequestWeightIncrease.onNext(state)
                 }
-            } else if (WorkoutService.BROADCAST_REQUEST_DECREASE_WEIGHT == intent?.action) {
-                val state = intent.getSerializableExtra(ELConstants.EXTRA_WORKOUT_STATE) as? ELWorkoutState
+            } else if (WorkoutBroadcasts.REQUEST_DECREASE_WEIGHT == intent?.action) {
+                val state = intent.getSerializableExtra(WorkoutBroadcasts.EXTRA_WORKOUT_STATE) as? ELWorkoutState
                 if (state != null) {
                     mOnRequestWeightDecrease.onNext(state)
                 }
-            } else if (WorkoutService.BROADCAST_REQUEST_INCREASE_REPS == intent?.action) {
-                val state = intent.getSerializableExtra(ELConstants.EXTRA_WORKOUT_STATE) as? ELWorkoutState
+            } else if (WorkoutBroadcasts.REQUEST_INCREASE_REPS == intent?.action) {
+                val state = intent.getSerializableExtra(WorkoutBroadcasts.EXTRA_WORKOUT_STATE) as? ELWorkoutState
                 if (state != null) {
                     mOnRequestRepsIncrease.onNext(state)
                 }
-            } else if (WorkoutService.BROADCAST_REQUEST_DECREASE_REPS == intent?.action) {
-                val state = intent.getSerializableExtra(ELConstants.EXTRA_WORKOUT_STATE) as? ELWorkoutState
+            } else if (WorkoutBroadcasts.REQUEST_DECREASE_REPS == intent?.action) {
+                val state = intent.getSerializableExtra(WorkoutBroadcasts.EXTRA_WORKOUT_STATE) as? ELWorkoutState
                 if (state != null) {
                     mOnRequestRepsDecrease.onNext(state)
                 }
-            } else if (WorkoutService.BROADCAST_REQUEST_TIMER_EXERCISE_STOP == intent?.action) {
-                val state = intent.getSerializableExtra(ELConstants.EXTRA_WORKOUT_STATE) as? ELWorkoutState
+            } else if (WorkoutBroadcasts.REQUEST_TIMER_EXERCISE_STOP == intent?.action) {
+                val state = intent.getSerializableExtra(WorkoutBroadcasts.EXTRA_WORKOUT_STATE) as? ELWorkoutState
                 if (state != null) {
                     mOnRequestTimerExerciseStop.onNext(state)
                 }
-            } else if (WorkoutService.BROADCAST_REQUEST_TIMER_REST_STOP == intent?.action) {
+            } else if (WorkoutBroadcasts.REQUEST_TIMER_REST_STOP == intent?.action) {
                 mOnRequestTimerRestStop.onNext(null)
-            } else if (WorkoutService.BROADCAST_REQUEST_COMPLETE_SET == intent?.action) {
-                val state = intent.getSerializableExtra(ELConstants.EXTRA_WORKOUT_STATE) as? ELWorkoutState
+            } else if (WorkoutBroadcasts.REQUEST_COMPLETE_SET == intent?.action) {
+                val state = intent.getSerializableExtra(WorkoutBroadcasts.EXTRA_WORKOUT_STATE) as? ELWorkoutState
                 if (state != null) {
                     mOnRequestCompleteSet.onNext(state)
                 }

@@ -2,7 +2,7 @@ package com.everlog.ui.navigator
 
 import com.everlog.android.common.data.model.workout.ELWorkout
 import com.everlog.ui.activities.home.workout.WorkoutActivity
-import com.everlog.ui.activities.workoutlog.WorkoutLogActivity
+import com.everlog.android.workout.feature.log.WorkoutLogActivity
 import com.google.common.truth.Truth.assertThat
 import org.junit.Test
 

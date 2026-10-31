@@ -6,10 +6,11 @@ import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
-import com.everlog.BuildConfig
 import com.everlog.R
 import com.everlog.android.common.data.model.workout.ELWorkout
 import com.everlog.android.common.data.model.workout.ELWorkoutState
+import com.everlog.android.workout.data.notification.ShownSet
+import com.everlog.android.workout.data.notification.WorkoutBroadcasts
 import com.everlog.constants.ELConstants
 import com.everlog.managers.ELNotificationManager
 import com.everlog.managers.analytics.AnalyticsManager
@@ -59,20 +60,6 @@ class WorkoutService : BaseService() {
         const val ACTION_SERVICE_START = "ACTION_SERVICE_START"
         const val ACTION_SERVICE_STOP = "ACTION_SERVICE_STOP"
 
-        // Requests that the workout activity makes to the service.
-        const val BROADCAST_SERVICE_SET_UPDATED = BuildConfig.APPLICATION_ID + ".BROADCAST_SERVICE_SET_UPDATED"
-        const val BROADCAST_SERVICE_SHOW_REST_TIMER = BuildConfig.APPLICATION_ID + ".BROADCAST_SERVICE_SHOW_REST_TIMER"
-
-        // Requests that the service makes to the workout activity.
-        const val BROADCAST_REQUEST_COMPLETE_SET = BuildConfig.APPLICATION_ID + ".BROADCAST_REQUEST_NEXT_SET"
-        const val BROADCAST_REQUEST_INCREASE_WEIGHT = BuildConfig.APPLICATION_ID + ".BROADCAST_REQUEST_INCREASE_WEIGHT"
-        const val BROADCAST_REQUEST_DECREASE_WEIGHT = BuildConfig.APPLICATION_ID + ".BROADCAST_REQUEST_DECREASE_WEIGHT"
-        const val BROADCAST_REQUEST_INCREASE_REPS = BuildConfig.APPLICATION_ID + ".BROADCAST_REQUEST_INCREASE_REPS"
-        const val BROADCAST_REQUEST_DECREASE_REPS = BuildConfig.APPLICATION_ID + ".BROADCAST_REQUEST_DECREASE_REPS"
-        const val BROADCAST_REQUEST_INCREASE_TIME = BuildConfig.APPLICATION_ID + ".BROADCAST_REQUEST_INCREASE_TIME"
-        const val BROADCAST_REQUEST_DECREASE_TIME = BuildConfig.APPLICATION_ID + ".BROADCAST_REQUEST_DECREASE_TIME"
-        const val BROADCAST_REQUEST_TIMER_EXERCISE_STOP = BuildConfig.APPLICATION_ID + ".BROADCAST_REQUEST_TIMER_EXERCISE_STOP"
-        const val BROADCAST_REQUEST_TIMER_REST_STOP = BuildConfig.APPLICATION_ID + ".BROADCAST_REQUEST_TIMER_REST_STOP"
     }
 
     override fun onCreate() {
@@ -145,29 +132,29 @@ class WorkoutService : BaseService() {
 
     private fun handleWeightChange(increase: Boolean) {
         AnalyticsManager.manager.workoutServiceWeightModified()
-        val intent = Intent(if (increase) BROADCAST_REQUEST_INCREASE_WEIGHT else BROADCAST_REQUEST_DECREASE_WEIGHT)
-        intent.putExtra(ELConstants.EXTRA_WORKOUT_STATE, mNextState)
+        val intent = Intent(if (increase) WorkoutBroadcasts.REQUEST_INCREASE_WEIGHT else WorkoutBroadcasts.REQUEST_DECREASE_WEIGHT)
+        intent.putExtra(WorkoutBroadcasts.EXTRA_WORKOUT_STATE, mNextState)
         LocalBroadcastManager.getInstance(this).sendBroadcast(intent)
     }
 
     private fun handleRepsChange(increase: Boolean) {
         AnalyticsManager.manager.workoutServiceRepsModified()
-        val intent = Intent(if (increase) BROADCAST_REQUEST_INCREASE_REPS else BROADCAST_REQUEST_DECREASE_REPS)
-        intent.putExtra(ELConstants.EXTRA_WORKOUT_STATE, mNextState)
+        val intent = Intent(if (increase) WorkoutBroadcasts.REQUEST_INCREASE_REPS else WorkoutBroadcasts.REQUEST_DECREASE_REPS)
+        intent.putExtra(WorkoutBroadcasts.EXTRA_WORKOUT_STATE, mNextState)
         LocalBroadcastManager.getInstance(this).sendBroadcast(intent)
     }
 
     // Only the new workout screen shows these, and logs them itself
     private fun handleTimeChange(increase: Boolean) {
-        val intent = Intent(if (increase) BROADCAST_REQUEST_INCREASE_TIME else BROADCAST_REQUEST_DECREASE_TIME)
-        intent.putExtra(ELConstants.EXTRA_WORKOUT_STATE, mNextState)
+        val intent = Intent(if (increase) WorkoutBroadcasts.REQUEST_INCREASE_TIME else WorkoutBroadcasts.REQUEST_DECREASE_TIME)
+        intent.putExtra(WorkoutBroadcasts.EXTRA_WORKOUT_STATE, mNextState)
         LocalBroadcastManager.getInstance(this).sendBroadcast(intent)
     }
 
     private fun handleStopExerciseTimer() {
         AnalyticsManager.manager.workoutServiceTimerStoppedExercise()
-        val intent = Intent(BROADCAST_REQUEST_TIMER_EXERCISE_STOP)
-        intent.putExtra(ELConstants.EXTRA_WORKOUT_STATE, mNextState)
+        val intent = Intent(WorkoutBroadcasts.REQUEST_TIMER_EXERCISE_STOP)
+        intent.putExtra(WorkoutBroadcasts.EXTRA_WORKOUT_STATE, mNextState)
         LocalBroadcastManager.getInstance(this).sendBroadcast(intent)
     }
 
@@ -178,14 +165,14 @@ class WorkoutService : BaseService() {
         } else {
             AnalyticsManager.manager.workoutServiceNextExercise()
         }
-        val intent = Intent(BROADCAST_REQUEST_COMPLETE_SET)
-        intent.putExtra(ELConstants.EXTRA_WORKOUT_STATE, mNextState)
+        val intent = Intent(WorkoutBroadcasts.REQUEST_COMPLETE_SET)
+        intent.putExtra(WorkoutBroadcasts.EXTRA_WORKOUT_STATE, mNextState)
         LocalBroadcastManager.getInstance(this).sendBroadcast(intent)
     }
 
     private fun handleStopRestTimer() {
         AnalyticsManager.manager.workoutServiceTimerStoppedRest()
-        LocalBroadcastManager.getInstance(this).sendBroadcast(Intent(BROADCAST_REQUEST_TIMER_REST_STOP))
+        LocalBroadcastManager.getInstance(this).sendBroadcast(Intent(WorkoutBroadcasts.REQUEST_TIMER_REST_STOP))
     }
 
     private fun refreshNotification() {
@@ -221,14 +208,14 @@ class WorkoutService : BaseService() {
 
     private fun setupBroadcastReceivers() {
         val filter = IntentFilter()
-        filter.addAction(BROADCAST_SERVICE_SET_UPDATED)
-        filter.addAction(BROADCAST_SERVICE_SHOW_REST_TIMER)
+        filter.addAction(WorkoutBroadcasts.SERVICE_SET_UPDATED)
+        filter.addAction(WorkoutBroadcasts.SERVICE_SHOW_REST_TIMER)
         mReceiver = object : BroadcastReceiver() {
 
             override fun onReceive(context: Context?, intent: Intent?) {
                 when (intent?.action) {
-                    BROADCAST_SERVICE_SET_UPDATED -> handleSetUpdated(intent)
-                    BROADCAST_SERVICE_SHOW_REST_TIMER -> handleShowRestTimer(intent)
+                    WorkoutBroadcasts.SERVICE_SET_UPDATED -> handleSetUpdated(intent)
+                    WorkoutBroadcasts.SERVICE_SHOW_REST_TIMER -> handleShowRestTimer(intent)
                 }
             }
         }
@@ -236,16 +223,16 @@ class WorkoutService : BaseService() {
     }
 
     private fun setupWorkoutState(intent: Intent?) {
-        if (intent?.hasExtra(ELConstants.EXTRA_REST_TIMER_PROGRESS) == true) {
+        if (intent?.hasExtra(WorkoutBroadcasts.EXTRA_REST_TIMER_PROGRESS) == true) {
             // Rest timer updates don't carry the workout, so keep the last one we were sent.
             mRestTimer = WorkoutNotificationState.RestTimer(
-                    remainingSeconds = intent.getIntExtra(ELConstants.EXTRA_REST_TIMER_REMAINING_SECONDS, 0),
-                    remainingPercent = intent.getIntExtra(ELConstants.EXTRA_REST_TIMER_PROGRESS, 100))
+                    remainingSeconds = intent.getIntExtra(WorkoutBroadcasts.EXTRA_REST_TIMER_REMAINING_SECONDS, 0),
+                    remainingPercent = intent.getIntExtra(WorkoutBroadcasts.EXTRA_REST_TIMER_PROGRESS, 100))
         } else {
             mRestTimer = null
             mWorkout = intent?.getSerializableExtra(ELConstants.EXTRA_WORKOUT) as? ELWorkout
             // The old workout screen doesn't say which set to show
-            mShown = intent?.getSerializableExtra(ELConstants.EXTRA_SHOWN_SET) as? ShownSet
+            mShown = intent?.getSerializableExtra(WorkoutBroadcasts.EXTRA_SHOWN_SET) as? ShownSet
             mNextState = mShown?.position ?: mWorkout?.getNextIncompleteState()
         }
     }

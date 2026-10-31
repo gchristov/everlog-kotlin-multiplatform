@@ -222,20 +222,20 @@ class PresenterWorkout : PresenterCreateExerciseGroups<MvpViewWorkout>() {
         val prompt = if (setsCompleted > 0) {
             // Offer to finish instead, so logged sets aren't lost by accident. Finishing from here doesn't ask about
             // unticked sets like the Finish button does, so say which of them would be saved as done.
-            var message = context.resources.getQuantityString(R.plurals.workout_discard_sets_logged, setsCompleted, setsCompleted)
+            var message = context.resources.getQuantityString(DesignR.plurals.workout_discard_sets_logged, setsCompleted, setsCompleted)
             val untickedSaved = mWorkout?.getUntickedSetsWithDataCount() ?: 0
             if (untickedSaved > 0) {
-                message += " " + context.resources.getQuantityString(R.plurals.workout_discard_unticked_saved, untickedSaved, untickedSaved)
+                message += " " + context.resources.getQuantityString(DesignR.plurals.workout_discard_unticked_saved, untickedSaved, untickedSaved)
             }
-            mvpView.showChoicePrompt(context.getString(R.string.workout_discard_title),
+            mvpView.showChoicePrompt(context.getString(DesignR.string.workout_discard_title),
                     message,
-                    context.getString(R.string.workout_discard_finish),
+                    context.getString(DesignR.string.workout_discard_finish),
                     context.getString(DesignR.string.discard),
-                    context.getString(R.string.workout_discard_keep_going))
+                    context.getString(DesignR.string.workout_discard_keep_going))
         } else {
-            mvpView.showChoicePrompt(context.getString(R.string.workout_discard_title),
-                    context.getString(R.string.workout_discard_nothing_logged),
-                    context.getString(R.string.workout_discard_keep_going),
+            mvpView.showChoicePrompt(context.getString(DesignR.string.workout_discard_title),
+                    context.getString(DesignR.string.workout_discard_nothing_logged),
+                    context.getString(DesignR.string.workout_discard_keep_going),
                     context.getString(DesignR.string.discard),
                     null)
         }
@@ -270,7 +270,7 @@ class PresenterWorkout : PresenterCreateExerciseGroups<MvpViewWorkout>() {
             saveWorkout()
         } else {
             // Nudge to tick the rest, even ones with prefilled reps or time that would be saved as done anyway
-            subscriptions.add(mvpView.showPrompt(R.string.workout_finish_title, R.string.workout_finish_subtitle, R.string.workout_finish, DesignR.string.cancel)
+            subscriptions.add(mvpView.showPrompt(R.string.workout_finish_title, R.string.workout_finish_subtitle, DesignR.string.workout_finish, DesignR.string.cancel)
                     .compose(applyUISchedulers())
                     .subscribe({ action: Int ->
                         if (action == DialogInterface.BUTTON_POSITIVE) {
@@ -393,7 +393,7 @@ class PresenterWorkout : PresenterCreateExerciseGroups<MvpViewWorkout>() {
         val exercise = group?.getExercisesForSetIndex(state.setIndex)?.get(state.exerciseIndex)
         exercise?.modifyWeight(offset, state.setIndex, SettingsManager.manager.weightUnit())
         mAdapter.notifyDataSetChanged()
-        // This causes an extra BROADCAST_SERVICE_SET_UPDATED event but is needed for when the app is in background.
+        // This causes an extra SERVICE_SET_UPDATED broadcast but is needed for when the app is in background.
         notifyWorkoutServiceSetUpdated()
         saveOngoingWorkout()
     }
@@ -403,7 +403,7 @@ class PresenterWorkout : PresenterCreateExerciseGroups<MvpViewWorkout>() {
         val exercise = group?.getExercisesForSetIndex(state.setIndex)?.get(state.exerciseIndex)
         exercise?.modifyReps(offset, state.setIndex)
         mAdapter.notifyDataSetChanged()
-        // This causes an extra BROADCAST_SERVICE_SET_UPDATED event but is needed for when the app is in background.
+        // This causes an extra SERVICE_SET_UPDATED broadcast but is needed for when the app is in background.
         notifyWorkoutServiceSetUpdated()
         saveOngoingWorkout()
     }
@@ -439,7 +439,7 @@ class PresenterWorkout : PresenterCreateExerciseGroups<MvpViewWorkout>() {
                     if (allGranted) {
                         notifyWorkoutServiceStart()
                     } else {
-                        navigator.promptForAppSettings(R.string.workout_error_no_permissions)
+                        navigator.promptForAppSettings(DesignR.string.workout_error_no_permissions)
                     }
                 }) { throwable: Throwable? -> handleError(throwable) })
             return

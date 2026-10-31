@@ -9,7 +9,7 @@ import com.everlog.android.common.data.model.exercise.ELExercise;
 import com.everlog.android.plan.data.model.ELPlan;
 import com.everlog.android.common.data.model.workout.ELWorkout;
 import com.everlog.managers.apprate.RatePromptTrigger;
-import com.everlog.services.workout.ShownSet;
+import com.everlog.android.workout.data.notification.ShownSet;
 import com.everlog.ui.activities.home.congratulate.CongratulateActivity;
 import com.everlog.android.exercise.feature.details.ExerciseDetailsActivity;
 import com.everlog.ui.activities.home.exercisegroup.DefaultCreateExerciseGroupsActivity;

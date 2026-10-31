@@ -20,7 +20,7 @@ import com.everlog.android.settings.data.model.ELIntegration
 import com.everlog.databinding.FragmentHomeSettingsBinding
 import com.everlog.managers.RemoteConfigManager
 import com.everlog.managers.analytics.AnalyticsConstants
-import com.everlog.ui.activities.setsuggestions.SetSuggestion
+import com.everlog.android.workout.feature.setsuggestions.SetSuggestion
 import com.everlog.ui.dialog.AppDialogs
 import com.everlog.ui.views.CheckBoxTriStates
 import com.everlog.android.common.mvp.util.ViewUtils
@@ -159,7 +159,7 @@ class SettingsHomeFragment : BaseTabFragment(), MvpViewSettingsHome {
         val v2 = RemoteConfigManager.manager.setSuggestionsV2()
         // Goals the new screen doesn't offer, which older versions could set, keep their old names
         val suggestion = goal?.let { SetSuggestion.of(it) }.takeIf { v2 }
-        binding.root.findViewById<TextView>(R.id.muscleGoalTitle).setText(if (v2) R.string.set_suggestions_title else R.string.muscle_goal_title)
+        binding.root.findViewById<TextView>(R.id.muscleGoalTitle).setText(if (v2) DesignR.string.set_suggestions_title else R.string.muscle_goal_title)
         binding.root.findViewById<TextView>(R.id.muscleGoalField).text = suggestion?.let { getString(it.title) } ?: goal?.valueName(activity)
         binding.root.findViewById<TextView>(R.id.muscleGoalSubtitle).text = suggestion?.subtitle(requireContext()) ?: goal?.valueSettingsSummary(activity, false)
     }

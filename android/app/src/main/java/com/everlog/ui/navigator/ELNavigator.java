@@ -35,7 +35,6 @@ import com.everlog.managers.analytics.AnalyticsManager;
 import com.everlog.managers.apprate.RatePromptController;
 import com.everlog.managers.apprate.RatePromptTrigger;
 import com.everlog.android.auth.data.LocalUserManager;
-import com.everlog.services.workout.ShownSet;
 import com.everlog.services.workout.WorkoutService;
 import com.everlog.ui.activities.home.HomeActivity;
 import com.everlog.ui.activities.onboarding.OnboardingActivity;
@@ -54,14 +53,16 @@ import com.everlog.ui.activities.home.routine.create.CreateRoutineActivity;
 import com.everlog.android.template.feature.details.RoutineDetailsActivity;
 import com.everlog.android.template.feature.perform.PerformRoutineActivity;
 import com.everlog.android.template.feature.settype.SetTypePickerActivity;
+import com.everlog.android.workout.data.notification.ShownSet;
+import com.everlog.android.workout.data.notification.WorkoutBroadcasts;
 import com.everlog.ui.activities.home.web.WebViewActivity;
 import com.everlog.ui.activities.home.workout.WorkoutActivity;
 import com.everlog.ui.activities.home.workout.details.WorkoutDetailsActivity;
 import com.everlog.ui.activities.login.LoginActivity;
 import com.everlog.ui.activities.login.resetpassword.ResetPasswordActivity;
-import com.everlog.ui.activities.setsuggestions.SetSuggestionsActivity;
+import com.everlog.android.workout.feature.setsuggestions.SetSuggestionsActivity;
 import com.everlog.ui.activities.home.routine.create.TemplateEditorRoutingKt;
-import com.everlog.ui.activities.workoutlog.WorkoutLogActivity;
+import com.everlog.android.workout.feature.log.WorkoutLogActivity;
 import com.everlog.android.common.mvp.dialog.DialogBuilder;
 import com.everlog.android.common.mvp.dialog.ToastBuilder;
 import com.everlog.android.common.mvp.util.ViewUtils;
@@ -277,7 +278,7 @@ public class ELNavigator implements Navigator {
         Intent i = new Intent(mContext, WorkoutService.class);
         i.setAction(WorkoutService.ACTION_SERVICE_START);
         i.putExtra(ELConstants.EXTRA_WORKOUT, workout);
-        i.putExtra(ELConstants.EXTRA_SHOWN_SET, shown);
+        i.putExtra(WorkoutBroadcasts.EXTRA_SHOWN_SET, shown);
         startService(i);
     }
 
@@ -295,17 +296,17 @@ public class ELNavigator implements Navigator {
 
     @Override
     public void notifyWorkoutServiceSetUpdated(ELWorkout workout, @Nullable ShownSet shown) {
-        Intent i = new Intent(WorkoutService.BROADCAST_SERVICE_SET_UPDATED);
+        Intent i = new Intent(WorkoutBroadcasts.SERVICE_SET_UPDATED);
         i.putExtra(ELConstants.EXTRA_WORKOUT, workout);
-        i.putExtra(ELConstants.EXTRA_SHOWN_SET, shown);
+        i.putExtra(WorkoutBroadcasts.EXTRA_SHOWN_SET, shown);
         sendBroadcast(i);
     }
 
     @Override
     public void notifyWorkoutServiceShowRestTimer(int remainingTimePercent, int remainingTimeSeconds) {
-        Intent i = new Intent(WorkoutService.BROADCAST_SERVICE_SHOW_REST_TIMER);
-        i.putExtra(ELConstants.EXTRA_REST_TIMER_PROGRESS, remainingTimePercent);
-        i.putExtra(ELConstants.EXTRA_REST_TIMER_REMAINING_SECONDS, remainingTimeSeconds);
+        Intent i = new Intent(WorkoutBroadcasts.SERVICE_SHOW_REST_TIMER);
+        i.putExtra(WorkoutBroadcasts.EXTRA_REST_TIMER_PROGRESS, remainingTimePercent);
+        i.putExtra(WorkoutBroadcasts.EXTRA_REST_TIMER_REMAINING_SECONDS, remainingTimeSeconds);
         sendBroadcast(i);
     }
 
