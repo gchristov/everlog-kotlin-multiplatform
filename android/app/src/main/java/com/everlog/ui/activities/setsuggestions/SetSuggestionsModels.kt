@@ -6,8 +6,8 @@ import com.everlog.R
 import com.everlog.android.common.kotlin.WeightUnit
 import com.everlog.android.settings.data.SettingsManager.MuscleGoal
 import com.everlog.android.common.kotlin.estimate1RM
-import com.everlog.data.controllers.workoutprefill.goalWeight
-import com.everlog.data.controllers.workoutprefill.rounded1RM
+import com.everlog.android.workout.data.prefill.goalWeight
+import com.everlog.android.workout.data.prefill.rounded1RM
 import kotlin.math.roundToInt
 
 /**

@@ -32,7 +32,7 @@ import com.everlog.android.common.data.model.set.ELSet
 import com.everlog.android.common.data.model.set.ELSetType
 import com.everlog.android.common.data.model.workout.ELWorkout
 import com.everlog.constants.ELConstants
-import com.everlog.managers.WorkoutManager
+import com.everlog.android.workout.data.WorkoutManager
 import com.everlog.testutil.E2EAccount
 import com.everlog.ui.activities.home.workout.WorkoutActivity
 import com.everlog.ui.activities.workoutlog.WorkoutLogActivity

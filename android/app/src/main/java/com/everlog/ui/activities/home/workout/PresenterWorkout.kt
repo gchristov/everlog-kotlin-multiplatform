@@ -19,11 +19,11 @@ import com.everlog.android.common.data.model.workout.ELWorkout
 import com.everlog.android.common.data.model.workout.ELWorkoutState
 import com.everlog.android.common.mvp.MvpBroadcasts
 import com.everlog.android.settings.data.SettingsManager
-import com.everlog.data.controllers.workoutprefill.BaseWorkoutPrefillController.PrefillSource
-import com.everlog.data.controllers.workoutprefill.WorkoutPrefillController
+import com.everlog.android.workout.data.prefill.BaseWorkoutPrefillController.PrefillSource
+import com.everlog.android.workout.data.prefill.WorkoutPrefillController
 import com.everlog.data.datastores.ELDatastore
 import com.everlog.managers.PlanManager
-import com.everlog.managers.WorkoutManager
+import com.everlog.android.workout.data.WorkoutManager
 import com.everlog.managers.analytics.AnalyticsConstants
 import com.everlog.managers.analytics.AnalyticsManager
 import com.everlog.managers.apprate.AppLaunchManager

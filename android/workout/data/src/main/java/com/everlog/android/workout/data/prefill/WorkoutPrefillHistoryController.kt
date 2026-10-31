@@ -1,4 +1,4 @@
-package com.everlog.data.controllers.workoutprefill
+package com.everlog.android.workout.data.prefill
 
 import com.everlog.android.common.data.model.set.ELSet
 import com.everlog.android.settings.data.SettingsManager

@@ -47,12 +47,12 @@ import com.everlog.android.exercise.data.model.library.LibraryExercise
 import com.everlog.android.settings.data.SettingsManager.MuscleGoal
 import com.everlog.config.AppConfig
 import com.everlog.constants.ELConstants
-import com.everlog.data.controllers.workoutprefill.BaseWorkoutPrefillController.PrefillSource
-import com.everlog.data.controllers.workoutprefill.LoadPrefillSourcesUseCase
-import com.everlog.data.controllers.workoutsession.RealWorkoutSetPrefill
+import com.everlog.android.workout.data.prefill.BaseWorkoutPrefillController.PrefillSource
+import com.everlog.android.workout.data.prefill.LoadPrefillSourcesUseCase
+import com.everlog.android.workout.data.prefill.RealWorkoutSetPrefill
 import com.everlog.android.common.session.ValueField
-import com.everlog.data.repositories.OngoingWorkoutRepository
-import com.everlog.managers.WorkoutManager
+import com.everlog.android.workout.data.OngoingWorkoutRepository
+import com.everlog.android.workout.data.WorkoutManager
 import com.everlog.services.workout.ShownSet
 import com.everlog.services.workout.WorkoutService
 import com.google.common.truth.Truth.assertThat

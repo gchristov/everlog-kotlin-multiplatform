@@ -33,7 +33,7 @@ import com.everlog.android.common.data.model.workout.ELWorkout
 import com.everlog.android.exercise.feature.picker.ExercisePickerActivity
 import com.everlog.constants.ELConstants
 import com.everlog.data.datastores.ELDatastore
-import com.everlog.managers.WorkoutManager
+import com.everlog.android.workout.data.WorkoutManager
 import com.everlog.testutil.E2EAccount
 import com.everlog.android.exercise.feature.details.ExerciseDetailsActivity
 import com.everlog.ui.activities.home.workout.details.WorkoutDetailsActivity

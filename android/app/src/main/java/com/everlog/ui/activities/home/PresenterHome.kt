@@ -15,7 +15,7 @@ import com.everlog.data.datastores.ELDatastore
 import com.everlog.managers.ErrorManager
 import com.everlog.managers.PlanManager
 import com.everlog.managers.RemoteConfigManager
-import com.everlog.managers.WorkoutManager
+import com.everlog.android.workout.data.WorkoutManager
 import com.everlog.managers.analytics.AnalyticsConstants
 import com.everlog.managers.analytics.AnalyticsManager
 import com.everlog.managers.appupdate.AppUpdateController

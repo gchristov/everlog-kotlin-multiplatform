@@ -1,4 +1,4 @@
-package com.everlog.data.controllers.workoutsession
+package com.everlog.android.workout.data.prefill
 
 import com.everlog.android.common.data.model.set.ELSet
 import com.everlog.android.common.session.ValueField
@@ -7,8 +7,8 @@ import com.everlog.android.common.session.WorkoutSet
 import com.everlog.android.common.session.toELSet
 import com.everlog.android.common.session.toSessionSet
 import com.everlog.android.settings.data.SettingsManager
-import com.everlog.data.controllers.workoutprefill.BaseWorkoutPrefillController.PrefillSource
-import com.everlog.data.controllers.workoutprefill.WorkoutPrefillController
+import com.everlog.android.workout.data.prefill.BaseWorkoutPrefillController.PrefillSource
+import com.everlog.android.workout.data.prefill.WorkoutPrefillController
 
 /**
  * Fills sets in from the user's history: the 1RM target for the muscle goal in Settings, or else each set's value

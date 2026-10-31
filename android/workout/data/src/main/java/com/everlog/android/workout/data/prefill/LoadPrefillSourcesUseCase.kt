@@ -1,10 +1,10 @@
-package com.everlog.data.controllers.workoutprefill
+package com.everlog.android.workout.data.prefill
 
 import arrow.core.Either
 import com.everlog.android.common.data.model.exercise.ELExercise
 import com.everlog.android.common.datasync.Range
 import com.everlog.android.common.kotlin.Load
-import com.everlog.data.controllers.workoutprefill.BaseWorkoutPrefillController.PrefillSource
+import com.everlog.android.workout.data.prefill.BaseWorkoutPrefillController.PrefillSource
 import com.everlog.android.workout.data.WorkoutRepository
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.first

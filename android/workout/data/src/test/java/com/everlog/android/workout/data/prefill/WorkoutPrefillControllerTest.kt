@@ -1,4 +1,4 @@
-package com.everlog.data.controllers.workoutprefill
+package com.everlog.android.workout.data.prefill
 
 import com.everlog.android.common.data.model.exercise.ELExercise
 import com.everlog.android.common.data.model.set.ELSet
@@ -11,6 +11,8 @@ import com.everlog.android.common.kotlin.WeightUnit
 import com.everlog.android.common.test.InMemorySharedPreferences
 import com.everlog.android.settings.data.SettingsManager
 import com.everlog.android.settings.data.SettingsManager.MuscleGoal
+import com.everlog.android.workout.data.prefill.BaseWorkoutPrefillController
+import com.everlog.android.workout.data.prefill.WorkoutPrefillController
 import com.everlog.android.common.test.install
 import com.everlog.android.common.test.uninstall
 import com.google.common.truth.Truth.assertThat

@@ -1,14 +1,15 @@
-package com.everlog.data.datastores.history
+package com.everlog.android.workout.data.store
 
+import com.everlog.android.auth.data.LocalUserManager
 import com.everlog.android.common.data.model.workout.ELWorkout
 import com.everlog.android.common.firebase.FirestoreFields
+import com.everlog.android.common.firebase.FirestorePaths
 import com.everlog.android.common.data.store.ELCollectionStore
 import com.everlog.android.common.data.store.events.ELColStoreItemAddedEvent
 import com.everlog.android.common.data.store.events.ELColStoreItemModifiedEvent
 import com.everlog.android.common.data.store.events.ELColStoreItemRemovedEvent
 import com.everlog.android.common.data.store.events.ELColStoreItemsLoadedEvent
 import com.everlog.android.template.data.store.ELRoutineDecorator
-import com.everlog.managers.firebase.FirestorePathManager
 import com.google.firebase.firestore.Query
 
 class ELUserWorkoutsStore : ELCollectionStore<ELWorkout>() {
@@ -18,7 +19,7 @@ class ELUserWorkoutsStore : ELCollectionStore<ELWorkout>() {
     }
 
     override fun getQuery(): Query {
-        return FirestorePathManager.workoutsCollection
+        return FirestorePaths.workouts(LocalUserManager.requireUserId())
                 .orderBy(FirestoreFields.CREATED_DATE, Query.Direction.DESCENDING)
     }
 

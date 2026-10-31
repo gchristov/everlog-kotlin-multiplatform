@@ -1,6 +1,8 @@
-package com.everlog.data.controllers.workoutprefill
+package com.everlog.android.workout.data.prefill
 
 import com.everlog.android.settings.data.SettingsManager.MuscleGoal
+import com.everlog.android.workout.data.prefill.goalWeight
+import com.everlog.android.workout.data.prefill.rounded1RM
 import com.everlog.android.common.kotlin.estimate1RM
 import com.google.common.truth.Truth.assertThat
 import org.junit.Test

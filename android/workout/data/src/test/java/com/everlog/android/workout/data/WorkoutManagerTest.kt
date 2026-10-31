@@ -1,10 +1,11 @@
-package com.everlog.managers
+package com.everlog.android.workout.data
 
 import com.everlog.android.common.data.model.ELRoutine
 import com.everlog.android.common.data.model.workout.ELWorkout
 import com.everlog.android.common.test.InMemorySharedPreferences
 import com.everlog.android.common.test.install
 import com.everlog.android.common.test.uninstall
+import com.everlog.android.workout.data.WorkoutManager
 import com.google.common.truth.Truth.assertThat
 import org.junit.After
 import org.junit.Before
