@@ -28,12 +28,16 @@ runs:
         emulator-boot-timeout: 300
         emulator-options: -no-snapshot-save -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
         disable-animations: true
-        # Each line runs on its own. The build started above has to finish, and pass, first. On a test failure, keep
-        # the device's log for the artifacts below.
+        # Each line runs on its own. The build started above has to finish, and pass, first. A heavy build can starve
+        # the booting emulator until a system app stops responding, and its dialog then takes the window focus every
+        # test needs, so close it and hide any later ones. On a test failure, keep the device's log for the artifacts
+        # below.
         script: |
           while [ ! -f build.status ]; do sleep 5; done
           cat build.log
           test "$(cat build.status)" = 0
+          adb shell settings put global hide_error_dialogs 1
+          adb shell am broadcast -a android.intent.action.CLOSE_SYSTEM_DIALOGS
           ./gradlew connectedAndroidTest || (adb logcat -d > logcat.txt; exit 1)
     - name: Artifacts
       uses: actions/upload-artifact@v7
