@@ -127,7 +127,7 @@ internal fun ExerciseActions(index: Int, onAddSet: () -> Unit, onJoin: (() -> Un
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(start = cardIndent(), bottom = Theme.spacing.large),
+            .padding(bottom = Theme.spacing.large),
         horizontalArrangement = Arrangement.Center,
     ) {
         // Narrower than a lone button's, so all three fit on a small phone

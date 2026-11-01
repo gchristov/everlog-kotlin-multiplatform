@@ -38,7 +38,6 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.everlog.android.common.compose.components.reorder.ReorderGrip
 import com.everlog.android.common.compose.elements.AppText
@@ -72,12 +71,6 @@ private object ExerciseSizes {
     val FocusOutline = 1.5.dp
 }
 
-// Between the grip and the card, which the card, its labels and the buttons under it sit past
-private val GripGap = 8.dp
-
-@Composable
-internal fun cardIndent(): Dp = Theme.sizes.leading + GripGap
-
 /**
  * One exercise, or a superset or circuit, as the workout screen shows it: its grip, image and name, then SET and REPS
  * (or TIME) over a card of its sets, each with its value and a bin.
@@ -104,11 +97,10 @@ internal fun TemplateExercise(
         ExerciseHeader(block, grip, collapsed, lifted, onOpenExercise)
         if (collapsed) return@Column
         Spacer(modifier = Modifier.height(Theme.spacing.medium))
-        ColumnLabels(block, Modifier.padding(start = cardIndent()))
+        ColumnLabels(block, Modifier)
         Spacer(modifier = Modifier.height(Theme.spacing.extraSmall))
         Column(
             modifier = Modifier
-                .padding(start = cardIndent())
                 .fillMaxWidth()
                 .clip(Theme.shapes.surface)
                 .background(Theme.backgrounds.surface),
@@ -136,8 +128,8 @@ internal fun TemplateExercise(
     }
 }
 
-// The grip on the left, beside the last exercise as the workout's exercise menu is, then the image and name, or a
-// group's type over its exercises. While dragged, a card of the names alone.
+// The image and name, or a group's type over its exercises, then the grip where the workout has its exercise menu,
+// beside the last exercise. While dragged, a card of the names alone, the grip staying where it was.
 @Composable
 private fun ExerciseHeader(
     block: WorkoutBlock,
@@ -149,9 +141,11 @@ private fun ExerciseHeader(
     val context = LocalContext.current
     val group = block.exercises.size > 1
     val shape = Theme.shapes.surface
-    Row(verticalAlignment = Alignment.CenterVertically) {
-        ReorderGrip(modifier = grip.alignBy { it.measuredHeight / 2 })
-        Spacer(modifier = Modifier.width(Theme.spacing.large))
+    Row(
+        modifier = Modifier.padding(start = if (collapsed) 0.dp else ExerciseSizes.RowPadding, end = ExerciseSizes.RowPadding),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(Theme.spacing.medium),
+    ) {
         Column(
             modifier = Modifier
                 .weight(1f)
@@ -171,10 +165,8 @@ private fun ExerciseHeader(
                 // A single exercise's card is the grip's height, so the two line up
                 .heightIn(min = if (collapsed) Theme.sizes.leading else 0.dp)
                 .padding(
-                    start = if (collapsed) ExerciseSizes.RowPadding else 0.dp,
-                    end = ExerciseSizes.RowPadding,
-                    top = if (collapsed && group) Theme.spacing.small else 0.dp,
-                    bottom = if (collapsed && group) Theme.spacing.small else 0.dp,
+                    horizontal = if (collapsed) ExerciseSizes.RowPadding else 0.dp,
+                    vertical = if (collapsed && group) Theme.spacing.small else 0.dp,
                 ),
             verticalArrangement = if (group) Arrangement.spacedBy(ExerciseSizes.GroupRowGap) else Arrangement.Center,
         ) {
@@ -214,6 +206,7 @@ private fun ExerciseHeader(
                 }
             }
         }
+        ReorderGrip(modifier = grip.alignBy { it.measuredHeight / 2 })
     }
 }
 
