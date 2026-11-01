@@ -81,15 +81,17 @@ internal fun OnboardingReveal(
     LaunchedEffect(Unit) { revealShown = true }
 
     val scrollState = rememberScrollState()
-    // The header scrolls away with the cards, but only when they don't fit
+    // The header scrolls away with the cards, but only when they don't fit, and its title stays in the bar
     val appBarScrollBehavior = rememberAppBarScrollBehavior(canScroll = { scrollState.canScrollForward || scrollState.canScrollBackward })
+    val title = pluralStringResource(R.plurals.onboarding_reveal_title, starter.routines.size)
     AppScreen(
         modifier = Modifier.nestedScroll(appBarScrollBehavior.nestedScrollConnection),
         topBar = {
             AppBar(
+                title = title,
                 header = {
                     AppBarHeader(
-                        title = pluralStringResource(R.plurals.onboarding_reveal_title, starter.routines.size),
+                        title = title,
                         body = onboardingSummary(state.answers, split = starter.week.split),
                     )
                 },
