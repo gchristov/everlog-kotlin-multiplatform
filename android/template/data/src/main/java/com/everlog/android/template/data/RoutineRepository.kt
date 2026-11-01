@@ -5,20 +5,20 @@ import com.everlog.android.common.data.model.ELRoutine
 import com.everlog.android.common.data.store.DocumentStore
 import com.everlog.android.common.datasync.CollectionSource
 import com.everlog.android.common.datasync.DataSync
+import com.everlog.android.common.datasync.DocumentSource
 import com.everlog.android.common.datasync.FirestoreCollection
+import com.everlog.android.common.datasync.FirestoreDocument
 import com.everlog.android.common.datasync.SyncPlan
-import com.everlog.android.common.datasync.getCacheFirst
 import com.everlog.android.common.firebase.FirestorePaths
 import com.everlog.android.common.kotlin.Load
-import com.everlog.android.common.kotlin.map
 import com.everlog.android.auth.data.LocalUserManager
 import com.everlog.android.common.data.CommonData
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.SetOptions
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flowOf
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
 import kotlinx.coroutines.withTimeoutOrNull
@@ -62,14 +62,27 @@ class RealRoutineRepository(
     private val testLabRoutines: () -> DocumentStore<ELRoutine>,
 ) : RoutineRepository {
 
-    override fun routine(uuid: String): Flow<Load<ELRoutine?>> = routines().map { load -> load.map { routines -> routines.firstOrNull { it.uuid == uuid } } }
+    // Its own document: the routines' cache may hold only some of them, so missing from it doesn't mean deleted
+    override fun routine(uuid: String): Flow<Load<ELRoutine?>> {
+        val userId = LocalUserManager.getUser()?.id ?: return flowOf(Load.Ready(null))
+        return dataSync.observe(
+            DocumentSource("routine/$uuid", userId, FirestoreDocument(FirestorePaths.routines(userId).document(uuid), dispatcher) {
+                it.toObject(ELRoutine::class.java)
+            }),
+        )
+    }
 
     private fun routines(): Flow<Load<List<ELRoutine>>> {
         val userId = LocalUserManager.getUser()?.id ?: return flowOf(Load.Ready(emptyList()))
         return dataSync.observe(
-            CollectionSource("routines", userId, SyncPlan.Whole, FirestoreCollection(FirestorePaths.routines(userId), dispatcher = dispatcher) {
-                it.toObject(ELRoutine::class.java)
-            }),
+            CollectionSource(
+                "routines",
+                userId,
+                SyncPlan.Whole,
+                FirestoreCollection(FirestorePaths.routines(userId), dispatcher = dispatcher) { it.toObject(ELRoutine::class.java) },
+                // The routine screens cache single routines (ELUserRoutineStore), and counts need all of them
+                completeOnly = true,
+            ),
         )
     }
 
@@ -88,25 +101,21 @@ class RealRoutineRepository(
         }
     }
 
-    override suspend fun exerciseTemplateCounts(): Either<Throwable, Map<String, Int>> = withContext(dispatcher) {
-        Either.catch {
-            // The routines store keeps the cache current while the app runs
-            FirestorePaths.routines(LocalUserManager.requireUserId()).getCacheFirst(emptyIsAnswer = true)
-                .documents
-                .mapNotNull { document ->
-                    runCatching { document.toObject(ELRoutine::class.java) }
-                        .onFailure { Timber.tag(TAG).w(it, "Skipped routine %s, which doesn't parse", document.id) }
-                        .getOrNull()
-                }
-                .flatMap { routine ->
-                    routine.exerciseGroups.flatMap { group -> group.exercises.mapNotNull { it.exercise?.uuid } }.toSet()
-                }
-                .groupingBy { it }
-                .eachCount()
+    override suspend fun exerciseTemplateCounts(): Either<Throwable, Map<String, Int>> =
+        when (val load = routines().first { it != Load.Loading }) {
+            is Load.Ready -> Either.Right(exerciseTemplateCounts(load.value))
+            is Load.Unavailable -> Either.Left(load.error)
+            Load.Loading -> error("Filtered out")
         }
-    }
 
     private companion object {
         const val TAG = "RoutineRepository"
     }
 }
+
+// How many of the routines use each exercise, by the exercise's uuid. An exercise in a routine twice counts once.
+internal fun exerciseTemplateCounts(routines: List<ELRoutine>): Map<String, Int> =
+    routines
+        .flatMap { routine -> routine.exerciseGroups.flatMap { group -> group.exercises.mapNotNull { it.exercise?.uuid } }.toSet() }
+        .groupingBy { it }
+        .eachCount()

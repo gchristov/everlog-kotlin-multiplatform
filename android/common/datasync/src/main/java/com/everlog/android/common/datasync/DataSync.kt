@@ -65,10 +65,15 @@ class DataSync(
     private val running = HashMap<String, RunningSync>()
     private val shared = HashMap<String, SharedFlow<Load<*>>>()
 
-    fun <T> observe(source: CollectionSource<T>, range: Range = Range.All): Flow<Load<List<T>>> {
+    /**
+     * @param complete Shows nothing until the range has synced, rather than what's cached, as [CollectionSource.completeOnly]
+     * does for every read of a source: for a calculation over the range, which a part of it would get wrong.
+     */
+    fun <T> observe(source: CollectionSource<T>, range: Range = Range.All, complete: Boolean = false): Flow<Load<List<T>>> {
         require(range == Range.All || source.plan is SyncPlan.Recent) { "Range.Last needs a SyncPlan.Recent collection" }
-        val needsComplete = source.completeOnly || needsFullHistory(source.plan, range)
-        return observe(source.key, range.toString(), sync = { requestSync(source, range) }) { status ->
+        val needsComplete = complete || source.completeOnly || needsFullHistory(source.plan, range)
+        val variant = if (complete) "$range|complete" else range.toString()
+        return observe(source.key, variant, sync = { requestSync(source, range) }) { status ->
             val since = (range as? Range.Last)?.let { windowStart(clock(), it.months) }
             source.backend.cachedDocuments(since).withSyncStatus(status) { currentStatus(source.key) }.map { view ->
                 val cached = view.cached.items

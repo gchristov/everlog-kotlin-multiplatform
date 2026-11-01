@@ -7,7 +7,8 @@ screen. Background and plan: TAS-462 in Notion.
 In use so far: the exercise library, the user's own exercises and the registry (`ExerciseRepository`: the
 exercise picker, the exercise detail's Info tab, the names of the user's own exercises on the workout screen), and workouts
 (`WorkoutRepository`: the workout screen's set suggestions, the picker's Recently done), and routines
-(`RoutineRepository.routine`, through `LoadTemplateUseCase` for the template editor). The other screens
+(`RoutineRepository.routine`, one document, through `LoadTemplateUseCase` for the template editor, and
+`exerciseTemplateCounts` for the picker's Most used). The other screens
 still read through the old stores, which share the same Firestore cache.
 
 ## Rules
@@ -47,6 +48,10 @@ first sync too. That's for a collection whose documents are also read one at a t
 them before it has synced, and that a screen searches as a whole: the exercise library and the user's own exercises
 (the picker). Reads that need everything also wait until the cache shows what the sync brought, as Firestore can
 report a read done while its listeners still show the part cached before.
+
+A single read can ask for the same with `observe(source, range, complete = true)`: for a calculation over a range,
+which a part of it would get wrong (e.g. when each exercise was last done, from the last months of workouts), while
+lists of the same source show what's cached.
 
 After the full history has synced, each due sync of a `Recent` collection also compares the cached count
 with the server's (one read per 1,000 documents). A difference means something older was added or deleted

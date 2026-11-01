@@ -289,6 +289,30 @@ class DataSyncTest {
     }
 
     @Test
+    fun `a complete read of the window waits for its first sync, while a list of it shows the cache`() {
+        val backend = FakeCollectionBackend(server = listOf(bench, squat), cached = listOf(squat)).holdingServer()
+        val calculation = read(dataSync.observe(recent(backend), Range.Last(months = 3), complete = true))
+        val list = read(dataSync.observe(recent(backend), Range.Last(months = 3)))
+
+        assertThat(calculation).containsExactly(Load.Loading)
+        assertThat(list).containsExactly(Load.Ready(listOf(squat)))
+
+        backend.gate!!.complete(Unit)
+
+        assertThat(calculation.last()).isEqualTo(Load.Ready(listOf(bench, squat)))
+    }
+
+    @Test
+    fun `a complete read of the window that can't sync before its first is unavailable`() {
+        val backend = FakeCollectionBackend(server = listOf(bench, squat), cached = listOf(squat))
+        backend.fail = { IllegalStateException("offline") }
+
+        val loads = read(dataSync.observe(recent(backend), Range.Last(months = 3), complete = true))
+
+        assertThat(loads.last()).isInstanceOf(Load.Unavailable::class.java)
+    }
+
+    @Test
     fun `a read longer than the window needs the full history`() {
         val backend = FakeCollectionBackend(server = listOf(bench, deadlift, press))
 
