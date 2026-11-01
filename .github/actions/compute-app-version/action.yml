@@ -1,12 +1,8 @@
 name: 'Compute app version'
 inputs:
   workflowType:
-    description: 'The workflow type (staging, nightly, master)'
+    description: 'The workflow type (pr, master, nightly, release)'
     required: true
-  isRelease:
-    description: 'Whether this is a release build'
-    required: false
-    default: 'false'
 outputs:
   versionCode:
     description: 'Calculated version code'
@@ -20,30 +16,12 @@ runs:
     - id: compute
       shell: bash
       run: |
-        TYPE="${{ inputs.workflowType }}"
-
-        if [[ "$TYPE" == "staging" ]]; then
-          SHORT_SHA=$(echo "${{ github.event.pull_request.head.sha }}" | cut -c1-7)
-          VERSION_SUFFIX="pr-${{ github.event.pull_request.number }}-$SHORT_SHA"
-        elif [[ "$TYPE" == "nightly" ]]; then
-          DATE=$(date +'%d%m%Y')
-          VERSION_SUFFIX="nightly-$DATE"
-        elif [[ "${{ inputs.isRelease }}" == "true" ]]; then
-          VERSION_SUFFIX="none"
+        set -Eeuo pipefail
+        if [[ "${{ inputs.workflowType }}" == "pr" ]]; then
+          ./tools/versioning/app_version.sh pr "${{ github.event.pull_request.number }}" \
+            "${{ github.event.pull_request.base.sha }}" "${{ github.event.pull_request.head.sha }}" > "$RUNNER_TEMP/app_version.txt"
         else
-          VERSION_SUFFIX="$TYPE"
+          ./tools/versioning/app_version.sh "${{ inputs.workflowType }}" > "$RUNNER_TEMP/app_version.txt"
         fi
-
-        RELEASE_FLAG=""
-        if [[ "${{ inputs.isRelease }}" == "true" ]]; then
-          RELEASE_FLAG="--release"
-        fi
-
-        chmod +x ./tools/versioning/version_code.sh
-        VERSION_CODE=$(./tools/versioning/version_code.sh $TYPE $RELEASE_FLAG)
-        
-        echo "versionCode=$VERSION_CODE" >> $GITHUB_OUTPUT
-        echo "versionNameSuffix=$VERSION_SUFFIX" >> $GITHUB_OUTPUT
-        
-        echo "### Version Code: $VERSION_CODE" >> $GITHUB_STEP_SUMMARY
-        echo "### Version Name Suffix: $VERSION_SUFFIX" >> $GITHUB_STEP_SUMMARY
+        cat "$RUNNER_TEMP/app_version.txt" >> $GITHUB_OUTPUT
+        sed 's/^/### /; s/=/: /' "$RUNNER_TEMP/app_version.txt" >> $GITHUB_STEP_SUMMARY

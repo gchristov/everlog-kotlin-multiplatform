@@ -8,6 +8,11 @@ on:
         required: true
         type: string
 
+# Runs queue rather than overlap: each run numbers its candidate from the tags of the runs before it
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: false
+
 env:
   E2E_TEST_USER_EMAIL: ${{ secrets.E2E_TEST_USER_EMAIL }}
   E2E_TEST_USER_PASSWORD: ${{ secrets.E2E_TEST_USER_PASSWORD }}
@@ -75,8 +80,7 @@ jobs:
         uses: ./.github/actions/build-android
         with:
           buildType: 'release'
-          workflowType: 'master'
-          isRelease: 'true'
+          workflowType: 'release'
       - name: Slack report
         uses: slackapi/slack-github-action@v3
         if: always() # Ensure report is sent, even after errors
@@ -128,7 +132,7 @@ jobs:
           webhook-type: incoming-webhook
 
   tag-release:
-    needs: [deploy-android-release]
+    needs: [build-android, deploy-android-release]
     runs-on: ubuntu-24.04
     permissions:
       contents: write
@@ -142,12 +146,7 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          VERSION=$(cat tools/versioning/version.txt)
-          ./tools/versioning/release_notes.sh "${{ github.repository }}" "$GITHUB_SHA" > release_notes.md
-          gh release create "$VERSION" \
-            --target "$GITHUB_SHA" \
-            --title "$VERSION" \
-            --notes-file release_notes.md
+          ./tools/versioning/tag_release.sh "${{ github.repository }}" "${{ needs.build-android.outputs.versionCode }}" "$GITHUB_SHA"
       - name: Slack report
         uses: slackapi/slack-github-action@v3
         if: always() # Ensure report is sent, even after errors
