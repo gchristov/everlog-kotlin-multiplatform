@@ -17,25 +17,11 @@ runs:
       shell: bash
       run: |
         set -Eeuo pipefail
-        TYPE="${{ inputs.workflowType }}"
-
-        if [[ "$TYPE" == "pr" ]]; then
-          HEAD_SHA="${{ github.event.pull_request.head.sha }}"
-          VERSION_SUFFIX="pr-${{ github.event.pull_request.number }}-${HEAD_SHA:0:7}"
-          VERSION_CODE=$(./tools/versioning/version_code.sh pr "${{ github.event.pull_request.base.sha }}" "$HEAD_SHA")
-        elif [[ "$TYPE" == "nightly" ]]; then
-          VERSION_SUFFIX="nightly-$(date -u +'%d%m%Y')"
-          VERSION_CODE=$(./tools/versioning/version_code.sh nightly)
-        elif [[ "$TYPE" == "release" ]]; then
-          VERSION_SUFFIX="none"
-          VERSION_CODE=$(./tools/versioning/version_code.sh release)
+        if [[ "${{ inputs.workflowType }}" == "pr" ]]; then
+          ./tools/versioning/app_version.sh pr "${{ github.event.pull_request.number }}" \
+            "${{ github.event.pull_request.base.sha }}" "${{ github.event.pull_request.head.sha }}" > "$RUNNER_TEMP/app_version.txt"
         else
-          VERSION_SUFFIX="$TYPE"
-          VERSION_CODE=$(./tools/versioning/version_code.sh "$TYPE")
+          ./tools/versioning/app_version.sh "${{ inputs.workflowType }}" > "$RUNNER_TEMP/app_version.txt"
         fi
-
-        echo "versionCode=$VERSION_CODE" >> $GITHUB_OUTPUT
-        echo "versionNameSuffix=$VERSION_SUFFIX" >> $GITHUB_OUTPUT
-
-        echo "### Version Code: $VERSION_CODE" >> $GITHUB_STEP_SUMMARY
-        echo "### Version Name Suffix: $VERSION_SUFFIX" >> $GITHUB_STEP_SUMMARY
+        cat "$RUNNER_TEMP/app_version.txt" >> $GITHUB_OUTPUT
+        sed 's/^/### /; s/=/: /' "$RUNNER_TEMP/app_version.txt" >> $GITHUB_STEP_SUMMARY

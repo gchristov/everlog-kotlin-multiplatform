@@ -10,6 +10,8 @@ The versioning system generates the `versionCode` and `versionName` of every bui
 
 - **`version.txt`**: The version (e.g. `2.22.0`), the base of both the `versionName` and the version code. A version bump changes only this file, by hand in a PR.
 - **`version_code.sh`**: Calculates the version code for a build type.
+- **`app_version.sh`**: Prints a CI build's version code and version name suffix, as the `compute-app-version` action's outputs.
+- **`tag_release.sh`**: Tags an uploaded release candidate and creates (or replaces) the version's GitHub release, run by `release-check.yml`.
 - **`release_notes.sh`**: Prints GitHub release notes (one bullet per commit since the previous version's tag, with its PR link). Used by `release-check.yml`, which tags each release candidate and creates the GitHub release after a successful production deploy.
 
 ## Version Name
@@ -46,7 +48,7 @@ Within a version, a PR build is below every `master` build, which is below every
 
 ### Release candidates
 
-Each run of the release job uploads the next candidate, which replaces the earlier candidate's draft on Play, and tags it `<version>-rc<N>`. The next run counts those tags. The GitHub release and the `<version>` tag point at the latest candidate: a later one replaces them. Publish the candidate that passed testing by rolling out the draft in Play.
+Release runs queue rather than overlap, so each one numbers its candidate after the previous run has tagged. Each run uploads the next candidate, which replaces the earlier candidate's draft on Play, and tags it `<version>-rc<N>`. The next run counts those tags. The GitHub release and the `<version>` tag point at the latest candidate: a later one replaces them. Publish the candidate that passed testing by rolling out the draft in Play.
 
 ### Limits
 
@@ -67,7 +69,7 @@ CI runs the script through the `compute-app-version` action:
 ./tools/versioning/version_code.sh <master|nightly|release>
 ```
 
-`version_code_test.sh` checks it and `release_notes.sh` against throwaway repos (`bash tools/versioning/version_code_test.sh`). CI runs it with the unit tests.
+`version_code_test.sh` checks it, `app_version.sh`, `tag_release.sh` (with `gh` stubbed) and `release_notes.sh` against throwaway repos (`bash tools/versioning/version_code_test.sh`). CI runs it with the unit tests.
 
 Local builds use the version's base code (`2220000` for `2.22.0`), below every CI build of it. The version name suffix can be passed as:
 ```bash

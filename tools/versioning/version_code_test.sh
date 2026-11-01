@@ -1,11 +1,13 @@
 #!/bin/bash
-# Checks version_code.sh and release_notes.sh against throwaway git repos.
+# Checks version_code.sh, app_version.sh, tag_release.sh and release_notes.sh against throwaway git repos.
 # Run from the repo root: bash tools/versioning/version_code_test.sh
 set -euo pipefail
 
 DIR="$(cd "$(dirname "$0")" && pwd)"
 SCRIPT="$DIR/version_code.sh"
 NOTES="$DIR/release_notes.sh"
+APP_VERSION="$DIR/app_version.sh"
+TAG_RELEASE="$DIR/tag_release.sh"
 FAILED=0
 REPOS=()
 trap 'rm -rf "${REPOS[@]}"' EXIT
@@ -191,5 +193,101 @@ git -C "$REPO" tag 2.22.0
 commit_at "$BUMP_TIME" "Fix found in testing (#11)"
 expect_notes "notes for a second candidate" \
     "- Version bump to 2.22.0|- First change (https://github.com/owner/repo/pull/10)|- Fix found in testing (https://github.com/owner/repo/pull/11)|"
+
+# The CI outputs: the version code and the version name suffix for each type
+new_repo
+set_version 2.22.0 "$BUMP_TIME"
+merges 3 "$BUMP_TIME"
+git -C "$REPO" switch -q -c pr
+merges 2 "$BUMP_TIME"
+HEAD_SHA=$(git -C "$REPO" rev-parse HEAD)
+expect_output() {
+    local description=$1 expected=$2
+    shift 2
+    local actual
+    actual=$(cd "$REPO" && bash "$APP_VERSION" "$@" 2>&1 | tr '\n' ' ') || true
+    if [[ "$actual" == "$expected" ]]; then
+        echo "ok   $description: $actual"
+    else
+        echo "FAIL $description: expected $expected, got $actual"
+        FAILED=1
+    fi
+}
+expect_output "PR outputs" "versionCode=2220102 versionNameSuffix=pr-253-${HEAD_SHA:0:7} " pr 253 master "$HEAD_SHA"
+git -C "$REPO" switch -q master
+expect_output "master outputs" "versionCode=2220203 versionNameSuffix=master " master
+VERSION_CODE_NOW=$((BUMP_TIME + 6 * DAY)) expect_output "nightly outputs, dated in UTC" "versionCode=2220306 versionNameSuffix=nightly-01112026 " nightly
+expect_output "release outputs, with the bare version name" "versionCode=2220401 versionNameSuffix=none " release
+if (cd "$REPO" && bash "$APP_VERSION" pr 253 >/dev/null 2>&1); then
+    echo "FAIL PR outputs without the refs: expected it to fail"
+    FAILED=1
+else
+    echo "ok   PR outputs without the refs: fails"
+fi
+
+# Tagging a release candidate, with gh replaced by a stub that logs its calls
+STUB=$(mktemp -d)
+REPOS+=("$STUB")
+cat > "$STUB/gh" <<'STUB'
+#!/bin/bash
+echo "gh $*" >> "$GH_LOG"
+if [[ "$1 $2" == "release view" ]]; then
+    [[ -n "${GH_RELEASE_EXISTS:-}" ]]
+    exit
+fi
+if [[ "$1 $2" == "release create" ]]; then
+    while [[ $# -gt 0 ]]; do
+        [[ "$1" == "--notes-file" ]] && sed 's/^/  notes: /' "$2" >> "$GH_LOG"
+        shift
+    done
+fi
+exit 0
+STUB
+chmod +x "$STUB/gh"
+export GH_LOG="$STUB/calls"
+
+expect_calls() {
+    local description=$1 expected=$2 actual
+    actual=$(sed -E 's/--notes-file [^ ]+/--notes-file NOTES/' "$GH_LOG" | tr '\n' '|')
+    if [[ "$actual" == "$expected" ]]; then
+        echo "ok   $description"
+    else
+        echo "FAIL $description: expected $expected, got $actual"
+        FAILED=1
+    fi
+}
+
+new_repo
+set_version 2.21.0 "$BUMP_TIME"
+git -C "$REPO" tag 2.21.0
+set_version 2.22.0 "$BUMP_TIME"
+commit_at "$BUMP_TIME" "First change (#10)"
+SHA=$(git -C "$REPO" rev-parse HEAD)
+: > "$GH_LOG"
+(cd "$REPO" && PATH="$STUB:$PATH" bash "$TAG_RELEASE" owner/repo 2220401 "$SHA" >/dev/null)
+expect_calls "first candidate: tags rc1 and creates the release" \
+"gh api repos/owner/repo/git/refs -f ref=refs/tags/2.22.0-rc1 -f sha=$SHA|gh release view 2.22.0 --repo owner/repo|gh release create 2.22.0 --repo owner/repo --target $SHA --title 2.22.0 --notes-file NOTES|  notes: - Version bump to 2.22.0|  notes: - First change (https://github.com/owner/repo/pull/10)|"
+
+git -C "$REPO" tag 2.22.0-rc1
+git -C "$REPO" tag 2.22.0
+commit_at "$BUMP_TIME" "Fix found in testing (#11)"
+SHA=$(git -C "$REPO" rev-parse HEAD)
+: > "$GH_LOG"
+(cd "$REPO" && GH_RELEASE_EXISTS=1 PATH="$STUB:$PATH" bash "$TAG_RELEASE" owner/repo 2220402 "$SHA" >/dev/null)
+expect_calls "second candidate: tags rc2 and replaces the release, with notes since the previous version" \
+"gh api repos/owner/repo/git/refs -f ref=refs/tags/2.22.0-rc2 -f sha=$SHA|gh release view 2.22.0 --repo owner/repo|gh release delete 2.22.0 --repo owner/repo --cleanup-tag --yes|gh release create 2.22.0 --repo owner/repo --target $SHA --title 2.22.0 --notes-file NOTES|  notes: - Version bump to 2.22.0|  notes: - First change (https://github.com/owner/repo/pull/10)|  notes: - Fix found in testing (https://github.com/owner/repo/pull/11)|"
+
+for code in 2220306 2230401 2220400; do
+    : > "$GH_LOG"
+    if (cd "$REPO" && PATH="$STUB:$PATH" bash "$TAG_RELEASE" owner/repo "$code" "$SHA" >/dev/null 2>&1); then
+        echo "FAIL tagging $code, not a 2.22.0 release candidate: expected it to fail"
+        FAILED=1
+    elif [[ -s "$GH_LOG" ]]; then
+        echo "FAIL tagging $code, not a 2.22.0 release candidate: called gh before failing"
+        FAILED=1
+    else
+        echo "ok   tagging $code, not a 2.22.0 release candidate: fails before calling gh"
+    fi
+done
 
 exit $FAILED

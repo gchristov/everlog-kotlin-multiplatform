@@ -19,7 +19,7 @@ internal fun Project.calculateVersionCode(): Int =
     findProperty("ciVersionCode")?.toString()?.toIntOrNull()
         ?: baseVersionCode(readVersionFile("version.txt"))
 
-private fun baseVersionCode(version: String): Int {
+internal fun baseVersionCode(version: String): Int {
     val (major, minor, patch) = Regex("""(\d)\.(\d{1,2})\.(\d)""").matchEntire(version)?.destructured
         ?: throw GradleException("tools/versioning/version.txt must be M.m.P with a one-digit major and patch, got $version")
     return major.toInt() * 1_000_000 + minor.toInt() * 10_000 + patch.toInt() * 1_000
