@@ -9,7 +9,6 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.ScrollState
-import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -18,9 +17,8 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.runtime.Composable
@@ -32,11 +30,9 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.input.nestedscroll.nestedScroll
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
@@ -44,7 +40,6 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.stateDescription
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import coil.compose.AsyncImage
 import com.everlog.android.common.compose.elements.AppBar
 import com.everlog.android.common.compose.elements.AppBarHeader
 import com.everlog.android.common.compose.elements.AppFooter
@@ -53,6 +48,7 @@ import com.everlog.android.common.compose.elements.AppIcon
 import com.everlog.android.common.compose.elements.AppScreen
 import com.everlog.android.common.compose.elements.AppSurface
 import com.everlog.android.common.compose.elements.AppText
+import com.everlog.android.common.compose.elements.AppThumbnail
 import com.everlog.android.common.compose.elements.list.AppListItem
 import com.everlog.android.common.compose.elements.rememberAppBarScrollBehavior
 import com.everlog.android.common.compose.theme.Theme
@@ -275,7 +271,7 @@ private fun ExerciseRow(
     AppListItem(
         modifier = Modifier.semantics(mergeDescendants = true) {},
         title = name,
-        leading = { ExerciseThumbnail(imageUrl = imageUrl, size = RevealSizes.Thumbnail) },
+        leading = { AppThumbnail(imageUrl = imageUrl, size = Theme.sizes.leading, corner = RevealSizes.Corner) },
         trailing = {
             AppText(
                 text = target,
@@ -291,31 +287,14 @@ private fun ExerciseRow(
 private fun ThumbnailStack(imageUrls: List<String?>) {
     Row(horizontalArrangement = Arrangement.spacedBy(-RevealSizes.StackOverlap)) {
         imageUrls.forEach { imageUrl ->
-            ExerciseThumbnail(
-                modifier = Modifier.border(RevealSizes.StackRing, Theme.backgrounds.surface, CircleShape),
+            AppThumbnail(
+                modifier = Modifier.border(RevealSizes.StackRing, Theme.backgrounds.surface, RoundedCornerShape(RevealSizes.Corner)),
                 imageUrl = imageUrl,
-                size = RevealSizes.StackThumbnail,
+                size = Theme.sizes.leading,
+                corner = RevealSizes.Corner,
             )
         }
     }
-}
-
-// The library's exercise images are a grey figure on white, so a missing one is a plain white disc
-@Composable
-private fun ExerciseThumbnail(
-    imageUrl: String?,
-    size: Dp,
-    modifier: Modifier = Modifier,
-) {
-    AsyncImage(
-        modifier = modifier
-            .size(size)
-            .clip(CircleShape)
-            .background(Theme.contentColors.primary),
-        model = imageUrl,
-        contentDescription = null,
-        contentScale = ContentScale.Crop,
-    )
 }
 
 // e.g. 3 × 8–12, or 3 × 30 s for a hold
@@ -341,9 +320,9 @@ private object RevealMotion {
 
 // Sizes from the design that the design system doesn't have
 private object RevealSizes {
-    val Thumbnail = 36.dp
-    val StackThumbnail = 30.dp
-    val StackOverlap = 10.dp
+    // The workout screen's exercise images
+    val Corner = 12.dp
+    val StackOverlap = 14.dp
     val StackRing = 2.dp
     const val StackCount = 3
 }
