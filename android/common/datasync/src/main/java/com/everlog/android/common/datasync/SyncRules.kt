@@ -44,19 +44,29 @@ internal fun covers(status: SyncStatus, plan: SyncPlan, range: Range): Boolean =
     if (needsFullHistory(plan, range)) status.fullHistorySynced != null else status.lastSynced != null
 
 /**
- * The cache once it's covered. Before that, what's cached when there's any, unless the read needs the full
- * history, which a part of would show wrong totals. Otherwise the shimmer, until a sync fails.
+ * The cache once it's covered. Before that, what's cached when there's any, unless the read needs a complete
+ * copy, e.g. the full history, which a part of would show wrong totals. Otherwise the shimmer, until a sync fails.
  *
  * @param cacheBehind The cache hasn't shown anything since the last sync finished. Firestore can report a
  * read done before its listeners show what it brought, so an empty cache then isn't the server's answer.
  */
-internal fun <T> loadOf(cached: T, isEmpty: Boolean, covered: Boolean, needsFullHistory: Boolean, status: SyncStatus, cacheBehind: Boolean = false): Load<T> = when {
+internal fun <T> loadOf(cached: T, isEmpty: Boolean, covered: Boolean, needsComplete: Boolean, status: SyncStatus, cacheBehind: Boolean = false): Load<T> = when {
     covered && isEmpty && cacheBehind && status.lastFetched > 0 -> Load.Loading
     covered -> Load.Ready(cached)
-    !isEmpty && !needsFullHistory -> Load.Ready(cached)
+    !isEmpty && !needsComplete -> Load.Ready(cached)
     status.lastFailure != null && !status.syncing -> Load.Unavailable(status.lastFailure)
     else -> Load.Loading
 }
+
+/**
+ * Whether the cache shows what the last sync brought. Firestore can report a read done before its listeners
+ * show it, so right after a first sync the cache may still hold only part of the collection, e.g. the few
+ * documents read one at a time, or the recent workouts without the rest of the history. [cachedDocuments]
+ * counts ones that don't parse too, so a document that doesn't parse can't hold the read up. Once the cache
+ * has shown anything since the sync, it's caught up, e.g. after a delete.
+ */
+internal fun caughtUp(cachedDocuments: Int, status: SyncStatus, cacheBehind: Boolean): Boolean =
+    !cacheBehind || cachedDocuments >= status.lastFetched
 
 // Calendar months back from [now], in the device's time zone
 internal fun windowStart(now: Long, months: Int): Long = Calendar.getInstance().run {

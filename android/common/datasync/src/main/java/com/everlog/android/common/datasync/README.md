@@ -42,7 +42,11 @@ still read through the old stores, which share the same Firestore cache.
 
 Each read picks its `Range`: `All`, or `Last(months)` for a `Recent` collection. A read further back than
 the plan's window waits for the full history (the shimmer, the first time after an install), rather than showing part
-of it. Others show what's cached straight away.
+of it. Others show what's cached straight away, except from a source made with `completeOnly`, which waits for its
+first sync too. That's for a collection whose documents are also read one at a time, so its cache can hold a few of
+them before it has synced, and that a screen searches as a whole: the exercise library and the user's own exercises
+(the picker). Reads that need everything also wait until the cache shows what the sync brought, as Firestore can
+report a read done while its listeners still show the part cached before.
 
 After the full history has synced, each due sync of a `Recent` collection also compares the cached count
 with the server's (one read per 1,000 documents). A difference means something older was added or deleted

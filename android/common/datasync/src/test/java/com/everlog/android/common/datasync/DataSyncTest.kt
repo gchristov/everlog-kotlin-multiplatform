@@ -72,6 +72,27 @@ class DataSyncTest {
     }
 
     @Test
+    fun `a complete-only collection waits for its first sync rather than showing the part that's cached`() {
+        val backend = FakeCollectionBackend(server = listOf(bench, squat), cached = listOf(bench)).holdingServer()
+        val loads = read(dataSync.observe(completeOnly(backend)))
+
+        assertThat(loads).containsExactly(Load.Loading)
+
+        backend.gate!!.complete(Unit)
+
+        assertThat(loads.last()).isEqualTo(Load.Ready(listOf(bench, squat)))
+    }
+
+    @Test
+    fun `a complete-only collection shows its cache straight away once it has synced`() {
+        synced("library", fullHistory = false, at = now - 2 * maxAge)
+        val backend = FakeCollectionBackend(server = listOf(bench, squat), cached = listOf(bench, squat)).holdingServer()
+        val loads = read(dataSync.observe(completeOnly(backend)))
+
+        assertThat(loads).containsExactly(Load.Ready(listOf(bench, squat)))
+    }
+
+    @Test
     fun `an empty collection is ready once the server says so`() {
         val loads = read(dataSync.observe(whole(FakeCollectionBackend())))
 
@@ -154,6 +175,40 @@ class DataSyncTest {
     }
 
     @Test
+    fun `a complete-only collection's first sync waits for the cache to show what it brought`() {
+        val backend = FakeCollectionBackend(server = listOf(bench, squat), cached = listOf(bench)).holdingServer().apply { cacheLate = true }
+        val loads = read(dataSync.observe(completeOnly(backend)))
+        backend.gate!!.complete(Unit)
+
+        assertThat(loads).containsExactly(Load.Loading)
+
+        backend.deliverCache()
+
+        assertThat(loads).containsExactly(Load.Loading, Load.Ready(listOf(bench, squat))).inOrder()
+    }
+
+    @Test
+    fun `a complete-only collection shows a delete made right after its first sync`() {
+        val backend = FakeCollectionBackend(server = listOf(bench, squat), cached = listOf(bench))
+        val loads = read(dataSync.observe(completeOnly(backend)))
+
+        backend.cache.value = listOf(bench)
+
+        assertThat(loads.last()).isEqualTo(Load.Ready(listOf(bench)))
+    }
+
+    @Test
+    fun `a complete-only collection stays on its cache while a later sync lands`() {
+        synced("library", fullHistory = false, at = now - 2 * maxAge)
+        val backend = FakeCollectionBackend(server = listOf(bench, squat), cached = listOf(bench, squat)).holdingServer().apply { cacheLate = true }
+        val loads = read(dataSync.observe(completeOnly(backend)))
+        backend.gate!!.complete(Unit)
+        backend.deliverCache()
+
+        assertThat(loads).containsExactly(Load.Ready(listOf(bench, squat)))
+    }
+
+    @Test
     fun `an empty collection is ready as soon as its sync finishes, without waiting for the cache`() {
         val backend = FakeCollectionBackend().holdingServer().apply { cacheLate = true }
         val loads = read(dataSync.observe(whole(backend)))
@@ -205,6 +260,32 @@ class DataSyncTest {
         assertThat(loads.last()).isEqualTo(Load.Ready(listOf(bench, squat, deadlift, press, row)))
         assertThat(records.fullHistorySynced["user/workouts"]).isEqualTo(now)
         assertThat(records.lastSynced["user/workouts"]).isEqualTo(now)
+    }
+
+    @Test
+    fun `an all-time read waits for the cache to show the full history once it has synced`() {
+        val all = listOf(bench, deadlift)
+        val backend = FakeCollectionBackend(server = all, cached = listOf(bench)).holdingServer().apply { cacheLate = true }
+        val loads = read(dataSync.observe(recent(backend)))
+        backend.gate!!.complete(Unit)
+
+        assertThat(loads).containsExactly(Load.Loading)
+
+        backend.deliverCache()
+
+        assertThat(loads).containsExactly(Load.Loading, Load.Ready(all)).inOrder()
+    }
+
+    @Test
+    fun `an all-time read stays on its cache while a due recent sync lands`() {
+        synced("user/workouts", fullHistory = true, at = now - TimeUnit.HOURS.toMillis(2))
+        val all = listOf(bench, squat, deadlift, press, row)
+        val backend = FakeCollectionBackend(server = all, cached = all).holdingServer().apply { cacheLate = true }
+        val loads = read(dataSync.observe(recent(backend)))
+        backend.gate!!.complete(Unit)
+        backend.deliverCache()
+
+        assertThat(loads).containsExactly(Load.Ready(all))
     }
 
     @Test
@@ -335,6 +416,16 @@ class DataSyncTest {
     }
 
     @Test
+    fun `a complete-only collection that can't sync before its first is unavailable, whatever is cached`() {
+        val backend = FakeCollectionBackend(server = listOf(bench, squat), cached = listOf(bench))
+        backend.fail = { IllegalStateException("offline") }
+
+        val loads = read(dataSync.observe(completeOnly(backend)))
+
+        assertThat(loads.last()).isInstanceOf(Load.Unavailable::class.java)
+    }
+
+    @Test
     fun `a sync that fails with data cached stays on the cache`() {
         val backend = FakeCollectionBackend(server = listOf(bench, squat), cached = listOf(bench))
         backend.fail = { IllegalStateException("offline") }
@@ -457,6 +548,8 @@ class DataSyncTest {
     // Helpers
 
     private fun whole(backend: FakeCollectionBackend) = CollectionSource("routines", "user", SyncPlan.Whole, backend)
+
+    private fun completeOnly(backend: FakeCollectionBackend) = CollectionSource("library", null, SyncPlan.Whole, backend, completeOnly = true)
 
     private fun recent(backend: FakeCollectionBackend) = CollectionSource("workouts", "user", recentPlan, backend)
 

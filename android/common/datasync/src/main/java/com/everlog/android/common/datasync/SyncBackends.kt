@@ -1,6 +1,7 @@
 package com.everlog.android.common.datasync
 
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 
 /**
  * Where a collection's data lives: Firestore's cache, kept in step with the server. [DataSync] decides
@@ -13,7 +14,10 @@ interface CollectionBackend<T> {
      * it lands. Only from [since] by the plan's date field, and the first [limit], when given. Documents
      * that don't parse are left out.
      */
-    fun cached(since: Long?, limit: Int? = null): Flow<List<T>>
+    fun cached(since: Long?, limit: Int? = null): Flow<List<T>> = cachedDocuments(since, limit).map { it.items }
+
+    // The same, with how many documents that is, parsed or not
+    fun cachedDocuments(since: Long?, limit: Int? = null): Flow<CachedDocuments<T>>
 
     // The whole collection from the server into the cache. Returns how many documents it read.
     suspend fun fetchAll(): Int
@@ -34,6 +38,8 @@ interface CollectionBackend<T> {
 }
 
 data class Chunk(val count: Int, val lastId: String?)
+
+data class CachedDocuments<T>(val items: List<T>, val documents: Int)
 
 interface DocumentBackend<T> {
 

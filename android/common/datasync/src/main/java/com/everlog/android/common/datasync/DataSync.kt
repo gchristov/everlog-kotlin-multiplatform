@@ -67,11 +67,17 @@ class DataSync(
 
     fun <T> observe(source: CollectionSource<T>, range: Range = Range.All): Flow<Load<List<T>>> {
         require(range == Range.All || source.plan is SyncPlan.Recent) { "Range.Last needs a SyncPlan.Recent collection" }
-        val fullHistory = needsFullHistory(source.plan, range)
+        val needsComplete = source.completeOnly || needsFullHistory(source.plan, range)
         return observe(source.key, range.toString(), sync = { requestSync(source, range) }) { status ->
             val since = (range as? Range.Last)?.let { windowStart(clock(), it.months) }
-            source.backend.cached(since).withSyncStatus(status) { currentStatus(source.key) }.map { view ->
-                loadOf(view.cached, view.cached.isEmpty(), covers(view.status, source.plan, range), fullHistory, view.status, view.cacheBehind)
+            source.backend.cachedDocuments(since).withSyncStatus(status) { currentStatus(source.key) }.map { view ->
+                val cached = view.cached.items
+                // Only for the whole collection: a window holds fewer documents than a full sync brings
+                if (needsComplete && since == null && !caughtUp(view.cached.documents, view.status, view.cacheBehind)) {
+                    Load.Loading
+                } else {
+                    loadOf(cached, cached.isEmpty(), covers(view.status, source.plan, range), needsComplete, view.status, view.cacheBehind)
+                }
             }
         }
     }
@@ -99,7 +105,7 @@ class DataSync(
     fun <T> observe(source: DocumentSource<T>): Flow<Load<T?>> =
         observe(source.key, "document", sync = { requestSync(source) }) { status ->
             source.backend.cached().withSyncStatus(status) { currentStatus(source.key) }.map { view ->
-                loadOf(view.cached, view.cached == null, view.status.lastSynced != null, needsFullHistory = false, view.status, view.cacheBehind)
+                loadOf(view.cached, view.cached == null, view.status.lastSynced != null, needsComplete = false, view.status, view.cacheBehind)
             }
         }
 
