@@ -141,6 +141,22 @@ abstract class BaseAnalytic : Analytic {
         logEvent(AnalyticsConstants.EVENT_ROUTINE_MODIFIED)
     }
 
+    override fun routineLeavePromptShown() {
+        logEvent(AnalyticsConstants.EVENT_ROUTINE_LEAVE_PROMPT_SHOWN)
+    }
+
+    override fun routineLeavePromptSaved() {
+        logEvent(AnalyticsConstants.EVENT_ROUTINE_LEAVE_PROMPT_SAVED)
+    }
+
+    override fun routineLeavePromptDiscarded() {
+        logEvent(AnalyticsConstants.EVENT_ROUTINE_LEAVE_PROMPT_DISCARDED)
+    }
+
+    override fun routineLeavePromptCancelled() {
+        logEvent(AnalyticsConstants.EVENT_ROUTINE_LEAVE_PROMPT_CANCELLED)
+    }
+
     override fun routineDeleted() {
         logEvent(AnalyticsConstants.EVENT_ROUTINE_DELETED)
     }

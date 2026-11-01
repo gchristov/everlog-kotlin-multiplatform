@@ -394,6 +394,24 @@ class TemplateEditorViewModelTest {
         assertThat(viewModel.state.value.focus).isEqualTo(CellFocus(viewModel.ref(1, 2), ValueField.Time))
     }
 
+    @Test
+    fun `a typed value is logged once, as typing moves on, and a stepped one straight away`() {
+        val viewModel = loaded()
+
+        viewModel.onCellTapped(CellFocus(viewModel.ref(0, 0), ValueField.Reps))
+        viewModel.type("12")
+        assertThat(analytics.events.filter { it.startsWith("value") }).isEmpty()
+        viewModel.onMainKey()
+        viewModel.onStep(1)
+        viewModel.onMainKey()
+        viewModel.onMainKey()
+        viewModel.type("45")
+        viewModel.onHideKeypad()
+
+        assertThat(analytics.events.filter { it.startsWith("value") })
+            .containsExactly("value:Reps:12", "value:Reps:9", "value:Time:45").inOrder()
+    }
+
     // Leaving
 
     @Test
@@ -410,6 +428,20 @@ class TemplateEditorViewModelTest {
         viewModel.onDiscard()
         assertThat(viewModel.state.value.exit).isEqualTo(TemplateEditorExit.Closed)
         assertThat(save.saved).isEmpty()
+        assertThat(analytics.events.filter { it.startsWith("leave") })
+            .containsExactly("leave:shown", "leave:cancelled", "leave:shown", "leave:discarded").inOrder()
+    }
+
+    @Test
+    fun `saving from the prompt on leaving saves the template, and says it was picked there`() {
+        val viewModel = loaded()
+        viewModel.onAddSet(viewModel.blocks[0].id)
+
+        viewModel.onClose()
+        viewModel.onSave()
+
+        assertThat(save.saved).hasSize(1)
+        assertThat(analytics.events).containsAtLeast("leave:shown", "leave:saved", "saved:edited").inOrder()
     }
 
     @Test
@@ -421,6 +453,7 @@ class TemplateEditorViewModelTest {
         assertThat(viewModel.state.value.dialog).isNull()
         assertThat(viewModel.state.value.exit).isEqualTo(TemplateEditorExit.Closed)
         assertThat(save.saved).isEmpty()
+        assertThat(analytics.events.filter { it.startsWith("leave") }).isEmpty()
     }
 
     @Test
@@ -606,6 +639,26 @@ class TemplateEditorViewModelTest {
 
         override fun setTypeChanged(type: ELSetType) {
             events += "setType:${type.name}"
+        }
+
+        override fun valueChanged(field: ValueField, value: Int?) {
+            events += "value:${field.name}:$value"
+        }
+
+        override fun leavePromptShown() {
+            events += "leave:shown"
+        }
+
+        override fun leavePromptSaved() {
+            events += "leave:saved"
+        }
+
+        override fun leavePromptDiscarded() {
+            events += "leave:discarded"
+        }
+
+        override fun leavePromptCancelled() {
+            events += "leave:cancelled"
         }
     }
 }

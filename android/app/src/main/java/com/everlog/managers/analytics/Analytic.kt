@@ -35,6 +35,10 @@ interface Analytic {
     fun routineDeleted()
     fun routineExerciseGroupAdded()
     fun routineExerciseModified()
+    fun routineLeavePromptShown()
+    fun routineLeavePromptSaved()
+    fun routineLeavePromptDiscarded()
+    fun routineLeavePromptCancelled()
 
     fun setTypeSelected(type: ELSetType?)
     fun setWeightModified(value: Float?)

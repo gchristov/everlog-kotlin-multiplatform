@@ -146,6 +146,34 @@ class AnalyticsManager : Analytic {
         }
     }
 
+    override fun routineLeavePromptShown() {
+        Timber.tag(TAG).i("Routine leave prompt shown")
+        mAnalytics?.forEach {
+            it.routineLeavePromptShown()
+        }
+    }
+
+    override fun routineLeavePromptSaved() {
+        Timber.tag(TAG).i("Routine leave prompt saved")
+        mAnalytics?.forEach {
+            it.routineLeavePromptSaved()
+        }
+    }
+
+    override fun routineLeavePromptDiscarded() {
+        Timber.tag(TAG).i("Routine leave prompt discarded")
+        mAnalytics?.forEach {
+            it.routineLeavePromptDiscarded()
+        }
+    }
+
+    override fun routineLeavePromptCancelled() {
+        Timber.tag(TAG).i("Routine leave prompt cancelled")
+        mAnalytics?.forEach {
+            it.routineLeavePromptCancelled()
+        }
+    }
+
     override fun routineDeleted() {
         Timber.tag(TAG).i("Routine deleted")
         mAnalytics?.forEach {

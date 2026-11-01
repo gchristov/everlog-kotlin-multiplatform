@@ -1,6 +1,7 @@
 package com.everlog.application.features
 
 import com.everlog.android.common.data.model.set.ELSetType
+import com.everlog.android.common.session.ValueField
 import com.everlog.android.template.TemplateScreenNames
 import com.everlog.android.template.editor.TemplateEditorAnalytics
 import com.everlog.managers.analytics.AnalyticsManager
@@ -20,7 +21,20 @@ class AppTemplateEditorAnalytics : TemplateEditorAnalytics {
 
     override fun restChanged(seconds: Int) = analytics.setRestTimeModified(seconds)
 
+    override fun valueChanged(field: ValueField, value: Int?) = when (field) {
+        ValueField.Time -> analytics.setRequiredTimeModified(value)
+        else -> analytics.setRequiredRepsModified(value)
+    }
+
     override fun timeForAllSets(seconds: Int) = analytics.setRequiredTimeModified(seconds)
 
     override fun setTypeChanged(type: ELSetType) = analytics.setTypeSelected(type)
+
+    override fun leavePromptShown() = analytics.routineLeavePromptShown()
+
+    override fun leavePromptSaved() = analytics.routineLeavePromptSaved()
+
+    override fun leavePromptDiscarded() = analytics.routineLeavePromptDiscarded()
+
+    override fun leavePromptCancelled() = analytics.routineLeavePromptCancelled()
 }
