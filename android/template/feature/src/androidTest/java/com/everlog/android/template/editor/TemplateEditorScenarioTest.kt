@@ -30,6 +30,7 @@ import com.everlog.android.common.data.model.set.ELSet
 import com.everlog.android.common.data.model.set.ELSetType
 import com.everlog.android.common.kotlin.Load
 import com.everlog.android.common.session.SessionDefaults
+import com.everlog.android.common.session.ValueField
 import com.everlog.android.exercise.data.model.library.LibraryExercise
 import com.everlog.android.template.data.session.LoadTemplateUseCase
 import com.everlog.android.template.data.session.SaveTemplateUseCase
@@ -521,6 +522,11 @@ class TemplateEditorScenarioTest {
         override fun restChanged(seconds: Int) = Unit
         override fun timeForAllSets(seconds: Int) = Unit
         override fun setTypeChanged(type: ELSetType) = Unit
+        override fun valueChanged(field: ValueField, value: Int?) = Unit
+        override fun leavePromptShown() = Unit
+        override fun leavePromptSaved() = Unit
+        override fun leavePromptDiscarded() = Unit
+        override fun leavePromptCancelled() = Unit
     }
 
     private companion object {

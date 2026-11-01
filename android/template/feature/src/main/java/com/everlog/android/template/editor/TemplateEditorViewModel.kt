@@ -159,10 +159,17 @@ internal class TemplateEditorViewModel(
         val set = state.blocks.set(cell.ref) ?: return
         val value = steppedValue(set, cell.field, NoWeights, weightStep = 0f, direction)
         change { copy(blocks = blocks.setValue(cell.ref, cell.field, value), reveal = reveal + 1) }
+        analytics.valueChanged(cell.field, value.toInt())
     }
 
     // Moving on keeps what was typed: there's nothing to save until Save
-    private fun finishTyping() = setState { copy(typed = null) }
+    private fun finishTyping() {
+        val state = state.value
+        val cell = state.focus
+        val typed = state.typed ?: return
+        if (cell != null) analytics.valueChanged(cell.field, parse(cell.field, typed)?.toInt())
+        setState { copy(typed = null) }
+    }
 
     fun onMainKey() {
         finishTyping()
@@ -278,12 +285,16 @@ internal class TemplateEditorViewModel(
         analytics.restChanged(seconds)
     }
 
-    fun onDialogDismissed() = setState { copy(dialog = null) }
+    fun onDialogDismissed() {
+        if (state.value.dialog == TemplateEditorDialog.Leave) analytics.leavePromptCancelled()
+        setState { copy(dialog = null) }
+    }
 
     fun onSave() {
         finishTyping()
         val state = state.value
         if (state.saving) return
+        if (state.dialog == TemplateEditorDialog.Leave) analytics.leavePromptSaved()
         // A new template saves even untouched, as the old editor's did; an existing one only when it differs
         if (!state.hasChanges() && !state.isNew) return setState { copy(dialog = null, exit = TemplateEditorExit.Closed) }
         val edited = state.edited() ?: return
@@ -302,10 +313,15 @@ internal class TemplateEditorViewModel(
     // Close or Back. Changes are only lost once the user says so.
     fun onClose() {
         finishTyping()
-        setState { if (hasChanges()) copy(dialog = TemplateEditorDialog.Leave) else copy(exit = TemplateEditorExit.Closed) }
+        if (!state.value.hasChanges()) return setState { copy(exit = TemplateEditorExit.Closed) }
+        setState { copy(dialog = TemplateEditorDialog.Leave) }
+        analytics.leavePromptShown()
     }
 
-    fun onDiscard() = setState { copy(dialog = null, exit = TemplateEditorExit.Closed) }
+    fun onDiscard() {
+        analytics.leavePromptDiscarded()
+        setState { copy(dialog = null, exit = TemplateEditorExit.Closed) }
+    }
 
     // Every edit goes through here, and ends the undo of a delete unless it's the delete itself
     private fun change(keepUndo: Boolean = false, reducer: TemplateEditorState.() -> TemplateEditorState) = setState {

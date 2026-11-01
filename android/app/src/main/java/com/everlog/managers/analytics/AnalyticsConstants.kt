@@ -60,6 +60,10 @@ class AnalyticsConstants {
         const val EVENT_ROUTINE_DELETED = "routine_deleted"
         const val EVENT_ROUTINE_EXERCISE_GROUP_ADDED = "routine_exercise_group_added"
         const val EVENT_ROUTINE_EXERCISE_MODIFIED = "routine_exercise_modified"
+        const val EVENT_ROUTINE_LEAVE_PROMPT_SHOWN = "routine_leave_prompt_shown"
+        const val EVENT_ROUTINE_LEAVE_PROMPT_SAVED = "routine_leave_prompt_saved"
+        const val EVENT_ROUTINE_LEAVE_PROMPT_DISCARDED = "routine_leave_prompt_discarded"
+        const val EVENT_ROUTINE_LEAVE_PROMPT_CANCELLED = "routine_leave_prompt_cancelled"
 
         // Sets
 
