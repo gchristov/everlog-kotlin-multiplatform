@@ -45,7 +45,9 @@ class RealWorkoutRepository(
     private val syncMonths: Int,
 ) : WorkoutRepository {
 
-    override fun workouts(range: Range): Flow<Load<List<ELWorkout>>> {
+    override fun workouts(range: Range): Flow<Load<List<ELWorkout>>> = workouts(range, complete = false)
+
+    private fun workouts(range: Range, complete: Boolean): Flow<Load<List<ELWorkout>>> {
         val userId = LocalUserManager.getUser()?.id ?: return flowOf(Load.Ready(emptyList()))
         return dataSync.observe(
             CollectionSource(
@@ -60,12 +62,13 @@ class RealWorkoutRepository(
                 ) { it.toObject(ELWorkout::class.java) },
             ),
             range,
+            complete,
         )
     }
 
-    // A first open with nothing synced waits for the recent sync
+    // Waits for the recent sync until there's been one: the cache may hold only single workouts opened before
     override suspend fun exerciseLastDone(workouts: Int): Either<Throwable, Map<String, Long>> =
-        when (val load = workouts(Range.Last(syncMonths)).first { it != Load.Loading }) {
+        when (val load = workouts(Range.Last(syncMonths), complete = true).first { it != Load.Loading }) {
             is Load.Ready -> Either.Right(exerciseLastDone(load.value.take(workouts)))
             is Load.Unavailable -> Either.Left(load.error)
             Load.Loading -> error("Filtered out")
