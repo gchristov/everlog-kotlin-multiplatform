@@ -81,17 +81,18 @@ internal fun TemplateEditorSkeleton(contentPadding: PaddingValues) {
 
 @Composable
 private fun Exercise(brush: Brush, sets: Int, nameWidth: Float) {
-    Row(verticalAlignment = Alignment.CenterVertically) {
-        Box(modifier = Modifier.size(Theme.sizes.leading).clip(CircleShape).background(brush))
-        Spacer(modifier = Modifier.width(Theme.spacing.large))
+    Row(modifier = Modifier.padding(horizontal = SkeletonSizes.RowPadding), verticalAlignment = Alignment.CenterVertically) {
         Box(modifier = Modifier.size(Theme.sizes.leading).clip(RoundedCornerShape(SkeletonSizes.ThumbnailCorner)).background(brush))
         Spacer(modifier = Modifier.width(Theme.spacing.medium))
-        Line(brush, fraction = nameWidth, height = SkeletonSizes.TitleHeight)
+        Box(modifier = Modifier.weight(1f)) {
+            Line(brush, fraction = nameWidth, height = SkeletonSizes.TitleHeight)
+        }
+        Spacer(modifier = Modifier.width(Theme.spacing.medium))
+        Box(modifier = Modifier.size(Theme.sizes.leading).clip(CircleShape).background(brush))
     }
     Spacer(modifier = Modifier.height(Theme.spacing.medium + SkeletonSizes.LabelsHeight + Theme.spacing.extraSmall))
     Column(
         modifier = Modifier
-            .padding(start = cardIndent())
             .fillMaxWidth()
             .clip(Theme.shapes.surface)
             .background(Theme.backgrounds.surface),

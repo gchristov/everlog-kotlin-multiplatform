@@ -88,7 +88,7 @@ fun ExerciseEditList(
     }
 }
 
-// The grip, outside the card on its left, beside the last exercise. The card holds a group's type, the names and the
+// The grip, outside the card on its right where the table has the exercise menu, beside the last exercise. The card holds a group's type, the names and the
 // bin; it's raised while dragged, the grip staying outside it.
 @Composable
 private fun EditCard(
@@ -102,8 +102,6 @@ private fun EditCard(
     val context = LocalContext.current
     val group = block.exercises.size > 1
     Row(modifier = modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
-        ReorderGrip(modifier = gripModifier.alignBy { it.measuredHeight / 2 })
-        Spacer(modifier = Modifier.width(Theme.spacing.large))
         Row(
             modifier = Modifier
                 .weight(1f)
@@ -135,6 +133,8 @@ private fun EditCard(
             }
             InsetDeleteButton(onClick = onDelete, contentDescription = stringResource(DesignR.string.workout_log_delete))
         }
+        Spacer(modifier = Modifier.width(Theme.spacing.large))
+        ReorderGrip(modifier = gripModifier.alignBy { it.measuredHeight / 2 })
     }
 }
 
