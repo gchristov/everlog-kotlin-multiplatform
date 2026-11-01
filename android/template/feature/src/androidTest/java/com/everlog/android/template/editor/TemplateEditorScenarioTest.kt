@@ -4,6 +4,7 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.semantics.SemanticsActions
 import androidx.compose.ui.test.SemanticsNodeInteraction
 import androidx.compose.ui.test.assertTextEquals
+import androidx.compose.ui.test.getBoundsInRoot
 import androidx.compose.ui.test.hasAnyAncestor
 import androidx.compose.ui.test.hasContentDescription
 import androidx.compose.ui.test.hasTestTag
@@ -138,6 +139,11 @@ class TemplateEditorScenarioTest {
         compose.onNodeWithText("SET 3 OF 3 · TIME").assertDoesNotExist()
         compose.onNode(hasContentDescription("Show keypad")).performClick()
         compose.onNodeWithText("SET 3 OF 3 · TIME").assertExists()
+        key("Done").performClick()
+
+        // A set at the end of the list, tapped with the keypad closed, ends up above the keypad as it opens
+        cell(1, 2).performClick()
+        assertAboveKeypad(TemplateEditorTags.value(1, 2, 0))
         key("Done").performClick()
 
         // Add set copies the last set
@@ -480,6 +486,12 @@ class TemplateEditorScenarioTest {
     }
 
     // A key or button on the docked keypad, rather than the same text in the table
+    private fun assertAboveKeypad(tag: String) {
+        val cell = compose.onNodeWithTag(tag).getBoundsInRoot()
+        val keypad = compose.onNodeWithTag(TemplateEditorTags.Keypad).getBoundsInRoot()
+        assertThat(cell.bottom.value).isAtMost(keypad.top.value)
+    }
+
     private fun key(text: String) = compose.onNode(hasText(text) and hasAnyAncestor(hasTestTag(TemplateEditorTags.Keypad)))
 
     private fun keys(digits: String) = digits.forEach { key(it.toString()).performClick() }

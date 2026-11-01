@@ -251,8 +251,8 @@ private fun SetRow(
     val selected = state.focus?.ref == ref
     val requester = remember { BringIntoViewRequester() }
     var height by remember { mutableIntStateOf(0) }
-    LaunchedEffect(focused, state.reveal) {
-        // With the space under it the keypad covers
+    // With the space under it the keypad covers, which grows as the keypad opens, so again as it does
+    LaunchedEffect(focused, state.reveal, keepClear) {
         if (focused) requester.bringIntoView(Rect(0f, 0f, 1f, height + keepClear))
     }
     Row(
