@@ -1,12 +1,8 @@
 name: 'Compute app version'
 inputs:
   workflowType:
-    description: 'The workflow type (staging, nightly, master)'
+    description: 'The workflow type (pr, master, nightly, release)'
     required: true
-  isRelease:
-    description: 'Whether this is a release build'
-    required: false
-    default: 'false'
 outputs:
   versionCode:
     description: 'Calculated version code'
@@ -20,30 +16,26 @@ runs:
     - id: compute
       shell: bash
       run: |
+        set -Eeuo pipefail
         TYPE="${{ inputs.workflowType }}"
 
-        if [[ "$TYPE" == "staging" ]]; then
-          SHORT_SHA=$(echo "${{ github.event.pull_request.head.sha }}" | cut -c1-7)
-          VERSION_SUFFIX="pr-${{ github.event.pull_request.number }}-$SHORT_SHA"
+        if [[ "$TYPE" == "pr" ]]; then
+          HEAD_SHA="${{ github.event.pull_request.head.sha }}"
+          VERSION_SUFFIX="pr-${{ github.event.pull_request.number }}-${HEAD_SHA:0:7}"
+          VERSION_CODE=$(./tools/versioning/version_code.sh pr "${{ github.event.pull_request.base.sha }}" "$HEAD_SHA")
         elif [[ "$TYPE" == "nightly" ]]; then
-          DATE=$(date +'%d%m%Y')
-          VERSION_SUFFIX="nightly-$DATE"
-        elif [[ "${{ inputs.isRelease }}" == "true" ]]; then
+          VERSION_SUFFIX="nightly-$(date -u +'%d%m%Y')"
+          VERSION_CODE=$(./tools/versioning/version_code.sh nightly)
+        elif [[ "$TYPE" == "release" ]]; then
           VERSION_SUFFIX="none"
+          VERSION_CODE=$(./tools/versioning/version_code.sh release)
         else
           VERSION_SUFFIX="$TYPE"
+          VERSION_CODE=$(./tools/versioning/version_code.sh "$TYPE")
         fi
 
-        RELEASE_FLAG=""
-        if [[ "${{ inputs.isRelease }}" == "true" ]]; then
-          RELEASE_FLAG="--release"
-        fi
-
-        chmod +x ./tools/versioning/version_code.sh
-        VERSION_CODE=$(./tools/versioning/version_code.sh $TYPE $RELEASE_FLAG)
-        
         echo "versionCode=$VERSION_CODE" >> $GITHUB_OUTPUT
         echo "versionNameSuffix=$VERSION_SUFFIX" >> $GITHUB_OUTPUT
-        
+
         echo "### Version Code: $VERSION_CODE" >> $GITHUB_STEP_SUMMARY
         echo "### Version Name Suffix: $VERSION_SUFFIX" >> $GITHUB_STEP_SUMMARY

@@ -75,8 +75,7 @@ jobs:
         uses: ./.github/actions/build-android
         with:
           buildType: 'release'
-          workflowType: 'master'
-          isRelease: 'true'
+          workflowType: 'release'
       - name: Slack report
         uses: slackapi/slack-github-action@v3
         if: always() # Ensure report is sent, even after errors
@@ -128,7 +127,7 @@ jobs:
           webhook-type: incoming-webhook
 
   tag-release:
-    needs: [deploy-android-release]
+    needs: [build-android, deploy-android-release]
     runs-on: ubuntu-24.04
     permissions:
       contents: write
@@ -142,7 +141,15 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          VERSION=$(cat tools/versioning/version.txt)
+          set -Eeuo pipefail
+          VERSION=$(tr -d '[:space:]' < tools/versioning/version.txt)
+          # The candidate's tag is what the next release run counts to number its candidate
+          CANDIDATE=$(( ${{ needs.build-android.outputs.versionCode }} % 100 ))
+          gh api "repos/${{ github.repository }}/git/refs" -f ref="refs/tags/$VERSION-rc$CANDIDATE" -f sha="$GITHUB_SHA" > /dev/null
+          # A later candidate replaces the earlier one's GitHub release and version tag
+          if gh release view "$VERSION" > /dev/null 2>&1; then
+            gh release delete "$VERSION" --cleanup-tag --yes
+          fi
           ./tools/versioning/release_notes.sh "${{ github.repository }}" "$GITHUB_SHA" > release_notes.md
           gh release create "$VERSION" \
             --target "$GITHUB_SHA" \

@@ -17,7 +17,7 @@ default_platform :android
 
 platform :android do
   def generate_changelog
-    tag = sh("git describe --tags --abbrev=0 @^ 2>/dev/null || echo ''").strip
+    tag = sh("git describe --tags --abbrev=0 --exclude '*-rc*' @^ 2>/dev/null || echo ''").strip
     if tag.empty?
       log_command = 'git --no-pager log --pretty=format:"%s" --no-merges --reverse'
     else

@@ -12,8 +12,10 @@ if [[ -z "$REPO" ]]; then
     exit 1
 fi
 
-# Look for the previous tag from the parent commit, so REF being tagged already doesn't produce empty notes
-PREVIOUS_TAG=$(git describe --tags --abbrev=0 "$REF^" 2>/dev/null)
+# The previous version's tag, looked for from the parent commit so REF being tagged already doesn't produce
+# empty notes. Release candidates and an earlier candidate's tag for this version don't count.
+VERSION=$(tr -d '[:space:]' < tools/versioning/version.txt)
+PREVIOUS_TAG=$(git describe --tags --abbrev=0 --exclude '*-rc*' --exclude "$VERSION" "$REF^" 2>/dev/null)
 if [[ -z "$PREVIOUS_TAG" ]]; then
     RANGE="$REF"
 else
