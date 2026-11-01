@@ -39,7 +39,7 @@ class FirestoreCollection<T : Any>(
     private val parse: (DocumentSnapshot) -> T?,
 ) : CollectionBackend<T> {
 
-    override fun cached(since: Long?, limit: Int?): Flow<List<T>> {
+    override fun cachedDocuments(since: Long?, limit: Int?): Flow<CachedDocuments<T>> {
         val ordered = order(if (since == null) documents else documents.whereGreaterThanOrEqualTo(requireDateField(), since))
         // Never the same query as a server read (see cacheOnly): every listener has a limit no read uses,
         // and a page one more than it shows. Cache reads are free and need no index.
@@ -52,7 +52,7 @@ class FirestoreCollection<T : Any>(
                     ParsedDocuments.Change<DocumentSnapshot>(change.document.id, change.document.takeUnless { change.type == DocumentChange.Type.REMOVED })
                 }
                 val shown = parsed.update(changes, snapshot.documents.map { it.id })
-                if (limit == null) shown else shown.take(limit)
+                CachedDocuments(if (limit == null) shown else shown.take(limit), documents = snapshot.size())
             })
         }.flowOn(dispatcher)
     }

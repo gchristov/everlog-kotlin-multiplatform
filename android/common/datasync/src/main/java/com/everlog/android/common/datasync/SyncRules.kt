@@ -59,12 +59,14 @@ internal fun <T> loadOf(cached: T, isEmpty: Boolean, covered: Boolean, needsComp
 }
 
 /**
- * Whether the cache shows at least what the last sync brought. Firestore can report a read done before its
- * listeners show it, so right after a first sync the cache may still hold only the few documents read
- * one at a time.
+ * Whether the cache shows what the last sync brought. Firestore can report a read done before its listeners
+ * show it, so right after a first sync the cache may still hold only part of the collection, e.g. the few
+ * documents read one at a time, or the recent workouts without the rest of the history. [cachedDocuments]
+ * counts ones that don't parse too, so a document that doesn't parse can't hold the read up. Once the cache
+ * has shown anything since the sync, it's caught up, e.g. after a delete.
  */
-internal fun caughtUp(cachedCount: Int, status: SyncStatus, cacheBehind: Boolean): Boolean =
-    !cacheBehind || cachedCount >= status.lastFetched
+internal fun caughtUp(cachedDocuments: Int, status: SyncStatus, cacheBehind: Boolean): Boolean =
+    !cacheBehind || cachedDocuments >= status.lastFetched
 
 // Calendar months back from [now], in the device's time zone
 internal fun windowStart(now: Long, months: Int): Long = Calendar.getInstance().run {

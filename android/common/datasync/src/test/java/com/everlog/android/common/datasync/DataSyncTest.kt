@@ -188,6 +188,16 @@ class DataSyncTest {
     }
 
     @Test
+    fun `a complete-only collection shows a delete made right after its first sync`() {
+        val backend = FakeCollectionBackend(server = listOf(bench, squat), cached = listOf(bench))
+        val loads = read(dataSync.observe(completeOnly(backend)))
+
+        backend.cache.value = listOf(bench)
+
+        assertThat(loads.last()).isEqualTo(Load.Ready(listOf(bench)))
+    }
+
+    @Test
     fun `a complete-only collection stays on its cache while a later sync lands`() {
         synced("library", fullHistory = false, at = now - 2 * maxAge)
         val backend = FakeCollectionBackend(server = listOf(bench, squat), cached = listOf(bench, squat)).holdingServer().apply { cacheLate = true }
@@ -250,6 +260,32 @@ class DataSyncTest {
         assertThat(loads.last()).isEqualTo(Load.Ready(listOf(bench, squat, deadlift, press, row)))
         assertThat(records.fullHistorySynced["user/workouts"]).isEqualTo(now)
         assertThat(records.lastSynced["user/workouts"]).isEqualTo(now)
+    }
+
+    @Test
+    fun `an all-time read waits for the cache to show the full history once it has synced`() {
+        val all = listOf(bench, deadlift)
+        val backend = FakeCollectionBackend(server = all, cached = listOf(bench)).holdingServer().apply { cacheLate = true }
+        val loads = read(dataSync.observe(recent(backend)))
+        backend.gate!!.complete(Unit)
+
+        assertThat(loads).containsExactly(Load.Loading)
+
+        backend.deliverCache()
+
+        assertThat(loads).containsExactly(Load.Loading, Load.Ready(all)).inOrder()
+    }
+
+    @Test
+    fun `an all-time read stays on its cache while a due recent sync lands`() {
+        synced("user/workouts", fullHistory = true, at = now - TimeUnit.HOURS.toMillis(2))
+        val all = listOf(bench, squat, deadlift, press, row)
+        val backend = FakeCollectionBackend(server = all, cached = all).holdingServer().apply { cacheLate = true }
+        val loads = read(dataSync.observe(recent(backend)))
+        backend.gate!!.complete(Unit)
+        backend.deliverCache()
+
+        assertThat(loads).containsExactly(Load.Ready(all))
     }
 
     @Test

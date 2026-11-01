@@ -68,7 +68,7 @@ class RealExerciseRepository(
         userId = null,
         SyncPlan.Whole,
         FirestoreCollection(FirestorePaths.globalExercises, dispatcher = dispatcher) { it.toStoredExercise(own = false) },
-        // libraryExercise(uuid) caches single exercises, and the picker searches the whole library
+        // libraryExercise(uuid) and routines (ELRoutineDecorator) cache single exercises, and the picker searches the whole library
         completeOnly = true,
     )
 
@@ -91,9 +91,14 @@ class RealExerciseRepository(
     override fun ownExercises(): Flow<Load<List<LibraryExercise>>> {
         val userId = LocalUserManager.getUser()?.id ?: return flowOf(Load.Ready(emptyList()))
         return dataSync.observe(
-            CollectionSource("exercises", userId, SyncPlan.Whole, FirestoreCollection(FirestorePaths.exercises(userId), dispatcher = dispatcher) {
-                it.toStoredExercise(own = true)
-            })
+            CollectionSource(
+                "exercises",
+                userId,
+                SyncPlan.Whole,
+                FirestoreCollection(FirestorePaths.exercises(userId), dispatcher = dispatcher) { it.toStoredExercise(own = true) },
+                // Routines read single exercises (ELRoutineDecorator), and the picker searches them with the library
+                completeOnly = true,
+            )
         ).map { load -> load.map { it.visible() } }
     }
 

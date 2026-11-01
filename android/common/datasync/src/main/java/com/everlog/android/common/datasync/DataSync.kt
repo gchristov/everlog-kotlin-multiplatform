@@ -70,11 +70,13 @@ class DataSync(
         val needsComplete = source.completeOnly || needsFullHistory(source.plan, range)
         return observe(source.key, range.toString(), sync = { requestSync(source, range) }) { status ->
             val since = (range as? Range.Last)?.let { windowStart(clock(), it.months) }
-            source.backend.cached(since).withSyncStatus(status) { currentStatus(source.key) }.map { view ->
-                if (source.completeOnly && !caughtUp(view.cached.size, view.status, view.cacheBehind)) {
+            source.backend.cachedDocuments(since).withSyncStatus(status) { currentStatus(source.key) }.map { view ->
+                val cached = view.cached.items
+                // Only for the whole collection: a window holds fewer documents than a full sync brings
+                if (needsComplete && since == null && !caughtUp(view.cached.documents, view.status, view.cacheBehind)) {
                     Load.Loading
                 } else {
-                    loadOf(view.cached, view.cached.isEmpty(), covers(view.status, source.plan, range), needsComplete, view.status, view.cacheBehind)
+                    loadOf(cached, cached.isEmpty(), covers(view.status, source.plan, range), needsComplete, view.status, view.cacheBehind)
                 }
             }
         }

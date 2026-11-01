@@ -99,9 +99,9 @@ class SyncRulesTest {
     fun `the cache has caught up once it shows what the last sync brought`() {
         val synced = SyncStatus(lastSynced = 1, syncs = 1, lastFetched = 3)
 
-        assertThat(caughtUp(cachedCount = 1, synced, cacheBehind = true)).isFalse()
-        assertThat(caughtUp(cachedCount = 3, synced, cacheBehind = true)).isTrue()
-        assertThat(caughtUp(cachedCount = 1, synced, cacheBehind = false)).isTrue()
+        assertThat(caughtUp(cachedDocuments = 1, synced, cacheBehind = true)).isFalse()
+        assertThat(caughtUp(cachedDocuments = 3, synced, cacheBehind = true)).isTrue()
+        assertThat(caughtUp(cachedDocuments = 1, synced, cacheBehind = false)).isTrue()
     }
 
     @Test

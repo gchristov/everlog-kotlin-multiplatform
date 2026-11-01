@@ -55,8 +55,11 @@ class FakeCollectionBackend(server: List<Doc> = emptyList(), cached: List<Doc> =
     // Local writes the server hasn't confirmed yet, which syncs don't replace
     private val pending = HashSet<String>()
 
-    override fun cached(since: Long?, limit: Int?): Flow<List<Doc>> =
-        cache.map { docs -> docs.filter { since == null || it.date >= since }.sortedByDescending { it.date }.take(limit ?: Int.MAX_VALUE) }
+    override fun cachedDocuments(since: Long?, limit: Int?): Flow<CachedDocuments<Doc>> =
+        cache.map { docs ->
+            val shown = docs.filter { since == null || it.date >= since }.sortedByDescending { it.date }
+            CachedDocuments(shown.take(limit ?: Int.MAX_VALUE), documents = shown.size)
+        }
 
     override suspend fun fetchPage(after: Int, size: Int): Int {
         serverCall("page:$after")
