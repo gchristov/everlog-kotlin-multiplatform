@@ -6,6 +6,7 @@ import com.everlog.R
 import com.everlog.android.common.data.model.exercise.ELExerciseGroup
 import com.everlog.android.common.session.SessionDefaults
 import com.everlog.managers.ErrorManager
+import com.everlog.managers.RemoteConfigManager
 import com.everlog.managers.analytics.AnalyticsManager
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.firestoreSettings
@@ -54,6 +55,7 @@ class AppConfig {
         configureFirestore()
         configureAnalyticsManager()
         configureErrorManager()
+        refreshRemoteConfig()
     }
 
     // Settings only apply before Firestore's first use, so this runs first
@@ -66,6 +68,11 @@ class AppConfig {
 
     private fun configureErrorManager() {
         ErrorManager.manager.initialize()
+    }
+
+    // Screens opened before Home, like onboarding's, read the flags too, so they can't wait for Home's refresh
+    private fun refreshRemoteConfig() {
+        RemoteConfigManager.manager.refreshAppConfig()
     }
 
     private fun configureAnalyticsManager() {
