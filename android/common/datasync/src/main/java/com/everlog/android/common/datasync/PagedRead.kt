@@ -53,7 +53,7 @@ class PagedRead<T> internal constructor(
             fetchFromServerWhenShort(shown, status, paging)
             val short = shown.items.size < shown.limit
             val page = Page(shown.items, paging.loadingMore, endReached = short && (status.fullHistorySynced != null || paging.serverExhausted))
-            loadOf(page, shown.items.isEmpty(), covered = status.lastSynced != null, needsFullHistory = false, status, view.cacheBehind)
+            loadOf(page, shown.items.isEmpty(), covered = status.lastSynced != null, needsComplete = false, status, view.cacheBehind)
         }
             .catch { emit(Load.Unavailable(it)) }
             .distinctUntilChanged()

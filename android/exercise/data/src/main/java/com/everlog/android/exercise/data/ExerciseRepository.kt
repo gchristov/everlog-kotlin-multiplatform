@@ -68,6 +68,8 @@ class RealExerciseRepository(
         userId = null,
         SyncPlan.Whole,
         FirestoreCollection(FirestorePaths.globalExercises, dispatcher = dispatcher) { it.toStoredExercise(own = false) },
+        // libraryExercise(uuid) caches single exercises, and the picker searches the whole library
+        completeOnly = true,
     )
 
     override suspend fun globalExercises(): Either<Throwable, List<ELExercise>> = withContext(dispatcher) {

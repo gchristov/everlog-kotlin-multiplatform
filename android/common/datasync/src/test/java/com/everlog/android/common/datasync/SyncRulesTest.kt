@@ -87,12 +87,21 @@ class SyncRulesTest {
         val failed = SyncStatus(lastFailure = IllegalStateException("offline"))
         val cached = listOf("bench")
 
-        assertThat(loadOf(emptyList<String>(), isEmpty = true, covered = true, needsFullHistory = false, SyncStatus())).isEqualTo(Load.Ready(emptyList<String>()))
-        assertThat(loadOf(cached, isEmpty = false, covered = false, needsFullHistory = false, syncing)).isEqualTo(Load.Ready(cached))
-        assertThat(loadOf(cached, isEmpty = false, covered = false, needsFullHistory = true, syncing)).isEqualTo(Load.Loading)
-        assertThat(loadOf(emptyList<String>(), isEmpty = true, covered = false, needsFullHistory = false, syncing)).isEqualTo(Load.Loading)
-        assertThat(loadOf(emptyList<String>(), isEmpty = true, covered = false, needsFullHistory = false, failed)).isEqualTo(Load.Unavailable(failed.lastFailure!!))
-        assertThat(loadOf(cached, isEmpty = false, covered = false, needsFullHistory = true, failed)).isEqualTo(Load.Unavailable(failed.lastFailure!!))
+        assertThat(loadOf(emptyList<String>(), isEmpty = true, covered = true, needsComplete = false, SyncStatus())).isEqualTo(Load.Ready(emptyList<String>()))
+        assertThat(loadOf(cached, isEmpty = false, covered = false, needsComplete = false, syncing)).isEqualTo(Load.Ready(cached))
+        assertThat(loadOf(cached, isEmpty = false, covered = false, needsComplete = true, syncing)).isEqualTo(Load.Loading)
+        assertThat(loadOf(emptyList<String>(), isEmpty = true, covered = false, needsComplete = false, syncing)).isEqualTo(Load.Loading)
+        assertThat(loadOf(emptyList<String>(), isEmpty = true, covered = false, needsComplete = false, failed)).isEqualTo(Load.Unavailable(failed.lastFailure!!))
+        assertThat(loadOf(cached, isEmpty = false, covered = false, needsComplete = true, failed)).isEqualTo(Load.Unavailable(failed.lastFailure!!))
+    }
+
+    @Test
+    fun `the cache has caught up once it shows what the last sync brought`() {
+        val synced = SyncStatus(lastSynced = 1, syncs = 1, lastFetched = 3)
+
+        assertThat(caughtUp(cachedCount = 1, synced, cacheBehind = true)).isFalse()
+        assertThat(caughtUp(cachedCount = 3, synced, cacheBehind = true)).isTrue()
+        assertThat(caughtUp(cachedCount = 1, synced, cacheBehind = false)).isTrue()
     }
 
     @Test
