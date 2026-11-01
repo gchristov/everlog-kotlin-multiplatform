@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Prints GitHub release notes for the commits since the previous tag, one bullet per commit:
+# Prints GitHub release notes for the commits since the previous version's tag, one bullet per commit:
 #   - [TAS-123] Something changed (https://github.com/<repo>/pull/45)
 #
 # Arguments: REPO (e.g. gchristov/everlog-kotlin-multiplatform) and optional REF (defaults to HEAD)
