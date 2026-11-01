@@ -52,7 +52,7 @@ Three workflows in `.github/workflows/`, all built from shared composite actions
 - `nightly-check.yml` — cron every weekday (can also be run manually, but only on `master`): same checks plus a **release** build uploaded to the Play Store internal track, with Slack status reporting to `MONITORING_SLACK_URL`.
 - `release-check.yml` — manual (`workflow_dispatch`, requires a changelog input, only on `master` or a `hotfix-*` branch): full release build deployed to the Play Store production track via `fastlane android deploy_play_release`, then tags the build as the next release candidate (`<version>-rc<N>`) and creates (or, for a later candidate, replaces) the GitHub release and `<version>` tag, listing the PRs since the previous version's tag (`tools/versioning/release_notes.sh`). Each run is a new candidate that replaces the earlier draft on Play. Bumping the version for the next release is still a manual PR. Hotfixes (patch releases) always go through a `hotfix-<version>` branch off the release tag, released from that branch and then merged back into `master`: see "Hotfixes" in `tools/versioning/README.md`.
 
-Fastlane lanes (`fastlane/Fastfile`): `deploy_firebase`, `deploy_play_internal`, `deploy_play_release`. Changelogs are auto-generated from `git log` since the last tag.
+Fastlane lanes (`fastlane/Fastfile`): `deploy_firebase`, `deploy_play_internal`, `deploy_play_release`. Changelogs are auto-generated from `git log` since the last tag, skipping release candidate tags (`<version>-rc<N>`).
 
 ## Architecture
 

@@ -1,6 +1,6 @@
 # Versioning System
 
-This directory contains the configuration and logic for the automated versioning system used in the Everlog project for both **Android** and **iOS**.
+This directory contains the configuration and logic for the Android app's automated versioning.
 
 ## Overview
 
