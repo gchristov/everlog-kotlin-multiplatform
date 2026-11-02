@@ -80,7 +80,7 @@ object AuthManager : PreferencesManager() {
                     }
                 })
             }
-            ELApplication.graph.userSettings.loggedIn() -> {
+            ELApplication.graph.realUserSettings.loggedIn() -> {
                 handleAuthError(Exception("User previously logged in but not anymore => logging out"), object : AuthActionListener() {
                     override fun onError(throwable: Throwable) {
                         logout(listener)
@@ -105,7 +105,7 @@ object AuthManager : PreferencesManager() {
     }
 
     val isLoggedIn: Boolean
-        get() = ELApplication.graph.userSettings.loggedIn() && mAuth?.currentUser != null
+        get() = ELApplication.graph.realUserSettings.loggedIn() && mAuth?.currentUser != null
 
     // Test Lab runs are redirected to this account on login
     val isFirebaseTestLabAccount: Boolean
@@ -184,11 +184,11 @@ object AuthManager : PreferencesManager() {
         // Integrations
         GoogleFitIntegrationManager.signOut()
         // Local state
-        ELApplication.graph.userSettings.setLoggedIn(false)
+        ELApplication.graph.realUserSettings.setLoggedIn(false)
         ELApplication.graph.userSession.clearUser()
         AnalyticsManager.manager.userLogout()
         AppLaunchManager.manager.clearAppUserData()
-        ELApplication.graph.userSettings.clearUserPreferences()
+        ELApplication.graph.realUserSettings.clearUserPreferences()
         ELApplication.graph.planProgress.clearOngoingPlan()
         mAuth?.signOut()
         mClient?.signOut()?.addOnCompleteListener {
@@ -317,7 +317,7 @@ object AuthManager : PreferencesManager() {
          */
         val block = Runnable {
             saveUser(user)
-            ELApplication.graph.userSettings.setLoggedIn(true)
+            ELApplication.graph.realUserSettings.setLoggedIn(true)
             mAuthListener?.onSuccess(user, justRegistered)
         }
         // This is required here for the refresh to work

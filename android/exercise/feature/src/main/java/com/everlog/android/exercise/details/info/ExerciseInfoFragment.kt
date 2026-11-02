@@ -1,5 +1,7 @@
 package com.everlog.android.exercise.details.info
 
+import com.everlog.android.exercise.ExerciseGraph
+import com.everlog.android.common.kotlin.di.appGraph
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -10,7 +12,6 @@ import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import com.everlog.android.common.compose.theme.Theme
 import com.everlog.android.common.data.model.exercise.ELExercise
-import com.everlog.android.exercise.ExerciseFeature
 import com.everlog.android.exercise.ExerciseScreenNames
 import com.everlog.android.exercise.R
 import com.everlog.android.exercise.details.BaseExerciseTabFragment
@@ -23,6 +24,7 @@ import kotlinx.coroutines.Dispatchers
 class ExerciseInfoFragment(exercise: ELExercise, stats: ExerciseStatsController.StatsResult?) : BaseExerciseTabFragment(exercise, stats), MvpViewExerciseInfo {
 
     private var mPresenter: PresenterExerciseInfo? = null
+    private val graph by lazy { requireContext().appGraph<ExerciseGraph>() }
 
     private val viewModel by lazy {
         val factory = viewModelFactory {
@@ -30,8 +32,8 @@ class ExerciseInfoFragment(exercise: ELExercise, stats: ExerciseStatsController.
                 val exercise = getExercise()
                 ExerciseInfoViewModel(
                     dispatcher = Dispatchers.Main,
-                    loadGuide = ExerciseFeature.dependencies.loadExerciseGuide(),
-                    exercise = exercise.toInfoExercise(),
+                    loadGuide = graph.loadExerciseGuide,
+                    exercise = exercise.toInfoExercise(graph.userSession.user()?.id),
                 )
             }
         }
@@ -74,7 +76,7 @@ class ExerciseInfoFragment(exercise: ELExercise, stats: ExerciseStatsController.
         // Reloads pass the exercise here (see BaseExerciseTabFragment.update): the view-model keeps
         // the guide, and the screen its scroll position
         if (isAdded) {
-            viewModel.updateExercise(exercise.toInfoExercise())
+            viewModel.updateExercise(exercise.toInfoExercise(graph.userSession.user()?.id))
         }
     }
 
@@ -85,9 +87,9 @@ class ExerciseInfoFragment(exercise: ELExercise, stats: ExerciseStatsController.
     }
 }
 
-private fun ELExercise.toInfoExercise() = ExerciseInfoViewModel.Exercise(
+private fun ELExercise.toInfoExercise(userId: String?) = ExerciseInfoViewModel.Exercise(
     uuid = uuid.orEmpty(),
     name = name.orEmpty(),
     imageUrl = imageUrl,
-    own = isEditable(ExerciseFeature.dependencies.userSession().user()?.id),
+    own = isEditable(userId),
 )

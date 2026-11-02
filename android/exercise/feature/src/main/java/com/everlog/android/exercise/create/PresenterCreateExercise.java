@@ -1,5 +1,7 @@
 package com.everlog.android.exercise.create;
 
+import com.everlog.android.exercise.ExerciseNavigation;
+import com.everlog.android.exercise.ExerciseAnalytics;
 import android.content.Intent;
 import android.content.DialogInterface;
 import android.net.Uri;
@@ -7,17 +9,15 @@ import android.net.Uri;
 import com.everlog.android.common.data.model.exercise.ELExercise;
 import com.everlog.android.auth.data.UserSession;
 import com.everlog.android.auth.data.UserSessionKt;
-import com.everlog.android.exercise.ExerciseFeature;
 import com.everlog.android.exercise.data.ExerciseImageStorage;
 import com.everlog.android.exercise.data.store.ExerciseStores;
 import com.everlog.android.exercise.ExerciseExtras;
-import com.everlog.android.exercise.ExerciseFeature;
 import com.everlog.android.exercise.R;
 import com.everlog.android.common.mvp.activity.BaseActivityPresenter;
 import com.everlog.android.common.kotlin.format.ArrayResourceTypeUtils;
 import com.everlog.android.common.kotlin.Utils;
 import com.everlog.android.common.mvp.util.KeyboardUtils;
-import com.everlog.android.exercise.data.ExerciseData;
+import com.everlog.android.exercise.data.ExerciseCopies;
 import com.google.firebase.firestore.SetOptions;
 import com.imagepick.ImagePickerOptions;
 import com.imagepick.ImagePickerResult;
@@ -31,12 +31,23 @@ public class PresenterCreateExercise extends BaseActivityPresenter<MvpViewCreate
 
 //    @State
     boolean mChangesMade = false;
-    private final UserSession session = ExerciseFeature.INSTANCE.getDependencies().userSession();
-    private final ExerciseImageStorage imageStorage = ExerciseFeature.INSTANCE.getDependencies().exerciseImageStorage();
+    private final UserSession session;
+    private final ExerciseImageStorage imageStorage;
+    private final ExerciseCopies copies;
+    private final ExerciseAnalytics analytics;
+    private final ExerciseNavigation navigation;
     private ELExercise toEdit;
     private boolean mInitialDataSet = false;
     private boolean mEditMode = false;
     private Uri mPickedImageUri;
+
+    public PresenterCreateExercise(UserSession session, ExerciseImageStorage imageStorage, ExerciseCopies copies, ExerciseAnalytics analytics, ExerciseNavigation navigation) {
+        this.session = session;
+        this.imageStorage = imageStorage;
+        this.copies = copies;
+        this.analytics = analytics;
+        this.navigation = navigation;
+    }
 
     @Override
     public void onReady() {
@@ -127,9 +138,9 @@ public class PresenterCreateExercise extends BaseActivityPresenter<MvpViewCreate
                 ExerciseStores.exerciseStore().create(toSave, SetOptions.merge());
                 getMvpView().showToast(R.string.create_exercise_saved);
                 if (mEditMode) {
-                    ExerciseFeature.INSTANCE.getDependencies().exerciseAnalytics().exerciseModified();
+                    analytics.exerciseModified();
                 } else {
-                    ExerciseFeature.INSTANCE.getDependencies().exerciseAnalytics().exerciseCreated();
+                    analytics.exerciseCreated();
                 }
                 // Upload image.
                 if (mPickedImageUri != null) {
@@ -148,7 +159,7 @@ public class PresenterCreateExercise extends BaseActivityPresenter<MvpViewCreate
     }
 
     private void handleMigrateRoutinesAndHistory(ELExercise changed) {
-        ExerciseData.INSTANCE.getDependencies().updateCopies(changed);
+        copies.update(changed);
     }
 
     private void handlePickImage() {
@@ -167,7 +178,7 @@ public class PresenterCreateExercise extends BaseActivityPresenter<MvpViewCreate
                     } else if (result instanceof ImagePickerResult.Removed) {
                         handleImagePicked(null);
                     } else if (result instanceof ImagePickerResult.PermissionDenied) {
-                        ExerciseFeature.INSTANCE.getDependencies().promptForAppSettings(getContext(), R.string.create_exercise_error_no_permissions);
+                        navigation.promptForAppSettings(getContext(), R.string.create_exercise_error_no_permissions);
                     }
                 }, this::handleError));
     }

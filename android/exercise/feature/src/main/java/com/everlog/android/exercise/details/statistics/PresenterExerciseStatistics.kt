@@ -1,13 +1,15 @@
 package com.everlog.android.exercise.details.statistics
 
-import com.everlog.android.exercise.ExerciseFeature
+import com.everlog.android.exercise.ExerciseNavigation
 import com.everlog.android.exercise.ExerciseFeedbackForm
 import com.everlog.android.exercise.details.BasePresenterExerciseTab
 
-class PresenterExerciseStatistics : BasePresenterExerciseTab<MvpViewExerciseStatistics>() {
+class PresenterExerciseStatistics(
+    private val navigation: ExerciseNavigation,
+) : BasePresenterExerciseTab<MvpViewExerciseStatistics>() {
 
     private val feedback by lazy {
-        mvpView.getParentActivity()?.let { ExerciseFeature.dependencies.feedbackForm(it, ExerciseFeedbackForm.Statistics) }
+        mvpView.getParentActivity()?.let { navigation.feedbackForm(it, ExerciseFeedbackForm.Statistics) }
     }
 
     override fun onReady() {

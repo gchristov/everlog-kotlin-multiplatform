@@ -21,7 +21,7 @@ import timber.log.Timber
 @SingleIn(AppScope::class)
 @ContributesBinding(AppScope::class, binding = binding<ExerciseImageStorage>())
 @Inject
-class RealExerciseImageStorage : PreferencesManager(), ExerciseImageStorage {
+class RealExerciseImageStorage(private val copies: ExerciseCopies) : PreferencesManager(), ExerciseImageStorage {
 
     private companion object {
         const val TAG = "ExerciseImageStorage"
@@ -100,7 +100,7 @@ class RealExerciseImageStorage : PreferencesManager(), ExerciseImageStorage {
                     exercise.imageUrl = uri.toString()
                     ExerciseStores.exerciseStore().create(exercise, SetOptions.merge())
                     Timber.tag(TAG).i("Updated exercise image in Firestore")
-                    ExerciseData.dependencies.updateCopies(exercise)
+                    copies.update(exercise)
                 }
     }
 

@@ -2,10 +2,11 @@ package com.everlog.android.exercise.data
 
 import arrow.core.getOrElse
 import com.everlog.android.common.kotlin.Load
-import com.everlog.android.exercise.data.LoadExerciseLibraryUseCase
-import com.everlog.android.exercise.data.exerciseLibraryOf
+import com.everlog.android.common.kotlin.di.IoDispatcher
 import com.everlog.android.exercise.data.model.library.ExerciseLibrary
-import com.everlog.android.exercise.data.ExerciseRepository
+import dev.zacsweers.metro.AppScope
+import dev.zacsweers.metro.ContributesBinding
+import dev.zacsweers.metro.Inject
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
@@ -16,8 +17,10 @@ import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
 import timber.log.Timber
 
+@ContributesBinding(AppScope::class)
+@Inject
 class RealLoadExerciseLibraryUseCase(
-    private val dispatcher: CoroutineDispatcher,
+    @IoDispatcher private val dispatcher: CoroutineDispatcher,
     private val exerciseRepository: ExerciseRepository,
     private val usage: ExerciseUsage,
 ) : LoadExerciseLibraryUseCase {

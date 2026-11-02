@@ -5,9 +5,8 @@ import com.everlog.android.auth.AuthFeature
 import com.everlog.android.auth.data.store.AuthStores
 import com.everlog.android.common.data.CommonData
 import com.everlog.android.common.kotlin.AppContext
+import com.everlog.android.common.kotlin.di.GraphOwner
 import com.everlog.android.common.mvp.CommonMvp
-import com.everlog.android.exercise.ExerciseFeature
-import com.everlog.android.exercise.data.ExerciseData
 import com.everlog.android.exercise.data.store.ExerciseStores
 import com.everlog.android.history.HistoryFeature
 import com.everlog.android.onboarding.OnboardingFeature
@@ -23,8 +22,6 @@ import com.everlog.android.workout.data.store.WorkoutStores
 import com.everlog.application.features.AppAuthFeatureDependencies
 import com.everlog.application.features.AppCommonDataDependencies
 import com.everlog.application.features.AppCommonMvpDependencies
-import com.everlog.application.features.AppExerciseDataDependencies
-import com.everlog.application.features.AppExerciseFeatureDependencies
 import com.everlog.application.features.AppHistoryFeatureDependencies
 import com.everlog.application.features.AppOnboardingFeatureDependencies
 import com.everlog.application.features.AppPlanFeatureDependencies
@@ -36,7 +33,7 @@ import com.everlog.config.AppConfig
 import com.jakewharton.threetenabp.AndroidThreeTen
 import dev.zacsweers.metro.createGraph
 
-class ELApplication : Application() {
+class ELApplication : Application(), GraphOwner {
 
     companion object {
         // For the code that can't have its dependencies passed in yet
@@ -44,6 +41,9 @@ class ELApplication : Application() {
         lateinit var graph: AppGraph
             private set
     }
+
+    override val dependencyGraph: Any
+        get() = graph
 
     override fun onCreate() {
         super.onCreate()
@@ -57,8 +57,6 @@ class ELApplication : Application() {
         PlanStores.session = graph.userSession
         SettingsStores.session = graph.userSession
         CommonMvp.dependencies = AppCommonMvpDependencies()
-        ExerciseData.dependencies = AppExerciseDataDependencies()
-        ExerciseFeature.dependencies = AppExerciseFeatureDependencies()
         TemplateFeature.dependencies = AppTemplateFeatureDependencies()
         WorkoutFeature.dependencies = AppWorkoutFeatureDependencies()
         HistoryFeature.dependencies = AppHistoryFeatureDependencies()

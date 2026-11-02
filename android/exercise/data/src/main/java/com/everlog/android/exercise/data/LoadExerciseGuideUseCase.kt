@@ -1,9 +1,13 @@
 package com.everlog.android.exercise.data
 
 import com.everlog.android.common.kotlin.Load
+import com.everlog.android.common.kotlin.di.IoDispatcher
 import com.everlog.android.common.kotlin.map
-import com.everlog.android.exercise.data.model.library.ExerciseGuide
 import com.everlog.android.exercise.data.ExerciseRepository
+import com.everlog.android.exercise.data.model.library.ExerciseGuide
+import dev.zacsweers.metro.AppScope
+import dev.zacsweers.metro.ContributesBinding
+import dev.zacsweers.metro.Inject
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOn
@@ -19,8 +23,10 @@ interface LoadExerciseGuideUseCase {
     operator fun invoke(uuid: String): Flow<Load<ExerciseGuide>>
 }
 
+@ContributesBinding(AppScope::class)
+@Inject
 class RealLoadExerciseGuideUseCase(
-    private val dispatcher: CoroutineDispatcher,
+    @IoDispatcher private val dispatcher: CoroutineDispatcher,
     private val exerciseRepository: ExerciseRepository,
 ) : LoadExerciseGuideUseCase {
 

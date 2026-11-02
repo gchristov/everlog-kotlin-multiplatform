@@ -118,7 +118,7 @@ class AppUsageReminderManager : PreferencesManager() {
         }
 
         private fun nextReminder(now: Long): AppUsageNotification.Reminder? {
-            if (!ELApplication.graph.userSettings.loggedIn()) {
+            if (!ELApplication.graph.realUserSettings.loggedIn()) {
                 Timber.tag(TAG).i("No app usage reminder - logged out")
                 return null
             }

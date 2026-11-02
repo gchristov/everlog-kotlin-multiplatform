@@ -5,6 +5,8 @@ import com.everlog.android.common.data.model.exercise.ELRoutineExercise
 import com.everlog.android.common.data.model.set.ELSet
 import com.everlog.android.common.data.model.workout.ELWorkout
 import com.everlog.android.common.data.model.workout.RangeType
+import com.everlog.android.common.data.store.CollectionStore
+import com.everlog.android.common.data.store.OnStoreItemsListener
 import com.everlog.android.common.datatest.at
 import com.everlog.android.common.datatest.loggedSet
 import com.everlog.android.common.datatest.workout
@@ -45,11 +47,20 @@ class ExerciseStatsControllerTest {
 
     // Helpers
 
+    // The stats are worked out from the history passed in, so the store is never read
+    private object NoWorkouts : CollectionStore<ELWorkout> {
+        override fun getItems() = Unit
+
+        override fun getItems(listener: OnStoreItemsListener<ELWorkout>?) = Unit
+
+        override fun destroy() = Unit
+    }
+
     private fun routineExercise(vararg sets: ELSet) = ELRoutineExercise("re", bench, sets.toMutableList())
 
     private fun calculateStats(history: List<ELWorkout>): ExerciseStatsController.StatsResult {
         // OVERALL so the result doesn't depend on today's date
-        return ExerciseStatsController(WeightUnit.KILOGRAM, DayOfWeek.MONDAY).calculateStats(RangeType.OVERALL, listOf(bench), history, false)
+        return ExerciseStatsController(WeightUnit.KILOGRAM, DayOfWeek.MONDAY, NoWorkouts).calculateStats(RangeType.OVERALL, listOf(bench), history, false)
                 .toBlocking().first().getValue(bench.uuid!!)
     }
 }

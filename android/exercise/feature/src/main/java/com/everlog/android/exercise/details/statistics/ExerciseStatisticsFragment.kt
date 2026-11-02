@@ -1,6 +1,7 @@
 package com.everlog.android.exercise.details.statistics
 
-import com.everlog.android.exercise.ExerciseFeature
+import com.everlog.android.exercise.ExerciseGraph
+import com.everlog.android.common.kotlin.di.appGraph
 import android.graphics.PorterDuff
 import android.view.LayoutInflater
 import android.view.View
@@ -33,7 +34,8 @@ class ExerciseStatisticsFragment(exercise: ELExercise,
                                  stats: ExerciseStatsController.StatsResult?,
                                  private var range: RangeType) : BaseExerciseTabFragment(exercise, stats), MvpViewExerciseStatistics {
 
-    private val weightUnit get() = ExerciseFeature.dependencies.userSettings().weightUnit()
+    private val graph by lazy { requireContext().appGraph<ExerciseGraph>() }
+    private val weightUnit get() = graph.userSettings.weightUnit()
     private var mPresenter: PresenterExerciseStatistics? = null
     private var _binding: FragmentExerciseStatisticsBinding? = null
     private val binding get() = _binding!!
@@ -154,7 +156,7 @@ class ExerciseStatisticsFragment(exercise: ELExercise,
     // Setup
 
     override fun setupPresenter() {
-        mPresenter = PresenterExerciseStatistics()
+        mPresenter = PresenterExerciseStatistics(graph.exerciseNavigation)
     }
 
     private fun setupCharts() {

@@ -1,5 +1,7 @@
 package com.everlog.android.exercise.details
 
+import com.everlog.android.exercise.ExerciseGraph
+import com.everlog.android.common.kotlin.di.appGraph
 import com.everlog.android.common.design.R as DesignR
 import android.content.Context
 import android.content.Intent
@@ -16,7 +18,6 @@ import com.everlog.android.common.mvp.activity.BaseActivity
 import com.everlog.android.common.mvp.activity.BaseActivityMvpView
 import com.everlog.android.common.mvp.activity.BaseActivityPresenter
 import com.everlog.android.exercise.ExerciseExtras
-import com.everlog.android.exercise.ExerciseFeature
 import com.everlog.android.exercise.ExerciseScreenNames
 import com.everlog.android.exercise.R
 import com.everlog.android.exercise.databinding.ActivityExerciseDetailsBinding
@@ -38,7 +39,8 @@ class ExerciseDetailsActivity : BaseActivity(), MvpViewExerciseDetails {
     private var mAllowDelete = false
     private var mLastType: Type? = null
     // Read once, so a Remote Config refresh doesn't swap the tab while the screen is open
-    private val mDetailsV2 = ExerciseFeature.dependencies.exerciseDetailsV2()
+    private val graph by lazy { appGraph<ExerciseGraph>() }
+    private val mDetailsV2 by lazy { graph.exerciseConfig.exerciseDetailsV2() }
     // Built once: reloads update them, as replacing them lost each tab's state and scroll position
     private var mTabs: List<BaseExerciseTabFragment>? = null
 
@@ -136,7 +138,7 @@ class ExerciseDetailsActivity : BaseActivity(), MvpViewExerciseDetails {
                                      range: RangeType) {
         supportActionBar?.title = exercise.name
         supportActionBar?.subtitle = exercise.category?.lowercase()?.capitalize()
-        mAllowDelete = exercise.isEditable(ExerciseFeature.dependencies.userSession().user()?.id)
+        mAllowDelete = exercise.isEditable(graph.userSession.user()?.id)
         invalidateOptionsMenu()
         // Tabs
         mTabs?.let { tabs ->
@@ -168,7 +170,13 @@ class ExerciseDetailsActivity : BaseActivity(), MvpViewExerciseDetails {
     // Setup
 
     override fun setupPresenter() {
-        mPresenter = PresenterExerciseDetails()
+        mPresenter = PresenterExerciseDetails(
+            settings = graph.userSettings,
+            session = graph.userSession,
+            imageStorage = graph.exerciseImageStorage,
+            analytics = graph.exerciseAnalytics,
+            workoutsStore = graph.workoutsStore,
+        )
     }
 
     private fun setupTopBar() {

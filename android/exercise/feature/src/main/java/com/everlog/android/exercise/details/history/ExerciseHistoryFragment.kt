@@ -1,5 +1,7 @@
 package com.everlog.android.exercise.details.history
 
+import com.everlog.android.exercise.ExerciseGraph
+import com.everlog.android.common.kotlin.di.appGraph
 import com.everlog.android.common.design.R as DesignR
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -72,7 +74,7 @@ class ExerciseHistoryFragment(exercise: ELExercise, stats: ExerciseStatsControll
     // Setup
 
     override fun setupPresenter() {
-        mPresenter = PresenterExerciseHistory()
+        mPresenter = PresenterExerciseHistory(requireContext().appGraph<ExerciseGraph>().userSettings)
     }
 
     private fun setupListView() {

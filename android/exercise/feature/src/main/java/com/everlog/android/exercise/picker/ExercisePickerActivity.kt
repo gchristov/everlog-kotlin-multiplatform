@@ -1,5 +1,7 @@
 package com.everlog.android.exercise.picker
 
+import com.everlog.android.exercise.ExerciseGraph
+import com.everlog.android.common.kotlin.di.appGraph
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
@@ -10,7 +12,6 @@ import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import com.everlog.android.common.compose.CommonComposeActivity
 import com.everlog.android.exercise.data.model.library.toELExercise
-import com.everlog.android.exercise.ExerciseFeature
 import com.everlog.android.exercise.ExerciseFeedbackForm
 import com.everlog.android.exercise.R
 import kotlinx.coroutines.Dispatchers
@@ -20,7 +21,8 @@ import kotlinx.coroutines.Dispatchers
  * builders), it returns the picks as exercise groups in [EXTRA_EXERCISE_GROUPS]. The spec is on the Everlog canvas (Exercise Library page).
  */
 class ExercisePickerActivity : CommonComposeActivity() {
-    private val dependencies = ExerciseFeature.dependencies
+    private val graph by lazy { appGraph<ExerciseGraph>() }
+    private val navigation by lazy { graph.exerciseNavigation }
 
     private val viewModel by viewModels<ExercisePickerViewModel> {
         viewModelFactory {
@@ -29,9 +31,9 @@ class ExercisePickerActivity : CommonComposeActivity() {
                     dispatcher = Dispatchers.Main,
                     mode = if (intent.getBooleanExtra(ExtraPick, false)) PickerMode.Pick else PickerMode.Browse,
                     savedState = createSavedStateHandle(),
-                    loadLibrary = dependencies.loadExerciseLibrary(),
+                    loadLibrary = graph.loadExerciseLibrary,
                     recentSearches = RealExercisePickerRecentSearches(),
-                    analytics = dependencies.pickerAnalytics(),
+                    analytics = graph.pickerAnalytics,
                     me = FilterValue(
                         id = CreatedByMe,
                         name = getString(R.string.exercise_picker_created_by_me),
@@ -43,16 +45,16 @@ class ExercisePickerActivity : CommonComposeActivity() {
         }
     }
 
-    private val sendFeedback by lazy { dependencies.feedbackForm(this, ExerciseFeedbackForm.PickerMenu) }
-    private val reportMissing by lazy { dependencies.feedbackForm(this, ExerciseFeedbackForm.PickerNoResults) }
+    private val sendFeedback by lazy { navigation.feedbackForm(this, ExerciseFeedbackForm.PickerMenu) }
+    private val reportMissing by lazy { navigation.feedbackForm(this, ExerciseFeedbackForm.PickerNoResults) }
 
     @Composable
     override fun Content() = ExercisePickerScreen(
         viewModel = viewModel,
         onResult = ::finishWithPicks,
-        onOpenExercise = { dependencies.openExerciseDetails(this, it.toELExercise()) },
-        onCreateExercise = { name -> dependencies.openCreateExercise(this, name) },
-        onPickSetType = { count -> dependencies.openSetTypePicker(this, count) },
+        onOpenExercise = { navigation.openExerciseDetails(this, it.toELExercise()) },
+        onCreateExercise = { name -> navigation.openCreateExercise(this, name) },
+        onPickSetType = { count -> navigation.openSetTypePicker(this, count) },
         onSendFeedback = sendFeedback,
         onReportMissing = reportMissing,
     )
@@ -61,8 +63,8 @@ class ExercisePickerActivity : CommonComposeActivity() {
     @Deprecated("The navigator opens the set type picker and the create screen with startActivityForResult")
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        dependencies.pickedSetType(requestCode, resultCode, data)?.let { viewModel.onAdd(it) }
-        dependencies.createdExerciseUuid(requestCode, resultCode, data)?.let { viewModel.onExerciseCreated(it) }
+        navigation.pickedSetType(requestCode, resultCode, data)?.let { viewModel.onAdd(it) }
+        navigation.createdExerciseUuid(requestCode, resultCode, data)?.let { viewModel.onExerciseCreated(it) }
     }
 
     private fun finishWithPicks(result: PickerResult) {
