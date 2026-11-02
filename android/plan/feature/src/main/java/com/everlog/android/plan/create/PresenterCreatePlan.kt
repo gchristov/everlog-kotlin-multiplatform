@@ -15,7 +15,6 @@ import com.everlog.android.plan.data.model.ELPlanWeek
 import com.everlog.android.plan.data.store.ELDocStorePlanLoadedEvent
 import com.everlog.android.plan.data.store.PlanStores
 import com.everlog.android.plan.details.PlanDetailsActivity
-import com.everlog.android.plan.data.PlanManager
 import com.everlog.android.common.mvp.activity.BaseActivityPresenter
 import com.everlog.android.common.kotlin.Utils
 import com.everlog.android.common.mvp.util.KeyboardUtils
@@ -35,6 +34,8 @@ import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
 
 class PresenterCreatePlan : BaseActivityPresenter<MvpViewCreatePlan>() {
+
+    private val planProgress = PlanFeature.dependencies.planProgress()
 
     // @State
     @JvmField
@@ -123,8 +124,8 @@ class PresenterCreatePlan : BaseActivityPresenter<MvpViewCreatePlan>() {
             } else {
                 if (!mLoadedItemOnce || event.isHasPendingWrites) {
                     toEdit = event.item
-                    if (PlanManager.manager.isOngoing(toEdit)) {
-                        toEdit = PlanManager.manager.ongoingPlan()
+                    if (planProgress.isOngoing(toEdit)) {
+                        toEdit = planProgress.ongoingPlan()
                     }
                 }
                 loadViewData()
@@ -272,8 +273,8 @@ class PresenterCreatePlan : BaseActivityPresenter<MvpViewCreatePlan>() {
             PlanStores.planStore().create(toSave, SetOptions.merge())
             mvpView?.showToast(R.string.create_plan_saved)
             // Update local plan
-            if (PlanManager.manager.isOngoing(toEdit)) {
-                PlanManager.manager.setOngoingPlan(toEdit)
+            if (planProgress.isOngoing(toEdit)) {
+                planProgress.setOngoingPlan(toEdit)
                 sendBroadcast(Intent(PlanBroadcasts.CURRENT_PLAN_CHANGED))
             }
             if (mEditMode) {

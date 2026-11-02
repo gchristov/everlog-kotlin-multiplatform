@@ -1,12 +1,12 @@
 package com.everlog.ui.fragments.home.week
 
+import com.everlog.application.AppServices
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.everlog.R
 import com.everlog.config.HomeNotification
 import com.everlog.databinding.FragmentHomeWeekBinding
-import com.everlog.android.plan.data.PlanManager
 import com.everlog.managers.analytics.AnalyticsConstants
 import com.everlog.android.common.mvp.activity.BaseActivity
 import com.everlog.ui.activities.home.HomeActivity
@@ -133,7 +133,7 @@ class WeekHomeFragment : BaseTabFragment(), MvpViewWeekHome {
     private fun setupWeekViews() {
         mWeekViews.forEach { it.onCreateView(view) }
         (activity as? BaseActivity)?.let { parent ->
-            val initialState = WeekViewState.Loading(PlanManager.manager.hasOngoingPlan())
+            val initialState = WeekViewState.Loading(AppServices.planProgress.hasOngoingPlan())
             mWeekViews.forEach { it.render(initialState, parent) }
         }
         mWeekStatistics.setListener(object : StatisticsWeekListener {

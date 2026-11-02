@@ -12,7 +12,6 @@ import com.everlog.android.exercise.R
 import com.everlog.android.exercise.create.CreateExerciseActivity
 import com.everlog.android.exercise.details.statistics.ExerciseStatisticsFragment
 import com.everlog.android.exercise.details.statistics.ExerciseStatsController
-import com.everlog.android.exercise.data.ExerciseImageStorage
 import com.everlog.android.common.mvp.activity.BaseActivityPresenter
 import com.everlog.android.common.kotlin.Utils
 import org.greenrobot.eventbus.Subscribe
@@ -22,6 +21,7 @@ class PresenterExerciseDetails : BaseActivityPresenter<MvpViewExerciseDetails>()
 
     private val settings = ExerciseFeature.dependencies.userSettings()
     private val session = ExerciseFeature.dependencies.userSession()
+    private val imageStorage = ExerciseFeature.dependencies.exerciseImageStorage()
 
     private var toEdit: ELExercise? = null
     private var mLastStats: ExerciseStatsController.StatsResult? = null
@@ -136,7 +136,7 @@ class PresenterExerciseDetails : BaseActivityPresenter<MvpViewExerciseDetails>()
     private fun handleDeleteExercise() {
         ExerciseFeature.dependencies.exerciseAnalytics().exerciseDeleted()
         ExerciseStores.exerciseStore().delete(toEdit!!)
-        ExerciseImageStorage.deleteExerciseImage(toEdit!!, session.requireUserId())
+        imageStorage.deleteExerciseImage(toEdit!!, session.requireUserId())
         mvpView.closeScreen()
     }
 

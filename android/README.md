@@ -22,7 +22,7 @@ Every feature has all three modules, even while one is empty:
 | `exercise` | The exercise picker, detail and create screens | `ExerciseRepository`, the exercise library and guide use cases, the exercise stores, `ExerciseImageStorage` |
 | `workout` | The workout screen, Set suggestions, workout details, `WorkoutService` and its notification | `WorkoutManager`, the ongoing workout, prefill, the workout stores, `WorkoutBroadcasts` |
 | `template` | The template editor, template details, the start-a-workout screen, the template and set type pickers | `RoutineRepository`, the template load and save use cases, the routine stores, `OngoingPlanRepository` |
-| `plan` | Plan create, details and week days, the cover picker, the congratulations screen | `PlanManager`, the plan stores and models, the cover images API, `PlanBroadcasts` |
+| `plan` | Plan create, details and week days, the cover picker, the congratulations screen | `PlanProgress` (the ongoing plan), the plan stores and models, the cover images API, `PlanBroadcasts` |
 | `history` | The Activity tab: statistics and the workouts calendar | Nothing yet: the tab reads `workout:data` |
 | `pro` | The Pro screen, `BillingManager` | The Pro models |
 | `settings` | Settings, the integration screen | The user's settings (`UserSettings`, `RealUserSettings`), the integration store and model |

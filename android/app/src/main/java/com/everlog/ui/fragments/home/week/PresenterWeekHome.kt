@@ -22,7 +22,6 @@ import com.everlog.android.history.statistics.UserStatsController.OnCompleteList
 import com.everlog.android.plan.data.PlanBroadcasts
 import com.everlog.data.datastores.ELDatastore
 import com.everlog.android.workout.data.store.ELColStoreWorkoutsLoadedEvent
-import com.everlog.android.plan.data.PlanManager
 import com.everlog.managers.RemoteConfigManager
 import com.everlog.managers.analytics.AnalyticsManager
 import com.everlog.android.plan.congratulate.CongratulateActivity
@@ -180,7 +179,7 @@ class PresenterWeekHome : BaseFragmentPresenter<MvpViewWeekHome>() {
         subscriptions.add(mvpView.onClickPlan()
                 .compose(applyUISchedulers())
                 .subscribe({
-                    val plan = PlanManager.manager.ongoingPlan()
+                    val plan = AppServices.planProgress.ongoingPlan()
                     if (plan != null) {
                         navigator.openPlanDetails(plan)
                     }
@@ -198,7 +197,7 @@ class PresenterWeekHome : BaseFragmentPresenter<MvpViewWeekHome>() {
     private fun loadWeekStats() {
         // Load history
         mLoading = true
-        mvpView?.render(WeekViewState.Loading(PlanManager.manager.hasOngoingPlan()))
+        mvpView?.render(WeekViewState.Loading(AppServices.planProgress.hasOngoingPlan()))
         Utils.runWithDelay({ ELDatastore.workoutsStore().getItems() }, 600)
     }
 
@@ -213,21 +212,21 @@ class PresenterWeekHome : BaseFragmentPresenter<MvpViewWeekHome>() {
     }
 
     private fun handleSkip() {
-        val plan = PlanManager.manager.ongoingPlan()
+        val plan = AppServices.planProgress.ongoingPlan()
         val nextDay = plan!!.getNextDay()
         if (nextDay != null) {
             nextDay.setRest(true)
             nextDay.complete = true
-            PlanManager.manager.setOngoingPlan(plan)
+            AppServices.planProgress.setOngoingPlan(plan)
             mLatestPlan = plan
-            mLatestPlanState = PlanManager.manager.ongoingPlanState()
+            mLatestPlanState = AppServices.planProgress.ongoingPlanState()
             checkWeekViews()
         }
     }
 
     private fun handleStartNextPlanDay() {
-        if (PlanManager.manager.hasOngoingPlan()) {
-            val plan = PlanManager.manager.ongoingPlan()
+        if (AppServices.planProgress.hasOngoingPlan()) {
+            val plan = AppServices.planProgress.ongoingPlan()
             val nextDay = plan!!.getNextDay()
             if (nextDay != null) {
                 if (nextDay.getRoutine() != null) {
@@ -237,15 +236,15 @@ class PresenterWeekHome : BaseFragmentPresenter<MvpViewWeekHome>() {
                     // Rest day, so mark as complete directly
                     nextDay.complete = true
                     nextDay.next = false
-                    PlanManager.manager.setOngoingPlan(plan)
+                    AppServices.planProgress.setOngoingPlan(plan)
                     mLatestPlan = plan
-                    mLatestPlanState = PlanManager.manager.ongoingPlanState()
+                    mLatestPlanState = AppServices.planProgress.ongoingPlanState()
                     checkWeekViews()
                     AnalyticsManager.manager.planDayComplete()
                 }
             } else {
                 // Finish plan
-                PlanManager.manager.clearOngoingPlan()
+                AppServices.planProgress.clearOngoingPlan()
                 navigator.openCongratulate(CongratulateActivity.Type.PLAN_FINISH)
                 AnalyticsManager.manager.planCompleted()
             }
@@ -259,7 +258,7 @@ class PresenterWeekHome : BaseFragmentPresenter<MvpViewWeekHome>() {
     private fun renderReady() {
         if (isAttachedToView) {
             mLoading = false
-            val state = if (PlanManager.manager.hasOngoingPlan()) {
+            val state = if (AppServices.planProgress.hasOngoingPlan()) {
                 WeekViewState.Plan(mLatestPlan, mLatestPlanState)
             } else {
                 WeekViewState.Stats(mLatestWeekStats ?: UserStatsController.StatsResult())
@@ -273,13 +272,13 @@ class PresenterWeekHome : BaseFragmentPresenter<MvpViewWeekHome>() {
     }
 
     private fun handleCurrentPlanChanged() {
-        mLatestPlan = PlanManager.manager.ongoingPlan()
-        mLatestPlanState = PlanManager.manager.ongoingPlanState()
+        mLatestPlan = AppServices.planProgress.ongoingPlan()
+        mLatestPlanState = AppServices.planProgress.ongoingPlanState()
         renderReady()
     }
 
     private fun checkWeekViews() {
-        if (PlanManager.manager.ongoingPlan()?.uuid != mLatestPlan?.uuid) {
+        if (AppServices.planProgress.ongoingPlan()?.uuid != mLatestPlan?.uuid) {
             // Plan was started or stopped, so refresh our stats
             mLatestPlan = null
             mLatestPlanState = null

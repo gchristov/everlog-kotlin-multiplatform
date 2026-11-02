@@ -5,13 +5,14 @@ import com.ahamed.multiviewadapter.DataListManager
 import com.ahamed.multiviewadapter.RecyclerAdapter
 import com.everlog.android.plan.data.model.ELPlan
 import com.everlog.android.plan.data.model.ELPlanDay
-import com.everlog.android.plan.data.PlanManager
 import com.everlog.android.common.mvp.fragment.BaseFragmentPresenter
 import com.everlog.android.plan.PlanFeature
 import com.everlog.android.plan.adapter.PlanDayAdapter
 import com.everlog.android.plan.adapter.applyProLock
 
 class PresenterWeekDays : BaseFragmentPresenter<MvpViewWeekDays>() {
+
+    private val planProgress = PlanFeature.dependencies.planProgress()
 
     private var mPlan: ELPlan? = null
     private var mWeekIndex = 0
@@ -68,6 +69,6 @@ class PresenterWeekDays : BaseFragmentPresenter<MvpViewWeekDays>() {
             override fun onClickSkip(day: ELPlanDay) {}
 
             override fun onClickStart(day: ELPlanDay) {}
-        }).setOngoing(PlanManager.manager.isOngoing(mvpView.getPlan())))
+        }).setOngoing(planProgress.isOngoing(mvpView.getPlan())))
     }
 }

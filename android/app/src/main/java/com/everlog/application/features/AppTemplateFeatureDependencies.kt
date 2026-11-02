@@ -27,7 +27,6 @@ import com.everlog.constants.ELConstants
 import com.everlog.data.datastores.ELDatastore
 import com.everlog.android.plan.data.RealOngoingPlanRepository
 import com.everlog.data.sync.AppDataSync
-import com.everlog.android.plan.data.PlanManager
 import com.everlog.managers.analytics.AnalyticsManager
 import com.everlog.ui.activities.home.routine.create.CreateRoutineActivity
 import com.everlog.ui.navigator.ELNavigator
@@ -74,7 +73,7 @@ class AppTemplateFeatureDependencies : TemplateFeatureDependencies {
         RealLoadTemplateUseCase(Dispatchers.Default, routines(), RealExerciseRepository(Dispatchers.IO, AppDataSync.instance, AppServices.userSession))
 
     override fun saveTemplate(context: Context): SaveTemplateUseCase =
-        RealSaveTemplateUseCase(Dispatchers.IO, routines(), RealOngoingPlanRepository(context.applicationContext))
+        RealSaveTemplateUseCase(Dispatchers.IO, routines(), RealOngoingPlanRepository(context.applicationContext, AppServices.planProgress))
 
     override fun ownExerciseUpdates(): Flow<List<LibraryExercise>> =
         RealExerciseRepository(Dispatchers.IO, AppDataSync.instance, AppServices.userSession).ownExerciseUpdates()
@@ -83,7 +82,7 @@ class AppTemplateFeatureDependencies : TemplateFeatureDependencies {
 
     private fun routines() = RealRoutineRepository(Dispatchers.IO, AppDataSync.instance, AppServices.userSession) { ELDatastore.routineStore() }
 
-    override fun removeFromOngoingPlan(activity: Activity, routine: ELRoutine) = PlanManager.manager.deleteRoutineForPlan(activity, routine)
+    override fun removeFromOngoingPlan(activity: Activity, routine: ELRoutine) = AppServices.planProgress.deleteRoutineForPlan(activity, routine)
 
     override fun setTypesFeedback(activity: Activity): (() -> Unit)? = activity.feedbackFormLauncher(FeedbackSource.SET_TYPES)
 }

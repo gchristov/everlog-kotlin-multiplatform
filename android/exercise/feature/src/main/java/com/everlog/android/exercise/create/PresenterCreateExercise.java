@@ -32,6 +32,7 @@ public class PresenterCreateExercise extends BaseActivityPresenter<MvpViewCreate
 //    @State
     boolean mChangesMade = false;
     private final UserSession session = ExerciseFeature.INSTANCE.getDependencies().userSession();
+    private final ExerciseImageStorage imageStorage = ExerciseFeature.INSTANCE.getDependencies().exerciseImageStorage();
     private ELExercise toEdit;
     private boolean mInitialDataSet = false;
     private boolean mEditMode = false;
@@ -132,10 +133,10 @@ public class PresenterCreateExercise extends BaseActivityPresenter<MvpViewCreate
                 }
                 // Upload image.
                 if (mPickedImageUri != null) {
-                    ExerciseImageStorage.uploadExerciseImage(mPickedImageUri, toSave, UserSessionKt.requireUserId(session));
+                    imageStorage.uploadExerciseImage(mPickedImageUri, toSave, UserSessionKt.requireUserId(session));
                 }
                 if (toSave.getImageUrl() == null) {
-                    ExerciseImageStorage.deleteExerciseImage(toSave, UserSessionKt.requireUserId(session));
+                    imageStorage.deleteExerciseImage(toSave, UserSessionKt.requireUserId(session));
                 }
                 // Update routines and history.
                 handleMigrateRoutinesAndHistory(toSave);

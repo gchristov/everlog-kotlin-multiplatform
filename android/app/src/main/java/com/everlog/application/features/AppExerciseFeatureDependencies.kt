@@ -1,5 +1,6 @@
 package com.everlog.application.features
 
+import com.everlog.android.exercise.data.ExerciseImageStorage
 import com.everlog.android.auth.data.UserSession
 import com.everlog.application.AppServices
 import com.everlog.android.settings.data.UserSettings
@@ -34,6 +35,8 @@ import com.everlog.ui.navigator.feedbackFormLauncher
 import kotlinx.coroutines.Dispatchers
 
 class AppExerciseFeatureDependencies : ExerciseFeatureDependencies {
+    override fun exerciseImageStorage(): ExerciseImageStorage = AppServices.exerciseImageStorage
+
     override fun userSession(): UserSession = AppServices.userSession
 
     override fun userSettings(): UserSettings = AppServices.userSettings

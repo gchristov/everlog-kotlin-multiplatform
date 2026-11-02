@@ -8,7 +8,6 @@ import com.everlog.android.plan.data.model.ELPlan
 import com.everlog.android.common.data.store.ELDocumentStore
 import com.everlog.android.plan.data.store.ELDocStorePlanLoadedEvent
 import com.everlog.android.plan.data.store.PlanStores
-import com.everlog.android.plan.data.PlanManager
 import com.everlog.android.common.mvp.activity.BaseActivityPresenter
 import com.everlog.android.plan.PlanFeature
 import com.everlog.android.plan.R
@@ -18,6 +17,8 @@ import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
 
 class PresenterPlanDetails : BaseActivityPresenter<MvpViewPlanDetails>() {
+
+    private val planProgress = PlanFeature.dependencies.planProgress()
 
     private var toEdit: ELPlan? = null
     private var mRealPlan: ELPlan? = null
@@ -58,8 +59,8 @@ class PresenterPlanDetails : BaseActivityPresenter<MvpViewPlanDetails>() {
                 if (!mLoadedItemOnce || event.isHasPendingWrites) {
                     toEdit = event.item
                     mRealPlan = event.item
-                    if (PlanManager.manager.isOngoing(toEdit)) {
-                        toEdit = PlanManager.manager.ongoingPlan()
+                    if (planProgress.isOngoing(toEdit)) {
+                        toEdit = planProgress.ongoingPlan()
                     }
                     loadViewData()
                 }
@@ -115,7 +116,7 @@ class PresenterPlanDetails : BaseActivityPresenter<MvpViewPlanDetails>() {
                 .compose(applyUISchedulers())
                 .subscribe({ action ->
                     if (action == DialogInterface.BUTTON_POSITIVE) {
-                        PlanManager.manager.clearOngoingPlan()
+                        planProgress.clearOngoingPlan()
                         toEdit = mRealPlan
                         loadViewData()
                         PlanFeature.dependencies.planAnalytics().stopped()
@@ -135,14 +136,14 @@ class PresenterPlanDetails : BaseActivityPresenter<MvpViewPlanDetails>() {
 
     private fun observePlanNotFoundConfirm() {
         val planUuid = mvpView.getItemToEditUuid()
-        val currentPlanUuid = PlanManager.manager.ongoingPlan()?.uuid
+        val currentPlanUuid = planProgress.ongoingPlan()?.uuid
         if (planUuid.equals(currentPlanUuid)) {
             // We didn't find the current user plan
             subscriptions.add(mvpView.showDestructivePrompt(R.string.plan_details_not_found, R.string.plan_details_not_found_prompt_current, R.string.stop, R.string.continue_)
                     .compose(applyUISchedulers())
                     .subscribe({ action ->
                         if (action == DialogInterface.BUTTON_POSITIVE) {
-                            PlanManager.manager.clearOngoingPlan()
+                            planProgress.clearOngoingPlan()
                         }
                         mvpView?.closeScreen()
                     }, { throwable -> handleError(throwable) }))
@@ -168,7 +169,7 @@ class PresenterPlanDetails : BaseActivityPresenter<MvpViewPlanDetails>() {
     }
 
     private fun isThisPlanStarted(): Boolean {
-        return toEdit?.uuid?.equals(PlanManager.manager.ongoingPlan()?.uuid) == true
+        return toEdit?.uuid?.equals(planProgress.ongoingPlan()?.uuid) == true
     }
 
     // Handlers
@@ -178,7 +179,7 @@ class PresenterPlanDetails : BaseActivityPresenter<MvpViewPlanDetails>() {
             isThisPlanStarted() ->
                 // Stop plan
                 observeStopConfirm()
-            PlanManager.manager.hasOngoingPlan() -> {
+            planProgress.hasOngoingPlan() -> {
                 if (!planCanBeStarted()) {
                     return
                 }
@@ -196,7 +197,7 @@ class PresenterPlanDetails : BaseActivityPresenter<MvpViewPlanDetails>() {
     }
 
     private fun handleStartPlan() {
-        PlanManager.manager.setOngoingPlan(toEdit)
+        planProgress.setOngoingPlan(toEdit)
         PlanFeature.dependencies.planAnalytics().started()
         LocalBroadcastManager.getInstance(mvpView.context).sendBroadcast(Intent(PlanBroadcasts.CURRENT_PLAN_STARTED))
         mvpView?.getActivity()?.let(PlanFeature.dependencies::openHome)
@@ -207,8 +208,8 @@ class PresenterPlanDetails : BaseActivityPresenter<MvpViewPlanDetails>() {
         PlanStores.planStore().delete(plan)
         PlanFeature.dependencies.planAnalytics().deleted()
         // If local plan is the same, clear it too
-        if (PlanManager.manager.isOngoing(plan)) {
-            PlanManager.manager.clearOngoingPlan()
+        if (planProgress.isOngoing(plan)) {
+            planProgress.clearOngoingPlan()
         }
         mvpView?.closeScreen()
     }
