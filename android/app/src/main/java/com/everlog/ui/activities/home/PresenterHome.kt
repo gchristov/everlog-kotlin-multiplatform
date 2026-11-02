@@ -14,7 +14,6 @@ import com.everlog.android.common.data.model.workout.ELWorkout
 import com.everlog.constants.ELConstants
 import com.everlog.data.datastores.ELDatastore
 import com.everlog.managers.ErrorManager
-import com.everlog.android.plan.data.PlanManager
 import com.everlog.managers.RemoteConfigManager
 import com.everlog.android.workout.data.WorkoutManager
 import com.everlog.managers.analytics.AnalyticsConstants
@@ -215,7 +214,7 @@ class PresenterHome : BaseActivityPresenter<MvpViewHome>() {
 
     private fun updateStartWorkoutButtonVisibility() {
         val onWeekTab = getSelectedTab() == 0
-        val hide = onWeekTab && (PlanManager.manager.hasOngoingPlan() || mWeekIsEmpty)
+        val hide = onWeekTab && (AppServices.planProgress.hasOngoingPlan() || mWeekIsEmpty)
         mvpView?.toggleStartWorkoutButton(!hide)
     }
 

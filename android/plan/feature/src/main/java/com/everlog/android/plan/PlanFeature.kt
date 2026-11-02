@@ -1,5 +1,6 @@
 package com.everlog.android.plan
 
+import com.everlog.android.plan.data.PlanProgress
 import com.everlog.android.auth.data.UserSession
 import android.app.Activity
 import android.content.Context
@@ -12,6 +13,8 @@ import com.everlog.android.common.data.model.ELRoutine
  * startup. Shaped like constructor injection so a DI framework can take over the registration (android/README.md).
  */
 interface PlanFeatureDependencies {
+    fun planProgress(): PlanProgress
+
     fun userSession(): UserSession
 
     fun planAnalytics(): PlanAnalytics

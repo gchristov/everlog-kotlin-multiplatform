@@ -1,5 +1,6 @@
 package com.everlog.android.exercise
 
+import com.everlog.android.exercise.data.ExerciseImageStorage
 import com.everlog.android.auth.data.UserSession
 import android.app.Activity
 import android.content.Context
@@ -19,6 +20,8 @@ import com.everlog.android.settings.data.UserSettings
  * startup. Shaped like constructor injection so a DI framework can take over the registration (android/README.md).
  */
 interface ExerciseFeatureDependencies {
+    fun exerciseImageStorage(): ExerciseImageStorage
+
     fun userSession(): UserSession
 
     fun userSettings(): UserSettings

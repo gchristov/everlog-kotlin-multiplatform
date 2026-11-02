@@ -135,7 +135,7 @@ class AppWorkoutFeatureDependencies : WorkoutFeatureDependencies {
         ELNavigator(activity).requestRatePrompt(RatePromptTrigger.WorkoutCompleted(workout), delayMillis)
 
     override fun replaceRoutineInOngoingPlan(context: Context, routine: ELRoutine) =
-        RealOngoingPlanRepository(context.applicationContext).replaceRoutine(routine)
+        RealOngoingPlanRepository(context.applicationContext, AppServices.planProgress).replaceRoutine(routine)
 
     override fun workoutsThisWeek(workouts: List<ELWorkout>, onCount: (Int) -> Unit, onError: (Throwable) -> Unit) =
         UserStatsController(AppServices.userSettings.weightUnit(), AppServices.userSettings.firstDayOfWeek()).loadStats(RangeType.WEEK, workouts, object : UserStatsController.OnCompleteListener {

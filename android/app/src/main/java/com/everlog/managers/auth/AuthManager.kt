@@ -16,7 +16,6 @@ import com.everlog.data.datastores.ELDatastore
 import com.everlog.android.common.data.store.OnStoreItemListener
 import com.everlog.data.sync.AppDataSync
 import com.everlog.utils.device.DeviceUtils
-import com.everlog.android.plan.data.PlanManager
 import com.everlog.managers.analytics.AnalyticsConstants
 import com.everlog.managers.analytics.AnalyticsManager
 import com.everlog.managers.apprate.AppLaunchManager
@@ -190,7 +189,7 @@ object AuthManager : PreferencesManager() {
         AnalyticsManager.manager.userLogout()
         AppLaunchManager.manager.clearAppUserData()
         AppServices.userSettings.clearUserPreferences()
-        PlanManager.manager.clearOngoingPlan()
+        AppServices.planProgress.clearOngoingPlan()
         mAuth?.signOut()
         mClient?.signOut()?.addOnCompleteListener {
             listener.onLogout()

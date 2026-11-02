@@ -11,7 +11,6 @@ import com.everlog.android.common.data.model.ELRoutine.Companion.buildNewRoutine
 import com.everlog.android.common.data.model.exercise.ELExerciseGroup
 import com.everlog.constants.ELConstants
 import com.everlog.data.datastores.ELDatastore
-import com.everlog.android.plan.data.PlanManager
 import com.everlog.managers.analytics.AnalyticsManager
 import com.everlog.ui.activities.home.exercisegroup.PresenterCreateExerciseGroups
 import com.everlog.ui.adapters.routine.RoutineCreateHeaderAdapter
@@ -105,7 +104,7 @@ class PresenterCreateRoutine : PresenterCreateExerciseGroups<MvpViewCreateRoutin
                 if (mEditMode) {
                     AnalyticsManager.manager.routineModified()
                     // Replace routine for ongoing plan
-                    PlanManager.manager.updateRoutineForPlan(mvpView.context, toSave!!)
+                    AppServices.planProgress.updateRoutineForPlan(mvpView.context, toSave!!)
                 } else {
                     AnalyticsManager.manager.routineCreated()
                     if (mvpView?.shouldOpenDetailsOnSuccess() == true) {
