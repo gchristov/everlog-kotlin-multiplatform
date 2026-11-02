@@ -17,7 +17,7 @@ Every feature has all three modules, even while one is empty:
 
 | Feature | `feature` holds | `data` holds |
 | --- | --- | --- |
-| `auth` | Login, reset password | `LocalUserManager`, the user, device and consent stores and models |
+| `auth` | Login, reset password | The signed-in user (`UserSession`, `RealUserSession`), the user, device and consent stores and models |
 | `onboarding` | The onboarding: welcome, questions, building and the reveal | The starter routines |
 | `exercise` | The exercise picker, detail and create screens | `ExerciseRepository`, the exercise library and guide use cases, the exercise stores, `ExerciseImageStorage` |
 | `workout` | The workout screen, Set suggestions, workout details, `WorkoutService` and its notification | `WorkoutManager`, the ongoing workout, prefill, the workout stores, `WorkoutBroadcasts` |
@@ -68,7 +68,7 @@ A feature module can't see the app, but some of what it needs lives there for no
 
 `common:mvp` does the same for what its bases need (screen views and the signed-in user check), with `CommonMvpDependencies`.
 
-Services the app shares, like the user's settings, are an interface with a `Real…` implementation and a `Fake…` in the feature's `test-fixtures` (`UserSettings`, `RealUserSettings`, `FakeUserSettings`). The app creates one instance of each in `AppServices` and hands it to the features through their dependencies, rather than each class reaching for a singleton. Code that only needs a value, like an adapter showing weights, takes the value; one that lives on while the setting changes, like a Home tab, takes the interface and reads it when it draws.
+Services the app shares, like the user's settings, are an interface with a `Real…` implementation and a `Fake…` in the feature's `test-fixtures` (`UserSettings`, `RealUserSettings`, `FakeUserSettings`; `UserSession` for the signed-in user). The app creates one instance of each in `AppServices` and hands it to the features through their dependencies, rather than each class reaching for a singleton. The `…Stores` objects can't take them in a constructor, so the app sets their `session` at startup until DI builds the stores. Code that only needs a value, like an adapter showing weights, takes the value; one that lives on while the setting changes, like a Home tab, takes the interface and reads it when it draws.
 
 This stands in for dependency injection while the app is split into modules. Each interface is shaped like constructor injection, a list of what the feature needs, so introducing a DI framework after the modularisation (TAS-468) only replaces how the app registers them; the interfaces and the features stay as they are.
 

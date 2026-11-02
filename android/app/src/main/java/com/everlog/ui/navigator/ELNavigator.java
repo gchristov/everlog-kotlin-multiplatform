@@ -34,7 +34,6 @@ import com.everlog.managers.analytics.AnalyticsConstants;
 import com.everlog.managers.analytics.AnalyticsManager;
 import com.everlog.managers.apprate.RatePromptController;
 import com.everlog.managers.apprate.RatePromptTrigger;
-import com.everlog.android.auth.data.LocalUserManager;
 import com.everlog.android.workout.notification.WorkoutService;
 import com.everlog.ui.activities.home.HomeActivity;
 import com.everlog.android.onboarding.OnboardingActivity;
@@ -343,7 +342,7 @@ public class ELNavigator implements Navigator {
 
     @Override
     public void runProFeature(Runnable runnable) {
-        ELUser user = LocalUserManager.getUser();
+        ELUser user = AppServices.userSession.user();
         if (user == null) {
             ToastBuilder.showToast(mContext, "An unexpected error occurred. We've been notified and taking a look. Feel free to try again.", true);
             Timber.tag(TAG).e(new RuntimeException("Trying to access pro feature without user account"));
@@ -365,7 +364,7 @@ public class ELNavigator implements Navigator {
 
     @Override
     public void openProBuyOrManage() {
-        ELUser user = LocalUserManager.getUser();
+        ELUser user = AppServices.userSession.user();
         if (user.isPro()) {
             AnalyticsManager.manager.proManageSubscription();
             // Show subscription manager in the Play Store

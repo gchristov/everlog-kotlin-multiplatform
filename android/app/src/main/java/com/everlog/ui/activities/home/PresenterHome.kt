@@ -1,5 +1,6 @@
 package com.everlog.ui.activities.home
 
+import com.everlog.application.AppServices
 import com.everlog.android.common.design.R as DesignR
 import android.content.BroadcastReceiver
 import android.content.Context
@@ -19,7 +20,6 @@ import com.everlog.android.workout.data.WorkoutManager
 import com.everlog.managers.analytics.AnalyticsConstants
 import com.everlog.managers.analytics.AnalyticsManager
 import com.everlog.managers.appupdate.AppUpdateController
-import com.everlog.android.auth.data.LocalUserManager
 import com.everlog.managers.billing.BillingBridge
 import com.everlog.android.pro.billing.BillingManager
 import com.everlog.ui.navigator.navigator
@@ -255,8 +255,8 @@ class PresenterHome : BaseActivityPresenter<MvpViewHome>() {
     // Analytics
 
     private fun identifyUser() {
-        AnalyticsManager.manager.userIdentify(LocalUserManager.getUser()!!.id)
-        ErrorManager.manager.userIdentify(LocalUserManager.getUser()!!.id)
+        AnalyticsManager.manager.userIdentify(AppServices.userSession.user()!!.id)
+        ErrorManager.manager.userIdentify(AppServices.userSession.user()!!.id)
     }
 
     // Setup

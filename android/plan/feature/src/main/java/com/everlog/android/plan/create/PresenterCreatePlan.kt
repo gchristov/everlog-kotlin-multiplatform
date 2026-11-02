@@ -1,5 +1,6 @@
 package com.everlog.android.plan.create
 
+import com.everlog.android.auth.data.requireUserId
 import com.everlog.android.common.design.R as DesignR
 import android.app.Activity
 import android.app.Activity.RESULT_OK
@@ -15,7 +16,6 @@ import com.everlog.android.plan.data.store.ELDocStorePlanLoadedEvent
 import com.everlog.android.plan.data.store.PlanStores
 import com.everlog.android.plan.details.PlanDetailsActivity
 import com.everlog.android.plan.data.PlanManager
-import com.everlog.android.auth.data.LocalUserManager
 import com.everlog.android.common.mvp.activity.BaseActivityPresenter
 import com.everlog.android.common.kotlin.Utils
 import com.everlog.android.common.mvp.util.KeyboardUtils
@@ -398,7 +398,7 @@ class PresenterCreatePlan : BaseActivityPresenter<MvpViewCreatePlan>() {
     private fun showDays(week: ELPlanWeek?, weekIndex: Int) {
         mSelectedWeek = weekIndex
         mDaysDataListManager.clear()
-        week?.applyProLock()
+        week?.applyProLock(PlanFeature.dependencies.userSession().user())
         mDaysDataListManager.addAll(week?.getDays() ?: ArrayList())
         mDaysAdapter.notifyDataSetChanged()
         showPanel(CreatePlanActivity.Flow.DAYS, weekIndex)
@@ -449,7 +449,7 @@ class PresenterCreatePlan : BaseActivityPresenter<MvpViewCreatePlan>() {
              of days and workouts attached, which will definitely go over at some point.
             */
             if (toEdit == null) {
-                toEdit = ELPlan.newPlan(LocalUserManager.getUser()!!.id)
+                toEdit = ELPlan.newPlan(PlanFeature.dependencies.userSession().requireUserId())
                 PlanStores.planStore().create(toEdit!!, SetOptions.merge())
             }
         }

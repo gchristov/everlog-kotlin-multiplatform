@@ -1,5 +1,6 @@
 package com.everlog.android.exercise.details
 
+import com.everlog.android.auth.data.requireUserId
 import com.everlog.android.common.design.R as DesignR
 import android.content.DialogInterface
 import com.everlog.android.common.data.model.exercise.ELExercise
@@ -11,7 +12,6 @@ import com.everlog.android.exercise.R
 import com.everlog.android.exercise.create.CreateExerciseActivity
 import com.everlog.android.exercise.details.statistics.ExerciseStatisticsFragment
 import com.everlog.android.exercise.details.statistics.ExerciseStatsController
-import com.everlog.android.auth.data.LocalUserManager
 import com.everlog.android.exercise.data.ExerciseImageStorage
 import com.everlog.android.common.mvp.activity.BaseActivityPresenter
 import com.everlog.android.common.kotlin.Utils
@@ -21,6 +21,7 @@ import org.greenrobot.eventbus.ThreadMode
 class PresenterExerciseDetails : BaseActivityPresenter<MvpViewExerciseDetails>() {
 
     private val settings = ExerciseFeature.dependencies.userSettings()
+    private val session = ExerciseFeature.dependencies.userSession()
 
     private var toEdit: ELExercise? = null
     private var mLastStats: ExerciseStatsController.StatsResult? = null
@@ -93,7 +94,7 @@ class PresenterExerciseDetails : BaseActivityPresenter<MvpViewExerciseDetails>()
         // Show exercise immediately
         loadViewData()
         // Only the user's own exercises live in their exercises collection
-        if (toEdit!!.isEditable(LocalUserManager.getUser()?.id)) {
+        if (toEdit!!.isEditable(session.user()?.id)) {
             ExerciseStores.exerciseStore().getItem(toEdit!!.uuid)
         }
         // Load stats
@@ -135,7 +136,7 @@ class PresenterExerciseDetails : BaseActivityPresenter<MvpViewExerciseDetails>()
     private fun handleDeleteExercise() {
         ExerciseFeature.dependencies.exerciseAnalytics().exerciseDeleted()
         ExerciseStores.exerciseStore().delete(toEdit!!)
-        ExerciseImageStorage.deleteExerciseImage(toEdit!!)
+        ExerciseImageStorage.deleteExerciseImage(toEdit!!, session.requireUserId())
         mvpView.closeScreen()
     }
 

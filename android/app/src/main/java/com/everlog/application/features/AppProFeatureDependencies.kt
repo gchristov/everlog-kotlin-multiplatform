@@ -1,8 +1,8 @@
 package com.everlog.application.features
 
+import com.everlog.application.AppServices
 import android.content.Context
 import com.android.billingclient.api.Purchase
-import com.everlog.android.auth.data.LocalUserManager
 import com.everlog.android.plan.congratulate.CongratulateActivity
 import com.everlog.android.pro.ProAnalytics
 import com.everlog.android.pro.ProFeatureDependencies
@@ -31,7 +31,7 @@ class AppProFeatureDependencies : ProFeatureDependencies {
         override fun restore() = analytics.proBuyRestore()
     }
 
-    override fun isUserPro(): Boolean = LocalUserManager.getUser()?.isPro() == true
+    override fun isUserPro(): Boolean = AppServices.userSession.user()?.isPro() == true
 
     override fun processPurchaseCompleted(purchases: List<Purchase>, skuDetails: ELProSkuDetails?) =
         BillingBridge.processPurchaseCompleted(purchases, skuDetails)

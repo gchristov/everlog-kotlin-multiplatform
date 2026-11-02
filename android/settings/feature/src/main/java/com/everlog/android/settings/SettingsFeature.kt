@@ -1,5 +1,6 @@
 package com.everlog.android.settings
 
+import com.everlog.android.auth.data.UserSession
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
@@ -15,6 +16,8 @@ import rx.Observable
  * startup. Shaped like constructor injection so a DI framework can take over the registration (android/README.md).
  */
 interface SettingsFeatureDependencies {
+    fun userSession(): UserSession
+
     fun userSettings(): UserSettings
 
     fun settingsAnalytics(): SettingsAnalytics

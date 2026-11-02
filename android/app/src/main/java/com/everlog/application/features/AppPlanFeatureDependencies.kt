@@ -1,5 +1,7 @@
 package com.everlog.application.features
 
+import com.everlog.application.AppServices
+import com.everlog.android.auth.data.UserSession
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
@@ -12,6 +14,8 @@ import com.everlog.managers.analytics.AnalyticsManager
 import com.everlog.ui.navigator.ELNavigator
 
 class AppPlanFeatureDependencies : PlanFeatureDependencies {
+    override fun userSession(): UserSession = AppServices.userSession
+
 
     override fun planAnalytics(): PlanAnalytics = object : PlanAnalytics {
         private val analytics = AnalyticsManager.manager

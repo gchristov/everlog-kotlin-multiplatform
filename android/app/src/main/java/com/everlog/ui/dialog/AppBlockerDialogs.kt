@@ -1,11 +1,11 @@
 package com.everlog.ui.dialog
 
+import com.everlog.application.AppServices
 import com.everlog.android.common.design.R as DesignR
 import android.app.Dialog
 import android.content.Context
 import com.everlog.R
 import com.everlog.android.common.mvp.dialog.DialogBuilder
-import com.everlog.android.auth.data.LocalUserManager
 import rx.Observable
 
 internal class AppBlockerDialogs {
@@ -28,7 +28,7 @@ internal class AppBlockerDialogs {
             when (type) {
                 AppDialogs.AppBlockerDialogType.NEWSLETTER -> {
                     title = context.getString(DesignR.string.notifications_newsletter_title)
-                    message = context.getString(R.string.notifications_newsletter_prompt, LocalUserManager.getUser()!!.getFirstName())
+                    message = context.getString(R.string.notifications_newsletter_prompt, AppServices.userSession.user()!!.getFirstName())
                     yes = context.getString(R.string.notifications_newsletter_prompt_yes)
                     no = context.getString(DesignR.string.no_thanks)
                 }

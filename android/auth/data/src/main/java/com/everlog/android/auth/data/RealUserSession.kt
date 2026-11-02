@@ -1,11 +1,11 @@
 package com.everlog.android.auth.data
 
-import android.text.TextUtils
 import com.everlog.android.auth.data.model.ELUser
 import com.everlog.android.common.persistence.PreferencesManager
 import com.google.gson.Gson
 
-object LocalUserManager : PreferencesManager() {
+// Keeps the user in memory once read, so the app holds one instance
+class RealUserSession : PreferencesManager(), UserSession {
 
     private enum class PreferenceKeys {
         USER,
@@ -13,32 +13,22 @@ object LocalUserManager : PreferencesManager() {
 
     private var userAccountCache: ELUser? = null
 
-    @JvmStatic
-    fun getUser(): ELUser? {
+    override fun user(): ELUser? {
         if (userAccountCache == null) {
             val json = getPreference(PreferenceKeys.USER.name, "")
-            if (!TextUtils.isEmpty(json)) {
+            if (!json.isNullOrEmpty()) {
                 userAccountCache = Gson().fromJson(json, ELUser::class.java)
             }
         }
         return userAccountCache
     }
 
-    fun updateUser(user: ELUser) {
+    override fun updateUser(user: ELUser) {
         userAccountCache = user
         savePreference(Gson().toJson(user), PreferenceKeys.USER.name)
     }
 
-    // For writes that only happen while signed in
-    @JvmStatic
-    fun requireUserId(): String = getUser()?.id ?: throw IllegalStateException("User missing or invalid")
-
-    @JvmStatic
-    fun hasUser(): Boolean {
-        return getUser() != null
-    }
-
-    fun clearUser() {
+    override fun clearUser() {
         userAccountCache = null
         removePreference(PreferenceKeys.USER.name)
     }

@@ -11,7 +11,8 @@ import com.everlog.android.common.datasync.FirestoreDocument
 import com.everlog.android.common.datasync.SyncPlan
 import com.everlog.android.common.firebase.FirestorePaths
 import com.everlog.android.common.kotlin.Load
-import com.everlog.android.auth.data.LocalUserManager
+import com.everlog.android.auth.data.UserSession
+import com.everlog.android.auth.data.requireUserId
 import com.everlog.android.common.data.CommonData
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.SetOptions
@@ -59,12 +60,13 @@ interface RoutineRepository {
 class RealRoutineRepository(
     private val dispatcher: CoroutineDispatcher,
     private val dataSync: DataSync,
+    private val session: UserSession,
     private val testLabRoutines: () -> DocumentStore<ELRoutine>,
 ) : RoutineRepository {
 
     // Its own document: the routines' cache may hold only some of them, so missing from it doesn't mean deleted
     override fun routine(uuid: String): Flow<Load<ELRoutine?>> {
-        val userId = LocalUserManager.getUser()?.id ?: return flowOf(Load.Ready(null))
+        val userId = session.user()?.id ?: return flowOf(Load.Ready(null))
         return dataSync.observe(
             DocumentSource("routine/$uuid", userId, FirestoreDocument(FirestorePaths.routines(userId).document(uuid), dispatcher) {
                 it.toObject(ELRoutine::class.java)
@@ -73,7 +75,7 @@ class RealRoutineRepository(
     }
 
     private fun routines(): Flow<Load<List<ELRoutine>>> {
-        val userId = LocalUserManager.getUser()?.id ?: return flowOf(Load.Ready(emptyList()))
+        val userId = session.user()?.id ?: return flowOf(Load.Ready(emptyList()))
         return dataSync.observe(
             CollectionSource(
                 "routines",
@@ -92,7 +94,7 @@ class RealRoutineRepository(
                 routines.forEach { testLabRoutines().create(it, SetOptions.merge()) }
                 return@catch
             }
-            val collection = FirestorePaths.routines(LocalUserManager.requireUserId())
+            val collection = FirestorePaths.routines(session.requireUserId())
             val batch = FirebaseFirestore.getInstance().batch()
             routines.forEach { batch.set(collection.document(it.documentId()), it.asMap(), SetOptions.merge()) }
             // commit() completes with null, so a plain await() can't tell a confirmed write from a timeout

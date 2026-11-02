@@ -54,12 +54,12 @@ class AppWorkoutFeatureDependencies : WorkoutFeatureDependencies {
 
     override fun loadPrefillSources(): LoadPrefillSourcesUseCase = RealLoadPrefillSourcesUseCase(
         Dispatchers.Default,
-        RealWorkoutRepository(Dispatchers.IO, AppDataSync.instance, AppConfig.configuration.workoutSyncMonths),
+        RealWorkoutRepository(Dispatchers.IO, AppDataSync.instance, AppConfig.configuration.workoutSyncMonths, AppServices.userSession),
         AppServices.userSettings,
     )
 
     override fun ownExerciseUpdates(): Flow<List<LibraryExercise>> =
-        RealExerciseRepository(Dispatchers.IO, AppDataSync.instance).ownExerciseUpdates()
+        RealExerciseRepository(Dispatchers.IO, AppDataSync.instance, AppServices.userSession).ownExerciseUpdates()
 
     override fun workoutLogAnalytics(): WorkoutLogAnalytics = AppWorkoutLogAnalytics()
 

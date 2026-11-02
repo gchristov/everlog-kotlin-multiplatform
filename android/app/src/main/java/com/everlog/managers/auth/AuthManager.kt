@@ -6,7 +6,6 @@ import android.text.TextUtils
 import com.everlog.BuildConfig
 import com.everlog.R
 import com.everlog.android.auth.data.AuthActionListener
-import com.everlog.android.auth.data.LocalUserManager
 import com.everlog.android.auth.data.model.ELConsent.Companion.newConsent
 import com.everlog.android.auth.data.model.ELUser
 import com.everlog.android.common.kotlin.AppContext
@@ -52,7 +51,7 @@ object AuthManager : PreferencesManager() {
         when {
             isLoggedIn -> {
                 val uid = mAuth!!.currentUser!!.uid
-                val saved = savedUserFor(uid, LocalUserManager.getUser())
+                val saved = savedUserFor(uid, AppServices.userSession.user())
                 if (saved != null) {
                     Timber.tag(TAG).i("Initializing with the saved user")
                     // The store updates the saved user when the document arrives
@@ -67,7 +66,7 @@ object AuthManager : PreferencesManager() {
                     return
                 }
                 Timber.tag(TAG).i("Initializing with logged in user")
-                // Initialize LocalUserManager with latest local account
+                // Initialize the user session with the latest local account
                 ELDatastore.userStore().getItem(uid, object : OnStoreItemListener<ELUser> {
                     override fun onItemLoaded(item: ELUser, fromCache: Boolean) {
                         listener.onSuccess(item)
@@ -187,7 +186,7 @@ object AuthManager : PreferencesManager() {
         GoogleFitIntegrationManager.signOut()
         // Local state
         AppServices.userSettings.setLoggedIn(false)
-        LocalUserManager.clearUser()
+        AppServices.userSession.clearUser()
         AnalyticsManager.manager.userLogout()
         AppLaunchManager.manager.clearAppUserData()
         AppServices.userSettings.clearUserPreferences()
@@ -323,7 +322,7 @@ object AuthManager : PreferencesManager() {
             mAuthListener?.onSuccess(user, justRegistered)
         }
         // This is required here for the refresh to work
-        LocalUserManager.updateUser(user)
+        AppServices.userSession.updateUser(user)
         refreshLocalUser(object : OnStoreItemListener<ELUser> {
             override fun onItemLoaded(item: ELUser, fromCache: Boolean) {
                 block.run()
@@ -343,13 +342,13 @@ object AuthManager : PreferencesManager() {
         } else {
             Timber.tag(TAG).i("Saving user profile")
         }
-        LocalUserManager.updateUser(user)
+        AppServices.userSession.updateUser(user)
         ELDatastore.userStore().create(user, SetOptions.merge())
     }
 
     private fun refreshLocalUser(listener: OnStoreItemListener<ELUser>) {
         Timber.tag(TAG).i("Refreshing user profile")
-        ELDatastore.userStore().getItem(LocalUserManager.getUser()?.id, object : OnStoreItemListener<ELUser> {
+        ELDatastore.userStore().getItem(AppServices.userSession.user()?.id, object : OnStoreItemListener<ELUser> {
             override fun onItemLoaded(item: ELUser, fromCache: Boolean) {
                 if (BuildConfig.DEBUG) {
                     Timber.tag(TAG).i("User profile refreshed: user=%s", item)

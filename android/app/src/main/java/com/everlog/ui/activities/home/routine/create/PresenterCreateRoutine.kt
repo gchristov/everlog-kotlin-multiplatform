@@ -1,5 +1,6 @@
 package com.everlog.ui.activities.home.routine.create
 
+import com.everlog.application.AppServices
 import com.everlog.android.common.design.R as DesignR
 import android.app.Activity
 import android.content.DialogInterface
@@ -12,7 +13,6 @@ import com.everlog.constants.ELConstants
 import com.everlog.data.datastores.ELDatastore
 import com.everlog.android.plan.data.PlanManager
 import com.everlog.managers.analytics.AnalyticsManager
-import com.everlog.android.auth.data.LocalUserManager
 import com.everlog.ui.activities.home.exercisegroup.PresenterCreateExerciseGroups
 import com.everlog.ui.adapters.routine.RoutineCreateHeaderAdapter
 import com.everlog.ui.navigator.navigator
@@ -135,7 +135,7 @@ class PresenterCreateRoutine : PresenterCreateExerciseGroups<MvpViewCreateRoutin
         if (toEdit == null) {
             toEdit = mvpView?.getItemToEdit()
             if (toEdit == null) {
-                toEdit = buildNewRoutine(LocalUserManager.getUser()?.id!!)
+                toEdit = buildNewRoutine(AppServices.userSession.user()?.id!!)
             } else {
                 // If we're editing a routine, don't assume changes made
                 mLocalChangesMade = false

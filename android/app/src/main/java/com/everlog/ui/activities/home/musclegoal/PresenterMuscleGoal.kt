@@ -9,7 +9,6 @@ import com.everlog.android.settings.data.MuscleGoal
 import com.everlog.config.FeedbackSource
 import com.everlog.managers.RemoteConfigManager
 import com.everlog.managers.analytics.AnalyticsManager
-import com.everlog.android.auth.data.LocalUserManager
 import com.everlog.android.common.mvp.activity.BaseActivityPresenter
 import com.everlog.ui.adapters.MuscleGoalAdapter
 import com.everlog.ui.navigator.navigator
@@ -60,7 +59,7 @@ class PresenterMuscleGoal : BaseActivityPresenter<MvpViewMuscleGoal>() {
         mAdapter.notifyDataSetChanged()
         mvpView?.showData()
         // Check for pending Pro selection
-        if (mPendingMuscleGoal?.proLocked() == true && LocalUserManager.getUser()?.isPro() == true) {
+        if (mPendingMuscleGoal?.proLocked() == true && AppServices.userSession.user()?.isPro() == true) {
             setMuscleGoal(mPendingMuscleGoal!!, false)
         }
     }

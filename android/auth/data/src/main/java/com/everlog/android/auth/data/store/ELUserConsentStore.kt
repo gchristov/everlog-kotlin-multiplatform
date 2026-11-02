@@ -3,13 +3,14 @@ package com.everlog.android.auth.data.store
 import com.everlog.android.auth.data.model.ELConsent
 import com.everlog.android.common.data.store.ELDocumentStore
 import com.everlog.android.common.data.store.events.ELDocStoreItemLoadedEvent
-import com.everlog.android.auth.data.LocalUserManager
+import com.everlog.android.auth.data.UserSession
+import com.everlog.android.auth.data.requireUserId
 import com.everlog.android.common.firebase.FirestorePaths
 import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.FieldPath
 import com.google.firebase.firestore.Query
 
-class ELUserConsentStore : ELDocumentStore<ELConsent>() {
+class ELUserConsentStore(private val session: UserSession) : ELDocumentStore<ELConsent>() {
 
     override fun getType(): Class<ELConsent> {
         return ELConsent::class.java
@@ -17,7 +18,7 @@ class ELUserConsentStore : ELDocumentStore<ELConsent>() {
 
     override fun getQuery(unused: String?): Query {
         return parentCollection
-                .whereEqualTo(FieldPath.documentId(), LocalUserManager.getUser()!!.id)
+                .whereEqualTo(FieldPath.documentId(), session.requireUserId())
     }
 
     override fun getParentCollection(): CollectionReference {

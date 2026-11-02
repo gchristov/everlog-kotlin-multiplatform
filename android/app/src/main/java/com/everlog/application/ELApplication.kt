@@ -1,5 +1,11 @@
 package com.everlog.application
 
+import com.everlog.android.settings.data.store.SettingsStores
+import com.everlog.android.plan.data.store.PlanStores
+import com.everlog.android.workout.data.store.WorkoutStores
+import com.everlog.android.template.data.store.TemplateStores
+import com.everlog.android.exercise.data.store.ExerciseStores
+import com.everlog.android.auth.data.store.AuthStores
 import android.app.Application
 import com.everlog.android.auth.AuthFeature
 import com.everlog.android.common.data.CommonData
@@ -35,6 +41,12 @@ class ELApplication : Application() {
         super.onCreate()
         AppContext = this
         CommonData.dependencies = AppCommonDataDependencies()
+        AuthStores.session = AppServices.userSession
+        ExerciseStores.session = AppServices.userSession
+        TemplateStores.session = AppServices.userSession
+        WorkoutStores.session = AppServices.userSession
+        PlanStores.session = AppServices.userSession
+        SettingsStores.session = AppServices.userSession
         CommonMvp.dependencies = AppCommonMvpDependencies()
         ExerciseData.dependencies = AppExerciseDataDependencies()
         ExerciseFeature.dependencies = AppExerciseFeatureDependencies()

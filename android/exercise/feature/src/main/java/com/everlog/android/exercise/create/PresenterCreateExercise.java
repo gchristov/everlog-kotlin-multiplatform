@@ -5,7 +5,9 @@ import android.content.DialogInterface;
 import android.net.Uri;
 
 import com.everlog.android.common.data.model.exercise.ELExercise;
-import com.everlog.android.auth.data.LocalUserManager;
+import com.everlog.android.auth.data.UserSession;
+import com.everlog.android.auth.data.UserSessionKt;
+import com.everlog.android.exercise.ExerciseFeature;
 import com.everlog.android.exercise.data.ExerciseImageStorage;
 import com.everlog.android.exercise.data.store.ExerciseStores;
 import com.everlog.android.exercise.ExerciseExtras;
@@ -29,6 +31,7 @@ public class PresenterCreateExercise extends BaseActivityPresenter<MvpViewCreate
 
 //    @State
     boolean mChangesMade = false;
+    private final UserSession session = ExerciseFeature.INSTANCE.getDependencies().userSession();
     private ELExercise toEdit;
     private boolean mInitialDataSet = false;
     private boolean mEditMode = false;
@@ -129,10 +132,10 @@ public class PresenterCreateExercise extends BaseActivityPresenter<MvpViewCreate
                 }
                 // Upload image.
                 if (mPickedImageUri != null) {
-                    ExerciseImageStorage.uploadExerciseImage(mPickedImageUri, toSave);
+                    ExerciseImageStorage.uploadExerciseImage(mPickedImageUri, toSave, UserSessionKt.requireUserId(session));
                 }
                 if (toSave.getImageUrl() == null) {
-                    ExerciseImageStorage.deleteExerciseImage(toSave);
+                    ExerciseImageStorage.deleteExerciseImage(toSave, UserSessionKt.requireUserId(session));
                 }
                 // Update routines and history.
                 handleMigrateRoutinesAndHistory(toSave);
@@ -192,7 +195,7 @@ public class PresenterCreateExercise extends BaseActivityPresenter<MvpViewCreate
         toEdit = getMvpView().getItemToEdit();
         mEditMode = toEdit != null;
         if (toEdit == null) {
-            toEdit = ELExercise.newExercise(LocalUserManager.getUser().getId());
+            toEdit = ELExercise.newExercise(UserSessionKt.requireUserId(session));
             toEdit.setName(getMvpView().getNameToCreate());
         }
     }

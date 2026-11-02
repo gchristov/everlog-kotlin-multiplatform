@@ -10,7 +10,6 @@ import com.everlog.R
 import com.everlog.android.settings.data.MuscleGoal
 import com.everlog.constants.ELConstants
 import com.everlog.databinding.RowSettingsMuscleGoalBinding
-import com.everlog.android.auth.data.LocalUserManager
 import com.everlog.android.common.mvp.list.OnListItemListener
 
 class MuscleGoalAdapter {
@@ -50,7 +49,7 @@ class MuscleGoalAdapter {
         }
 
         private fun renderPro() {
-            val proLocked = item.proLocked() && LocalUserManager.getUser()?.isPro() == false
+            val proLocked = item.proLocked() && AppServices.userSession.user()?.isPro() == false
             binding.proBadge.visibility = if (proLocked) View.VISIBLE else View.GONE
             binding.titleLbl.alpha = if (proLocked) ELConstants.ALPHA_PRO_FEATURE_DISABLED else 1f
             binding.subtitleLbl.alpha = if (proLocked) ELConstants.ALPHA_PRO_FEATURE_DISABLED else 1f

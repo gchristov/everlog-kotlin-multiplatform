@@ -1,5 +1,6 @@
 package com.everlog.managers.billing
 
+import com.everlog.application.AppServices
 import com.android.billingclient.api.BillingClient
 import com.android.billingclient.api.BillingResult
 import com.android.billingclient.api.Purchase
@@ -7,7 +8,6 @@ import com.android.billingclient.api.SkuDetails
 import com.everlog.android.pro.data.model.ELProSkuDetails
 import com.everlog.android.pro.data.model.ELProSubscription
 import com.everlog.managers.auth.AuthManager
-import com.everlog.android.auth.data.LocalUserManager
 import com.everlog.android.pro.billing.BillingManager
 import timber.log.Timber
 
@@ -19,7 +19,7 @@ class BillingBridge {
             Timber.tag(BillingManager.TAG).i("Processing completed purchase")
             var shouldSaveUser = false
             // Obtain current subscription
-            val user = LocalUserManager.getUser()
+            val user = AppServices.userSession.user()
             var subscription = user?.subscription
             if (subscription == null) {
                 shouldSaveUser = true

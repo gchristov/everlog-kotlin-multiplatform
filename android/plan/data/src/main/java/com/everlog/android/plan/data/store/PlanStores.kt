@@ -1,5 +1,6 @@
 package com.everlog.android.plan.data.store
 
+import com.everlog.android.auth.data.UserSession
 import com.everlog.android.common.data.CommonData
 import com.everlog.android.common.data.store.CollectionStore
 import com.everlog.android.common.data.store.DocumentStore
@@ -8,18 +9,21 @@ import com.everlog.android.plan.data.model.ELPlan
 // The plan stores, one of each until destroy(). Test Lab runs keep plans in memory, so robots don't create data.
 object PlanStores {
 
+    // Set by the app at startup, until dependency injection builds the stores
+    lateinit var session: UserSession
+
     private var plans: CollectionStore<ELPlan>? = null
     private var plan: DocumentStore<ELPlan>? = null
 
     @JvmStatic
     @Synchronized
     fun plansStore(): CollectionStore<ELPlan> =
-        plans ?: (if (inMemory()) ELUserPlansInMemoryStore() else ELUserPlansStore()).also { plans = it }
+        plans ?: (if (inMemory()) ELUserPlansInMemoryStore(session) else ELUserPlansStore(session)).also { plans = it }
 
     @JvmStatic
     @Synchronized
     fun planStore(): DocumentStore<ELPlan> =
-        plan ?: (if (inMemory()) ELUserPlanInMemoryStore() else ELUserPlanStore()).also { plan = it }
+        plan ?: (if (inMemory()) ELUserPlanInMemoryStore(session) else ELUserPlanStore(session)).also { plan = it }
 
     @JvmStatic
     @Synchronized

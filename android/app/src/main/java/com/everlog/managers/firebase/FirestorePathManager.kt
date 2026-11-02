@@ -1,6 +1,7 @@
 package com.everlog.managers.firebase
 
-import com.everlog.android.auth.data.LocalUserManager
+import com.everlog.android.auth.data.requireUserId
+import com.everlog.application.AppServices
 import com.everlog.android.common.firebase.FirestorePaths
 import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.DocumentReference
@@ -18,16 +19,16 @@ object FirestorePathManager {
         get() = FirestorePaths.users
 
     val exercisesCollection: CollectionReference
-        get() = FirestorePaths.exercises(LocalUserManager.requireUserId())
+        get() = FirestorePaths.exercises(AppServices.userSession.requireUserId())
 
     val devicesCollection: CollectionReference
-        get() = FirestorePaths.devices(LocalUserManager.requireUserId())
+        get() = FirestorePaths.devices(AppServices.userSession.requireUserId())
 
     val routinesCollection: CollectionReference
-        get() = FirestorePaths.routines(LocalUserManager.requireUserId())
+        get() = FirestorePaths.routines(AppServices.userSession.requireUserId())
 
     val workoutsCollection: CollectionReference
-        get() = FirestorePaths.workouts(LocalUserManager.requireUserId())
+        get() = FirestorePaths.workouts(AppServices.userSession.requireUserId())
 
     val plansCollection: CollectionReference
         get() = FirestorePaths.plans

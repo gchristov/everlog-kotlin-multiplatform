@@ -1,6 +1,7 @@
 package com.everlog.android.template.data.store
 
-import com.everlog.android.auth.data.LocalUserManager
+import com.everlog.android.auth.data.UserSession
+import com.everlog.android.auth.data.requireUserId
 import com.everlog.android.common.data.model.ELRoutine
 import com.everlog.android.common.data.store.ELDocumentStore
 import com.everlog.android.common.data.store.events.ELDocStoreItemLoadedEvent
@@ -9,7 +10,7 @@ import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.FieldPath
 import com.google.firebase.firestore.Query
 
-class ELUserRoutineStore : ELDocumentStore<ELRoutine>() {
+class ELUserRoutineStore(private val session: UserSession) : ELDocumentStore<ELRoutine>() {
 
     override fun getType(): Class<ELRoutine> {
         return ELRoutine::class.java
@@ -21,7 +22,7 @@ class ELUserRoutineStore : ELDocumentStore<ELRoutine>() {
     }
 
     override fun getParentCollection(): CollectionReference {
-        return FirestorePaths.routines(LocalUserManager.requireUserId())
+        return FirestorePaths.routines(session.requireUserId())
     }
 
     override fun getTag(): String {
@@ -29,7 +30,7 @@ class ELUserRoutineStore : ELDocumentStore<ELRoutine>() {
     }
 
     override fun decorateItem(item: ELRoutine) {
-        ELRoutineDecorator().decorate(item)
+        ELRoutineDecorator(session).decorate(item)
     }
 
     // Events

@@ -1,5 +1,6 @@
 package com.everlog.android.plan.data.store
 
+import com.everlog.android.auth.data.UserSession
 import com.everlog.android.common.data.model.ELRoutine
 import com.everlog.android.plan.data.model.ELPlan
 import com.everlog.android.common.data.store.InMemoryDatabase
@@ -10,14 +11,14 @@ import com.everlog.android.template.data.store.ELUserRoutinesInMemoryStore
  * [ELPlanDecorator] for the in-memory stores, which resolves a plan's routines from memory instead
  * of Firestore.
  */
-class ELPlanInMemoryDecorator {
+class ELPlanInMemoryDecorator(private val session: UserSession) {
 
     fun decoratePlan(plan: ELPlan) {
         val routineUuids = plan.getRoutinesToResolve()
         if (routineUuids.isEmpty()) {
             return
         }
-        val routineDecorator = ELRoutineDecorator()
+        val routineDecorator = ELRoutineDecorator(session)
         val routines = routineUuids.mapNotNull { uuid ->
             (InMemoryDatabase.get(ELUserRoutinesInMemoryStore.COLLECTION, uuid) as? ELRoutine)?.let { routine ->
                 routineDecorator.decorate(routine)

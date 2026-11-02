@@ -37,7 +37,7 @@ class PresenterWeekDays : BaseFragmentPresenter<MvpViewWeekDays>() {
     private fun loadWeek() {
         mDataListManager.clear()
         val week = mPlan?.weeks?.get(mWeekIndex)
-        week?.applyProLock()
+        week?.applyProLock(PlanFeature.dependencies.userSession().user())
         mDataListManager.addAll(week?.getDays() ?: ArrayList())
         mAdapter.notifyDataSetChanged()
     }

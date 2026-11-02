@@ -1,5 +1,6 @@
 package com.everlog.android.plan.create
 
+import com.everlog.android.plan.PlanFeature
 import android.content.Context
 import android.content.Intent
 import android.view.View
@@ -19,7 +20,6 @@ import android.widget.FrameLayout
 import com.everlog.android.plan.R
 import com.everlog.android.plan.data.model.ELPlan
 import com.everlog.android.plan.databinding.ActivityPlanCreateBinding
-import com.everlog.android.auth.data.LocalUserManager
 import com.everlog.android.common.mvp.activity.BaseActivity
 import com.everlog.android.common.mvp.activity.BaseActivityMvpView
 import com.everlog.android.common.mvp.activity.BaseActivityPresenter
@@ -111,7 +111,7 @@ class CreatePlanActivity : BaseActivity(), MvpViewCreatePlan {
         binding.root.findViewById<TextView>(R.id.weeksField).text = if (plan.hasWeeksWithWorkouts()) resources.getQuantityString(R.plurals.weeks, plan.weeks.size, plan.weeks.size) else getString(R.string.tap_to_setup)
         // Pro upgrade
         binding.daysContainer.proUpgradePrompt.setType(WarningNotificationView.WarningType.PRO_PLAN_DAYS)
-        binding.daysContainer.proUpgradePrompt.visibility = if (LocalUserManager.getUser()?.isPro() == true) View.GONE else View.VISIBLE
+        binding.daysContainer.proUpgradePrompt.visibility = if (PlanFeature.dependencies.userSession().user()?.isPro() == true) View.GONE else View.VISIBLE
     }
 
     override fun getItemToEditUuid(): String? {

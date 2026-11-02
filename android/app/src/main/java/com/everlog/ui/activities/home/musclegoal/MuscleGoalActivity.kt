@@ -1,5 +1,6 @@
 package com.everlog.ui.activities.home.musclegoal
 
+import com.everlog.application.AppServices
 import android.view.View
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
@@ -10,7 +11,6 @@ import android.view.ViewGroup
 import com.everlog.R
 import com.everlog.databinding.ActivityMuscleGoalBinding
 import com.everlog.managers.analytics.AnalyticsConstants
-import com.everlog.android.auth.data.LocalUserManager
 import com.everlog.android.common.mvp.activity.BaseActivity
 import com.everlog.android.common.mvp.activity.BaseActivityMvpView
 import com.everlog.android.common.mvp.activity.BaseActivityPresenter
@@ -77,7 +77,7 @@ class MuscleGoalActivity : BaseActivity(), MvpViewMuscleGoal {
 
     override fun showData() {
         binding.proUpgradePrompt.setType(WarningNotificationView.WarningType.PRO_MUSCLE_GOALS)
-        binding.proUpgradePrompt.visibility = if (LocalUserManager.getUser()?.isPro() == true) View.GONE else View.VISIBLE
+        binding.proUpgradePrompt.visibility = if (AppServices.userSession.user()?.isPro() == true) View.GONE else View.VISIBLE
     }
 
     // Setup

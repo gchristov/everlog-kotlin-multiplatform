@@ -14,7 +14,7 @@ import com.everlog.android.exercise.data.model.library.ExerciseRegistry
 import com.everlog.android.exercise.data.model.library.ExerciseRegistryDto
 import com.everlog.android.exercise.data.model.library.LibraryExercise
 import com.everlog.android.exercise.data.model.library.LibraryExerciseDto
-import com.everlog.android.auth.data.LocalUserManager
+import com.everlog.android.auth.data.UserSession
 import com.everlog.android.common.firebase.FirestorePaths
 import com.google.firebase.firestore.DocumentSnapshot
 import kotlinx.coroutines.CoroutineDispatcher
@@ -61,6 +61,7 @@ interface ExerciseRepository {
 class RealExerciseRepository(
     private val dispatcher: CoroutineDispatcher,
     private val dataSync: DataSync,
+    private val session: UserSession,
 ) : ExerciseRepository {
 
     private val librarySource = CollectionSource(
@@ -89,7 +90,7 @@ class RealExerciseRepository(
     )
 
     override fun ownExercises(): Flow<Load<List<LibraryExercise>>> {
-        val userId = LocalUserManager.getUser()?.id ?: return flowOf(Load.Ready(emptyList()))
+        val userId = session.user()?.id ?: return flowOf(Load.Ready(emptyList()))
         return dataSync.observe(
             CollectionSource(
                 "exercises",

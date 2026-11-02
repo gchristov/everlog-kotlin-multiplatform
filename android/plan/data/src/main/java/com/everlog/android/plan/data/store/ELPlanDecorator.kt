@@ -1,6 +1,7 @@
 package com.everlog.android.plan.data.store
 
-import com.everlog.android.auth.data.LocalUserManager
+import com.everlog.android.auth.data.requireUserId
+import com.everlog.android.auth.data.UserSession
 import com.everlog.android.common.data.model.ELRoutine
 import com.everlog.android.common.firebase.FirestorePaths
 import com.everlog.android.plan.data.model.ELPlan
@@ -14,7 +15,7 @@ import timber.log.Timber
 /**
  * Class used to decorate a plan. Plans contain routine UUIDs which have to be resolved before the plan is displayed on the UI
  */
-class ELPlanDecorator {
+class ELPlanDecorator(private val session: UserSession) {
 
     private val TAG = "ELPlanDecorator"
 
@@ -29,7 +30,7 @@ class ELPlanDecorator {
 
     private fun buildResolvedRoutines(routinesToResolve: Set<String>): Map<String, ELRoutine> {
         val resolvedRoutines = HashMap<String, ELRoutine>()
-        val routineDecorator = ELRoutineDecorator()
+        val routineDecorator = ELRoutineDecorator(session)
         routinesToResolve.forEach {
             // Check local routines cache first
             val cachedRoutine = resolveRoutine(it, Source.CACHE)
@@ -60,7 +61,7 @@ class ELPlanDecorator {
 
     private fun resolveRoutine(uuid: String, source: Source): ELRoutine? {
         return try {
-            val snapshot = Tasks.await(FirestorePaths.routines(LocalUserManager.requireUserId()).whereEqualTo(FieldPath.documentId(), uuid).get(source))
+            val snapshot = Tasks.await(FirestorePaths.routines(session.requireUserId()).whereEqualTo(FieldPath.documentId(), uuid).get(source))
             if (snapshot.documents.isNotEmpty()) {
                 snapshot.documents.first().toObject(ELRoutine::class.java)
             } else {

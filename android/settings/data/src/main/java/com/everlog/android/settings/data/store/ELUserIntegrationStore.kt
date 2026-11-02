@@ -1,15 +1,16 @@
 package com.everlog.android.settings.data.store
 
+import com.everlog.android.auth.data.requireUserId
+import com.everlog.android.auth.data.UserSession
 import com.everlog.android.common.firebase.FirestoreFields
 import com.everlog.android.settings.data.model.ELIntegration
 import com.everlog.android.common.data.store.ELDocumentStore
 import com.everlog.android.common.data.store.events.ELDocStoreItemLoadedEvent
-import com.everlog.android.auth.data.LocalUserManager
 import com.everlog.android.common.firebase.FirestorePaths
 import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.Query
 
-class ELUserIntegrationStore : ELDocumentStore<ELIntegration>() {
+class ELUserIntegrationStore(private val session: UserSession) : ELDocumentStore<ELIntegration>() {
 
     override fun getType(): Class<ELIntegration> {
         return ELIntegration::class.java
@@ -17,7 +18,7 @@ class ELUserIntegrationStore : ELDocumentStore<ELIntegration>() {
 
     override fun getQuery(integrationType: String): Query {
         return parentCollection
-                .whereEqualTo(FirestoreFields.CREATED_BY_USER_ID, LocalUserManager.getUser()!!.id)
+                .whereEqualTo(FirestoreFields.CREATED_BY_USER_ID, session.requireUserId())
                 .whereEqualTo(FirestoreFields.TYPE, integrationType)
     }
 

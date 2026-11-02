@@ -13,7 +13,6 @@ import com.everlog.android.common.data.model.exercise.ELExercise
 import com.everlog.android.exercise.ExerciseFeature
 import com.everlog.android.exercise.ExerciseScreenNames
 import com.everlog.android.exercise.R
-import com.everlog.android.auth.data.LocalUserManager
 import com.everlog.android.exercise.details.BaseExerciseTabFragment
 import com.everlog.android.exercise.details.BasePresenterExerciseTab
 import com.everlog.android.exercise.details.statistics.ExerciseStatsController
@@ -90,5 +89,5 @@ private fun ELExercise.toInfoExercise() = ExerciseInfoViewModel.Exercise(
     uuid = uuid.orEmpty(),
     name = name.orEmpty(),
     imageUrl = imageUrl,
-    own = isEditable(LocalUserManager.getUser()?.id),
+    own = isEditable(ExerciseFeature.dependencies.userSession().user()?.id),
 )

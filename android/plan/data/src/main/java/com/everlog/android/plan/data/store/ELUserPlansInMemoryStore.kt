@@ -1,5 +1,6 @@
 package com.everlog.android.plan.data.store
 
+import com.everlog.android.auth.data.UserSession
 import com.everlog.android.plan.data.model.ELPlan
 import com.everlog.android.common.data.store.InMemoryCollectionStore
 import com.everlog.android.common.data.store.events.ELColStoreItemsLoadedEvent
@@ -7,7 +8,7 @@ import com.everlog.android.common.data.store.events.ELColStoreItemsLoadedEvent
 /**
  * [ELUserPlansStore] for Firebase Test Lab runs, kept in memory.
  */
-class ELUserPlansInMemoryStore : InMemoryCollectionStore<ELPlan>() {
+class ELUserPlansInMemoryStore(private val session: UserSession) : InMemoryCollectionStore<ELPlan>() {
 
     companion object {
         const val COLLECTION = "plans"
@@ -22,7 +23,7 @@ class ELUserPlansInMemoryStore : InMemoryCollectionStore<ELPlan>() {
     }
 
     override fun decorateItem(item: ELPlan) {
-        ELPlanInMemoryDecorator().decoratePlan(item)
+        ELPlanInMemoryDecorator(session).decoratePlan(item)
     }
 
     override fun getCollectionStoreItemLoadedEvent(items: List<ELPlan>?,
