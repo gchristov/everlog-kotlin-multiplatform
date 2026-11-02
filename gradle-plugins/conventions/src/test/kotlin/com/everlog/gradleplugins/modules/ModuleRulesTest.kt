@@ -36,11 +36,12 @@ class ModuleRulesTest {
     }
 
     @Test
-    fun `a feature depends only on its own modules`() {
+    fun `a feature depends on any feature's data but never on another feature's UI`() {
         assertThat(broken(":android:exercise:feature", ":android:exercise:data")).isNull()
+        assertThat(broken(":android:exercise:feature", ":android:workout:data")).isNull()
         assertThat(broken(":android:exercise:feature", ":android:workout:feature")).isNotNull()
-        assertThat(broken(":android:exercise:feature", ":android:workout:data")).isNotNull()
         assertThat(broken(":android:exercise:feature", ":android:exercise:test-fixtures", forTests = true)).isNull()
+        assertThat(broken(":android:exercise:feature", ":android:workout:test-fixtures", forTests = true)).isNull()
     }
 
     @Test

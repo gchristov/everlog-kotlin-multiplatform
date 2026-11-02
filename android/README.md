@@ -53,13 +53,13 @@ Common modules:
 
 The convention plugins enforce these: a module that declares a dependency breaking one fails the build, with the rule it breaks (`gradle-plugins/conventions/…/modules`, unit tested in `ModuleRulesTest`).
 
-- **app → feature → data → common.** The app depends on every `feature` module. A feature depends on its own `data` module.
-- **A feature never depends on another feature.** Screens open each other through the app's `Navigator`. A `feature` module uses only its own feature's modules; when it needs another feature's data, its `data` module depends on that feature's `data` module.
+- **app → feature → data → common.** The app depends on every `feature` module. A feature depends on its own `data` module and on any other feature's `data` module it uses, e.g. `auth:data` for the user or `settings:data` for the settings.
+- **A feature never depends on another feature's UI.** Screens open each other through the app's `Navigator`, so a `feature` module never depends on another feature's `feature` module.
 - **Data may depend on other features' data**, and on their `test-fixtures` in tests.
 - **Data never depends on UI**: no `feature` modules, `common:compose`, `common:compose-test`, `common:mvp` or `common:design`.
 - **Nothing depends on the app**, and **common modules never depend on a feature's modules.**
 - **Code moves with its tests**, never ahead of them. A feature's tests go to its `feature` or `data` module when the code they test does, and common modules hold only common code and its tests.
-- **Test support goes through `test-fixtures` modules and the `common:*-test` modules** (`common:test`, `common:compose-test`, `common:data-test`), which only test configurations (`testImplementation`, `androidTestImplementation`) and other test support may depend on. Their code lives in `main`, with their dependencies as `api`, because a module's `test` sources can't be shared. A feature's `feature` and `data` modules use its `test-fixtures` for their tests.
+- **Test support goes through `test-fixtures` modules and the `common:*-test` modules** (`common:test`, `common:compose-test`, `common:data-test`), which only test configurations (`testImplementation`, `androidTestImplementation`) and other test support may depend on. Their code lives in `main`, with their dependencies as `api`, because a module's `test` sources can't be shared. A feature's `feature` and `data` modules use its `test-fixtures` for their tests, and other features' `test-fixtures` for the data they use.
 
 ## What a feature gets from the app
 
