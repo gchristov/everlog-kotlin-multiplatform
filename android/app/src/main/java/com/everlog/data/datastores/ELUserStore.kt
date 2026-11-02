@@ -10,7 +10,6 @@ import com.everlog.android.common.mvp.MvpBroadcasts
 import com.everlog.android.settings.data.MuscleGoal
 import com.everlog.android.common.data.store.ELDocumentStore
 import com.everlog.android.common.data.store.events.ELDocStoreItemLoadedEvent
-import com.everlog.android.auth.data.LocalUserManager
 import com.everlog.managers.firebase.FirestorePathManager
 import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.FieldPath
@@ -37,8 +36,8 @@ class ELUserStore : ELDocumentStore<ELUser>() {
 
     override fun itemReady(item: ELUser) {
         super.itemReady(item)
-        val proChanged = LocalUserManager.getUser()?.isPro() != item.isPro()
-        LocalUserManager.updateUser(item)
+        val proChanged = AppServices.userSession.user()?.isPro() != item.isPro()
+        AppServices.userSession.updateUser(item)
         if (proChanged) {
             if (!item.isPro()) {
                 checkProDependentFeatures()

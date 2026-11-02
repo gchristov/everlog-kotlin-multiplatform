@@ -25,12 +25,12 @@ class AppOnboardingFeatureDependencies : OnboardingFeatureDependencies {
 
     override fun buildStarterRoutines(): BuildStarterRoutinesUseCase = RealBuildStarterRoutinesUseCase(
         dispatcher = Dispatchers.Default,
-        exerciseRepository = RealExerciseRepository(dispatcher = Dispatchers.IO, dataSync = AppDataSync.instance),
+        exerciseRepository = RealExerciseRepository(dispatcher = Dispatchers.IO, dataSync = AppDataSync.instance, session = AppServices.userSession),
     )
 
     override fun saveStarterRoutines(): SaveStarterRoutinesUseCase = RealSaveStarterRoutinesUseCase(
         dispatcher = Dispatchers.Default,
-        routineRepository = RealRoutineRepository(dispatcher = Dispatchers.IO, dataSync = AppDataSync.instance, testLabRoutines = { ELDatastore.routineStore() }),
+        routineRepository = RealRoutineRepository(dispatcher = Dispatchers.IO, dataSync = AppDataSync.instance, session = AppServices.userSession, testLabRoutines = { ELDatastore.routineStore() }),
     )
 
     override fun onboardingSettings(context: Context): OnboardingSettings = AppOnboardingSettings(context)

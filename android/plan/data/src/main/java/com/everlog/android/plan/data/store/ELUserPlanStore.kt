@@ -1,5 +1,6 @@
 package com.everlog.android.plan.data.store
 
+import com.everlog.android.auth.data.UserSession
 import com.everlog.android.plan.data.model.ELPlan
 import com.everlog.android.common.data.store.ELDocumentStore
 import com.everlog.android.common.data.store.events.ELDocStoreItemLoadedEvent
@@ -8,7 +9,7 @@ import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.FieldPath
 import com.google.firebase.firestore.Query
 
-class ELUserPlanStore : ELDocumentStore<ELPlan>() {
+class ELUserPlanStore(private val session: UserSession) : ELDocumentStore<ELPlan>() {
 
     override fun getType(): Class<ELPlan> {
         return ELPlan::class.java
@@ -28,7 +29,7 @@ class ELUserPlanStore : ELDocumentStore<ELPlan>() {
     }
 
     override fun decorateItem(item: ELPlan) {
-        ELPlanDecorator().decoratePlan(item)
+        ELPlanDecorator(session).decoratePlan(item)
     }
 
     // Events

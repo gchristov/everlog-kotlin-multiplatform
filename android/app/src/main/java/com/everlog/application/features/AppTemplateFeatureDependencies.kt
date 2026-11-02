@@ -71,17 +71,17 @@ class AppTemplateFeatureDependencies : TemplateFeatureDependencies {
         }
 
     override fun loadTemplate(): LoadTemplateUseCase =
-        RealLoadTemplateUseCase(Dispatchers.Default, routines(), RealExerciseRepository(Dispatchers.IO, AppDataSync.instance))
+        RealLoadTemplateUseCase(Dispatchers.Default, routines(), RealExerciseRepository(Dispatchers.IO, AppDataSync.instance, AppServices.userSession))
 
     override fun saveTemplate(context: Context): SaveTemplateUseCase =
         RealSaveTemplateUseCase(Dispatchers.IO, routines(), RealOngoingPlanRepository(context.applicationContext))
 
     override fun ownExerciseUpdates(): Flow<List<LibraryExercise>> =
-        RealExerciseRepository(Dispatchers.IO, AppDataSync.instance).ownExerciseUpdates()
+        RealExerciseRepository(Dispatchers.IO, AppDataSync.instance, AppServices.userSession).ownExerciseUpdates()
 
     override fun templateEditorAnalytics(): TemplateEditorAnalytics = AppTemplateEditorAnalytics()
 
-    private fun routines() = RealRoutineRepository(Dispatchers.IO, AppDataSync.instance) { ELDatastore.routineStore() }
+    private fun routines() = RealRoutineRepository(Dispatchers.IO, AppDataSync.instance, AppServices.userSession) { ELDatastore.routineStore() }
 
     override fun removeFromOngoingPlan(activity: Activity, routine: ELRoutine) = PlanManager.manager.deleteRoutineForPlan(activity, routine)
 

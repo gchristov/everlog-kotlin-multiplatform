@@ -1,5 +1,7 @@
 package com.everlog.android.plan.data.store
 
+import com.everlog.android.auth.data.requireUserId
+import com.everlog.android.auth.data.UserSession
 import com.everlog.android.common.firebase.FirestoreFields
 import com.everlog.android.plan.data.model.ELPlan
 import com.everlog.android.common.data.store.ELCollectionStore
@@ -7,11 +9,10 @@ import com.everlog.android.common.data.store.events.ELColStoreItemAddedEvent
 import com.everlog.android.common.data.store.events.ELColStoreItemModifiedEvent
 import com.everlog.android.common.data.store.events.ELColStoreItemRemovedEvent
 import com.everlog.android.common.data.store.events.ELColStoreItemsLoadedEvent
-import com.everlog.android.auth.data.LocalUserManager
 import com.everlog.android.common.firebase.FirestorePaths
 import com.google.firebase.firestore.Query
 
-class ELUserPlansStore : ELCollectionStore<ELPlan>() {
+class ELUserPlansStore(private val session: UserSession) : ELCollectionStore<ELPlan>() {
 
     override fun getType(): Class<ELPlan> {
         return ELPlan::class.java
@@ -19,7 +20,7 @@ class ELUserPlansStore : ELCollectionStore<ELPlan>() {
 
     override fun getQuery(): Query {
         return FirestorePaths.plans
-                .whereEqualTo(FirestoreFields.CREATED_BY_USER_ID, LocalUserManager.getUser()!!.id)
+                .whereEqualTo(FirestoreFields.CREATED_BY_USER_ID, session.requireUserId())
                 .orderBy(FirestoreFields.NAME)
     }
 
@@ -28,7 +29,7 @@ class ELUserPlansStore : ELCollectionStore<ELPlan>() {
     }
 
     override fun decorateItem(item: ELPlan) {
-        ELPlanDecorator().decoratePlan(item)
+        ELPlanDecorator(session).decoratePlan(item)
     }
 
     // Events

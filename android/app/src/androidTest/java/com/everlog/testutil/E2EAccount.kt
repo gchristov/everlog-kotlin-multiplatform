@@ -1,11 +1,11 @@
 package com.everlog.testutil
 
+import com.everlog.application.AppServices
 import androidx.test.platform.app.InstrumentationRegistry
 import com.everlog.BuildConfig
 import com.everlog.android.auth.data.AuthActionListener
 import com.everlog.android.auth.data.model.ELUser
 import com.everlog.managers.auth.AuthManager
-import com.everlog.android.auth.data.LocalUserManager
 import com.google.common.truth.Truth.assertThat
 import java.util.concurrent.CountDownLatch
 import java.util.concurrent.TimeUnit
@@ -17,7 +17,7 @@ import java.util.concurrent.TimeUnit
  */
 object E2EAccount {
     fun signIn() {
-        if (LocalUserManager.getUser() != null) return
+        if (AppServices.userSession.user() != null) return
         val signedIn = CountDownLatch(1)
         var error: Throwable? = null
         InstrumentationRegistry.getInstrumentation().runOnMainSync {

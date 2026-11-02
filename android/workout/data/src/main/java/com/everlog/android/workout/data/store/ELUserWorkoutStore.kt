@@ -1,6 +1,7 @@
 package com.everlog.android.workout.data.store
 
-import com.everlog.android.auth.data.LocalUserManager
+import com.everlog.android.auth.data.requireUserId
+import com.everlog.android.auth.data.UserSession
 import com.everlog.android.common.data.model.workout.ELWorkout
 import com.everlog.android.common.data.store.ELDocumentStore
 import com.everlog.android.common.data.store.events.ELDocStoreItemLoadedEvent
@@ -10,7 +11,7 @@ import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.FieldPath
 import com.google.firebase.firestore.Query
 
-class ELUserWorkoutStore : ELDocumentStore<ELWorkout>() {
+class ELUserWorkoutStore(private val session: UserSession) : ELDocumentStore<ELWorkout>() {
 
     override fun getType(): Class<ELWorkout> {
         return ELWorkout::class.java
@@ -22,7 +23,7 @@ class ELUserWorkoutStore : ELDocumentStore<ELWorkout>() {
     }
 
     override fun getParentCollection(): CollectionReference {
-        return FirestorePaths.workouts(LocalUserManager.requireUserId())
+        return FirestorePaths.workouts(session.requireUserId())
     }
 
     override fun getTag(): String {
@@ -30,7 +31,7 @@ class ELUserWorkoutStore : ELDocumentStore<ELWorkout>() {
     }
 
     override fun decorateItem(item: ELWorkout) {
-        ELRoutineDecorator().decorate(item)
+        ELRoutineDecorator(session).decorate(item)
     }
 
     // Events

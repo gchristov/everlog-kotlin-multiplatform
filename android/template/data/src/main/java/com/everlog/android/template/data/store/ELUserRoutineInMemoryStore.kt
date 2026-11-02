@@ -1,5 +1,6 @@
 package com.everlog.android.template.data.store
 
+import com.everlog.android.auth.data.UserSession
 import com.everlog.android.common.data.model.ELRoutine
 import com.everlog.android.common.data.store.InMemoryDocumentStore
 import com.everlog.android.common.data.store.events.ELDocStoreItemLoadedEvent
@@ -7,7 +8,7 @@ import com.everlog.android.common.data.store.events.ELDocStoreItemLoadedEvent
 /**
  * [ELUserRoutineStore] for Firebase Test Lab runs, kept in memory.
  */
-class ELUserRoutineInMemoryStore : InMemoryDocumentStore<ELRoutine>() {
+class ELUserRoutineInMemoryStore(private val session: UserSession) : InMemoryDocumentStore<ELRoutine>() {
 
     override fun getType(): Class<ELRoutine> {
         return ELRoutine::class.java
@@ -18,7 +19,7 @@ class ELUserRoutineInMemoryStore : InMemoryDocumentStore<ELRoutine>() {
     }
 
     override fun decorateItem(item: ELRoutine) {
-        ELRoutineDecorator().decorate(item)
+        ELRoutineDecorator(session).decorate(item)
     }
 
     override fun getDocumentStoreItemLoadedEvent(item: ELRoutine?,

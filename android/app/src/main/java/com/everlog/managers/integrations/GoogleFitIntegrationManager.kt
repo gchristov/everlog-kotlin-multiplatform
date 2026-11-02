@@ -1,5 +1,6 @@
 package com.everlog.managers.integrations
 
+import com.everlog.application.AppServices
 import android.Manifest
 import android.app.Activity
 import android.content.Intent
@@ -9,7 +10,6 @@ import com.everlog.android.settings.data.model.ELIntegration
 import com.everlog.constants.ELActivityRequestCodes
 import com.everlog.data.datastores.ELDatastore
 import com.everlog.managers.analytics.AnalyticsManager
-import com.everlog.android.auth.data.LocalUserManager
 import com.everlog.android.common.mvp.fragment.BaseFragmentMvpView
 import com.everlog.ui.navigator.ELNavigator
 import com.everlog.utils.device.DeviceUtils
@@ -113,7 +113,7 @@ object GoogleFitIntegrationManager {
         AnalyticsManager.manager.integrationConnected()
         Timber.tag(TAG).i("Google Fit access granted")
         // Add integration
-        val integration = ELIntegration.newIntegration(LocalUserManager.getUser()!!.id, ELIntegration.Type.GOOGLE_FIT, serverAuthCode)
+        val integration = ELIntegration.newIntegration(AppServices.userSession.user()!!.id, ELIntegration.Type.GOOGLE_FIT, serverAuthCode)
         ELDatastore.integrationStore().create(integration, SetOptions.merge())
         Timber.tag(TAG).i("Added user integration")
         // Notify listener

@@ -9,7 +9,7 @@ import com.everlog.android.common.datasync.Range
 import com.everlog.android.common.datasync.SyncPlan
 import com.everlog.android.common.firebase.FirestoreFields
 import com.everlog.android.common.kotlin.Load
-import com.everlog.android.auth.data.LocalUserManager
+import com.everlog.android.auth.data.UserSession
 import com.everlog.android.common.firebase.FirestorePaths
 import com.google.firebase.firestore.Query
 import kotlinx.coroutines.CoroutineDispatcher
@@ -43,12 +43,13 @@ class RealWorkoutRepository(
     private val dispatcher: CoroutineDispatcher,
     private val dataSync: DataSync,
     private val syncMonths: Int,
+    private val session: UserSession,
 ) : WorkoutRepository {
 
     override fun workouts(range: Range): Flow<Load<List<ELWorkout>>> = workouts(range, complete = false)
 
     private fun workouts(range: Range, complete: Boolean): Flow<Load<List<ELWorkout>>> {
-        val userId = LocalUserManager.getUser()?.id ?: return flowOf(Load.Ready(emptyList()))
+        val userId = session.user()?.id ?: return flowOf(Load.Ready(emptyList()))
         return dataSync.observe(
             CollectionSource(
                 "workouts",

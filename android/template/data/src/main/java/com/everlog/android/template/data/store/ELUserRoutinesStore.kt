@@ -1,6 +1,7 @@
 package com.everlog.android.template.data.store
 
-import com.everlog.android.auth.data.LocalUserManager
+import com.everlog.android.auth.data.UserSession
+import com.everlog.android.auth.data.requireUserId
 import com.everlog.android.common.data.model.ELRoutine
 import com.everlog.android.common.firebase.FirestoreFields
 import com.everlog.android.common.firebase.FirestorePaths
@@ -11,14 +12,14 @@ import com.everlog.android.common.data.store.events.ELColStoreItemRemovedEvent
 import com.everlog.android.common.data.store.events.ELColStoreItemsLoadedEvent
 import com.google.firebase.firestore.Query
 
-class ELUserRoutinesStore : ELCollectionStore<ELRoutine>() {
+class ELUserRoutinesStore(private val session: UserSession) : ELCollectionStore<ELRoutine>() {
 
     override fun getType(): Class<ELRoutine> {
         return ELRoutine::class.java
     }
 
     override fun getQuery(): Query {
-        return FirestorePaths.routines(LocalUserManager.requireUserId())
+        return FirestorePaths.routines(session.requireUserId())
                 .orderBy(FirestoreFields.NAME)
     }
 
@@ -27,7 +28,7 @@ class ELUserRoutinesStore : ELCollectionStore<ELRoutine>() {
     }
 
     override fun decorateItem(item: ELRoutine) {
-        ELRoutineDecorator().decorate(item)
+        ELRoutineDecorator(session).decorate(item)
     }
 
     // Events

@@ -1,5 +1,6 @@
 package com.everlog.application.features
 
+import com.everlog.android.auth.data.UserSession
 import com.everlog.application.AppServices
 import com.everlog.android.settings.data.UserSettings
 import android.app.Activity
@@ -33,6 +34,8 @@ import com.everlog.ui.navigator.feedbackFormLauncher
 import kotlinx.coroutines.Dispatchers
 
 class AppExerciseFeatureDependencies : ExerciseFeatureDependencies {
+    override fun userSession(): UserSession = AppServices.userSession
+
     override fun userSettings(): UserSettings = AppServices.userSettings
 
 
@@ -40,10 +43,10 @@ class AppExerciseFeatureDependencies : ExerciseFeatureDependencies {
         val io = Dispatchers.IO
         return RealLoadExerciseLibraryUseCase(
             io,
-            RealExerciseRepository(io, AppDataSync.instance),
+            RealExerciseRepository(io, AppDataSync.instance, AppServices.userSession),
             AppExerciseUsage(
-                RealRoutineRepository(io, AppDataSync.instance) { ELDatastore.routineStore() },
-                RealWorkoutRepository(io, AppDataSync.instance, AppConfig.configuration.workoutSyncMonths),
+                RealRoutineRepository(io, AppDataSync.instance, AppServices.userSession) { ELDatastore.routineStore() },
+                RealWorkoutRepository(io, AppDataSync.instance, AppConfig.configuration.workoutSyncMonths, AppServices.userSession),
             ),
         )
     }
@@ -69,7 +72,7 @@ class AppExerciseFeatureDependencies : ExerciseFeatureDependencies {
 
     override fun loadExerciseGuide(): LoadExerciseGuideUseCase {
         val io = Dispatchers.IO
-        return RealLoadExerciseGuideUseCase(io, RealExerciseRepository(io, AppDataSync.instance))
+        return RealLoadExerciseGuideUseCase(io, RealExerciseRepository(io, AppDataSync.instance, AppServices.userSession))
     }
 
     override fun workoutsStore(): CollectionStore<ELWorkout> = ELDatastore.workoutsStore()

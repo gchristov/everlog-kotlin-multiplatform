@@ -1,5 +1,6 @@
 package com.everlog.ui.activities.templateeditor
 
+import com.everlog.application.AppServices
 import android.app.Activity
 import android.app.Instrumentation
 import android.content.Context
@@ -167,7 +168,7 @@ class TemplateEditorActivityTest {
             createdDate = System.currentTimeMillis(),
             exerciseGroups = mutableListOf(group("e2e-bench", "Bench press", sets = 2)),
         )
-        runBlocking { RealRoutineRepository(Dispatchers.IO, AppDataSync.instance) { ELDatastore.routineStore() }.saveRoutines(listOf(routine)) }
+        runBlocking { RealRoutineRepository(Dispatchers.IO, AppDataSync.instance, AppServices.userSession) { ELDatastore.routineStore() }.saveRoutines(listOf(routine)) }
         saved += routine
         return routine
     }

@@ -4,7 +4,6 @@ import android.net.Uri
 import com.everlog.android.common.data.model.exercise.ELExercise
 import com.everlog.android.common.persistence.PreferencesManager
 import com.everlog.android.exercise.data.store.ExerciseStores
-import com.everlog.android.auth.data.LocalUserManager
 import com.google.android.gms.tasks.Task
 import com.google.firebase.firestore.SetOptions
 import com.google.firebase.storage.FirebaseStorage
@@ -36,15 +35,15 @@ object ExerciseImageStorage : PreferencesManager() {
     }
 
     @JvmStatic
-    fun uploadExerciseImage(filePath: Uri, exercise: ELExercise) {
-        val ref = mStorageReference.child(getUserExercisePath(exercise))
+    fun uploadExerciseImage(filePath: Uri, exercise: ELExercise, userId: String) {
+        val ref = mStorageReference.child(getUserExercisePath(exercise, userId))
         saveExerciseUpload(ref.toString(), exercise)
         resumeUpload(ref, filePath)
     }
 
     @JvmStatic
-    fun deleteExerciseImage(exercise: ELExercise) {
-        val ref = mStorageReference.child(getUserExercisePath(exercise))
+    fun deleteExerciseImage(exercise: ELExercise, userId: String) {
+        val ref = mStorageReference.child(getUserExercisePath(exercise, userId))
         deleteImage(ref)
     }
 
@@ -62,8 +61,8 @@ object ExerciseImageStorage : PreferencesManager() {
         upload.resume()
     }
 
-    private fun getUserExercisePath(exercise: ELExercise): String {
-        return String.format("exercises/%s/%s", LocalUserManager.getUser()!!.id, exercise.uuid)
+    private fun getUserExercisePath(exercise: ELExercise, userId: String): String {
+        return String.format("exercises/%s/%s", userId, exercise.uuid)
     }
 
     private fun resumePendingExercises() {
@@ -85,9 +84,8 @@ object ExerciseImageStorage : PreferencesManager() {
         saveStorageUpload(uploadUrl, Gson().toJson(exercise), PreferenceKeys.EXERCISE_UPLOAD_TASK_IDS.name)
     }
 
-    private fun finishExerciseUpload(exercise: ELExercise) {
+    private fun finishExerciseUpload(ref: StorageReference, exercise: ELExercise) {
         // Fetch the final image url.
-        val ref = mStorageReference.child(getUserExercisePath(exercise))
         Timber.tag(TAG).d("Finished exercise image upload: url=$ref")
         ref.downloadUrl
                 .addOnSuccessListener { uri: Uri ->
@@ -123,7 +121,7 @@ object ExerciseImageStorage : PreferencesManager() {
                 exerciseUploadKeys.remove(uploadUrl)
                 savePreference(exerciseUploadKeys, PreferenceKeys.EXERCISE_UPLOAD_TASK_IDS.name)
                 val exercise = Gson().fromJson(dataJson, ELExercise::class.java)
-                finishExerciseUpload(exercise)
+                finishExerciseUpload(mStorage.getReferenceFromUrl(uploadUrl), exercise)
             }
             removePreference(uploadUrl)
         }

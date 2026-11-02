@@ -8,18 +8,19 @@ import com.everlog.android.common.data.store.events.ELColStoreItemModifiedEvent
 import com.everlog.android.common.data.store.events.ELColStoreItemRemovedEvent
 import com.everlog.android.common.data.store.events.ELColStoreItemsLoadedEvent
 import com.everlog.android.exercise.data.store.ELExercisesStore.*
-import com.everlog.android.auth.data.LocalUserManager
+import com.everlog.android.auth.data.UserSession
+import com.everlog.android.auth.data.requireUserId
 import com.everlog.android.common.firebase.FirestorePaths
 import com.google.firebase.firestore.Query
 
-internal class ELUserExercisesStore : ELCollectionStore<ELExercise>() {
+internal class ELUserExercisesStore(private val session: UserSession) : ELCollectionStore<ELExercise>() {
 
     override fun getType(): Class<ELExercise> {
         return ELExercise::class.java
     }
 
     override fun getQuery(): Query {
-        return FirestorePaths.exercises(LocalUserManager.requireUserId())
+        return FirestorePaths.exercises(session.requireUserId())
                 .orderBy(FirestoreFields.NAME)
     }
 

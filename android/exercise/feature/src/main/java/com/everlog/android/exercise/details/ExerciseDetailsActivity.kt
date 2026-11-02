@@ -12,7 +12,6 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.updatePadding
 import com.everlog.android.common.data.model.exercise.ELExercise
 import com.everlog.android.common.data.model.workout.RangeType
-import com.everlog.android.auth.data.LocalUserManager
 import com.everlog.android.common.mvp.activity.BaseActivity
 import com.everlog.android.common.mvp.activity.BaseActivityMvpView
 import com.everlog.android.common.mvp.activity.BaseActivityPresenter
@@ -137,7 +136,7 @@ class ExerciseDetailsActivity : BaseActivity(), MvpViewExerciseDetails {
                                      range: RangeType) {
         supportActionBar?.title = exercise.name
         supportActionBar?.subtitle = exercise.category?.lowercase()?.capitalize()
-        mAllowDelete = exercise.isEditable(LocalUserManager.getUser()?.id)
+        mAllowDelete = exercise.isEditable(ExerciseFeature.dependencies.userSession().user()?.id)
         invalidateOptionsMenu()
         // Tabs
         mTabs?.let { tabs ->

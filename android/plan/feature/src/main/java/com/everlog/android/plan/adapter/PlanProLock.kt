@@ -1,11 +1,11 @@
 package com.everlog.android.plan.adapter
 
 import com.everlog.android.plan.data.model.ELPlanWeek
-import com.everlog.android.auth.data.LocalUserManager
+import com.everlog.android.auth.data.model.ELUser
 
 // Before a week's days are shown: without a signed-in user nothing is locked
-fun ELPlanWeek.applyProLock() {
-    lockDays(MAX_FREE_WEEK_DAYS, userIsPro = LocalUserManager.getUser()?.isPro() != false)
+fun ELPlanWeek.applyProLock(user: ELUser?) {
+    lockDays(MAX_FREE_WEEK_DAYS, userIsPro = user?.isPro() != false)
 }
 
 // How many days of each week a free user can fill in

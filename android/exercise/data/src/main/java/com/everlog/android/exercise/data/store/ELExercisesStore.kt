@@ -1,5 +1,6 @@
 package com.everlog.android.exercise.data.store
 
+import com.everlog.android.auth.data.UserSession
 import com.everlog.android.common.data.model.exercise.ELExercise
 import com.everlog.android.common.firebase.FirestoreFields
 import com.everlog.android.common.data.store.ELCollectionStore
@@ -17,10 +18,10 @@ import timber.log.Timber
 import java.util.*
 import java.util.concurrent.TimeUnit
 
-class ELExercisesStore : ELCollectionStore<ELExercise>() {
+class ELExercisesStore(session: UserSession) : ELCollectionStore<ELExercise>() {
 
     private val mAllItemsReady = PublishSubject.create<List<ELExercise>>()
-    private val mUserExercisesStore = ELUserExercisesStore()
+    private val mUserExercisesStore = ELUserExercisesStore(session)
     private var mMergedItemsMap: Map<String, ELExercise> = HashMap()
 
     init {

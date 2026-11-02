@@ -1,5 +1,6 @@
 package com.everlog.android.workout.data.store
 
+import com.everlog.android.auth.data.UserSession
 import com.everlog.android.common.data.model.workout.ELWorkout
 import com.everlog.android.common.data.store.InMemoryCollectionStore
 import com.everlog.android.common.data.store.events.ELColStoreItemsLoadedEvent
@@ -8,7 +9,7 @@ import com.everlog.android.template.data.store.ELRoutineDecorator
 /**
  * [ELUserWorkoutsStore] for Firebase Test Lab runs, kept in memory.
  */
-class ELUserWorkoutsInMemoryStore : InMemoryCollectionStore<ELWorkout>() {
+class ELUserWorkoutsInMemoryStore(private val session: UserSession) : InMemoryCollectionStore<ELWorkout>() {
 
     companion object {
         const val COLLECTION = "workouts"
@@ -23,7 +24,7 @@ class ELUserWorkoutsInMemoryStore : InMemoryCollectionStore<ELWorkout>() {
     }
 
     override fun decorateItem(item: ELWorkout) {
-        ELRoutineDecorator().decorate(item)
+        ELRoutineDecorator(session).decorate(item)
     }
 
     override fun getCollectionStoreItemLoadedEvent(items: List<ELWorkout>?,

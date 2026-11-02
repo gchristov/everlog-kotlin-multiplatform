@@ -1,6 +1,7 @@
 package com.everlog.android.template.data.store
 
-import com.everlog.android.auth.data.LocalUserManager
+import com.everlog.android.auth.data.UserSession
+import com.everlog.android.auth.data.requireUserId
 import com.everlog.android.common.data.model.ELRoutine
 import com.everlog.android.common.data.model.exercise.ELExercise
 import com.everlog.android.common.data.model.workout.ELWorkout
@@ -14,7 +15,7 @@ import timber.log.Timber
  * Class used to decorate a routine or workout.
  * It hydrates the exercises within the routine using the latest data from ELExercisesStore.
  */
-class ELRoutineDecorator {
+class ELRoutineDecorator(private val session: UserSession) {
 
     private val TAG = "ELRoutineDecorator"
 
@@ -74,7 +75,7 @@ class ELRoutineDecorator {
 
             // Try user
             val userRef = try {
-                FirestorePaths.exercises(LocalUserManager.requireUserId()).document(uuid)
+                FirestorePaths.exercises(session.requireUserId()).document(uuid)
             } catch (e: Exception) {
                 e.printStackTrace()
                 null

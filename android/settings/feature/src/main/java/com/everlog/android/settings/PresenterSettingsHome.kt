@@ -1,5 +1,7 @@
 package com.everlog.android.settings
 
+import com.everlog.android.auth.data.requireUserId
+import com.everlog.android.auth.data.requireUser
 import com.everlog.android.common.design.R as DesignR
 import android.content.DialogInterface
 import android.content.Intent
@@ -15,7 +17,6 @@ import com.everlog.android.settings.data.model.ELIntegration
 import com.everlog.android.settings.data.store.ELUserIntegrationStore
 import com.everlog.android.settings.data.store.SettingsStores
 import com.everlog.android.settings.integration.IntegrationActivity
-import com.everlog.android.auth.data.LocalUserManager
 import com.everlog.android.common.kotlin.format.ArrayResourceTypeUtils
 import com.google.firebase.firestore.SetOptions
 // import icepick.State
@@ -29,6 +30,7 @@ class PresenterSettingsHome : BaseFragmentPresenter<MvpViewSettingsHome>() {
 
     private val dependencies = SettingsFeature.dependencies
     private val settings = dependencies.userSettings()
+    private val session = dependencies.userSession()
     private val analytics = dependencies.settingsAnalytics()
 
     // @State
@@ -253,7 +255,7 @@ class PresenterSettingsHome : BaseFragmentPresenter<MvpViewSettingsHome>() {
     // Loading
 
     private fun loadData() {
-        mvpView?.showUserInfo(LocalUserManager.getUser()!!)
+        mvpView?.showUserInfo(session.requireUser())
         mvpView?.showAppInfo(dependencies.appInfo())
         showFeedback()
         mvpView?.showSettings(
@@ -287,7 +289,7 @@ class PresenterSettingsHome : BaseFragmentPresenter<MvpViewSettingsHome>() {
 
 
     private fun saveConsentDecision(granted: Boolean) {
-        val consent = mConsent ?: ELConsent.newConsent(LocalUserManager.getUser()!!.id, granted)
+        val consent = mConsent ?: ELConsent.newConsent(session.requireUserId(), granted)
         consent.updateNewsletter(granted)
         AuthStores.consentStore().create(consent, SetOptions.merge())
         if (granted) analytics.newsletterGranted() else analytics.newsletterDenied()

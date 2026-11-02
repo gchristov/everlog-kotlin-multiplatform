@@ -1,5 +1,6 @@
 package com.everlog.android.plan.details
 
+import com.everlog.android.plan.PlanFeature
 import android.content.Context
 import android.content.Intent
 import android.view.Menu
@@ -14,7 +15,6 @@ import androidx.viewpager.widget.ViewPager
 import com.everlog.android.plan.R
 import com.everlog.android.plan.data.model.ELPlan
 import com.everlog.android.plan.databinding.ActivityPlanDetailsBinding
-import com.everlog.android.auth.data.LocalUserManager
 import com.everlog.android.common.mvp.activity.BaseActivity
 import com.everlog.android.common.mvp.activity.BaseActivityMvpView
 import com.everlog.android.common.mvp.activity.BaseActivityPresenter
@@ -118,7 +118,7 @@ class PlanDetailsActivity : BaseActivity(), MvpViewPlanDetails {
         } else {
             binding.root.findViewById<ImageView>(R.id.coverImage).setImageDrawable(null)
         }
-        mAllowDelete = plan.isEditable(LocalUserManager.getUser()?.id)
+        mAllowDelete = plan.isEditable(PlanFeature.dependencies.userSession().user()?.id)
         invalidateOptionsMenu()
         // Start/Stop
         binding.root.findViewById<Button>(R.id.toggleStartBtn).setText(if (showStop) R.string.plan_details_stop else R.string.plan_details_start)
