@@ -17,6 +17,8 @@ dependencies {
     implementation(libs.gson)
     implementation(libs.timber)
     implementation(projects.android.exercise.data)
+    implementation(projects.android.auth.data)
+    implementation(projects.android.settings.data)
     testImplementation(projects.android.common.dataTest)
     testImplementation(projects.android.exercise.testFixtures)
     androidTestImplementation(projects.android.exercise.testFixtures)

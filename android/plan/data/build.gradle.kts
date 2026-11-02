@@ -10,8 +10,8 @@ android {
 }
 
 dependencies {
-    // The plan screens read the user, their settings and templates through their data module
-    api(projects.android.template.data)
+    implementation(projects.android.auth.data)
+    implementation(projects.android.template.data)
     implementation(projects.android.common.persistence)
     implementation(libs.androidx.localbroadcastmanager)
     implementation(libs.commons.lang3)

@@ -11,6 +11,7 @@ android {
 
 dependencies {
     api(libs.firebase.auth)
+    // ELUser holds the Pro subscription
     api(projects.android.pro.data)
     // LocalUserManager is a PreferencesManager
     api(projects.android.common.persistence)

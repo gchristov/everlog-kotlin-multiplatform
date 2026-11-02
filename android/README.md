@@ -56,6 +56,7 @@ The convention plugins enforce these: a module that declares a dependency breaki
 - **app → feature → data → common.** The app depends on every `feature` module. A feature depends on its own `data` module and on any other feature's `data` module it uses, e.g. `auth:data` for the user or `settings:data` for the settings.
 - **A feature never depends on another feature's UI.** Screens open each other through the app's `Navigator`, so a `feature` module never depends on another feature's `feature` module.
 - **Data may depend on other features' data**, and on their `test-fixtures` in tests.
+- **Each module declares the modules it uses**, as `implementation`. A module exposes another as `api` only when that module's types are part of its own public API (e.g. `auth:data` exposes `pro:data`, as `ELUser` holds the Pro subscription), never to hand another feature's data on to the modules using it. The plugins can't check this one, so check it in review.
 - **Data never depends on UI**: no `feature` modules, `common:compose`, `common:compose-test`, `common:mvp` or `common:design`.
 - **Nothing depends on the app**, and **common modules never depend on a feature's modules.**
 - **Code moves with its tests**, never ahead of them. A feature's tests go to its `feature` or `data` module when the code they test does, and common modules hold only common code and its tests.
