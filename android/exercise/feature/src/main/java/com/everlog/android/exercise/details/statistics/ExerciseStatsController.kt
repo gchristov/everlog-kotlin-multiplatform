@@ -1,5 +1,6 @@
 package com.everlog.android.exercise.details.statistics
 
+import com.everlog.android.common.data.store.CollectionStore
 import com.everlog.android.common.data.model.exercise.ELExercise
 import com.everlog.android.common.data.model.exercise.ELExerciseHistory
 import com.everlog.android.common.data.model.exercise.estimated1RM
@@ -10,7 +11,6 @@ import com.everlog.android.common.kotlin.WeightUnit
 import org.threeten.bp.DayOfWeek
 import com.everlog.android.common.data.store.OnStoreItemsListener
 import com.everlog.android.common.mvp.chart.BaseStatsController
-import com.everlog.android.exercise.ExerciseFeature
 import com.github.mikephil.charting.data.Entry
 import rx.Observable
 import rx.android.schedulers.AndroidSchedulers
@@ -22,16 +22,18 @@ import kotlin.math.max
 /**
  * @param weightUnit The unit weights are totalled in
  * @param firstDayOfWeek Where "this week" starts
+ * @param workoutsStore The user's workouts, which the stats are worked out from
  */
 class ExerciseStatsController(
     private val weightUnit: WeightUnit,
     private val firstDayOfWeek: DayOfWeek,
+    private val workoutsStore: CollectionStore<ELWorkout>,
 ) : BaseStatsController() {
 
     fun loadStats(range: RangeType,
                   exercise: ELExercise,
                   listener: OnCompleteListener?) {
-        ExerciseFeature.dependencies.workoutsStore().getItems(object : OnStoreItemsListener<ELWorkout> {
+        workoutsStore.getItems(object : OnStoreItemsListener<ELWorkout> {
             override fun onItemsLoaded(items: List<ELWorkout>, fromCache: Boolean) {
                 Observable.just(calculateStats(range, listOf(exercise), items, true)
                         .observeOn(AndroidSchedulers.mainThread())

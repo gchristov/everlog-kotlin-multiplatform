@@ -1,6 +1,6 @@
 package com.everlog.android.exercise.details.history
 
-import com.everlog.android.exercise.ExerciseFeature
+import com.everlog.android.settings.data.UserSettings
 import com.ahamed.multiviewadapter.DataListManager
 import com.ahamed.multiviewadapter.RecyclerAdapter
 import com.everlog.android.common.data.model.exercise.ELExerciseHistory
@@ -9,7 +9,9 @@ import com.everlog.android.common.mvp.list.BaseTimelineViewHolder
 import com.everlog.android.exercise.details.history.ExerciseHistoryAdapter
 import com.everlog.android.exercise.details.BasePresenterExerciseTab
 
-class PresenterExerciseHistory : BasePresenterExerciseTab<MvpViewExerciseHistory>() {
+class PresenterExerciseHistory(
+    private val settings: UserSettings,
+) : BasePresenterExerciseTab<MvpViewExerciseHistory>() {
 
     private val mAdapter = RecyclerAdapter()
     private val mDataListManager = DataListManager<ELExerciseHistory>(mAdapter)
@@ -53,7 +55,7 @@ class PresenterExerciseHistory : BasePresenterExerciseTab<MvpViewExerciseHistory
 
     private fun setupListView() {
         mAdapter.addDataManager(mDataListManager)
-        mAdapter.registerBinder(ExerciseHistoryAdapter.Binder(ExerciseFeature.dependencies.userSettings().weightUnit(), object : BaseTimelineViewHolder.OnTimelineListener<ELExerciseHistory> {
+        mAdapter.registerBinder(ExerciseHistoryAdapter.Binder(settings.weightUnit(), object : BaseTimelineViewHolder.OnTimelineListener<ELExerciseHistory> {
             override fun collectionSize(): Int {
                 return mDataListManager.count
             }

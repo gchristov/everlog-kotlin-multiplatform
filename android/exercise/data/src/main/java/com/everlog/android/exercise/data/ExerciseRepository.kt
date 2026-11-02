@@ -1,6 +1,7 @@
 package com.everlog.android.exercise.data
 
 import arrow.core.Either
+import com.everlog.android.auth.data.UserSession
 import com.everlog.android.common.data.model.exercise.ELExercise
 import com.everlog.android.common.datasync.CollectionSource
 import com.everlog.android.common.datasync.DataSync
@@ -8,15 +9,18 @@ import com.everlog.android.common.datasync.DocumentSource
 import com.everlog.android.common.datasync.FirestoreCollection
 import com.everlog.android.common.datasync.FirestoreDocument
 import com.everlog.android.common.datasync.SyncPlan
+import com.everlog.android.common.firebase.FirestorePaths
 import com.everlog.android.common.kotlin.Load
+import com.everlog.android.common.kotlin.di.IoDispatcher
 import com.everlog.android.common.kotlin.map
 import com.everlog.android.exercise.data.model.library.ExerciseRegistry
 import com.everlog.android.exercise.data.model.library.ExerciseRegistryDto
 import com.everlog.android.exercise.data.model.library.LibraryExercise
 import com.everlog.android.exercise.data.model.library.LibraryExerciseDto
-import com.everlog.android.auth.data.UserSession
-import com.everlog.android.common.firebase.FirestorePaths
 import com.google.firebase.firestore.DocumentSnapshot
+import dev.zacsweers.metro.AppScope
+import dev.zacsweers.metro.ContributesBinding
+import dev.zacsweers.metro.Inject
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOf
@@ -58,8 +62,10 @@ interface ExerciseRepository {
     fun registry(): Flow<Load<ExerciseRegistry?>>
 }
 
+@ContributesBinding(AppScope::class)
+@Inject
 class RealExerciseRepository(
-    private val dispatcher: CoroutineDispatcher,
+    @IoDispatcher private val dispatcher: CoroutineDispatcher,
     private val dataSync: DataSync,
     private val session: UserSession,
 ) : ExerciseRepository {

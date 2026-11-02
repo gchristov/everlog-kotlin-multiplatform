@@ -27,9 +27,9 @@ class AppAuthFeatureDependencies : AuthFeatureDependencies {
 
     override fun requestPasswordReset(email: String, listener: AuthActionListener) = AuthManager.requestPasswordReset(email, listener)
 
-    override fun onboardingPending(): Boolean = ELApplication.graph.userSettings.onboardingPending()
+    override fun onboardingPending(): Boolean = ELApplication.graph.realUserSettings.onboardingPending()
 
-    override fun setOnboardingPending(pending: Boolean) = ELApplication.graph.userSettings.setOnboardingPending(pending)
+    override fun setOnboardingPending(pending: Boolean) = ELApplication.graph.realUserSettings.setOnboardingPending(pending)
 
     override fun openHome(activity: Activity) = ELNavigator(activity).openHome()
 

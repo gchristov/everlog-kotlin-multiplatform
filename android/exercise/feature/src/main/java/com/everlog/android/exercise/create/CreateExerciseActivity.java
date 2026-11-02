@@ -1,5 +1,7 @@
 package com.everlog.android.exercise.create;
 
+import com.everlog.android.common.kotlin.di.GraphOwnerKt;
+import com.everlog.android.exercise.ExerciseGraph;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.ColorStateList;
@@ -164,7 +166,8 @@ public class CreateExerciseActivity extends BaseActivity implements MvpViewCreat
 
     @Override
     public void setupPresenter() {
-        mPresenter = new PresenterCreateExercise();
+        ExerciseGraph graph = GraphOwnerKt.appGraph(this, ExerciseGraph.class);
+        mPresenter = new PresenterCreateExercise(graph.getUserSession(), graph.getExerciseImageStorage(), graph.getExerciseCopies(), graph.getExerciseAnalytics(), graph.getExerciseNavigation());
     }
 
     private void setupTopBar() {

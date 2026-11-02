@@ -1,5 +1,11 @@
 package com.everlog.android.exercise.details
 
+import com.everlog.android.common.data.model.workout.ELWorkout
+import com.everlog.android.common.data.store.CollectionStore
+import com.everlog.android.exercise.ExerciseAnalytics
+import com.everlog.android.exercise.data.ExerciseImageStorage
+import com.everlog.android.auth.data.UserSession
+import com.everlog.android.settings.data.UserSettings
 import com.everlog.android.auth.data.requireUserId
 import com.everlog.android.common.design.R as DesignR
 import android.content.DialogInterface
@@ -7,7 +13,6 @@ import com.everlog.android.common.data.model.exercise.ELExercise
 import com.everlog.android.common.data.model.workout.RangeType
 import com.everlog.android.exercise.data.store.ELUserExerciseStore
 import com.everlog.android.exercise.data.store.ExerciseStores
-import com.everlog.android.exercise.ExerciseFeature
 import com.everlog.android.exercise.R
 import com.everlog.android.exercise.create.CreateExerciseActivity
 import com.everlog.android.exercise.details.statistics.ExerciseStatisticsFragment
@@ -17,11 +22,13 @@ import com.everlog.android.common.kotlin.Utils
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
 
-class PresenterExerciseDetails : BaseActivityPresenter<MvpViewExerciseDetails>() {
-
-    private val settings = ExerciseFeature.dependencies.userSettings()
-    private val session = ExerciseFeature.dependencies.userSession()
-    private val imageStorage = ExerciseFeature.dependencies.exerciseImageStorage()
+class PresenterExerciseDetails(
+    private val settings: UserSettings,
+    private val session: UserSession,
+    private val imageStorage: ExerciseImageStorage,
+    private val analytics: ExerciseAnalytics,
+    private val workoutsStore: CollectionStore<ELWorkout>,
+) : BaseActivityPresenter<MvpViewExerciseDetails>() {
 
     private var toEdit: ELExercise? = null
     private var mLastStats: ExerciseStatsController.StatsResult? = null
@@ -83,7 +90,7 @@ class PresenterExerciseDetails : BaseActivityPresenter<MvpViewExerciseDetails>()
                         mRange = range
                         mLastStats = null
                         loadExercise()
-                        ExerciseFeature.dependencies.exerciseAnalytics().statisticsRangeModified(range)
+                        analytics.statisticsRangeModified(range)
                     }
                 })
     }
@@ -100,7 +107,7 @@ class PresenterExerciseDetails : BaseActivityPresenter<MvpViewExerciseDetails>()
         // Load stats
         Utils.runWithDelay({
             if (isAttachedToView) {
-                ExerciseStatsController(settings.weightUnit(), settings.firstDayOfWeek()).loadStats(mRange,
+                ExerciseStatsController(settings.weightUnit(), settings.firstDayOfWeek(), workoutsStore).loadStats(mRange,
                         toEdit!!,
                         object : ExerciseStatsController.OnCompleteListener {
                             override fun onComplete(result: ExerciseStatsController.StatsResult) {
@@ -134,7 +141,7 @@ class PresenterExerciseDetails : BaseActivityPresenter<MvpViewExerciseDetails>()
     }
 
     private fun handleDeleteExercise() {
-        ExerciseFeature.dependencies.exerciseAnalytics().exerciseDeleted()
+        analytics.exerciseDeleted()
         ExerciseStores.exerciseStore().delete(toEdit!!)
         imageStorage.deleteExerciseImage(toEdit!!, session.requireUserId())
         mvpView.closeScreen()

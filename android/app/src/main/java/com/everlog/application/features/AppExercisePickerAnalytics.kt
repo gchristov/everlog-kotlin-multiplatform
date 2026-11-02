@@ -4,7 +4,12 @@ import com.everlog.android.exercise.picker.ExercisePickerAnalytics
 import com.everlog.android.exercise.picker.PickerMode
 import com.everlog.managers.analytics.AnalyticsConstants
 import com.everlog.managers.analytics.AnalyticsManager
+import dev.zacsweers.metro.AppScope
+import dev.zacsweers.metro.ContributesBinding
+import dev.zacsweers.metro.Inject
 
+@ContributesBinding(AppScope::class)
+@Inject
 class AppExercisePickerAnalytics : ExercisePickerAnalytics {
     private val analytics = AnalyticsManager.manager
 

@@ -52,11 +52,11 @@ class PresenterSplash : BaseActivityPresenter<MvpViewSplash>() {
             // RESULT_OK whether the user set up or skipped. Anything else means onboarding was closed
             // without finishing, e.g. the system removed it after the app died, so it's still to do,
             // unless it was finished from another screen in the meantime (see PresenterLogin).
-            if (resultCode != Activity.RESULT_OK && ELApplication.graph.userSettings.onboardingPending()) {
+            if (resultCode != Activity.RESULT_OK && ELApplication.graph.realUserSettings.onboardingPending()) {
                 navigator.openOnboarding()
             } else {
                 openedOnboarding = false
-                ELApplication.graph.userSettings.setOnboardingPending(false)
+                ELApplication.graph.realUserSettings.setOnboardingPending(false)
                 navigator.openHome()
             }
         }
@@ -95,7 +95,7 @@ class PresenterSplash : BaseActivityPresenter<MvpViewSplash>() {
         when {
             !AuthManager.isLoggedIn -> navigator.openLogin()
             // A new account whose onboarding was interrupted, e.g. by closing the app, picks it up again
-            ELApplication.graph.userSettings.onboardingPending() -> {
+            ELApplication.graph.realUserSettings.onboardingPending() -> {
                 openedOnboarding = true
                 navigator.openOnboarding()
             }
