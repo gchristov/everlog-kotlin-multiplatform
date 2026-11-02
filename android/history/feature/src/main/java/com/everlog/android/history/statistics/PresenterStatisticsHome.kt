@@ -14,6 +14,7 @@ import java.util.ArrayList
 class PresenterStatisticsHome : BaseFragmentPresenter<MvpViewStatisticsHome>() {
 
     private var mRange = UserStatsController.DEFAULT_RANGE
+    private val settings = HistoryFeature.dependencies.userSettings()
     private val mHistory: MutableList<ELWorkout> = ArrayList()
 
     override fun onReady() {
@@ -86,7 +87,7 @@ class PresenterStatisticsHome : BaseFragmentPresenter<MvpViewStatisticsHome>() {
         mvpView?.toggleLoadingOverlay(true)
         Utils.runWithDelay({
             if (isAttachedToView) {
-                UserStatsController().loadStats(range,
+                UserStatsController(settings.weightUnit(), settings.firstDayOfWeek()).loadStats(range,
                         history,
                         object : UserStatsController.OnCompleteListener {
 

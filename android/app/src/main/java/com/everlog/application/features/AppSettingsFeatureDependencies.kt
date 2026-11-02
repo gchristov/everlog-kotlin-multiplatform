@@ -1,5 +1,7 @@
 package com.everlog.application.features
 
+import com.everlog.application.AppServices
+import com.everlog.android.settings.data.UserSettings
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
@@ -8,7 +10,7 @@ import com.everlog.android.common.mvp.fragment.BaseFragmentMvpView
 import com.everlog.android.settings.SetSuggestionText
 import com.everlog.android.settings.SettingsAnalytics
 import com.everlog.android.settings.SettingsFeatureDependencies
-import com.everlog.android.settings.data.SettingsManager.MuscleGoal
+import com.everlog.android.settings.data.MuscleGoal
 import com.everlog.android.settings.data.model.ELIntegration
 import com.everlog.android.workout.setsuggestions.SetSuggestion
 import com.everlog.config.FeedbackSource
@@ -22,6 +24,8 @@ import com.everlog.utils.device.DeviceInfo
 import rx.Observable
 
 class AppSettingsFeatureDependencies : SettingsFeatureDependencies {
+    override fun userSettings(): UserSettings = AppServices.userSettings
+
 
     override fun settingsAnalytics(): SettingsAnalytics = object : SettingsAnalytics {
         private val analytics = AnalyticsManager.manager

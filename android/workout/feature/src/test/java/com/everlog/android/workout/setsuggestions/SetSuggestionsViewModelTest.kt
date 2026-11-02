@@ -2,7 +2,7 @@ package com.everlog.android.workout.setsuggestions
 
 import com.everlog.android.common.kotlin.WeightUnit
 import com.everlog.android.common.test.FakeCoroutineDispatcher
-import com.everlog.android.settings.data.SettingsManager.MuscleGoal
+import com.everlog.android.settings.data.MuscleGoal
 import com.everlog.android.workout.setsuggestions.SetSuggestion
 import com.everlog.android.workout.setsuggestions.SetSuggestionsAnalytics
 import com.everlog.android.workout.setsuggestions.SetSuggestionsSettings

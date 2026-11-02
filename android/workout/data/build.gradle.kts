@@ -15,5 +15,6 @@ dependencies {
     implementation(libs.rxandroid)
     implementation(libs.timber)
     testImplementation(projects.android.common.dataTest)
+    testImplementation(projects.android.settings.testFixtures)
     testImplementation(projects.android.workout.testFixtures)
 }

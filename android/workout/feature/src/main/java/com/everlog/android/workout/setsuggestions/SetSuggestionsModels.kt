@@ -3,7 +3,7 @@ package com.everlog.android.workout.setsuggestions
 import android.content.Context
 import androidx.annotation.StringRes
 import com.everlog.android.common.kotlin.WeightUnit
-import com.everlog.android.settings.data.SettingsManager.MuscleGoal
+import com.everlog.android.settings.data.MuscleGoal
 import com.everlog.android.common.kotlin.estimate1RM
 import com.everlog.android.workout.data.prefill.goalWeight
 import com.everlog.android.workout.data.prefill.rounded1RM

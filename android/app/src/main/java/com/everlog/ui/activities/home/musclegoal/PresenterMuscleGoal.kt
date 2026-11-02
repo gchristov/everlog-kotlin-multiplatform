@@ -1,10 +1,11 @@
 package com.everlog.ui.activities.home.musclegoal
 
+import com.everlog.application.AppServices
 import android.content.Intent
 import com.ahamed.multiviewadapter.DataListManager
 import com.ahamed.multiviewadapter.RecyclerAdapter
 import com.everlog.android.common.mvp.MvpBroadcasts
-import com.everlog.android.settings.data.SettingsManager
+import com.everlog.android.settings.data.MuscleGoal
 import com.everlog.config.FeedbackSource
 import com.everlog.managers.RemoteConfigManager
 import com.everlog.managers.analytics.AnalyticsManager
@@ -16,7 +17,7 @@ import com.everlog.android.common.kotlin.Utils
 
 class PresenterMuscleGoal : BaseActivityPresenter<MvpViewMuscleGoal>() {
 
-    private var mPendingMuscleGoal: SettingsManager.MuscleGoal? = null
+    private var mPendingMuscleGoal: MuscleGoal? = null
     private val mAdapter = RecyclerAdapter()
     private val mDataListManager = DataListManager<Any>(mAdapter)
 
@@ -51,7 +52,7 @@ class PresenterMuscleGoal : BaseActivityPresenter<MvpViewMuscleGoal>() {
 
     private fun loadData() {
         val items = ArrayList<Any>()
-        for (type in SettingsManager.MuscleGoal.availableGoals()) {
+        for (type in MuscleGoal.availableGoals()) {
             items.add(type)
         }
         mDataListManager.clear()
@@ -66,8 +67,8 @@ class PresenterMuscleGoal : BaseActivityPresenter<MvpViewMuscleGoal>() {
 
     // Handlers
 
-    private fun handleMuscleGoalSelected(muscleGoal: SettingsManager.MuscleGoal) {
-        if (SettingsManager.manager.muscleGoal() != muscleGoal) {
+    private fun handleMuscleGoalSelected(muscleGoal: MuscleGoal) {
+        if (AppServices.userSettings.muscleGoal() != muscleGoal) {
             if (muscleGoal.proLocked()) {
                 // Keep track of selected goal so it can be applied after user upgrades
                 mPendingMuscleGoal = muscleGoal
@@ -80,8 +81,8 @@ class PresenterMuscleGoal : BaseActivityPresenter<MvpViewMuscleGoal>() {
         }
     }
 
-    private fun setMuscleGoal(muscleGoal: SettingsManager.MuscleGoal, closeScreen: Boolean) {
-        SettingsManager.manager.setMuscleGoal(muscleGoal)
+    private fun setMuscleGoal(muscleGoal: MuscleGoal, closeScreen: Boolean) {
+        AppServices.userSettings.setMuscleGoal(muscleGoal)
         notifyPreferencesChanged()
         AnalyticsManager.manager.settingsMuscleGoalModified(muscleGoal)
         mAdapter.notifyDataSetChanged()

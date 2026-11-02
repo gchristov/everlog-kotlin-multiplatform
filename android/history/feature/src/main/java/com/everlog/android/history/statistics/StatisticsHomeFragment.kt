@@ -10,7 +10,7 @@ import androidx.core.content.ContextCompat
 import com.everlog.android.common.data.model.workout.RangeType
 import com.everlog.android.common.kotlin.format.StatsFormatUtils
 import com.everlog.android.common.kotlin.makeSingleLine
-import com.everlog.android.settings.data.SettingsManager
+import com.everlog.android.history.HistoryFeature
 import com.everlog.android.common.mvp.chart.BaseStatsController
 import com.everlog.android.common.mvp.activity.BaseActivity
 import com.everlog.android.common.mvp.fragment.BaseFragmentMvpView
@@ -94,11 +94,11 @@ class StatisticsHomeFragment : BaseTabFragment(), MvpViewStatisticsHome {
 
     private fun renderSummaryViews(stats: UserStatsController.StatsResult) {
         binding.workoutsCompletedSummary.setSummary(StatsFormatUtils.formatNumberStatsLabel(stats.workoutsCompleted), null, requireContext().getString(DesignR.string.home_week_workouts_completed).lowercase().makeSingleLine())
-        binding.totalWeightSummary.setSummary(StatsFormatUtils.formatWeightStatsLabel(stats.totalWeightLifted), weightUnitAbbreviation(SettingsManager.manager.weightUnit()), requireContext().getString(DesignR.string.home_week_weight_lifted).lowercase().makeSingleLine())
+        binding.totalWeightSummary.setSummary(StatsFormatUtils.formatWeightStatsLabel(stats.totalWeightLifted), weightUnitAbbreviation(HistoryFeature.dependencies.userSettings().weightUnit()), requireContext().getString(DesignR.string.home_week_weight_lifted).lowercase().makeSingleLine())
         binding.totalTimeSummary.setSummary(StatsFormatUtils.formatTimeStatsLabel(stats.totalWorkoutTimeMillis), requireContext().getString(KotlinR.string.hour), requireContext().getString(DesignR.string.home_week_total_time).lowercase().makeSingleLine())
         binding.averageTimeSummary.setSummary(StatsFormatUtils.formatTimeStatsLabel(stats.averageSessionTimeMillis), requireContext().getString(KotlinR.string.hour), requireContext().getString(DesignR.string.home_week_average_time).lowercase().makeSingleLine())
         binding.longestSessionSummary.setSummary(StatsFormatUtils.formatTimeStatsLabel(stats.longestSessionTimeMillis), requireContext().getString(KotlinR.string.hour), requireContext().getString(R.string.statistics_longest_session).lowercase().makeSingleLine())
-        binding.maxWeightSummary.setSummary(StatsFormatUtils.formatWeightStatsLabel(stats.maxWeightLifted), weightUnitAbbreviation(SettingsManager.manager.weightUnit()), requireContext().getString(DesignR.string.workout_details_max_weight).lowercase().makeSingleLine())
+        binding.maxWeightSummary.setSummary(StatsFormatUtils.formatWeightStatsLabel(stats.maxWeightLifted), weightUnitAbbreviation(HistoryFeature.dependencies.userSettings().weightUnit()), requireContext().getString(DesignR.string.workout_details_max_weight).lowercase().makeSingleLine())
     }
 
     private fun renderCharts(stats: UserStatsController.StatsResult) {
@@ -107,7 +107,7 @@ class StatisticsHomeFragment : BaseTabFragment(), MvpViewStatisticsHome {
         mChartRenderer?.renderPieChart(binding.musclesTrainedChart, stats.categoryCounts)
         // Volume lifted
         binding.weightLiftedChartTitle.text = getString(DesignR.string.home_week_weight_lifted).makeSingleLine()
-        binding.weightLiftedAxisLeftTitleLbl.text = String.format("%s (%s)", getString(DesignR.string.weight), weightUnitAbbreviation(SettingsManager.manager.weightUnit()))
+        binding.weightLiftedAxisLeftTitleLbl.text = String.format("%s (%s)", getString(DesignR.string.weight), weightUnitAbbreviation(HistoryFeature.dependencies.userSettings().weightUnit()))
         mChartRenderer?.renderBarChart(binding.weightLiftedChart,
                 binding.weightLiftedAxisLeftTitle,
                 null,

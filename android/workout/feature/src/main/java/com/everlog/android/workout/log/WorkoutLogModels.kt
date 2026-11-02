@@ -2,7 +2,7 @@ package com.everlog.android.workout.log
 
 import com.everlog.android.common.data.model.workout.ELWorkout
 import com.everlog.android.common.kotlin.WeightUnit
-import com.everlog.android.settings.data.SettingsManager.MuscleGoal
+import com.everlog.android.settings.data.MuscleGoal
 import com.everlog.android.common.session.DeletedSets
 import com.everlog.android.common.session.SetMode
 import com.everlog.android.common.session.SetRef

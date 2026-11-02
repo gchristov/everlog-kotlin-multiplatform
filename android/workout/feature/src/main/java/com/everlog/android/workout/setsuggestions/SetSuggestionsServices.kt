@@ -1,7 +1,7 @@
 package com.everlog.android.workout.setsuggestions
 
 import com.everlog.android.common.kotlin.WeightUnit
-import com.everlog.android.settings.data.SettingsManager.MuscleGoal
+import com.everlog.android.settings.data.MuscleGoal
 
 /**
  * The setting the screen changes, stored as the muscle goal. A change logs the same event as the old screen.

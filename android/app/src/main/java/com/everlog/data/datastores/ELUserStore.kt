@@ -1,12 +1,13 @@
 package com.everlog.data.datastores
 
+import com.everlog.application.AppServices
 import android.content.Intent
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.everlog.android.auth.data.model.ELUser
 import com.everlog.android.auth.data.store.ELDocStoreUserLoadedEvent
 import com.everlog.android.common.kotlin.AppContext
 import com.everlog.android.common.mvp.MvpBroadcasts
-import com.everlog.android.settings.data.SettingsManager
+import com.everlog.android.settings.data.MuscleGoal
 import com.everlog.android.common.data.store.ELDocumentStore
 import com.everlog.android.common.data.store.events.ELDocStoreItemLoadedEvent
 import com.everlog.android.auth.data.LocalUserManager
@@ -49,8 +50,8 @@ class ELUserStore : ELDocumentStore<ELUser>() {
 
     private fun checkProDependentFeatures() {
         // Make sure to downgrade the user's local muscle goals, if they have a pro-based one set
-        if (SettingsManager.manager.muscleGoal().proLocked()) {
-            SettingsManager.manager.setMuscleGoal(SettingsManager.MuscleGoal.HISTORY)
+        if (AppServices.userSettings.muscleGoal().proLocked()) {
+            AppServices.userSettings.setMuscleGoal(MuscleGoal.HISTORY)
         }
     }
 

@@ -10,7 +10,7 @@ import com.ahamed.multiviewadapter.ItemViewHolder;
 import com.everlog.android.common.kotlin.DateExtKt;
 import com.everlog.android.common.kotlin.format.StatsFormatUtils;
 import com.everlog.android.common.mvp.list.OnListItemListener;
-import com.everlog.android.settings.data.SettingsManager;
+import com.everlog.android.common.kotlin.WeightUnit;
 import com.everlog.android.workout.R;
 import com.everlog.android.common.data.model.workout.ELWorkout;
 import com.everlog.android.workout.databinding.RowHeaderWorkoutDetailsBinding;
@@ -20,15 +20,17 @@ public class WorkoutDetailsStatsAdapter {
 
     public static class Binder extends ItemBinder<ELWorkout, ViewHolder> {
 
+        private final WeightUnit mWeightUnit;
         private final OnWorkoutDetailsStatsListener mListener;
 
-        public Binder(OnWorkoutDetailsStatsListener listener) {
+        public Binder(WeightUnit weightUnit, OnWorkoutDetailsStatsListener listener) {
+            this.mWeightUnit = weightUnit;
             this.mListener = listener;
         }
 
         @Override
         public ViewHolder create(LayoutInflater inflater, ViewGroup parent) {
-            return new ViewHolder(inflater.inflate(R.layout.row_header_workout_details, parent, false), mListener);
+            return new ViewHolder(inflater.inflate(R.layout.row_header_workout_details, parent, false), mWeightUnit, mListener);
         }
 
         @Override
@@ -45,10 +47,12 @@ public class WorkoutDetailsStatsAdapter {
     static class ViewHolder extends ItemViewHolder<ELWorkout> {
 
         private final RowHeaderWorkoutDetailsBinding binding;
+        private final WeightUnit mWeightUnit;
         private final OnWorkoutDetailsStatsListener mListener;
 
-        ViewHolder(View itemView, OnWorkoutDetailsStatsListener listener) {
+        ViewHolder(View itemView, WeightUnit weightUnit, OnWorkoutDetailsStatsListener listener) {
             super(itemView);
+            this.mWeightUnit = weightUnit;
             this.mListener = listener;
             binding = RowHeaderWorkoutDetailsBinding.bind(itemView);
             setupClickListeners();
@@ -102,11 +106,11 @@ public class WorkoutDetailsStatsAdapter {
             // Duration
             binding.totalTimeSummary.setSummary(StatsFormatUtils.Companion.formatTimeStatsLabel(item.getDurationMillis()), getContext().getString(com.everlog.android.common.kotlin.R.string.hour), getContext().getString(com.everlog.android.common.design.R.string.workout_details_duration));
             // Weight
-            float weight = item.getTotalWeight(SettingsManager.manager.weightUnit());
+            float weight = item.getTotalWeight(mWeightUnit);
             binding.totalWeightSummary.setVisibility(weight > 0 ? View.VISIBLE : View.GONE);
-            binding.totalWeightSummary.setSummary(StatsFormatUtils.Companion.formatWeightStatsLabel(weight), WeightFormatKt.weightUnitAbbreviation(SettingsManager.manager.weightUnit()), getContext().getString(com.everlog.android.common.design.R.string.weight));
+            binding.totalWeightSummary.setSummary(StatsFormatUtils.Companion.formatWeightStatsLabel(weight), WeightFormatKt.weightUnitAbbreviation(mWeightUnit), getContext().getString(com.everlog.android.common.design.R.string.weight));
             binding.maxWeightSummary.setVisibility(weight > 0 ? View.VISIBLE : View.GONE);
-            binding.maxWeightSummary.setSummary(StatsFormatUtils.Companion.formatWeightStatsLabel(item.getMaxWeight(SettingsManager.manager.weightUnit())), WeightFormatKt.weightUnitAbbreviation(SettingsManager.manager.weightUnit()), getContext().getString(com.everlog.android.common.design.R.string.workout_details_max_weight));
+            binding.maxWeightSummary.setSummary(StatsFormatUtils.Companion.formatWeightStatsLabel(item.getMaxWeight(mWeightUnit)), WeightFormatKt.weightUnitAbbreviation(mWeightUnit), getContext().getString(com.everlog.android.common.design.R.string.workout_details_max_weight));
             // Exercises
             binding.exercisesSummary.setVisibility(weight > 0 ? View.GONE : View.VISIBLE);
             binding.exercisesSummary.setSummary(item.getTotalExercises() + "", null, getContext().getString(com.everlog.android.common.design.R.string.exercises_title));

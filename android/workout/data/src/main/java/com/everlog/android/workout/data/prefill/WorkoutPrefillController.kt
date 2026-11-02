@@ -7,12 +7,7 @@ import com.everlog.android.common.data.model.exercise.estimated1RM
 import com.everlog.android.common.data.model.set.ELSet
 import com.everlog.android.common.data.model.workout.ELWorkout
 import com.everlog.android.workout.data.prefill.BaseWorkoutPrefillController.PrefillSource
-import com.everlog.android.workout.data.store.WorkoutStores
-import com.everlog.android.common.data.store.OnStoreItemsListener
-import com.everlog.android.settings.data.SettingsManager
-import rx.Observable
-import rx.android.schedulers.AndroidSchedulers
-import rx.schedulers.Schedulers
+import com.everlog.android.common.kotlin.WeightUnit
 import timber.log.Timber
 import java.util.concurrent.TimeUnit
 
@@ -27,68 +22,35 @@ class WorkoutPrefillController {
         private val ORM_WINDOW_MILLIS = TimeUnit.DAYS.toMillis(90)
 
         /**
-         * Loads the user's history, then fills the empty values of the given exercises' sets on the main thread.
-         *
-         * @param fill false to only load what the exercises would be prefilled from, e.g. when resuming a
-         * workout whose sets were already prefilled and may have been cleared by the user since
-         */
-        fun prefillExercises(exercises: List<ELRoutineExercise>, fill: Boolean, listener: OnExercisePrefillListener) {
-            // Read before leaving the main thread, the workout screen keeps changing the exercises
-            val toLoad = exercises.mapNotNull { it.exercise }
-            // Fetch user history
-            WorkoutStores.workoutsStore().getItems(object : OnStoreItemsListener<ELWorkout> {
-                override fun onItemsLoaded(history: MutableList<ELWorkout>, fromCache: Boolean) {
-                    // Copy before leaving this thread, as the store keeps updating its list
-                    val snapshot = ArrayList(history)
-                    Observable.fromCallable { buildPrefillSources(toLoad, snapshot, System.currentTimeMillis()) }
-                            .observeOn(AndroidSchedulers.mainThread())
-                            .subscribeOn(Schedulers.computation())
-                            .subscribe({ sources ->
-                                // Sets are only changed on the main thread, where the user edits them too
-                                if (fill) {
-                                    applyPrefill(exercises, sources)
-                                }
-                                listener.onSuccess(sources)
-                            })
-                            { throwable: Throwable -> listener.onError(throwable) }
-                }
-
-                override fun onItemsLoadingError(throwable: Throwable) {
-                    listener.onError(throwable)
-                }
-            })
-        }
-
-        /**
          * Fills the empty values of the given exercises' sets.
          *
          * @return what each exercise was prefilled from, by exercise uuid, so sets added later can use it
          */
-        internal fun prefill(exercises: List<ELRoutineExercise>, history: List<ELWorkout>, now: Long): Map<String, PrefillSource> {
-            val sources = buildPrefillSources(exercises.mapNotNull { it.exercise }, history, now)
-            applyPrefill(exercises, sources)
+        internal fun prefill(exercises: List<ELRoutineExercise>, history: List<ELWorkout>, now: Long, settings: PrefillSettings): Map<String, PrefillSource> {
+            val sources = buildPrefillSources(exercises.mapNotNull { it.exercise }, history, now, settings.weightUnit)
+            applyPrefill(exercises, sources, settings)
             return sources
         }
 
         /**
          * @return what each exercise would be prefilled from, by exercise uuid
          */
-        internal fun buildPrefillSources(exercises: List<ELExercise>, history: List<ELWorkout>, now: Long): Map<String, PrefillSource> {
+        internal fun buildPrefillSources(exercises: List<ELExercise>, history: List<ELWorkout>, now: Long, weightUnit: WeightUnit): Map<String, PrefillSource> {
             // The store orders by created date, which can differ from when the workout was completed
             val newestFirst = history.sortedByDescending { it.completedDate }
             val sources = HashMap<String, PrefillSource>()
             exercises.forEach { exercise ->
-                exercise.uuid?.let { sources[it] = buildPrefillSource(exercise, newestFirst, now) }
+                exercise.uuid?.let { sources[it] = buildPrefillSource(exercise, newestFirst, now, weightUnit) }
             }
             return sources
         }
 
-        internal fun applyPrefill(exercises: List<ELRoutineExercise>, sources: Map<String, PrefillSource>) {
+        internal fun applyPrefill(exercises: List<ELRoutineExercise>, sources: Map<String, PrefillSource>, settings: PrefillSettings) {
             Timber.tag(TAG).d("Starting set prefill")
             exercises.forEach { routineExercise ->
                 val source = sources[routineExercise.exercise?.uuid] ?: return@forEach
                 routineExercise.sets.forEachIndexed { setIndex, setToPrefill ->
-                    prefillSet(source, setToPrefill, setIndex)
+                    prefillSet(source, setToPrefill, setIndex, settings)
                 }
             }
             Timber.tag(TAG).d("Finished set prefill")
@@ -100,7 +62,7 @@ class WorkoutPrefillController {
          *
          * @return true if the set was prefilled
          */
-        fun prefillAddedSet(source: PrefillSource, addedSet: ELSet, setIndex: Int): Boolean {
+        fun prefillAddedSet(source: PrefillSource, addedSet: ELSet, setIndex: Int, settings: PrefillSettings): Boolean {
             val historicSet = source.lastSession?.exercise?.sets?.getOrNull(setIndex)
             if (historicSet == null || historicSet.isWithoutData()) {
                 return false
@@ -110,17 +72,17 @@ class WorkoutPrefillController {
             addedSet.clearRequiredReps()
             addedSet.clearRequiredTime()
             addedSet.remainingTimeSeconds = null
-            prefillSet(source, addedSet, setIndex)
+            prefillSet(source, addedSet, setIndex, settings)
             return true
         }
 
         // Fills a set's empty values from its exercise's source: the 1RM target for the muscle goal, then its last
         // session's set at the same index. Also used by the Compose workout screen (TAS-455), set by set.
-        internal fun prefillSet(source: PrefillSource, setToPrefill: ELSet, setIndex: Int) {
+        internal fun prefillSet(source: PrefillSource, setToPrefill: ELSet, setIndex: Int, settings: PrefillSettings) {
             // 1. Prefill using 1RM
-            WorkoutPrefill1RMController().prefill(source, setToPrefill, setIndex)
+            WorkoutPrefill1RMController().prefill(source, setToPrefill, setIndex, settings)
             // 2. Prefill from history
-            WorkoutPrefillHistoryController().prefill(source, setToPrefill, setIndex)
+            WorkoutPrefillHistoryController().prefill(source, setToPrefill, setIndex, settings)
         }
 
         /**
@@ -131,7 +93,8 @@ class WorkoutPrefillController {
          */
         internal fun buildPrefillSource(exercise: ELExercise,
                                         newestFirst: List<ELWorkout>,
-                                        now: Long): PrefillSource {
+                                        now: Long,
+                                        weightUnit: WeightUnit): PrefillSource {
             // Sessions where the exercise was actually logged, newest first
             val sessions = newestFirst
                     .flatMap { workout ->
@@ -139,17 +102,12 @@ class WorkoutPrefillController {
                                 .filter { it.getSetsWithData().isNotEmpty() }
                                 .map { ELExerciseHistory(it, workout) }
                     }
-            val orm = best1RM(sessions.filter { now - it.workout!!.completedDate <= ORM_WINDOW_MILLIS })
+            val orm = best1RM(sessions.filter { now - it.workout!!.completedDate <= ORM_WINDOW_MILLIS }, weightUnit)
             return PrefillSource(sessions.firstOrNull(), orm)
         }
 
-        private fun best1RM(sessions: List<ELExerciseHistory>): Float {
-            return sessions.maxOfOrNull { it.exercise!!.estimated1RM(SettingsManager.manager.weightUnit()) } ?: 0f
+        private fun best1RM(sessions: List<ELExerciseHistory>, weightUnit: WeightUnit): Float {
+            return sessions.maxOfOrNull { it.exercise!!.estimated1RM(weightUnit) } ?: 0f
         }
-    }
-
-    interface OnExercisePrefillListener {
-        fun onSuccess(sources: Map<String, PrefillSource>)
-        fun onError(throwable: Throwable)
     }
 }

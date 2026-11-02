@@ -11,7 +11,6 @@ import com.everlog.android.template.R
 import com.everlog.android.template.TemplateFeature
 import com.everlog.android.common.mvp.activity.BaseActivityPresenter
 import com.everlog.android.common.mvp.list.ExerciseGroupSummaryAdapter
-import com.everlog.android.settings.data.SettingsManager
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
 
@@ -148,7 +147,7 @@ open class PresenterRoutineDetails<T : MvpViewRoutineDetails> : BaseActivityPres
         mAdapter.addDataManager(mDataListManager)
         mAdapter.registerBinders(ExerciseGroupSummaryAdapter().build(ExerciseGroupSummaryAdapter.Builder()
                 .setShowTemplates(true)
-                .setWeightUnit(SettingsManager.manager.weightUnit())
+                .setWeightUnit(TemplateFeature.dependencies.userSettings().weightUnit())
                 .setOnExerciseClicked { context, exercise -> TemplateFeature.dependencies.openExerciseDetails(context, exercise) }
         ))
     }

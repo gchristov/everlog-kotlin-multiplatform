@@ -1,5 +1,7 @@
 package com.everlog.application.features
 
+import com.everlog.application.AppServices
+import com.everlog.android.settings.data.UserSettings
 import android.content.Context
 import android.content.Intent
 import com.everlog.android.exercise.data.RealExerciseRepository
@@ -18,6 +20,8 @@ import com.everlog.ui.activities.home.routine.create.templateEditorIntent
 import kotlinx.coroutines.Dispatchers
 
 class AppOnboardingFeatureDependencies : OnboardingFeatureDependencies {
+    override fun userSettings(): UserSettings = AppServices.userSettings
+
 
     override fun buildStarterRoutines(): BuildStarterRoutinesUseCase = RealBuildStarterRoutinesUseCase(
         dispatcher = Dispatchers.Default,

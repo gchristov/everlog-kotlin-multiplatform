@@ -1,5 +1,7 @@
 package com.everlog.application.features
 
+import com.everlog.application.AppServices
+import com.everlog.android.settings.data.UserSettings
 import android.content.Context
 import com.everlog.android.common.data.model.workout.ELWorkout
 import com.everlog.android.common.data.model.workout.RangeType
@@ -10,6 +12,8 @@ import com.everlog.managers.analytics.AnalyticsManager
 import com.everlog.ui.navigator.ELNavigator
 
 class AppHistoryFeatureDependencies : HistoryFeatureDependencies {
+    override fun userSettings(): UserSettings = AppServices.userSettings
+
 
     override fun openWorkoutDetails(context: Context, workout: ELWorkout) =
         ELNavigator(context).openWorkoutDetails(workout, false, false)

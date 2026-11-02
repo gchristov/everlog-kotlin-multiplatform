@@ -1,13 +1,13 @@
 package com.everlog.ui.adapters
 
+import com.everlog.application.AppServices
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.ahamed.multiviewadapter.ItemBinder
 import com.ahamed.multiviewadapter.ItemViewHolder
 import com.everlog.R
-import com.everlog.android.settings.data.SettingsManager
-import com.everlog.android.settings.data.SettingsManager.MuscleGoal
+import com.everlog.android.settings.data.MuscleGoal
 import com.everlog.constants.ELConstants
 import com.everlog.databinding.RowSettingsMuscleGoalBinding
 import com.everlog.android.auth.data.LocalUserManager
@@ -44,7 +44,7 @@ class MuscleGoalAdapter {
         // Render
 
         private fun renderGoal() {
-            binding.radioButton.isChecked = SettingsManager.manager.muscleGoal() == item
+            binding.radioButton.isChecked = AppServices.userSettings.muscleGoal() == item
             binding.titleLbl.text = item.valueName(itemView.context)
             binding.subtitleLbl.text = item.percent1RMSummary(itemView.context)
         }

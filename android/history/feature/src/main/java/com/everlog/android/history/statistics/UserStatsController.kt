@@ -3,18 +3,22 @@ package com.everlog.android.history.statistics
 import com.everlog.android.common.data.model.workout.ELWorkout
 import com.everlog.android.common.data.model.workout.RangeType
 import com.everlog.android.common.mvp.chart.BaseStatsController
-import com.everlog.android.settings.data.SettingsManager
+import com.everlog.android.common.kotlin.WeightUnit
 import com.github.mikephil.charting.data.BarEntry
 import com.github.mikephil.charting.data.Entry
 import com.github.mikephil.charting.data.PieEntry
 import rx.Observable
 import rx.android.schedulers.AndroidSchedulers
 import rx.schedulers.Schedulers
+import org.threeten.bp.DayOfWeek
 import java.io.Serializable
 import java.util.concurrent.TimeUnit
 import kotlin.math.max
 
-class UserStatsController : BaseStatsController() {
+class UserStatsController(
+    private val weightUnit: WeightUnit,
+    private val firstDayOfWeek: DayOfWeek,
+) : BaseStatsController() {
 
     companion object {
         val DEFAULT_RANGE = RangeType.WEEK
@@ -41,14 +45,14 @@ class UserStatsController : BaseStatsController() {
             val durationCountsPerMonth: MutableMap<Int, MutableList<Float>> = LinkedHashMap()
 
             history
-                    .filter { it.inRange(range, SettingsManager.manager.firstDayOfWeek()) } // Only use workouts in the specified range
+                    .filter { it.inRange(range, firstDayOfWeek) } // Only use workouts in the specified range
                     .forEach {
-                        val workoutTotalWeight = it.getTotalWeight(SettingsManager.manager.weightUnit())
+                        val workoutTotalWeight = it.getTotalWeight(weightUnit)
                         stats.workoutsCompleted++
                         stats.totalWorkoutTimeMillis += it.getDurationMillis()
                         stats.totalWeightLifted += workoutTotalWeight
                         stats.longestSessionTimeMillis = max(stats.longestSessionTimeMillis, it.getDurationMillis())
-                        stats.maxWeightLifted = max(stats.maxWeightLifted, it.getMaxWeight(SettingsManager.manager.weightUnit()))
+                        stats.maxWeightLifted = max(stats.maxWeightLifted, it.getMaxWeight(weightUnit))
                         val day = it.getDay()
                         (stats.dayWorkoutMap as MutableMap)[day] = day
                         // Add category stats

@@ -9,14 +9,12 @@ import androidx.test.platform.app.InstrumentationRegistry
 import com.everlog.android.common.data.model.set.ELSet
 import com.everlog.android.common.kotlin.AppContext
 import com.everlog.android.common.kotlin.WeightUnit
-import com.everlog.android.settings.data.SettingsManager
 import com.everlog.android.workout.R
 import com.everlog.android.workout.notification.WorkoutNotificationState.Done
 import com.everlog.android.workout.notification.WorkoutNotificationState.NextSet
 import com.everlog.android.workout.notification.WorkoutNotificationState.NoExercises
 import com.everlog.android.workout.notification.WorkoutNotificationState.Rest
 import com.google.common.truth.Truth.assertThat
-import org.junit.After
 import org.junit.Assume.assumeTrue
 import org.junit.Before
 import org.junit.Test
@@ -31,22 +29,13 @@ import org.junit.runner.RunWith
 class WorkoutNotificationBuilderTest {
 
     private val context = InstrumentationRegistry.getInstrumentation().targetContext
-    private val builder = WorkoutNotificationBuilder(context)
+    private val builder = WorkoutNotificationBuilder(context, WeightUnit.KILOGRAM)
     private val channelId = "test_channel"
-
-    private lateinit var originalWeightUnit: WeightUnit
 
     @Before
     fun setUp() {
         // Set by the app at startup, which a library's tests don't run
         AppContext = InstrumentationRegistry.getInstrumentation().targetContext.applicationContext
-        originalWeightUnit = SettingsManager.manager.weightUnit()
-        SettingsManager.manager.setWeightUnit(WeightUnit.KILOGRAM)
-    }
-
-    @After
-    fun tearDown() {
-        SettingsManager.manager.setWeightUnit(originalWeightUnit)
     }
 
     // Common

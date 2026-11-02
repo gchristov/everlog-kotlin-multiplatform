@@ -12,6 +12,7 @@ import com.everlog.android.exercise.data.model.library.LibraryExercise
 import com.everlog.android.template.data.session.LoadTemplateUseCase
 import com.everlog.android.template.data.session.SaveTemplateUseCase
 import com.everlog.android.template.editor.TemplateEditorAnalytics
+import com.everlog.android.settings.data.UserSettings
 import kotlinx.coroutines.flow.Flow
 
 /**
@@ -20,6 +21,8 @@ import kotlinx.coroutines.flow.Flow
  * startup. Shaped like constructor injection so a DI framework can take over the registration (android/README.md).
  */
 interface TemplateFeatureDependencies {
+    fun userSettings(): UserSettings
+
     fun templateAnalytics(): TemplateAnalytics
 
     // Opens the template editor for [routine], or for a new template when null, with TemplateRequestCodes.EDIT

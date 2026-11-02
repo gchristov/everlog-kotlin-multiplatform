@@ -35,7 +35,6 @@ import com.everlog.android.common.compose.elements.rememberAppBarScrollBehavior
 import com.everlog.android.common.compose.theme.Theme
 import com.everlog.android.common.mvvm.createViewModelFactory
 import com.everlog.android.onboarding.R
-import com.everlog.android.settings.data.SettingsManager
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.android.awaitFrame
 
@@ -59,7 +58,7 @@ class OnboardingActivity : CommonComposeActivity() {
                 saveStarterRoutinesUseCase = dependencies.saveStarterRoutines(),
                 settings = dependencies.onboardingSettings(this),
                 analytics = dependencies.onboardingAnalytics(),
-                firstDayOfWeek = SettingsManager.manager.firstDayOfWeek(),
+                firstDayOfWeek = dependencies.userSettings().firstDayOfWeek(),
             )
         }
     }

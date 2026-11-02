@@ -14,7 +14,7 @@ import com.everlog.android.common.data.model.set.ELSet
 import com.everlog.android.common.kotlin.format.exerciseSummary
 import com.everlog.android.common.mvp.list.BaseTimelineViewHolder
 import com.everlog.android.common.mvp.list.BaseTimelineViewHolder.OnTimelineListener
-import com.everlog.android.settings.data.SettingsManager
+import com.everlog.android.common.kotlin.WeightUnit
 import com.everlog.android.exercise.databinding.RowHistoryExerciseBinding
 import com.everlog.android.common.mvp.databinding.RowSetSummaryBinding
 import com.everlog.android.common.mvp.view.renderCompleteSetSummary
@@ -23,10 +23,13 @@ import java.util.Date
 
 class ExerciseHistoryAdapter {
 
-    class Binder(private val mListener: OnTimelineListener<ELExerciseHistory>) : ItemBinder<ELExerciseHistory, ViewHolder>() {
+    class Binder(
+        private val weightUnit: WeightUnit,
+        private val mListener: OnTimelineListener<ELExerciseHistory>,
+    ) : ItemBinder<ELExerciseHistory, ViewHolder>() {
 
         override fun create(inflater: LayoutInflater, parent: ViewGroup): ViewHolder {
-            return ViewHolder(inflater.inflate(R.layout.row_history_exercise, parent, false))
+            return ViewHolder(inflater.inflate(R.layout.row_history_exercise, parent, false), weightUnit)
         }
 
         override fun canBindData(item: Any): Boolean {
@@ -39,9 +42,9 @@ class ExerciseHistoryAdapter {
         }
     }
 
-    class ViewHolder(itemView: View) : BaseTimelineViewHolder<ELExerciseHistory>(itemView) {
+    class ViewHolder(itemView: View, private val weightUnit: WeightUnit) : BaseTimelineViewHolder<ELExerciseHistory>(itemView) {
 
-        private var mSetBinder = SetBinder()
+        private var mSetBinder = SetBinder(weightUnit)
         private val binding = RowHistoryExerciseBinding.bind(itemView)
         private val mAdapter = RecyclerAdapter()
         private val mDataListManager = DataListManager<ELSet>(mAdapter)
@@ -70,8 +73,7 @@ class ExerciseHistoryAdapter {
         private fun renderExercise() {
             binding.routineName.text = item.workout?.getName()
             binding.exerciseSummary.text = item.exercise?.let { exercise ->
-                val unit = SettingsManager.manager.weightUnit()
-                exerciseSummary(binding.root.context, exercise.getTotalWeight(unit), exercise.getTotalReps(), exercise.getTotalTimeSeconds(), unit)
+                exerciseSummary(binding.root.context, exercise.getTotalWeight(weightUnit), exercise.getTotalReps(), exercise.getTotalTimeSeconds(), weightUnit)
             }
         }
 
@@ -85,10 +87,10 @@ class ExerciseHistoryAdapter {
         }
     }
 
-    internal class SetBinder : ItemBinder<ELSet, SetViewHolder>() {
+    internal class SetBinder(private val weightUnit: WeightUnit) : ItemBinder<ELSet, SetViewHolder>() {
 
         override fun create(inflater: LayoutInflater, parent: ViewGroup): SetViewHolder {
-            return SetViewHolder(inflater.inflate(MvpR.layout.row_set_summary, parent, false))
+            return SetViewHolder(inflater.inflate(MvpR.layout.row_set_summary, parent, false), weightUnit)
         }
 
         override fun canBindData(item: Any): Boolean {
@@ -100,7 +102,7 @@ class ExerciseHistoryAdapter {
         }
     }
 
-    internal class SetViewHolder(itemView: View) : ItemViewHolder<ELSet>(itemView) {
+    internal class SetViewHolder(itemView: View, private val weightUnit: WeightUnit) : ItemViewHolder<ELSet>(itemView) {
 
         private val binding = RowSetSummaryBinding.bind(itemView)
 
@@ -108,7 +110,7 @@ class ExerciseHistoryAdapter {
 
         fun render() {
             binding.setNumber.text = String.format("%d", absoluteAdapterPosition + 1)
-            renderCompleteSetSummary(itemView.context, item, SettingsManager.manager.weightUnit(), binding.setSummary)
+            renderCompleteSetSummary(itemView.context, item, weightUnit, binding.setSummary)
         }
     }
 }

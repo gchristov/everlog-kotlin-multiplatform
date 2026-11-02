@@ -38,12 +38,12 @@ class WorkoutLogActivity : SignedInComposeActivity() {
                     resumed = loaded.resumed,
                     fromPlan = intent.getBooleanExtra(WorkoutExtras.FROM_PLAN, false),
                     repository = repository,
-                    settings = RealWorkoutLogSettings(),
+                    settings = RealWorkoutLogSettings(dependencies.userSettings()),
                     analytics = dependencies.workoutLogAnalytics(),
                     alerts = dependencies.timerAlerts(applicationContext),
                     notification = dependencies.workoutNotification(applicationContext),
                     loadPrefillSources = dependencies.loadPrefillSources(),
-                    prefill = RealWorkoutSetPrefill(),
+                    prefill = RealWorkoutSetPrefill(dependencies.userSettings()),
                     ownExerciseUpdates = dependencies::ownExerciseUpdates,
                 )
             }

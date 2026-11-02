@@ -1,10 +1,10 @@
 package com.everlog.ui.activities.splash
 
+import com.everlog.application.AppServices
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import com.everlog.android.auth.data.model.ELUser
-import com.everlog.android.settings.data.SettingsManager
 import com.everlog.constants.ELActivityRequestCodes
 import com.everlog.managers.auth.AuthManager
 import com.everlog.android.auth.data.AuthActionListener
@@ -52,11 +52,11 @@ class PresenterSplash : BaseActivityPresenter<MvpViewSplash>() {
             // RESULT_OK whether the user set up or skipped. Anything else means onboarding was closed
             // without finishing, e.g. the system removed it after the app died, so it's still to do,
             // unless it was finished from another screen in the meantime (see PresenterLogin).
-            if (resultCode != Activity.RESULT_OK && SettingsManager.manager.onboardingPending()) {
+            if (resultCode != Activity.RESULT_OK && AppServices.userSettings.onboardingPending()) {
                 navigator.openOnboarding()
             } else {
                 openedOnboarding = false
-                SettingsManager.manager.setOnboardingPending(false)
+                AppServices.userSettings.setOnboardingPending(false)
                 navigator.openHome()
             }
         }
@@ -95,7 +95,7 @@ class PresenterSplash : BaseActivityPresenter<MvpViewSplash>() {
         when {
             !AuthManager.isLoggedIn -> navigator.openLogin()
             // A new account whose onboarding was interrupted, e.g. by closing the app, picks it up again
-            SettingsManager.manager.onboardingPending() -> {
+            AppServices.userSettings.onboardingPending() -> {
                 openedOnboarding = true
                 navigator.openOnboarding()
             }

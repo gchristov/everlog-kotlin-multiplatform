@@ -1,5 +1,7 @@
 package com.everlog.application.features
 
+import com.everlog.application.AppServices
+import com.everlog.android.settings.data.UserSettings
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
@@ -44,6 +46,8 @@ import kotlinx.coroutines.flow.Flow
 import rx.Observable
 
 class AppWorkoutFeatureDependencies : WorkoutFeatureDependencies {
+    override fun userSettings(): UserSettings = AppServices.userSettings
+
     private val templates = AppTemplateFeatureDependencies()
 
     override fun ongoingWorkoutRepository(): OngoingWorkoutRepository = RealOngoingWorkoutRepository()
@@ -51,6 +55,7 @@ class AppWorkoutFeatureDependencies : WorkoutFeatureDependencies {
     override fun loadPrefillSources(): LoadPrefillSourcesUseCase = RealLoadPrefillSourcesUseCase(
         Dispatchers.Default,
         RealWorkoutRepository(Dispatchers.IO, AppDataSync.instance, AppConfig.configuration.workoutSyncMonths),
+        AppServices.userSettings,
     )
 
     override fun ownExerciseUpdates(): Flow<List<LibraryExercise>> =
@@ -133,7 +138,7 @@ class AppWorkoutFeatureDependencies : WorkoutFeatureDependencies {
         RealOngoingPlanRepository(context.applicationContext).replaceRoutine(routine)
 
     override fun workoutsThisWeek(workouts: List<ELWorkout>, onCount: (Int) -> Unit, onError: (Throwable) -> Unit) =
-        UserStatsController().loadStats(RangeType.WEEK, workouts, object : UserStatsController.OnCompleteListener {
+        UserStatsController(AppServices.userSettings.weightUnit(), AppServices.userSettings.firstDayOfWeek()).loadStats(RangeType.WEEK, workouts, object : UserStatsController.OnCompleteListener {
             override fun onComplete(result: UserStatsController.StatsResult) = onCount(result.workoutsCompleted)
 
             override fun onError(throwable: Throwable) = onError(throwable)

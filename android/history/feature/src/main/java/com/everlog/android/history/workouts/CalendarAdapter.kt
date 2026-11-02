@@ -13,7 +13,7 @@ import com.everlog.android.common.kotlin.fromJava
 import com.everlog.android.common.kotlin.toJava
 import com.everlog.android.history.databinding.RowCalendarDayBinding
 import com.everlog.android.history.databinding.RowCalendarMonthBinding
-import com.everlog.android.settings.data.SettingsManager
+import com.everlog.android.settings.data.UserSettings
 import com.kizitonwose.calendarview.CalendarView
 import com.kizitonwose.calendarview.model.CalendarDay
 import com.kizitonwose.calendarview.model.CalendarMonth
@@ -25,7 +25,8 @@ import com.everlog.android.common.design.R as DesignR
 import java.util.*
 import kotlin.collections.ArrayList
 
-class CalendarAdapter {
+// Reads the settings each time it draws, as the tab stays open while they change
+class CalendarAdapter(private val settings: UserSettings) {
 
     // TODO: Months
 
@@ -83,7 +84,7 @@ class CalendarAdapter {
         // Setup
 
         private fun setupWeekDays() {
-            val days = SettingsManager.manager.firstDayOfWeek().buildWeekDays()
+            val days = settings.firstDayOfWeek().buildWeekDays()
             days.forEach {
                 val textView = TextView(view.context)
                 textView.gravity = Gravity.CENTER

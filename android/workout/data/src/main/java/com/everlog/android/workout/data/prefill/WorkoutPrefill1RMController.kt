@@ -1,7 +1,6 @@
 package com.everlog.android.workout.data.prefill
 
 import com.everlog.android.common.data.model.set.ELSet
-import com.everlog.android.settings.data.SettingsManager
 import timber.log.Timber
 
 class WorkoutPrefill1RMController: BaseWorkoutPrefillController() {
@@ -10,9 +9,9 @@ class WorkoutPrefill1RMController: BaseWorkoutPrefillController() {
         return "Prefill1RMController"
     }
 
-    override fun prefill(source: PrefillSource, setToPrefill: ELSet, setIndex: Int) {
+    override fun prefill(source: PrefillSource, setToPrefill: ELSet, setIndex: Int, settings: PrefillSettings) {
         // Make sure muscle goal is 1RM-based
-        if (!SettingsManager.manager.muscleGoal().is1RMBased) {
+        if (!settings.muscleGoal.is1RMBased) {
             Timber.tag(tag()).d("Prefill not based on 1RM. Ignoring")
             return
         }
@@ -22,10 +21,10 @@ class WorkoutPrefill1RMController: BaseWorkoutPrefillController() {
             return
         }
         // Compute 1RM goal for all eligible sets
-        val targetWeight = goalWeight(source.orm, SettingsManager.manager.muscleGoal())
+        val targetWeight = goalWeight(source.orm, settings.muscleGoal)
         if (!setToPrefill.isWeightEntered()) {
             printExerciseMessage(setIndex, String.format("1RM calculated: 1RM=%f, target=%f", source.orm, targetWeight))
-            setToPrefill.updateWeight(targetWeight, SettingsManager.manager.weightUnit())
+            setToPrefill.updateWeight(targetWeight, settings.weightUnit)
         }
     }
 }

@@ -10,7 +10,7 @@ import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.everlog.android.common.kotlin.toJava
 import com.everlog.android.common.kotlin.toLocalDate
-import com.everlog.android.settings.data.SettingsManager
+import com.everlog.android.history.HistoryFeature
 import com.everlog.android.common.mvp.activity.BaseActivity
 import com.everlog.android.history.workouts.CalendarAdapter
 import com.everlog.android.common.mvp.fragment.BaseFragmentMvpView
@@ -105,7 +105,7 @@ class HistoryHomeFragment : BaseTabFragment(), MvpViewHistoryHome {
         val lastMonth = now.plusMonths(1)
         // Remember previous position before resetting
         val currMonth = if (mCalendarSetup) binding.calendarView.findFirstVisibleMonth() else null
-        binding.calendarView.setup(firstMonth, lastMonth, SettingsManager.manager.firstDayOfWeek().toJava())
+        binding.calendarView.setup(firstMonth, lastMonth, HistoryFeature.dependencies.userSettings().firstDayOfWeek().toJava())
         binding.calendarView.post {
             // The fragment's view may have been destroyed by the time this runs
             if (_binding == null) return@post
@@ -156,7 +156,7 @@ class HistoryHomeFragment : BaseTabFragment(), MvpViewHistoryHome {
     }
 
     private fun setupCalendar() {
-        val adapter = CalendarAdapter()
+        val adapter = CalendarAdapter(HistoryFeature.dependencies.userSettings())
         binding.calendarView.monthHeaderBinder = adapter.buildMonth(CalendarAdapter.MonthBuilder()
                 .calendar(binding.calendarView))
         binding.calendarView.dayBinder = adapter.buildDay(CalendarAdapter.DayBuilder()

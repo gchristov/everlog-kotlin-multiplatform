@@ -4,6 +4,7 @@ import arrow.core.Either
 import com.everlog.android.common.data.model.exercise.ELExercise
 import com.everlog.android.common.datasync.Range
 import com.everlog.android.common.kotlin.Load
+import com.everlog.android.settings.data.UserSettings
 import com.everlog.android.workout.data.prefill.BaseWorkoutPrefillController.PrefillSource
 import com.everlog.android.workout.data.WorkoutRepository
 import kotlinx.coroutines.CoroutineDispatcher
@@ -21,6 +22,7 @@ interface LoadPrefillSourcesUseCase {
 class RealLoadPrefillSourcesUseCase(
     private val dispatcher: CoroutineDispatcher,
     private val workoutRepository: WorkoutRepository,
+    private val settings: UserSettings,
     private val clock: () -> Long = System::currentTimeMillis,
 ) : LoadPrefillSourcesUseCase {
 
@@ -28,7 +30,7 @@ class RealLoadPrefillSourcesUseCase(
     // install, once it has synced
     override suspend operator fun invoke(exercises: List<ELExercise>): Either<Throwable, Map<String, PrefillSource>> =
         when (val history = workoutRepository.workouts(Range.All).first { it != Load.Loading }) {
-            is Load.Ready -> Either.Right(withContext(dispatcher) { WorkoutPrefillController.buildPrefillSources(exercises, history.value, clock()) })
+            is Load.Ready -> Either.Right(withContext(dispatcher) { WorkoutPrefillController.buildPrefillSources(exercises, history.value, clock(), settings.weightUnit()) })
             is Load.Unavailable -> Either.Left(history.error)
             Load.Loading -> error("Filtered out")
         }

@@ -4,7 +4,7 @@ import com.everlog.android.common.data.model.exercise.ELExerciseHistory
 import com.everlog.android.common.data.model.exercise.ELRoutineExercise
 import com.everlog.android.common.data.model.set.ELSet
 import com.everlog.android.common.data.model.workout.ELWorkout
-import com.everlog.android.settings.data.SettingsManager
+import com.everlog.android.common.kotlin.WeightUnit
 import timber.log.Timber
 
 abstract class BaseWorkoutPrefillController {
@@ -13,7 +13,8 @@ abstract class BaseWorkoutPrefillController {
 
     abstract fun prefill(source: PrefillSource,
                          setToPrefill: ELSet,
-                         setIndex: Int)
+                         setIndex: Int,
+                         settings: PrefillSettings)
 
     internal fun printExerciseMessage(setIndex: Int, message: String) {
         Timber.tag(tag()).d("[SET %s] %s",
@@ -27,8 +28,8 @@ abstract class BaseWorkoutPrefillController {
                 workout.getName(), workout.getCompletedDateAsDate(), exercise.getName()?.uppercase(), setIndex + 1, message)
     }
 
-    internal fun buildSetInfo(set: ELSet): String {
-        return String.format("weight=%.2f, reps=%d, time=%d", set.getWeight(SettingsManager.manager.weightUnit()), set.getReps(), set.getTimeSeconds())
+    internal fun buildSetInfo(set: ELSet, weightUnit: WeightUnit): String {
+        return String.format("weight=%.2f, reps=%d, time=%d", set.getWeight(weightUnit), set.getReps(), set.getTimeSeconds())
     }
 
     /**

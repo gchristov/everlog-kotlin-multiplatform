@@ -9,21 +9,14 @@ import com.everlog.android.common.data.model.workout.ELWorkout
 import com.everlog.android.common.data.model.workout.ELWorkoutState
 import com.everlog.android.common.datatest.plannedSet
 import com.everlog.android.common.datatest.workout
-import com.everlog.android.common.kotlin.WeightUnit
-import com.everlog.android.common.test.InMemorySharedPreferences
-import com.everlog.android.settings.data.SettingsManager
 import com.everlog.android.workout.data.notification.ShownSet
 import com.everlog.android.workout.notification.WorkoutNotificationState
-import com.everlog.android.common.test.install
-import com.everlog.android.common.test.uninstall
 import com.everlog.android.workout.notification.WorkoutNotificationState.Done
 import com.everlog.android.workout.notification.WorkoutNotificationState.NextSet
 import com.everlog.android.workout.notification.WorkoutNotificationState.NoExercises
 import com.everlog.android.workout.notification.WorkoutNotificationState.Rest
 import com.everlog.android.workout.notification.WorkoutNotificationState.RestTimer
 import com.google.common.truth.Truth.assertThat
-import org.junit.After
-import org.junit.Before
 import org.junit.Test
 
 class WorkoutNotificationStateTest {
@@ -31,17 +24,6 @@ class WorkoutNotificationStateTest {
     private val bench = ELExercise(uuid = "bench", name = "Bench press")
     private val squat = ELExercise(uuid = "squat", name = "Squat")
     private val plank = ELExercise(uuid = "plank", name = "Plank")
-
-    @Before
-    fun setUp() {
-        InMemorySharedPreferences.install()
-        SettingsManager.manager.setWeightUnit(WeightUnit.KILOGRAM)
-    }
-
-    @After
-    fun tearDown() {
-        InMemorySharedPreferences.uninstall()
-    }
 
     // State selection
 

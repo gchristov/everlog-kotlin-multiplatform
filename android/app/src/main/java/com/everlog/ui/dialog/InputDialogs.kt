@@ -1,5 +1,6 @@
 package com.everlog.ui.dialog
 
+import com.everlog.application.AppServices
 import com.everlog.android.common.design.R as DesignR
 import android.app.AlertDialog
 import android.content.Context
@@ -15,7 +16,6 @@ import android.widget.FrameLayout
 import android.widget.TextView
 import com.everlog.R
 import com.everlog.android.common.mvp.dialog.ToastBuilder
-import com.everlog.android.settings.data.SettingsManager
 import com.everlog.ui.dialog.AppDialogs.MetricDialogType
 import com.everlog.ui.dialog.AppDialogs.StringDialogType
 import com.everlog.android.common.kotlin.Utils
@@ -119,7 +119,7 @@ internal class InputDialogs {
             var inputType = InputType.TYPE_CLASS_NUMBER
             when (type) {
                 MetricDialogType.WEIGHT -> {
-                    title = String.format("%s (%s)", context.getString(R.string.exercise_sets_performed_weight), weightUnitAbbreviation(SettingsManager.manager.weightUnit()))
+                    title = String.format("%s (%s)", context.getString(R.string.exercise_sets_performed_weight), weightUnitAbbreviation(AppServices.userSettings.weightUnit()))
                     inputType = inputType or InputType.TYPE_NUMBER_FLAG_DECIMAL
                 }
                 MetricDialogType.REPS -> {

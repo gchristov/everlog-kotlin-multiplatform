@@ -191,7 +191,7 @@ class WorkoutService : Service() {
 
     private fun buildNotification(): Notification {
         val state = WorkoutNotificationState.from(mWorkout, mRestTimer, mShown)
-        return WorkoutNotificationBuilder(this).build(notificationChannelId(), state, mWorkout)
+        return WorkoutNotificationBuilder(this, WorkoutFeature.dependencies.userSettings().weightUnit()).build(notificationChannelId(), state, mWorkout)
     }
 
     // Notification channel

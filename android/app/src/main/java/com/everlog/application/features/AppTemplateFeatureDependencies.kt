@@ -1,5 +1,7 @@
 package com.everlog.application.features
 
+import com.everlog.application.AppServices
+import com.everlog.android.settings.data.UserSettings
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
@@ -34,6 +36,8 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 
 class AppTemplateFeatureDependencies : TemplateFeatureDependencies {
+    override fun userSettings(): UserSettings = AppServices.userSettings
+
 
     override fun templateAnalytics(): TemplateAnalytics = object : TemplateAnalytics {
         override fun routineDeleted() = AnalyticsManager.manager.routineDeleted()

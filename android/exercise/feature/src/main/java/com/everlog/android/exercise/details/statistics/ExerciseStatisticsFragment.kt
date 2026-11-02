@@ -1,5 +1,6 @@
 package com.everlog.android.exercise.details.statistics
 
+import com.everlog.android.exercise.ExerciseFeature
 import android.graphics.PorterDuff
 import android.view.LayoutInflater
 import android.view.View
@@ -13,7 +14,6 @@ import com.everlog.android.common.data.model.exercise.ELExercise
 import com.everlog.android.common.data.model.workout.RangeType
 import com.everlog.android.common.kotlin.format.StatsFormatUtils
 import com.everlog.android.common.kotlin.makeSingleLine
-import com.everlog.android.settings.data.SettingsManager
 import com.everlog.android.common.mvp.chart.BaseStatsController
 import com.everlog.android.common.mvp.activity.BaseActivity
 import com.everlog.android.common.mvp.chart.ChartRenderer
@@ -33,6 +33,7 @@ class ExerciseStatisticsFragment(exercise: ELExercise,
                                  stats: ExerciseStatsController.StatsResult?,
                                  private var range: RangeType) : BaseExerciseTabFragment(exercise, stats), MvpViewExerciseStatistics {
 
+    private val weightUnit get() = ExerciseFeature.dependencies.userSettings().weightUnit()
     private var mPresenter: PresenterExerciseStatistics? = null
     private var _binding: FragmentExerciseStatisticsBinding? = null
     private val binding get() = _binding!!
@@ -103,9 +104,9 @@ class ExerciseStatisticsFragment(exercise: ELExercise,
     private fun renderSummaryViews(stats: ExerciseStatsController.StatsResult?) {
         if (stats == null) return
         binding.timesPerformedSummary.setSummary(StatsFormatUtils.formatNumberStatsLabel(stats.timesPerformed), null, requireContext().getString(R.string.exercise_statistics_times_performed).lowercase().makeSingleLine())
-        binding.totalWeightSummary.setSummary(StatsFormatUtils.formatWeightStatsLabel(stats.totalWeight), weightUnitAbbreviation(SettingsManager.manager.weightUnit()), requireContext().getString(DesignR.string.home_week_weight_lifted).lowercase().makeSingleLine())
+        binding.totalWeightSummary.setSummary(StatsFormatUtils.formatWeightStatsLabel(stats.totalWeight), weightUnitAbbreviation(weightUnit), requireContext().getString(DesignR.string.home_week_weight_lifted).lowercase().makeSingleLine())
         binding.totalRepsSummary.setSummary(StatsFormatUtils.formatNumberStatsLabel(stats.totalReps), null, requireContext().getString(R.string.exercise_statistics_total_reps).lowercase().makeSingleLine())
-        binding.maxWeightSummary.setSummary(StatsFormatUtils.formatWeightStatsLabel(stats.heaviestSet?.getWeight(SettingsManager.manager.weightUnit()) ?: 0f), weightUnitAbbreviation(SettingsManager.manager.weightUnit()), requireContext().getString(DesignR.string.workout_details_max_weight).lowercase().makeSingleLine())
+        binding.maxWeightSummary.setSummary(StatsFormatUtils.formatWeightStatsLabel(stats.heaviestSet?.getWeight(weightUnit) ?: 0f), weightUnitAbbreviation(weightUnit), requireContext().getString(DesignR.string.workout_details_max_weight).lowercase().makeSingleLine())
     }
 
     private fun renderCharts(stats: ExerciseStatsController.StatsResult?) {
@@ -117,7 +118,7 @@ class ExerciseStatisticsFragment(exercise: ELExercise,
         weightDataDescriptor.axisDependency = YAxis.AxisDependency.RIGHT
         weightDataDescriptor.colorResId = DesignR.color.pie_chart_4
         weightDataDescriptor.title = "Weight"
-        binding.repWeightAxisRightTitleLbl.text = String.format("%s (%s)", getString(DesignR.string.weight), weightUnitAbbreviation(SettingsManager.manager.weightUnit()))
+        binding.repWeightAxisRightTitleLbl.text = String.format("%s (%s)", getString(DesignR.string.weight), weightUnitAbbreviation(weightUnit))
         mChartRenderer?.renderLineChart(binding.repWeightChart,
                 binding.repWeightAxisLeftTitle,
                 binding.repWeightAxisRightTitle,

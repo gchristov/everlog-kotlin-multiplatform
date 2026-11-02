@@ -46,7 +46,8 @@ import com.everlog.android.common.kotlin.UnitUtils
 import com.everlog.android.common.kotlin.WeightUnit
 import com.everlog.android.common.session.SessionDefaults
 import com.everlog.android.exercise.data.model.library.LibraryExercise
-import com.everlog.android.settings.data.SettingsManager.MuscleGoal
+import com.everlog.android.settings.data.MuscleGoal
+import com.everlog.android.settings.testfixtures.FakeUserSettings
 import com.everlog.android.workout.data.prefill.BaseWorkoutPrefillController.PrefillSource
 import com.everlog.android.workout.data.prefill.LoadPrefillSourcesUseCase
 import com.everlog.android.workout.data.prefill.RealWorkoutSetPrefill
@@ -58,7 +59,6 @@ import com.everlog.android.workout.log.WorkoutLogExit
 import com.everlog.android.workout.log.WorkoutLogNotification
 import com.everlog.android.workout.log.WorkoutLogNotificationReceiver
 import com.everlog.android.workout.log.WorkoutLogScreen
-import com.everlog.android.workout.log.WorkoutLogSettings
 import com.everlog.android.workout.log.WorkoutLogTags
 import com.everlog.android.workout.log.WorkoutLogViewModel
 import com.everlog.android.common.session.ValueField
@@ -107,7 +107,7 @@ class WorkoutLogScenarioTest {
     // The exercise whose details were opened, and on which tab
     private var opened: Pair<String?, ExerciseTab>? = null
     private var setSuggestionsOpened = 0
-    private val settings = PoundSettings()
+    private val settings = FakeUserSettings(unit = WeightUnit.POUND, weightStep = 5f, screenOn = false)
     private val ownUpdates = MutableSharedFlow<List<LibraryExercise>>(extraBufferCapacity = 1)
     private val now = 1_800_000_000_000L
 
@@ -383,7 +383,7 @@ class WorkoutLogScenarioTest {
         compose.waitUntil(10_000L) { setSuggestionsOpened == 2 }
 
         // Turned off there, the suggested values go once the workout shows again; the targets stay
-        settings.goal = MuscleGoal.NONE
+        settings.setMuscleGoal(MuscleGoal.NONE)
         InstrumentationRegistry.getInstrumentation().runOnMainSync { viewModel.onResume() }
         compose.waitUntil(5_000L) { compose.onAllNodes(hasText("✦")).fetchSemanticsNodes().isEmpty() }
         cell(1, 0, 0, "count").assertTextEquals("12")
@@ -481,14 +481,14 @@ class WorkoutLogScenarioTest {
             resumed = loaded.resumed,
             fromPlan = false,
             repository = store,
-            settings = settings,
+            settings = RealWorkoutLogSettings(settings),
             analytics = analytics,
             alerts = object : WorkoutLogAlerts {
                 override fun timerRanOut() = Unit
             },
             notification = notification,
             loadPrefillSources = BenchHistory,
-            prefill = RealWorkoutSetPrefill { settings.goal.canPrefill() },
+            prefill = RealWorkoutSetPrefill(settings),
             ownExerciseUpdates = { ownUpdates },
             clock = { now },
             tickMillis = null,
@@ -606,19 +606,6 @@ class WorkoutLogScenarioTest {
             return mapOf(bench.uuid!! to PrefillSource(last, orm = 0f)).right()
         }
     }
-
-    private class PoundSettings : WorkoutLogSettings {
-        var goal = MuscleGoal.HISTORY
-
-        override fun weightUnit() = WeightUnit.POUND
-
-        override fun weightIncrease() = 5f
-
-        override fun keepScreenOn() = false
-
-        override fun muscleGoal() = goal
-    }
-
 
     private class RecordingAnalytics : WorkoutLogAnalytics {
         val events = mutableListOf<String>()
