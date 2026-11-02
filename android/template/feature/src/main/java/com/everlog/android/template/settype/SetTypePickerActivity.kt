@@ -1,5 +1,7 @@
 package com.everlog.android.template.settype
 
+import com.everlog.android.template.TemplateGraph
+import com.everlog.android.common.kotlin.di.appGraph
 import android.view.View
 import androidx.appcompat.widget.Toolbar
 import androidx.core.view.ViewCompat
@@ -69,7 +71,8 @@ class SetTypePickerActivity : BaseActivity(), MvpViewSetTypePicker {
     // Setup
 
     override fun setupPresenter() {
-        mPresenter = PresenterSetTypePicker()
+        val graph = appGraph<TemplateGraph>()
+        mPresenter = PresenterSetTypePicker(graph.templateAnalytics, graph.templateNavigation)
     }
 
     private fun setupTopBar() {

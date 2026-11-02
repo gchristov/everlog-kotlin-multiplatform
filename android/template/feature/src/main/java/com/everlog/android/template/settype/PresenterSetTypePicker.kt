@@ -1,5 +1,7 @@
 package com.everlog.android.template.settype
 
+import com.everlog.android.template.TemplateNavigation
+import com.everlog.android.template.TemplateAnalytics
 import com.everlog.android.common.design.R as DesignR
 import android.app.Activity.RESULT_OK
 import android.content.Intent
@@ -9,15 +11,17 @@ import com.everlog.android.common.data.model.set.ELSetType
 import com.everlog.android.common.mvp.activity.BaseActivityPresenter
 import com.everlog.android.template.R
 import com.everlog.android.template.TemplateExtras
-import com.everlog.android.template.TemplateFeature
 import com.everlog.android.template.settype.Footer
 import com.everlog.android.template.settype.FooterAdapter
 import com.everlog.android.template.settype.SetTypeAdapter
 import com.everlog.android.common.kotlin.format.ArrayResourceTypeUtils
 
-class PresenterSetTypePicker : BaseActivityPresenter<MvpViewSetTypePicker>() {
+class PresenterSetTypePicker(
+    private val analytics: TemplateAnalytics,
+    private val navigation: TemplateNavigation,
+) : BaseActivityPresenter<MvpViewSetTypePicker>() {
 
-    private val feedback by lazy { mvpView.getActivity()?.let { TemplateFeature.dependencies.setTypesFeedback(it) } }
+    private val feedback by lazy { mvpView.getActivity()?.let { navigation.setTypesFeedback(it) } }
 
     private var mBinder: SetTypeAdapter.Binder? = null
     private val mAdapter = RecyclerAdapter()
@@ -53,7 +57,7 @@ class PresenterSetTypePicker : BaseActivityPresenter<MvpViewSetTypePicker>() {
 
     private fun handleSetTypeSelected(type: ELSetType) {
         if (type.canBeSelected(mvpView.getSelectedExercisesCount())) {
-            TemplateFeature.dependencies.templateAnalytics().setTypeSelected(type)
+            analytics.setTypeSelected(type)
             val i = Intent()
             i.putExtra(TemplateExtras.SET_TYPE, type)
             mvpView.setViewResult(RESULT_OK, i)

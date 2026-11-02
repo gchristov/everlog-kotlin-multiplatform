@@ -1,6 +1,9 @@
 package com.everlog.android.template.data
 
 import arrow.core.Either
+import com.everlog.android.auth.data.UserSession
+import com.everlog.android.auth.data.requireUserId
+import com.everlog.android.common.data.CommonData
 import com.everlog.android.common.data.model.ELRoutine
 import com.everlog.android.common.data.store.DocumentStore
 import com.everlog.android.common.datasync.CollectionSource
@@ -11,11 +14,12 @@ import com.everlog.android.common.datasync.FirestoreDocument
 import com.everlog.android.common.datasync.SyncPlan
 import com.everlog.android.common.firebase.FirestorePaths
 import com.everlog.android.common.kotlin.Load
-import com.everlog.android.auth.data.UserSession
-import com.everlog.android.auth.data.requireUserId
-import com.everlog.android.common.data.CommonData
+import com.everlog.android.common.kotlin.di.IoDispatcher
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.SetOptions
+import dev.zacsweers.metro.AppScope
+import dev.zacsweers.metro.ContributesBinding
+import dev.zacsweers.metro.Inject
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
@@ -57,8 +61,10 @@ interface RoutineRepository {
  * @param testLabRoutines Where routines go during Test Lab runs, which keep them in memory so robots don't
  * create data
  */
+@ContributesBinding(AppScope::class)
+@Inject
 class RealRoutineRepository(
-    private val dispatcher: CoroutineDispatcher,
+    @IoDispatcher private val dispatcher: CoroutineDispatcher,
     private val dataSync: DataSync,
     private val session: UserSession,
     private val testLabRoutines: () -> DocumentStore<ELRoutine>,

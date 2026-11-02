@@ -2,12 +2,16 @@ package com.everlog.android.template.data.session
 
 import com.everlog.android.common.data.model.ELRoutine
 import com.everlog.android.common.kotlin.Load
+import com.everlog.android.common.kotlin.di.DefaultDispatcher
 import com.everlog.android.common.kotlin.optional
 import com.everlog.android.common.kotlin.zip
+import com.everlog.android.exercise.data.ExerciseRepository
 import com.everlog.android.exercise.data.model.library.LibraryExercise
 import com.everlog.android.exercise.data.model.library.toELExercise
-import com.everlog.android.exercise.data.ExerciseRepository
 import com.everlog.android.template.data.RoutineRepository
+import dev.zacsweers.metro.AppScope
+import dev.zacsweers.metro.ContributesBinding
+import dev.zacsweers.metro.Inject
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
@@ -25,8 +29,10 @@ interface LoadTemplateUseCase {
     operator fun invoke(uuid: String): Flow<Load<ELRoutine>>
 }
 
+@ContributesBinding(AppScope::class)
+@Inject
 class RealLoadTemplateUseCase(
-    private val dispatcher: CoroutineDispatcher,
+    @DefaultDispatcher private val dispatcher: CoroutineDispatcher,
     private val routineRepository: RoutineRepository,
     private val exerciseRepository: ExerciseRepository,
 ) : LoadTemplateUseCase {

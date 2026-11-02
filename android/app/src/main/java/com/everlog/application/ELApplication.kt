@@ -15,7 +15,6 @@ import com.everlog.android.plan.data.store.PlanStores
 import com.everlog.android.pro.ProFeature
 import com.everlog.android.settings.SettingsFeature
 import com.everlog.android.settings.data.store.SettingsStores
-import com.everlog.android.template.TemplateFeature
 import com.everlog.android.template.data.store.TemplateStores
 import com.everlog.android.workout.WorkoutFeature
 import com.everlog.android.workout.data.store.WorkoutStores
@@ -27,11 +26,10 @@ import com.everlog.application.features.AppOnboardingFeatureDependencies
 import com.everlog.application.features.AppPlanFeatureDependencies
 import com.everlog.application.features.AppProFeatureDependencies
 import com.everlog.application.features.AppSettingsFeatureDependencies
-import com.everlog.application.features.AppTemplateFeatureDependencies
 import com.everlog.application.features.AppWorkoutFeatureDependencies
 import com.everlog.config.AppConfig
 import com.jakewharton.threetenabp.AndroidThreeTen
-import dev.zacsweers.metro.createGraph
+import dev.zacsweers.metro.createGraphFactory
 
 class ELApplication : Application(), GraphOwner {
 
@@ -48,7 +46,7 @@ class ELApplication : Application(), GraphOwner {
     override fun onCreate() {
         super.onCreate()
         AppContext = this
-        graph = createGraph<AppGraph>()
+        graph = createGraphFactory<AppGraph.Factory>().create(this)
         CommonData.dependencies = AppCommonDataDependencies()
         AuthStores.session = graph.userSession
         ExerciseStores.session = graph.userSession
@@ -57,7 +55,6 @@ class ELApplication : Application(), GraphOwner {
         PlanStores.session = graph.userSession
         SettingsStores.session = graph.userSession
         CommonMvp.dependencies = AppCommonMvpDependencies()
-        TemplateFeature.dependencies = AppTemplateFeatureDependencies()
         WorkoutFeature.dependencies = AppWorkoutFeatureDependencies()
         HistoryFeature.dependencies = AppHistoryFeatureDependencies()
         PlanFeature.dependencies = AppPlanFeatureDependencies()

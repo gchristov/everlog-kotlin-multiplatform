@@ -43,5 +43,7 @@ class SaveTemplateUseCaseTest {
         override fun replaceRoutine(routine: ELRoutine) {
             replaced += routine
         }
+
+        override fun removeRoutine(routine: ELRoutine) = Unit
     }
 }

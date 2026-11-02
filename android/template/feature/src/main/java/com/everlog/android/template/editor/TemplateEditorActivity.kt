@@ -1,5 +1,7 @@
 package com.everlog.android.template.editor
 
+import com.everlog.android.template.TemplateGraph
+import com.everlog.android.common.kotlin.di.appGraph
 import android.content.Context
 import android.content.Intent
 import androidx.activity.viewModels
@@ -9,7 +11,6 @@ import androidx.lifecycle.viewmodel.viewModelFactory
 import com.everlog.android.common.mvp.activity.SignedInComposeActivity
 import com.everlog.android.template.R
 import com.everlog.android.template.TemplateExtras
-import com.everlog.android.template.TemplateFeature
 import com.everlog.android.template.details.RoutineDetailsActivity
 import kotlinx.coroutines.Dispatchers
 
@@ -18,7 +19,8 @@ import kotlinx.coroutines.Dispatchers
  * template could outgrow.
  */
 class TemplateEditorActivity : SignedInComposeActivity() {
-    private val dependencies = TemplateFeature.dependencies
+    private val graph by lazy { appGraph<TemplateGraph>() }
+    private val navigation by lazy { graph.templateNavigation }
 
     private val viewModel by viewModels<TemplateEditorViewModel> {
         viewModelFactory {
@@ -27,10 +29,10 @@ class TemplateEditorActivity : SignedInComposeActivity() {
                     dispatcher = Dispatchers.Main,
                     uuid = intent.getStringExtra(ExtraRoutineUuid),
                     defaultName = getString(R.string.template_editor_default_name),
-                    loadTemplate = dependencies.loadTemplate(),
-                    saveTemplate = dependencies.saveTemplate(this@TemplateEditorActivity),
-                    analytics = dependencies.templateEditorAnalytics(),
-                    ownExerciseUpdates = dependencies::ownExerciseUpdates,
+                    loadTemplate = graph.loadTemplate,
+                    saveTemplate = graph.saveTemplate,
+                    analytics = graph.templateEditorAnalytics,
+                    ownExerciseUpdates = graph.exerciseRepository::ownExerciseUpdates,
                 )
             }
         }
@@ -39,15 +41,15 @@ class TemplateEditorActivity : SignedInComposeActivity() {
     @Composable
     override fun Content() = TemplateEditorScreen(
         viewModel = viewModel,
-        onAddExercise = { dependencies.openExercisePicker(this) },
-        onOpenExercise = { exercise, tab -> dependencies.openExerciseDetails(this, exercise, tab) },
+        onAddExercise = { navigation.openExercisePicker(this) },
+        onOpenExercise = { exercise, tab -> navigation.openExerciseDetails(this, exercise, tab) },
         onExit = ::exit,
     )
 
     @Deprecated("The exercise picker opens with startActivityForResult")
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        dependencies.pickedExerciseGroups(requestCode, resultCode, data)?.let(viewModel::onExercisesPicked)
+        navigation.pickedExerciseGroups(requestCode, resultCode, data)?.let(viewModel::onExercisesPicked)
     }
 
     // The routine goes back as the old editor's did: the routine picker starts a workout from a new one
