@@ -16,8 +16,7 @@ internal fun moduleRuleBroken(from: Module, to: Module, forTests: Boolean): Stri
         is Module.Common -> commonRuleBroken(to)
         is Module.Feature -> when (from.type) {
             DATA -> dataRuleBroken(to)
-            FEATURE -> featureRuleBroken(from, to)
-            TEST_FIXTURES -> testFixturesRuleBroken(from, to)
+            FEATURE, TEST_FIXTURES -> featureRuleBroken(from, to)
         }
     }
 }
@@ -32,11 +31,8 @@ private fun dataRuleBroken(to: Module) = when {
 }
 
 private fun featureRuleBroken(from: Module.Feature, to: Module) =
-    if (to is Module.Feature && to.feature != from.feature) "a feature never depends on another feature" else null
-
-private fun testFixturesRuleBroken(from: Module.Feature, to: Module) =
     if (to is Module.Feature && to.feature != from.feature && to.type == FEATURE) {
-        "a feature never depends on another feature"
+        "a feature never depends on another feature's UI"
     } else {
         null
     }
