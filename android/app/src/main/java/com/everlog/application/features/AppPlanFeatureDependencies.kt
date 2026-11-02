@@ -1,7 +1,7 @@
 package com.everlog.application.features
 
 import com.everlog.android.plan.data.PlanProgress
-import com.everlog.application.AppServices
+import com.everlog.application.ELApplication
 import com.everlog.android.auth.data.UserSession
 import android.app.Activity
 import android.content.Context
@@ -15,9 +15,9 @@ import com.everlog.managers.analytics.AnalyticsManager
 import com.everlog.ui.navigator.ELNavigator
 
 class AppPlanFeatureDependencies : PlanFeatureDependencies {
-    override fun planProgress(): PlanProgress = AppServices.planProgress
+    override fun planProgress(): PlanProgress = ELApplication.graph.planProgress
 
-    override fun userSession(): UserSession = AppServices.userSession
+    override fun userSession(): UserSession = ELApplication.graph.userSession
 
 
     override fun planAnalytics(): PlanAnalytics = object : PlanAnalytics {

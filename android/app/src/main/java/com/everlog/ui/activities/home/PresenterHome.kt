@@ -1,6 +1,6 @@
 package com.everlog.ui.activities.home
 
-import com.everlog.application.AppServices
+import com.everlog.application.ELApplication
 import com.everlog.android.common.design.R as DesignR
 import android.content.BroadcastReceiver
 import android.content.Context
@@ -214,7 +214,7 @@ class PresenterHome : BaseActivityPresenter<MvpViewHome>() {
 
     private fun updateStartWorkoutButtonVisibility() {
         val onWeekTab = getSelectedTab() == 0
-        val hide = onWeekTab && (AppServices.planProgress.hasOngoingPlan() || mWeekIsEmpty)
+        val hide = onWeekTab && (ELApplication.graph.planProgress.hasOngoingPlan() || mWeekIsEmpty)
         mvpView?.toggleStartWorkoutButton(!hide)
     }
 
@@ -254,8 +254,8 @@ class PresenterHome : BaseActivityPresenter<MvpViewHome>() {
     // Analytics
 
     private fun identifyUser() {
-        AnalyticsManager.manager.userIdentify(AppServices.userSession.user()!!.id)
-        ErrorManager.manager.userIdentify(AppServices.userSession.user()!!.id)
+        AnalyticsManager.manager.userIdentify(ELApplication.graph.userSession.user()!!.id)
+        ErrorManager.manager.userIdentify(ELApplication.graph.userSession.user()!!.id)
     }
 
     // Setup

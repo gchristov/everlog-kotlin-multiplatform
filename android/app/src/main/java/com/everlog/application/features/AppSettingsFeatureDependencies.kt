@@ -1,7 +1,7 @@
 package com.everlog.application.features
 
 import com.everlog.android.auth.data.UserSession
-import com.everlog.application.AppServices
+import com.everlog.application.ELApplication
 import com.everlog.android.settings.data.UserSettings
 import android.app.Activity
 import android.content.Context
@@ -25,9 +25,9 @@ import com.everlog.utils.device.DeviceInfo
 import rx.Observable
 
 class AppSettingsFeatureDependencies : SettingsFeatureDependencies {
-    override fun userSession(): UserSession = AppServices.userSession
+    override fun userSession(): UserSession = ELApplication.graph.userSession
 
-    override fun userSettings(): UserSettings = AppServices.userSettings
+    override fun userSettings(): UserSettings = ELApplication.graph.userSettings
 
 
     override fun settingsAnalytics(): SettingsAnalytics = object : SettingsAnalytics {

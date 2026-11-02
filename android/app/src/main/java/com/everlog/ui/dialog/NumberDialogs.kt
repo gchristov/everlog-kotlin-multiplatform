@@ -1,6 +1,6 @@
 package com.everlog.ui.dialog
 
-import com.everlog.application.AppServices
+import com.everlog.application.ELApplication
 import com.everlog.android.common.design.R as DesignR
 import android.app.Activity
 import android.app.AlertDialog
@@ -48,7 +48,7 @@ internal class NumberDialogs {
             val inflater = alertDialog.layoutInflater
             val dialogLayout: View = inflater.inflate(R.layout.dialog_picker_weight_increase, frameView)
             val weightUnit = dialogLayout.findViewById<TextView>(R.id.weightUnit)
-            weightUnit.text = weightUnitAbbreviation(AppServices.userSettings.weightUnit())
+            weightUnit.text = weightUnitAbbreviation(ELApplication.graph.userSettings.weightUnit())
             val wholeNumber: MaterialNumberPicker = dialogLayout.findViewById(R.id.wholeNumberPickerView)
             wholeNumber.minValue = 1
             wholeNumber.maxValue = 20

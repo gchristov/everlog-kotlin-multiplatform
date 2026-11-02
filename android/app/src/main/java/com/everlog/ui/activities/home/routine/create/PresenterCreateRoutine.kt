@@ -1,6 +1,6 @@
 package com.everlog.ui.activities.home.routine.create
 
-import com.everlog.application.AppServices
+import com.everlog.application.ELApplication
 import com.everlog.android.common.design.R as DesignR
 import android.app.Activity
 import android.content.DialogInterface
@@ -104,7 +104,7 @@ class PresenterCreateRoutine : PresenterCreateExerciseGroups<MvpViewCreateRoutin
                 if (mEditMode) {
                     AnalyticsManager.manager.routineModified()
                     // Replace routine for ongoing plan
-                    AppServices.planProgress.updateRoutineForPlan(mvpView.context, toSave!!)
+                    ELApplication.graph.planProgress.updateRoutineForPlan(mvpView.context, toSave!!)
                 } else {
                     AnalyticsManager.manager.routineCreated()
                     if (mvpView?.shouldOpenDetailsOnSuccess() == true) {
@@ -134,7 +134,7 @@ class PresenterCreateRoutine : PresenterCreateExerciseGroups<MvpViewCreateRoutin
         if (toEdit == null) {
             toEdit = mvpView?.getItemToEdit()
             if (toEdit == null) {
-                toEdit = buildNewRoutine(AppServices.userSession.user()?.id!!)
+                toEdit = buildNewRoutine(ELApplication.graph.userSession.user()?.id!!)
             } else {
                 // If we're editing a routine, don't assume changes made
                 mLocalChangesMade = false

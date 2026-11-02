@@ -1,6 +1,6 @@
 package com.everlog.managers
 
-import com.everlog.application.AppServices
+import com.everlog.application.ELApplication
 import android.app.AlarmManager
 import android.app.PendingIntent
 import android.content.Context
@@ -118,7 +118,7 @@ class AppUsageReminderManager : PreferencesManager() {
         }
 
         private fun nextReminder(now: Long): AppUsageNotification.Reminder? {
-            if (!AppServices.userSettings.loggedIn()) {
+            if (!ELApplication.graph.userSettings.loggedIn()) {
                 Timber.tag(TAG).i("No app usage reminder - logged out")
                 return null
             }

@@ -1,6 +1,6 @@
 package com.everlog.application.features
 
-import com.everlog.application.AppServices
+import com.everlog.application.ELApplication
 import android.content.Context
 import android.content.Intent
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
@@ -15,16 +15,16 @@ import com.everlog.managers.analytics.AnalyticsManager
 class AppSetSuggestionsSettings(context: Context) : SetSuggestionsSettings {
     private val context = context.applicationContext
 
-    override fun muscleGoal(): MuscleGoal = AppServices.userSettings.muscleGoal()
+    override fun muscleGoal(): MuscleGoal = ELApplication.graph.userSettings.muscleGoal()
 
     override fun setMuscleGoal(goal: MuscleGoal) {
-        AppServices.userSettings.setMuscleGoal(goal)
+        ELApplication.graph.userSettings.setMuscleGoal(goal)
         // As the Settings screen does, so open screens show the new value
         LocalBroadcastManager.getInstance(context).sendBroadcast(Intent(MvpBroadcasts.PREFERENCES_CHANGED))
         AnalyticsManager.manager.settingsMuscleGoalModified(goal)
     }
 
-    override fun weightUnit(): WeightUnit = AppServices.userSettings.weightUnit()
+    override fun weightUnit(): WeightUnit = ELApplication.graph.userSettings.weightUnit()
 }
 
 class AppSetSuggestionsAnalytics : SetSuggestionsAnalytics {

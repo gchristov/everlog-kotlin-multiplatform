@@ -1,6 +1,6 @@
 package com.everlog.data.repositories
 
-import com.everlog.application.AppServices
+import com.everlog.application.ELApplication
 import com.everlog.android.common.data.model.workout.ELWorkout
 import com.everlog.android.workout.data.OngoingWorkoutRepository
 import com.everlog.android.workout.data.WorkoutManager
@@ -21,6 +21,6 @@ class RealOngoingWorkoutRepository : OngoingWorkoutRepository {
         // Pushes back the app usage reminder, the user may not pass through the home screen for a while
         AppLaunchManager.manager.recordActivity(Date())
         WorkoutStores.workoutStore().create(workout, SetOptions.merge())
-        if (AppServices.planProgress.checkCompletedWorkout(workout, fromPlan)) AnalyticsManager.manager.planDayComplete()
+        if (ELApplication.graph.planProgress.checkCompletedWorkout(workout, fromPlan)) AnalyticsManager.manager.planDayComplete()
     }
 }

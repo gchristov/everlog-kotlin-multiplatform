@@ -41,6 +41,8 @@ dependencies {
     implementation(libs.google.services.gradlePlugin)
     implementation(libs.firebase.crashlytics.gradlePlugin)
     implementation(libs.firebase.perf.gradlePlugin)
+    // Applied by id only: it's built with a newer Kotlin than the one Gradle compiles these plugins with
+    runtimeOnly(libs.metro.gradlePlugin)
 
     testImplementation(libs.junit)
     testImplementation(libs.truth)

@@ -1,6 +1,6 @@
 package com.everlog.ui.adapters
 
-import com.everlog.application.AppServices
+import com.everlog.application.ELApplication
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -43,13 +43,13 @@ class MuscleGoalAdapter {
         // Render
 
         private fun renderGoal() {
-            binding.radioButton.isChecked = AppServices.userSettings.muscleGoal() == item
+            binding.radioButton.isChecked = ELApplication.graph.userSettings.muscleGoal() == item
             binding.titleLbl.text = item.valueName(itemView.context)
             binding.subtitleLbl.text = item.percent1RMSummary(itemView.context)
         }
 
         private fun renderPro() {
-            val proLocked = item.proLocked() && AppServices.userSession.user()?.isPro() == false
+            val proLocked = item.proLocked() && ELApplication.graph.userSession.user()?.isPro() == false
             binding.proBadge.visibility = if (proLocked) View.VISIBLE else View.GONE
             binding.titleLbl.alpha = if (proLocked) ELConstants.ALPHA_PRO_FEATURE_DISABLED else 1f
             binding.subtitleLbl.alpha = if (proLocked) ELConstants.ALPHA_PRO_FEATURE_DISABLED else 1f

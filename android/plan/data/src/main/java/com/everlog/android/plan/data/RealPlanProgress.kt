@@ -9,7 +9,15 @@ import com.everlog.android.common.persistence.PreferencesManager
 import com.everlog.android.plan.data.model.ELPlan
 import com.everlog.android.plan.data.model.ELPlanState
 import com.google.gson.Gson
+import dev.zacsweers.metro.AppScope
+import dev.zacsweers.metro.ContributesBinding
+import dev.zacsweers.metro.Inject
+import dev.zacsweers.metro.SingleIn
+import dev.zacsweers.metro.binding
 
+@SingleIn(AppScope::class)
+@ContributesBinding(AppScope::class, binding = binding<PlanProgress>())
+@Inject
 class RealPlanProgress : PreferencesManager(), PlanProgress {
 
     private enum class PreferenceKeys {

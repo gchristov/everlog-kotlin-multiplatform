@@ -1,6 +1,6 @@
 package com.everlog.ui.activities.home.musclegoal
 
-import com.everlog.application.AppServices
+import com.everlog.application.ELApplication
 import android.content.Intent
 import com.ahamed.multiviewadapter.DataListManager
 import com.ahamed.multiviewadapter.RecyclerAdapter
@@ -59,7 +59,7 @@ class PresenterMuscleGoal : BaseActivityPresenter<MvpViewMuscleGoal>() {
         mAdapter.notifyDataSetChanged()
         mvpView?.showData()
         // Check for pending Pro selection
-        if (mPendingMuscleGoal?.proLocked() == true && AppServices.userSession.user()?.isPro() == true) {
+        if (mPendingMuscleGoal?.proLocked() == true && ELApplication.graph.userSession.user()?.isPro() == true) {
             setMuscleGoal(mPendingMuscleGoal!!, false)
         }
     }
@@ -67,7 +67,7 @@ class PresenterMuscleGoal : BaseActivityPresenter<MvpViewMuscleGoal>() {
     // Handlers
 
     private fun handleMuscleGoalSelected(muscleGoal: MuscleGoal) {
-        if (AppServices.userSettings.muscleGoal() != muscleGoal) {
+        if (ELApplication.graph.userSettings.muscleGoal() != muscleGoal) {
             if (muscleGoal.proLocked()) {
                 // Keep track of selected goal so it can be applied after user upgrades
                 mPendingMuscleGoal = muscleGoal
@@ -81,7 +81,7 @@ class PresenterMuscleGoal : BaseActivityPresenter<MvpViewMuscleGoal>() {
     }
 
     private fun setMuscleGoal(muscleGoal: MuscleGoal, closeScreen: Boolean) {
-        AppServices.userSettings.setMuscleGoal(muscleGoal)
+        ELApplication.graph.userSettings.setMuscleGoal(muscleGoal)
         notifyPreferencesChanged()
         AnalyticsManager.manager.settingsMuscleGoalModified(muscleGoal)
         mAdapter.notifyDataSetChanged()

@@ -1,6 +1,6 @@
 package com.everlog.ui.dialog
 
-import com.everlog.application.AppServices
+import com.everlog.application.ELApplication
 import android.app.DatePickerDialog
 import android.app.TimePickerDialog
 import android.content.Context
@@ -36,7 +36,7 @@ class DateTimeDialogs {
                     usedDate.monthValue - 1,
                     usedDate.dayOfMonth)
             // Set first day of week (offset due to differences in ordinals)
-            datePickerDialog?.datePicker?.firstDayOfWeek = AppServices.userSettings.firstDayOfWeek().plus(1).value
+            datePickerDialog?.datePicker?.firstDayOfWeek = ELApplication.graph.userSettings.firstDayOfWeek().plus(1).value
             datePickerDialog?.show()
             return subscriber
         }

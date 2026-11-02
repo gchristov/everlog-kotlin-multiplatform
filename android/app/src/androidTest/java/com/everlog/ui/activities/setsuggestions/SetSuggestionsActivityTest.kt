@@ -1,6 +1,6 @@
 package com.everlog.ui.activities.setsuggestions
 
-import com.everlog.application.AppServices
+import com.everlog.application.ELApplication
 import androidx.compose.ui.test.junit4.createEmptyComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.performClick
@@ -39,23 +39,23 @@ class SetSuggestionsActivityTest {
 
     @Before
     fun setUp() {
-        goalBefore = AppServices.userSettings.muscleGoal()
-        AppServices.userSettings.setMuscleGoal(MuscleGoal.HISTORY)
+        goalBefore = ELApplication.graph.userSettings.muscleGoal()
+        ELApplication.graph.userSettings.setMuscleGoal(MuscleGoal.HISTORY)
     }
 
     @After
     fun tearDown() {
-        AppServices.userSettings.setMuscleGoal(goalBefore)
+        ELApplication.graph.userSettings.setMuscleGoal(goalBefore)
     }
 
     @Test
     fun changingTheSetting() {
         ActivityScenario.launch<SetSuggestionsActivity>(SetSuggestionsActivity.launchIntent(instrumentation.targetContext)).use {
             compose.onNodeWithTag(SetSuggestionsTags.option(SetSuggestion.Off)).performClick()
-            compose.waitUntil(WaitMillis) { AppServices.userSettings.muscleGoal() == MuscleGoal.NONE }
+            compose.waitUntil(WaitMillis) { ELApplication.graph.userSettings.muscleGoal() == MuscleGoal.NONE }
 
             compose.onNodeWithTag(SetSuggestionsTags.option(SetSuggestion.BuildMuscle)).performClick()
-            compose.waitUntil(WaitMillis) { AppServices.userSettings.muscleGoal() == MuscleGoal.GROWTH }
+            compose.waitUntil(WaitMillis) { ELApplication.graph.userSettings.muscleGoal() == MuscleGoal.GROWTH }
         }
     }
 

@@ -20,10 +20,12 @@ class AndroidBasePlugin : Plugin<Project> {
             }
             pluginManager.apply("org.jetbrains.kotlin.android")
             pluginManager.apply("org.jetbrains.kotlin.plugin.parcelize")
+            // Dependency injection: every module can declare its classes and bindings for the app's graph
+            pluginManager.apply("dev.zacsweers.metro")
             enforceModuleRules()
 
             extensions.configure<KotlinAndroidProjectExtension> {
-                // When changing the Java version make sure to also update the CI
+                // When changing the Java version, also update CI and gradle/gradle-daemon-jvm.properties
                 jvmToolchain(21)
             }
             with(android) {

@@ -1,6 +1,6 @@
 package com.everlog.ui.fragments.home.week
 
-import com.everlog.application.AppServices
+import com.everlog.application.ELApplication
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -133,7 +133,7 @@ class WeekHomeFragment : BaseTabFragment(), MvpViewWeekHome {
     private fun setupWeekViews() {
         mWeekViews.forEach { it.onCreateView(view) }
         (activity as? BaseActivity)?.let { parent ->
-            val initialState = WeekViewState.Loading(AppServices.planProgress.hasOngoingPlan())
+            val initialState = WeekViewState.Loading(ELApplication.graph.planProgress.hasOngoingPlan())
             mWeekViews.forEach { it.render(initialState, parent) }
         }
         mWeekStatistics.setListener(object : StatisticsWeekListener {

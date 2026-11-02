@@ -1,6 +1,6 @@
 package com.everlog.application.features
 
-import com.everlog.application.AppServices
+import com.everlog.application.ELApplication
 import android.content.Context
 import android.content.Intent
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
@@ -13,15 +13,15 @@ class AppOnboardingSettings(context: Context) : OnboardingSettings {
     private val context = context.applicationContext
 
     override fun setWeightUnit(unit: WeightUnit) {
-        if (AppServices.userSettings.weightUnit() == unit) return
-        AppServices.userSettings.setWeightUnit(unit)
+        if (ELApplication.graph.userSettings.weightUnit() == unit) return
+        ELApplication.graph.userSettings.setWeightUnit(unit)
         notifyChanged()
         AnalyticsManager.manager.settingsWeightUnitModified(unit.name)
     }
 
     override fun setWeeklyWorkoutsGoal(count: Int) {
-        if (AppServices.userSettings.weeklyWorkoutsGoal() == count) return
-        AppServices.userSettings.setWeeklyWorkoutsGoal(count)
+        if (ELApplication.graph.userSettings.weeklyWorkoutsGoal() == count) return
+        ELApplication.graph.userSettings.setWeeklyWorkoutsGoal(count)
         notifyChanged()
         AnalyticsManager.manager.settingsWeeklyGoalModified(count)
     }

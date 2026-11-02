@@ -1,6 +1,6 @@
 package com.everlog.managers.auth
 
-import com.everlog.application.AppServices
+import com.everlog.application.ELApplication
 import android.content.Intent
 import android.text.TextUtils
 import com.everlog.BuildConfig
@@ -50,7 +50,7 @@ object AuthManager : PreferencesManager() {
         when {
             isLoggedIn -> {
                 val uid = mAuth!!.currentUser!!.uid
-                val saved = savedUserFor(uid, AppServices.userSession.user())
+                val saved = savedUserFor(uid, ELApplication.graph.userSession.user())
                 if (saved != null) {
                     Timber.tag(TAG).i("Initializing with the saved user")
                     // The store updates the saved user when the document arrives
@@ -80,7 +80,7 @@ object AuthManager : PreferencesManager() {
                     }
                 })
             }
-            AppServices.userSettings.loggedIn() -> {
+            ELApplication.graph.userSettings.loggedIn() -> {
                 handleAuthError(Exception("User previously logged in but not anymore => logging out"), object : AuthActionListener() {
                     override fun onError(throwable: Throwable) {
                         logout(listener)
@@ -105,7 +105,7 @@ object AuthManager : PreferencesManager() {
     }
 
     val isLoggedIn: Boolean
-        get() = AppServices.userSettings.loggedIn() && mAuth?.currentUser != null
+        get() = ELApplication.graph.userSettings.loggedIn() && mAuth?.currentUser != null
 
     // Test Lab runs are redirected to this account on login
     val isFirebaseTestLabAccount: Boolean
@@ -184,12 +184,12 @@ object AuthManager : PreferencesManager() {
         // Integrations
         GoogleFitIntegrationManager.signOut()
         // Local state
-        AppServices.userSettings.setLoggedIn(false)
-        AppServices.userSession.clearUser()
+        ELApplication.graph.userSettings.setLoggedIn(false)
+        ELApplication.graph.userSession.clearUser()
         AnalyticsManager.manager.userLogout()
         AppLaunchManager.manager.clearAppUserData()
-        AppServices.userSettings.clearUserPreferences()
-        AppServices.planProgress.clearOngoingPlan()
+        ELApplication.graph.userSettings.clearUserPreferences()
+        ELApplication.graph.planProgress.clearOngoingPlan()
         mAuth?.signOut()
         mClient?.signOut()?.addOnCompleteListener {
             listener.onLogout()
@@ -317,11 +317,11 @@ object AuthManager : PreferencesManager() {
          */
         val block = Runnable {
             saveUser(user)
-            AppServices.userSettings.setLoggedIn(true)
+            ELApplication.graph.userSettings.setLoggedIn(true)
             mAuthListener?.onSuccess(user, justRegistered)
         }
         // This is required here for the refresh to work
-        AppServices.userSession.updateUser(user)
+        ELApplication.graph.userSession.updateUser(user)
         refreshLocalUser(object : OnStoreItemListener<ELUser> {
             override fun onItemLoaded(item: ELUser, fromCache: Boolean) {
                 block.run()
@@ -341,13 +341,13 @@ object AuthManager : PreferencesManager() {
         } else {
             Timber.tag(TAG).i("Saving user profile")
         }
-        AppServices.userSession.updateUser(user)
+        ELApplication.graph.userSession.updateUser(user)
         ELDatastore.userStore().create(user, SetOptions.merge())
     }
 
     private fun refreshLocalUser(listener: OnStoreItemListener<ELUser>) {
         Timber.tag(TAG).i("Refreshing user profile")
-        ELDatastore.userStore().getItem(AppServices.userSession.user()?.id, object : OnStoreItemListener<ELUser> {
+        ELDatastore.userStore().getItem(ELApplication.graph.userSession.user()?.id, object : OnStoreItemListener<ELUser> {
             override fun onItemLoaded(item: ELUser, fromCache: Boolean) {
                 if (BuildConfig.DEBUG) {
                     Timber.tag(TAG).i("User profile refreshed: user=%s", item)
