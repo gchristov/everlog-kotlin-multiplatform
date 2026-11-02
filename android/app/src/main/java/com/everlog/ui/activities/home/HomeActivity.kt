@@ -1,6 +1,6 @@
 package com.everlog.ui.activities.home
 
-import com.everlog.application.AppServices
+import com.everlog.application.ELApplication
 import android.content.Intent
 import android.view.View
 import android.view.ViewGroup
@@ -71,7 +71,7 @@ class HomeActivity : BaseActivity(), MvpViewHome {
         }, 10)
         Utils.runInBackground {
             // Resume any pending image uploads
-            AppServices.exerciseImageStorage.resumePendingUploads()
+            ELApplication.graph.exerciseImageStorage.resumePendingUploads()
             // Do app rate checks here because we might have to show it due to app launches trigger reached
             AppLaunchManager.manager.launchApp()
         }

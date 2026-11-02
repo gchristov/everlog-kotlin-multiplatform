@@ -1,6 +1,6 @@
 package com.everlog.application.features
 
-import com.everlog.application.AppServices
+import com.everlog.application.ELApplication
 import com.everlog.android.settings.data.UserSettings
 import android.app.Activity
 import android.content.Context
@@ -35,7 +35,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 
 class AppTemplateFeatureDependencies : TemplateFeatureDependencies {
-    override fun userSettings(): UserSettings = AppServices.userSettings
+    override fun userSettings(): UserSettings = ELApplication.graph.userSettings
 
 
     override fun templateAnalytics(): TemplateAnalytics = object : TemplateAnalytics {
@@ -70,19 +70,19 @@ class AppTemplateFeatureDependencies : TemplateFeatureDependencies {
         }
 
     override fun loadTemplate(): LoadTemplateUseCase =
-        RealLoadTemplateUseCase(Dispatchers.Default, routines(), RealExerciseRepository(Dispatchers.IO, AppDataSync.instance, AppServices.userSession))
+        RealLoadTemplateUseCase(Dispatchers.Default, routines(), RealExerciseRepository(Dispatchers.IO, AppDataSync.instance, ELApplication.graph.userSession))
 
     override fun saveTemplate(context: Context): SaveTemplateUseCase =
-        RealSaveTemplateUseCase(Dispatchers.IO, routines(), RealOngoingPlanRepository(context.applicationContext, AppServices.planProgress))
+        RealSaveTemplateUseCase(Dispatchers.IO, routines(), RealOngoingPlanRepository(context.applicationContext, ELApplication.graph.planProgress))
 
     override fun ownExerciseUpdates(): Flow<List<LibraryExercise>> =
-        RealExerciseRepository(Dispatchers.IO, AppDataSync.instance, AppServices.userSession).ownExerciseUpdates()
+        RealExerciseRepository(Dispatchers.IO, AppDataSync.instance, ELApplication.graph.userSession).ownExerciseUpdates()
 
     override fun templateEditorAnalytics(): TemplateEditorAnalytics = AppTemplateEditorAnalytics()
 
-    private fun routines() = RealRoutineRepository(Dispatchers.IO, AppDataSync.instance, AppServices.userSession) { ELDatastore.routineStore() }
+    private fun routines() = RealRoutineRepository(Dispatchers.IO, AppDataSync.instance, ELApplication.graph.userSession) { ELDatastore.routineStore() }
 
-    override fun removeFromOngoingPlan(activity: Activity, routine: ELRoutine) = AppServices.planProgress.deleteRoutineForPlan(activity, routine)
+    override fun removeFromOngoingPlan(activity: Activity, routine: ELRoutine) = ELApplication.graph.planProgress.deleteRoutineForPlan(activity, routine)
 
     override fun setTypesFeedback(activity: Activity): (() -> Unit)? = activity.feedbackFormLauncher(FeedbackSource.SET_TYPES)
 }

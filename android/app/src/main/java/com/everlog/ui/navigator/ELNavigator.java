@@ -1,6 +1,6 @@
 package com.everlog.ui.navigator;
 
-import com.everlog.application.AppServices;
+import com.everlog.application.ELApplication;
 import androidx.annotation.Nullable;
 import android.app.Activity;
 import android.content.ActivityNotFoundException;
@@ -342,7 +342,7 @@ public class ELNavigator implements Navigator {
 
     @Override
     public void runProFeature(Runnable runnable) {
-        ELUser user = AppServices.userSession.user();
+        ELUser user = ELApplication.getGraph().getUserSession().user();
         if (user == null) {
             ToastBuilder.showToast(mContext, "An unexpected error occurred. We've been notified and taking a look. Feel free to try again.", true);
             Timber.tag(TAG).e(new RuntimeException("Trying to access pro feature without user account"));
@@ -364,7 +364,7 @@ public class ELNavigator implements Navigator {
 
     @Override
     public void openProBuyOrManage() {
-        ELUser user = AppServices.userSession.user();
+        ELUser user = ELApplication.getGraph().getUserSession().user();
         if (user.isPro()) {
             AnalyticsManager.manager.proManageSubscription();
             // Show subscription manager in the Play Store
@@ -404,7 +404,7 @@ public class ELNavigator implements Navigator {
         TextView exercises = v.findViewById(R.id.exercisesField);
         title.setText(workout.getName());
         sets.setText(StatsFormatUtils.Companion.formatNumberStatsLabel(workout.getTotalSets()));
-        weight.setText(String.format("%s %s", StatsFormatUtils.Companion.formatWeightStatsLabel(workout.getTotalWeight(AppServices.userSettings.weightUnit())), WeightFormatKt.weightUnitAbbreviation(AppServices.userSettings.weightUnit())));
+        weight.setText(String.format("%s %s", StatsFormatUtils.Companion.formatWeightStatsLabel(workout.getTotalWeight(ELApplication.getGraph().getUserSettings().weightUnit())), WeightFormatKt.weightUnitAbbreviation(ELApplication.getGraph().getUserSettings().weightUnit())));
         duration.setText(String.format("%s %s", StatsFormatUtils.Companion.formatTimeStatsLabel(workout.getDurationMillis()), mContext.getString(com.everlog.android.common.kotlin.R.string.hour)));
         exercises.setText(workout.getTotalExercises() + "");
         // Draw everything.

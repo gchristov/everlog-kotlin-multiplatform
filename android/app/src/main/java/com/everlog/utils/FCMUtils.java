@@ -1,6 +1,6 @@
 package com.everlog.utils;
 
-import com.everlog.application.AppServices;
+import com.everlog.application.ELApplication;
 import com.everlog.data.datastores.ELDatastore;
 import com.everlog.android.auth.data.model.ELDevice;
 import com.everlog.managers.DeviceManager;
@@ -32,7 +32,7 @@ public class FCMUtils {
     public static void refreshTokenForLoggedInUser(String token) {
         Timber.tag(TAG).i("Updating user device info");
         Timber.tag(TAG).d("FCM token: %s", token);
-        if (AppServices.userSession.user() != null) {
+        if (ELApplication.getGraph().getUserSession().user() != null) {
             ELDevice device = ELDevice.newDevice(DeviceManager.manager.deviceId(), DeviceUtils.getDeviceName(), token, new Date().getTime());
             ELDatastore.deviceStore().create(device, SetOptions.merge());
             Timber.tag(TAG).i("Updated user device info");

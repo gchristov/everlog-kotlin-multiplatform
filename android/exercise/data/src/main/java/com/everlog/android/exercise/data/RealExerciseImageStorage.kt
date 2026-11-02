@@ -10,9 +10,17 @@ import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
 import com.google.firebase.storage.UploadTask
 import com.google.gson.Gson
-import timber.log.Timber
+import dev.zacsweers.metro.AppScope
+import dev.zacsweers.metro.ContributesBinding
+import dev.zacsweers.metro.Inject
+import dev.zacsweers.metro.SingleIn
+import dev.zacsweers.metro.binding
 import java.util.*
+import timber.log.Timber
 
+@SingleIn(AppScope::class)
+@ContributesBinding(AppScope::class, binding = binding<ExerciseImageStorage>())
+@Inject
 class RealExerciseImageStorage : PreferencesManager(), ExerciseImageStorage {
 
     private companion object {

@@ -1,6 +1,6 @@
 package com.everlog.application.features
 
-import com.everlog.application.AppServices
+import com.everlog.application.ELApplication
 import com.everlog.android.settings.data.UserSettings
 import android.app.Activity
 import android.content.Context
@@ -46,7 +46,7 @@ import kotlinx.coroutines.flow.Flow
 import rx.Observable
 
 class AppWorkoutFeatureDependencies : WorkoutFeatureDependencies {
-    override fun userSettings(): UserSettings = AppServices.userSettings
+    override fun userSettings(): UserSettings = ELApplication.graph.userSettings
 
     private val templates = AppTemplateFeatureDependencies()
 
@@ -54,12 +54,12 @@ class AppWorkoutFeatureDependencies : WorkoutFeatureDependencies {
 
     override fun loadPrefillSources(): LoadPrefillSourcesUseCase = RealLoadPrefillSourcesUseCase(
         Dispatchers.Default,
-        RealWorkoutRepository(Dispatchers.IO, AppDataSync.instance, AppConfig.configuration.workoutSyncMonths, AppServices.userSession),
-        AppServices.userSettings,
+        RealWorkoutRepository(Dispatchers.IO, AppDataSync.instance, AppConfig.configuration.workoutSyncMonths, ELApplication.graph.userSession),
+        ELApplication.graph.userSettings,
     )
 
     override fun ownExerciseUpdates(): Flow<List<LibraryExercise>> =
-        RealExerciseRepository(Dispatchers.IO, AppDataSync.instance, AppServices.userSession).ownExerciseUpdates()
+        RealExerciseRepository(Dispatchers.IO, AppDataSync.instance, ELApplication.graph.userSession).ownExerciseUpdates()
 
     override fun workoutLogAnalytics(): WorkoutLogAnalytics = AppWorkoutLogAnalytics()
 
@@ -135,10 +135,10 @@ class AppWorkoutFeatureDependencies : WorkoutFeatureDependencies {
         ELNavigator(activity).requestRatePrompt(RatePromptTrigger.WorkoutCompleted(workout), delayMillis)
 
     override fun replaceRoutineInOngoingPlan(context: Context, routine: ELRoutine) =
-        RealOngoingPlanRepository(context.applicationContext, AppServices.planProgress).replaceRoutine(routine)
+        RealOngoingPlanRepository(context.applicationContext, ELApplication.graph.planProgress).replaceRoutine(routine)
 
     override fun workoutsThisWeek(workouts: List<ELWorkout>, onCount: (Int) -> Unit, onError: (Throwable) -> Unit) =
-        UserStatsController(AppServices.userSettings.weightUnit(), AppServices.userSettings.firstDayOfWeek()).loadStats(RangeType.WEEK, workouts, object : UserStatsController.OnCompleteListener {
+        UserStatsController(ELApplication.graph.userSettings.weightUnit(), ELApplication.graph.userSettings.firstDayOfWeek()).loadStats(RangeType.WEEK, workouts, object : UserStatsController.OnCompleteListener {
             override fun onComplete(result: UserStatsController.StatsResult) = onCount(result.workoutsCompleted)
 
             override fun onError(throwable: Throwable) = onError(throwable)

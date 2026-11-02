@@ -1,6 +1,6 @@
 package com.everlog.data.datastores
 
-import com.everlog.application.AppServices
+import com.everlog.application.ELApplication
 import android.content.Intent
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.everlog.android.auth.data.model.ELUser
@@ -36,8 +36,8 @@ class ELUserStore : ELDocumentStore<ELUser>() {
 
     override fun itemReady(item: ELUser) {
         super.itemReady(item)
-        val proChanged = AppServices.userSession.user()?.isPro() != item.isPro()
-        AppServices.userSession.updateUser(item)
+        val proChanged = ELApplication.graph.userSession.user()?.isPro() != item.isPro()
+        ELApplication.graph.userSession.updateUser(item)
         if (proChanged) {
             if (!item.isPro()) {
                 checkProDependentFeatures()
@@ -49,8 +49,8 @@ class ELUserStore : ELDocumentStore<ELUser>() {
 
     private fun checkProDependentFeatures() {
         // Make sure to downgrade the user's local muscle goals, if they have a pro-based one set
-        if (AppServices.userSettings.muscleGoal().proLocked()) {
-            AppServices.userSettings.setMuscleGoal(MuscleGoal.HISTORY)
+        if (ELApplication.graph.userSettings.muscleGoal().proLocked()) {
+            ELApplication.graph.userSettings.setMuscleGoal(MuscleGoal.HISTORY)
         }
     }
 

@@ -5,7 +5,7 @@ import com.everlog.android.auth.data.UserSession
 // The signed-in user's integrations store, one until destroy()
 object SettingsStores {
 
-    // Set by the app at startup, until dependency injection builds the stores
+    // Set by the app at startup, until the app's graph builds the stores
     lateinit var session: UserSession
 
     private var integration: ELUserIntegrationStore? = null

@@ -2,7 +2,7 @@ package com.everlog.application.features
 
 import com.everlog.android.exercise.data.ExerciseImageStorage
 import com.everlog.android.auth.data.UserSession
-import com.everlog.application.AppServices
+import com.everlog.application.ELApplication
 import com.everlog.android.settings.data.UserSettings
 import android.app.Activity
 import android.content.Context
@@ -35,21 +35,21 @@ import com.everlog.ui.navigator.feedbackFormLauncher
 import kotlinx.coroutines.Dispatchers
 
 class AppExerciseFeatureDependencies : ExerciseFeatureDependencies {
-    override fun exerciseImageStorage(): ExerciseImageStorage = AppServices.exerciseImageStorage
+    override fun exerciseImageStorage(): ExerciseImageStorage = ELApplication.graph.exerciseImageStorage
 
-    override fun userSession(): UserSession = AppServices.userSession
+    override fun userSession(): UserSession = ELApplication.graph.userSession
 
-    override fun userSettings(): UserSettings = AppServices.userSettings
+    override fun userSettings(): UserSettings = ELApplication.graph.userSettings
 
 
     override fun loadExerciseLibrary(): LoadExerciseLibraryUseCase {
         val io = Dispatchers.IO
         return RealLoadExerciseLibraryUseCase(
             io,
-            RealExerciseRepository(io, AppDataSync.instance, AppServices.userSession),
+            RealExerciseRepository(io, AppDataSync.instance, ELApplication.graph.userSession),
             AppExerciseUsage(
-                RealRoutineRepository(io, AppDataSync.instance, AppServices.userSession) { ELDatastore.routineStore() },
-                RealWorkoutRepository(io, AppDataSync.instance, AppConfig.configuration.workoutSyncMonths, AppServices.userSession),
+                RealRoutineRepository(io, AppDataSync.instance, ELApplication.graph.userSession) { ELDatastore.routineStore() },
+                RealWorkoutRepository(io, AppDataSync.instance, AppConfig.configuration.workoutSyncMonths, ELApplication.graph.userSession),
             ),
         )
     }
@@ -75,7 +75,7 @@ class AppExerciseFeatureDependencies : ExerciseFeatureDependencies {
 
     override fun loadExerciseGuide(): LoadExerciseGuideUseCase {
         val io = Dispatchers.IO
-        return RealLoadExerciseGuideUseCase(io, RealExerciseRepository(io, AppDataSync.instance, AppServices.userSession))
+        return RealLoadExerciseGuideUseCase(io, RealExerciseRepository(io, AppDataSync.instance, ELApplication.graph.userSession))
     }
 
     override fun workoutsStore(): CollectionStore<ELWorkout> = ELDatastore.workoutsStore()

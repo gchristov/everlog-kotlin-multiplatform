@@ -1,6 +1,6 @@
 package com.everlog.application.features
 
-import com.everlog.application.AppServices
+import com.everlog.application.ELApplication
 import com.everlog.android.settings.data.UserSettings
 import android.content.Context
 import android.content.Intent
@@ -20,17 +20,17 @@ import com.everlog.ui.activities.home.routine.create.templateEditorIntent
 import kotlinx.coroutines.Dispatchers
 
 class AppOnboardingFeatureDependencies : OnboardingFeatureDependencies {
-    override fun userSettings(): UserSettings = AppServices.userSettings
+    override fun userSettings(): UserSettings = ELApplication.graph.userSettings
 
 
     override fun buildStarterRoutines(): BuildStarterRoutinesUseCase = RealBuildStarterRoutinesUseCase(
         dispatcher = Dispatchers.Default,
-        exerciseRepository = RealExerciseRepository(dispatcher = Dispatchers.IO, dataSync = AppDataSync.instance, session = AppServices.userSession),
+        exerciseRepository = RealExerciseRepository(dispatcher = Dispatchers.IO, dataSync = AppDataSync.instance, session = ELApplication.graph.userSession),
     )
 
     override fun saveStarterRoutines(): SaveStarterRoutinesUseCase = RealSaveStarterRoutinesUseCase(
         dispatcher = Dispatchers.Default,
-        routineRepository = RealRoutineRepository(dispatcher = Dispatchers.IO, dataSync = AppDataSync.instance, session = AppServices.userSession, testLabRoutines = { ELDatastore.routineStore() }),
+        routineRepository = RealRoutineRepository(dispatcher = Dispatchers.IO, dataSync = AppDataSync.instance, session = ELApplication.graph.userSession, testLabRoutines = { ELDatastore.routineStore() }),
     )
 
     override fun onboardingSettings(context: Context): OnboardingSettings = AppOnboardingSettings(context)

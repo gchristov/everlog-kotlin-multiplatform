@@ -1,6 +1,6 @@
 # Android modules
 
-The app is split into Gradle modules, modelled on [newsfeed-kotlin-multiplatform](https://github.com/gchristov/newsfeed-kotlin-multiplatform) but without dependency injection: modules are wired by hand through view-model factories. Every feature's screens and data live in its modules (TAS-468). What's left in `:android:app` is the app shell and the old screens still waiting to be removed, see [What stays in the app](#what-stays-in-the-app).
+The app is split into Gradle modules, modelled on [newsfeed-kotlin-multiplatform](https://github.com/gchristov/newsfeed-kotlin-multiplatform), with [Metro](https://zacsweers.github.io/metro/) for dependency injection instead of newsfeed's Kodein. Metro is moving in feature by feature, see [Dependency injection](#dependency-injection). Every feature's screens and data live in its modules (TAS-468). What's left in `:android:app` is the app shell and the old screens still waiting to be removed, see [What stays in the app](#what-stays-in-the-app).
 
 ## Layout
 
@@ -68,9 +68,20 @@ A feature module can't see the app, but some of what it needs lives there for no
 
 `common:mvp` does the same for what its bases need (screen views and the signed-in user check), with `CommonMvpDependencies`.
 
-Services the app shares, like the user's settings, are an interface with a `Real…` implementation and a `Fake…` in the feature's `test-fixtures` (`UserSettings`, `RealUserSettings`, `FakeUserSettings`; `UserSession` for the signed-in user). The app creates one instance of each in `AppServices` and hands it to the features through their dependencies, rather than each class reaching for a singleton. The `…Stores` objects can't take them in a constructor, so the app sets their `session` at startup until DI builds the stores. Code that only needs a value, like an adapter showing weights, takes the value; one that lives on while the setting changes, like a Home tab, takes the interface and reads it when it draws.
+Services the app shares, like the user's settings, are an interface with a `Real…` implementation and a `Fake…` in the feature's `test-fixtures` (`UserSettings`, `RealUserSettings`, `FakeUserSettings`; `UserSession` for the signed-in user). The app's graph creates one instance of each and the app hands it to the features through their dependencies, rather than each class reaching for a singleton. The `…Stores` objects can't take them in a constructor, so the app sets their `session` at startup until the graph builds the stores. Code that only needs a value, like an adapter showing weights, takes the value; one that lives on while the setting changes, like a Home tab, takes the interface and reads it when it draws.
 
-This stands in for dependency injection while the app is split into modules. Each interface is shaped like constructor injection, a list of what the feature needs, so introducing a DI framework after the modularisation (TAS-468) only replaces how the app registers them; the interfaces and the features stay as they are.
+The holders stand in for dependency injection until Metro reaches each feature. Each interface is shaped like constructor injection, a list of what the feature needs, so moving a feature onto the graph only replaces how the app registers it.
+
+## Dependency injection
+
+[Metro](https://zacsweers.github.io/metro/) builds the app's dependencies at compile time, so a missing one fails the build rather than the app. The base convention plugin applies it to every module.
+
+- **The graph** is `AppGraph` in the app (`AppScope`), created first thing in `ELApplication.onCreate`. Code that can't have its dependencies passed in yet reads it through `ELApplication.graph`.
+- **Modules contribute their implementations**: a data module marks its `Real…` class `@Inject @SingleIn(AppScope::class) @ContributesBinding(AppScope::class, binding = binding<…>())`, and the graph binds the interface to it without any wiring in the app. `binding` names the interface when the class has other supertypes, like `PreferencesManager`.
+- **Metro only reads Kotlin**: a Java class gets into the graph through a Kotlin `@Provides` function, or by moving it to Kotlin.
+- **Activities and presenters** can't take constructor parameters (constructor injection for activities needs API 28, and the app supports 24), so they get what they need from the graph.
+
+What's next, feature by feature (TAS-474): the graph builds each feature's `…Dependencies` and its stores, and the holders and `…Stores` objects go.
 
 ## What stays in the app
 

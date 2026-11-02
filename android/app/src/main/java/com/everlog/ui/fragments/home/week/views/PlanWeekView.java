@@ -1,6 +1,6 @@
 package com.everlog.ui.fragments.home.week.views;
 
-import com.everlog.application.AppServices;
+import com.everlog.application.ELApplication;
 import android.content.Context;
 import android.view.View;
 import android.widget.ProgressBar;
@@ -143,7 +143,7 @@ public class PlanWeekView implements IWeekView {
                 // If we've passed the last week, use the last plan week
                 week = plan.getWeeks().size() - 1;
             }
-            PlanProLockKt.applyProLock(plan.getWeeks().get(week), AppServices.userSession.user());
+            PlanProLockKt.applyProLock(plan.getWeeks().get(week), ELApplication.getGraph().getUserSession().user());
             ELPlanDay day = plan.getWeeks().get(week).getDays().get(currentDay % 7);
             day.setNext(true);
             mPlanWeekLbl.setText(String.format("Week %d of %d", week + 1, plan.getWeeks().size()));

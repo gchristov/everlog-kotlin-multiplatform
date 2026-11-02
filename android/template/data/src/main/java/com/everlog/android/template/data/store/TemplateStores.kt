@@ -9,7 +9,7 @@ import com.everlog.android.common.data.store.DocumentStore
 // The routine stores, one of each until destroy(). Test Lab runs keep routines in memory, so robots don't create data.
 object TemplateStores {
 
-    // Set by the app at startup, until dependency injection builds the stores
+    // Set by the app at startup, until the app's graph builds the stores
     lateinit var session: UserSession
 
     private var routines: CollectionStore<ELRoutine>? = null

@@ -1,6 +1,6 @@
 package com.everlog.data.sync
 
-import com.everlog.application.AppServices
+import com.everlog.application.ELApplication
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
 import com.everlog.BuildConfig
@@ -46,7 +46,7 @@ class FirestoreBackendsTest {
     fun setUp() = runBlocking<Unit> {
         E2EAccount.signIn()
         // A collection of its own per run, so nothing is cached for it yet
-        val path = "users/${AppServices.userSession.user()!!.id}/syncTest-${UUID.randomUUID()}"
+        val path = "users/${ELApplication.graph.userSession.user()!!.id}/syncTest-${UUID.randomUUID()}"
         collection = FirebaseFirestore.getInstance().collection(path)
         otherPhone = otherPhoneFirestore().collection(path)
         backend = FirestoreCollection(
