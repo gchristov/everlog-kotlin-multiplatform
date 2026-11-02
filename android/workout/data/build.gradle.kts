@@ -7,8 +7,9 @@ android {
 }
 
 dependencies {
-    // The workout screens read templates, exercises, the user and their settings through their data module
-    api(projects.android.template.data)
+    implementation(projects.android.auth.data)
+    implementation(projects.android.settings.data)
+    implementation(projects.android.template.data)
     implementation(projects.android.common.persistence)
     implementation(libs.gson)
     implementation(libs.rxandroid)

@@ -11,6 +11,8 @@ android {
 
 dependencies {
     implementation(projects.android.history.data)
+    implementation(projects.android.settings.data)
+    implementation(projects.android.workout.data)
     implementation(projects.android.common.mvp)
     implementation(libs.rxbinding)
     implementation(libs.calendarview)

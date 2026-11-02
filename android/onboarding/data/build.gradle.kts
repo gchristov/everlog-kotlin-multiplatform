@@ -8,6 +8,9 @@ android {
 
 dependencies {
     // The onboarding builds starter templates from the exercise library and saves them
-    api(projects.android.template.data)
+    implementation(projects.android.exercise.data)
+    implementation(projects.android.template.data)
+    testImplementation(projects.android.exercise.testFixtures)
+    testImplementation(projects.android.template.testFixtures)
     testImplementation(projects.android.onboarding.testFixtures)
 }

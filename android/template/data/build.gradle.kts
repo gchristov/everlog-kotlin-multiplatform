@@ -7,11 +7,10 @@ android {
 }
 
 dependencies {
-    // The template screens read the user and their settings through their data module
-    api(projects.android.auth.data)
-    api(projects.android.settings.data)
+    implementation(projects.android.auth.data)
     // The template editor shows library exercises
-    api(projects.android.exercise.data)
+    implementation(projects.android.exercise.data)
+    // The template session is built from the shared session model
     api(projects.android.common.session)
     implementation(libs.commons.lang3)
     implementation(libs.timber)

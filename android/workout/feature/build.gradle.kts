@@ -11,6 +11,9 @@ android {
 
 dependencies {
     implementation(projects.android.workout.data)
+    implementation(projects.android.exercise.data)
+    implementation(projects.android.settings.data)
+    implementation(projects.android.template.data)
     implementation(projects.android.common.mvp)
     implementation(projects.android.common.sessionUi)
     implementation(libs.timber)
