@@ -24,7 +24,7 @@ class AndroidBasePlugin : Plugin<Project> {
 
             extensions.configure<KotlinAndroidProjectExtension> {
                 // When changing the Java version make sure to also update the CI
-                jvmToolchain(20)
+                jvmToolchain(21)
             }
             with(android) {
                 compileSdk = SDK

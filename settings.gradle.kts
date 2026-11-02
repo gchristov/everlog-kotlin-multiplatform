@@ -11,6 +11,8 @@ pluginManagement {
 
 plugins {
     id("com.gradle.develocity") version "4.4.0"
+    // Downloads the JDK the build needs (gradle/gradle-daemon-jvm.properties and jvmToolchain) when none is installed
+    id("org.gradle.toolchains.foojay-resolver-convention") version "1.0.0"
 }
 
 develocity {
