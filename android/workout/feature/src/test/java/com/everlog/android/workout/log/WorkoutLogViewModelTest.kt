@@ -14,12 +14,8 @@ import com.everlog.android.common.data.model.workout.ELWorkout
 import com.everlog.android.common.data.model.workout.ELWorkoutState
 import com.everlog.android.common.kotlin.WeightUnit
 import com.everlog.android.common.test.FakeCoroutineDispatcher
-import com.everlog.android.common.test.InMemorySharedPreferences
 import com.everlog.android.exercise.data.model.library.LibraryExercise
-import com.everlog.android.settings.data.SettingsManager
-import com.everlog.android.settings.data.SettingsManager.MuscleGoal
-import com.everlog.android.common.test.install
-import com.everlog.android.common.test.uninstall
+import com.everlog.android.settings.data.MuscleGoal
 import com.everlog.android.common.session.SessionDefaults
 import com.everlog.android.workout.data.prefill.BaseWorkoutPrefillController.PrefillSource
 import com.everlog.android.workout.data.prefill.LoadPrefillSourcesUseCase
@@ -50,8 +46,6 @@ import com.everlog.android.common.kotlin.format.displayWeight
 import com.google.common.truth.Truth.assertThat
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.flow.MutableSharedFlow
-import org.junit.After
-import org.junit.Before
 import org.junit.Test
 
 class WorkoutLogViewModelTest {
@@ -98,18 +92,6 @@ class WorkoutLogViewModelTest {
             clock = { time },
             tickMillis = null,
         )
-    }
-
-    // ELSet reads the weight unit from the preferences
-    @Before
-    fun setUp() {
-        InMemorySharedPreferences.install()
-        SettingsManager.manager.setWeightUnit(WeightUnit.KILOGRAM)
-    }
-
-    @After
-    fun tearDown() {
-        InMemorySharedPreferences.uninstall()
     }
 
     private val WorkoutLogViewModel.blocks get() = state.value.blocks

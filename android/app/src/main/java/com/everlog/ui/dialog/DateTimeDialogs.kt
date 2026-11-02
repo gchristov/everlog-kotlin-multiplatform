@@ -1,12 +1,12 @@
 package com.everlog.ui.dialog
 
+import com.everlog.application.AppServices
 import android.app.DatePickerDialog
 import android.app.TimePickerDialog
 import android.content.Context
 import android.widget.DatePicker
 import android.widget.TimePicker
 import com.everlog.android.common.kotlin.toLocalDateTime
-import com.everlog.android.settings.data.SettingsManager
 import org.threeten.bp.DateTimeUtils
 import org.threeten.bp.LocalDateTime
 import org.threeten.bp.ZoneId
@@ -36,7 +36,7 @@ class DateTimeDialogs {
                     usedDate.monthValue - 1,
                     usedDate.dayOfMonth)
             // Set first day of week (offset due to differences in ordinals)
-            datePickerDialog?.datePicker?.firstDayOfWeek = SettingsManager.manager.firstDayOfWeek().plus(1).value
+            datePickerDialog?.datePicker?.firstDayOfWeek = AppServices.userSettings.firstDayOfWeek().plus(1).value
             datePickerDialog?.show()
             return subscriber
         }

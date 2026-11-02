@@ -9,6 +9,7 @@ import com.everlog.android.common.data.model.exercise.ELExerciseGroup
 import com.everlog.android.common.data.model.workout.ELWorkout
 import com.everlog.android.common.sessionui.exercisetable.ExerciseTab
 import com.everlog.android.exercise.data.model.library.LibraryExercise
+import com.everlog.android.settings.data.UserSettings
 import com.everlog.android.workout.data.OngoingWorkoutRepository
 import com.everlog.android.workout.data.prefill.LoadPrefillSourcesUseCase
 import com.everlog.android.workout.details.WorkoutDetailsAnalytics
@@ -29,6 +30,8 @@ import rx.Observable
  * startup. Shaped like constructor injection so a DI framework can take over the registration (android/README.md).
  */
 interface WorkoutFeatureDependencies {
+    fun userSettings(): UserSettings
+
     fun ongoingWorkoutRepository(): OngoingWorkoutRepository
 
     fun loadPrefillSources(): LoadPrefillSourcesUseCase

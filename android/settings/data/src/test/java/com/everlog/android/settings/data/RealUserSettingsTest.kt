@@ -8,9 +8,9 @@ import org.junit.After
 import org.junit.Before
 import org.junit.Test
 
-class SettingsManagerTest {
+class RealUserSettingsTest {
 
-    private val manager = SettingsManager.manager
+    private val settings = RealUserSettings()
 
     @Before
     fun setUp() {
@@ -24,24 +24,24 @@ class SettingsManagerTest {
 
     @Test
     fun `keeps the screen on by default`() {
-        assertThat(manager.keepScreenOn()).isTrue()
+        assertThat(settings.keepScreenOn()).isTrue()
     }
 
     @Test
     fun `saves keep screen on`() {
-        manager.setKeepScreenOn(false)
-        assertThat(manager.keepScreenOn()).isFalse()
+        settings.setKeepScreenOn(false)
+        assertThat(settings.keepScreenOn()).isFalse()
 
-        manager.setKeepScreenOn(true)
-        assertThat(manager.keepScreenOn()).isTrue()
+        settings.setKeepScreenOn(true)
+        assertThat(settings.keepScreenOn()).isTrue()
     }
 
     @Test
     fun `clearing user preferences restores the keep screen on default`() {
-        manager.setKeepScreenOn(false)
+        settings.setKeepScreenOn(false)
 
-        manager.clearUserPreferences()
+        settings.clearUserPreferences()
 
-        assertThat(manager.keepScreenOn()).isTrue()
+        assertThat(settings.keepScreenOn()).isTrue()
     }
 }

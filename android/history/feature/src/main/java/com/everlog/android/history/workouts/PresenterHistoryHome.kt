@@ -182,7 +182,7 @@ class PresenterHistoryHome : BaseFragmentPresenter<MvpViewHistoryHome>() {
 
     private fun setupListView() {
         mAdapter.addDataManager(mDataListManager)
-        mAdapter.registerBinders(HistoryAdapter.Binder(object : BaseTimelineViewHolder.OnTimelineListener<ELWorkout> {
+        mAdapter.registerBinders(HistoryAdapter.Binder(HistoryFeature.dependencies.userSettings(), object : BaseTimelineViewHolder.OnTimelineListener<ELWorkout> {
             override fun collectionSize(): Int {
                 return mDataListManager.count
             }

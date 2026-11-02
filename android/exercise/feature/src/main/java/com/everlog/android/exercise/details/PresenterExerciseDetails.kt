@@ -1,6 +1,5 @@
 package com.everlog.android.exercise.details
 
-import com.everlog.android.settings.data.SettingsManager
 import com.everlog.android.common.design.R as DesignR
 import android.content.DialogInterface
 import com.everlog.android.common.data.model.exercise.ELExercise
@@ -20,6 +19,8 @@ import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
 
 class PresenterExerciseDetails : BaseActivityPresenter<MvpViewExerciseDetails>() {
+
+    private val settings = ExerciseFeature.dependencies.userSettings()
 
     private var toEdit: ELExercise? = null
     private var mLastStats: ExerciseStatsController.StatsResult? = null
@@ -98,7 +99,7 @@ class PresenterExerciseDetails : BaseActivityPresenter<MvpViewExerciseDetails>()
         // Load stats
         Utils.runWithDelay({
             if (isAttachedToView) {
-                ExerciseStatsController(SettingsManager.manager.weightUnit(), SettingsManager.manager.firstDayOfWeek()).loadStats(mRange,
+                ExerciseStatsController(settings.weightUnit(), settings.firstDayOfWeek()).loadStats(mRange,
                         toEdit!!,
                         object : ExerciseStatsController.OnCompleteListener {
                             override fun onComplete(result: ExerciseStatsController.StatsResult) {

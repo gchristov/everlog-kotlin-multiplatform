@@ -10,6 +10,7 @@ import com.everlog.android.common.data.store.CollectionStore
 import com.everlog.android.exercise.data.LoadExerciseGuideUseCase
 import com.everlog.android.exercise.data.LoadExerciseLibraryUseCase
 import com.everlog.android.exercise.picker.ExercisePickerAnalytics
+import com.everlog.android.settings.data.UserSettings
 
 /**
  * What the exercise feature needs from the app: services built on the app's managers, and the screens of other
@@ -17,6 +18,8 @@ import com.everlog.android.exercise.picker.ExercisePickerAnalytics
  * startup. Shaped like constructor injection so a DI framework can take over the registration (android/README.md).
  */
 interface ExerciseFeatureDependencies {
+    fun userSettings(): UserSettings
+
     fun loadExerciseLibrary(): LoadExerciseLibraryUseCase
 
     fun pickerAnalytics(): ExercisePickerAnalytics

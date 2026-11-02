@@ -1,5 +1,6 @@
 package com.everlog.ui.fragments.home.week
 
+import com.everlog.application.AppServices
 import com.everlog.android.common.design.R as DesignR
 import android.app.Activity
 import android.content.BroadcastReceiver
@@ -126,7 +127,7 @@ class PresenterWeekHome : BaseFragmentPresenter<MvpViewWeekHome>() {
                 .debounce(600, TimeUnit.MILLISECONDS)
                 .compose(applyUISchedulers())
                 .subscribe({
-                    UserStatsController().loadStats(RangeType.WEEK,
+                    UserStatsController(AppServices.userSettings.weightUnit(), AppServices.userSettings.firstDayOfWeek()).loadStats(RangeType.WEEK,
                             it,
                             object : OnCompleteListener {
                                 override fun onComplete(result: UserStatsController.StatsResult) {

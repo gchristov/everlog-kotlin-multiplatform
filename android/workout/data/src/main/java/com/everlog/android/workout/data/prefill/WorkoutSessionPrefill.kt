@@ -6,9 +6,8 @@ import com.everlog.android.common.session.WorkoutBlock
 import com.everlog.android.common.session.WorkoutSet
 import com.everlog.android.common.session.toELSet
 import com.everlog.android.common.session.toSessionSet
-import com.everlog.android.settings.data.SettingsManager
+import com.everlog.android.settings.data.UserSettings
 import com.everlog.android.workout.data.prefill.BaseWorkoutPrefillController.PrefillSource
-import com.everlog.android.workout.data.prefill.WorkoutPrefillController
 
 /**
  * Fills sets in from the user's history: the 1RM target for the muscle goal in Settings, or else each set's value
@@ -26,16 +25,14 @@ interface WorkoutSetPrefill {
     fun fillAdded(source: PrefillSource, set: WorkoutSet, index: Int): WorkoutSet
 }
 
-class RealWorkoutSetPrefill(
-    private val fillsSets: () -> Boolean = { SettingsManager.manager.muscleGoal().canPrefill() },
-) : WorkoutSetPrefill {
-    override fun fillsSets(): Boolean = fillsSets.invoke()
+class RealWorkoutSetPrefill(private val settings: UserSettings) : WorkoutSetPrefill {
+    override fun fillsSets(): Boolean = settings.muscleGoal().canPrefill()
 
     override fun fill(source: PrefillSource, set: WorkoutSet, index: Int): WorkoutSet =
-        set.throughELSet { WorkoutPrefillController.prefillSet(source, it, index) }
+        set.throughELSet { WorkoutPrefillController.prefillSet(source, it, index, settings.prefillSettings()) }
 
     override fun fillAdded(source: PrefillSource, set: WorkoutSet, index: Int): WorkoutSet =
-        set.throughELSet { WorkoutPrefillController.prefillAddedSet(source, it, index) }
+        set.throughELSet { WorkoutPrefillController.prefillAddedSet(source, it, index, settings.prefillSettings()) }
 
     // WorkoutPrefillController fills an ELSet in place
     private fun WorkoutSet.throughELSet(fill: (ELSet) -> Unit): WorkoutSet {

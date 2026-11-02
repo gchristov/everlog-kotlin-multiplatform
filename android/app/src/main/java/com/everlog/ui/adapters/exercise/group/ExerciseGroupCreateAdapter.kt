@@ -1,5 +1,6 @@
 package com.everlog.ui.adapters.exercise.group
 
+import com.everlog.application.AppServices
 import android.text.Editable
 import android.text.TextUtils
 import android.text.TextWatcher
@@ -27,7 +28,6 @@ import com.everlog.android.common.kotlin.NumberUtils
 import com.everlog.android.common.kotlin.format.FormatUtils.Companion.formatDurationShort
 import com.everlog.android.common.kotlin.format.FormatUtils.Companion.formatSetWeight
 import com.everlog.android.common.mvp.dialog.ToastBuilder
-import com.everlog.android.settings.data.SettingsManager
 import com.everlog.config.AppConfig
 import com.everlog.databinding.RowExerciseGroupCreateBinding
 import com.everlog.databinding.RowExerciseWithinSetCreateBinding
@@ -443,7 +443,7 @@ class ExerciseGroupCreateAdapter {
             override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
                 // TODO: Optimisation
                 val input = binding.weightField.text.toString()
-                groupVH.item.setUpdateWeightFromInput(item, set, input, SettingsManager.manager.weightUnit())
+                groupVH.item.setUpdateWeightFromInput(item, set, input, AppServices.userSettings.weightUnit())
                 AnalyticsManager.manager.setWeightModified(NumberUtils.parseFloat(input))
                 render()
                 if (prevVisibility != binding.weightPanel.visibility) {
@@ -526,7 +526,7 @@ class ExerciseGroupCreateAdapter {
 
         fun onClickWeightPanel(view: View) {
             Observable.just(AppDialogs.showInputNumberDialog(view.context,
-                    if (getSet().isWeightEntered()) formatSetWeight(getSet().getWeight(SettingsManager.manager.weightUnit())) else null,
+                    if (getSet().isWeightEntered()) formatSetWeight(getSet().getWeight(AppServices.userSettings.weightUnit())) else null,
                     AppDialogs.MetricDialogType.WEIGHT)
                     .subscribe { text: String? ->
                         binding.weightField.text = if (TextUtils.isEmpty(text)) "" else text
@@ -566,12 +566,12 @@ class ExerciseGroupCreateAdapter {
         }
 
         fun onClickReduceWeight() {
-            getSet().modifyWeight(-SettingsManager.manager.weightIncrease(), SettingsManager.manager.weightUnit())
+            getSet().modifyWeight(-AppServices.userSettings.weightIncrease(), AppServices.userSettings.weightUnit())
             renderWeight()
         }
 
         fun onClickIncreaceWeight() {
-            getSet().modifyWeight(SettingsManager.manager.weightIncrease(), SettingsManager.manager.weightUnit())
+            getSet().modifyWeight(AppServices.userSettings.weightIncrease(), AppServices.userSettings.weightUnit())
             renderWeight()
         }
 
@@ -668,13 +668,13 @@ class ExerciseGroupCreateAdapter {
             val selectMode = builder.hasSelections()
             binding.completeContainer.visibility = if (selectMode) View.GONE else View.VISIBLE
             binding.incompleteContainer.visibility = View.GONE
-            renderCompleteSetSummary(itemView.context, getSet(), SettingsManager.manager.weightUnit(), binding.completeContainer)
+            renderCompleteSetSummary(itemView.context, getSet(), AppServices.userSettings.weightUnit(), binding.completeContainer)
         }
 
         private fun renderWeight() {
-            binding.weightField.text = formatSetWeight(getSet().getWeight(SettingsManager.manager.weightUnit()))
+            binding.weightField.text = formatSetWeight(getSet().getWeight(AppServices.userSettings.weightUnit()))
             binding.weightPanel.visibility = if (!builder.allowSetTemplates && getSet().isWeightEntered()) View.VISIBLE else View.GONE
-            binding.weightUnit.text = String.format("(%s)", weightUnitAbbreviation(SettingsManager.manager.weightUnit()))
+            binding.weightUnit.text = String.format("(%s)", weightUnitAbbreviation(AppServices.userSettings.weightUnit()))
         }
 
         private fun renderReps() {

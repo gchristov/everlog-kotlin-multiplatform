@@ -1,6 +1,5 @@
 package com.everlog.android.history.workouts
 
-import com.everlog.android.settings.data.SettingsManager
 import com.everlog.android.common.kotlin.WeekDay
 import org.threeten.bp.DayOfWeek
 import org.threeten.bp.LocalDate
@@ -10,7 +9,7 @@ import java.util.*
 
 fun DayOfWeek.buildWeekDays(): List<WeekDay> {
     var now = LocalDate.now()
-    now = now.with(TemporalAdjusters.previousOrSame(SettingsManager.manager.firstDayOfWeek()))
+    now = now.with(TemporalAdjusters.previousOrSame(this))
     val days = ArrayList<WeekDay>()
     for (i in 0..6) {
         days.add(WeekDay(now.dayOfWeek.getDisplayName(TextStyle.SHORT, Locale.getDefault()), now))

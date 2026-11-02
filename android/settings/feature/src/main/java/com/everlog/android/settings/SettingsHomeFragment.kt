@@ -14,7 +14,7 @@ import com.everlog.android.common.kotlin.format.FormatUtils
 import com.everlog.android.common.mvp.fragment.BaseFragmentMvpView
 import com.everlog.android.common.mvp.fragment.BaseFragmentPresenter
 import com.everlog.android.common.mvp.fragment.BaseTabFragment
-import com.everlog.android.settings.data.SettingsManager
+import com.everlog.android.settings.data.MuscleGoal
 import com.everlog.android.settings.data.model.ELIntegration
 import com.everlog.android.settings.databinding.FragmentHomeSettingsBinding
 import com.everlog.android.common.mvp.util.ViewUtils
@@ -135,7 +135,7 @@ class SettingsHomeFragment : BaseTabFragment(), MvpViewSettingsHome {
 
     override fun showSettings(viewModel: SettingsViewModel) {
         showMuscleGoal(viewModel.muscleGoal)
-        binding.root.findViewById<TextView>(R.id.weightIncreaseField).text = String.format("%s %s", FormatUtils.formatSetWeight(viewModel.weightIncrease!!), weightUnitAbbreviation(SettingsManager.manager.weightUnit()))
+        binding.root.findViewById<TextView>(R.id.weightIncreaseField).text = String.format("%s %s", FormatUtils.formatSetWeight(viewModel.weightIncrease!!), weightUnitAbbreviation(viewModel.weightUnit!!))
         binding.root.findViewById<TextView>(R.id.weeklyGoalField).text = String.format("%d", viewModel.weeklyGoals)
         binding.root.findViewById<CheckBoxTriStates>(R.id.keepScreenOnCheckbox).setChecked(viewModel.keepScreenOn)
         // Units
@@ -151,7 +151,7 @@ class SettingsHomeFragment : BaseTabFragment(), MvpViewSettingsHome {
         binding.root.findViewById<CheckBoxTriStates>(R.id.newsletterCheckbox).setChecked(viewModel.notificationNewsletterEnabled)
     }
 
-    private fun showMuscleGoal(goal: SettingsManager.MuscleGoal?) {
+    private fun showMuscleGoal(goal: MuscleGoal?) {
         val v2 = SettingsFeature.dependencies.setSuggestionsV2()
         // Goals the new screen doesn't offer, which older versions could set, keep their old names
         val suggestion = goal?.let { SettingsFeature.dependencies.setSuggestionText(requireContext(), it) }.takeIf { v2 }
@@ -218,7 +218,7 @@ class SettingsHomeFragment : BaseTabFragment(), MvpViewSettingsHome {
 
     class SettingsViewModel {
 
-        var muscleGoal: SettingsManager.MuscleGoal? = null
+        var muscleGoal: MuscleGoal? = null
             private set
         var weightIncrease: Float? = null
             private set
@@ -235,7 +235,7 @@ class SettingsHomeFragment : BaseTabFragment(), MvpViewSettingsHome {
         var notificationNewsletterEnabled: Boolean? = null
             private set
 
-        fun muscleGoal(muscleGoal: SettingsManager.MuscleGoal) = apply { this.muscleGoal = muscleGoal }
+        fun muscleGoal(muscleGoal: MuscleGoal) = apply { this.muscleGoal = muscleGoal }
         fun weightIncrease(weightIncrease: Float) = apply { this.weightIncrease = weightIncrease }
         fun weeklyGoals(weeklyGoals: Int) = apply { this.weeklyGoals = weeklyGoals }
         fun weightUnit(weightUnit: WeightUnit) = apply { this.weightUnit = weightUnit }

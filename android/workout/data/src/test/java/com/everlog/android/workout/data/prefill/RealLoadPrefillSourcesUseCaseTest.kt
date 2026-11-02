@@ -10,10 +10,7 @@ import com.everlog.android.common.datatest.workout
 import com.everlog.android.common.kotlin.Load
 import com.everlog.android.common.kotlin.WeightUnit
 import com.everlog.android.common.test.FakeCoroutineDispatcher
-import com.everlog.android.common.test.InMemorySharedPreferences
-import com.everlog.android.settings.data.SettingsManager
-import com.everlog.android.common.test.install
-import com.everlog.android.common.test.uninstall
+import com.everlog.android.settings.testfixtures.FakeUserSettings
 import com.everlog.android.workout.data.WorkoutRepository
 import com.everlog.android.workout.data.prefill.RealLoadPrefillSourcesUseCase
 import com.google.common.truth.Truth.assertThat
@@ -22,8 +19,6 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.yield
-import org.junit.After
-import org.junit.Before
 import org.junit.Test
 import java.io.IOException
 
@@ -32,18 +27,7 @@ class RealLoadPrefillSourcesUseCaseTest {
     private val bench = ELExercise(uuid = "bench", name = "Bench press")
     private val now = at(2026, 10, 1)
     private val repository = FakeWorkoutRepository()
-    private val useCase = RealLoadPrefillSourcesUseCase(FakeCoroutineDispatcher, repository) { now }
-
-    @Before
-    fun setUp() {
-        InMemorySharedPreferences.install()
-        SettingsManager.manager.setWeightUnit(WeightUnit.KILOGRAM)
-    }
-
-    @After
-    fun tearDown() {
-        InMemorySharedPreferences.uninstall()
-    }
+    private val useCase = RealLoadPrefillSourcesUseCase(FakeCoroutineDispatcher, repository, FakeUserSettings(unit = WeightUnit.KILOGRAM)) { now }
 
     @Test
     fun `an exercise last done months ago still has its last session, from the whole history`() = runBlocking<Unit> {

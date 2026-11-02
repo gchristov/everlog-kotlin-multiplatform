@@ -1,11 +1,11 @@
 package com.everlog.application.features
 
+import com.everlog.application.AppServices
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import com.everlog.android.auth.AuthFeatureDependencies
 import com.everlog.android.auth.data.AuthActionListener
-import com.everlog.android.settings.data.SettingsManager
 import com.everlog.constants.ELConstants
 import com.everlog.managers.auth.AuthManager
 import com.everlog.ui.navigator.ELNavigator
@@ -27,9 +27,9 @@ class AppAuthFeatureDependencies : AuthFeatureDependencies {
 
     override fun requestPasswordReset(email: String, listener: AuthActionListener) = AuthManager.requestPasswordReset(email, listener)
 
-    override fun onboardingPending(): Boolean = SettingsManager.manager.onboardingPending()
+    override fun onboardingPending(): Boolean = AppServices.userSettings.onboardingPending()
 
-    override fun setOnboardingPending(pending: Boolean) = SettingsManager.manager.setOnboardingPending(pending)
+    override fun setOnboardingPending(pending: Boolean) = AppServices.userSettings.setOnboardingPending(pending)
 
     override fun openHome(activity: Activity) = ELNavigator(activity).openHome()
 

@@ -14,16 +14,20 @@ import com.everlog.android.common.mvp.util.ViewUtils.dpToPx
 import com.everlog.android.common.mvp.util.ViewUtils.getRawDimension
 import com.everlog.android.common.mvp.util.ViewUtils.setMargins
 import com.everlog.android.history.R
-import com.everlog.android.settings.data.SettingsManager
+import com.everlog.android.settings.data.UserSettings
 import com.everlog.android.history.databinding.RowHistoryBinding
 import java.util.*
 
+// Reads the settings each time it draws, as the tab stays open while they change
 class HistoryAdapter {
 
-    class Binder(private val mListener: OnTimelineListener<ELWorkout>) : ItemBinder<ELWorkout, ViewHolder>() {
+    class Binder(
+        private val settings: UserSettings,
+        private val mListener: OnTimelineListener<ELWorkout>,
+    ) : ItemBinder<ELWorkout, ViewHolder>() {
 
         override fun create(inflater: LayoutInflater, parent: ViewGroup): ViewHolder {
-            return ViewHolder(inflater.inflate(R.layout.row_history, parent, false))
+            return ViewHolder(inflater.inflate(R.layout.row_history, parent, false), settings)
         }
 
         override fun canBindData(item: Any): Boolean {
@@ -37,7 +41,7 @@ class HistoryAdapter {
         }
     }
 
-    class ViewHolder(itemView: View) : BaseTimelineViewHolder<ELWorkout>(itemView) {
+    class ViewHolder(itemView: View, private val settings: UserSettings) : BaseTimelineViewHolder<ELWorkout>(itemView) {
 
         private val binding = RowHistoryBinding.bind(itemView)
         val mRoutineContainer = binding.routinePicker.routineContainer
@@ -57,7 +61,7 @@ class HistoryAdapter {
         private fun renderRoutine() {
             binding.routinePicker.routineName.text = item.getName()
             binding.routinePicker.routineSummary.text = item.let { workout ->
-                val unit = SettingsManager.manager.weightUnit()
+                val unit = settings.weightUnit()
                 workoutSummary(binding.root.context, workout.getDurationMillis(), workout.getTotalWeight(unit).takeIf { workout.hasWeight() }, unit)
             }
         }

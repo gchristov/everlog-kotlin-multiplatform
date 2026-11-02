@@ -1,5 +1,7 @@
 package com.everlog.application.features
 
+import com.everlog.application.AppServices
+import com.everlog.android.settings.data.UserSettings
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
@@ -31,6 +33,8 @@ import com.everlog.ui.navigator.feedbackFormLauncher
 import kotlinx.coroutines.Dispatchers
 
 class AppExerciseFeatureDependencies : ExerciseFeatureDependencies {
+    override fun userSettings(): UserSettings = AppServices.userSettings
+
 
     override fun loadExerciseLibrary(): LoadExerciseLibraryUseCase {
         val io = Dispatchers.IO

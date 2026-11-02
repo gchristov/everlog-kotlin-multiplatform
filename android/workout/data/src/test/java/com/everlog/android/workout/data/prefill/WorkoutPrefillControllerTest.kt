@@ -8,16 +8,11 @@ import com.everlog.android.common.datatest.loggedSet
 import com.everlog.android.common.datatest.plannedSet
 import com.everlog.android.common.datatest.workout
 import com.everlog.android.common.kotlin.WeightUnit
-import com.everlog.android.common.test.InMemorySharedPreferences
-import com.everlog.android.settings.data.SettingsManager
-import com.everlog.android.settings.data.SettingsManager.MuscleGoal
+import com.everlog.android.settings.data.MuscleGoal
+import com.everlog.android.settings.testfixtures.FakeUserSettings
 import com.everlog.android.workout.data.prefill.BaseWorkoutPrefillController
 import com.everlog.android.workout.data.prefill.WorkoutPrefillController
-import com.everlog.android.common.test.install
-import com.everlog.android.common.test.uninstall
 import com.google.common.truth.Truth.assertThat
-import org.junit.After
-import org.junit.Before
 import org.junit.Test
 import java.util.concurrent.TimeUnit
 
@@ -30,17 +25,7 @@ class WorkoutPrefillControllerTest {
     // The first day of a month, which is when prefilling used to reset (TAS-409)
     private val now = at(2026, 10, 1)
 
-    @Before
-    fun setUp() {
-        InMemorySharedPreferences.install()
-        SettingsManager.manager.setWeightUnit(WeightUnit.KILOGRAM)
-        SettingsManager.manager.setMuscleGoal(MuscleGoal.HISTORY)
-    }
-
-    @After
-    fun tearDown() {
-        InMemorySharedPreferences.uninstall()
-    }
+    private val settings = FakeUserSettings(unit = WeightUnit.KILOGRAM, goal = MuscleGoal.HISTORY)
 
     // History
 
@@ -134,7 +119,7 @@ class WorkoutPrefillControllerTest {
 
     @Test
     fun `history prefill keeps the weight when using pounds`() {
-        SettingsManager.manager.setWeightUnit(WeightUnit.POUND)
+        settings.setWeightUnit(WeightUnit.POUND)
         val history = listOf(workout(at(2026, 9, 28), bench to listOf(loggedSet(8, 60f))))
         val ongoing = workout(now, bench to listOf(plannedSet()))
 
@@ -148,7 +133,7 @@ class WorkoutPrefillControllerTest {
 
     @Test
     fun `1RM goal targets a percentage of a 1RM from the previous month`() {
-        SettingsManager.manager.setMuscleGoal(MuscleGoal.GROWTH)
+        settings.setMuscleGoal(MuscleGoal.GROWTH)
         // Brzycki: 90 / (1.0278 - 0.0278 * 5) = 101.26
         val history = listOf(workout(at(2026, 9, 29), bench to listOf(loggedSet(5, 90f))))
         val ongoing = workout(now, bench to listOf(plannedSet(), plannedSet()))
@@ -164,14 +149,14 @@ class WorkoutPrefillControllerTest {
         val history = listOf(
                 workout(at(2026, 8, 1), bench to listOf(loggedSet(5, 90f))),
                 workout(at(2025, 1, 1), bench to listOf(loggedSet(5, 120f))))
-        val source = WorkoutPrefillController.buildPrefillSource(bench, history, now)
+        val source = WorkoutPrefillController.buildPrefillSource(bench, history, now, settings.weightUnit())
 
         assertThat(source.orm).isWithin(0.01f).of(101.26f)
     }
 
     @Test
     fun `1RM goal falls back to the last session's weights when there's no recent 1RM`() {
-        SettingsManager.manager.setMuscleGoal(MuscleGoal.GROWTH)
+        settings.setMuscleGoal(MuscleGoal.GROWTH)
         // Over 90 days ago, e.g. coming back from a break
         val history = listOf(
                 workout(at(2026, 6, 1), bench to listOf(loggedSet(5, 90f), loggedSet(5, 85f))),
@@ -180,21 +165,21 @@ class WorkoutPrefillControllerTest {
 
         prefill(ongoing, history)
 
-        assertThat(WorkoutPrefillController.buildPrefillSource(bench, history, now).orm).isEqualTo(0f)
+        assertThat(WorkoutPrefillController.buildPrefillSource(bench, history, now, settings.weightUnit()).orm).isEqualTo(0f)
         assertThat(weights(ongoing, bench)).containsExactly(90f, 85f).inOrder()
     }
 
     @Test
     fun `1RM counts a session exactly 90 days ago`() {
         val history = listOf(workout(now - TimeUnit.DAYS.toMillis(90), bench to listOf(loggedSet(5, 90f))))
-        val source = WorkoutPrefillController.buildPrefillSource(bench, history, now)
+        val source = WorkoutPrefillController.buildPrefillSource(bench, history, now, settings.weightUnit())
 
         assertThat(source.orm).isWithin(0.01f).of(101.26f)
     }
 
     @Test
     fun `1RM goal leaves sets empty when no set has weight`() {
-        SettingsManager.manager.setMuscleGoal(MuscleGoal.GROWTH)
+        settings.setMuscleGoal(MuscleGoal.GROWTH)
         val history = listOf(workout(at(2026, 9, 28), bench to listOf(ELSet(reps = 8))))
         val ongoing = workout(now, bench to listOf(plannedSet()))
 
@@ -205,7 +190,7 @@ class WorkoutPrefillControllerTest {
 
     @Test
     fun `1RM target isn't bumped up by float noise`() {
-        SettingsManager.manager.setMuscleGoal(MuscleGoal.GROWTH)
+        settings.setMuscleGoal(MuscleGoal.GROWTH)
         // A single rep's 1RM is its weight, which comes out as 100.00001
         val history = listOf(workout(at(2026, 9, 28), bench to listOf(loggedSet(1, 100f))))
         val ongoing = workout(now, bench to listOf(plannedSet()))
@@ -221,7 +206,7 @@ class WorkoutPrefillControllerTest {
         val history = listOf(
                 workout(at(2026, 9, 28), bench to listOf(loggedSet(30, 20f))),
                 workout(at(2026, 9, 20), bench to listOf(loggedSet(12, 80f), loggedSet(5, 70f))))
-        val source = WorkoutPrefillController.buildPrefillSource(bench, history, now)
+        val source = WorkoutPrefillController.buildPrefillSource(bench, history, now, settings.weightUnit())
 
         // 70 / (1.0278 - 0.0278 * 5)
         assertThat(source.orm).isWithin(0.01f).of(78.76f)
@@ -229,7 +214,7 @@ class WorkoutPrefillControllerTest {
 
     @Test
     fun `1RM goal falls back to history when every weighted set has more than 10 reps`() {
-        SettingsManager.manager.setMuscleGoal(MuscleGoal.GROWTH)
+        settings.setMuscleGoal(MuscleGoal.GROWTH)
         val history = listOf(workout(at(2026, 9, 28), bench to listOf(loggedSet(30, 20f))))
         val ongoing = workout(now, bench to listOf(plannedSet()))
 
@@ -330,7 +315,7 @@ class WorkoutPrefillControllerTest {
 
     @Test
     fun `1RM goal takes the weight from the 1RM and the reps from the last session`() {
-        SettingsManager.manager.setMuscleGoal(MuscleGoal.GROWTH)
+        settings.setMuscleGoal(MuscleGoal.GROWTH)
         val history = listOf(workout(at(2026, 9, 29), bench to listOf(loggedSet(5, 90f))))
         val ongoing = workout(now, bench to listOf(ELSet()))
 
@@ -348,7 +333,7 @@ class WorkoutPrefillControllerTest {
         // The user cleared bench, then added squat
         val ongoing = workout(now, bench to listOf(ELSet()), squat to listOf(ELSet()))
 
-        WorkoutPrefillController.prefill(ongoing.findExercise(squat)!!, history, now)
+        WorkoutPrefillController.prefill(ongoing.findExercise(squat)!!, history, now, settings.prefillSettings())
 
         assertThat(reps(ongoing, bench)).containsExactly(-1)
         assertThat(weights(ongoing, bench)).containsExactly(-1f)
@@ -374,7 +359,7 @@ class WorkoutPrefillControllerTest {
         val history = listOf(workout(at(2026, 9, 28), bench to listOf(loggedSet(10, 60f))))
         val ongoing = workout(now, bench to listOf(ELSet()))
 
-        val sources = WorkoutPrefillController.buildPrefillSources(listOf(bench), history, now)
+        val sources = WorkoutPrefillController.buildPrefillSources(listOf(bench), history, now, settings.weightUnit())
 
         assertThat(sources.getValue("bench").lastSession).isNotNull()
         assertThat(reps(ongoing, bench)).containsExactly(-1)
@@ -385,11 +370,11 @@ class WorkoutPrefillControllerTest {
     fun `applying fills sets added after the sources were built`() {
         val history = listOf(workout(at(2026, 9, 28), bench to listOf(loggedSet(10, 60f), loggedSet(8, 65f))))
         val ongoing = workout(now, bench to listOf(ELSet()))
-        val sources = WorkoutPrefillController.buildPrefillSources(listOf(bench), history, now)
+        val sources = WorkoutPrefillController.buildPrefillSources(listOf(bench), history, now, settings.weightUnit())
         // The user added a set while history was loading
         ongoing.findExercise(bench)!!.single().sets.add(ELSet())
 
-        WorkoutPrefillController.applyPrefill(ongoing.findExercise(bench)!!, sources)
+        WorkoutPrefillController.applyPrefill(ongoing.findExercise(bench)!!, sources, settings.prefillSettings())
 
         assertThat(reps(ongoing, bench)).containsExactly(10, 8).inOrder()
     }
@@ -398,7 +383,7 @@ class WorkoutPrefillControllerTest {
     fun `applying skips exercises without a source`() {
         val ongoing = workout(now, bench to listOf(ELSet()))
 
-        WorkoutPrefillController.applyPrefill(ongoing.findExercise(bench)!!, emptyMap())
+        WorkoutPrefillController.applyPrefill(ongoing.findExercise(bench)!!, emptyMap(), settings.prefillSettings())
 
         assertThat(reps(ongoing, bench)).containsExactly(-1)
     }
@@ -408,35 +393,35 @@ class WorkoutPrefillControllerTest {
     @Test
     fun `an added set takes the same set of the last session instead of the copied one`() {
         val history = listOf(workout(at(2026, 9, 28), bench to listOf(loggedSet(10, 60f), loggedSet(8, 65f))))
-        val source = WorkoutPrefillController.buildPrefillSource(bench, history, now)
+        val source = WorkoutPrefillController.buildPrefillSource(bench, history, now, settings.weightUnit())
         // A copy of set 1, as made by ELExerciseGroup.setAdd
         val added = loggedSet(10, 60f)
 
-        assertThat(WorkoutPrefillController.prefillAddedSet(source, added, 1)).isTrue()
+        assertThat(WorkoutPrefillController.prefillAddedSet(source, added, 1, settings.prefillSettings())).isTrue()
 
         assertThat(added.getReps()).isEqualTo(8)
-        assertThat(added.getWeight(SettingsManager.manager.weightUnit())).isEqualTo(65f)
+        assertThat(added.getWeight(settings.weightUnit())).isEqualTo(65f)
     }
 
     @Test
     fun `an added set past the last session keeps the copied values`() {
         val history = listOf(workout(at(2026, 9, 28), bench to listOf(loggedSet(10, 60f))))
-        val source = WorkoutPrefillController.buildPrefillSource(bench, history, now)
+        val source = WorkoutPrefillController.buildPrefillSource(bench, history, now, settings.weightUnit())
         val added = loggedSet(12, 50f)
 
-        assertThat(WorkoutPrefillController.prefillAddedSet(source, added, 1)).isFalse()
+        assertThat(WorkoutPrefillController.prefillAddedSet(source, added, 1, settings.prefillSettings())).isFalse()
 
         assertThat(added.getReps()).isEqualTo(12)
-        assertThat(added.getWeight(SettingsManager.manager.weightUnit())).isEqualTo(50f)
+        assertThat(added.getWeight(settings.weightUnit())).isEqualTo(50f)
     }
 
     @Test
     fun `an added set keeps the copied values when the last session skipped that set`() {
         val history = listOf(workout(at(2026, 9, 28), bench to listOf(loggedSet(10, 60f), ELSet(weight = 65f))))
-        val source = WorkoutPrefillController.buildPrefillSource(bench, history, now)
+        val source = WorkoutPrefillController.buildPrefillSource(bench, history, now, settings.weightUnit())
         val added = loggedSet(10, 60f)
 
-        assertThat(WorkoutPrefillController.prefillAddedSet(source, added, 1)).isFalse()
+        assertThat(WorkoutPrefillController.prefillAddedSet(source, added, 1, settings.prefillSettings())).isFalse()
 
         assertThat(added.getReps()).isEqualTo(10)
     }
@@ -444,10 +429,10 @@ class WorkoutPrefillControllerTest {
     @Test
     fun `an added set can switch from reps to time`() {
         val history = listOf(workout(at(2026, 9, 28), plank to listOf(ELSet(reps = 10), ELSet(timeSeconds = 45))))
-        val source = WorkoutPrefillController.buildPrefillSource(plank, history, now)
+        val source = WorkoutPrefillController.buildPrefillSource(plank, history, now, settings.weightUnit())
         val added = ELSet(reps = 10)
 
-        WorkoutPrefillController.prefillAddedSet(source, added, 1)
+        WorkoutPrefillController.prefillAddedSet(source, added, 1, settings.prefillSettings())
 
         assertThat(added.getTimeSeconds()).isEqualTo(45)
         assertThat(added.getReps()).isEqualTo(-1)
@@ -456,10 +441,10 @@ class WorkoutPrefillControllerTest {
     @Test
     fun `an added set drops the template target copied from the previous set`() {
         val history = listOf(workout(at(2026, 9, 28), bench to listOf(loggedSet(10, 60f), loggedSet(8, 65f))))
-        val source = WorkoutPrefillController.buildPrefillSource(bench, history, now)
+        val source = WorkoutPrefillController.buildPrefillSource(bench, history, now, settings.weightUnit())
         val added = ELSet(requiredReps = 10, reps = 10)
 
-        WorkoutPrefillController.prefillAddedSet(source, added, 1)
+        WorkoutPrefillController.prefillAddedSet(source, added, 1, settings.prefillSettings())
 
         assertThat(added.isRequiredRepsEntered()).isFalse()
         assertThat(added.getReps()).isEqualTo(8)
@@ -467,22 +452,22 @@ class WorkoutPrefillControllerTest {
 
     @Test
     fun `an added set with a 1RM goal targets the 1RM`() {
-        SettingsManager.manager.setMuscleGoal(MuscleGoal.GROWTH)
+        settings.setMuscleGoal(MuscleGoal.GROWTH)
         val history = listOf(workout(at(2026, 9, 29), bench to listOf(loggedSet(5, 90f), loggedSet(5, 85f))))
-        val source = WorkoutPrefillController.buildPrefillSource(bench, history, now)
+        val source = WorkoutPrefillController.buildPrefillSource(bench, history, now, settings.weightUnit())
         // Copied from set 1 after the user lowered its weight
         val added = loggedSet(6, 70f)
 
-        WorkoutPrefillController.prefillAddedSet(source, added, 1)
+        WorkoutPrefillController.prefillAddedSet(source, added, 1, settings.prefillSettings())
 
-        assertThat(added.getWeight(SettingsManager.manager.weightUnit())).isEqualTo(82f)
+        assertThat(added.getWeight(settings.weightUnit())).isEqualTo(82f)
         assertThat(added.getReps()).isEqualTo(5)
     }
 
     // Helpers
 
     private fun prefill(workout: ELWorkout, history: List<ELWorkout>): Map<String, BaseWorkoutPrefillController.PrefillSource> {
-        return WorkoutPrefillController.prefill(workout.getExerciseGroups().flatMap { it.exercises }, history, now)
+        return WorkoutPrefillController.prefill(workout.getExerciseGroups().flatMap { it.exercises }, history, now, settings.prefillSettings())
     }
 
     private fun sets(workout: ELWorkout, exercise: ELExercise): List<ELSet> {
@@ -490,7 +475,7 @@ class WorkoutPrefillControllerTest {
     }
 
     private fun weights(workout: ELWorkout, exercise: ELExercise): List<Float> {
-        return sets(workout, exercise).map { it.getWeight(SettingsManager.manager.weightUnit()) }
+        return sets(workout, exercise).map { it.getWeight(settings.weightUnit()) }
     }
 
     private fun reps(workout: ELWorkout, exercise: ELExercise): List<Int> {

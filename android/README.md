@@ -25,7 +25,7 @@ Every feature has all three modules, even while one is empty:
 | `plan` | Plan create, details and week days, the cover picker, the congratulations screen | `PlanManager`, the plan stores and models, the cover images API, `PlanBroadcasts` |
 | `history` | The Activity tab: statistics and the workouts calendar | Nothing yet: the tab reads `workout:data` |
 | `pro` | The Pro screen, `BillingManager` | The Pro models |
-| `settings` | Settings, the integration screen | `SettingsManager`, the integration store and model |
+| `settings` | Settings, the integration screen | The user's settings (`UserSettings`, `RealUserSettings`), the integration store and model |
 | `showcase` | The design system showcase (debug builds only) | |
 
 Each `data` module gives its stores one entry point, e.g. `WorkoutStores` or `PlanStores`, which the app's `ELDatastore` hands out to the code still using it.
@@ -42,7 +42,7 @@ Common modules:
 | `common:mvvm` | `CommonViewModel`, `ViewModelFactory` |
 | `common:mvp` | The XML/MVP bases: presenters, base activities, fragments, bottom sheets and views, the generic prompts, EventBus and the broadcasts every presenter listens to, the vendored adapter |
 | `common:firebase` | Firebase, the field names and `FirestorePaths` (each user's collections take the user id) |
-| `common:persistence` | `PreferencesManager`, the app's key-value storage. The user's settings (`SettingsManager`) go to `settings:data` |
+| `common:persistence` | `PreferencesManager`, the app's key-value storage. The user's settings (`UserSettings`) go to `settings:data` |
 | `common:session` | The workout session model the workout screen and the template editor edit (blocks, rounds, sets) and its rules. A stopgap until each feature owns its part |
 | `common:session-ui` | The exercise table and edit list both screens show. A stopgap until the table has its own UI model and joins the design system |
 | `common:datasync` | `DataSync`, the cache-first sync layer (the app wires its instance in `AppDataSync`) |
@@ -67,6 +67,8 @@ The convention plugins enforce these: a module that declares a dependency breaki
 A feature module can't see the app, but some of what it needs lives there for now: services built on the app's managers (analytics, the user, remote config) and other features' screens, which open through the app's `Navigator`. So each feature declares one interface for them, e.g. `ExerciseFeatureDependencies` in `exercise:feature`, and a holder for it (`ExerciseFeature.dependencies`). The app implements it (`application/features`) and registers it first thing in `ELApplication.onCreate`. The feature's activities read it and hand its parts to their view-models' own interfaces, so view-model tests still pass fakes.
 
 `common:mvp` does the same for what its bases need (screen views and the signed-in user check), with `CommonMvpDependencies`.
+
+Services the app shares, like the user's settings, are an interface with a `Real…` implementation and a `Fake…` in the feature's `test-fixtures` (`UserSettings`, `RealUserSettings`, `FakeUserSettings`). The app creates one instance of each in `AppServices` and hands it to the features through their dependencies, rather than each class reaching for a singleton. Code that only needs a value, like an adapter showing weights, takes the value; one that lives on while the setting changes, like a Home tab, takes the interface and reads it when it draws.
 
 This stands in for dependency injection while the app is split into modules. Each interface is shaped like constructor injection, a list of what the feature needs, so introducing a DI framework after the modularisation (TAS-468) only replaces how the app registers them; the interfaces and the features stay as they are.
 

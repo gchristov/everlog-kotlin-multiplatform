@@ -4,7 +4,8 @@ import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import com.everlog.android.common.mvp.fragment.BaseFragmentMvpView
-import com.everlog.android.settings.data.SettingsManager.MuscleGoal
+import com.everlog.android.settings.data.MuscleGoal
+import com.everlog.android.settings.data.UserSettings
 import com.everlog.android.settings.data.model.ELIntegration
 import rx.Observable
 
@@ -14,6 +15,8 @@ import rx.Observable
  * startup. Shaped like constructor injection so a DI framework can take over the registration (android/README.md).
  */
 interface SettingsFeatureDependencies {
+    fun userSettings(): UserSettings
+
     fun settingsAnalytics(): SettingsAnalytics
 
     // Set suggestions, or the old muscle goal screen while Remote Config's set_suggestions_v2 is off

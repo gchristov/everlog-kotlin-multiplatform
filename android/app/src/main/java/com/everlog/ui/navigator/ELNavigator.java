@@ -1,5 +1,6 @@
 package com.everlog.ui.navigator;
 
+import com.everlog.application.AppServices;
 import androidx.annotation.Nullable;
 import android.app.Activity;
 import android.content.ActivityNotFoundException;
@@ -22,7 +23,6 @@ import com.everlog.android.common.data.model.workout.ELWorkout;
 import com.everlog.android.common.kotlin.format.StatsFormatUtils;
 import com.everlog.android.exercise.picker.ExercisePickerActivity;
 import com.everlog.android.plan.data.model.ELPlan;
-import com.everlog.android.settings.data.SettingsManager;
 import com.everlog.android.settings.data.model.ELIntegration;
 import com.everlog.android.showcase.DesignSystemActivity;
 import com.everlog.config.FeedbackSource;
@@ -405,7 +405,7 @@ public class ELNavigator implements Navigator {
         TextView exercises = v.findViewById(R.id.exercisesField);
         title.setText(workout.getName());
         sets.setText(StatsFormatUtils.Companion.formatNumberStatsLabel(workout.getTotalSets()));
-        weight.setText(String.format("%s %s", StatsFormatUtils.Companion.formatWeightStatsLabel(workout.getTotalWeight(SettingsManager.manager.weightUnit())), WeightFormatKt.weightUnitAbbreviation(SettingsManager.manager.weightUnit())));
+        weight.setText(String.format("%s %s", StatsFormatUtils.Companion.formatWeightStatsLabel(workout.getTotalWeight(AppServices.userSettings.weightUnit())), WeightFormatKt.weightUnitAbbreviation(AppServices.userSettings.weightUnit())));
         duration.setText(String.format("%s %s", StatsFormatUtils.Companion.formatTimeStatsLabel(workout.getDurationMillis()), mContext.getString(com.everlog.android.common.kotlin.R.string.hour)));
         exercises.setText(workout.getTotalExercises() + "");
         // Draw everything.

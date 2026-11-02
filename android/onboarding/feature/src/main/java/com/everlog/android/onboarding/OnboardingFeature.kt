@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.Intent
 import com.everlog.android.onboarding.data.BuildStarterRoutinesUseCase
 import com.everlog.android.onboarding.data.SaveStarterRoutinesUseCase
+import com.everlog.android.settings.data.UserSettings
 
 /**
  * What the onboarding needs from the app: services built on the app's data sync and managers, and the template
@@ -11,6 +12,8 @@ import com.everlog.android.onboarding.data.SaveStarterRoutinesUseCase
  * Shaped like constructor injection so a DI framework can take over the registration (android/README.md).
  */
 interface OnboardingFeatureDependencies {
+    fun userSettings(): UserSettings
+
     fun buildStarterRoutines(): BuildStarterRoutinesUseCase
 
     fun saveStarterRoutines(): SaveStarterRoutinesUseCase

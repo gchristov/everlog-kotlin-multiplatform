@@ -7,7 +7,6 @@ import android.text.TextUtils;
 import com.ahamed.multiviewadapter.DataListManager;
 import com.ahamed.multiviewadapter.RecyclerAdapter;
 import com.everlog.android.common.kotlin.DateExtKt;
-import com.everlog.android.settings.data.SettingsManager;
 import com.everlog.android.template.data.store.TemplateStores;
 import com.everlog.android.workout.R;
 import com.everlog.android.workout.WorkoutFeature;
@@ -272,7 +271,7 @@ public class PresenterWorkoutDetails extends BaseActivityPresenter<MvpViewWorkou
                         if (isAttachedToView()) {
                             if (getMvpView().performingFromPlan()) {
                                 getMvpView().showWorkoutCompleteCongrats();
-                            } else if (SettingsManager.manager.weeklyWorkoutsGoal() == workoutsThisWeek) {
+                            } else if (dependencies.userSettings().weeklyWorkoutsGoal() == workoutsThisWeek) {
                                 getMvpView().showWeeklyGoalCompleteCongrats();
                             } else {
                                 getMvpView().showWorkoutCompleteCongrats();
@@ -302,7 +301,7 @@ public class PresenterWorkoutDetails extends BaseActivityPresenter<MvpViewWorkou
 
     private void setupListView() {
         mAdapter.addDataManager(mDataListManager);
-        mAdapter.registerBinders(new WorkoutDetailsStatsAdapter.Binder(new WorkoutDetailsStatsAdapter.OnWorkoutDetailsStatsListener() {
+        mAdapter.registerBinders(new WorkoutDetailsStatsAdapter.Binder(dependencies.userSettings().weightUnit(), new WorkoutDetailsStatsAdapter.OnWorkoutDetailsStatsListener() {
             @Override
             public void onClickEditName(ELWorkout workout) {
                 analytics.nameModified();
@@ -331,7 +330,7 @@ public class PresenterWorkoutDetails extends BaseActivityPresenter<MvpViewWorkou
             public void onItemClicked(ELWorkout item, int position) {}
         }), new ExerciseGroupSummaryAdapter().build(new ExerciseGroupSummaryAdapter.Builder()
                 .setShowTemplates(false)
-                .setWeightUnit(SettingsManager.manager.weightUnit())
+                .setWeightUnit(dependencies.userSettings().weightUnit())
                 .setOnExerciseClicked((context, exercise) -> {
                     dependencies.openExerciseDetails(context, exercise, ExerciseTab.Info);
                     return Unit.INSTANCE;

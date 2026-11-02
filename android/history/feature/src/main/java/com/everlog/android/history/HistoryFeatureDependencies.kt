@@ -3,6 +3,7 @@ package com.everlog.android.history
 import android.content.Context
 import com.everlog.android.common.data.model.workout.ELWorkout
 import com.everlog.android.common.data.model.workout.RangeType
+import com.everlog.android.settings.data.UserSettings
 
 /**
  * What the history feature needs from the app: services built on the app's managers, and the screens of other
@@ -10,6 +11,8 @@ import com.everlog.android.common.data.model.workout.RangeType
  * startup. Shaped like constructor injection so a DI framework can take over the registration (android/README.md).
  */
 interface HistoryFeatureDependencies {
+    fun userSettings(): UserSettings
+
     fun openWorkoutDetails(context: Context, workout: ELWorkout)
 
     // Whether Remote Config has a feedback form for the statistics, which the screen offers when it does

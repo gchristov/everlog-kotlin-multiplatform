@@ -1,13 +1,13 @@
 package com.everlog.ui.activities.setsuggestions
 
+import com.everlog.application.AppServices
 import androidx.compose.ui.test.junit4.createEmptyComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.performClick
 import androidx.test.core.app.ActivityScenario
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
-import com.everlog.android.settings.data.SettingsManager
-import com.everlog.android.settings.data.SettingsManager.MuscleGoal
+import com.everlog.android.settings.data.MuscleGoal
 import com.everlog.android.workout.setsuggestions.SetSuggestion
 import com.everlog.android.workout.setsuggestions.SetSuggestionsActivity
 import com.everlog.android.workout.setsuggestions.SetSuggestionsTags
@@ -39,23 +39,23 @@ class SetSuggestionsActivityTest {
 
     @Before
     fun setUp() {
-        goalBefore = SettingsManager.manager.muscleGoal()
-        SettingsManager.manager.setMuscleGoal(MuscleGoal.HISTORY)
+        goalBefore = AppServices.userSettings.muscleGoal()
+        AppServices.userSettings.setMuscleGoal(MuscleGoal.HISTORY)
     }
 
     @After
     fun tearDown() {
-        SettingsManager.manager.setMuscleGoal(goalBefore)
+        AppServices.userSettings.setMuscleGoal(goalBefore)
     }
 
     @Test
     fun changingTheSetting() {
         ActivityScenario.launch<SetSuggestionsActivity>(SetSuggestionsActivity.launchIntent(instrumentation.targetContext)).use {
             compose.onNodeWithTag(SetSuggestionsTags.option(SetSuggestion.Off)).performClick()
-            compose.waitUntil(WaitMillis) { SettingsManager.manager.muscleGoal() == MuscleGoal.NONE }
+            compose.waitUntil(WaitMillis) { AppServices.userSettings.muscleGoal() == MuscleGoal.NONE }
 
             compose.onNodeWithTag(SetSuggestionsTags.option(SetSuggestion.BuildMuscle)).performClick()
-            compose.waitUntil(WaitMillis) { SettingsManager.manager.muscleGoal() == MuscleGoal.GROWTH }
+            compose.waitUntil(WaitMillis) { AppServices.userSettings.muscleGoal() == MuscleGoal.GROWTH }
         }
     }
 

@@ -3,7 +3,8 @@ package com.everlog.android.workout.log
 import com.everlog.android.common.data.model.set.ELSetType
 import com.everlog.android.common.data.model.workout.ELWorkout
 import com.everlog.android.common.kotlin.WeightUnit
-import com.everlog.android.settings.data.SettingsManager
+import com.everlog.android.settings.data.UserSettings
+import com.everlog.android.settings.data.MuscleGoal
 import com.everlog.android.common.session.ValueField
 import com.everlog.android.workout.data.notification.ShownSet
 
@@ -19,17 +20,17 @@ internal interface WorkoutLogSettings {
     fun keepScreenOn(): Boolean
 
     // What fills sets in: off, last time or a 1RM goal
-    fun muscleGoal(): SettingsManager.MuscleGoal
+    fun muscleGoal(): MuscleGoal
 }
 
-internal class RealWorkoutLogSettings : WorkoutLogSettings {
-    override fun weightUnit(): WeightUnit = SettingsManager.manager.weightUnit()
+internal class RealWorkoutLogSettings(private val settings: UserSettings) : WorkoutLogSettings {
+    override fun weightUnit(): WeightUnit = settings.weightUnit()
 
-    override fun weightIncrease(): Float = SettingsManager.manager.weightIncrease()
+    override fun weightIncrease(): Float = settings.weightIncrease()
 
-    override fun keepScreenOn(): Boolean = SettingsManager.manager.keepScreenOn()
+    override fun keepScreenOn(): Boolean = settings.keepScreenOn()
 
-    override fun muscleGoal(): SettingsManager.MuscleGoal = SettingsManager.manager.muscleGoal()
+    override fun muscleGoal(): MuscleGoal = settings.muscleGoal()
 }
 
 /**

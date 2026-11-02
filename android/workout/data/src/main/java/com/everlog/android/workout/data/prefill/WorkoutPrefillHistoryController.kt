@@ -1,7 +1,6 @@
 package com.everlog.android.workout.data.prefill
 
 import com.everlog.android.common.data.model.set.ELSet
-import com.everlog.android.settings.data.SettingsManager
 import timber.log.Timber
 
 class WorkoutPrefillHistoryController: BaseWorkoutPrefillController() {
@@ -10,7 +9,7 @@ class WorkoutPrefillHistoryController: BaseWorkoutPrefillController() {
         return "PrefillHistoryController"
     }
 
-    override fun prefill(source: PrefillSource, setToPrefill: ELSet, setIndex: Int) {
+    override fun prefill(source: PrefillSource, setToPrefill: ELSet, setIndex: Int, settings: PrefillSettings) {
         // Make sure history is not empty
         val historicEntry = source.lastSession
         if (historicEntry == null) {
@@ -21,16 +20,16 @@ class WorkoutPrefillHistoryController: BaseWorkoutPrefillController() {
         val historicSet = historicEntry.exercise?.sets?.getOrNull(setIndex) ?: return
         if (!setToPrefill.isWeightEntered() && historicSet.isWeightEntered()) {
             // Prefill weight if current set doesn't have weight AND historic set has
-            printExerciseMessage(historicEntry.workout!!, historicEntry.exercise!!, setIndex, String.format("Found historic weight value: %s", buildSetInfo(historicSet)))
-            setToPrefill.updateWeight(historicSet.getWeight(SettingsManager.manager.weightUnit()), SettingsManager.manager.weightUnit())
+            printExerciseMessage(historicEntry.workout!!, historicEntry.exercise!!, setIndex, String.format("Found historic weight value: %s", buildSetInfo(historicSet, settings.weightUnit)))
+            setToPrefill.updateWeight(historicSet.getWeight(settings.weightUnit), settings.weightUnit)
         }
         // Reps and time replace each other, so only fill a set that has neither, including as a template target
         if (setToPrefill.isWithoutData() && !setToPrefill.isRequiredRepsEntered() && !setToPrefill.isRequiredTimeEntered()) {
             if (historicSet.isRepsEntered()) {
-                printExerciseMessage(historicEntry.workout!!, historicEntry.exercise!!, setIndex, String.format("Found historic reps value: %s", buildSetInfo(historicSet)))
+                printExerciseMessage(historicEntry.workout!!, historicEntry.exercise!!, setIndex, String.format("Found historic reps value: %s", buildSetInfo(historicSet, settings.weightUnit)))
                 setToPrefill.updateReps(historicSet.getReps())
             } else if (historicSet.isTimeEntered()) {
-                printExerciseMessage(historicEntry.workout!!, historicEntry.exercise!!, setIndex, String.format("Found historic time value: %s", buildSetInfo(historicSet)))
+                printExerciseMessage(historicEntry.workout!!, historicEntry.exercise!!, setIndex, String.format("Found historic time value: %s", buildSetInfo(historicSet, settings.weightUnit)))
                 setToPrefill.updateTimeSeconds(historicSet.getTimeSeconds())
             }
         }

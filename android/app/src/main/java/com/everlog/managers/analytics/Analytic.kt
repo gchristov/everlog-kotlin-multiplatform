@@ -2,7 +2,7 @@ package com.everlog.managers.analytics
 
 import com.everlog.android.common.data.model.set.ELSetType
 import com.everlog.android.common.data.model.workout.RangeType
-import com.everlog.android.settings.data.SettingsManager.MuscleGoal
+import com.everlog.android.settings.data.MuscleGoal
 import com.everlog.managers.appupdate.AppUpdateController
 
 interface Analytic {

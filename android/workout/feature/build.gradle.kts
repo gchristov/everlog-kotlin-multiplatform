@@ -23,5 +23,6 @@ dependencies {
     implementation(libs.collapsingtoolbar.subtitle)
     testImplementation(projects.android.common.dataTest)
     testImplementation(projects.android.workout.testFixtures)
+    androidTestImplementation(projects.android.settings.testFixtures)
     androidTestImplementation(projects.android.workout.testFixtures)
 }

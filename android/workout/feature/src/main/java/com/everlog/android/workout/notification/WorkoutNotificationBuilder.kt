@@ -11,7 +11,6 @@ import androidx.core.content.ContextCompat
 import com.everlog.android.workout.R
 import com.everlog.android.common.data.model.set.ELSetType
 import com.everlog.android.common.data.model.workout.ELWorkout
-import com.everlog.android.settings.data.SettingsManager
 import com.everlog.android.workout.WorkoutExtras
 import com.everlog.android.common.session.toSessionSet
 import com.everlog.android.workout.log.WorkoutLogActivity
@@ -19,6 +18,7 @@ import com.everlog.android.workout.notification.WorkoutNotificationState.Done
 import com.everlog.android.workout.notification.WorkoutNotificationState.NextSet
 import com.everlog.android.workout.notification.WorkoutNotificationState.NoExercises
 import com.everlog.android.workout.notification.WorkoutNotificationState.Rest
+import com.everlog.android.common.kotlin.WeightUnit
 import com.everlog.android.common.kotlin.format.ArrayResourceTypeUtils
 import com.everlog.android.common.kotlin.format.EmptyValue
 import com.everlog.android.common.kotlin.format.displayWeight
@@ -37,7 +37,7 @@ import com.everlog.android.common.design.R as DesignR
  * (backported by NotificationCompat) through to API 31+ (where the system always decorates
  * custom views). The other states use the standard template.
  */
-class WorkoutNotificationBuilder(private val context: Context) {
+class WorkoutNotificationBuilder(private val context: Context, private val weightUnit: WeightUnit) {
 
     companion object {
         // Stable request codes so each update replaces the previous PendingIntents rather than
@@ -118,8 +118,8 @@ class WorkoutNotificationBuilder(private val context: Context) {
         layout.setTextViewText(R.id.exerciseName, exerciseName(state))
         layout.setTextViewText(R.id.setSummary, setLabel(state))
         // Weight
-        layout.setTextViewText(R.id.weightField, state.weightKg?.let { formatWeight(displayWeight(it, SettingsManager.manager.weightUnit())) } ?: EmptyValue)
-        layout.setTextViewText(R.id.weightUnit, unitLabel(SettingsManager.manager.weightUnit()))
+        layout.setTextViewText(R.id.weightField, state.weightKg?.let { formatWeight(displayWeight(it, weightUnit)) } ?: EmptyValue)
+        layout.setTextViewText(R.id.weightUnit, unitLabel(weightUnit))
         layout.setOnClickPendingIntent(R.id.reduceWeightBtn, actionIntent(WorkoutService.ACTION_DECREASE_WEIGHT))
         layout.setOnClickPendingIntent(R.id.increaseWeightBtn, actionIntent(WorkoutService.ACTION_INCREASE_WEIGHT))
         // Reps
@@ -189,9 +189,8 @@ class WorkoutNotificationBuilder(private val context: Context) {
      * e.g. "Set 1/1 • Tap to edit".
      */
     private fun setSummary(state: NextSet, promptIfEmpty: Boolean = true): String {
-        val unit = SettingsManager.manager.weightUnit()
         val set = state.set.toSessionSet().copy(timeSeconds = state.timeSeconds)
-        val values = lastTimeText(set, unit, unitLabel(unit))
+        val values = lastTimeText(set, weightUnit, unitLabel(weightUnit))
                 ?: if (promptIfEmpty) context.getString(R.string.workout_notification_tap_to_edit) else null
         return listOfNotNull(setLabel(state), values).joinToString(" • ")
     }

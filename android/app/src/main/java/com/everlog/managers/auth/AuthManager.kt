@@ -1,5 +1,6 @@
 package com.everlog.managers.auth
 
+import com.everlog.application.AppServices
 import android.content.Intent
 import android.text.TextUtils
 import com.everlog.BuildConfig
@@ -10,7 +11,6 @@ import com.everlog.android.auth.data.model.ELConsent.Companion.newConsent
 import com.everlog.android.auth.data.model.ELUser
 import com.everlog.android.common.kotlin.AppContext
 import com.everlog.android.common.persistence.PreferencesManager
-import com.everlog.android.settings.data.SettingsManager
 import com.everlog.constants.ELActivityRequestCodes
 import com.everlog.constants.ELConstants
 import com.everlog.data.datastores.ELDatastore
@@ -82,7 +82,7 @@ object AuthManager : PreferencesManager() {
                     }
                 })
             }
-            SettingsManager.manager.loggedIn() -> {
+            AppServices.userSettings.loggedIn() -> {
                 handleAuthError(Exception("User previously logged in but not anymore => logging out"), object : AuthActionListener() {
                     override fun onError(throwable: Throwable) {
                         logout(listener)
@@ -107,7 +107,7 @@ object AuthManager : PreferencesManager() {
     }
 
     val isLoggedIn: Boolean
-        get() = SettingsManager.manager.loggedIn() && mAuth?.currentUser != null
+        get() = AppServices.userSettings.loggedIn() && mAuth?.currentUser != null
 
     // Test Lab runs are redirected to this account on login
     val isFirebaseTestLabAccount: Boolean
@@ -186,11 +186,11 @@ object AuthManager : PreferencesManager() {
         // Integrations
         GoogleFitIntegrationManager.signOut()
         // Local state
-        SettingsManager.manager.setLoggedIn(false)
+        AppServices.userSettings.setLoggedIn(false)
         LocalUserManager.clearUser()
         AnalyticsManager.manager.userLogout()
         AppLaunchManager.manager.clearAppUserData()
-        SettingsManager.manager.clearUserPreferences()
+        AppServices.userSettings.clearUserPreferences()
         PlanManager.manager.clearOngoingPlan()
         mAuth?.signOut()
         mClient?.signOut()?.addOnCompleteListener {
@@ -319,7 +319,7 @@ object AuthManager : PreferencesManager() {
          */
         val block = Runnable {
             saveUser(user)
-            SettingsManager.manager.setLoggedIn(true)
+            AppServices.userSettings.setLoggedIn(true)
             mAuthListener?.onSuccess(user, justRegistered)
         }
         // This is required here for the refresh to work

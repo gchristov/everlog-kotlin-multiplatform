@@ -11,7 +11,6 @@ import com.everlog.android.auth.data.store.ELUserConsentStore
 import com.everlog.android.common.kotlin.WeightUnit
 import com.everlog.android.common.mvp.MvpBroadcasts
 import com.everlog.android.common.mvp.fragment.BaseFragmentPresenter
-import com.everlog.android.settings.data.SettingsManager
 import com.everlog.android.settings.data.model.ELIntegration
 import com.everlog.android.settings.data.store.ELUserIntegrationStore
 import com.everlog.android.settings.data.store.SettingsStores
@@ -29,6 +28,7 @@ import java.util.*
 class PresenterSettingsHome : BaseFragmentPresenter<MvpViewSettingsHome>() {
 
     private val dependencies = SettingsFeature.dependencies
+    private val settings = dependencies.userSettings()
     private val analytics = dependencies.settingsAnalytics()
 
     // @State
@@ -119,7 +119,7 @@ class PresenterSettingsHome : BaseFragmentPresenter<MvpViewSettingsHome>() {
     }
 
     private fun observeWeightIncreaseConfirm() {
-        subscriptions.add(mvpView.showPickerWeight(SettingsManager.manager.weightIncrease())
+        subscriptions.add(mvpView.showPickerWeight(settings.weightIncrease())
                 .compose(applyUISchedulers())
                 .subscribe({ value -> handleWeightIncreaseChanged(value) }, { throwable -> handleError(throwable) }))
     }
@@ -131,7 +131,7 @@ class PresenterSettingsHome : BaseFragmentPresenter<MvpViewSettingsHome>() {
     }
 
     private fun observeWeeklyGoalConfirm() {
-        subscriptions.add(mvpView.showPickerWeeklyGoal(SettingsManager.manager.weeklyWorkoutsGoal())
+        subscriptions.add(mvpView.showPickerWeeklyGoal(settings.weeklyWorkoutsGoal())
                 .compose(applyUISchedulers())
                 .subscribe({ value -> handleWeeklyGoalChanged(value) }, { throwable -> handleError(throwable) }))
     }
@@ -178,7 +178,7 @@ class PresenterSettingsHome : BaseFragmentPresenter<MvpViewSettingsHome>() {
 
     private fun observeWeightUnitConfirm() {
         val titles = ArrayResourceTypeUtils.withWeightUnits().titles
-        val selectedIndex = ArrayResourceTypeUtils.withWeightUnits().types.indexOf(SettingsManager.manager.weightUnit().name)
+        val selectedIndex = ArrayResourceTypeUtils.withWeightUnits().types.indexOf(settings.weightUnit().name)
         subscriptions.add(mvpView.showPickerMultipleChoice(R.string.settings_unit_weight, titles, selectedIndex)
                 .compose(applyUISchedulers())
                 .subscribe({ value -> handleWeightUnitChanged(value) }, { throwable -> handleError(throwable) }))
@@ -193,7 +193,7 @@ class PresenterSettingsHome : BaseFragmentPresenter<MvpViewSettingsHome>() {
     private fun observeFirstWeekDayConfirm() {
         val collection = arrayOf(DayOfWeek.MONDAY, DayOfWeek.SUNDAY)
         val titles = collection.map { dayOfWeek -> dayOfWeek.getDisplayName(TextStyle.FULL, Locale.getDefault()) }
-        val selectedIndex = collection.indexOf(SettingsManager.manager.firstDayOfWeek())
+        val selectedIndex = collection.indexOf(settings.firstDayOfWeek())
         subscriptions.add(mvpView.showPickerMultipleChoice(R.string.settings_first_week_day, titles.toTypedArray(), selectedIndex)
                 .compose(applyUISchedulers())
                 .subscribe({ value -> handleFirstWeekDayChanged(value) }, { throwable -> handleError(throwable) }))
@@ -258,12 +258,12 @@ class PresenterSettingsHome : BaseFragmentPresenter<MvpViewSettingsHome>() {
         showFeedback()
         mvpView?.showSettings(
                 SettingsHomeFragment.SettingsViewModel()
-                        .muscleGoal(SettingsManager.manager.muscleGoal())
-                        .weightIncrease(SettingsManager.manager.weightIncrease())
-                        .weeklyGoals(SettingsManager.manager.weeklyWorkoutsGoal())
-                        .weightUnit(SettingsManager.manager.weightUnit())
-                        .keepScreenOn(SettingsManager.manager.keepScreenOn())
-                        .firstWeekDay(SettingsManager.manager.firstDayOfWeek())
+                        .muscleGoal(settings.muscleGoal())
+                        .weightIncrease(settings.weightIncrease())
+                        .weeklyGoals(settings.weeklyWorkoutsGoal())
+                        .weightUnit(settings.weightUnit())
+                        .keepScreenOn(settings.keepScreenOn())
+                        .firstWeekDay(settings.firstDayOfWeek())
                         .integrationGoogleFitEnabled(mIntegrationGoogleFit != null)
                         .notificationNewsletterEnabled(mConsent?.getNewsletter())
         )
@@ -296,27 +296,27 @@ class PresenterSettingsHome : BaseFragmentPresenter<MvpViewSettingsHome>() {
     // Handlers
 
     private fun handleWeightIncreaseChanged(value: Float) {
-        SettingsManager.manager.setWeightIncrease(value)
+        settings.setWeightIncrease(value)
         loadData()
         analytics.weightIncreaseModified(value)
     }
 
     private fun handleWeeklyGoalChanged(value: Int) {
-        SettingsManager.manager.setWeeklyWorkoutsGoal(value)
+        settings.setWeeklyWorkoutsGoal(value)
         loadData()
         notifyPreferencesChanged()
         analytics.weeklyGoalModified(value)
     }
 
     private fun handleKeepScreenOnChanged(value: Boolean) {
-        SettingsManager.manager.setKeepScreenOn(value)
+        settings.setKeepScreenOn(value)
         loadData()
         analytics.keepScreenOnModified(value)
     }
 
     private fun handleWeightUnitChanged(index: Int) {
         val unit = WeightUnit.valueOf(ArrayResourceTypeUtils.withWeightUnits().types[index])
-        SettingsManager.manager.setWeightUnit(unit)
+        settings.setWeightUnit(unit)
         loadData()
         notifyPreferencesChanged()
         analytics.weightUnitModified(unit.name)
@@ -325,7 +325,7 @@ class PresenterSettingsHome : BaseFragmentPresenter<MvpViewSettingsHome>() {
     private fun handleFirstWeekDayChanged(index: Int) {
         val collection = arrayOf(DayOfWeek.MONDAY, DayOfWeek.SUNDAY)
         val day = collection[index]
-        SettingsManager.manager.setFirstDayOfWeek(day)
+        settings.setFirstDayOfWeek(day)
         loadData()
         notifyPreferencesChanged()
         analytics.firstWeekDayModified(day.name)
