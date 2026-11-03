@@ -45,6 +45,7 @@ class SyncTimeoutException(source: String) : Exception("Syncing $source timed ou
  *
  * @param stopTimeoutMillis How long a source's cache listener outlives its last reader, so a rotation
  * doesn't restart it.
+ * @param report Told about every sync, finished or failed
  */
 class DataSync(
     private val records: SyncRecords,
@@ -52,6 +53,7 @@ class DataSync(
     private val clock: () -> Long,
     private val scope: CoroutineScope,
     private val stopTimeoutMillis: Long = 5_000,
+    private val report: (SyncReport) -> Unit = {},
 ) {
 
     private val statuses = MutableStateFlow<Map<String, SyncStatus>>(emptyMap())
@@ -291,12 +293,14 @@ class DataSync(
                 )
             }
             Timber.tag(TAG).i("Synced %s (%s): %d documents in %d ms", name, work, result.documents, clock() - startedAt)
+            report(SyncReport(name, work.reportName(result.syncedBackTo != null), result.documents, clock() - startedAt, failure = null))
         } catch (e: CancellationException) {
             // Only sign-out cancels, and it forgets the status
             throw e
         } catch (e: Exception) {
             // Without the throwable: failing offline is expected, not a Crashlytics non-fatal
             Timber.tag(TAG).w("Couldn't sync %s (%s): %s", name, work, e.message)
+            report(SyncReport(name, work.reportName(syncedBack = false), documents = 0, clock() - startedAt, failure = e))
             updateStatus(key) { it.copy(syncing = false, lastFailure = e) }
         }
     }
@@ -326,6 +330,13 @@ class DataSync(
             }
             event is Reading<*>
         }
+    }
+
+    private fun SyncWork.reportName(syncedBack: Boolean) = when {
+        this == SyncWork.Whole -> "whole"
+        this is SyncWork.Recent && backTo != null -> "back"
+        syncedBack -> "recount"
+        else -> "recent"
     }
 
     private class RunningSync(val work: SyncWork, val job: Job)

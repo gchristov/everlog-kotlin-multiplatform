@@ -626,6 +626,8 @@ class WorkoutLogScenarioTest {
 
         override fun screenViewed() = Unit
 
+        override fun historyLoaded(exercises: Int, durationMillis: Long, failed: Boolean) = Unit
+
         override fun setCompleted(type: ELSetType?, timed: Boolean, fromNotification: Boolean) {
             events += "set_completed $type" + if (fromNotification) " notification" else ""
         }

@@ -105,6 +105,9 @@ interface WorkoutLogAnalytics {
     fun keypadShown(source: KeypadShownFrom)
 
     fun keypadHidden(source: KeypadHiddenBy)
+
+    // The exercises' history arriving, or not, and how long it took
+    fun historyLoaded(exercises: Int, durationMillis: Long, failed: Boolean)
 }
 
 enum class KeypadShownFrom(val id: String) {

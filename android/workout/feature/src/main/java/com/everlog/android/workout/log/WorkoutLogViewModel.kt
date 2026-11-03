@@ -523,7 +523,10 @@ internal class WorkoutLogViewModel(
     }
 
     private suspend fun fillFromHistory(blocks: List<WorkoutBlock>, exercises: List<ELExercise>, fill: Boolean) {
-        loadPrefillSources(exercises).fold(
+        val started = clock()
+        val loaded = loadPrefillSources(exercises)
+        analytics.historyLoaded(exercises.size, clock() - started, failed = loaded.isLeft())
+        loaded.fold(
             // Without history (offline before it ever synced) the sets keep their values
             { Timber.tag(TAG).w("Couldn't load history to fill in from: %s", it.message) },
             { found ->

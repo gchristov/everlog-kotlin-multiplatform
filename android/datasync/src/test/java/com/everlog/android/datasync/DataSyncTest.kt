@@ -24,6 +24,7 @@ class DataSyncTest {
     private var maxAge = TimeUnit.HOURS.toMillis(1)
     private val olderMaxAge = TimeUnit.DAYS.toMillis(7)
     private val records = InMemorySyncRecords()
+    private val reports = CopyOnWriteArrayList<SyncReport>()
     private val syncScope = CoroutineScope(SupervisorJob() + Dispatchers.Unconfined)
     private val readers = CoroutineScope(SupervisorJob() + Dispatchers.Unconfined)
     private val dataSync = DataSync(
@@ -32,6 +33,7 @@ class DataSyncTest {
         clock = { now },
         scope = syncScope,
         stopTimeoutMillis = 0,
+        report = { reports += it },
     )
 
     private val day = TimeUnit.DAYS.toMillis(1)
@@ -682,6 +684,45 @@ class DataSyncTest {
         backend.gate!!.complete(Unit)
 
         assertThat(loads.last()).isEqualTo(Load.Ready(renamed))
+    }
+
+    // Reports
+
+    @Test
+    fun `each sync is reported with what it synced`() {
+        read(dataSync.observe(whole(FakeCollectionBackend(server = listOf(bench, squat)))))
+        read(dataSync.observe(recent(FakeCollectionBackend(server = listOf(bench, deadlift))), Range.Last(months = 12)))
+
+        assertThat(reports).containsExactly(
+            SyncReport("routines", "whole", documents = 2, durationMillis = 0, failure = null),
+            SyncReport("workouts", "back", documents = 2, durationMillis = 0, failure = null),
+        ).inOrder()
+    }
+
+    @Test
+    fun `a sync of the window is reported as recent`() {
+        read(dataSync.observe(recent(FakeCollectionBackend(server = listOf(bench))), Range.Last(months = 3)))
+
+        assertThat(reports.map { it.work }).containsExactly("recent")
+    }
+
+    @Test
+    fun `a sync of the part synced back, as its count differed, is reported as a recount`() {
+        syncedBack(to = yearBack, at = now - TimeUnit.HOURS.toMillis(2))
+
+        read(dataSync.observe(recent(FakeCollectionBackend(server = listOf(bench, deadlift), cached = listOf(bench))), Range.Last(months = 3)))
+
+        assertThat(reports.map { it.work }).containsExactly("recount")
+    }
+
+    @Test
+    fun `a sync that fails is reported with why`() {
+        val backend = FakeCollectionBackend(server = listOf(bench)).apply { fail = { IllegalStateException("offline") } }
+
+        read(dataSync.observe(whole(backend)))
+
+        assertThat(reports.single().failure).hasMessageThat().isEqualTo("offline")
+        assertThat(reports.single().documents).isEqualTo(0)
     }
 
     // Status and signing out

@@ -433,6 +433,30 @@ abstract class BaseAnalytic : Analytic {
         logEvent(AnalyticsConstants.EVENT_WORKOUT_KEYPAD_HIDDEN, mapOf(AnalyticsConstants.PROPERTY_SOURCE to source))
     }
 
+    override fun workoutHistoryLoaded(exercises: Int, durationMillis: Long, outcome: String) {
+        logEvent(
+            AnalyticsConstants.EVENT_WORKOUT_HISTORY_LOADED,
+            mapOf(
+                AnalyticsConstants.PROPERTY_EXERCISES to exercises.toLong(),
+                AnalyticsConstants.PROPERTY_DURATION_MS to durationMillis,
+                AnalyticsConstants.PROPERTY_OUTCOME to outcome,
+            ),
+        )
+    }
+
+    override fun dataSynced(collection: String, work: String, documents: Int, durationMillis: Long, outcome: String) {
+        logEvent(
+            AnalyticsConstants.EVENT_DATA_SYNCED,
+            mapOf(
+                AnalyticsConstants.PROPERTY_COLLECTION to collection,
+                AnalyticsConstants.PROPERTY_WORK to work,
+                AnalyticsConstants.PROPERTY_DOCUMENTS to documents.toLong(),
+                AnalyticsConstants.PROPERTY_DURATION_MS to durationMillis,
+                AnalyticsConstants.PROPERTY_OUTCOME to outcome,
+            ),
+        )
+    }
+
     override fun workoutTimerStartedExercise() {
         logEvent(AnalyticsConstants.EVENT_WORKOUT_TIMER_STARTED_EXERCISE)
     }

@@ -1137,6 +1137,22 @@ class WorkoutLogViewModelTest {
     }
 
     @Test
+    fun `the history arriving is logged with how many exercises it was for`() {
+        prefill.lastWeightKg = 60f
+        viewModel()
+
+        assertThat(analytics.historyLoads).containsExactly("3")
+    }
+
+    @Test
+    fun `history that can't load is logged as failed`() {
+        prefill.fails = true
+        viewModel()
+
+        assertThat(analytics.historyLoads).containsExactly("3 failed")
+    }
+
+    @Test
     fun `history that can't load stops showing as loading`() {
         prefill.fails = true
         val viewModel = viewModel()
@@ -1598,6 +1614,13 @@ class WorkoutLogViewModelTest {
 
     private class RecordingAnalytics : WorkoutLogAnalytics {
         val events = mutableListOf<String>()
+
+        // Apart from the events, which tests check in order
+        val historyLoads = mutableListOf<String>()
+
+        override fun historyLoaded(exercises: Int, durationMillis: Long, failed: Boolean) {
+            historyLoads += "$exercises" + if (failed) " failed" else ""
+        }
 
         override fun screenViewed() {
             events += "screen"

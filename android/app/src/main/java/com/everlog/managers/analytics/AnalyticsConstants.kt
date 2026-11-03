@@ -133,6 +133,8 @@ class AnalyticsConstants {
         const val EVENT_WORKOUT_CHANGE_MUSCLE_GOAL = "workout_change_muscle_goal"
         const val EVENT_WORKOUT_KEYPAD_SHOWN = "workout_keypad_shown"
         const val EVENT_WORKOUT_KEYPAD_HIDDEN = "workout_keypad_hidden"
+        const val EVENT_WORKOUT_HISTORY_LOADED = "workout_history_loaded"
+        const val EVENT_DATA_SYNCED = "data_synced"
         const val EVENT_WORKOUT_TIMER_STARTED_EXERCISE = "workout_timer_started_exercise"
         const val EVENT_WORKOUT_TIMER_STOPPED_EXERCISE = "workout_timer_stopped_exercise"
         const val EVENT_WORKOUT_TIMER_STARTED_REST = "workout_timer_started_rest"
@@ -235,6 +237,10 @@ class AnalyticsConstants {
         const val PROPERTY_POSITION = "position"
         const val PROPERTY_COUNT = "count"
         const val PROPERTY_HAD_TEXT = "had_text"
+        const val PROPERTY_DURATION_MS = "duration_ms"
+        const val PROPERTY_COLLECTION = "collection"
+        const val PROPERTY_WORK = "work"
+        const val PROPERTY_DOCUMENTS = "documents"
 
         // Legacy user properties. Versions before 2.11.0 set the user's email and name as user
         // properties, which Firebase keeps on the device until cleared. They're PII, so they are
