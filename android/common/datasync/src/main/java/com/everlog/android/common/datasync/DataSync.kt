@@ -106,6 +106,23 @@ class DataSync(
         )
     }
 
+    /**
+     * Brings the documents with these [ids] from the server into the cache, where readers see them: for documents a
+     * read found missing, e.g. a library exercise added since the library last synced, or one of the user's own
+     * created on another phone. Ready with the ids the server has, the rest don't exist.
+     */
+    suspend fun fetchIds(source: CollectionSource<*>, ids: Set<String>): Load<Set<String>> {
+        if (ids.isEmpty()) return Load.Ready(emptySet())
+        return try {
+            Load.Ready(withSyncTimeout(source.name) { source.backend.fetchIds(ids) })
+        } catch (e: CancellationException) {
+            throw e
+        } catch (e: Exception) {
+            Timber.tag(TAG).w("Couldn't fetch %d of %s: %s", ids.size, source.name, e.message)
+            Load.Unavailable(e)
+        }
+    }
+
     // Ready(null) once the server has said the document doesn't exist
     fun <T> observe(source: DocumentSource<T>): Flow<Load<T?>> =
         observe(source.key, "document", sync = { requestSync(source) }) { status ->

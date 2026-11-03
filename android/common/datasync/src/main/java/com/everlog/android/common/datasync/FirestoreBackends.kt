@@ -74,6 +74,10 @@ class FirestoreCollection<T : Any>(
         return Chunk(snapshot.size(), snapshot.documents.lastOrNull()?.id)
     }
 
+    override suspend fun fetchIds(ids: Collection<String>): Set<String> = ids.distinct().chunked(MaxIdsPerRead).flatMap { batch ->
+        documents.whereIn(FieldPath.documentId(), batch).get(Source.SERVER).await().documents.map { it.id }
+    }.toSet()
+
     override suspend fun countOnServer(): Long = documents.count().get(AggregateSource.SERVER).await().count
 
     override suspend fun countInCache(): Long =

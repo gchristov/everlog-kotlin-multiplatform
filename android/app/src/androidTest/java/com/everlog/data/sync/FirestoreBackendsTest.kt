@@ -106,6 +106,19 @@ class FirestoreBackendsTest {
     }
 
     @Test
+    fun documentsFetchedByIdReachTheCacheWhileItIsFollowed() = runBlocking<Unit> {
+        otherPhone.document("bench").set(mapOf("date" to 2L)).await()
+        otherPhone.document("squat").set(mapOf("date" to 1L)).await()
+        val followed = CopyOnWriteArrayList<List<Entry>>()
+        val following = launch(Dispatchers.IO) { backend.cached(since = null).collect { followed += it } }
+
+        assertThat(backend.fetchIds(listOf("squat", "missing"))).containsExactly("squat")
+
+        withTimeout(TIMEOUT) { while (followed.lastOrNull() != listOf(Entry("squat", 1))) delay(50) }
+        following.cancel()
+    }
+
+    @Test
     fun aDocumentSyncWhileTheDocumentIsFollowedReachesTheServer() = runBlocking<Unit> {
         val document = FirestoreDocument(collection.document("profile"), Dispatchers.IO) { Entry(it.id, it.getLong("date")!!) }
         otherPhone.document("profile").set(mapOf("date" to 1L)).await()

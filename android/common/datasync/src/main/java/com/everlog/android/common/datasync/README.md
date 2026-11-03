@@ -67,6 +67,11 @@ Past what's cached, before the full history has synced, the next page comes from
 for a footer spinner) until it has nothing older (`Page.endReached`). A page that fails is retried by the
 next `loadMore()`.
 
+Documents a read finds missing between syncs, e.g. a library exercise added since the library last synced,
+come in by id with `fetchIds(source, ids)`: a server read of just those (30 per read, Firestore's limit for
+`in`), into the cache, where every reader sees them. It says which ids exist, so callers can stop asking for
+the rest.
+
 A source's backend is a `FirestoreCollection` or `FirestoreDocument`. Give it every document of the
 source (e.g. a user's workouts), the order screens show them in, and how to parse one. A document that
 doesn't parse is left out and logged.
@@ -120,7 +125,8 @@ piece when the feature that needs it arrives.
   - **A source per query.** A source's key is its name and user. Browsing a category or a search needs the
     query's parameters in the key, so each one has its own sync records and max age.
   - **References outside what's synced.** A shared plan pointing at routines no synced collection holds
-    needs a "these ids" source. Firestore's `in` queries take at most 30 ids, so it reads in batches.
+    can bring them in with `fetchIds`. Showing them as a list of their own would need a source whose
+    cache listener follows just those ids.
 - **Queries and server reads.** A new kind of server read must never be the same query as a cache
   listener. Firestore answers it from the listener's view (see `cacheOnly` in `FirestoreBackends.kt`).
   Add a case to `FirestoreBackendsTest` that follows the data while syncing it.
