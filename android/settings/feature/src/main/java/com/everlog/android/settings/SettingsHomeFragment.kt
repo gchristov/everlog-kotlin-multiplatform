@@ -9,30 +9,34 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.core.content.ContextCompat
 import com.everlog.android.auth.data.model.ELUser
+import com.everlog.android.common.design.R as DesignR
+import com.everlog.android.common.kotlin.R as KotlinR
 import com.everlog.android.common.kotlin.WeightUnit
+import com.everlog.android.common.kotlin.di.appGraph
 import com.everlog.android.common.kotlin.format.FormatUtils
+import com.everlog.android.common.kotlin.format.weightUnitAbbreviation
+import com.everlog.android.common.mvp.dialog.showChoiceList
 import com.everlog.android.common.mvp.fragment.BaseFragmentMvpView
 import com.everlog.android.common.mvp.fragment.BaseFragmentPresenter
 import com.everlog.android.common.mvp.fragment.BaseTabFragment
-import com.everlog.android.settings.data.MuscleGoal
-import com.everlog.android.settings.data.model.ELIntegration
-import com.everlog.android.settings.databinding.FragmentHomeSettingsBinding
+import com.everlog.android.common.mvp.util.ELGlideModule
 import com.everlog.android.common.mvp.util.ViewUtils
 import com.everlog.android.common.mvp.view.CheckBoxTriStates
 import com.everlog.android.settings.R
+import com.everlog.android.settings.SettingsGraph
+import com.everlog.android.settings.data.MuscleGoal
+import com.everlog.android.settings.data.model.ELIntegration
+import com.everlog.android.settings.databinding.FragmentHomeSettingsBinding
 import com.everlog.android.settings.integration.getIcon
-import com.everlog.android.common.kotlin.format.weightUnitAbbreviation
-import com.everlog.android.common.mvp.dialog.showChoiceList
-import com.everlog.android.common.mvp.util.ELGlideModule
 import com.jakewharton.rxbinding.view.RxView
+import java.util.*
 import org.threeten.bp.DayOfWeek
 import org.threeten.bp.format.TextStyle
 import rx.Observable
-import com.everlog.android.common.design.R as DesignR
-import com.everlog.android.common.kotlin.R as KotlinR
-import java.util.*
 
 class SettingsHomeFragment : BaseTabFragment(), MvpViewSettingsHome {
+
+    private val graph by lazy { requireContext().appGraph<SettingsGraph>() }
 
     private var mPresenter: PresenterSettingsHome? = null
     private var _binding: FragmentHomeSettingsBinding? = null
@@ -152,9 +156,9 @@ class SettingsHomeFragment : BaseTabFragment(), MvpViewSettingsHome {
     }
 
     private fun showMuscleGoal(goal: MuscleGoal?) {
-        val v2 = SettingsFeature.dependencies.setSuggestionsV2()
+        val v2 = graph.settingsConfig.setSuggestionsV2()
         // Goals the new screen doesn't offer, which older versions could set, keep their old names
-        val suggestion = goal?.let { SettingsFeature.dependencies.setSuggestionText(requireContext(), it) }.takeIf { v2 }
+        val suggestion = goal?.let { graph.settingsConfig.setSuggestionText(requireContext(), it) }.takeIf { v2 }
         binding.root.findViewById<TextView>(R.id.muscleGoalTitle).setText(if (v2) DesignR.string.set_suggestions_title else DesignR.string.muscle_goal_title)
         binding.root.findViewById<TextView>(R.id.muscleGoalField).text = suggestion?.value ?: goal?.valueName(activity)
         binding.root.findViewById<TextView>(R.id.muscleGoalSubtitle).text = suggestion?.subtitle ?: goal?.valueSettingsSummary(activity, false)
@@ -192,10 +196,10 @@ class SettingsHomeFragment : BaseTabFragment(), MvpViewSettingsHome {
     }
 
     override fun showPickerWeight(value: Float): Observable<Float> =
-        SettingsFeature.dependencies.showWeightIncreasePrompt(requireContext(), value)
+        graph.settingsDialogs.showWeightIncreasePrompt(requireContext(), value)
 
     override fun showPickerWeeklyGoal(value: Int): Observable<Int> =
-        SettingsFeature.dependencies.showWeeklyGoalPrompt(requireContext(), value)
+        graph.settingsDialogs.showWeeklyGoalPrompt(requireContext(), value)
 
     override fun showPickerMultipleChoice(titleResId: Int, values: Array<String>, selectedIndex: Int): Observable<Int> {
         return showChoiceList(requireContext(), titleResId, values, selectedIndex)
@@ -204,7 +208,7 @@ class SettingsHomeFragment : BaseTabFragment(), MvpViewSettingsHome {
     // Setup
 
     override fun setupPresenter() {
-        mPresenter = PresenterSettingsHome()
+        mPresenter = PresenterSettingsHome(graph.userSettings, graph.userSession, graph.settingsAnalytics, graph.settingsNavigation, graph.settingsConfig, graph.settingsAccount, graph.googleFitConnection)
     }
 
     private fun setupButtons() {
