@@ -1,27 +1,30 @@
 package com.everlog.android.template.settype
 
-import com.everlog.android.template.TemplateNavigation
-import com.everlog.android.template.TemplateAnalytics
-import com.everlog.android.common.design.R as DesignR
 import android.app.Activity.RESULT_OK
 import android.content.Intent
 import com.ahamed.multiviewadapter.DataListManager
 import com.ahamed.multiviewadapter.RecyclerAdapter
 import com.everlog.android.common.data.model.set.ELSetType
+import com.everlog.android.common.design.R as DesignR
+import com.everlog.android.common.kotlin.format.ArrayResourceTypeUtils
 import com.everlog.android.common.mvp.activity.BaseActivityPresenter
+import com.everlog.android.common.navigation.FeedbackForm
+import com.everlog.android.common.navigation.FeedbackSource
+import com.everlog.android.common.navigation.Navigator
+import com.everlog.android.common.navigation.launcher
 import com.everlog.android.template.R
+import com.everlog.android.template.TemplateAnalytics
 import com.everlog.android.template.TemplateExtras
 import com.everlog.android.template.settype.Footer
 import com.everlog.android.template.settype.FooterAdapter
 import com.everlog.android.template.settype.SetTypeAdapter
-import com.everlog.android.common.kotlin.format.ArrayResourceTypeUtils
 
 class PresenterSetTypePicker(
     private val analytics: TemplateAnalytics,
-    private val navigation: TemplateNavigation,
+    private val navigator: Navigator,
 ) : BaseActivityPresenter<MvpViewSetTypePicker>() {
 
-    private val feedback by lazy { mvpView.getActivity()?.let { navigation.setTypesFeedback(it) } }
+    private val feedback by lazy { mvpView.getActivity()?.let { navigator.launcher(it, FeedbackForm(FeedbackSource.SET_TYPES)) } }
 
     private var mBinder: SetTypeAdapter.Binder? = null
     private val mAdapter = RecyclerAdapter()

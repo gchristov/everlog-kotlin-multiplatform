@@ -1,26 +1,30 @@
 package com.everlog.android.template.details
 
-import com.everlog.android.template.data.session.OngoingPlanRepository
-import com.everlog.android.template.TemplateNavigation
-import com.everlog.android.template.TemplateAnalytics
-import com.everlog.android.settings.data.UserSettings
-import com.everlog.android.common.design.R as DesignR
 import android.content.DialogInterface
 import com.ahamed.multiviewadapter.DataListManager
 import com.ahamed.multiviewadapter.RecyclerAdapter
 import com.everlog.android.common.data.model.ELRoutine
-import com.everlog.android.template.data.store.ELDocStoreRoutineLoadedEvent
-import com.everlog.android.template.data.store.TemplateStores
-import com.everlog.android.template.R
+import com.everlog.android.common.design.R as DesignR
 import com.everlog.android.common.mvp.activity.BaseActivityPresenter
 import com.everlog.android.common.mvp.list.ExerciseGroupSummaryAdapter
+import com.everlog.android.common.navigation.ExerciseDetails
+import com.everlog.android.common.navigation.Navigator
+import com.everlog.android.common.navigation.StartWorkout
+import com.everlog.android.common.navigation.TemplateEditor
+import com.everlog.android.common.navigation.openForResult
+import com.everlog.android.settings.data.UserSettings
+import com.everlog.android.template.R
+import com.everlog.android.template.TemplateAnalytics
+import com.everlog.android.template.data.session.OngoingPlanRepository
+import com.everlog.android.template.data.store.ELDocStoreRoutineLoadedEvent
+import com.everlog.android.template.data.store.TemplateStores
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
 
 open class PresenterRoutineDetails<T : MvpViewRoutineDetails>(
     private val settings: UserSettings,
     private val analytics: TemplateAnalytics,
-    private val navigation: TemplateNavigation,
+    private val navigator: Navigator,
     private val ongoingPlan: OngoingPlanRepository,
 ) : BaseActivityPresenter<T>() {
 
@@ -78,7 +82,7 @@ open class PresenterRoutineDetails<T : MvpViewRoutineDetails>(
         subscriptions.add(mvpView.onClickEdit()
                 .compose(applyUISchedulers())
                 .subscribe {
-                    mvpView.getActivity()?.let { navigation.openTemplateEditor(it, toEdit) }
+                    mvpView.getActivity()?.let { navigator.openForResult(it, TemplateEditor(toEdit, showDetailsOnSuccess = false)) }
                 })
     }
 
@@ -107,7 +111,7 @@ open class PresenterRoutineDetails<T : MvpViewRoutineDetails>(
                 .compose(applyUISchedulers())
                 .subscribe {
                     if (toEdit?.canBePerformed() == true) {
-                        mvpView.getActivity()?.let { navigation.startWorkout(it, toEdit!!, performingFromPlan()) }
+                        mvpView.getActivity()?.let { navigator.open(it, StartWorkout(toEdit!!, performingFromPlan())) }
                     } else {
                         mvpView.showOK(R.string.routines_cannot_perform_title, R.string.routines_cannot_perform_prompt)
                     }
@@ -156,7 +160,7 @@ open class PresenterRoutineDetails<T : MvpViewRoutineDetails>(
         mAdapter.registerBinders(ExerciseGroupSummaryAdapter().build(ExerciseGroupSummaryAdapter.Builder()
                 .setShowTemplates(true)
                 .setWeightUnit(settings.weightUnit())
-                .setOnExerciseClicked { context, exercise -> navigation.openExerciseDetails(context, exercise) }
+                .setOnExerciseClicked { context, exercise -> navigator.open(context, ExerciseDetails(exercise)) }
         ))
     }
 

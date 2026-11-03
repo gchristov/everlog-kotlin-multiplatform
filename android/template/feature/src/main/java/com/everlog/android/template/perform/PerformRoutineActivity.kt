@@ -1,9 +1,9 @@
 package com.everlog.android.template.perform
 
-import com.everlog.android.template.TemplateGraph
-import com.everlog.android.common.kotlin.di.appGraph
 import android.view.Menu
+import com.everlog.android.common.kotlin.di.appGraph
 import com.everlog.android.template.TemplateExtras
+import com.everlog.android.template.TemplateGraph
 import com.everlog.android.template.TemplateScreenNames
 import com.everlog.android.template.details.PresenterRoutineDetails
 import com.everlog.android.template.details.RoutineDetailsActivity
@@ -32,6 +32,6 @@ class PerformRoutineActivity : RoutineDetailsActivity(), MvpViewPerformRoutine {
 
     public override fun setupPresenter() {
         val graph = appGraph<TemplateGraph>()
-        mPresenter = PresenterPerformRoutine(graph.userSettings, graph.templateAnalytics, graph.templateNavigation, graph.ongoingPlanRepository)
+        mPresenter = PresenterPerformRoutine(graph.userSettings, graph.templateAnalytics, graph.navigator, graph.ongoingPlanRepository)
     }
 }

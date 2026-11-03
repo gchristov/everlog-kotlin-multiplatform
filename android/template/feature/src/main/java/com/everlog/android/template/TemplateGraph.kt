@@ -1,5 +1,6 @@
 package com.everlog.android.template
 
+import com.everlog.android.common.navigation.Navigator
 import com.everlog.android.exercise.data.ExerciseRepository
 import com.everlog.android.settings.data.UserSettings
 import com.everlog.android.template.data.session.LoadTemplateUseCase
@@ -27,5 +28,5 @@ interface TemplateGraph {
 
     val templateEditorAnalytics: TemplateEditorAnalytics
 
-    val templateNavigation: TemplateNavigation
+    val navigator: Navigator
 }

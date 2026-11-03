@@ -1,24 +1,24 @@
 package com.everlog.android.template.picker
 
-import com.everlog.android.template.TemplateGraph
-import com.everlog.android.common.kotlin.di.appGraph
 import android.view.View
 import androidx.appcompat.widget.Toolbar
-import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.updateLayoutParams
 import androidx.core.view.updatePadding
+import androidx.recyclerview.widget.LinearLayoutManager
+import com.everlog.android.common.design.R as DesignR
+import com.everlog.android.common.kotlin.di.appGraph
 import com.everlog.android.common.mvp.activity.BaseActivity
 import com.everlog.android.common.mvp.activity.BaseActivityMvpView
 import com.everlog.android.common.mvp.activity.BaseActivityPresenter
 import com.everlog.android.template.R
+import com.everlog.android.template.TemplateGraph
 import com.everlog.android.template.TemplateScreenNames
 import com.everlog.android.template.databinding.ActivityRoutinePickerBinding
 import com.facebook.shimmer.ShimmerFrameLayout
 import com.jakewharton.rxbinding.view.RxView
 import rx.Observable
-import com.everlog.android.common.design.R as DesignR
 
 class RoutinePickerActivity : BaseActivity(), MvpViewRoutinePicker {
 
@@ -99,7 +99,7 @@ class RoutinePickerActivity : BaseActivity(), MvpViewRoutinePicker {
     // Setup
 
     public override fun setupPresenter() {
-        mPresenter = PresenterRoutinePicker(appGraph<TemplateGraph>().templateNavigation)
+        mPresenter = PresenterRoutinePicker(appGraph<TemplateGraph>().navigator)
     }
 
     private fun setupTopBar() {
