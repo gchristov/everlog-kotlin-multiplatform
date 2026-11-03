@@ -10,24 +10,26 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.updateLayoutParams
 import androidx.core.view.updatePadding
+import com.everlog.android.auth.AuthGraph
 import com.everlog.android.auth.AuthScreenNames
 import com.everlog.android.auth.R
 import com.everlog.android.auth.databinding.ActivityLoginBinding
+import com.everlog.android.common.design.R as DesignR
 import com.everlog.android.common.kotlin.AppContext
+import com.everlog.android.common.kotlin.Utils
+import com.everlog.android.common.kotlin.di.appGraph
 import com.everlog.android.common.mvp.activity.BaseActivity
 import com.everlog.android.common.mvp.activity.BaseActivityMvpView
 import com.everlog.android.common.mvp.activity.BaseActivityPresenter
-import com.everlog.android.common.mvp.view.CheckBoxTriStates
-import com.everlog.android.common.kotlin.Utils
-import com.everlog.android.common.mvp.util.ViewUtils
 import com.everlog.android.common.mvp.util.KeyboardUtils
 import com.everlog.android.common.mvp.util.TextViewUtils
 import com.everlog.android.common.mvp.util.TouchableSpan
+import com.everlog.android.common.mvp.util.ViewUtils
+import com.everlog.android.common.mvp.view.CheckBoxTriStates
 import com.github.leandroborgesferreira.loadingbutton.customViews.CircularProgressButton
 import com.jakewharton.rxbinding.view.RxView
 import rx.Observable
 import rx.subjects.PublishSubject
-import com.everlog.android.common.design.R as DesignR
 
 class LoginActivity : BaseActivity(), MvpViewLogin {
 
@@ -288,7 +290,8 @@ class LoginActivity : BaseActivity(), MvpViewLogin {
     // Setup
 
     override fun setupPresenter() {
-        mPresenter = PresenterLogin()
+        val graph = appGraph<AuthGraph>()
+        mPresenter = PresenterLogin(graph.authService, graph.authNavigation, graph.authAppState)
     }
 
     private fun setupTopBar() {
