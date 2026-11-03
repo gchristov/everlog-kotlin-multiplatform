@@ -203,7 +203,7 @@ public class WorkoutDetailsActivity extends BaseActivity implements MvpViewWorko
     @Override
     public void setupPresenter() {
         WorkoutGraph graph = graph();
-        mPresenter = new PresenterWorkoutDetails(graph.getUserSettings(), graph.getWorkoutDetailsAnalytics(), graph.getWorkoutNavigation(), graph.getWorkoutStats(), graph.getOngoingPlanRepository());
+        mPresenter = new PresenterWorkoutDetails(graph.getUserSettings(), graph.getWorkoutDetailsAnalytics(), graph.getNavigator(), graph.getWorkoutStats(), graph.getOngoingPlanRepository());
     }
 
     private WorkoutGraph graph() {

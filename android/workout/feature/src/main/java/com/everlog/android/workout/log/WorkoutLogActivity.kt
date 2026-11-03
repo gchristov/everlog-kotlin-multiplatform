@@ -1,7 +1,5 @@
 package com.everlog.android.workout.log
 
-import com.everlog.android.workout.WorkoutGraph
-import com.everlog.android.common.kotlin.di.appGraph
 import android.Manifest
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -15,17 +13,28 @@ import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.everlog.android.common.data.model.workout.ELWorkout
+import com.everlog.android.common.design.R as DesignR
+import com.everlog.android.common.kotlin.di.appGraph
 import com.everlog.android.common.mvp.MvpBroadcasts
-import com.everlog.android.workout.data.prefill.RealWorkoutSetPrefill
+import com.everlog.android.common.mvp.activity.SignedInComposeActivity
+import com.everlog.android.common.navigation.AppSettingsPrompt
+import com.everlog.android.common.navigation.ExerciseDetails
+import com.everlog.android.common.navigation.ExercisePicker
+import com.everlog.android.common.navigation.FeedbackForm
+import com.everlog.android.common.navigation.FeedbackSource
+import com.everlog.android.common.navigation.SetSuggestions
+import com.everlog.android.common.navigation.WorkoutDetails
+import com.everlog.android.common.navigation.launcher
+import com.everlog.android.common.navigation.openForResult
 import com.everlog.android.workout.R
 import com.everlog.android.workout.WorkoutExtras
-import com.everlog.android.common.mvp.activity.SignedInComposeActivity
+import com.everlog.android.workout.WorkoutGraph
+import com.everlog.android.workout.data.prefill.RealWorkoutSetPrefill
 import kotlinx.coroutines.Dispatchers
-import com.everlog.android.common.design.R as DesignR
 
 class WorkoutLogActivity : SignedInComposeActivity() {
     private val graph by lazy { appGraph<WorkoutGraph>() }
-    private val navigation by lazy { graph.workoutNavigation }
+    private val navigator by lazy { graph.navigator }
 
     private val viewModel by viewModels<WorkoutLogViewModel> {
         viewModelFactory {
@@ -61,7 +70,7 @@ class WorkoutLogActivity : SignedInComposeActivity() {
         if (granted.values.all { it }) {
             viewModel.onScreenStarted()
         } else {
-            navigation.promptForAppSettings(this, DesignR.string.workout_error_no_permissions)
+            navigator.open(this, AppSettingsPrompt(DesignR.string.workout_error_no_permissions))
         }
     }
 
@@ -96,14 +105,14 @@ class WorkoutLogActivity : SignedInComposeActivity() {
         if (missing.isEmpty()) viewModel.onScreenStarted() else permissions.launch(missing.toTypedArray())
     }
 
-    private val sendFeedback by lazy { navigation.workoutFeedback(this) }
+    private val sendFeedback by lazy { navigator.launcher(this, FeedbackForm(FeedbackSource.WORKOUT_MENU)) }
 
     @Composable
     override fun Content() = WorkoutLogScreen(
         viewModel = viewModel,
-        onAddExercise = { navigation.openExercisePicker(this) },
-        onOpenExercise = { exercise, tab -> navigation.openExerciseDetails(this, exercise, tab) },
-        onOpenSetSuggestions = { navigation.openSetSuggestions(this) },
+        onAddExercise = { navigator.openForResult(this, ExercisePicker) },
+        onOpenExercise = { exercise, tab -> navigator.open(this, ExerciseDetails(exercise, tab)) },
+        onOpenSetSuggestions = { navigator.open(this, SetSuggestions) },
         onSendFeedback = sendFeedback,
         onExit = ::exit,
     )
@@ -111,12 +120,12 @@ class WorkoutLogActivity : SignedInComposeActivity() {
     @Deprecated("The navigator opens the exercise picker with startActivityForResult")
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        navigation.pickedExerciseGroups(requestCode, resultCode, data)?.let(viewModel::onExercisesPicked)
+        ExercisePicker.result(requestCode, resultCode, data)?.let(viewModel::onExercisesPicked)
     }
 
     private fun exit(exit: WorkoutLogExit) {
         if (exit is WorkoutLogExit.Finished) {
-            navigation.openWorkoutDetails(this, exit.workout, intent.getBooleanExtra(WorkoutExtras.FROM_PLAN, false))
+            navigator.open(this, WorkoutDetails(exit.workout, justFinished = true, fromPlan = intent.getBooleanExtra(WorkoutExtras.FROM_PLAN, false)))
         }
         finish()
     }
