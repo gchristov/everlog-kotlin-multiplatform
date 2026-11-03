@@ -1,6 +1,7 @@
 package com.everlog.android.workout.data
 
 import arrow.core.Either
+import com.everlog.android.auth.data.UserSession
 import com.everlog.android.common.data.model.workout.ELWorkout
 import com.everlog.android.common.datasync.CollectionSource
 import com.everlog.android.common.datasync.DataSync
@@ -8,10 +9,13 @@ import com.everlog.android.common.datasync.FirestoreCollection
 import com.everlog.android.common.datasync.Range
 import com.everlog.android.common.datasync.SyncPlan
 import com.everlog.android.common.firebase.FirestoreFields
-import com.everlog.android.common.kotlin.Load
-import com.everlog.android.auth.data.UserSession
 import com.everlog.android.common.firebase.FirestorePaths
+import com.everlog.android.common.kotlin.Load
+import com.everlog.android.common.kotlin.di.IoDispatcher
 import com.google.firebase.firestore.Query
+import dev.zacsweers.metro.AppScope
+import dev.zacsweers.metro.ContributesBinding
+import dev.zacsweers.metro.Inject
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
@@ -39,10 +43,12 @@ interface WorkoutRepository {
 /**
  * @param syncMonths How many months of workouts to keep synced. Older ones are read when a screen asks for them.
  */
+@ContributesBinding(AppScope::class)
+@Inject
 class RealWorkoutRepository(
-    private val dispatcher: CoroutineDispatcher,
+    @IoDispatcher private val dispatcher: CoroutineDispatcher,
     private val dataSync: DataSync,
-    private val syncMonths: Int,
+    @WorkoutSyncMonths private val syncMonths: Int,
     private val session: UserSession,
 ) : WorkoutRepository {
 

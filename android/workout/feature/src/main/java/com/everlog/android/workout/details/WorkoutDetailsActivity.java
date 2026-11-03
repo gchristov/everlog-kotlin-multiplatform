@@ -1,12 +1,13 @@
 package com.everlog.android.workout.details;
 
+import com.everlog.android.common.kotlin.di.GraphOwnerKt;
+import com.everlog.android.workout.WorkoutGraph;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
 import com.everlog.android.workout.R;
 import com.everlog.android.workout.WorkoutExtras;
-import com.everlog.android.workout.WorkoutFeature;
 import com.everlog.android.workout.WorkoutScreenNames;
 import com.everlog.android.workout.databinding.ActivityWorkoutDetailsBinding;
 import com.everlog.android.common.data.model.workout.ELWorkout;
@@ -183,12 +184,12 @@ public class WorkoutDetailsActivity extends BaseActivity implements MvpViewWorko
 
     @Override
     public Observable<String> showStringPrompt(String name, WorkoutTextField type) {
-        return WorkoutFeature.INSTANCE.getDependencies().showTextPrompt(this, name, type);
+        return graph().getWorkoutDialogs().showTextPrompt(this, name, type);
     }
 
     @Override
     public Observable<Date> showDatePrompt(Date date) {
-        return WorkoutFeature.INSTANCE.getDependencies().showDateTimePrompt(this, date);
+        return graph().getWorkoutDialogs().showDateTimePrompt(this, date);
     }
 
     @Override
@@ -201,7 +202,12 @@ public class WorkoutDetailsActivity extends BaseActivity implements MvpViewWorko
 
     @Override
     public void setupPresenter() {
-        mPresenter = new PresenterWorkoutDetails();
+        WorkoutGraph graph = graph();
+        mPresenter = new PresenterWorkoutDetails(graph.getUserSettings(), graph.getWorkoutDetailsAnalytics(), graph.getWorkoutNavigation(), graph.getWorkoutStats(), graph.getOngoingPlanRepository());
+    }
+
+    private WorkoutGraph graph() {
+        return GraphOwnerKt.appGraph(this, WorkoutGraph.class);
     }
 
     private void setupTopBar() {

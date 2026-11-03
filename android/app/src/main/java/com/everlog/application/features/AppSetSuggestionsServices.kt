@@ -1,6 +1,5 @@
 package com.everlog.application.features
 
-import com.everlog.application.ELApplication
 import android.content.Context
 import android.content.Intent
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
@@ -10,8 +9,14 @@ import com.everlog.android.settings.data.MuscleGoal
 import com.everlog.android.workout.WorkoutScreenNames
 import com.everlog.android.workout.setsuggestions.SetSuggestionsAnalytics
 import com.everlog.android.workout.setsuggestions.SetSuggestionsSettings
+import com.everlog.application.ELApplication
 import com.everlog.managers.analytics.AnalyticsManager
+import dev.zacsweers.metro.AppScope
+import dev.zacsweers.metro.ContributesBinding
+import dev.zacsweers.metro.Inject
 
+@ContributesBinding(AppScope::class)
+@Inject
 class AppSetSuggestionsSettings(context: Context) : SetSuggestionsSettings {
     private val context = context.applicationContext
 
@@ -27,6 +32,8 @@ class AppSetSuggestionsSettings(context: Context) : SetSuggestionsSettings {
     override fun weightUnit(): WeightUnit = ELApplication.graph.userSettings.weightUnit()
 }
 
+@ContributesBinding(AppScope::class)
+@Inject
 class AppSetSuggestionsAnalytics : SetSuggestionsAnalytics {
     override fun screenViewed() = AnalyticsManager.manager.screenName(WorkoutScreenNames.SET_SUGGESTIONS)
 

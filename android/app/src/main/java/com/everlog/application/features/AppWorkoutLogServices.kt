@@ -4,8 +4,8 @@ import android.content.Context
 import com.everlog.android.common.data.model.set.ELSetType
 import com.everlog.android.common.data.model.workout.ELWorkout
 import com.everlog.android.common.session.ValueField
-import com.everlog.android.workout.data.notification.ShownSet
 import com.everlog.android.workout.WorkoutScreenNames
+import com.everlog.android.workout.data.notification.ShownSet
 import com.everlog.android.workout.log.KeypadHiddenBy
 import com.everlog.android.workout.log.KeypadShownFrom
 import com.everlog.android.workout.log.WorkoutLogAlerts
@@ -13,11 +13,19 @@ import com.everlog.android.workout.log.WorkoutLogAnalytics
 import com.everlog.android.workout.log.WorkoutLogNotification
 import com.everlog.managers.analytics.AnalyticsConstants
 import com.everlog.managers.analytics.AnalyticsManager
+import com.everlog.ui.navigator.ELNavigator
 import com.everlog.ui.navigator.Navigator
 import com.everlog.utils.SoundUtils
 import com.everlog.utils.VibrationUtils
+import dev.zacsweers.metro.AppScope
+import dev.zacsweers.metro.ContributesBinding
+import dev.zacsweers.metro.Inject
 
-class AppWorkoutLogNotification(private val navigator: Navigator) : WorkoutLogNotification {
+@ContributesBinding(AppScope::class)
+@Inject
+class AppWorkoutLogNotification(context: Context) : WorkoutLogNotification {
+    private val navigator = ELNavigator(context)
+
     override fun start(workout: ELWorkout, shown: ShownSet?) = navigator.startWorkoutService(workout, shown)
 
     override fun stop() = navigator.stopWorkoutService()
@@ -28,6 +36,8 @@ class AppWorkoutLogNotification(private val navigator: Navigator) : WorkoutLogNo
         navigator.notifyWorkoutServiceShowRestTimer(remainingPercent, remainingSeconds)
 }
 
+@ContributesBinding(AppScope::class)
+@Inject
 class AppWorkoutLogAlerts(private val context: Context) : WorkoutLogAlerts {
     override fun timerRanOut() {
         SoundUtils.playTimerSound(context)
@@ -35,6 +45,8 @@ class AppWorkoutLogAlerts(private val context: Context) : WorkoutLogAlerts {
     }
 }
 
+@ContributesBinding(AppScope::class)
+@Inject
 class AppWorkoutLogAnalytics : WorkoutLogAnalytics {
     private val analytics = AnalyticsManager.manager
 

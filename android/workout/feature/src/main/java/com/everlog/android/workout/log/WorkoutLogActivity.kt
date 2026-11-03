@@ -1,5 +1,7 @@
 package com.everlog.android.workout.log
 
+import com.everlog.android.workout.WorkoutGraph
+import com.everlog.android.common.kotlin.di.appGraph
 import android.Manifest
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -17,18 +19,18 @@ import com.everlog.android.common.mvp.MvpBroadcasts
 import com.everlog.android.workout.data.prefill.RealWorkoutSetPrefill
 import com.everlog.android.workout.R
 import com.everlog.android.workout.WorkoutExtras
-import com.everlog.android.workout.WorkoutFeature
 import com.everlog.android.common.mvp.activity.SignedInComposeActivity
 import kotlinx.coroutines.Dispatchers
 import com.everlog.android.common.design.R as DesignR
 
 class WorkoutLogActivity : SignedInComposeActivity() {
-    private val dependencies = WorkoutFeature.dependencies
+    private val graph by lazy { appGraph<WorkoutGraph>() }
+    private val navigation by lazy { graph.workoutNavigation }
 
     private val viewModel by viewModels<WorkoutLogViewModel> {
         viewModelFactory {
             initializer {
-                val repository = dependencies.ongoingWorkoutRepository()
+                val repository = graph.ongoingWorkoutRepository
                 @Suppress("DEPRECATION")
                 val launched = intent.getSerializableExtra(WorkoutExtras.WORKOUT) as ELWorkout
                 val loaded = WorkoutLogViewModel.load(launched, repository)
@@ -38,13 +40,13 @@ class WorkoutLogActivity : SignedInComposeActivity() {
                     resumed = loaded.resumed,
                     fromPlan = intent.getBooleanExtra(WorkoutExtras.FROM_PLAN, false),
                     repository = repository,
-                    settings = RealWorkoutLogSettings(dependencies.userSettings()),
-                    analytics = dependencies.workoutLogAnalytics(),
-                    alerts = dependencies.timerAlerts(applicationContext),
-                    notification = dependencies.workoutNotification(applicationContext),
-                    loadPrefillSources = dependencies.loadPrefillSources(),
-                    prefill = RealWorkoutSetPrefill(dependencies.userSettings()),
-                    ownExerciseUpdates = dependencies::ownExerciseUpdates,
+                    settings = RealWorkoutLogSettings(graph.userSettings),
+                    analytics = graph.workoutLogAnalytics,
+                    alerts = graph.workoutLogAlerts,
+                    notification = graph.workoutLogNotification,
+                    loadPrefillSources = graph.loadPrefillSources,
+                    prefill = RealWorkoutSetPrefill(graph.userSettings),
+                    ownExerciseUpdates = graph.exerciseRepository::ownExerciseUpdates,
                 )
             }
         }
@@ -59,7 +61,7 @@ class WorkoutLogActivity : SignedInComposeActivity() {
         if (granted.values.all { it }) {
             viewModel.onScreenStarted()
         } else {
-            dependencies.promptForAppSettings(this, DesignR.string.workout_error_no_permissions)
+            navigation.promptForAppSettings(this, DesignR.string.workout_error_no_permissions)
         }
     }
 
@@ -94,14 +96,14 @@ class WorkoutLogActivity : SignedInComposeActivity() {
         if (missing.isEmpty()) viewModel.onScreenStarted() else permissions.launch(missing.toTypedArray())
     }
 
-    private val sendFeedback by lazy { dependencies.workoutFeedback(this) }
+    private val sendFeedback by lazy { navigation.workoutFeedback(this) }
 
     @Composable
     override fun Content() = WorkoutLogScreen(
         viewModel = viewModel,
-        onAddExercise = { dependencies.openExercisePicker(this) },
-        onOpenExercise = { exercise, tab -> dependencies.openExerciseDetails(this, exercise, tab) },
-        onOpenSetSuggestions = { dependencies.openSetSuggestions(this) },
+        onAddExercise = { navigation.openExercisePicker(this) },
+        onOpenExercise = { exercise, tab -> navigation.openExerciseDetails(this, exercise, tab) },
+        onOpenSetSuggestions = { navigation.openSetSuggestions(this) },
         onSendFeedback = sendFeedback,
         onExit = ::exit,
     )
@@ -109,12 +111,12 @@ class WorkoutLogActivity : SignedInComposeActivity() {
     @Deprecated("The navigator opens the exercise picker with startActivityForResult")
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        dependencies.pickedExerciseGroups(requestCode, resultCode, data)?.let(viewModel::onExercisesPicked)
+        navigation.pickedExerciseGroups(requestCode, resultCode, data)?.let(viewModel::onExercisesPicked)
     }
 
     private fun exit(exit: WorkoutLogExit) {
         if (exit is WorkoutLogExit.Finished) {
-            dependencies.openWorkoutDetails(this, exit.workout, intent.getBooleanExtra(WorkoutExtras.FROM_PLAN, false))
+            navigation.openWorkoutDetails(this, exit.workout, intent.getBooleanExtra(WorkoutExtras.FROM_PLAN, false))
         }
         finish()
     }
