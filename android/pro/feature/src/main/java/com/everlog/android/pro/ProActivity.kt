@@ -1,18 +1,19 @@
 package com.everlog.android.pro
 
-import com.everlog.android.common.design.R as DesignR
 import android.view.View
 import androidx.core.widget.NestedScrollView
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.everlog.android.pro.R
-import com.everlog.android.pro.data.model.ELProSkuDetails
-import com.everlog.android.pro.databinding.ActivityProBinding
+import com.everlog.android.common.design.R as DesignR
+import com.everlog.android.common.kotlin.di.appGraph
 import com.everlog.android.common.mvp.activity.BaseActivity
 import com.everlog.android.common.mvp.activity.BaseActivityMvpView
 import com.everlog.android.common.mvp.activity.BaseActivityPresenter
 import com.everlog.android.common.mvp.util.ELGlideModule
 import com.everlog.android.common.mvp.util.TextViewUtils
 import com.everlog.android.common.mvp.util.TouchableSpan
+import com.everlog.android.pro.R
+import com.everlog.android.pro.data.model.ELProSkuDetails
+import com.everlog.android.pro.databinding.ActivityProBinding
 import rx.Observable
 import rx.subjects.PublishSubject
 
@@ -91,7 +92,8 @@ class ProActivity : BaseActivity(), MvpViewPro {
     // Setup
 
     override fun setupPresenter() {
-        mPresenter = PresenterPro()
+        val graph = appGraph<ProGraph>()
+        mPresenter = PresenterPro(graph.proPurchases, graph.proAnalytics, graph.proNavigation)
     }
 
     private fun setupTopBar() {
