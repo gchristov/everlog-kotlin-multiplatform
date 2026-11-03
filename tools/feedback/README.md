@@ -1,6 +1,6 @@
 # Feedback forms
 
-The app's feedback links open Google Forms, one per place that asks for feedback (TAS-458). This folder is an Apps
+The app's feedback links open Google Forms, one per place that asks for feedback. This folder is an Apps
 Script project that builds those forms and posts their answers to Slack:
 
 - `Forms.gs` describes every form: its questions, sections, branching and prefill fields. It's the source of truth.

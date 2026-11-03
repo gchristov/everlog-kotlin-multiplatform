@@ -84,7 +84,7 @@ These are **test devices**, left out for good: a device that once ran a nightly 
 
 **Onboarding v1 funnel:** new users since onboarding v1. It shows each onboarding step viewed (`onboarding_step_viewed`), how onboarding ended (`onboarding_finished` outcome), reached home, then setup on day one and week-one workouts for users with enough days. It also has the paid test's health checks: 70%+ of people completing each step they view, and 30%+ keeping or building templates at the reveal.
 
-**Paid test:** one row per campaign in `config.json`, plus organic, for users who installed since `paid_test.start_date` (or since onboarding v1 before the campaigns start). Columns: new users, finished onboarding, kept or built, users with 7 days, week-one lifters and their rate, spend, and cost per week-one lifter (spend ÷ week-one lifters). A ✓ marks a cost at or under `bar_eur_per_lifter`. The decision rules are on the paid test ticket (TAS-448).
+**Paid test:** one row per campaign in `config.json`, plus organic, for users who installed since `paid_test.start_date` (or since onboarding v1 before the campaigns start). Columns: new users, finished onboarding, kept or built, users with 7 days, week-one lifters and their rate, spend, and cost per week-one lifter (spend ÷ week-one lifters). A ✓ marks a cost at or under `bar_eur_per_lifter`. The decision rules are on the paid test's ticket in Notion.
 
 **Trends:**
 - New users per install week, organic vs paid. The tooltip shows how many finished a workout in week one.

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="exercises_max_selection">You cannot add more than %1$d exercises at a time</string>
-    <!-- Exercise picker (TAS-451). Filters read as "Equipment is Barbell, Dumbbell". -->
+    <!-- Exercise picker. Filters read as "Equipment is Barbell, Dumbbell". -->
     <string name="exercise_picker_title">Select exercises</string>
     <string name="exercise_picker_title_browse">Exercises</string>
     <string name="exercise_picker_search_loading">Search exercises</string>

@@ -2,7 +2,7 @@
 
 How screens get Firestore data: always from the cache, which syncs with the server when a read needs it.
 This replaces the old stores (`ELCollectionStore`, `ELDocumentStore`) and their EventBus events, screen by
-screen. Background and plan: TAS-462 in Notion.
+screen.
 
 In use so far: the exercise library, the user's own exercises and the registry (`ExerciseRepository`: the
 exercise picker, the exercise detail's Info tab, the names of the user's own exercises on the workout screen), and workouts

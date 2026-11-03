@@ -30,7 +30,7 @@ data class ELSet (
         // sets still line up with their exercises. Only the ongoing workout has these; finishing drops them.
         @get:Exclude @set:Exclude
         var removed: Boolean = false,
-        // The values the Compose workout screen (TAS-455) filled in from history, weight in kg, until they're changed or
+        // The values the Compose workout screen filled in from history, weight in kg, until they're changed or
         // the set done: they show as suggestions. Only the ongoing workout has them.
         @get:Exclude @set:Exclude
         var suggestedWeight: Float? = null,

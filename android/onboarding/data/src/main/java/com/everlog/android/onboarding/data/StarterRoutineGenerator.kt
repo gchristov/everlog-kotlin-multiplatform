@@ -14,7 +14,7 @@ import org.threeten.bp.DayOfWeek
 import java.util.UUID
 
 /**
- * How someone trains, from the onboarding questions (TAS-442).
+ * How someone trains, from the onboarding questions.
  */
 data class StarterProfile(
     val daysPerWeek: Int,
@@ -105,7 +105,7 @@ data class StarterRoutine(
 
 /**
  * Builds a starter week from the onboarding answers, following the rules in the Everlog Onboarding
- * design (TAS-442).
+ * design.
  */
 object StarterRoutineGenerator {
 

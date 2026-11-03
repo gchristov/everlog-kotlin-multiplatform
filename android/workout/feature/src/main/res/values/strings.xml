@@ -23,7 +23,7 @@
     <string name="set_suggestions_off">Off</string>
     <string name="set_suggestions_off_subtitle">Start from your template and type the rest</string>
     <string name="set_suggestions_speed_power">Speed and power</string>
-    <!-- The Compose workout screen (TAS-455) -->
+    <!-- The Compose workout screen -->
     <string name="workout_log_close">Close</string>
     <string name="workout_log_delete_exercise_body">Its sets go with it.</string>
     <string name="workout_log_delete_exercise_title">Delete %1$s?</string>
