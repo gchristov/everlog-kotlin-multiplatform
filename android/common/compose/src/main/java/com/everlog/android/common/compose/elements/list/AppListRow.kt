@@ -36,8 +36,7 @@ fun AppListRow(
 }
 
 // A row like the ones in Settings (SettingsTitle and SettingsSubtitle): a title with an optional
-// header above it and subtitle below it, between optional leading and trailing content, laid out like
-// the newsfeed project's feed rows.
+// header above it and subtitle below it, between optional leading and trailing content.
 @Composable
 fun AppListItem(
     title: String,

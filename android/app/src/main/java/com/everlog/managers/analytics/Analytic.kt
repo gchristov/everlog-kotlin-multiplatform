@@ -154,7 +154,7 @@ interface Analytic {
     fun onboardingTemplateToggled(open: Boolean)
     fun onboardingFinished(outcome: String, step: String, routines: Int)
 
-    // The new exercise picker (TAS-451); the screen view says which mode
+    // The new exercise picker; the screen view says which mode
     fun exercisePickerFilterAdded(filter: String, value: String, source: String)
     fun exercisePickerFilterRemoved(filter: String)
     fun exercisePickerFilterOperatorChanged(filter: String, not: Boolean)

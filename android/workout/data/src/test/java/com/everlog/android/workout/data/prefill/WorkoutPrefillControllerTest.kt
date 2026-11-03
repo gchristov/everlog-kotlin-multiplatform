@@ -22,7 +22,7 @@ class WorkoutPrefillControllerTest {
     private val squat = ELExercise(uuid = "squat", name = "Squat")
     private val plank = ELExercise(uuid = "plank", name = "Plank")
 
-    // The first day of a month, which is when prefilling used to reset (TAS-409)
+    // The first day of a month, which is when prefilling used to reset
     private val now = at(2026, 10, 1)
 
     private val settings = FakeUserSettings(unit = WeightUnit.KILOGRAM, goal = MuscleGoal.HISTORY)

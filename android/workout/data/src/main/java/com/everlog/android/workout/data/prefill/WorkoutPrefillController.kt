@@ -77,7 +77,7 @@ class WorkoutPrefillController {
         }
 
         // Fills a set's empty values from its exercise's source: the 1RM target for the muscle goal, then its last
-        // session's set at the same index. Also used by the Compose workout screen (TAS-455), set by set.
+        // session's set at the same index. Also used by the Compose workout screen, set by set.
         internal fun prefillSet(source: PrefillSource, setToPrefill: ELSet, setIndex: Int, settings: PrefillSettings) {
             // 1. Prefill using 1RM
             WorkoutPrefill1RMController().prefill(source, setToPrefill, setIndex, settings)

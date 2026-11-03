@@ -9,7 +9,7 @@ data class RemoteConfig (
 
         var notificationHome: HomeNotification? = null,
         var notificationAppUsage: AppUsageNotification? = null,
-        // The exercise detail in Compose (TAS-452): for now its Info tab, with the library's instructions and tips
+        // The exercise detail in Compose: for now its Info tab, with the library's instructions and tips
         var exerciseDetailsV2: Boolean = false,
         // The Set suggestions screen in Compose instead of MuscleGoalActivity, from every entry point
         var setSuggestionsV2: Boolean = false,

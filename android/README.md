@@ -1,6 +1,6 @@
 # Android modules
 
-The app is split into Gradle modules, modelled on [newsfeed-kotlin-multiplatform](https://github.com/gchristov/newsfeed-kotlin-multiplatform), with [Metro](https://zacsweers.github.io/metro/) for dependency injection instead of newsfeed's Kodein. Metro is moving in feature by feature, see [Dependency injection](#dependency-injection). Every feature's screens and data live in its modules (TAS-468). What's left in `:android:app` is the app shell and the old screens still waiting to be removed, see [What stays in the app](#what-stays-in-the-app).
+The app is split into Gradle modules, with [Metro](https://zacsweers.github.io/metro/) for dependency injection (see [Dependency injection](#dependency-injection)). Every feature's screens and data live in its modules. What's left in `:android:app` is the app shell and the old screens still waiting to be removed, see [What stays in the app](#what-stays-in-the-app).
 
 ## Layout
 
@@ -85,7 +85,7 @@ Services the app shares, like the user's settings, are an interface with a `Real
   - What only the app can do is a small interface in the feature, bound by an app class: `ExerciseConfig` (Remote Config), the analytics interfaces. Other features' screens open through the `Navigator`.
   - The feature declares what its screens use in one `@ContributesTo(AppScope::class)` interface, `ExerciseGraph`, which the app's graph takes on. Activities and fragments read it with `appGraph<ExerciseGraph>()` (from Java, `appGraph(context, ExerciseGraph.class)`), through the application (`GraphOwner`), and hand presenters their parts in the constructor.
   - `AppBindings` gives the graph what comes from outside it: `DataSync`, the app's settings like how many months of workouts to sync (`@WorkoutSyncMonths`), and the old workouts store. A data module provides its own store the same way, e.g. `TemplateStoreBindings`. The graph takes the application `Context` in its factory.
-- **Next** (TAS-474): the `common:mvp` and `common:data` holders, then the stores, which still come from the `…Stores` objects.
+- **Next**: the `common:mvp` and `common:data` holders, then the stores, which still come from the `…Stores` objects.
 
 ## What stays in the app
 
@@ -94,7 +94,7 @@ Services the app shares, like the user's settings, are an interface with a `Real
 - **The shell**: `ELApplication` with each feature's dependencies (`application/features`), `SplashActivity` (the launcher, which keeps its class name), Home with its Week and Workouts tabs and home notifications, the `Navigator`, `AppConfig` and Remote Config, the data migrations, `AppDataSync`, FCM, the alarm receivers and their notifications, and the web view.
 - **Managers on the app's services**: `AuthManager`, `AnalyticsManager`, the rating prompt, in-app updates, `BillingBridge`, `FirestorePathManager`, Google Fit, `ELUserStore` and `ELDatastore`.
 - **Shared XML pieces only the app uses**: `AppDialogs` and the other pickers and inputs in `ui/dialog`, and the views and adapters the screens above use.
-- **The old screens behind v2 flags** (`CreateRoutineActivity`, `CreateExerciseGroupsActivity`, `MuscleGoalActivity` and their adapters), which go when their flags are removed (TAS-465) rather than moving into modules.
+- **The old screens behind v2 flags** (`CreateRoutineActivity`, `CreateExerciseGroupsActivity`, `MuscleGoalActivity` and their adapters), which go when their flags are removed rather than moving into modules.
 
 ## Convention plugins
 
