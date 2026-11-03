@@ -13,4 +13,5 @@ internal fun WorkoutLogState.tableView(unitLabel: String) = TableView(
     armed = focus?.ref.takeIf { mainKey == KeypadMainKey.CompleteSet || mainKey == KeypadMainKey.StartTimer },
     startsTimer = ::startsTimer,
     lastTime = lastTime,
+    lastTimeLoading = historyLoading,
 )
