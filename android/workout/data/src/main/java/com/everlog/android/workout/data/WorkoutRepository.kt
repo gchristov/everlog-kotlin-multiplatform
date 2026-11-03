@@ -36,9 +36,6 @@ interface WorkoutRepository {
      */
     suspend fun workoutsCreatedBetween(from: Long, until: Long?): Either<Throwable, List<ELWorkout>>
 
-    // When the user's account was created, before which they can't have logged workouts. Null when unknown.
-    fun historyStart(): Long?
-
     /**
      * When the user last did each exercise, by the exercise's uuid, from their [workouts] most recent workouts
      * of the last months.
@@ -77,8 +74,6 @@ class RealWorkoutRepository(
             Load.Loading -> error("A read waits for its sync")
         }
     }
-
-    override fun historyStart(): Long? = session.user()?.createdDate?.takeIf { it > 0 }
 
     private fun workoutsOf(userId: String) = CollectionSource(
         "workouts",

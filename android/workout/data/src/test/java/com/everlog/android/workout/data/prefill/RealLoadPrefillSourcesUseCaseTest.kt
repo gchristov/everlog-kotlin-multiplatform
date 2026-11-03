@@ -30,14 +30,14 @@ class RealLoadPrefillSourcesUseCaseTest {
     private val useCase = RealLoadPrefillSourcesUseCase(FakeCoroutineDispatcher, repository, FakeUserSettings(unit = WeightUnit.KILOGRAM)) { now }
 
     @Test
-    fun `an exercise last done months ago still has its last session, from further back in the history`() = runBlocking<Unit> {
+    fun `an exercise last done months ago still has its last session, from the rest of the year`() = runBlocking<Unit> {
         val longAgo = workout(at(2026, 3, 14), bench to listOf(loggedSet(8, 60f))).apply { createdDate = completedDate }
         repository.history += longAgo
 
         val sources = useCase(listOf(bench)).getOrNull()!!
 
         assertThat(sources.getValue("bench").lastSession?.workout).isSameInstanceAs(longAgo)
-        assertThat(repository.reads.size).isGreaterThan(1)
+        assertThat(repository.reads).hasSize(2)
     }
 
     @Test
@@ -47,24 +47,6 @@ class RealLoadPrefillSourcesUseCaseTest {
         useCase(listOf(bench))
 
         assertThat(repository.reads).hasSize(1)
-    }
-
-    @Test
-    fun `reads back to when the account was created`() = runBlocking<Unit> {
-        repository.start = at(2025, 1, 1)
-
-        useCase(listOf(bench))
-
-        assertThat(repository.reads.dropLast(1).last().first).isEqualTo(at(2025, 1, 1))
-    }
-
-    @Test
-    fun `an account that doesn't know when it was created reads back to when Everlog started`() = runBlocking<Unit> {
-        repository.start = null
-
-        useCase(listOf(bench))
-
-        assertThat(repository.reads.dropLast(1).last().first).isEqualTo(EverlogStart)
     }
 
     @Test
@@ -92,7 +74,6 @@ class RealLoadPrefillSourcesUseCaseTest {
     private class FakeWorkoutRepository : WorkoutRepository {
         val history = mutableListOf<ELWorkout>()
         val reads = mutableListOf<Pair<Long, Long?>>()
-        var start: Long? = at(2024, 1, 1)
         var failure: Throwable? = null
         var beforeRead: suspend () -> Unit = {}
 
@@ -104,8 +85,6 @@ class RealLoadPrefillSourcesUseCaseTest {
             failure?.let { return Either.Left(it) }
             return Either.Right(history.filter { it.createdDate >= from && (until == null || it.createdDate < until) })
         }
-
-        override fun historyStart(): Long? = start
 
         override suspend fun exerciseLastDone(workouts: Int): Either<Throwable, Map<String, Long>> = Either.Right(emptyMap())
     }

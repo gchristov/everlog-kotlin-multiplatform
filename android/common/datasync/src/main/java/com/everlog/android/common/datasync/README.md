@@ -60,9 +60,9 @@ another phone keeps the count, so an all-time read also syncs the full history a
 (Remote Config `data_sync_full_history_max_age_days`, 7 by default, debug builds too), showing the cache
 meanwhile.
 
-A calculation that may need the whole history, but usually only its last months (e.g. each exercise's last
-session for the workout screen's suggestions), reads it once a part at a time with `read(source, from, until)`
-instead of following it all: a listener keeps every document it shows in memory, and a long history doesn't fit
+A calculation over a longer part of the history than it usually needs (e.g. each exercise's last session in the
+past year for the workout screen's suggestions, usually found in the last months) reads it once, a part at a time,
+with `read(source, from, until)` instead of following it all: a listener keeps every document it shows in memory, and a long history doesn't fit
 (about 70 MB for 2,000 workouts, on a 256 MB heap). It syncs and waits like `observe` does for the same range.
 Firestore's cache goes through every document of the collection for each read, but keeps only the ones the
 read's dates match, so read in a few large parts rather than many small ones.
