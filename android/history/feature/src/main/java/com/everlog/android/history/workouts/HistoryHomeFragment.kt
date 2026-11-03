@@ -150,7 +150,7 @@ class HistoryHomeFragment : BaseTabFragment(), MvpViewHistoryHome {
     // Setup
 
     override fun setupPresenter() {
-        mPresenter = PresenterHistoryHome(graph.userSettings, graph.historyNavigation)
+        mPresenter = PresenterHistoryHome(graph.userSettings, graph.navigator)
     }
 
     private fun setupListView() {

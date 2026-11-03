@@ -4,8 +4,10 @@ import com.everlog.android.common.data.model.workout.ELWorkout
 import com.everlog.android.common.data.model.workout.RangeType
 import com.everlog.android.common.kotlin.Utils
 import com.everlog.android.common.mvp.fragment.BaseFragmentPresenter
+import com.everlog.android.common.navigation.FeedbackForm
+import com.everlog.android.common.navigation.FeedbackSource
+import com.everlog.android.common.navigation.Navigator
 import com.everlog.android.history.HistoryAnalytics
-import com.everlog.android.history.HistoryNavigation
 import com.everlog.android.settings.data.UserSettings
 import com.everlog.android.workout.data.store.ELColStoreWorkoutsLoadedEvent
 import com.everlog.android.workout.data.store.WorkoutStores
@@ -16,7 +18,7 @@ import org.greenrobot.eventbus.ThreadMode
 class PresenterStatisticsHome(
     private val settings: UserSettings,
     private val analytics: HistoryAnalytics,
-    private val navigation: HistoryNavigation,
+    private val navigator: Navigator,
 ) : BaseFragmentPresenter<MvpViewStatisticsHome>() {
 
     private var mRange = UserStatsController.DEFAULT_RANGE
@@ -55,7 +57,7 @@ class PresenterStatisticsHome(
     }
 
     private fun showFeedback() {
-        mvpView?.showFeedback(navigation.hasStatisticsFeedback())
+        mvpView?.showFeedback(navigator.canOpen(FeedbackForm(FeedbackSource.ACTIVITY_STATISTICS)))
     }
 
     // Observers
@@ -76,7 +78,7 @@ class PresenterStatisticsHome(
         subscriptions.add(mvpView.onClickFooter()
                 .compose(applyUISchedulers())
                 .subscribe {
-                    context?.let(navigation::openStatisticsFeedback)
+                    context?.let { navigator.open(it, FeedbackForm(FeedbackSource.ACTIVITY_STATISTICS)) }
                 })
     }
 

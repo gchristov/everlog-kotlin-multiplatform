@@ -1,5 +1,6 @@
 package com.everlog.android.history
 
+import com.everlog.android.common.navigation.Navigator
 import com.everlog.android.settings.data.UserSettings
 import dev.zacsweers.metro.AppScope
 import dev.zacsweers.metro.ContributesTo
@@ -11,5 +12,5 @@ interface HistoryGraph {
 
     val historyAnalytics: HistoryAnalytics
 
-    val historyNavigation: HistoryNavigation
+    val navigator: Navigator
 }

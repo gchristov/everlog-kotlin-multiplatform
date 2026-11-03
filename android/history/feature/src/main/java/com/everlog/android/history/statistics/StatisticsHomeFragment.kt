@@ -134,7 +134,7 @@ class StatisticsHomeFragment : BaseTabFragment(), MvpViewStatisticsHome {
     // Setup
 
     override fun setupPresenter() {
-        mPresenter = PresenterStatisticsHome(graph.userSettings, graph.historyAnalytics, graph.historyNavigation)
+        mPresenter = PresenterStatisticsHome(graph.userSettings, graph.historyAnalytics, graph.navigator)
     }
 
     private fun setupCharts() {
