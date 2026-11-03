@@ -1,6 +1,7 @@
 package com.everlog.android.exercise.create;
 
-import com.everlog.android.exercise.ExerciseNavigation;
+import com.everlog.android.common.navigation.AppSettingsPrompt;
+import com.everlog.android.common.navigation.Navigator;
 import com.everlog.android.exercise.ExerciseAnalytics;
 import android.content.Intent;
 import android.content.DialogInterface;
@@ -35,18 +36,18 @@ public class PresenterCreateExercise extends BaseActivityPresenter<MvpViewCreate
     private final ExerciseImageStorage imageStorage;
     private final ExerciseCopies copies;
     private final ExerciseAnalytics analytics;
-    private final ExerciseNavigation navigation;
+    private final Navigator navigator;
     private ELExercise toEdit;
     private boolean mInitialDataSet = false;
     private boolean mEditMode = false;
     private Uri mPickedImageUri;
 
-    public PresenterCreateExercise(UserSession session, ExerciseImageStorage imageStorage, ExerciseCopies copies, ExerciseAnalytics analytics, ExerciseNavigation navigation) {
+    public PresenterCreateExercise(UserSession session, ExerciseImageStorage imageStorage, ExerciseCopies copies, ExerciseAnalytics analytics, Navigator navigator) {
         this.session = session;
         this.imageStorage = imageStorage;
         this.copies = copies;
         this.analytics = analytics;
-        this.navigation = navigation;
+        this.navigator = navigator;
     }
 
     @Override
@@ -178,7 +179,7 @@ public class PresenterCreateExercise extends BaseActivityPresenter<MvpViewCreate
                     } else if (result instanceof ImagePickerResult.Removed) {
                         handleImagePicked(null);
                     } else if (result instanceof ImagePickerResult.PermissionDenied) {
-                        navigation.promptForAppSettings(getContext(), R.string.create_exercise_error_no_permissions);
+                        navigator.open(getContext(), new AppSettingsPrompt(R.string.create_exercise_error_no_permissions));
                     }
                 }, this::handleError));
     }
