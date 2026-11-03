@@ -90,6 +90,13 @@ class FakeCollectionBackend(server: List<Doc> = emptyList(), cached: List<Doc> =
         return Chunk(chunk.size, chunk.lastOrNull()?.id)
     }
 
+    override suspend fun fetchIds(ids: Collection<String>): Set<String> {
+        ids.distinct().chunked(MaxIdsPerRead).forEach { serverCall("ids:${it.joinToString(",")}") }
+        val found = server.filter { it.id in ids && it.id !in pending }
+        land { cache.value = cache.value.filterNot { cached -> found.any { it.id == cached.id } } + found }
+        return found.map { it.id }.toSet()
+    }
+
     override suspend fun countOnServer(): Long {
         serverCall("count")
         return server.size.toLong()

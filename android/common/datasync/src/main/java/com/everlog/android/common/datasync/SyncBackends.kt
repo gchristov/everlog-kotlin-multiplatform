@@ -31,11 +31,20 @@ interface CollectionBackend<T> {
     // One chunk of the whole collection by document id, after [afterId]
     suspend fun fetchChunk(afterId: String?, size: Int): Chunk
 
+    /**
+     * The documents with these [ids] from the server into the cache, at most [MaxIdsPerRead] at a time as Firestore
+     * takes in one read. Returns the ids the server has.
+     */
+    suspend fun fetchIds(ids: Collection<String>): Set<String>
+
     suspend fun countOnServer(): Long
 
     // Documents the server has confirmed, so edits still waiting to upload don't count
     suspend fun countInCache(): Long
 }
+
+// How many ids Firestore takes in one `in` query
+const val MaxIdsPerRead = 30
 
 data class Chunk(val count: Int, val lastId: String?)
 

@@ -9,6 +9,7 @@ import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import org.junit.After
 import org.junit.Test
 import java.util.concurrent.CopyOnWriteArrayList
@@ -419,6 +420,59 @@ class DataSyncTest {
 
         assertThat(records.lastSynced["user/workouts"]).isEqualTo(now)
         assertThat(dataSync.status.value["user/workouts"]?.lastFailure).isNull()
+    }
+
+    // Fetching documents by id
+
+    @Test
+    fun `documents fetched by id reach readers, and the ones the server doesn't have are left out`() {
+        synced("user/routines", fullHistory = false, at = now)
+        val backend = FakeCollectionBackend(server = listOf(bench, squat, deadlift), cached = listOf(bench))
+        val loads = read(dataSync.observe(whole(backend)))
+
+        val fetched = runBlocking { dataSync.fetchIds(whole(backend), setOf("squat", "missing")) }
+
+        assertThat(fetched).isEqualTo(Load.Ready(setOf("squat")))
+        assertThat(backend.calls).containsExactly("ids:squat,missing")
+        assertThat((loads.last() as Load.Ready).value).containsExactly(bench, squat)
+    }
+
+    @Test
+    fun `ids are fetched at most thirty at a time`() {
+        val backend = FakeCollectionBackend()
+
+        runBlocking { dataSync.fetchIds(whole(backend), (1..65).map { "id$it" }.toSet()) }
+
+        assertThat(backend.calls).hasSize(3)
+    }
+
+    @Test
+    fun `no ids fetch nothing`() {
+        val backend = FakeCollectionBackend()
+
+        val fetched = runBlocking { dataSync.fetchIds(whole(backend), emptySet()) }
+
+        assertThat(fetched).isEqualTo(Load.Ready(emptySet<String>()))
+        assertThat(backend.calls).isEmpty()
+    }
+
+    @Test
+    fun `fetching ids that fails is unavailable, leaving the cache as it was`() {
+        val backend = FakeCollectionBackend(server = listOf(squat), cached = listOf(bench)).apply { fail = { IllegalStateException("offline") } }
+
+        val fetched = runBlocking { dataSync.fetchIds(whole(backend), setOf("squat")) }
+
+        assertThat((fetched as Load.Unavailable).error).hasMessageThat().isEqualTo("offline")
+        assertThat(backend.cache.value).containsExactly(bench)
+    }
+
+    @Test
+    fun `fetching ids from a server that doesn't answer times out`() {
+        val backend = FakeCollectionBackend(server = listOf(squat)).apply { hang = true }
+
+        val fetched = runBlocking { dataSync.fetchIds(whole(backend), setOf("squat")) }
+
+        assertThat((fetched as Load.Unavailable).error).isInstanceOf(SyncTimeoutException::class.java)
     }
 
     // Failures
