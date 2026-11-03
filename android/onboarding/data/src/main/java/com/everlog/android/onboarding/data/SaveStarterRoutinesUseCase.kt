@@ -4,7 +4,11 @@ import arrow.core.Either
 import arrow.core.raise.either
 import arrow.core.raise.ensure
 import com.everlog.android.common.data.model.ELRoutine
+import com.everlog.android.common.kotlin.di.DefaultDispatcher
 import com.everlog.android.template.data.RoutineRepository
+import dev.zacsweers.metro.AppScope
+import dev.zacsweers.metro.ContributesBinding
+import dev.zacsweers.metro.Inject
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.withContext
 
@@ -23,8 +27,10 @@ interface SaveStarterRoutinesUseCase {
     data class Dto(val routines: List<ELRoutine>)
 }
 
+@ContributesBinding(AppScope::class)
+@Inject
 class RealSaveStarterRoutinesUseCase(
-    private val dispatcher: CoroutineDispatcher,
+    @DefaultDispatcher private val dispatcher: CoroutineDispatcher,
     private val routineRepository: RoutineRepository,
 ) : SaveStarterRoutinesUseCase {
 

@@ -33,6 +33,7 @@ import com.everlog.android.common.compose.elements.AppDialogAction
 import com.everlog.android.common.compose.elements.AppScreen
 import com.everlog.android.common.compose.elements.rememberAppBarScrollBehavior
 import com.everlog.android.common.compose.theme.Theme
+import com.everlog.android.common.kotlin.di.appGraph
 import com.everlog.android.common.mvvm.createViewModelFactory
 import com.everlog.android.onboarding.R
 import kotlinx.coroutines.Dispatchers
@@ -48,17 +49,17 @@ import kotlinx.coroutines.android.awaitFrame
 // The screen doesn't know what comes after it. It closes with RESULT_OK whether the user set up
 // or skipped, and the screen that opened it for a result decides what's next.
 class OnboardingActivity : CommonComposeActivity() {
-    private val dependencies = OnboardingFeature.dependencies
+    private val graph by lazy { appGraph<OnboardingGraph>() }
 
     private val viewModel by viewModels<OnboardingViewModel> {
         createViewModelFactory {
             OnboardingViewModel(
                 dispatcher = Dispatchers.Main,
-                buildStarterRoutinesUseCase = dependencies.buildStarterRoutines(),
-                saveStarterRoutinesUseCase = dependencies.saveStarterRoutines(),
-                settings = dependencies.onboardingSettings(this),
-                analytics = dependencies.onboardingAnalytics(),
-                firstDayOfWeek = dependencies.userSettings().firstDayOfWeek(),
+                buildStarterRoutinesUseCase = graph.buildStarterRoutines,
+                saveStarterRoutinesUseCase = graph.saveStarterRoutines,
+                settings = graph.onboardingSettings,
+                analytics = graph.onboardingAnalytics,
+                firstDayOfWeek = graph.userSettings.firstDayOfWeek(),
             )
         }
     }
@@ -73,7 +74,7 @@ class OnboardingActivity : CommonComposeActivity() {
         viewModel = viewModel,
         onOpenRoutineBuilder = {
             // Not the routine's details after saving: the screen decides what comes next
-            routineBuilder.launch(dependencies.newTemplateIntent(this))
+            routineBuilder.launch(graph.onboardingNavigation.newTemplateIntent(this))
         },
         onClose = {
             setResult(RESULT_OK)
