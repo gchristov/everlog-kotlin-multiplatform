@@ -1,5 +1,7 @@
 package com.everlog.android.workout.setsuggestions
 
+import com.everlog.android.workout.WorkoutGraph
+import com.everlog.android.common.kotlin.di.appGraph
 import android.content.Context
 import android.content.Intent
 import androidx.activity.viewModels
@@ -7,7 +9,6 @@ import androidx.compose.runtime.Composable
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import com.everlog.android.common.compose.CommonComposeActivity
-import com.everlog.android.workout.WorkoutFeature
 import kotlinx.coroutines.Dispatchers
 
 /**
@@ -15,21 +16,21 @@ import kotlinx.coroutines.Dispatchers
  * canvas (Set suggestions page).
  */
 class SetSuggestionsActivity : CommonComposeActivity() {
-    private val dependencies = WorkoutFeature.dependencies
+    private val graph by lazy { appGraph<WorkoutGraph>() }
 
     private val viewModel by viewModels<SetSuggestionsViewModel> {
         viewModelFactory {
             initializer {
                 SetSuggestionsViewModel(
                     dispatcher = Dispatchers.Main,
-                    settings = dependencies.setSuggestionsSettings(this@SetSuggestionsActivity),
-                    analytics = dependencies.setSuggestionsAnalytics(),
+                    settings = graph.setSuggestionsSettings,
+                    analytics = graph.setSuggestionsAnalytics,
                 )
             }
         }
     }
 
-    private val sendFeedback by lazy { dependencies.setSuggestionsFeedback(this) }
+    private val sendFeedback by lazy { graph.workoutNavigation.setSuggestionsFeedback(this) }
 
     @Composable
     override fun Content() = SetSuggestionsScreen(viewModel = viewModel, onSendFeedback = sendFeedback)

@@ -1,5 +1,7 @@
 package com.everlog.android.workout.notification
 
+import com.everlog.android.workout.WorkoutGraph
+import com.everlog.android.common.kotlin.di.appGraph
 import android.app.Notification
 import android.app.Service
 import android.content.BroadcastReceiver
@@ -15,7 +17,6 @@ import com.everlog.android.workout.data.notification.ShownSet
 import com.everlog.android.workout.data.notification.WorkoutBroadcasts
 import com.everlog.android.workout.R
 import com.everlog.android.workout.WorkoutExtras
-import com.everlog.android.workout.WorkoutFeature
 import timber.log.Timber
 
 /**
@@ -64,7 +65,8 @@ class WorkoutService : Service() {
 
     }
 
-    private val analytics = WorkoutFeature.dependencies.workoutServiceAnalytics()
+    private val graph by lazy { appGraph<WorkoutGraph>() }
+    private val analytics by lazy { graph.workoutServiceAnalytics }
 
     override fun onCreate() {
         super.onCreate()
@@ -191,7 +193,7 @@ class WorkoutService : Service() {
 
     private fun buildNotification(): Notification {
         val state = WorkoutNotificationState.from(mWorkout, mRestTimer, mShown)
-        return WorkoutNotificationBuilder(this, WorkoutFeature.dependencies.userSettings().weightUnit()).build(notificationChannelId(), state, mWorkout)
+        return WorkoutNotificationBuilder(this, graph.userSettings.weightUnit()).build(notificationChannelId(), state, mWorkout)
     }
 
     // Notification channel

@@ -1,5 +1,9 @@
 package com.everlog.android.workout.details;
 
+import com.everlog.android.template.data.session.OngoingPlanRepository;
+import com.everlog.android.workout.WorkoutStats;
+import com.everlog.android.workout.WorkoutNavigation;
+import com.everlog.android.settings.data.UserSettings;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.text.TextUtils;
@@ -9,8 +13,6 @@ import com.ahamed.multiviewadapter.RecyclerAdapter;
 import com.everlog.android.common.kotlin.DateExtKt;
 import com.everlog.android.template.data.store.TemplateStores;
 import com.everlog.android.workout.R;
-import com.everlog.android.workout.WorkoutFeature;
-import com.everlog.android.workout.WorkoutFeatureDependencies;
 import com.everlog.android.common.data.store.OnStoreItemsListener;
 import com.everlog.android.workout.data.store.ELDocStoreWorkoutLoadedEvent;
 import com.everlog.android.workout.data.store.WorkoutStores;
@@ -34,8 +36,11 @@ import kotlin.Unit;
 
 public class PresenterWorkoutDetails extends BaseActivityPresenter<MvpViewWorkoutDetails> {
 
-    private final WorkoutFeatureDependencies dependencies = WorkoutFeature.INSTANCE.getDependencies();
-    private final WorkoutDetailsAnalytics analytics = dependencies.workoutDetailsAnalytics();
+    private final UserSettings settings;
+    private final WorkoutDetailsAnalytics analytics;
+    private final WorkoutNavigation navigation;
+    private final WorkoutStats stats;
+    private final OngoingPlanRepository ongoingPlan;
 
     // From the workout loading. Lets the congrats banner, shown about 0.5s in, play before Play's rating
     // dialog covers the screen.
@@ -43,6 +48,14 @@ public class PresenterWorkoutDetails extends BaseActivityPresenter<MvpViewWorkou
 
     private ELWorkout toEdit;
     private boolean mLoadedItemOnce;
+
+    public PresenterWorkoutDetails(UserSettings settings, WorkoutDetailsAnalytics analytics, WorkoutNavigation navigation, WorkoutStats stats, OngoingPlanRepository ongoingPlan) {
+        this.settings = settings;
+        this.analytics = analytics;
+        this.navigation = navigation;
+        this.stats = stats;
+        this.ongoingPlan = ongoingPlan;
+    }
     private boolean mBackPressed;
     private boolean mChangesMade;
     private final RecyclerAdapter mAdapter = new RecyclerAdapter();
@@ -84,7 +97,7 @@ public class PresenterWorkoutDetails extends BaseActivityPresenter<MvpViewWorkou
     @Override
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        List<ELExerciseGroup> edited = dependencies.editedExerciseGroups(requestCode, resultCode, data);
+        List<ELExerciseGroup> edited = navigation.editedExerciseGroups(requestCode, resultCode, data);
         if (edited != null) {
             handleEditExercises(edited);
         }
@@ -103,7 +116,7 @@ public class PresenterWorkoutDetails extends BaseActivityPresenter<MvpViewWorkou
                         Utils.runWithDelay(() -> {
                             handleCheckWeeklyGoalComplete();
                         }, 500);
-                        dependencies.requestRatePrompt(getMvpView().getActivity(), toEdit, RATE_PROMPT_DELAY_MILLIS);
+                        navigation.requestRatePrompt(getMvpView().getActivity(), toEdit, RATE_PROMPT_DELAY_MILLIS);
                     }
                 }
                 mLoadedItemOnce = true;
@@ -122,7 +135,7 @@ public class PresenterWorkoutDetails extends BaseActivityPresenter<MvpViewWorkou
                 .compose(applyUISchedulers())
                 .subscribe(action -> {
                     analytics.shared();
-                    dependencies.shareWorkout(getMvpView().getActivity(), toEdit);
+                    navigation.shareWorkout(getMvpView().getActivity(), toEdit);
                 }, throwable -> handleError(throwable)));
     }
 
@@ -249,7 +262,7 @@ public class PresenterWorkoutDetails extends BaseActivityPresenter<MvpViewWorkou
         ELRoutine toSave = SerializationUtils.clone(toEdit).getRoutineFromWorkout();
         TemplateStores.routineStore().create(toSave, SetOptions.merge());
         // Replace routine for ongoing plan
-        dependencies.replaceRoutineInOngoingPlan(getMvpView().getContext(), toSave);
+        ongoingPlan.replaceRoutine(toSave);
         getMvpView().showToast(R.string.workout_details_save_success);
         if (mBackPressed) {
             // If we are coming from the BACK workflow, safely close the screen.
@@ -267,11 +280,11 @@ public class PresenterWorkoutDetails extends BaseActivityPresenter<MvpViewWorkou
 
             @Override
             public void onItemsLoaded(List<ELWorkout> items, boolean fromCache) {
-                dependencies.workoutsThisWeek(items, workoutsThisWeek -> {
+                stats.workoutsThisWeek(items, workoutsThisWeek -> {
                         if (isAttachedToView()) {
                             if (getMvpView().performingFromPlan()) {
                                 getMvpView().showWorkoutCompleteCongrats();
-                            } else if (dependencies.userSettings().weeklyWorkoutsGoal() == workoutsThisWeek) {
+                            } else if (settings.weeklyWorkoutsGoal() == workoutsThisWeek) {
                                 getMvpView().showWeeklyGoalCompleteCongrats();
                             } else {
                                 getMvpView().showWorkoutCompleteCongrats();
@@ -301,7 +314,7 @@ public class PresenterWorkoutDetails extends BaseActivityPresenter<MvpViewWorkou
 
     private void setupListView() {
         mAdapter.addDataManager(mDataListManager);
-        mAdapter.registerBinders(new WorkoutDetailsStatsAdapter.Binder(dependencies.userSettings().weightUnit(), new WorkoutDetailsStatsAdapter.OnWorkoutDetailsStatsListener() {
+        mAdapter.registerBinders(new WorkoutDetailsStatsAdapter.Binder(settings.weightUnit(), new WorkoutDetailsStatsAdapter.OnWorkoutDetailsStatsListener() {
             @Override
             public void onClickEditName(ELWorkout workout) {
                 analytics.nameModified();
@@ -323,16 +336,16 @@ public class PresenterWorkoutDetails extends BaseActivityPresenter<MvpViewWorkou
             @Override
             public void onClickEditExercises(ELWorkout workout) {
                 analytics.exercisesModified();
-                dependencies.openExerciseEditor(getMvpView().getActivity(), workout.getExerciseGroups());
+                navigation.openExerciseEditor(getMvpView().getActivity(), workout.getExerciseGroups());
             }
 
             @Override
             public void onItemClicked(ELWorkout item, int position) {}
         }), new ExerciseGroupSummaryAdapter().build(new ExerciseGroupSummaryAdapter.Builder()
                 .setShowTemplates(false)
-                .setWeightUnit(dependencies.userSettings().weightUnit())
+                .setWeightUnit(settings.weightUnit())
                 .setOnExerciseClicked((context, exercise) -> {
-                    dependencies.openExerciseDetails(context, exercise, ExerciseTab.Info);
+                    navigation.openExerciseDetails(context, exercise, ExerciseTab.Info);
                     return Unit.INSTANCE;
                 })
         ));
