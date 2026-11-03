@@ -6,7 +6,7 @@ import com.ahamed.multiviewadapter.DataListManager
 import com.ahamed.multiviewadapter.RecyclerAdapter
 import com.everlog.android.common.mvp.MvpBroadcasts
 import com.everlog.android.settings.data.MuscleGoal
-import com.everlog.config.FeedbackSource
+import com.everlog.android.common.navigation.FeedbackSource
 import com.everlog.managers.RemoteConfigManager
 import com.everlog.managers.analytics.AnalyticsManager
 import com.everlog.android.common.mvp.activity.BaseActivityPresenter

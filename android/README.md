@@ -42,6 +42,7 @@ Common modules:
 | `common:mvvm` | `CommonViewModel`, `ViewModelFactory` |
 | `common:mvp` | The XML/MVP bases: presenters, base activities, fragments, bottom sheets and views, the generic prompts, EventBus and the broadcasts every presenter listens to, the vendored adapter |
 | `common:firebase` | Firebase, the field names and `FirestorePaths` (each user's collections take the user id) |
+| `common:navigation` | The `Navigator` every feature opens other features' and the app's screens through, and the destinations: one per screen opened from outside its feature, with what it's opened with and, for screens that hand something back, how to read their result. The app's `AppNavigator` implements it |
 | `common:persistence` | `PreferencesManager`, the app's key-value storage. The user's settings (`UserSettings`) go to `settings:data` |
 | `common:session` | The workout session model the workout screen and the template editor edit (blocks, rounds, sets) and its rules. A stopgap until each feature owns its part |
 | `common:session-ui` | The exercise table and edit list both screens show. A stopgap until the table has its own UI model and joins the design system |

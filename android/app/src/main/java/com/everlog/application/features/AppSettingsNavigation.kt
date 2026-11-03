@@ -2,7 +2,7 @@ package com.everlog.application.features
 
 import android.content.Context
 import com.everlog.android.settings.SettingsNavigation
-import com.everlog.config.FeedbackSource
+import com.everlog.android.common.navigation.FeedbackSource
 import com.everlog.managers.RemoteConfigManager
 import com.everlog.ui.navigator.ELNavigator
 import dev.zacsweers.metro.AppScope

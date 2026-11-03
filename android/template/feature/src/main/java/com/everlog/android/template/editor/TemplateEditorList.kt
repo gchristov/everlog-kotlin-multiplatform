@@ -1,6 +1,5 @@
 package com.everlog.android.template.editor
 
-import com.everlog.android.common.design.R as DesignR
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -18,19 +17,20 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
+import com.everlog.android.common.compose.components.reorder.rememberReorderState
+import com.everlog.android.common.compose.components.reorder.reorderGrip
+import com.everlog.android.common.compose.components.reorder.reorderItem
+import com.everlog.android.common.compose.components.reorder.reorderViewport
 import com.everlog.android.common.compose.elements.AppSectionHeader
 import com.everlog.android.common.compose.elements.AppTertiaryButton
 import com.everlog.android.common.compose.elements.list.AppListGroup
 import com.everlog.android.common.compose.elements.list.AppListItem
 import com.everlog.android.common.compose.theme.Theme
 import com.everlog.android.common.data.model.exercise.ELExercise
-import com.everlog.android.common.sessionui.exercisetable.ExerciseTab
-import com.everlog.android.template.R
-import com.everlog.android.common.compose.components.reorder.rememberReorderState
-import com.everlog.android.common.compose.components.reorder.reorderGrip
-import com.everlog.android.common.compose.components.reorder.reorderItem
-import com.everlog.android.common.compose.components.reorder.reorderViewport
+import com.everlog.android.common.design.R as DesignR
 import com.everlog.android.common.kotlin.format.formatClock
+import com.everlog.android.common.navigation.ExerciseTab
+import com.everlog.android.template.R
 
 /**
  * The template's details, then its exercises to edit in place: drag one by its grip (every exercise shrinks to its

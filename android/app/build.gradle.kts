@@ -68,6 +68,7 @@ dependencies {
     implementation(projects.android.common.kotlin)
     implementation(projects.android.common.mvp)
     implementation(projects.android.common.mvvm)
+    implementation(projects.android.common.navigation)
     implementation(projects.android.common.persistence)
     implementation(projects.android.common.session)
     implementation(projects.android.common.sessionUi)

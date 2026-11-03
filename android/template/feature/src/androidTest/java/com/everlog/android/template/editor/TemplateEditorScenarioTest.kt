@@ -29,6 +29,7 @@ import com.everlog.android.common.data.model.exercise.ELRoutineExercise
 import com.everlog.android.common.data.model.set.ELSet
 import com.everlog.android.common.data.model.set.ELSetType
 import com.everlog.android.common.kotlin.Load
+import com.everlog.android.common.navigation.ExerciseTab
 import com.everlog.android.common.session.SessionDefaults
 import com.everlog.android.common.session.ValueField
 import com.everlog.android.exercise.data.model.library.LibraryExercise
@@ -42,7 +43,6 @@ import com.everlog.android.template.editor.TemplateEditorTags
 import com.everlog.android.template.editor.TemplateEditorViewModel
 import com.everlog.android.template.editor.opened
 import com.everlog.android.template.editor.timeForAllSets
-import com.everlog.android.common.sessionui.exercisetable.ExerciseTab
 import com.google.common.truth.Truth.assertThat
 import java.util.concurrent.TimeUnit
 import kotlinx.coroutines.Dispatchers

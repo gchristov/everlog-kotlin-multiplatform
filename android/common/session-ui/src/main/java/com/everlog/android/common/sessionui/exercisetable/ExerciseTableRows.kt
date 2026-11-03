@@ -2,15 +2,16 @@ package com.everlog.android.common.sessionui.exercisetable
 
 import com.everlog.android.common.data.model.exercise.ELExercise
 import com.everlog.android.common.kotlin.WeightUnit
+import com.everlog.android.common.kotlin.format.EmptyValue
+import com.everlog.android.common.kotlin.format.displayWeight
+import com.everlog.android.common.kotlin.format.formatClock
+import com.everlog.android.common.kotlin.format.formatWeight
+import com.everlog.android.common.navigation.ExerciseTab
 import com.everlog.android.common.session.SetMode
 import com.everlog.android.common.session.SetRef
 import com.everlog.android.common.session.ValueField
 import com.everlog.android.common.session.WorkoutBlock
 import com.everlog.android.common.session.WorkoutSet
-import com.everlog.android.common.kotlin.format.EmptyValue
-import com.everlog.android.common.kotlin.format.displayWeight
-import com.everlog.android.common.kotlin.format.formatClock
-import com.everlog.android.common.kotlin.format.formatWeight
 import com.everlog.android.common.sessionui.exercisetable.lastTimeText
 
 /**
@@ -127,8 +128,3 @@ interface ExerciseTableActions {
     fun onDeleteExercise(blockId: Long) = Unit
 }
 
-// Which of an exercise's details opens
-enum class ExerciseTab {
-    Info,
-    History,
-}

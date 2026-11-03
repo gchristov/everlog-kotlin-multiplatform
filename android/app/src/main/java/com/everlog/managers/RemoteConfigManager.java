@@ -13,7 +13,7 @@ import com.everlog.android.common.mvp.MvpBroadcasts;
 import com.everlog.android.common.persistence.PreferencesManager;
 import com.everlog.config.AppUsageNotification;
 import com.everlog.config.FeedbackForms;
-import com.everlog.config.FeedbackSource;
+import com.everlog.android.common.navigation.FeedbackSource;
 import com.everlog.config.HomeNotification;
 import com.everlog.config.RemoteConfig;
 import com.everlog.managers.analytics.AnalyticsManager;

@@ -15,6 +15,7 @@ class AndroidFeaturePlugin : Plugin<Project> {
                 add("implementation", project(CommonModules.COMPOSE))
                 add("implementation", project(CommonModules.DESIGN))
                 add("implementation", project(CommonModules.MVVM))
+                add("implementation", project(CommonModules.NAVIGATION))
                 add("androidTestImplementation", project(CommonModules.COMPOSE_TEST))
             }
         }

@@ -76,14 +76,15 @@ import com.everlog.android.common.compose.elements.AppText
 import com.everlog.android.common.compose.elements.AppThumbnail
 import com.everlog.android.common.compose.theme.Theme
 import com.everlog.android.common.data.model.exercise.ELExercise
+import com.everlog.android.common.design.R as DesignR
 import com.everlog.android.common.kotlin.format.EmptyValue
 import com.everlog.android.common.kotlin.format.setTypeTitle
+import com.everlog.android.common.navigation.ExerciseTab
 import com.everlog.android.common.session.SetMode
 import com.everlog.android.common.session.SetRef
 import com.everlog.android.common.session.ValueField
 import com.everlog.android.common.session.WorkoutBlock
 import com.everlog.android.common.sessionui.R
-import com.everlog.android.common.design.R as DesignR
 import kotlin.math.roundToInt
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch

@@ -6,7 +6,7 @@ import android.content.Intent
 import com.everlog.android.common.data.model.exercise.ELExercise
 import com.everlog.android.common.data.model.exercise.ELExerciseGroup
 import com.everlog.android.common.data.model.workout.ELWorkout
-import com.everlog.android.common.sessionui.exercisetable.ExerciseTab
+import com.everlog.android.common.navigation.ExerciseTab
 
 // The other screens the workout screens open, through the app's Navigator, and what they hand back
 interface WorkoutNavigation {
