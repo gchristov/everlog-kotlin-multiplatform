@@ -1,5 +1,6 @@
 package com.everlog.android.workout.log
 
+import com.everlog.android.common.data.model.exercise.ELExercise
 import com.everlog.android.common.data.model.exercise.ELExerciseGroup
 import com.everlog.android.common.data.model.workout.ELWorkout
 import com.everlog.android.common.data.model.workout.ELWorkoutState
@@ -510,27 +511,37 @@ internal class WorkoutLogViewModel(
     private fun loadHistory(blocks: List<WorkoutBlock>, fill: Boolean) {
         val exercises = blocks.flatMap { block -> block.exercises.mapNotNull { it.exercise } }.distinctBy { it.uuid }
         if (exercises.isEmpty()) return
+        val loading = exercises.mapNotNull { it.uuid }.toSet()
+        setState { copy(historyLoading = historyLoading + loading) }
         launchCoroutine {
-            loadPrefillSources(exercises).fold(
-                // Without history (offline before it ever synced) the sets keep their values
-                { Timber.tag(TAG).w("Couldn't load history to fill in from: %s", it.message) },
-                { found ->
-                    sources = sources + found
-                    setState {
-                        copy(
-                            lastTime = lastTime + found.mapValues { (_, source) -> source.lastSets() },
-                            oneRepMaxes = oneRepMaxes + found.mapValues { (_, source) -> source.orm },
-                        )
-                    }
-                    if (fill && prefill.fillsSets()) {
-                        val before = blocks.associateBy { it.id }
-                        change {
-                            copy(blocks = this.blocks.map { block -> before[block.id]?.let { block.filledFromHistory(it, sources, prefill) } ?: block })
-                        }
-                    }
-                },
-            )
+            try {
+                fillFromHistory(blocks, exercises, fill)
+            } finally {
+                setState { copy(historyLoading = historyLoading - loading) }
+            }
         }
+    }
+
+    private suspend fun fillFromHistory(blocks: List<WorkoutBlock>, exercises: List<ELExercise>, fill: Boolean) {
+        loadPrefillSources(exercises).fold(
+            // Without history (offline before it ever synced) the sets keep their values
+            { Timber.tag(TAG).w("Couldn't load history to fill in from: %s", it.message) },
+            { found ->
+                sources = sources + found
+                setState {
+                    copy(
+                        lastTime = lastTime + found.mapValues { (_, source) -> source.lastSets() },
+                        oneRepMaxes = oneRepMaxes + found.mapValues { (_, source) -> source.orm },
+                    )
+                }
+                if (fill && prefill.fillsSets()) {
+                    val before = blocks.associateBy { it.id }
+                    change {
+                        copy(blocks = this.blocks.map { block -> before[block.id]?.let { block.filledFromHistory(it, sources, prefill) } ?: block })
+                    }
+                }
+            },
+        )
     }
 
     // Set suggestions changed while the screen was away, e.g. from the keypad note's Change

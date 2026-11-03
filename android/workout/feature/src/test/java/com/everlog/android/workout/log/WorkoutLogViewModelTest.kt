@@ -1122,6 +1122,44 @@ class WorkoutLogViewModelTest {
     }
 
     @Test
+    fun `an exercise's last time shows as loading until its history arrives`() {
+        prefill.lastWeightKg = 60f
+        val loading = CompletableDeferred<Unit>()
+        prefill.loading = loading
+        val viewModel = viewModel()
+
+        assertThat(viewModel.state.value.historyLoading).containsExactly("bench", "fly", "raise")
+
+        loading.complete(Unit)
+
+        assertThat(viewModel.state.value.historyLoading).isEmpty()
+        assertThat(viewModel.state.value.lastTime).containsKey("bench")
+    }
+
+    @Test
+    fun `history that can't load stops showing as loading`() {
+        prefill.fails = true
+        val viewModel = viewModel()
+
+        assertThat(viewModel.state.value.historyLoading).isEmpty()
+        assertThat(viewModel.state.value.lastTime).isEmpty()
+    }
+
+    @Test
+    fun `only a picked exercise's last time shows as loading while its history loads`() {
+        prefill.lastWeightKg = 60f
+        val viewModel = viewModel()
+        val loading = CompletableDeferred<Unit>()
+        prefill.loading = loading
+
+        viewModel.onExercisesPicked(listOf(group("SINGLE", "squat" to 5, sets = 1)))
+
+        assertThat(viewModel.state.value.historyLoading).containsExactly("squat")
+        loading.complete(Unit)
+        assertThat(viewModel.state.value.historyLoading).isEmpty()
+    }
+
+    @Test
     fun `a set changed while history loads keeps its values, the others are filled in`() {
         prefill.lastWeightKg = 60f
         val loading = CompletableDeferred<Unit>()

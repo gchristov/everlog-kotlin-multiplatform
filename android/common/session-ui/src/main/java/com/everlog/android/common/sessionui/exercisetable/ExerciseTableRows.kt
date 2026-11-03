@@ -31,6 +31,8 @@ data class TableView(
     val armed: SetRef? = null,
     val startsTimer: (SetRef) -> Boolean = { false },
     val lastTime: Map<String, List<WorkoutSet>> = emptyMap(),
+    // Exercises whose last time is still on its way, by uuid
+    val lastTimeLoading: Set<String> = emptySet(),
 )
 
 data class Countdown(val ref: SetRef, val seconds: Int)
@@ -51,6 +53,7 @@ data class SetRow(
     val startsRound: Boolean,
     val number: String?,
     val lastTime: String?,
+    val lastTimeLoading: Boolean,
     val countField: ValueField,
     val countText: String,
     val weightText: String,
@@ -75,6 +78,7 @@ fun WorkoutBlock.rows(view: TableView): List<SetRow> = rounds.flatMapIndexed { r
         val countdown = view.timing?.takeIf { it.ref == ref }
         val countField = countField(set)
         val weightFocused = view.focus == CellFocus(ref, ValueField.Weight)
+        val uuid = exercises[i].exercise?.uuid
         SetRow(
             ref = ref,
             round = r,
@@ -82,7 +86,8 @@ fun WorkoutBlock.rows(view: TableView): List<SetRow> = rounds.flatMapIndexed { r
             startsRound = i == firstShown,
             // A superset's rows are 1a, 1b, 1c
             number = if (round.sets.size > 1) "${r + 1}${'a' + i}" else if (i == firstShown) "${r + 1}" else null,
-            lastTime = view.lastTime[exercises[i].exercise?.uuid]?.getOrNull(r)?.let { lastTimeText(it, view.unit, view.unitLabel) },
+            lastTime = view.lastTime[uuid]?.getOrNull(r)?.let { lastTimeText(it, view.unit, view.unitLabel) },
+            lastTimeLoading = uuid in view.lastTimeLoading,
             countField = countField,
             countText = countdown?.let { formatClock(it.seconds.toLong()) } ?: cellText(set, countField, ref, view),
             weightText = cellText(set, ValueField.Weight, ref, view),

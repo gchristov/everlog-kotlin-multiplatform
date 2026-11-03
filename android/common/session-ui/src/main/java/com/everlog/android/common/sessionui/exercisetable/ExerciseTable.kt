@@ -38,6 +38,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.SideEffect
+import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableStateOf
@@ -50,6 +51,7 @@ import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.HorizontalAlignmentLine
@@ -74,6 +76,7 @@ import com.everlog.android.common.compose.elements.AppOverflowMenu
 import com.everlog.android.common.compose.elements.AppTertiaryButton
 import com.everlog.android.common.compose.elements.AppText
 import com.everlog.android.common.compose.elements.AppThumbnail
+import com.everlog.android.common.compose.elements.rememberShimmerBrush
 import com.everlog.android.common.compose.theme.Theme
 import com.everlog.android.common.data.model.exercise.ELExercise
 import com.everlog.android.common.design.R as DesignR
@@ -105,6 +108,10 @@ private object TableSizes {
     val ColumnGap = 8.dp
     val FocusOutline = 1.5.dp
     val CheckIcon = 18.dp
+    // A caption's line, as long as a typical last time
+    val LoadingWidth = 56.dp
+    val LoadingHeight = 10.dp
+    val LoadingCorner = 6.dp
     const val KeypadOpenMillis = 350L
 }
 
@@ -149,7 +156,14 @@ fun ExerciseTable(
         }
     }
     val openSwipe = remember { mutableStateOf<SetRef?>(null) }
-    CompositionLocalProvider(LocalEnsureVisible provides ensureVisible, LocalReveal provides reveal, LocalOpenSwipe provides openSwipe) {
+    // One brush, so every loading last time sweeps together, and only while one is
+    val shimmer = if (view.lastTimeLoading.isNotEmpty()) rememberShimmerBrush() else null
+    CompositionLocalProvider(
+        LocalEnsureVisible provides ensureVisible,
+        LocalReveal provides reveal,
+        LocalOpenSwipe provides openSwipe,
+        LocalShimmer provides shimmer,
+    ) {
         LazyColumn(
             modifier = Modifier
                 .fillMaxSize()
@@ -184,6 +198,9 @@ private val LocalReveal = staticCompositionLocalOf { 0 }
 
 // The set whose Delete is showing: one at a time, so opening another closes it
 private val LocalOpenSwipe = staticCompositionLocalOf { mutableStateOf<SetRef?>(null) }
+
+// Changes every frame while it sweeps, so only the placeholders reading it redraw
+private val LocalShimmer = compositionLocalOf<Brush?> { null }
 
 @Composable
 private fun BlockTable(
@@ -421,12 +438,23 @@ private fun TableRow(tag: String, row: SetRow, actions: ExerciseTableActions) {
                 .fillMaxHeight(),
             contentAlignment = Alignment.CenterStart,
         ) {
-            AppText(
-                text = row.lastTime ?: EmptyValue,
-                style = Theme.typography.caption.copy(fontFeatureSettings = "tnum"),
-                color = Theme.contentColors.secondary,
-                maxLines = 1,
-            )
+            val shimmer = LocalShimmer.current
+            if (row.lastTimeLoading && row.lastTime == null && shimmer != null) {
+                Box(
+                    modifier = Modifier
+                        .size(TableSizes.LoadingWidth, TableSizes.LoadingHeight)
+                        .clip(RoundedCornerShape(TableSizes.LoadingCorner))
+                        .background(shimmer)
+                        .testTag(ExerciseTableTags.lastTimeLoading(tag)),
+                )
+            } else {
+                AppText(
+                    text = row.lastTime ?: EmptyValue,
+                    style = Theme.typography.caption.copy(fontFeatureSettings = "tnum"),
+                    color = Theme.contentColors.secondary,
+                    maxLines = 1,
+                )
+            }
         }
         // Reps (or time) first, then weight, as last time reads: 15 × 17 kg
         Cell(
@@ -627,6 +655,8 @@ object ExerciseTableTags {
     fun count(set: String) = "$set:count"
 
     fun weight(set: String) = "$set:weight"
+
+    fun lastTimeLoading(set: String) = "$set:last_time_loading"
 
     fun tick(set: String) = "$set:tick"
 }

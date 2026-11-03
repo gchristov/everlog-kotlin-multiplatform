@@ -70,6 +70,7 @@ import com.everlog.android.workout.log.WorkoutLogTags
 import com.everlog.android.workout.log.WorkoutLogViewModel
 import com.google.common.truth.Truth.assertThat
 import java.util.concurrent.TimeUnit
+import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableSharedFlow
 import org.junit.After
@@ -109,6 +110,7 @@ class WorkoutLogScenarioTest {
     private var setSuggestionsOpened = 0
     private val settings = FakeUserSettings(unit = WeightUnit.POUND, weightStep = 5f, screenOn = false)
     private val ownUpdates = MutableSharedFlow<List<LibraryExercise>>(extraBufferCapacity = 1)
+    private val history = BenchHistory()
     private val now = 1_800_000_000_000L
 
     @Before
@@ -125,6 +127,8 @@ class WorkoutLogScenarioTest {
 
     @Test
     fun aWorkoutFromStartToFinish() {
+        val loading = CompletableDeferred<Unit>()
+        history.held = loading
         val template = template()
         var viewModel by mutableStateOf(viewModel(template))
         compose.setContent {
@@ -139,6 +143,12 @@ class WorkoutLogScenarioTest {
                 )
             }
         }
+
+        // The history is still loading: each set's last time shimmers, until it arrives
+        compose.onNodeWithTag(ExerciseTableTags.lastTimeLoading(ExerciseTableTags.set(0, 0, 0)), useUnmergedTree = true).assertExists()
+        loading.complete(Unit)
+        compose.waitForIdle()
+        compose.onNodeWithTag(ExerciseTableTags.lastTimeLoading(ExerciseTableTags.set(0, 0, 0)), useUnmergedTree = true).assertDoesNotExist()
 
         // Bench press was last done at 8 × 100 lb: its reps and weights are filled in from that, as suggestions, and
         // its last time shows beside each set
@@ -487,7 +497,7 @@ class WorkoutLogScenarioTest {
                 override fun timerRanOut() = Unit
             },
             notification = notification,
-            loadPrefillSources = BenchHistory,
+            loadPrefillSources = history,
             prefill = RealWorkoutSetPrefill(settings),
             ownExerciseUpdates = { ownUpdates },
             clock = { now },
@@ -598,8 +608,12 @@ class WorkoutLogScenarioTest {
      * The user's history: bench press last done at 8 × 100 lb for two sets. Sets are filled in from it by the old
      * screen's prefill, as on the device.
      */
-    private object BenchHistory : LoadPrefillSourcesUseCase {
+    private class BenchHistory : LoadPrefillSourcesUseCase {
+        // History arrives once this completes, if set
+        var held: CompletableDeferred<Unit>? = null
+
         override suspend fun invoke(exercises: List<ELExercise>): Either<Throwable, Map<String, PrefillSource>> {
+            held?.await()
             val bench = exercises.firstOrNull { it.uuid == "Bench press" } ?: return emptyMap<String, PrefillSource>().right()
             val sets = MutableList(2) { ELSet(reps = 8, weight = UnitUtils.lbToKg(100f)) }
             val last = ELExerciseHistory(ELRoutineExercise(bench.uuid, bench, sets), ELWorkout())

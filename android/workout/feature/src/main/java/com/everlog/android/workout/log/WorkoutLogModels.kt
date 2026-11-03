@@ -45,6 +45,8 @@ internal data class WorkoutLogState(
     val message: WorkoutLogMessage? = null,
     // Each exercise's last session's sets, by its uuid
     val lastTime: Map<String, List<WorkoutSet>> = emptyMap(),
+    // The exercises whose history is still loading, by uuid
+    val historyLoading: Set<String> = emptySet(),
     // Each exercise's estimated 1RM in the user's unit, by its uuid; 0 without recent sets to estimate it from
     val oneRepMaxes: Map<String, Float> = emptyMap(),
     val editing: Boolean = false,
