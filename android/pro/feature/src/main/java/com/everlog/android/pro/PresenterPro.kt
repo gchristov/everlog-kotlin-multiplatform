@@ -1,6 +1,5 @@
 package com.everlog.android.pro
 
-import com.everlog.android.common.design.R as DesignR
 import android.content.Intent
 import androidx.recyclerview.widget.RecyclerView
 import com.ahamed.multiviewadapter.DataListManager
@@ -9,15 +8,20 @@ import com.android.billingclient.api.BillingClient
 import com.android.billingclient.api.BillingResult
 import com.android.billingclient.api.Purchase
 import com.android.billingclient.api.SkuDetails
+import com.everlog.android.common.design.R as DesignR
 import com.everlog.android.common.mvp.MvpBroadcasts
-import com.everlog.android.pro.data.model.ELProSkuDetails
 import com.everlog.android.common.mvp.activity.BaseActivityPresenter
 import com.everlog.android.pro.ProUpgradeAdapter
 import com.everlog.android.pro.R
 import com.everlog.android.pro.billing.BillingManager
+import com.everlog.android.pro.data.model.ELProSkuDetails
 import timber.log.Timber
 
-class PresenterPro : BaseActivityPresenter<MvpViewPro>() {
+class PresenterPro(
+    private val proPurchases: ProPurchases,
+    private val analytics: ProAnalytics,
+    private val navigation: ProNavigation,
+) : BaseActivityPresenter<MvpViewPro>() {
 
     private val TAG = "PresenterPro"
 
@@ -77,7 +81,7 @@ class PresenterPro : BaseActivityPresenter<MvpViewPro>() {
         subscriptions.add(BillingManager.manager.onPurchaseCancelled()
                 .compose(applyUISchedulers())
                 .subscribe({
-                    ProFeature.dependencies.proAnalytics().cancelled()
+                    analytics.cancelled()
                 }, { throwable -> handleError(throwable) }))
     }
 
@@ -93,7 +97,7 @@ class PresenterPro : BaseActivityPresenter<MvpViewPro>() {
         subscriptions.add(mvpView.onClickSubMonth()
                 .compose(applyUISchedulers())
                 .subscribe({sku ->
-                    ProFeature.dependencies.proAnalytics().buyMonth()
+                    analytics.buyMonth()
                     handleStartPurchaseFlow(sku)
                 }, { throwable -> handleError(throwable) }))
     }
@@ -102,7 +106,7 @@ class PresenterPro : BaseActivityPresenter<MvpViewPro>() {
         subscriptions.add(mvpView.onClickSubYear()
                 .compose(applyUISchedulers())
                 .subscribe({sku ->
-                    ProFeature.dependencies.proAnalytics().buyYear()
+                    analytics.buyYear()
                     handleStartPurchaseFlow(sku)
                 }, { throwable -> handleError(throwable) }))
     }
@@ -119,7 +123,7 @@ class PresenterPro : BaseActivityPresenter<MvpViewPro>() {
         subscriptions.add(mvpView.onClickTerms()
                 .compose(applyUISchedulers())
                 .subscribe({
-                    ProFeature.dependencies.openTerms(mvpView.context, mvpView.context.getString(DesignR.string.login_terms))
+                    navigation.openTerms(mvpView.context, mvpView.context.getString(DesignR.string.login_terms))
                 }, { throwable -> handleError(throwable) }))
     }
 
@@ -127,7 +131,7 @@ class PresenterPro : BaseActivityPresenter<MvpViewPro>() {
         subscriptions.add(mvpView.onClickPrivacy()
                 .compose(applyUISchedulers())
                 .subscribe({
-                    ProFeature.dependencies.openPrivacyPolicy(mvpView.context, mvpView.context.getString(DesignR.string.login_terms_privacy))
+                    navigation.openPrivacyPolicy(mvpView.context, mvpView.context.getString(DesignR.string.login_terms_privacy))
                 }, { throwable -> handleError(throwable) }))
     }
 
@@ -192,13 +196,13 @@ class PresenterPro : BaseActivityPresenter<MvpViewPro>() {
     // Handlers
 
     private fun handleRestoreMembership() {
-        ProFeature.dependencies.proAnalytics().restore()
+        analytics.restore()
         mvpView.toggleLoadingOverlay(true)
-        ProFeature.dependencies.restorePurchases(object : BillingManager.OnPurchasesRestoredListener() {
+        proPurchases.restorePurchases(object : BillingManager.OnPurchasesRestoredListener() {
             override fun onPurchasesRestored() {
                 if (isAttachedToView) {
                     mvpView?.toggleLoadingOverlay(false)
-                    if (ProFeature.dependencies.isUserPro()) {
+                    if (proPurchases.isUserPro()) {
                         mvpView?.showLongToast(R.string.pro_restore_success)
                         mvpView?.closeScreen()
                     } else {
@@ -248,7 +252,7 @@ class PresenterPro : BaseActivityPresenter<MvpViewPro>() {
 
     private fun handlePurchaseAlreadyOwned() {
         if (isAttachedToView) {
-            ProFeature.dependencies.proAnalytics().alreadyOwned()
+            analytics.alreadyOwned()
             sendBroadcast(Intent(MvpBroadcasts.PRO_CHANGED))
             mvpView.closeScreen()
         }
@@ -256,14 +260,14 @@ class PresenterPro : BaseActivityPresenter<MvpViewPro>() {
 
     private fun handlePurchasesCompleted(purchases: List<Purchase>) {
         if (isAttachedToView) {
-            ProFeature.dependencies.proAnalytics().purchased()
-            ProFeature.dependencies.processPurchaseCompleted(purchases, mSelectedSku)
+            analytics.purchased()
+            proPurchases.processPurchaseCompleted(purchases, mSelectedSku)
             if (mSelectedSku != null) {
                 purchases.forEach {
 //                    Qonversion.instance?.purchase(mSelectedSku!!.skuDetails, it)
                 }
             }
-            ProFeature.dependencies.openCongratulate(mvpView.context)
+            navigation.openCongratulate(mvpView.context)
             mvpView?.closeScreen()
         }
     }

@@ -64,13 +64,11 @@ The convention plugins enforce these: a module that declares a dependency breaki
 
 ## What a feature gets from the app
 
-A feature module can't see the app, but some of what it needs lives there: services built on the app's managers (analytics, remote config) and other features' screens, which open through the app's `Navigator`. Features not on the dependency graph yet (see below) declare one interface for them, e.g. `ProFeatureDependencies` in `pro:feature`, and a holder for it (`ProFeature.dependencies`). The app implements it (`application/features`) and registers it first thing in `ELApplication.onCreate`. The feature's activities read it and hand its parts to their view-models' own interfaces, so view-model tests still pass fakes.
+A feature module can't see the app, but some of what it needs lives there: services built on the app's managers (analytics, remote config, auth, billing) and other features' screens, which open through the app's `Navigator`. Each feature declares them as small interfaces by role, e.g. `ExerciseNavigation`, `ExerciseConfig` and `ExerciseAnalytics`, which app classes implement and bind into the dependency graph (see below). The feature's activities read them from the graph and hand them to their presenters and view-models, so tests still pass fakes.
 
-`common:mvp` does the same for what its bases need (screen views and the signed-in user check), with `CommonMvpDependencies`.
+Services the app shares, like the user's settings, are an interface with a `Real…` implementation and a `Fake…` in the feature's `test-fixtures` (`UserSettings`, `RealUserSettings`, `FakeUserSettings`; `UserSession` for the signed-in user). The graph creates one instance of each. Code that only needs a value, like an adapter showing weights, takes the value; one that lives on while the setting changes, like a Home tab, takes the interface and reads it when it draws.
 
-Services the app shares, like the user's settings, are an interface with a `Real…` implementation and a `Fake…` in the feature's `test-fixtures` (`UserSettings`, `RealUserSettings`, `FakeUserSettings`; `UserSession` for the signed-in user). The app's graph creates one instance of each and the app hands it to the features through their dependencies, rather than each class reaching for a singleton. The `…Stores` objects can't take them in a constructor, so the app sets their `session` at startup until the graph builds the stores. Code that only needs a value, like an adapter showing weights, takes the value; one that lives on while the setting changes, like a Home tab, takes the interface and reads it when it draws.
-
-The holders stand in for dependency injection until Metro reaches each feature. Each interface is shaped like constructor injection, a list of what the feature needs, so moving a feature onto the graph only replaces how the app registers it.
+`common:mvp` and `common:data` still get what their bases need (screen views, the signed-in user check, Test Lab runs) through holders the app registers in `ELApplication.onCreate`, `CommonMvpDependencies` and `CommonDataDependencies`, and the `…Stores` objects get the session the same way, until the graph builds them.
 
 ## Dependency injection
 
@@ -81,12 +79,12 @@ The holders stand in for dependency injection until Metro reaches each feature. 
 - **Metro only reads Kotlin**: a Java class gets into the graph through a Kotlin `@Provides` function, or by moving it to Kotlin.
 - **Activities and presenters** can't take constructor parameters (constructor injection for activities needs API 28, and the app supports 24), so they get what they need from the graph.
 
-- **A feature on the graph** (every feature but pro so far) works like this, which the others follow as they move:
+- **Every feature** works like this:
   - Its data classes are `@Inject` in their `data` module and contribute their bindings, e.g. `RealExerciseRepository` and the library and guide use cases. They take dispatchers by qualifier (`@IoDispatcher`, `@DefaultDispatcher`, from `common:kotlin`'s `di` package).
   - What only the app can do is a small interface in the feature, bound by an app class: `ExerciseNavigation` (`AppExerciseNavigation`), `ExerciseConfig` (Remote Config), the analytics interfaces.
   - The feature declares what its screens use in one `@ContributesTo(AppScope::class)` interface, `ExerciseGraph`, which the app's graph takes on. Activities and fragments read it with `appGraph<ExerciseGraph>()` (from Java, `appGraph(context, ExerciseGraph.class)`), through the application (`GraphOwner`), and hand presenters their parts in the constructor.
   - `AppBindings` gives the graph what comes from outside it: `DataSync`, the app's settings like how many months of workouts to sync (`@WorkoutSyncMonths`), and the old workouts store. A data module provides its own store the same way, e.g. `TemplateStoreBindings`. The graph takes the application `Context` in its factory.
-- **Next** (TAS-474): the other features, one per PR, then the stores, which still come from the `…Stores` objects.
+- **Next** (TAS-474): the `common:mvp` and `common:data` holders, then the stores, which still come from the `…Stores` objects.
 
 ## What stays in the app
 
