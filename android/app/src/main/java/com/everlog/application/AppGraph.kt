@@ -3,6 +3,7 @@ package com.everlog.application
 import android.content.Context
 import com.everlog.android.auth.data.UserSession
 import com.everlog.android.exercise.data.ExerciseImageStorage
+import com.everlog.android.exercise.data.ExerciseLookup
 import com.everlog.android.plan.data.PlanProgress
 import com.everlog.android.settings.data.RealUserSettings
 import com.everlog.android.settings.data.UserSettings
@@ -23,6 +24,8 @@ interface AppGraph {
     val planProgress: PlanProgress
 
     val exerciseImageStorage: ExerciseImageStorage
+
+    val exerciseLookup: ExerciseLookup
 
     @DependencyGraph.Factory
     fun interface Factory {

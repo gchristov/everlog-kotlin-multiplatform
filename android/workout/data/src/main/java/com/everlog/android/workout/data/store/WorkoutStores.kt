@@ -18,12 +18,18 @@ object WorkoutStores {
     @JvmStatic
     @Synchronized
     fun workoutsStore(): CollectionStore<ELWorkout> =
-        workouts ?: (if (inMemory()) ELUserWorkoutsInMemoryStore(session) else ELUserWorkoutsStore(session)).also { workouts = it }
+        workouts ?: (if (inMemory()) ELUserWorkoutsInMemoryStore() else ELUserWorkoutsStore(session)).also { workouts = it }
 
     @JvmStatic
     @Synchronized
     fun workoutStore(): DocumentStore<ELWorkout> =
-        workout ?: (if (inMemory()) ELUserWorkoutInMemoryStore(session) else ELUserWorkoutStore(session)).also { workout = it }
+        workout ?: (if (inMemory()) ELUserWorkoutInMemoryStore() else ELUserWorkoutStore(session)).also { workout = it }
+
+    // The list it holds shows its exercises as they are now, e.g. once they've loaded late
+    @Synchronized
+    fun redecorate() {
+        workouts?.redecorate()
+    }
 
     @JvmStatic
     @Synchronized
