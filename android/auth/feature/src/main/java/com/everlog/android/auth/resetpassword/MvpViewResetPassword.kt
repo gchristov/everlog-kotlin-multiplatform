@@ -1,7 +1,7 @@
 package com.everlog.android.auth.resetpassword
 
-import com.everlog.android.common.mvp.activity.BaseActivityMvpView
 import com.everlog.android.auth.login.LoginActivity
+import com.everlog.android.common.mvp.activity.BaseActivityMvpView
 import rx.Observable
 
 interface MvpViewResetPassword : BaseActivityMvpView {

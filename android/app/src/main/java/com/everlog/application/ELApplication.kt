@@ -1,7 +1,6 @@
 package com.everlog.application
 
 import android.app.Application
-import com.everlog.android.auth.AuthFeature
 import com.everlog.android.auth.data.store.AuthStores
 import com.everlog.android.common.data.CommonData
 import com.everlog.android.common.kotlin.AppContext
@@ -14,7 +13,6 @@ import com.everlog.android.pro.ProFeature
 import com.everlog.android.settings.data.store.SettingsStores
 import com.everlog.android.template.data.store.TemplateStores
 import com.everlog.android.workout.data.store.WorkoutStores
-import com.everlog.application.features.AppAuthFeatureDependencies
 import com.everlog.application.features.AppCommonDataDependencies
 import com.everlog.application.features.AppCommonMvpDependencies
 import com.everlog.application.features.AppOnboardingFeatureDependencies
@@ -48,7 +46,6 @@ class ELApplication : Application(), GraphOwner {
         SettingsStores.session = graph.userSession
         CommonMvp.dependencies = AppCommonMvpDependencies()
         ProFeature.dependencies = AppProFeatureDependencies()
-        AuthFeature.dependencies = AppAuthFeatureDependencies()
         OnboardingFeature.dependencies = AppOnboardingFeatureDependencies()
         AndroidThreeTen.init(this)
         AppConfig.configuration.configureApp()
