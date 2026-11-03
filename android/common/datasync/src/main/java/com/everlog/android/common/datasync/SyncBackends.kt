@@ -19,6 +19,12 @@ interface CollectionBackend<T> {
     // The same, with how many documents that is, parsed or not
     fun cachedDocuments(since: Long?, limit: Int? = null): Flow<CachedDocuments<T>>
 
+    /**
+     * What's cached from [from] until before [until] by the plan's date field, once, in no particular order.
+     * Unlike a listener, it keeps nothing once read, so a long history can be gone through a part at a time.
+     */
+    suspend fun cachedBetween(from: Long, until: Long?): List<T>
+
     // The whole collection from the server into the cache. Returns how many documents it read.
     suspend fun fetchAll(): Int
 

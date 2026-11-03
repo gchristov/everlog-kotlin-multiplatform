@@ -61,6 +61,14 @@ class FakeCollectionBackend(server: List<Doc> = emptyList(), cached: List<Doc> =
             CachedDocuments(shown.take(limit ?: Int.MAX_VALUE), documents = shown.size)
         }
 
+    // Each cachedBetween, as from and until
+    val cacheReads: MutableList<Pair<Long, Long?>> = CopyOnWriteArrayList()
+
+    override suspend fun cachedBetween(from: Long, until: Long?): List<Doc> {
+        cacheReads += from to until
+        return cache.value.filter { it.date >= from && (until == null || it.date < until) }
+    }
+
     override suspend fun fetchPage(after: Int, size: Int): Int {
         serverCall("page:$after")
         val last = cache.value.sortedByDescending { it.date }.take(after).lastOrNull()

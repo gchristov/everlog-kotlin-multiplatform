@@ -21,6 +21,7 @@ import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.tasks.await
+import kotlinx.coroutines.withContext
 import timber.log.Timber
 
 /**
@@ -55,6 +56,13 @@ class FirestoreCollection<T : Any>(
                 CachedDocuments(if (limit == null) shown else shown.take(limit), documents = snapshot.size())
             })
         }.flowOn(dispatcher)
+    }
+
+    // Firestore's cache reads every document of the collection for a query, but keeps only the ones its filters match
+    override suspend fun cachedBetween(from: Long, until: Long?): List<T> {
+        val since = documents.whereGreaterThanOrEqualTo(requireDateField(), from)
+        val snapshot = (if (until == null) since else since.whereLessThan(requireDateField(), until)).get(Source.CACHE).await()
+        return withContext(dispatcher) { snapshot.documents.mapNotNull { it.parseOrNull(parse) } }
     }
 
     override suspend fun fetchAll(): Int = documents.get(Source.SERVER).await().size()

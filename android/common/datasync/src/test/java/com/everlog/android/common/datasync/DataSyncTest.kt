@@ -4,8 +4,11 @@ import com.everlog.android.common.kotlin.Load
 import com.google.common.truth.Truth.assertThat
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.async
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
@@ -422,6 +425,92 @@ class DataSyncTest {
         assertThat(dataSync.status.value["user/workouts"]?.lastFailure).isNull()
     }
 
+    // Reading a part of the history once
+
+    @Test
+    fun `a read within the window waits for its first sync, then reads that part of the cache once`() {
+        val backend = FakeCollectionBackend(server = listOf(bench, squat, deadlift), cached = listOf(bench)).holdingServer()
+        val read = readers.async { dataSync.read(recent(backend), now - 5 * day, null) }
+
+        assertThat(read.isCompleted).isFalse()
+
+        backend.gate!!.complete(Unit)
+
+        assertThat(backend.calls).containsExactly("since")
+        assertThat(read.docs()).containsExactly(bench)
+        assertThat(backend.cacheReads).containsExactly(now - 5 * day to null)
+    }
+
+    @Test
+    fun `a read further back than the window waits for the full history the first time`() {
+        val backend = FakeCollectionBackend(server = listOf(bench, squat, deadlift, press, row), cached = listOf(bench)).holdingServer()
+        val read = readers.async { dataSync.read(recent(backend), now - 450 * day, now - 100 * day) }
+
+        assertThat(read.isCompleted).isFalse()
+
+        backend.gate!!.complete(Unit)
+
+        assertThat(backend.calls).containsExactly("chunk:null", "chunk:deadlift", "chunk:row").inOrder()
+        assertThat(read.docs()).containsExactly(deadlift, press)
+        assertThat(records.fullHistorySynced["user/workouts"]).isEqualTo(now)
+    }
+
+    @Test
+    fun `a read of a synced part of the history reads the cache without waiting`() {
+        synced("user/workouts", fullHistory = true, at = now - TimeUnit.HOURS.toMillis(2))
+        val backend = FakeCollectionBackend(server = listOf(bench, press), cached = listOf(bench, press)).holdingServer()
+
+        val read = readers.async { dataSync.read(recent(backend), now - 450 * day, now - 100 * day) }
+
+        assertThat(read.docs()).containsExactly(press)
+    }
+
+    @Test
+    fun `a week after the full history, a read further back syncs it again, reading the cache meanwhile`() {
+        synced("user/workouts", fullHistory = true, at = now - TimeUnit.DAYS.toMillis(7))
+        val backend = FakeCollectionBackend(server = listOf(bench, press), cached = listOf(bench, press)).holdingServer()
+
+        val read = readers.async { dataSync.read(recent(backend), now - 450 * day, now - 100 * day) }
+
+        assertThat(read.docs()).containsExactly(press)
+        backend.gate!!.complete(Unit)
+        assertThat(backend.calls).containsExactly("chunk:null", "chunk:press").inOrder()
+    }
+
+    @Test
+    fun `a read shares the full history sync of a reader asking for it at the same time`() {
+        val backend = FakeCollectionBackend(server = listOf(bench, deadlift, press)).holdingServer()
+        val overview = read(dataSync.observe(recent(backend), Range.All))
+        val read = readers.async { dataSync.read(recent(backend), now - 450 * day, null) }
+
+        backend.gate!!.complete(Unit)
+
+        assertThat(backend.calls).containsExactly("chunk:null", "chunk:deadlift").inOrder()
+        assertThat(read.docs()).containsExactly(bench, deadlift, press)
+        assertThat(overview.last()).isEqualTo(Load.Ready(listOf(bench, deadlift, press)))
+    }
+
+    @Test
+    fun `a read that can't sync the part it needs is unavailable`() {
+        val backend = FakeCollectionBackend(server = listOf(bench, press), cached = listOf(bench)).apply { fail = { IllegalStateException("offline") } }
+
+        val read = readers.async { dataSync.read(recent(backend), now - 450 * day, null) }
+
+        assertThat((read.completed() as Load.Unavailable).error).hasMessageThat().isEqualTo("offline")
+        assertThat(backend.cacheReads).isEmpty()
+    }
+
+    @Test
+    fun `a read after a failed sync tries again rather than failing straight away`() {
+        val backend = FakeCollectionBackend(server = listOf(bench, press)).apply { fail = { IllegalStateException("offline") } }
+        readers.async { dataSync.read(recent(backend), now - 450 * day, null) }
+        backend.fail = { null }
+
+        val read = readers.async { dataSync.read(recent(backend), now - 450 * day, null) }
+
+        assertThat(read.docs()).containsExactly(bench, press)
+    }
+
     // Fetching documents by id
 
     @Test
@@ -646,6 +735,12 @@ class DataSyncTest {
         readers.launch { flow.collect { loads += it } }
         return loads
     }
+
+    @OptIn(ExperimentalCoroutinesApi::class)
+    private fun <T> Deferred<T>.completed(): T = getCompleted()
+
+    // What a one-off read found, in no particular order
+    private fun Deferred<Load<List<Doc>>>.docs(): List<Doc> = (completed() as Load.Ready).value
 
     private fun awaitUntil(condition: () -> Boolean) {
         val deadline = System.currentTimeMillis() + 2_000

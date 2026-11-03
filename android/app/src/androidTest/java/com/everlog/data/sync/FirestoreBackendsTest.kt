@@ -106,6 +106,25 @@ class FirestoreBackendsTest {
     }
 
     @Test
+    fun aReadOfAPartOfTheCacheHasOnlyThatPartAsTheLastSyncBroughtIt() = runBlocking<Unit> {
+        otherPhone.document("old").set(mapOf("date" to 1L)).await()
+        otherPhone.document("middle").set(mapOf("date" to 5L)).await()
+        otherPhone.document("new").set(mapOf("date" to 9L)).await()
+        // Followed meanwhile, as another screen would
+        val following = launch(Dispatchers.IO) { backend.cached(since = null).collect {} }
+        backend.fetchChunk(afterId = null, size = 10)
+
+        assertThat(backend.cachedBetween(from = 2, until = 9)).containsExactly(Entry("middle", 5))
+        assertThat(backend.cachedBetween(from = 5, until = null)).containsExactly(Entry("middle", 5), Entry("new", 9))
+
+        otherPhone.document("middle").set(mapOf("date" to 6L)).await()
+        backend.fetchChunk(afterId = null, size = 10)
+
+        assertThat(backend.cachedBetween(from = 2, until = 9)).containsExactly(Entry("middle", 6))
+        following.cancel()
+    }
+
+    @Test
     fun documentsFetchedByIdReachTheCacheWhileItIsFollowed() = runBlocking<Unit> {
         otherPhone.document("bench").set(mapOf("date" to 2L)).await()
         otherPhone.document("squat").set(mapOf("date" to 1L)).await()

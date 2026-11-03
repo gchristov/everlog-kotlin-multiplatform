@@ -6,7 +6,7 @@ screen.
 
 In use so far: the exercise library, the user's own exercises and the registry (`ExerciseRepository`: the
 exercise picker, the exercise detail's Info tab, the names of the user's own exercises on the workout screen), and workouts
-(`WorkoutRepository`: the workout screen's set suggestions, the picker's Recently done), and routines
+(`WorkoutRepository`: the workout screen's set suggestions, read back a window at a time, the picker's Recently done), and routines
 (`RoutineRepository.routine`, one document, through `LoadTemplateUseCase` for the template editor, and
 `exerciseTemplateCounts` for the picker's Most used). The other screens
 still read through the old stores, which share the same Firestore cache.
@@ -59,6 +59,13 @@ elsewhere, or went missing from the cache, so the full history syncs again. An o
 another phone keeps the count, so an all-time read also syncs the full history again once it's a week old
 (Remote Config `data_sync_full_history_max_age_days`, 7 by default, debug builds too), showing the cache
 meanwhile.
+
+A calculation that may need the whole history, but usually only its last months (e.g. each exercise's last
+session for the workout screen's suggestions), reads it once a part at a time with `read(source, from, until)`
+instead of following it all: a listener keeps every document it shows in memory, and a long history doesn't fit
+(about 70 MB for 2,000 workouts, on a 256 MB heap). It syncs and waits like `observe` does for the same range.
+Firestore's cache goes through every document of the collection for each read, but keeps only the ones the
+read's dates match, so read in a few large parts rather than many small ones.
 
 Long lists (the history) read in pages with `DataSync.pages(source, pageSize)`, newest first, for a
 `Recent` collection. Its cache listener grows a page at a time (`loadMore()`), so workouts added or
