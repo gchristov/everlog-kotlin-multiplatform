@@ -208,7 +208,7 @@ class SettingsHomeFragment : BaseTabFragment(), MvpViewSettingsHome {
     // Setup
 
     override fun setupPresenter() {
-        mPresenter = PresenterSettingsHome(graph.userSettings, graph.userSession, graph.settingsAnalytics, graph.settingsNavigation, graph.settingsConfig, graph.settingsAccount, graph.googleFitConnection)
+        mPresenter = PresenterSettingsHome(graph.userSettings, graph.userSession, graph.settingsAnalytics, graph.navigator, graph.settingsConfig, graph.settingsAccount, graph.googleFitConnection)
     }
 
     private fun setupButtons() {

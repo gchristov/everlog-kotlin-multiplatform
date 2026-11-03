@@ -14,6 +14,15 @@ import com.everlog.android.common.kotlin.WeightUnit
 import com.everlog.android.common.kotlin.format.ArrayResourceTypeUtils
 import com.everlog.android.common.mvp.MvpBroadcasts
 import com.everlog.android.common.mvp.fragment.BaseFragmentPresenter
+import com.everlog.android.common.navigation.DesignSystem
+import com.everlog.android.common.navigation.FeedbackForm
+import com.everlog.android.common.navigation.FeedbackSource
+import com.everlog.android.common.navigation.Login
+import com.everlog.android.common.navigation.Navigator
+import com.everlog.android.common.navigation.PlayStoreListing
+import com.everlog.android.common.navigation.ProBuyOrManage
+import com.everlog.android.common.navigation.SetSuggestions
+import com.everlog.android.common.navigation.ShareApp
 import com.everlog.android.settings.R
 import com.everlog.android.settings.data.UserSettings
 import com.everlog.android.settings.data.model.ELIntegration
@@ -32,7 +41,7 @@ class PresenterSettingsHome(
     private val settings: UserSettings,
     private val session: UserSession,
     private val analytics: SettingsAnalytics,
-    private val navigation: SettingsNavigation,
+    private val navigator: Navigator,
     private val config: SettingsConfig,
     private val account: SettingsAccount,
     private val googleFit: GoogleFitConnection,
@@ -117,7 +126,7 @@ class PresenterSettingsHome(
     private fun observeMuscleGoalClick() {
         subscriptions.add(mvpView.onClickMuscleGoal()
                 .compose(applyUISchedulers())
-                .subscribe({ context?.let(navigation::openSetSuggestions) }, { throwable -> handleError(throwable) }))
+                .subscribe({ context?.let { navigator.open(it, SetSuggestions) } }, { throwable -> handleError(throwable) }))
     }
 
     private fun observeWeightIncreaseClick() {
@@ -153,7 +162,7 @@ class PresenterSettingsHome(
     private fun observeGooglePlayClick() {
         subscriptions.add(mvpView.onClickGooglePlay()
                 .compose(applyUISchedulers())
-                .subscribe({ context?.let(navigation::openPlayStoreAppDetails) }, { throwable -> handleError(throwable) }))
+                .subscribe({ context?.let { navigator.open(it, PlayStoreListing) } }, { throwable -> handleError(throwable) }))
     }
 
     private fun observeLogoutClick() {
@@ -175,7 +184,7 @@ class PresenterSettingsHome(
     private fun observeFeedbackClick() {
         subscriptions.add(mvpView.onClickFeedback()
                 .compose(applyUISchedulers())
-                .subscribe({ context?.let(navigation::openSettingsFeedback) }, { throwable -> handleError(throwable) }))
+                .subscribe({ context?.let { navigator.open(it, FeedbackForm(FeedbackSource.SETTINGS)) } }, { throwable -> handleError(throwable) }))
     }
 
     private fun observeWeightUnitClick() {
@@ -210,19 +219,19 @@ class PresenterSettingsHome(
     private fun observeShareClick() {
         subscriptions.add(mvpView.onClickShare()
                 .compose(applyUISchedulers())
-                .subscribe({ context?.let(navigation::shareApp) }, { throwable -> handleError(throwable) }))
+                .subscribe({ context?.let { navigator.open(it, ShareApp) } }, { throwable -> handleError(throwable) }))
     }
 
     private fun observeManageProClick() {
         subscriptions.add(mvpView.onClickManagePro()
                 .compose(applyUISchedulers())
-                .subscribe({ context?.let(navigation::openProBuyOrManage) }, { throwable -> handleError(throwable) }))
+                .subscribe({ context?.let { navigator.open(it, ProBuyOrManage) } }, { throwable -> handleError(throwable) }))
     }
 
     private fun observeDesignSystemClick() {
         subscriptions.add(mvpView.onClickDesignSystem()
                 .compose(applyUISchedulers())
-                .subscribe({ context?.let(navigation::openDesignSystem) }, { throwable -> handleError(throwable) }))
+                .subscribe({ context?.let { navigator.open(it, DesignSystem) } }, { throwable -> handleError(throwable) }))
     }
 
     private fun observeManageIntegrationGoogleFitClick() {
@@ -253,7 +262,7 @@ class PresenterSettingsHome(
     private fun logout() {
         account.logout {
             if (isAttachedToView) {
-                context?.let(navigation::openLogin)
+                context?.let { navigator.open(it, Login) }
             }
         }
     }
@@ -278,7 +287,7 @@ class PresenterSettingsHome(
     }
 
     private fun showFeedback() {
-        mvpView?.showFeedback(navigation.hasSettingsFeedback())
+        mvpView?.showFeedback(navigator.canOpen(FeedbackForm(FeedbackSource.SETTINGS)))
     }
 
     private fun loadIntegrationsData() {
