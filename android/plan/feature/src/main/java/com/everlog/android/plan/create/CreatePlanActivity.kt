@@ -1,40 +1,43 @@
 package com.everlog.android.plan.create
 
-import com.everlog.android.plan.PlanFeature
 import android.content.Context
 import android.content.Intent
 import android.view.View
+import android.view.ViewGroup
 import android.widget.Button
 import android.widget.EditText
+import android.widget.FrameLayout
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.widget.Toolbar
 import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
-import androidx.core.view.updatePadding
 import androidx.core.view.updateLayoutParams
+import androidx.core.view.updatePadding
 import androidx.recyclerview.widget.LinearLayoutManager
-import android.view.ViewGroup
-import android.widget.FrameLayout
-import com.everlog.android.plan.R
-import com.everlog.android.plan.data.model.ELPlan
-import com.everlog.android.plan.databinding.ActivityPlanCreateBinding
+import com.everlog.android.common.design.R as DesignR
+import com.everlog.android.common.kotlin.di.appGraph
+import com.everlog.android.common.mvp.R as MvpR
 import com.everlog.android.common.mvp.activity.BaseActivity
 import com.everlog.android.common.mvp.activity.BaseActivityMvpView
 import com.everlog.android.common.mvp.activity.BaseActivityPresenter
-import com.everlog.android.plan.create.WarningNotificationView
 import com.everlog.android.common.mvp.util.ELGlideModule
 import com.everlog.android.plan.PlanExtras
+import com.everlog.android.plan.PlanGraph
 import com.everlog.android.plan.PlanScreenNames
+import com.everlog.android.plan.R
+import com.everlog.android.plan.create.WarningNotificationView
+import com.everlog.android.plan.data.model.ELPlan
+import com.everlog.android.plan.databinding.ActivityPlanCreateBinding
 import com.facebook.shimmer.ShimmerFrameLayout
 import com.jakewharton.rxbinding.view.RxView
 import com.jakewharton.rxbinding.widget.RxTextView
 import rx.Observable
-import com.everlog.android.common.design.R as DesignR
-import com.everlog.android.common.mvp.R as MvpR
 
 class CreatePlanActivity : BaseActivity(), MvpViewCreatePlan {
+
+    private val graph by lazy { appGraph<PlanGraph>() }
 
     companion object {
         // A new plan when [plan] is null
@@ -111,7 +114,7 @@ class CreatePlanActivity : BaseActivity(), MvpViewCreatePlan {
         binding.root.findViewById<TextView>(R.id.weeksField).text = if (plan.hasWeeksWithWorkouts()) resources.getQuantityString(R.plurals.weeks, plan.weeks.size, plan.weeks.size) else getString(R.string.tap_to_setup)
         // Pro upgrade
         binding.daysContainer.proUpgradePrompt.setType(WarningNotificationView.WarningType.PRO_PLAN_DAYS)
-        binding.daysContainer.proUpgradePrompt.visibility = if (PlanFeature.dependencies.userSession().user()?.isPro() == true) View.GONE else View.VISIBLE
+        binding.daysContainer.proUpgradePrompt.visibility = if (graph.userSession.user()?.isPro() == true) View.GONE else View.VISIBLE
     }
 
     override fun getItemToEditUuid(): String? {
@@ -188,7 +191,7 @@ class CreatePlanActivity : BaseActivity(), MvpViewCreatePlan {
     // Setup
 
     override fun setupPresenter() {
-        mPresenter = PresenterCreatePlan()
+        mPresenter = PresenterCreatePlan(graph.planProgress, graph.userSession, graph.planAnalytics, graph.planNavigation)
     }
 
     private fun setupTopBar() {

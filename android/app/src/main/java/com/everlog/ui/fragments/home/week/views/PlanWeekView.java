@@ -1,5 +1,7 @@
 package com.everlog.ui.fragments.home.week.views;
 
+import com.everlog.android.common.kotlin.di.GraphOwnerKt;
+import com.everlog.android.plan.PlanGraph;
 import com.everlog.application.ELApplication;
 import android.content.Context;
 import android.view.View;
@@ -164,7 +166,8 @@ public class PlanWeekView implements IWeekView {
 
     private void setupList() {
         mAdapter.addDataManager(mDataListManager);
-        mAdapter.registerBinder(new PlanDayAdapter.Binder(new PlanDayAdapter.OnPlanDayListener() {
+        PlanGraph planGraph = GraphOwnerKt.appGraph(mContext, PlanGraph.class);
+        mAdapter.registerBinder(new PlanDayAdapter.Binder(planGraph.getPlanAnalytics(), planGraph.getPlanNavigation(), new PlanDayAdapter.OnPlanDayListener() {
             @Override
             public void onClickSkip(ELPlanDay day) {
                 if (mListener != null) {

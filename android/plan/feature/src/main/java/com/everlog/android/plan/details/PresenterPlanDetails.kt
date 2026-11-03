@@ -1,24 +1,29 @@
 package com.everlog.android.plan.details
 
-import com.everlog.android.common.design.R as DesignR
 import android.content.DialogInterface
 import android.content.Intent
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
-import com.everlog.android.plan.data.model.ELPlan
 import com.everlog.android.common.data.store.ELDocumentStore
-import com.everlog.android.plan.data.store.ELDocStorePlanLoadedEvent
-import com.everlog.android.plan.data.store.PlanStores
+import com.everlog.android.common.design.R as DesignR
 import com.everlog.android.common.mvp.activity.BaseActivityPresenter
-import com.everlog.android.plan.PlanFeature
+import com.everlog.android.plan.PlanAnalytics
+import com.everlog.android.plan.PlanNavigation
 import com.everlog.android.plan.R
 import com.everlog.android.plan.create.CreatePlanActivity
 import com.everlog.android.plan.data.PlanBroadcasts
+import com.everlog.android.plan.data.PlanProgress
+import com.everlog.android.plan.data.model.ELPlan
+import com.everlog.android.plan.data.store.ELDocStorePlanLoadedEvent
+import com.everlog.android.plan.data.store.PlanStores
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
 
-class PresenterPlanDetails : BaseActivityPresenter<MvpViewPlanDetails>() {
+class PresenterPlanDetails(
+    private val planProgress: PlanProgress,
+    private val analytics: PlanAnalytics,
+    private val navigation: PlanNavigation,
+) : BaseActivityPresenter<MvpViewPlanDetails>() {
 
-    private val planProgress = PlanFeature.dependencies.planProgress()
 
     private var toEdit: ELPlan? = null
     private var mRealPlan: ELPlan? = null
@@ -119,7 +124,7 @@ class PresenterPlanDetails : BaseActivityPresenter<MvpViewPlanDetails>() {
                         planProgress.clearOngoingPlan()
                         toEdit = mRealPlan
                         loadViewData()
-                        PlanFeature.dependencies.planAnalytics().stopped()
+                        analytics.stopped()
                     }
                 }, { throwable -> handleError(throwable) }))
     }
@@ -198,15 +203,15 @@ class PresenterPlanDetails : BaseActivityPresenter<MvpViewPlanDetails>() {
 
     private fun handleStartPlan() {
         planProgress.setOngoingPlan(toEdit)
-        PlanFeature.dependencies.planAnalytics().started()
+        analytics.started()
         LocalBroadcastManager.getInstance(mvpView.context).sendBroadcast(Intent(PlanBroadcasts.CURRENT_PLAN_STARTED))
-        mvpView?.getActivity()?.let(PlanFeature.dependencies::openHome)
+        mvpView?.getActivity()?.let(navigation::openHome)
     }
 
     private fun handleDeletePlan(plan: ELPlan) {
         // Delete plan from database
         PlanStores.planStore().delete(plan)
-        PlanFeature.dependencies.planAnalytics().deleted()
+        analytics.deleted()
         // If local plan is the same, clear it too
         if (planProgress.isOngoing(plan)) {
             planProgress.clearOngoingPlan()

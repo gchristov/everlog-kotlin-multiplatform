@@ -6,16 +6,18 @@ import android.util.AttributeSet
 import android.view.LayoutInflater
 import androidx.core.content.ContextCompat
 import androidx.core.widget.ImageViewCompat
+import com.everlog.android.common.design.R as DesignR
+import com.everlog.android.common.kotlin.di.appGraph
+import com.everlog.android.common.mvp.util.ViewUtils
 import com.everlog.android.common.mvp.view.BaseView
 import com.everlog.android.common.mvp.view.BaseViewMvpView
 import com.everlog.android.common.mvp.view.BaseViewPresenter
+import com.everlog.android.plan.PlanGraph
 import com.everlog.android.plan.R
 import com.everlog.android.plan.adapter.MAX_FREE_WEEK_DAYS
 import com.everlog.android.plan.databinding.ViewNotificationWarningBinding
-import com.everlog.android.common.mvp.util.ViewUtils
 import com.jakewharton.rxbinding.view.RxView
 import rx.Observable
-import com.everlog.android.common.design.R as DesignR
 
 class WarningNotificationView(context: Context, attrs: AttributeSet?) : BaseView(context, attrs), MvpViewWarningNotification {
 
@@ -93,6 +95,6 @@ class WarningNotificationView(context: Context, attrs: AttributeSet?) : BaseView
     // Setup
 
     public override fun setupPresenter() {
-        mPresenter = PresenterWarningNotification()
+        mPresenter = PresenterWarningNotification(context.appGraph<PlanGraph>().planNavigation)
     }
 }
