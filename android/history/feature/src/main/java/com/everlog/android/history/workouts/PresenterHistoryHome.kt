@@ -4,13 +4,16 @@ import com.ahamed.multiviewadapter.DataListManager
 import com.ahamed.multiviewadapter.RecyclerAdapter
 import com.everlog.android.common.data.model.workout.ELWorkout
 import com.everlog.android.common.kotlin.toLocalDate
-import com.everlog.android.workout.data.store.ELColStoreWorkoutsLoadedEvent
-import com.everlog.android.workout.data.store.WorkoutStores
+import com.everlog.android.common.mvp.fragment.BaseFragmentPresenter
 import com.everlog.android.common.mvp.list.BaseTimelineViewHolder
-import com.everlog.android.history.HistoryFeature
+import com.everlog.android.history.HistoryNavigation
 import com.everlog.android.history.R
 import com.everlog.android.history.workouts.HistoryAdapter
-import com.everlog.android.common.mvp.fragment.BaseFragmentPresenter
+import com.everlog.android.settings.data.UserSettings
+import com.everlog.android.workout.data.store.ELColStoreWorkoutsLoadedEvent
+import com.everlog.android.workout.data.store.WorkoutStores
+import java.util.Date
+import java.util.concurrent.TimeUnit
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
 import org.threeten.bp.Instant
@@ -18,10 +21,11 @@ import org.threeten.bp.LocalDate
 import org.threeten.bp.ZoneId
 import org.threeten.bp.format.DateTimeFormatter
 import rx.Observable
-import java.util.Date
-import java.util.concurrent.TimeUnit
 
-class PresenterHistoryHome : BaseFragmentPresenter<MvpViewHistoryHome>() {
+class PresenterHistoryHome(
+    private val settings: UserSettings,
+    private val navigation: HistoryNavigation,
+) : BaseFragmentPresenter<MvpViewHistoryHome>() {
 
     private val mAdapter = RecyclerAdapter()
     private val mDataListManager = DataListManager<ELWorkout>(mAdapter)
@@ -182,7 +186,7 @@ class PresenterHistoryHome : BaseFragmentPresenter<MvpViewHistoryHome>() {
 
     private fun setupListView() {
         mAdapter.addDataManager(mDataListManager)
-        mAdapter.registerBinders(HistoryAdapter.Binder(HistoryFeature.dependencies.userSettings(), object : BaseTimelineViewHolder.OnTimelineListener<ELWorkout> {
+        mAdapter.registerBinders(HistoryAdapter.Binder(settings, object : BaseTimelineViewHolder.OnTimelineListener<ELWorkout> {
             override fun collectionSize(): Int {
                 return mDataListManager.count
             }
@@ -200,7 +204,7 @@ class PresenterHistoryHome : BaseFragmentPresenter<MvpViewHistoryHome>() {
             }
 
             override fun onItemClicked(item: ELWorkout, position: Int) {
-                context?.let { HistoryFeature.dependencies.openWorkoutDetails(it, item) }
+                context?.let { navigation.openWorkoutDetails(it, item) }
             }
         }))
     }

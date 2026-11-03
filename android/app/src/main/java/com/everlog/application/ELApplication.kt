@@ -8,7 +8,6 @@ import com.everlog.android.common.kotlin.AppContext
 import com.everlog.android.common.kotlin.di.GraphOwner
 import com.everlog.android.common.mvp.CommonMvp
 import com.everlog.android.exercise.data.store.ExerciseStores
-import com.everlog.android.history.HistoryFeature
 import com.everlog.android.onboarding.OnboardingFeature
 import com.everlog.android.plan.data.store.PlanStores
 import com.everlog.android.pro.ProFeature
@@ -19,7 +18,6 @@ import com.everlog.android.workout.data.store.WorkoutStores
 import com.everlog.application.features.AppAuthFeatureDependencies
 import com.everlog.application.features.AppCommonDataDependencies
 import com.everlog.application.features.AppCommonMvpDependencies
-import com.everlog.application.features.AppHistoryFeatureDependencies
 import com.everlog.application.features.AppOnboardingFeatureDependencies
 import com.everlog.application.features.AppProFeatureDependencies
 import com.everlog.application.features.AppSettingsFeatureDependencies
@@ -51,7 +49,6 @@ class ELApplication : Application(), GraphOwner {
         PlanStores.session = graph.userSession
         SettingsStores.session = graph.userSession
         CommonMvp.dependencies = AppCommonMvpDependencies()
-        HistoryFeature.dependencies = AppHistoryFeatureDependencies()
         SettingsFeature.dependencies = AppSettingsFeatureDependencies()
         ProFeature.dependencies = AppProFeatureDependencies()
         AuthFeature.dependencies = AppAuthFeatureDependencies()
