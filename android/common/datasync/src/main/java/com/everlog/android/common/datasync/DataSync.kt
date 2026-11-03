@@ -25,12 +25,13 @@ import timber.log.Timber
 import kotlin.coroutines.cancellation.CancellationException
 
 /**
- * @param fullHistoryMaxAgeMillis How old a SyncPlan.Recent collection's full history may get before an all-time
- * read syncs it again. Never, by default.
+ * @param olderMaxAgeMillis How old the part of a SyncPlan.Recent collection older than its window may get before a
+ * read of it syncs it again. Never, by default.
+ * @param chunkSize How many documents a page of the older part brings at a time
  */
 class SyncSettings(
     val maxAgeMillis: () -> Long,
-    val fullHistoryMaxAgeMillis: () -> Long = { Long.MAX_VALUE },
+    val olderMaxAgeMillis: () -> Long = { Long.MAX_VALUE },
     val timeoutMillis: Long,
     val chunkSize: Int,
 )
@@ -65,23 +66,35 @@ class DataSync(
     private val running = HashMap<String, RunningSync>()
     private val shared = HashMap<String, SharedFlow<Load<*>>>()
 
+    // A SyncPlan.Whole collection, all of it, as it changes
+    fun <T> observe(source: CollectionSource<T>): Flow<Load<List<T>>> {
+        require(source.plan == SyncPlan.Whole) { "A SyncPlan.Recent collection is read by range" }
+        return observe(source, since = null, variant = "whole", complete = false)
+    }
+
     /**
+     * The last months of a SyncPlan.Recent collection, as they change.
+     *
      * @param complete Shows nothing until the range has synced, rather than what's cached, as [CollectionSource.completeOnly]
      * does for every read of a source: for a calculation over the range, which a part of it would get wrong.
      */
-    fun <T> observe(source: CollectionSource<T>, range: Range = Range.All, complete: Boolean = false): Flow<Load<List<T>>> {
-        require(range == Range.All || source.plan is SyncPlan.Recent) { "Range.Last needs a SyncPlan.Recent collection" }
-        val needsComplete = complete || source.completeOnly || needsFullHistory(source.plan, range)
-        val variant = if (complete) "$range|complete" else range.toString()
-        return observe(source.key, variant, sync = { requestSync(source, range) }) { status ->
-            val since = (range as? Range.Last)?.let { windowStart(clock(), it.months) }
+    fun <T> observe(source: CollectionSource<T>, range: Range, complete: Boolean = false): Flow<Load<List<T>>> {
+        require(source.plan is SyncPlan.Recent) { "Only a SyncPlan.Recent collection is read by range" }
+        val months = (range as Range.Last).months
+        return observe(source, since = windowStart(clock(), months), variant = if (complete) "$range|complete" else range.toString(), complete)
+    }
+
+    private fun <T> observe(source: CollectionSource<T>, since: Long?, variant: String, complete: Boolean): Flow<Load<List<T>>> {
+        val backTo = reachesBack(source.plan, since, clock())
+        val needsComplete = complete || source.completeOnly || backTo != null
+        return observe(source.key, variant, sync = { requestSync(source, backTo) }) { status ->
             source.backend.cachedDocuments(since).withSyncStatus(status) { currentStatus(source.key) }.map { view ->
                 val cached = view.cached.items
-                // Only for the whole collection: a window holds fewer documents than a full sync brings
+                // Only for the whole collection: a window holds fewer documents than a sync of more of it brings
                 if (needsComplete && since == null && !caughtUp(view.cached.documents, view.status, view.cacheBehind)) {
                     Load.Loading
                 } else {
-                    loadOf(cached, cached.isEmpty(), covers(view.status, source.plan, range), needsComplete, view.status, view.cacheBehind)
+                    loadOf(cached, cached.isEmpty(), covers(view.status, backTo), needsComplete, view.status, view.cacheBehind)
                 }
             }
         }
@@ -100,7 +113,7 @@ class DataSync(
             scope = scope,
             status = statusOf(source.key),
             currentStatus = { currentStatus(source.key) },
-            sync = { requestSync(source, Range.Last(plan.months)) },
+            sync = { requestSync(source, backTo = null) },
             fetchPage = { after -> withSyncTimeout(source.name) { source.backend.fetchPage(after, pageSize) } },
             endsWithSession = { it.endsWith(session) },
         )
@@ -112,13 +125,13 @@ class DataSync(
      * [observe], it syncs when due, and waits for the first sync that reaches back to [from].
      */
     suspend fun <T> read(source: CollectionSource<T>, from: Long, until: Long?): Load<List<T>> {
-        val plan = requireNotNull(source.plan as? SyncPlan.Recent) { "Reading by date needs a SyncPlan.Recent collection" }
-        val range = if (from >= windowStart(clock(), plan.months)) Range.Last(plan.months) else Range.All
-        requestSync(source, range)
-        if (!covers(currentStatus(source.key), source.plan, range)) {
+        require(source.plan is SyncPlan.Recent) { "Reading by date needs a SyncPlan.Recent collection" }
+        val backTo = reachesBack(source.plan, from, clock())
+        requestSync(source, backTo)
+        if (!covers(currentStatus(source.key), backTo)) {
             synchronized(lock) { running[source.key]?.job }?.join()
             val status = currentStatus(source.key)
-            if (!covers(status, source.plan, range)) {
+            if (!covers(status, backTo)) {
                 return Load.Unavailable(status.lastFailure ?: IllegalStateException("${source.name} hasn't synced"))
             }
         }
@@ -178,8 +191,8 @@ class DataSync(
         return (sharedLoads as Flow<Load<T>>).onStart { sync() }.endsWith(session)
     }
 
-    private fun requestSync(source: CollectionSource<*>, range: Range) {
-        val work = syncWork(source.plan, range, currentStatus(source.key), clock(), settings.maxAgeMillis(), settings.fullHistoryMaxAgeMillis()) ?: return
+    private fun requestSync(source: CollectionSource<*>, backTo: Long?) {
+        val work = syncWork(source.plan, backTo, currentStatus(source.key), clock(), settings.maxAgeMillis(), settings.olderMaxAgeMillis()) ?: return
         start(source.key, work) { sync(source, work) }
     }
 
@@ -211,14 +224,16 @@ class DataSync(
         val backend = source.backend
         when (work) {
             SyncWork.Whole -> SyncResult(withSyncTimeout(source.name) { backend.fetchAll() })
-            SyncWork.FullHistory -> SyncResult(fullHistory(source), fullHistory = true)
-            SyncWork.Recent -> {
+            is SyncWork.Recent -> {
                 val plan = source.plan as SyncPlan.Recent
-                val recent = withSyncTimeout(source.name) { backend.fetchSince(windowStart(startedAt, plan.months)) }
-                // Older documents only change through a full sync: one missing (evicted, deleted on another
-                // phone) or added elsewhere shows as a different count
-                if (currentStatus(source.key).fullHistorySynced != null && countsDiffer(source)) {
-                    SyncResult(recent + fullHistory(source), fullHistory = true)
+                val windowFrom = windowStart(startedAt, plan.months)
+                val recent = withSyncTimeout(source.name) { backend.fetchSince(windowFrom) }
+                // The part synced back before only changes here: one missing (evicted, deleted on another phone) or
+                // added elsewhere shows as a different count
+                val syncedBackTo = currentStatus(source.key).syncedBackTo
+                val backTo = work.backTo ?: syncedBackTo?.takeIf { countsDiffer(source, since = it) }
+                if (backTo != null && backTo < windowFrom) {
+                    SyncResult(recent + older(source, backTo, windowFrom), syncedBackTo = backTo)
                 } else {
                     SyncResult(recent)
                 }
@@ -226,23 +241,30 @@ class DataSync(
         }
     }
 
-    // In chunks, so a long history isn't read in one go. Only done once the last chunk has landed.
-    private suspend fun fullHistory(source: CollectionSource<*>): Int {
+    // A page at a time, so a long stretch isn't read in one go. Only recorded once the last page has landed.
+    private suspend fun older(source: CollectionSource<*>, from: Long, until: Long): Int {
         var documents = 0
-        var afterId: String? = null
+        var after: Cursor? = null
         do {
-            val chunk = withSyncTimeout(source.name) { source.backend.fetchChunk(afterId, settings.chunkSize) }
+            val chunk = withSyncTimeout(source.name) { source.backend.fetchBetween(from, until, after, settings.chunkSize) }
             documents += chunk.count
-            afterId = chunk.lastId
+            after = chunk.last
         } while (chunk.count == settings.chunkSize)
         return documents
     }
 
-    // A check that fails doesn't fail the sync: the recent part has landed
-    private suspend fun countsDiffer(source: CollectionSource<*>): Boolean = try {
-        val server = withSyncTimeout(source.name) { source.backend.countOnServer() }
-        val cached = withSyncTimeout(source.name) { source.backend.countInCache() }
-        if (server != cached) Timber.tag(TAG).i("%s: %d cached, %d on the server, syncing it all", source.name, cached, server)
+    // A check that fails doesn't fail the sync: the recent part has landed. The cache is counted a year at a time,
+    // so it never holds more than that.
+    private suspend fun countsDiffer(source: CollectionSource<*>, since: Long): Boolean = try {
+        val server = withSyncTimeout(source.name) { source.backend.countOnServer(since) }
+        var cached = 0L
+        var from = since
+        while (from <= clock()) {
+            val until = from + CountWindowMillis
+            cached += withSyncTimeout(source.name) { source.backend.countInCache(from, until.takeIf { it <= clock() }) }
+            from = until
+        }
+        if (server != cached) Timber.tag(TAG).i("%s: %d cached, %d on the server, syncing it again", source.name, cached, server)
         server != cached
     } catch (e: CancellationException) {
         throw e
@@ -257,11 +279,12 @@ class DataSync(
         try {
             val result = sync(startedAt)
             records.setLastSynced(key, startedAt)
-            if (result.fullHistory) records.setFullHistorySynced(key, startedAt)
+            result.syncedBackTo?.let { records.setSyncedBack(key, SyncedBack(it, startedAt)) }
             updateStatus(key) {
                 it.copy(
                     lastSynced = startedAt,
-                    fullHistorySynced = if (result.fullHistory) startedAt else it.fullHistorySynced,
+                    syncedBackTo = result.syncedBackTo ?: it.syncedBackTo,
+                    syncedBackAt = if (result.syncedBackTo != null) startedAt else it.syncedBackAt,
                     syncing = false,
                     syncs = it.syncs + 1,
                     lastFetched = result.documents,
@@ -289,7 +312,10 @@ class DataSync(
     private fun updateStatus(key: String, change: (SyncStatus) -> SyncStatus) =
         statuses.update { it + (key to change(it[key] ?: recordedStatus(key))) }
 
-    private fun recordedStatus(key: String) = SyncStatus(records.lastSynced(key), records.fullHistorySynced(key))
+    private fun recordedStatus(key: String): SyncStatus {
+        val syncedBack = records.syncedBack(key)
+        return SyncStatus(records.lastSynced(key), syncedBackTo = syncedBack?.to, syncedBackAt = syncedBack?.at)
+    }
 
     private fun <T> Flow<T>.endsWith(session: Int): Flow<T> {
         val ended = sessions.filter { it != session }.map { Ended }
@@ -304,7 +330,8 @@ class DataSync(
 
     private class RunningSync(val work: SyncWork, val job: Job)
 
-    private class SyncResult(val documents: Int, val fullHistory: Boolean = false)
+    // [syncedBackTo] when it synced back that far beyond the window
+    private class SyncResult(val documents: Int, val syncedBackTo: Long? = null)
 
     private class Reading<T>(val value: T)
 
@@ -312,3 +339,5 @@ class DataSync(
 }
 
 private const val TAG = "DataSync"
+
+private val CountWindowMillis = java.util.concurrent.TimeUnit.DAYS.toMillis(365)

@@ -76,20 +76,28 @@ class FirestoreCollection<T : Any>(
         return (if (last == null) ordered else ordered.startAfter(last)).limit(size.toLong()).get(Source.SERVER).await().size()
     }
 
-    override suspend fun fetchChunk(afterId: String?, size: Int): Chunk {
-        val byId = documents.orderBy(FieldPath.documentId())
-        val snapshot = (if (afterId == null) byId else byId.startAfter(afterId)).limit(size.toLong()).get(Source.SERVER).await()
-        return Chunk(snapshot.size(), snapshot.documents.lastOrNull()?.id)
+    override suspend fun fetchBetween(from: Long, until: Long, after: Cursor?, size: Int): Chunk {
+        val dateField = requireDateField()
+        val ordered = documents.whereGreaterThanOrEqualTo(dateField, from).whereLessThan(dateField, until)
+            .orderBy(dateField).orderBy(FieldPath.documentId())
+        val snapshot = (if (after == null) ordered else ordered.startAfter(after.date, after.id)).limit(size.toLong()).get(Source.SERVER).await()
+        val last = snapshot.documents.lastOrNull()?.let { document -> (document.get(dateField) as? Number)?.let { Cursor(it.toLong(), document.id) } }
+        return Chunk(snapshot.size(), last)
     }
 
     override suspend fun fetchIds(ids: Collection<String>): Set<String> = ids.distinct().chunked(MaxIdsPerRead).flatMap { batch ->
         documents.whereIn(FieldPath.documentId(), batch).get(Source.SERVER).await().documents.map { it.id }
     }.toSet()
 
-    override suspend fun countOnServer(): Long = documents.count().get(AggregateSource.SERVER).await().count
+    override suspend fun countOnServer(since: Long): Long =
+        documents.whereGreaterThanOrEqualTo(requireDateField(), since).count().get(AggregateSource.SERVER).await().count
 
-    override suspend fun countInCache(): Long =
-        documents.get(Source.CACHE).await().documents.count { !it.metadata.hasPendingWrites() }.toLong()
+    // Like cachedBetween, keeps only the part counted
+    override suspend fun countInCache(from: Long, until: Long?): Long {
+        val since = documents.whereGreaterThanOrEqualTo(requireDateField(), from)
+        val snapshot = (if (until == null) since else since.whereLessThan(requireDateField(), until)).get(Source.CACHE).await()
+        return snapshot.documents.count { !it.metadata.hasPendingWrites() }.toLong()
+    }
 
     private fun requireDateField() = requireNotNull(dateField) { "Reading by date needs the collection's dateField" }
 }

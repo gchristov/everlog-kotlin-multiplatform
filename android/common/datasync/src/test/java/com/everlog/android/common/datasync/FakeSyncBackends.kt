@@ -15,7 +15,7 @@ data class Doc(val id: String, val date: Long, val name: String = id)
  */
 abstract class FakeServer {
 
-    // Server calls in order, e.g. "all", "since", "chunk:a", "count"
+    // Server calls in order, e.g. "all", "since", "between:<from>:<after id>", "count"
     val calls: MutableList<String> = CopyOnWriteArrayList()
 
     // Server calls wait for it while set
@@ -91,11 +91,13 @@ class FakeCollectionBackend(server: List<Doc> = emptyList(), cached: List<Doc> =
         return recent.size
     }
 
-    override suspend fun fetchChunk(afterId: String?, size: Int): Chunk {
-        serverCall("chunk:$afterId")
-        val chunk = server.sortedBy { it.id }.filter { afterId == null || it.id > afterId }.take(size)
-        land { cache.value = cache.value.filterNot { cached -> chunk.any { it.id == cached.id } } + chunk }
-        return Chunk(chunk.size, chunk.lastOrNull()?.id)
+    override suspend fun fetchBetween(from: Long, until: Long, after: Cursor?, size: Int): Chunk {
+        serverCall("between:$from:${after?.id}")
+        val page = server.filter { it.date in from until until }.sortedWith(compareBy({ it.date }, { it.id }))
+            .filter { after == null || it.date > after.date || (it.date == after.date && it.id > after.id) }
+            .take(size)
+        land { cache.value = cache.value.filterNot { cached -> page.any { it.id == cached.id } } + page }
+        return Chunk(page.size, page.lastOrNull()?.let { Cursor(it.date, it.id) })
     }
 
     override suspend fun fetchIds(ids: Collection<String>): Set<String> {
@@ -105,12 +107,18 @@ class FakeCollectionBackend(server: List<Doc> = emptyList(), cached: List<Doc> =
         return found.map { it.id }.toSet()
     }
 
-    override suspend fun countOnServer(): Long {
+    override suspend fun countOnServer(since: Long): Long {
         serverCall("count")
-        return server.size.toLong()
+        return server.count { it.date >= since }.toLong()
     }
 
-    override suspend fun countInCache(): Long = cache.value.count { it.id !in pending }.toLong()
+    // Each countInCache, as from and until
+    val cacheCounts: MutableList<Pair<Long, Long?>> = CopyOnWriteArrayList()
+
+    override suspend fun countInCache(from: Long, until: Long?): Long {
+        cacheCounts += from to until
+        return cache.value.count { it.id !in pending && it.date >= from && (until == null || it.date < until) }.toLong()
+    }
 
     // A local write, which Firestore puts in the cache straight away
     fun write(doc: Doc, uploaded: Boolean = true) {
@@ -136,22 +144,22 @@ class FakeDocumentBackend(var server: Doc? = null, cached: Doc? = null) : FakeSe
 class InMemorySyncRecords : SyncRecords {
 
     val lastSynced = HashMap<String, Long>()
-    val fullHistorySynced = HashMap<String, Long>()
+    val syncedBack = HashMap<String, SyncedBack>()
 
     override fun lastSynced(key: String): Long? = lastSynced[key]
 
-    override fun fullHistorySynced(key: String): Long? = fullHistorySynced[key]
+    override fun syncedBack(key: String): SyncedBack? = syncedBack[key]
 
     override fun setLastSynced(key: String, at: Long) {
         lastSynced[key] = at
     }
 
-    override fun setFullHistorySynced(key: String, at: Long) {
-        fullHistorySynced[key] = at
+    override fun setSyncedBack(key: String, syncedBack: SyncedBack) {
+        this.syncedBack[key] = syncedBack
     }
 
     override fun clear() {
         lastSynced.clear()
-        fullHistorySynced.clear()
+        syncedBack.clear()
     }
 }

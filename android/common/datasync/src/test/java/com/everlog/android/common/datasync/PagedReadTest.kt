@@ -131,17 +131,20 @@ class PagedReadTest {
     }
 
     @Test
-    fun `after the full history, the end of the cache is the end`() {
+    fun `at the end of the cache, the server is asked once whether there's anything older`() {
         records.lastSynced["user/workouts"] = now
-        records.fullHistorySynced["user/workouts"] = now
         val backend = FakeCollectionBackend(server = workouts.take(15), cached = workouts.take(15))
         val pages = dataSync.pages(source(backend), pageSize = 10)
         val loads = read(pages.loads)
 
         pages.loadMore()
 
-        assertThat(backend.calls).isEmpty()
+        assertThat(backend.calls).containsExactly("page:15")
         assertThat(loads.last()).isEqualTo(ready(workouts.take(15), endReached = true))
+
+        pages.loadMore()
+
+        assertThat(backend.calls).containsExactly("page:15")
     }
 
     @Test

@@ -48,7 +48,7 @@ class AppConfig {
         const val DATA_SYNC_MAX_AGE_MINUTES = 60L
 
         // Remote Config's data_sync_full_history_max_age_days when it has none
-        const val DATA_SYNC_FULL_HISTORY_MAX_AGE_DAYS = 7L
+        const val DATA_SYNC_OLDER_MAX_AGE_DAYS = 7L
     }
 
     fun configureApp() {

@@ -5,6 +5,7 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
 import com.everlog.BuildConfig
 import com.everlog.android.common.datasync.Chunk
+import com.everlog.android.common.datasync.Cursor
 import com.everlog.android.common.datasync.FirestoreCollection
 import com.everlog.android.common.datasync.FirestoreDocument
 import com.everlog.testutil.E2EAccount
@@ -112,13 +113,13 @@ class FirestoreBackendsTest {
         otherPhone.document("new").set(mapOf("date" to 9L)).await()
         // Followed meanwhile, as another screen would
         val following = launch(Dispatchers.IO) { backend.cached(since = null).collect {} }
-        backend.fetchChunk(afterId = null, size = 10)
+        backend.fetchBetween(from = 0, until = 10, after = null, size = 10)
 
         assertThat(backend.cachedBetween(from = 2, until = 9)).containsExactly(Entry("middle", 5))
         assertThat(backend.cachedBetween(from = 5, until = null)).containsExactly(Entry("middle", 5), Entry("new", 9))
 
         otherPhone.document("middle").set(mapOf("date" to 6L)).await()
-        backend.fetchChunk(afterId = null, size = 10)
+        backend.fetchBetween(from = 0, until = 10, after = null, size = 10)
 
         assertThat(backend.cachedBetween(from = 2, until = 9)).containsExactly(Entry("middle", 6))
         following.cancel()
@@ -184,20 +185,28 @@ class FirestoreBackendsTest {
     }
 
     @Test
-    fun chunksReadEveryDocumentByIdAndDropDeletions() = runBlocking<Unit> {
-        listOf("a", "b", "c").forEach { otherPhone.document(it).set(mapOf("date" to 1L)).await() }
-        // No date, so the screens' order leaves it out, but a full sync still reads it
-        otherPhone.document("d").set(mapOf("name" to "no date")).await()
+    fun datedPagesReadAStretchOldestFirstAndDropDeletions() = runBlocking<Unit> {
+        listOf("a" to 1L, "b" to 2L, "c" to 2L, "d" to 3L, "e" to 5L).forEach { (id, date) -> otherPhone.document(id).set(mapOf("date" to date)).await() }
         backend.fetchAll()
         otherPhone.document("b").delete().await()
 
-        val first = backend.fetchChunk(afterId = null, size = 2)
-        val second = backend.fetchChunk(afterId = first.lastId, size = 2)
+        val first = backend.fetchBetween(from = 1, until = 5, after = null, size = 2)
+        val second = backend.fetchBetween(from = 1, until = 5, after = first.last, size = 2)
 
-        assertThat(first).isEqualTo(Chunk(count = 2, lastId = "c"))
-        assertThat(second).isEqualTo(Chunk(count = 1, lastId = "d"))
-        assertThat(backend.cached(since = null).within().map { it.id }).containsExactly("a", "c")
-        assertThat(backend.countInCache()).isEqualTo(3)
+        assertThat(first).isEqualTo(Chunk(count = 2, last = Cursor(2, "c")))
+        assertThat(second).isEqualTo(Chunk(count = 1, last = Cursor(3, "d")))
+        assertThat(backend.cached(since = null).within().map { it.id }).containsExactly("e", "d", "c", "a").inOrder()
+    }
+
+    @Test
+    fun datedPagesTellApartDocumentsOfTheSameDate() = runBlocking<Unit> {
+        listOf("a", "b", "c").forEach { otherPhone.document(it).set(mapOf("date" to 2L)).await() }
+
+        val first = backend.fetchBetween(from = 0, until = 10, after = null, size = 2)
+        val second = backend.fetchBetween(from = 0, until = 10, after = first.last, size = 2)
+
+        assertThat(first.last).isEqualTo(Cursor(2, "b"))
+        assertThat(second).isEqualTo(Chunk(count = 1, last = Cursor(2, "c")))
     }
 
     @Test
@@ -216,12 +225,17 @@ class FirestoreBackendsTest {
         otherPhone.document("bench").set(mapOf("date" to 2L)).await()
         otherPhone.document("squat").set(mapOf("date" to 1L)).await()
 
-        assertThat(backend.countOnServer()).isEqualTo(2)
-        assertThat(backend.countInCache()).isEqualTo(0)
+        otherPhone.document("press").set(mapOf("date" to 5L)).await()
+
+        assertThat(backend.countOnServer(since = 2)).isEqualTo(2)
+        assertThat(backend.countInCache(from = 0, until = null)).isEqualTo(0)
 
         backend.fetchAll()
+        collection.document("row").set(mapOf("date" to 3L))
 
-        assertThat(backend.countInCache()).isEqualTo(2)
+        assertThat(backend.countInCache(from = 0, until = null)).isEqualTo(3)
+        assertThat(backend.countInCache(from = 2, until = 5)).isEqualTo(1)
+        assertThat(backend.countInCache(from = 2, until = null)).isEqualTo(2)
     }
 
     @Test

@@ -38,27 +38,29 @@ still read through the old stores, which share the same Firestore cache.
 | Plan | Syncs | For |
 |---|---|---|
 | `SyncPlan.Whole` | the whole collection when due | small collections: routines, plans, exercises, the library |
-| `SyncPlan.Recent(dateField, months)` | the last months when due; the full history, in chunks, the first time a read needs it, then weekly and when the count check finds a difference | big collections: workouts (3 months, `AppConfig.workoutSyncMonths`) |
+| `SyncPlan.Recent(dateField, months)` | the last months when due; further back only as far as a read goes, in pages, the first time it does, then weekly and when the count check finds a difference | big collections: workouts (3 months, `AppConfig.workoutSyncMonths`) |
 | `DocumentSource` | the document when due | one document: the registry, the user |
 
-Each read picks its `Range`: `All`, or `Last(months)` for a `Recent` collection. A read further back than
-the plan's window waits for the full history (the shimmer, the first time after an install), rather than showing part
-of it. Others show what's cached straight away, except from a source made with `completeOnly`, which waits for its
+A `Whole` collection is observed as a whole (`observe(source)`). A `Recent` collection never is: each read says how far
+back it goes, `observe(source, Range.Last(months))`, `read(source, from, until)` or `pages`, so nothing syncs or holds
+more of a long history than a screen needs. A read further back than the plan's window waits for that part to sync
+(the shimmer, the first time), rather than showing part of it. Others show what's cached straight away, except from a source made with `completeOnly`, which waits for its
 first sync too. That's for a collection whose documents are also read one at a time, so its cache can hold a few of
 them before it has synced, and that a screen searches as a whole: the exercise library and the user's own exercises
-(the picker). Reads that need everything also wait until the cache shows what the sync brought, as Firestore can
-report a read done while its listeners still show the part cached before.
+(the picker). Those also wait until the cache shows what the sync brought, as Firestore can report a read done while
+its listeners still show the part cached before.
 
 A single read can ask for the same with `observe(source, range, complete = true)`: for a calculation over a range,
 which a part of it would get wrong (e.g. when each exercise was last done, from the last months of workouts), while
 lists of the same source show what's cached.
 
-After the full history has synced, each due sync of a `Recent` collection also compares the cached count
-with the server's (one read per 1,000 documents). A difference means something older was added or deleted
-elsewhere, or went missing from the cache, so the full history syncs again. An older document edited on
-another phone keeps the count, so an all-time read also syncs the full history again once it's a week old
-(Remote Config `data_sync_full_history_max_age_days`, 7 by default, debug builds too), showing the cache
-meanwhile.
+Each source records how far back it has been synced beyond its window (`syncedBackTo`, in `DataSync.xml`). Once a
+read has reached back, each due sync of the `Recent` collection also compares the server's count of that stretch
+(one read per 1,000 documents) with the cache's, counted a year at a time so it never holds more. A difference means
+something older was added or deleted elsewhere, or went missing from the cache, so that stretch syncs again. An older
+document edited on another phone keeps the count, so a read reaching back syncs it again once it's a week old
+(Remote Config `data_sync_full_history_max_age_days`, named after what it used to be for, 7 by default, debug builds
+too), only as far back as that read goes, showing the cache meanwhile.
 
 A calculation over a longer part of the history than it usually needs (e.g. each exercise's last session in the
 past year for the workout screen's suggestions, usually found in the last months) reads it once, a part at a time,
@@ -70,8 +72,8 @@ read's dates match, so read in a few large parts rather than many small ones.
 Long lists (the history) read in pages with `DataSync.pages(source, pageSize)`, newest first, for a
 `Recent` collection. Its cache listener grows a page at a time (`loadMore()`), so workouts added or
 deleted anywhere don't make rows skip or repeat. Pages come from the cache, which the recent sync fills.
-Past what's cached, before the full history has synced, the next page comes from the server (`Page.loadingMore`
-for a footer spinner) until it has nothing older (`Page.endReached`). A page that fails is retried by the
+Past what's cached, the next page comes from the server (`Page.loadingMore` for a footer spinner) until it has
+nothing older (`Page.endReached`). A page that fails is retried by the
 next `loadMore()`.
 
 Documents a read finds missing between syncs, e.g. a library exercise added since the library last synced,
@@ -86,8 +88,9 @@ doesn't parse is left out and logged.
 ## Edge cases it handles
 
 - **Weak signal or offline.** Each server read times out (`AppConfig.dataSyncTimeoutSeconds`). A failed sync isn't recorded, so the next read tries again.
-- **Full history interrupted.** It's only recorded once the last chunk has landed. Documents without the date field still sync, since chunks go by document id.
+- **A sync back interrupted.** It's only recorded once the last page has landed. Documents without the date field never sync or show in a `Recent` collection, as every read is by date.
 - **Deletions on another phone.** A server read drops the documents it no longer returns (checked by `FirestoreBackendsTest`). Older ones go through the count check.
+- **Updating from an older version.** Its full history records (`fullHistorySynced:`) aren't read, so the phone syncs back again what reads need, once.
 - **Backups.** The sync records (`DataSync.xml`) and Firestore's cache are left out of backups, so a restored phone syncs instead of trusting an old cache.
 - **Signing out.** `AuthManager.logout` calls `signOut()`, which stops syncs, forgets the records and ends every read.
 - **Clock moved back.** A sync time in the future counts as due.
