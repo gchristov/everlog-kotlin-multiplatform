@@ -8,11 +8,29 @@ class ModuleRulesTest {
     @Test
     fun `reads module paths`() {
         assertThat(Module.of(":android:app")).isEqualTo(Module.App)
+        assertThat(Module.of(":android:datasync")).isEqualTo(Module.DataSync)
         assertThat(Module.of(":android:common:compose-test")).isEqualTo(Module.Common("compose-test"))
         assertThat(Module.of(":android:exercise:test-fixtures"))
             .isEqualTo(Module.Feature("exercise", FeatureModuleType.TEST_FIXTURES))
         assertThat(Module.of(":android:exercise:other")).isNull()
         assertThat(Module.of(":gradle-plugins:conventions")).isNull()
+    }
+
+    @Test
+    fun `only data modules and the app depend on DataSync`() {
+        assertThat(broken(":android:workout:data", ":android:datasync")).isNull()
+        assertThat(broken(":android:app", ":android:datasync")).isNull()
+        assertThat(broken(":android:workout:feature", ":android:datasync")).isNotNull()
+        assertThat(broken(":android:workout:test-fixtures", ":android:datasync", forTests = true)).isNotNull()
+        assertThat(broken(":android:common:data", ":android:datasync")).isNotNull()
+    }
+
+    @Test
+    fun `DataSync depends only on common modules without UI`() {
+        assertThat(broken(":android:datasync", ":android:common:firebase")).isNull()
+        assertThat(broken(":android:datasync", ":android:common:test", forTests = true)).isNull()
+        assertThat(broken(":android:datasync", ":android:common:compose")).isNotNull()
+        assertThat(broken(":android:datasync", ":android:workout:data")).isNotNull()
     }
 
     @Test

@@ -3,11 +3,11 @@ package com.everlog.android.workout.data
 import arrow.core.Either
 import com.everlog.android.auth.data.UserSession
 import com.everlog.android.common.data.model.workout.ELWorkout
-import com.everlog.android.common.datasync.CollectionSource
-import com.everlog.android.common.datasync.DataSync
-import com.everlog.android.common.datasync.FirestoreCollection
-import com.everlog.android.common.datasync.Range
-import com.everlog.android.common.datasync.SyncPlan
+import com.everlog.android.datasync.CollectionSource
+import com.everlog.android.datasync.DataSync
+import com.everlog.android.datasync.FirestoreCollection
+import com.everlog.android.datasync.Range
+import com.everlog.android.datasync.SyncPlan
 import com.everlog.android.common.firebase.FirestoreFields
 import com.everlog.android.common.firebase.FirestorePaths
 import com.everlog.android.common.kotlin.Load
@@ -22,13 +22,6 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flowOf
 
 interface WorkoutRepository {
-    /**
-     * The user's workouts of the [range]'s last months, newest first, as they change. A range longer than
-     * [RealWorkoutRepository]'s sync months waits the first time for the part older than them to sync, then shows the
-     * cache while it syncs again weekly. None without a signed-in user.
-     */
-    fun workouts(range: Range): Flow<Load<List<ELWorkout>>>
-
     /**
      * The user's workouts created from [from] until before [until], read once and in no particular order: for going
      * through the history a part at a time. Waits the first time it reads further back than the sync months, for
@@ -58,8 +51,6 @@ class RealWorkoutRepository(
     @WorkoutSyncMonths private val syncMonths: Int,
     private val session: UserSession,
 ) : WorkoutRepository {
-
-    override fun workouts(range: Range): Flow<Load<List<ELWorkout>>> = workouts(range, complete = false)
 
     private fun workouts(range: Range, complete: Boolean): Flow<Load<List<ELWorkout>>> {
         val userId = session.user()?.id ?: return flowOf(Load.Ready(emptyList()))

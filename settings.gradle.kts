@@ -37,11 +37,11 @@ dependencyResolutionManagement {
 rootProject.name = "everlog-kotlin-multiplatform"
 
 include(":android:app")
+include(":android:datasync")
 include(":android:common:compose")
 include(":android:common:compose-test")
 include(":android:common:data")
 include(":android:common:data-test")
-include(":android:common:datasync")
 include(":android:common:design")
 include(":android:common:firebase")
 include(":android:common:kotlin")

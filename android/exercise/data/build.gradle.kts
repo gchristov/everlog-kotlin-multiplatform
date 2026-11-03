@@ -10,6 +10,7 @@ android {
 }
 
 dependencies {
+    implementation(projects.android.datasync)
     implementation(projects.android.auth.data)
     implementation(projects.android.common.persistence)
     implementation(libs.firebase.storage)
