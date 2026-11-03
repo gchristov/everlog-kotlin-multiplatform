@@ -291,7 +291,7 @@ class LoginActivity : BaseActivity(), MvpViewLogin {
 
     override fun setupPresenter() {
         val graph = appGraph<AuthGraph>()
-        mPresenter = PresenterLogin(graph.authService, graph.authNavigation, graph.authAppState)
+        mPresenter = PresenterLogin(graph.authService, graph.navigator, graph.authAppState)
     }
 
     private fun setupTopBar() {

@@ -4,7 +4,6 @@ import android.app.Activity
 import android.content.Intent
 import android.text.TextUtils
 import com.everlog.android.auth.AuthAppState
-import com.everlog.android.auth.AuthNavigation
 import com.everlog.android.auth.AuthRequestCodes
 import com.everlog.android.auth.AuthService
 import com.everlog.android.auth.R
@@ -17,11 +16,16 @@ import com.everlog.android.common.kotlin.Utils
 import com.everlog.android.common.mvp.activity.BaseActivityPresenter
 import com.everlog.android.common.mvp.dialog.ToastBuilder
 import com.everlog.android.common.mvp.util.KeyboardUtils
+import com.everlog.android.common.navigation.Home
+import com.everlog.android.common.navigation.Navigator
+import com.everlog.android.common.navigation.Onboarding
+import com.everlog.android.common.navigation.PrivacyPolicy
+import com.everlog.android.common.navigation.Terms
 import rx.Observable
 
 class PresenterLogin(
     private val auth: AuthService,
-    private val navigation: AuthNavigation,
+    private val navigator: Navigator,
     private val appState: AuthAppState,
 ) : BaseActivityPresenter<MvpViewLogin>() {
 
@@ -88,7 +92,7 @@ class PresenterLogin(
         subscriptions.add(mvpView.onClickTerms()
                 .compose(applyUISchedulers())
                 .subscribe({
-                    navigation.openTerms(mvpView.context, mvpView.context.getString(DesignR.string.login_terms))
+                    navigator.open(mvpView.context, Terms(mvpView.context.getString(DesignR.string.login_terms)))
                 }) { throwable -> handleError(throwable) })
     }
 
@@ -96,7 +100,7 @@ class PresenterLogin(
         subscriptions.add(mvpView.onClickPrivacy()
                 .compose(applyUISchedulers())
                 .subscribe({
-                    navigation.openPrivacyPolicy(mvpView.context, mvpView.context.getString(DesignR.string.login_terms_privacy))
+                    navigator.open(mvpView.context, PrivacyPolicy(mvpView.context.getString(DesignR.string.login_terms_privacy)))
                 }) { throwable -> handleError(throwable) })
     }
 
@@ -234,19 +238,19 @@ class PresenterLogin(
     // finished from another screen in the meantime (see PresenterSplash).
     private fun onOnboardingResult(resultCode: Int) {
         if (resultCode != Activity.RESULT_OK && appState.onboardingPending()) {
-            mvpView?.getActivity()?.let(navigation::openOnboarding)
+            mvpView?.getActivity()?.let { navigator.open(it, Onboarding) }
         } else {
             appState.setOnboardingPending(false)
-            mvpView?.getActivity()?.let(navigation::openHome)
+            mvpView?.getActivity()?.let { navigator.open(it, Home) }
         }
     }
 
     // A new account goes through onboarding first, then home (see onOnboardingResult)
     private fun continueAfterLogin(newUser: Boolean) {
         if (newUser) {
-            mvpView?.getActivity()?.let(navigation::openOnboarding)
+            mvpView?.getActivity()?.let { navigator.open(it, Onboarding) }
         } else {
-            mvpView?.getActivity()?.let(navigation::openHome)
+            mvpView?.getActivity()?.let { navigator.open(it, Home) }
         }
     }
 }

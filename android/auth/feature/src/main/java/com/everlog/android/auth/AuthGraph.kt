@@ -1,5 +1,6 @@
 package com.everlog.android.auth
 
+import com.everlog.android.common.navigation.Navigator
 import dev.zacsweers.metro.AppScope
 import dev.zacsweers.metro.ContributesTo
 
@@ -8,7 +9,7 @@ import dev.zacsweers.metro.ContributesTo
 interface AuthGraph {
     val authService: AuthService
 
-    val authNavigation: AuthNavigation
+    val navigator: Navigator
 
     val authAppState: AuthAppState
 }
