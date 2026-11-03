@@ -9,19 +9,21 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.updateLayoutParams
 import androidx.core.view.updatePadding
-import com.everlog.android.common.mvp.activity.BaseActivity
-import com.everlog.android.common.mvp.activity.BaseActivityMvpView
-import com.everlog.android.common.mvp.activity.BaseActivityPresenter
+import com.everlog.android.auth.AuthGraph
 import com.everlog.android.auth.AuthScreenNames
 import com.everlog.android.auth.R
 import com.everlog.android.auth.databinding.ActivityResetPasswordBinding
 import com.everlog.android.auth.login.LoginActivity
 import com.everlog.android.auth.login.LoginActivity.Companion.setupLoadingButton
+import com.everlog.android.common.design.R as DesignR
+import com.everlog.android.common.kotlin.di.appGraph
+import com.everlog.android.common.mvp.activity.BaseActivity
+import com.everlog.android.common.mvp.activity.BaseActivityMvpView
+import com.everlog.android.common.mvp.activity.BaseActivityPresenter
 import com.everlog.android.common.mvp.util.KeyboardUtils
 import com.github.leandroborgesferreira.loadingbutton.customViews.CircularProgressButton
 import com.jakewharton.rxbinding.view.RxView
 import rx.Observable
-import com.everlog.android.common.design.R as DesignR
 
 class ResetPasswordActivity : BaseActivity(), MvpViewResetPassword {
 
@@ -148,7 +150,7 @@ class ResetPasswordActivity : BaseActivity(), MvpViewResetPassword {
     // Setup
 
     override fun setupPresenter() {
-        mPresenter = PresenterResetPassword()
+        mPresenter = PresenterResetPassword(appGraph<AuthGraph>().authService)
     }
 
     private fun setupTopBar() {

@@ -64,7 +64,7 @@ The convention plugins enforce these: a module that declares a dependency breaki
 
 ## What a feature gets from the app
 
-A feature module can't see the app, but some of what it needs lives there: services built on the app's managers (analytics, remote config) and other features' screens, which open through the app's `Navigator`. Features not on the dependency graph yet (see below) declare one interface for them, e.g. `AuthFeatureDependencies` in `auth:feature`, and a holder for it (`AuthFeature.dependencies`). The app implements it (`application/features`) and registers it first thing in `ELApplication.onCreate`. The feature's activities read it and hand its parts to their view-models' own interfaces, so view-model tests still pass fakes.
+A feature module can't see the app, but some of what it needs lives there: services built on the app's managers (analytics, remote config) and other features' screens, which open through the app's `Navigator`. Features not on the dependency graph yet (see below) declare one interface for them, e.g. `OnboardingFeatureDependencies` in `onboarding:feature`, and a holder for it (`OnboardingFeature.dependencies`). The app implements it (`application/features`) and registers it first thing in `ELApplication.onCreate`. The feature's activities read it and hand its parts to their view-models' own interfaces, so view-model tests still pass fakes.
 
 `common:mvp` does the same for what its bases need (screen views and the signed-in user check), with `CommonMvpDependencies`.
 
@@ -81,7 +81,7 @@ The holders stand in for dependency injection until Metro reaches each feature. 
 - **Metro only reads Kotlin**: a Java class gets into the graph through a Kotlin `@Provides` function, or by moving it to Kotlin.
 - **Activities and presenters** can't take constructor parameters (constructor injection for activities needs API 28, and the app supports 24), so they get what they need from the graph.
 
-- **A feature on the graph** (exercise, template, workout, plan, history and settings so far) works like this, which the others follow as they move:
+- **A feature on the graph** (exercise, template, workout, plan, history, settings and auth so far) works like this, which the others follow as they move:
   - Its data classes are `@Inject` in their `data` module and contribute their bindings, e.g. `RealExerciseRepository` and the library and guide use cases. They take dispatchers by qualifier (`@IoDispatcher`, `@DefaultDispatcher`, from `common:kotlin`'s `di` package).
   - What only the app can do is a small interface in the feature, bound by an app class: `ExerciseNavigation` (`AppExerciseNavigation`), `ExerciseConfig` (Remote Config), the analytics interfaces.
   - The feature declares what its screens use in one `@ContributesTo(AppScope::class)` interface, `ExerciseGraph`, which the app's graph takes on. Activities and fragments read it with `appGraph<ExerciseGraph>()` (from Java, `appGraph(context, ExerciseGraph.class)`), through the application (`GraphOwner`), and hand presenters their parts in the constructor.
