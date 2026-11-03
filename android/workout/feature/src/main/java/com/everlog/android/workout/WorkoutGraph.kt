@@ -1,5 +1,6 @@
 package com.everlog.android.workout
 
+import com.everlog.android.common.navigation.Navigator
 import com.everlog.android.exercise.data.ExerciseRepository
 import com.everlog.android.settings.data.UserSettings
 import com.everlog.android.template.data.session.OngoingPlanRepository
@@ -48,5 +49,5 @@ interface WorkoutGraph {
 
     val workoutDialogs: WorkoutDialogs
 
-    val workoutNavigation: WorkoutNavigation
+    val navigator: Navigator
 }

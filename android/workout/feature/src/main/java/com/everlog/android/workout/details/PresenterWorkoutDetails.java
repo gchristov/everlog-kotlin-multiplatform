@@ -1,8 +1,13 @@
 package com.everlog.android.workout.details;
 
+import com.everlog.android.common.navigation.ExerciseDetails;
+import com.everlog.android.common.navigation.ShareWorkout;
+import com.everlog.android.common.navigation.RatePrompt;
+import com.everlog.android.common.navigation.ExerciseGroupsEditor;
+import com.everlog.android.common.navigation.NavigatorKt;
+import com.everlog.android.common.navigation.Navigator;
 import com.everlog.android.template.data.session.OngoingPlanRepository;
 import com.everlog.android.workout.WorkoutStats;
-import com.everlog.android.workout.WorkoutNavigation;
 import com.everlog.android.settings.data.UserSettings;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -38,7 +43,7 @@ public class PresenterWorkoutDetails extends BaseActivityPresenter<MvpViewWorkou
 
     private final UserSettings settings;
     private final WorkoutDetailsAnalytics analytics;
-    private final WorkoutNavigation navigation;
+    private final Navigator navigator;
     private final WorkoutStats stats;
     private final OngoingPlanRepository ongoingPlan;
 
@@ -49,10 +54,10 @@ public class PresenterWorkoutDetails extends BaseActivityPresenter<MvpViewWorkou
     private ELWorkout toEdit;
     private boolean mLoadedItemOnce;
 
-    public PresenterWorkoutDetails(UserSettings settings, WorkoutDetailsAnalytics analytics, WorkoutNavigation navigation, WorkoutStats stats, OngoingPlanRepository ongoingPlan) {
+    public PresenterWorkoutDetails(UserSettings settings, WorkoutDetailsAnalytics analytics, Navigator navigator, WorkoutStats stats, OngoingPlanRepository ongoingPlan) {
         this.settings = settings;
         this.analytics = analytics;
-        this.navigation = navigation;
+        this.navigator = navigator;
         this.stats = stats;
         this.ongoingPlan = ongoingPlan;
     }
@@ -97,7 +102,7 @@ public class PresenterWorkoutDetails extends BaseActivityPresenter<MvpViewWorkou
     @Override
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        List<ELExerciseGroup> edited = navigation.editedExerciseGroups(requestCode, resultCode, data);
+        List<ELExerciseGroup> edited = ExerciseGroupsEditor.Companion.result(requestCode, resultCode, data);
         if (edited != null) {
             handleEditExercises(edited);
         }
@@ -116,7 +121,7 @@ public class PresenterWorkoutDetails extends BaseActivityPresenter<MvpViewWorkou
                         Utils.runWithDelay(() -> {
                             handleCheckWeeklyGoalComplete();
                         }, 500);
-                        navigation.requestRatePrompt(getMvpView().getActivity(), toEdit, RATE_PROMPT_DELAY_MILLIS);
+                        navigator.open(getMvpView().getActivity(), new RatePrompt(toEdit, RATE_PROMPT_DELAY_MILLIS));
                     }
                 }
                 mLoadedItemOnce = true;
@@ -135,7 +140,7 @@ public class PresenterWorkoutDetails extends BaseActivityPresenter<MvpViewWorkou
                 .compose(applyUISchedulers())
                 .subscribe(action -> {
                     analytics.shared();
-                    navigation.shareWorkout(getMvpView().getActivity(), toEdit);
+                    navigator.open(getMvpView().getActivity(), new ShareWorkout(toEdit));
                 }, throwable -> handleError(throwable)));
     }
 
@@ -336,7 +341,7 @@ public class PresenterWorkoutDetails extends BaseActivityPresenter<MvpViewWorkou
             @Override
             public void onClickEditExercises(ELWorkout workout) {
                 analytics.exercisesModified();
-                navigation.openExerciseEditor(getMvpView().getActivity(), workout.getExerciseGroups());
+                NavigatorKt.openForResult(navigator, getMvpView().getActivity(), new ExerciseGroupsEditor(workout.getExerciseGroups()));
             }
 
             @Override
@@ -345,7 +350,7 @@ public class PresenterWorkoutDetails extends BaseActivityPresenter<MvpViewWorkou
                 .setShowTemplates(false)
                 .setWeightUnit(settings.weightUnit())
                 .setOnExerciseClicked((context, exercise) -> {
-                    navigation.openExerciseDetails(context, exercise, ExerciseTab.Info);
+                    navigator.open(context, new ExerciseDetails(exercise, ExerciseTab.Info));
                     return Unit.INSTANCE;
                 })
         ));
