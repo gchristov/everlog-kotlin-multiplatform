@@ -96,6 +96,10 @@ interface Analytic {
     fun workoutChangeMuscleGoal()
     fun workoutKeypadShown(source: String)
     fun workoutKeypadHidden(source: String)
+    // An exercise's history arriving on the workout screen, or not: "loaded" or "failed"
+    fun workoutHistoryLoaded(exercises: Int, durationMillis: Long, outcome: String)
+    // A DataSync sync: "synced", "failed" or "timed_out"
+    fun dataSynced(collection: String, work: String, documents: Int, durationMillis: Long, outcome: String)
     fun workoutTimerStartedExercise()
     fun workoutTimerStoppedExercise()
     fun workoutTimerStartedRest()

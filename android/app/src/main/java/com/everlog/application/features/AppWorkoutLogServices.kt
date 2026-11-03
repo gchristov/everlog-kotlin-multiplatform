@@ -102,4 +102,7 @@ class AppWorkoutLogAnalytics : WorkoutLogAnalytics {
     override fun keypadShown(source: KeypadShownFrom) = analytics.workoutKeypadShown(source.id)
 
     override fun keypadHidden(source: KeypadHiddenBy) = analytics.workoutKeypadHidden(source.id)
+
+    override fun historyLoaded(exercises: Int, durationMillis: Long, failed: Boolean) =
+        analytics.workoutHistoryLoaded(exercises, durationMillis, if (failed) "failed" else "loaded")
 }

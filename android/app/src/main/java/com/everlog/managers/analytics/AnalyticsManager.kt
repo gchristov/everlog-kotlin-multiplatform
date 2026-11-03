@@ -552,6 +552,20 @@ class AnalyticsManager : Analytic {
         }
     }
 
+    override fun workoutHistoryLoaded(exercises: Int, durationMillis: Long, outcome: String) {
+        Timber.tag(TAG).i("Workout history loaded: exercises=%d durationMs=%d outcome=%s", exercises, durationMillis, outcome)
+        mAnalytics?.forEach {
+            it.workoutHistoryLoaded(exercises, durationMillis, outcome)
+        }
+    }
+
+    // Logged by DataSync itself, so not again here
+    override fun dataSynced(collection: String, work: String, documents: Int, durationMillis: Long, outcome: String) {
+        mAnalytics?.forEach {
+            it.dataSynced(collection, work, documents, durationMillis, outcome)
+        }
+    }
+
     override fun workoutTimerStartedExercise() {
         Timber.tag(TAG).i("Workout timer started exercise")
         mAnalytics?.forEach {
