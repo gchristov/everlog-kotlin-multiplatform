@@ -1,5 +1,6 @@
 package com.everlog.android.pro
 
+import com.everlog.android.common.navigation.Navigator
 import dev.zacsweers.metro.AppScope
 import dev.zacsweers.metro.ContributesTo
 
@@ -10,5 +11,5 @@ interface ProGraph {
 
     val proAnalytics: ProAnalytics
 
-    val proNavigation: ProNavigation
+    val navigator: Navigator
 }

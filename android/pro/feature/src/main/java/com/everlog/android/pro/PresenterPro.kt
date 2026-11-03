@@ -11,6 +11,10 @@ import com.android.billingclient.api.SkuDetails
 import com.everlog.android.common.design.R as DesignR
 import com.everlog.android.common.mvp.MvpBroadcasts
 import com.everlog.android.common.mvp.activity.BaseActivityPresenter
+import com.everlog.android.common.navigation.Navigator
+import com.everlog.android.common.navigation.PrivacyPolicy
+import com.everlog.android.common.navigation.ProCongratulations
+import com.everlog.android.common.navigation.Terms
 import com.everlog.android.pro.ProUpgradeAdapter
 import com.everlog.android.pro.R
 import com.everlog.android.pro.billing.BillingManager
@@ -20,7 +24,7 @@ import timber.log.Timber
 class PresenterPro(
     private val proPurchases: ProPurchases,
     private val analytics: ProAnalytics,
-    private val navigation: ProNavigation,
+    private val navigator: Navigator,
 ) : BaseActivityPresenter<MvpViewPro>() {
 
     private val TAG = "PresenterPro"
@@ -123,7 +127,7 @@ class PresenterPro(
         subscriptions.add(mvpView.onClickTerms()
                 .compose(applyUISchedulers())
                 .subscribe({
-                    navigation.openTerms(mvpView.context, mvpView.context.getString(DesignR.string.login_terms))
+                    navigator.open(mvpView.context, Terms(mvpView.context.getString(DesignR.string.login_terms)))
                 }, { throwable -> handleError(throwable) }))
     }
 
@@ -131,7 +135,7 @@ class PresenterPro(
         subscriptions.add(mvpView.onClickPrivacy()
                 .compose(applyUISchedulers())
                 .subscribe({
-                    navigation.openPrivacyPolicy(mvpView.context, mvpView.context.getString(DesignR.string.login_terms_privacy))
+                    navigator.open(mvpView.context, PrivacyPolicy(mvpView.context.getString(DesignR.string.login_terms_privacy)))
                 }, { throwable -> handleError(throwable) }))
     }
 
@@ -267,7 +271,7 @@ class PresenterPro(
 //                    Qonversion.instance?.purchase(mSelectedSku!!.skuDetails, it)
                 }
             }
-            navigation.openCongratulate(mvpView.context)
+            navigator.open(mvpView.context, ProCongratulations)
             mvpView?.closeScreen()
         }
     }

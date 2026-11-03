@@ -65,7 +65,7 @@ The convention plugins enforce these: a module that declares a dependency breaki
 
 ## What a feature gets from the app
 
-A feature module can't see the app, but some of what it needs lives there: services built on the app's managers (analytics, remote config, auth, billing) and other features' screens, which open through the app's `Navigator`. Each feature declares them as small interfaces by role, e.g. `ExerciseNavigation`, `ExerciseConfig` and `ExerciseAnalytics`, which app classes implement and bind into the dependency graph (see below). The feature's activities read them from the graph and hand them to their presenters and view-models, so tests still pass fakes.
+A feature module can't see the app, but some of what it needs lives there: services built on the app's managers (analytics, remote config, auth, billing) and other features' screens. Screens open through the shared `Navigator` (`common:navigation`). For the rest each feature declares small interfaces by role, e.g. `ExerciseConfig` and `ExerciseAnalytics`, which app classes implement and bind into the dependency graph (see below). The feature's activities read them from the graph and hand them to their presenters and view-models, so tests still pass fakes.
 
 Services the app shares, like the user's settings, are an interface with a `Real…` implementation and a `Fake…` in the feature's `test-fixtures` (`UserSettings`, `RealUserSettings`, `FakeUserSettings`; `UserSession` for the signed-in user). The graph creates one instance of each. Code that only needs a value, like an adapter showing weights, takes the value; one that lives on while the setting changes, like a Home tab, takes the interface and reads it when it draws.
 
@@ -82,7 +82,7 @@ Services the app shares, like the user's settings, are an interface with a `Real
 
 - **Every feature** works like this:
   - Its data classes are `@Inject` in their `data` module and contribute their bindings, e.g. `RealExerciseRepository` and the library and guide use cases. They take dispatchers by qualifier (`@IoDispatcher`, `@DefaultDispatcher`, from `common:kotlin`'s `di` package).
-  - What only the app can do is a small interface in the feature, bound by an app class: `ExerciseNavigation` (`AppExerciseNavigation`), `ExerciseConfig` (Remote Config), the analytics interfaces.
+  - What only the app can do is a small interface in the feature, bound by an app class: `ExerciseConfig` (Remote Config), the analytics interfaces. Other features' screens open through the `Navigator`.
   - The feature declares what its screens use in one `@ContributesTo(AppScope::class)` interface, `ExerciseGraph`, which the app's graph takes on. Activities and fragments read it with `appGraph<ExerciseGraph>()` (from Java, `appGraph(context, ExerciseGraph.class)`), through the application (`GraphOwner`), and hand presenters their parts in the constructor.
   - `AppBindings` gives the graph what comes from outside it: `DataSync`, the app's settings like how many months of workouts to sync (`@WorkoutSyncMonths`), and the old workouts store. A data module provides its own store the same way, e.g. `TemplateStoreBindings`. The graph takes the application `Context` in its factory.
 - **Next** (TAS-474): the `common:mvp` and `common:data` holders, then the stores, which still come from the `…Stores` objects.

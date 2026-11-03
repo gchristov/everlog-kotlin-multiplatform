@@ -93,7 +93,7 @@ class ProActivity : BaseActivity(), MvpViewPro {
 
     override fun setupPresenter() {
         val graph = appGraph<ProGraph>()
-        mPresenter = PresenterPro(graph.proPurchases, graph.proAnalytics, graph.proNavigation)
+        mPresenter = PresenterPro(graph.proPurchases, graph.proAnalytics, graph.navigator)
     }
 
     private fun setupTopBar() {
