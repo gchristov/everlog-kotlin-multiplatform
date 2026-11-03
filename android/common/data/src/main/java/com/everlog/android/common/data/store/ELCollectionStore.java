@@ -259,6 +259,26 @@ public abstract class ELCollectionStore<T> implements CollectionStore<T> {
         }
     }
 
+    @Override
+    public void redecorate() {
+        Utils.runInBackground(() -> {
+            synchronized (mParseMutex) {
+                if (!mItemsLoadedOnce) {
+                    return;
+                }
+                synchronized (mItems) {
+                    for (T item : mItems) {
+                        decorateItem(item);
+                    }
+                }
+                Utils.runInForeground(() -> {
+                    sendItemsLoadedEvent(false);
+                    mItemsLoadedObservable.onNext(new ArrayList<>(mItems));
+                });
+            }
+        });
+    }
+
     protected void decorateItem(T item) {
         // No-op
     }

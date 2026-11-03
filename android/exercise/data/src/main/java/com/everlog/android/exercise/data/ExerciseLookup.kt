@@ -33,6 +33,12 @@ interface ExerciseLookup {
      * thread. Ones it doesn't have are fetched in the background, for later calls.
      */
     fun find(uuids: Set<String>): Map<String, ELExercise>
+
+    /**
+     * [action] runs whenever the exercises arrive after finds had to go without them, e.g. after a slow first load
+     * or while offline, so what was resolved then can be resolved again.
+     */
+    fun onLateArrival(action: () -> Unit)
 }
 
 @SingleIn(AppScope::class)
@@ -65,21 +71,34 @@ class RealExerciseLookup(
 
     private val exercises = MutableStateFlow<Exercises>(Exercises.Loading)
     private var following: Job? = null
+    private var retrying: Job? = null
 
     // Fetched or being fetched while the exercises are followed, so each is asked for once
     private val asked = HashSet<String>()
     private val toFetch = HashSet<String>()
     private var fetching: Job? = null
 
+    private var lateArrival: List<() -> Unit> = emptyList()
+    private var wentWithout = false
+
     override fun find(uuids: Set<String>): Map<String, ELExercise> {
         follow()
         val found = when (val current = exercises.value) {
             is Exercises.Ready -> current.byUuid
-            Exercises.Missing -> return emptyMap()
-            Exercises.Loading -> if (onMainThread()) return emptyMap() else awaitFirstLoad() ?: return emptyMap()
+            Exercises.Missing -> null
+            Exercises.Loading -> if (onMainThread()) null else awaitFirstLoad()
         }
-        fetchLater(uuids - found.keys)
+        if (found == null) {
+            synchronized(this) { wentWithout = true }
+            return emptyMap()
+        }
+        fetchLater(uuids.filterTo(HashSet()) { it.isNotBlank() } - found.keys)
         return uuids.mapNotNull { uuid -> found[uuid]?.let { uuid to it } }.toMap()
+    }
+
+    @Synchronized
+    override fun onLateArrival(action: () -> Unit) {
+        lateArrival = lateArrival + action
     }
 
     private fun awaitFirstLoad(): Map<String, ELExercise>? = runBlocking {
@@ -94,13 +113,38 @@ class RealExerciseLookup(
         if (following?.isActive == true) return
         exercises.value = Exercises.Loading
         asked.clear()
-        following = scope.launch {
-            repository.allExercises().collect { load ->
-                when (load) {
-                    is Load.Ready -> exercises.value = Exercises.Ready(load.value.associate { it.uuid to it.toELExercise() })
-                    is Load.Unavailable -> if (exercises.value == Exercises.Loading) exercises.value = Exercises.Missing
-                    Load.Loading -> Unit
+        wentWithout = false
+        following = collect()
+    }
+
+    private fun collect(): Job = scope.launch {
+        repository.allExercises().collect { load ->
+            when (load) {
+                is Load.Ready -> arrived(load.value.associate { it.uuid to it.toELExercise() })
+                is Load.Unavailable -> {
+                    exercises.compareAndSet(Exercises.Loading, Exercises.Missing)
+                    readAgainLater()
                 }
+                Load.Loading -> Unit
+            }
+        }
+    }
+
+    private fun arrived(byUuid: Map<String, ELExercise>) {
+        exercises.value = Exercises.Ready(byUuid)
+        val late = synchronized(this) { lateArrival.takeIf { wentWithout }.orEmpty().also { wentWithout = false } }
+        late.forEach { it() }
+    }
+
+    // DataSync tries a failed sync again when it's read again, e.g. the library's first sync while offline
+    @Synchronized
+    private fun readAgainLater() {
+        if (retrying?.isActive == true) return
+        retrying = scope.launch {
+            delay(retryAfterMillis)
+            synchronized(this@RealExerciseLookup) {
+                following?.cancel()
+                following = collect()
             }
         }
     }

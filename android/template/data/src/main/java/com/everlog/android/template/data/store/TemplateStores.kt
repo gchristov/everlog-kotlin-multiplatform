@@ -25,6 +25,12 @@ object TemplateStores {
     fun routineStore(): DocumentStore<ELRoutine> =
         routine ?: (if (inMemory()) ELUserRoutineInMemoryStore() else ELUserRoutineStore(session)).also { routine = it }
 
+    // The list it holds shows its exercises as they are now, e.g. once they've loaded late
+    @Synchronized
+    fun redecorate() {
+        routines?.redecorate()
+    }
+
     @JvmStatic
     @Synchronized
     fun destroy() {

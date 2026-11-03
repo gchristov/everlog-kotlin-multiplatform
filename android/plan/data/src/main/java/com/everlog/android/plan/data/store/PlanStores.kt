@@ -25,6 +25,12 @@ object PlanStores {
     fun planStore(): DocumentStore<ELPlan> =
         plan ?: (if (inMemory()) ELUserPlanInMemoryStore() else ELUserPlanStore(session)).also { plan = it }
 
+    // The list it holds shows its exercises as they are now, e.g. once they've loaded late
+    @Synchronized
+    fun redecorate() {
+        plans?.redecorate()
+    }
+
     @JvmStatic
     @Synchronized
     fun destroy() {

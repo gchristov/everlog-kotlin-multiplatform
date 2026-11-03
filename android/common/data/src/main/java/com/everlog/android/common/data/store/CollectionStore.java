@@ -10,4 +10,8 @@ public interface CollectionStore<T> {
     void getItems(OnStoreItemsListener<T> listener);
 
     void destroy();
+
+    // Decorates the items it holds again, e.g. once what decorating them needs has arrived late
+    default void redecorate() {
+    }
 }

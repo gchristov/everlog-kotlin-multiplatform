@@ -19,6 +19,8 @@ class ELRoutineDecoratorTest {
             asked += uuids
             return mapOf("bench" to renamed).filterKeys { it in uuids }
         }
+
+        override fun onLateArrival(action: () -> Unit) = Unit
     }
     private val decorator = ELRoutineDecorator(lookup)
 
