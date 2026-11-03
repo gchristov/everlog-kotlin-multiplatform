@@ -167,7 +167,7 @@ public class PlanWeekView implements IWeekView {
     private void setupList() {
         mAdapter.addDataManager(mDataListManager);
         PlanGraph planGraph = GraphOwnerKt.appGraph(mContext, PlanGraph.class);
-        mAdapter.registerBinder(new PlanDayAdapter.Binder(planGraph.getPlanAnalytics(), planGraph.getPlanNavigation(), new PlanDayAdapter.OnPlanDayListener() {
+        mAdapter.registerBinder(new PlanDayAdapter.Binder(planGraph.getPlanAnalytics(), planGraph.getNavigator(), planGraph.getUserSession(), new PlanDayAdapter.OnPlanDayListener() {
             @Override
             public void onClickSkip(ELPlanDay day) {
                 if (mListener != null) {

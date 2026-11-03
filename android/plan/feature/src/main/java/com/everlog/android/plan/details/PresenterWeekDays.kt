@@ -5,8 +5,9 @@ import com.ahamed.multiviewadapter.RecyclerAdapter
 import com.everlog.android.auth.data.UserSession
 import com.everlog.android.common.design.R as DesignR
 import com.everlog.android.common.mvp.fragment.BaseFragmentPresenter
+import com.everlog.android.common.navigation.Navigator
+import com.everlog.android.common.navigation.TemplateDetails
 import com.everlog.android.plan.PlanAnalytics
-import com.everlog.android.plan.PlanNavigation
 import com.everlog.android.plan.adapter.PlanDayAdapter
 import com.everlog.android.plan.adapter.applyProLock
 import com.everlog.android.plan.data.PlanProgress
@@ -17,7 +18,7 @@ class PresenterWeekDays(
     private val planProgress: PlanProgress,
     private val session: UserSession,
     private val analytics: PlanAnalytics,
-    private val navigation: PlanNavigation,
+    private val navigator: Navigator,
 ) : BaseFragmentPresenter<MvpViewWeekDays>() {
 
 
@@ -59,11 +60,11 @@ class PresenterWeekDays(
 
     private fun setupListViews() {
         mAdapter.addDataManager(mDataListManager)
-        mAdapter.registerBinder(PlanDayAdapter.Binder(analytics, navigation, object : PlanDayAdapter.OnPlanDayListener {
+        mAdapter.registerBinder(PlanDayAdapter.Binder(analytics, navigator, session, object : PlanDayAdapter.OnPlanDayListener {
             override fun onItemClicked(item: ELPlanDay, position: Int) {
                 val routine = item.getRoutine()
                 if (routine != null) {
-                    context?.let { navigation.openTemplateDetails(it, routine) }
+                    context?.let { navigator.open(it, TemplateDetails(routine, viewOnly = true)) }
                 } else {
                     mvpView.showOK(DesignR.string.plan_details_rest_title, DesignR.string.plan_details_rest_prompt)
                 }

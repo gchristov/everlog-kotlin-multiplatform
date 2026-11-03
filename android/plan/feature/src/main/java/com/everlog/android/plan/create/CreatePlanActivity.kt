@@ -191,7 +191,7 @@ class CreatePlanActivity : BaseActivity(), MvpViewCreatePlan {
     // Setup
 
     override fun setupPresenter() {
-        mPresenter = PresenterCreatePlan(graph.planProgress, graph.userSession, graph.planAnalytics, graph.planNavigation)
+        mPresenter = PresenterCreatePlan(graph.planProgress, graph.userSession, graph.planAnalytics, graph.navigator)
     }
 
     private fun setupTopBar() {
