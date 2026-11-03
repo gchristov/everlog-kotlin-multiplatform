@@ -362,6 +362,34 @@ class WorkoutLogScenarioTest {
     }
 
     @Test
+    fun addingEachSetAfterTheLast() {
+        val bench = ELWorkout(
+            uuid = "bench",
+            createdDate = now,
+            routine = ELRoutine(name = "Bench", exerciseGroups = mutableListOf(group(ELSetType.SINGLE, "Bench press" to 8))),
+        )
+        val viewModel = viewModel(bench)
+        compose.setContent {
+            Theme { WorkoutLogScreen(viewModel = viewModel, onAddExercise = {}, onOpenExercise = { _, _ -> }, onOpenSetSuggestions = {}, onExit = { exit = it }) }
+        }
+
+        // The last set left to do still starts its rest, and a set added during it leaves it running
+        tick(0, 0, 0).performClick()
+        tick(0, 1, 0).performClick()
+        compose.onNodeWithText("REST").assertExists()
+        compose.onAllNodes(hasText("Add set") and hasAnyAncestor(hasTestTag(ExerciseTableTags.Table)))[0].performClick()
+        row(0, 2, 0).assertExists()
+        compose.onNodeWithText("REST").assertExists()
+
+        // Skipped, then the added set rests in turn
+        key("Skip").performClick()
+        compose.onNodeWithText("REST").assertDoesNotExist()
+        tick(0, 2, 0).performClick()
+        compose.onNodeWithText("REST").assertExists()
+        assertThat(analytics.events.count { it == "rest_started" }).isEqualTo(3)
+    }
+
+    @Test
     fun changingSetSuggestionsMidWorkout() {
         val viewModel = viewModel(template())
         compose.setContent {

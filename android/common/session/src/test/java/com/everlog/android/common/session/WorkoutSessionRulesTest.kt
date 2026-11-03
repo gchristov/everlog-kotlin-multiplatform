@@ -56,13 +56,23 @@ class WorkoutSessionRulesTest {
     }
 
     @Test
-    fun `completing the last set not done ends without rest`() {
+    fun `completing the last set not done still starts rest`() {
         val allButLast = blocks.refs().dropLast(1).fold(blocks) { acc, ref -> acc.completeSet(ref, current = null, now).blocks }
 
         val completion = allButLast.completeCurrent(blocks.refs().last(), now)
 
         assertThat(completion.current).isNull()
-        assertThat(completion.startsRest).isFalse()
+        assertThat(completion.startsRest).isTrue()
+    }
+
+    @Test
+    fun `completing the last set not done elsewhere still starts rest`() {
+        val allButFirst = blocks.refs().drop(1).fold(blocks) { acc, ref -> acc.completeSet(ref, current = null, now).blocks }
+
+        val completion = allButFirst.completeSet(ref(single, 0), current = null, now)
+
+        assertThat(completion.current).isNull()
+        assertThat(completion.startsRest).isTrue()
     }
 
     @Test

@@ -467,16 +467,21 @@ class WorkoutLogViewModelTest {
     }
 
     @Test
-    fun `the last set of the workout doesn't start a rest`() {
-        val viewModel = viewModel()
-        viewModel.blocks.indices.forEach { b ->
-            viewModel.blocks[b].rounds.indices.forEach { r ->
-                viewModel.blocks[b].exercises.indices.forEach { e -> viewModel.onTick(viewModel.ref(b, r, e)) }
-            }
-            viewModel.onTimerEnd()
-        }
+    fun `the last set of the workout starts a rest, which keeps running as the next set is added`() {
+        val oneSet = ELWorkout(
+            uuid = "workout",
+            createdDate = now - 60_000,
+            routine = ELRoutine(name = "Push", exerciseGroups = mutableListOf(group("SINGLE", "bench" to 8, sets = 1))),
+        )
+        val viewModel = viewModel(oneSet)
+        viewModel.onTick(viewModel.ref(0, 0))
+        assertThat(viewModel.state.value.timer).isEqualTo(WorkoutTimer.Rest(endsAt = now + 90_000, totalSeconds = 90))
 
-        assertThat(viewModel.state.value.timer).isNull()
+        viewModel.onAddSet(viewModel.blocks[0].id)
+
+        assertThat(viewModel.state.value.timer).isEqualTo(WorkoutTimer.Rest(endsAt = now + 90_000, totalSeconds = 90))
+        assertThat(viewModel.state.value.current).isEqualTo(viewModel.ref(0, 1))
+        assertThat(analytics.events).contains("rest_started")
     }
 
     @Test
