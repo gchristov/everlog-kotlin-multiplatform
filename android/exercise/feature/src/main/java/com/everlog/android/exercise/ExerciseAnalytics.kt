@@ -17,10 +17,3 @@ object ExerciseScreenNames {
     const val STATISTICS = "screen_exercise_statistics"
     const val HISTORY = "screen_exercise_history"
 }
-
-// The feedback forms the exercise screens link to
-enum class ExerciseFeedbackForm {
-    PickerMenu,
-    PickerNoResults,
-    Statistics,
-}

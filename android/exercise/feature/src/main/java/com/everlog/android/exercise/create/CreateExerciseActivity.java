@@ -167,7 +167,7 @@ public class CreateExerciseActivity extends BaseActivity implements MvpViewCreat
     @Override
     public void setupPresenter() {
         ExerciseGraph graph = GraphOwnerKt.appGraph(this, ExerciseGraph.class);
-        mPresenter = new PresenterCreateExercise(graph.getUserSession(), graph.getExerciseImageStorage(), graph.getExerciseCopies(), graph.getExerciseAnalytics(), graph.getExerciseNavigation());
+        mPresenter = new PresenterCreateExercise(graph.getUserSession(), graph.getExerciseImageStorage(), graph.getExerciseCopies(), graph.getExerciseAnalytics(), graph.getNavigator());
     }
 
     private void setupTopBar() {

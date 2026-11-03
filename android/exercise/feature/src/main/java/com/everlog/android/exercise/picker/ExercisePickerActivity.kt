@@ -1,7 +1,5 @@
 package com.everlog.android.exercise.picker
 
-import com.everlog.android.exercise.ExerciseGraph
-import com.everlog.android.common.kotlin.di.appGraph
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
@@ -11,9 +9,18 @@ import androidx.lifecycle.createSavedStateHandle
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import com.everlog.android.common.compose.CommonComposeActivity
-import com.everlog.android.exercise.data.model.library.toELExercise
-import com.everlog.android.exercise.ExerciseFeedbackForm
+import com.everlog.android.common.kotlin.di.appGraph
+import com.everlog.android.common.navigation.FeedbackForm
+import com.everlog.android.common.navigation.FeedbackSource
+import com.everlog.android.common.navigation.SetTypePicker
+import com.everlog.android.common.navigation.launcher
+import com.everlog.android.common.navigation.openForResult
+import com.everlog.android.exercise.ExerciseExtras
+import com.everlog.android.exercise.ExerciseGraph
 import com.everlog.android.exercise.R
+import com.everlog.android.exercise.create.CreateExerciseActivity
+import com.everlog.android.exercise.data.model.library.toELExercise
+import com.everlog.android.exercise.details.ExerciseDetailsActivity
 import kotlinx.coroutines.Dispatchers
 
 /**
@@ -22,7 +29,7 @@ import kotlinx.coroutines.Dispatchers
  */
 class ExercisePickerActivity : CommonComposeActivity() {
     private val graph by lazy { appGraph<ExerciseGraph>() }
-    private val navigation by lazy { graph.exerciseNavigation }
+    private val navigator by lazy { graph.navigator }
 
     private val viewModel by viewModels<ExercisePickerViewModel> {
         viewModelFactory {
@@ -45,16 +52,16 @@ class ExercisePickerActivity : CommonComposeActivity() {
         }
     }
 
-    private val sendFeedback by lazy { navigation.feedbackForm(this, ExerciseFeedbackForm.PickerMenu) }
-    private val reportMissing by lazy { navigation.feedbackForm(this, ExerciseFeedbackForm.PickerNoResults) }
+    private val sendFeedback by lazy { navigator.launcher(this, FeedbackForm(FeedbackSource.EXERCISE_PICKER_MENU)) }
+    private val reportMissing by lazy { navigator.launcher(this, FeedbackForm(FeedbackSource.EXERCISE_PICKER_NO_RESULTS)) }
 
     @Composable
     override fun Content() = ExercisePickerScreen(
         viewModel = viewModel,
         onResult = ::finishWithPicks,
-        onOpenExercise = { navigation.openExerciseDetails(this, it.toELExercise()) },
-        onCreateExercise = { name -> navigation.openCreateExercise(this, name) },
-        onPickSetType = { count -> navigation.openSetTypePicker(this, count) },
+        onOpenExercise = { startActivity(ExerciseDetailsActivity.launchIntent(this, ExerciseDetailsActivity.Companion.Properties().exercise(it.toELExercise()))) },
+        onCreateExercise = { name -> startActivityForResult(CreateExerciseActivity.createIntent(this, name), CreateExerciseActivity.REQUEST_CODE) },
+        onPickSetType = { count -> navigator.openForResult(this, SetTypePicker(count)) },
         onSendFeedback = sendFeedback,
         onReportMissing = reportMissing,
     )
@@ -63,8 +70,8 @@ class ExercisePickerActivity : CommonComposeActivity() {
     @Deprecated("The navigator opens the set type picker and the create screen with startActivityForResult")
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        navigation.pickedSetType(requestCode, resultCode, data)?.let { viewModel.onAdd(it) }
-        navigation.createdExerciseUuid(requestCode, resultCode, data)?.let { viewModel.onExerciseCreated(it) }
+        SetTypePicker.result(requestCode, resultCode, data)?.let { viewModel.onAdd(it) }
+        createdExerciseUuid(requestCode, resultCode, data)?.let { viewModel.onExerciseCreated(it) }
     }
 
     private fun finishWithPicks(result: PickerResult) {
@@ -84,3 +91,11 @@ class ExercisePickerActivity : CommonComposeActivity() {
             Intent(context, ExercisePickerActivity::class.java).putExtra(ExtraPick, pick)
     }
 }
+
+// The uuid of the exercise the create exercise screen saved
+private fun createdExerciseUuid(requestCode: Int, resultCode: Int, data: Intent?): String? =
+    if (requestCode == CreateExerciseActivity.REQUEST_CODE && resultCode == Activity.RESULT_OK) {
+        data?.getStringExtra(ExerciseExtras.EXERCISE_UUID)
+    } else {
+        null
+    }

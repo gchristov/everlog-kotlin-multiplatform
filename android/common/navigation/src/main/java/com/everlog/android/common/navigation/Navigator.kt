@@ -18,3 +18,11 @@ interface Navigator {
 // Opens [destination] for its result, which onActivityResult reads with its ScreenResult
 fun Navigator.openForResult(activity: Activity, destination: ResultDestination<*>) =
     activity.startActivityForResult(intent(activity, destination), destination.screenResult.requestCode)
+
+// Opens [destination] when it's there to open, or null so the screen leaves its entry out
+fun Navigator.launcher(context: Context, destination: Destination): (() -> Unit)? =
+    if (canOpen(destination)) {
+        { open(context, destination) }
+    } else {
+        null
+    }

@@ -156,7 +156,7 @@ class ExerciseStatisticsFragment(exercise: ELExercise,
     // Setup
 
     override fun setupPresenter() {
-        mPresenter = PresenterExerciseStatistics(graph.exerciseNavigation)
+        mPresenter = PresenterExerciseStatistics(graph.navigator)
     }
 
     private fun setupCharts() {

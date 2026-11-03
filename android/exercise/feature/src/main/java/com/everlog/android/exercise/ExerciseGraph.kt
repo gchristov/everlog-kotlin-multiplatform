@@ -3,6 +3,7 @@ package com.everlog.android.exercise
 import com.everlog.android.auth.data.UserSession
 import com.everlog.android.common.data.model.workout.ELWorkout
 import com.everlog.android.common.data.store.CollectionStore
+import com.everlog.android.common.navigation.Navigator
 import com.everlog.android.exercise.data.ExerciseCopies
 import com.everlog.android.exercise.data.ExerciseImageStorage
 import com.everlog.android.exercise.data.LoadExerciseGuideUseCase
@@ -31,7 +32,7 @@ interface ExerciseGraph {
 
     val pickerAnalytics: ExercisePickerAnalytics
 
-    val exerciseNavigation: ExerciseNavigation
+    val navigator: Navigator
 
     val exerciseConfig: ExerciseConfig
 
