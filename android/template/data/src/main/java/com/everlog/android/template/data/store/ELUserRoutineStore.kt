@@ -30,7 +30,7 @@ class ELUserRoutineStore(private val session: UserSession) : ELDocumentStore<ELR
     }
 
     override fun decorateItem(item: ELRoutine) {
-        ELRoutineDecorator(session).decorate(item)
+        ELRoutineDecorator().decorate(item)
     }
 
     // Events

@@ -31,7 +31,7 @@ class ELUserWorkoutStore(private val session: UserSession) : ELDocumentStore<ELW
     }
 
     override fun decorateItem(item: ELWorkout) {
-        ELRoutineDecorator(session).decorate(item)
+        ELRoutineDecorator().decorate(item)
     }
 
     // Events

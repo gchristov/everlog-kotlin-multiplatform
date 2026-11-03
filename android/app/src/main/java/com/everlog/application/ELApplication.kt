@@ -36,6 +36,7 @@ class ELApplication : Application(), GraphOwner {
         CommonData.dependencies = AppCommonDataDependencies()
         AuthStores.session = graph.userSession
         ExerciseStores.session = graph.userSession
+        ExerciseStores.lookup = lazy { graph.exerciseLookup }
         TemplateStores.session = graph.userSession
         WorkoutStores.session = graph.userSession
         PlanStores.session = graph.userSession

@@ -28,7 +28,7 @@ class ELUserRoutinesStore(private val session: UserSession) : ELCollectionStore<
     }
 
     override fun decorateItem(item: ELRoutine) {
-        ELRoutineDecorator(session).decorate(item)
+        ELRoutineDecorator().decorate(item)
     }
 
     // Events

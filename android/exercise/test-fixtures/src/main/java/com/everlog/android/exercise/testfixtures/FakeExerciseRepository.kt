@@ -9,6 +9,7 @@ import com.everlog.android.exercise.data.model.library.LibraryExercise
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.emptyFlow
 import kotlinx.coroutines.flow.flowOf
+import java.util.concurrent.CopyOnWriteArrayList
 
 class FakeExerciseRepository(
     var globalExercises: Either<Throwable, List<ELExercise>> = Either.Right(emptyList()),
@@ -37,4 +38,19 @@ class FakeExerciseRepository(
     override fun registry(): Flow<Load<ExerciseRegistry?>> = flowOf(Load.Ready(ExerciseRegistry()))
 
     override fun ownExerciseUpdates(): Flow<List<LibraryExercise>> = emptyFlow()
+
+    // Each call to allExercises gets the next of these, the last one again once they run out
+    var allExercises: MutableList<Flow<Load<List<LibraryExercise>>>> = mutableListOf(flowOf(Load.Ready(emptyList())))
+
+    override fun allExercises(): Flow<Load<List<LibraryExercise>>> =
+        if (allExercises.size > 1) allExercises.removeAt(0) else allExercises.first()
+
+    // The uuids asked for by each fetch, in order
+    val fetches: MutableList<Set<String>> = CopyOnWriteArrayList()
+    var fetch: (Set<String>) -> Load<Set<String>> = { Load.Ready(emptySet()) }
+
+    override suspend fun fetchExercises(uuids: Set<String>): Load<Set<String>> {
+        fetches += uuids
+        return fetch(uuids)
+    }
 }

@@ -30,7 +30,7 @@ class ELPlanDecorator(private val session: UserSession) {
 
     private fun buildResolvedRoutines(routinesToResolve: Set<String>): Map<String, ELRoutine> {
         val resolvedRoutines = HashMap<String, ELRoutine>()
-        val routineDecorator = ELRoutineDecorator(session)
+        val routineDecorator = ELRoutineDecorator()
         routinesToResolve.forEach {
             // Check local routines cache first
             val cachedRoutine = resolveRoutine(it, Source.CACHE)

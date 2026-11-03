@@ -18,12 +18,12 @@ object TemplateStores {
     @JvmStatic
     @Synchronized
     fun routinesStore(): CollectionStore<ELRoutine> =
-        routines ?: (if (inMemory()) ELUserRoutinesInMemoryStore(session) else ELUserRoutinesStore(session)).also { routines = it }
+        routines ?: (if (inMemory()) ELUserRoutinesInMemoryStore() else ELUserRoutinesStore(session)).also { routines = it }
 
     @JvmStatic
     @Synchronized
     fun routineStore(): DocumentStore<ELRoutine> =
-        routine ?: (if (inMemory()) ELUserRoutineInMemoryStore(session) else ELUserRoutineStore(session)).also { routine = it }
+        routine ?: (if (inMemory()) ELUserRoutineInMemoryStore() else ELUserRoutineStore(session)).also { routine = it }
 
     @JvmStatic
     @Synchronized
