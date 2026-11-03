@@ -7,6 +7,7 @@ android {
 }
 
 dependencies {
+    implementation(projects.android.datasync)
     implementation(projects.android.auth.data)
     implementation(projects.android.settings.data)
     implementation(projects.android.template.data)

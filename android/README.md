@@ -7,6 +7,7 @@ The app is split into Gradle modules, with [Metro](https://zacsweers.github.io/m
 ```
 android/
   app/                       the app shell and the old screens, see "What stays in the app"
+  datasync/                  DataSync, how data modules keep Firestore's cache in step with the server
   common/<name>/             setup and code shared by other modules
   <feature>/data/            a feature's repositories, use cases and stores
   <feature>/feature/         a feature's screens and view-models
@@ -46,15 +47,17 @@ Common modules:
 | `common:persistence` | `PreferencesManager`, the app's key-value storage. The user's settings (`UserSettings`) go to `settings:data` |
 | `common:session` | The workout session model the workout screen and the template editor edit (blocks, rounds, sets) and its rules. A stopgap until each feature owns its part |
 | `common:session-ui` | The exercise table and edit list both screens show. A stopgap until the table has its own UI model and joins the design system |
-| `common:datasync` | `DataSync`, the cache-first sync layer (the app wires its instance in `AppDataSync`) |
 | `common:data` | The models every feature shares (sets, exercises, routines, workouts), with their R8 keep rule, and the store base classes with their EventBus events, until they're split into the features' `data` modules. Feature-only models live in their feature's `data` module, each with its own keep rule |
 | `common:data-test` | Fixtures for building the shared models in tests |
+
+`datasync` is a module of its own: `DataSync`, the cache-first sync layer, and how the data modules that read Firestore through it (`exercise:data`, `template:data`, `workout:data`) keep the cache in step with the server. The app wires its instance in `AppDataSync`. Its `README.md` explains how it works.
 
 ## Dependency rules
 
 The convention plugins enforce these: a module that declares a dependency breaking one fails the build, with the rule it breaks (`gradle-plugins/conventions/…/modules`, unit tested in `ModuleRulesTest`).
 
 - **app → feature → data → common.** The app depends on every `feature` module. A feature depends on its own `data` module and on any other feature's `data` module it uses, e.g. `auth:data` for the user or `settings:data` for the settings.
+- **Only data modules and the app depend on `datasync`**, each declaring it where it reads through it. Screens read through their feature's data module, and `datasync` itself uses only common modules without UI.
 - **A feature never depends on another feature's UI.** Screens open each other through the app's `Navigator`, so a `feature` module never depends on another feature's `feature` module.
 - **Data may depend on other features' data**, and on their `test-fixtures` in tests.
 - **Each module declares the modules it uses**, as `implementation`. A module exposes another as `api` only when that module's types are part of its own public API (e.g. `auth:data` exposes `pro:data`, as `ELUser` holds the Pro subscription), never to hand another feature's data on to the modules using it. The plugins can't check this one, so check it in review.
@@ -103,7 +106,8 @@ Each module applies one plugin for its type, from `gradle-plugins/conventions`, 
 | Module type | Plugin | Adds |
 | --- | --- | --- |
 | `common` | `everlog.android.module` (plus `everlog.android.compose` for Compose code) | An Android library on the shared SDK, Java and desugaring setup, with `common:test` for unit tests |
-| `<feature>/data` | `everlog.android.data` | The module setup, with `common:kotlin`, `common:firebase`, `common:datasync` and `common:data` as `api` |
+| `<feature>/data` | `everlog.android.data` | The module setup, with `common:kotlin`, `common:firebase` and `common:data` as `api` |
+| `datasync` | `everlog.android.module` | The module setup |
 | `<feature>/feature` | `everlog.android.feature` | The module setup and Compose, with `common:compose`, `common:design` and `common:mvvm`, and `common:compose-test` for instrumented tests |
 | `<feature>/test-fixtures` | `everlog.android.module` | The module setup |
 | `common:test` | `everlog.android.base` | The shared setup only, as `everlog.android.module` adds `common:test` itself |

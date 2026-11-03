@@ -2,11 +2,11 @@ package com.everlog.data.sync
 
 import android.content.Context
 import com.everlog.BuildConfig
-import com.everlog.android.common.datasync.DataSync
-import com.everlog.android.common.datasync.PreferencesSyncRecords
-import com.everlog.android.common.datasync.SyncSettings
-import com.everlog.android.common.datasync.olderMaxAgeMillis
-import com.everlog.android.common.datasync.maxAgeMillis
+import com.everlog.android.datasync.DataSync
+import com.everlog.android.datasync.PreferencesSyncRecords
+import com.everlog.android.datasync.SyncSettings
+import com.everlog.android.datasync.olderMaxAgeMillis
+import com.everlog.android.datasync.maxAgeMillis
 import com.everlog.android.common.kotlin.AppContext
 import com.everlog.config.AppConfig
 import com.everlog.managers.RemoteConfigManager

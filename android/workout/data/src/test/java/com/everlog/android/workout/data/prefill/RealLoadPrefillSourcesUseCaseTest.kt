@@ -3,11 +3,9 @@ package com.everlog.android.workout.data.prefill
 import arrow.core.Either
 import com.everlog.android.common.data.model.exercise.ELExercise
 import com.everlog.android.common.data.model.workout.ELWorkout
-import com.everlog.android.common.datasync.Range
 import com.everlog.android.common.datatest.at
 import com.everlog.android.common.datatest.loggedSet
 import com.everlog.android.common.datatest.workout
-import com.everlog.android.common.kotlin.Load
 import com.everlog.android.common.kotlin.WeightUnit
 import com.everlog.android.common.test.FakeCoroutineDispatcher
 import com.everlog.android.settings.testfixtures.FakeUserSettings
@@ -15,8 +13,6 @@ import com.everlog.android.workout.data.WorkoutRepository
 import com.google.common.truth.Truth.assertThat
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.async
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.yield
 import org.junit.Test
@@ -76,8 +72,6 @@ class RealLoadPrefillSourcesUseCaseTest {
         val reads = mutableListOf<Pair<Long, Long?>>()
         var failure: Throwable? = null
         var beforeRead: suspend () -> Unit = {}
-
-        override fun workouts(range: Range): Flow<Load<List<ELWorkout>>> = flowOf(Load.Ready(history))
 
         override suspend fun workoutsCreatedBetween(from: Long, until: Long?): Either<Throwable, List<ELWorkout>> {
             beforeRead()

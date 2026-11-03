@@ -14,7 +14,6 @@ class AndroidDataPlugin : Plugin<Project> {
             dependencies {
                 add("api", project(CommonModules.KOTLIN))
                 add("api", project(CommonModules.FIREBASE))
-                add("api", project(CommonModules.DATASYNC))
                 add("api", project(CommonModules.DATA))
             }
         }

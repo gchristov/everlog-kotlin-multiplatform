@@ -4,10 +4,10 @@ import com.everlog.application.ELApplication
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
 import com.everlog.BuildConfig
-import com.everlog.android.common.datasync.Chunk
-import com.everlog.android.common.datasync.Cursor
-import com.everlog.android.common.datasync.FirestoreCollection
-import com.everlog.android.common.datasync.FirestoreDocument
+import com.everlog.android.datasync.Chunk
+import com.everlog.android.datasync.Cursor
+import com.everlog.android.datasync.FirestoreCollection
+import com.everlog.android.datasync.FirestoreDocument
 import com.everlog.testutil.E2EAccount
 import com.google.common.truth.Truth.assertThat
 import com.google.firebase.FirebaseApp

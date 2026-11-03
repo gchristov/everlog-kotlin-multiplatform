@@ -13,6 +13,7 @@ internal fun moduleRuleBroken(from: Module, to: Module, forTests: Boolean): Stri
     to.isTestSupport && !forTests && !from.isTestSupport -> "test support is only for tests"
     else -> when (from) {
         Module.App -> null
+        Module.DataSync -> dataSyncRuleBroken(to)
         is Module.Common -> commonRuleBroken(to)
         is Module.Feature -> when (from.type) {
             DATA -> dataRuleBroken(to)
@@ -21,8 +22,16 @@ internal fun moduleRuleBroken(from: Module, to: Module, forTests: Boolean): Stri
     }
 }
 
-private fun commonRuleBroken(to: Module) =
-    if (to is Module.Feature) "common modules never depend on feature modules" else null
+private fun commonRuleBroken(to: Module) = when (to) {
+    is Module.Feature -> "common modules never depend on feature modules"
+    Module.DataSync -> "common modules never depend on DataSync, which builds on them"
+    else -> null
+}
+
+private fun dataSyncRuleBroken(to: Module) = when {
+    to is Module.Common && !to.isUi -> null
+    else -> "DataSync depends only on common modules without UI"
+}
 
 private fun dataRuleBroken(to: Module) = when {
     to is Module.Feature && to.type == FEATURE -> "data never depends on UI"
@@ -30,9 +39,8 @@ private fun dataRuleBroken(to: Module) = when {
     else -> null
 }
 
-private fun featureRuleBroken(from: Module.Feature, to: Module) =
-    if (to is Module.Feature && to.feature != from.feature && to.type == FEATURE) {
-        "a feature never depends on another feature's UI"
-    } else {
-        null
-    }
+private fun featureRuleBroken(from: Module.Feature, to: Module) = when {
+    to is Module.Feature && to.feature != from.feature && to.type == FEATURE -> "a feature never depends on another feature's UI"
+    to == Module.DataSync -> "screens read data through their feature's data module, never DataSync"
+    else -> null
+}

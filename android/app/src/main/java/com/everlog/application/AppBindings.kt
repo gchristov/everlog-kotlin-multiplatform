@@ -2,7 +2,7 @@ package com.everlog.application
 
 import com.everlog.android.common.data.model.workout.ELWorkout
 import com.everlog.android.common.data.store.CollectionStore
-import com.everlog.android.common.datasync.DataSync
+import com.everlog.android.datasync.DataSync
 import com.everlog.android.workout.data.WorkoutSyncMonths
 import com.everlog.config.AppConfig
 import com.everlog.data.datastores.ELDatastore

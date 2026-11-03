@@ -7,6 +7,7 @@ android {
 }
 
 dependencies {
+    implementation(projects.android.datasync)
     implementation(projects.android.auth.data)
     // The template editor shows library exercises
     implementation(projects.android.exercise.data)
