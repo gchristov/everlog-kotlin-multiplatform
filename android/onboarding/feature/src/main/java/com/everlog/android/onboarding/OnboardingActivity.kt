@@ -35,6 +35,7 @@ import com.everlog.android.common.compose.elements.rememberAppBarScrollBehavior
 import com.everlog.android.common.compose.theme.Theme
 import com.everlog.android.common.kotlin.di.appGraph
 import com.everlog.android.common.mvvm.createViewModelFactory
+import com.everlog.android.common.navigation.TemplateEditor
 import com.everlog.android.onboarding.R
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.android.awaitFrame
@@ -74,7 +75,7 @@ class OnboardingActivity : CommonComposeActivity() {
         viewModel = viewModel,
         onOpenRoutineBuilder = {
             // Not the routine's details after saving: the screen decides what comes next
-            routineBuilder.launch(graph.onboardingNavigation.newTemplateIntent(this))
+            routineBuilder.launch(graph.navigator.intent(this, TemplateEditor(showDetailsOnSuccess = false)))
         },
         onClose = {
             setResult(RESULT_OK)
