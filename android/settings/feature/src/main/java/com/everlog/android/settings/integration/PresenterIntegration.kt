@@ -1,13 +1,15 @@
 package com.everlog.android.settings.integration
 
-import com.everlog.android.common.design.R as DesignR
 import android.content.DialogInterface
-import com.everlog.android.settings.R
-import com.everlog.android.settings.SettingsFeature
-import com.everlog.android.settings.data.model.ELIntegration
+import com.everlog.android.common.design.R as DesignR
 import com.everlog.android.common.mvp.activity.BaseActivityPresenter
+import com.everlog.android.settings.GoogleFitConnection
+import com.everlog.android.settings.R
+import com.everlog.android.settings.data.model.ELIntegration
 
-class PresenterIntegration : BaseActivityPresenter<MvpViewIntegration>() {
+class PresenterIntegration(
+    private val googleFit: GoogleFitConnection,
+) : BaseActivityPresenter<MvpViewIntegration>() {
 
     override fun onReady() {
         observeDisconnectClick()
@@ -32,7 +34,7 @@ class PresenterIntegration : BaseActivityPresenter<MvpViewIntegration>() {
                 .compose(applyUISchedulers())
                 .subscribe({ action ->
                     if (action == DialogInterface.BUTTON_POSITIVE) {
-                        SettingsFeature.dependencies.disconnectGoogleFit(integration)
+                        googleFit.disconnect(integration)
                         mvpView?.closeScreen()
                     }
                 }, { throwable -> handleError(throwable) }))

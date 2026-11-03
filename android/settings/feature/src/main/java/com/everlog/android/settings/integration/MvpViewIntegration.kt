@@ -1,7 +1,7 @@
 package com.everlog.android.settings.integration
 
-import com.everlog.android.settings.data.model.ELIntegration
 import com.everlog.android.common.mvp.activity.BaseActivityMvpView
+import com.everlog.android.settings.data.model.ELIntegration
 import rx.Observable
 
 interface MvpViewIntegration : BaseActivityMvpView {

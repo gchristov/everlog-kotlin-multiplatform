@@ -3,18 +3,20 @@ package com.everlog.android.settings.integration
 import android.content.Context
 import android.content.Intent
 import android.view.View
-import com.everlog.android.settings.R
-import com.everlog.android.settings.SettingsExtras
-import com.everlog.android.settings.SettingsScreenNames
-import com.everlog.android.settings.data.model.ELIntegration
-import com.everlog.android.settings.databinding.ActivityIntegrationBinding
+import com.everlog.android.common.design.R as DesignR
+import com.everlog.android.common.kotlin.di.appGraph
 import com.everlog.android.common.mvp.activity.BaseActivity
 import com.everlog.android.common.mvp.activity.BaseActivityMvpView
 import com.everlog.android.common.mvp.activity.BaseActivityPresenter
+import com.everlog.android.settings.R
+import com.everlog.android.settings.SettingsExtras
+import com.everlog.android.settings.SettingsGraph
+import com.everlog.android.settings.SettingsScreenNames
+import com.everlog.android.settings.data.model.ELIntegration
+import com.everlog.android.settings.databinding.ActivityIntegrationBinding
 import com.everlog.android.settings.integration.getIcon
 import com.jakewharton.rxbinding.view.RxView
 import rx.Observable
-import com.everlog.android.common.design.R as DesignR
 
 class IntegrationActivity : BaseActivity(), MvpViewIntegration {
 
@@ -77,7 +79,7 @@ class IntegrationActivity : BaseActivity(), MvpViewIntegration {
     // Setup
 
     override fun setupPresenter() {
-        mPresenter = PresenterIntegration()
+        mPresenter = PresenterIntegration(appGraph<SettingsGraph>().googleFitConnection)
     }
 
     private fun setupTopBar() {
