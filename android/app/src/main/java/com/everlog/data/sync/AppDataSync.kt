@@ -5,7 +5,7 @@ import com.everlog.BuildConfig
 import com.everlog.android.common.datasync.DataSync
 import com.everlog.android.common.datasync.PreferencesSyncRecords
 import com.everlog.android.common.datasync.SyncSettings
-import com.everlog.android.common.datasync.fullHistoryMaxAgeMillis
+import com.everlog.android.common.datasync.olderMaxAgeMillis
 import com.everlog.android.common.datasync.maxAgeMillis
 import com.everlog.android.common.kotlin.AppContext
 import com.everlog.config.AppConfig
@@ -24,8 +24,8 @@ object AppDataSync {
             records = PreferencesSyncRecords(AppContext.getSharedPreferences(PreferencesSyncRecords.FILE, Context.MODE_PRIVATE)),
             settings = SyncSettings(
                 maxAgeMillis = { maxAgeMillis(BuildConfig.DEBUG, RemoteConfigManager.manager.dataSyncMaxAgeMinutes(), AppConfig.DATA_SYNC_MAX_AGE_MINUTES) },
-                fullHistoryMaxAgeMillis = {
-                    fullHistoryMaxAgeMillis(RemoteConfigManager.manager.dataSyncFullHistoryMaxAgeDays(), AppConfig.DATA_SYNC_FULL_HISTORY_MAX_AGE_DAYS)
+                olderMaxAgeMillis = {
+                    olderMaxAgeMillis(RemoteConfigManager.manager.dataSyncOlderMaxAgeDays(), AppConfig.DATA_SYNC_OLDER_MAX_AGE_DAYS)
                 },
                 timeoutMillis = TimeUnit.SECONDS.toMillis(config.dataSyncTimeoutSeconds),
                 chunkSize = config.dataSyncChunkSize,

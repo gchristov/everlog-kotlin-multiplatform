@@ -11,6 +11,7 @@ class SyncRulesTest {
 
     private val now = 1_790_000_000_000L
     private val hour = TimeUnit.HOURS.toMillis(1)
+    private val day = TimeUnit.DAYS.toMillis(1)
     private val week = TimeUnit.DAYS.toMillis(7)
     private val recent = SyncPlan.Recent(dateField = "date", months = 3)
 
@@ -28,57 +29,67 @@ class SyncRulesTest {
     }
 
     @Test
-    fun `only reads further back than the window need the full history`() {
-        assertThat(needsFullHistory(SyncPlan.Whole, Range.All)).isFalse()
-        assertThat(needsFullHistory(recent, Range.All)).isTrue()
-        assertThat(needsFullHistory(recent, Range.Last(months = 3))).isFalse()
-        assertThat(needsFullHistory(recent, Range.Last(months = 4))).isTrue()
+    fun `only a read from before a recent collection's window reaches back`() {
+        val windowFrom = windowStart(now, months = 3)
+
+        assertThat(reachesBack(SyncPlan.Whole, from = null, now)).isNull()
+        assertThat(reachesBack(recent, from = null, now)).isNull()
+        assertThat(reachesBack(recent, from = windowFrom, now)).isNull()
+        assertThat(reachesBack(recent, from = windowFrom - 1, now)).isEqualTo(windowFrom - 1)
     }
 
     @Test
     fun `the work a read needs`() {
+        val yearAgo = now - 365 * day
         val never = SyncStatus()
         val fresh = SyncStatus(lastSynced = now)
         val stale = SyncStatus(lastSynced = now - hour)
-        val freshFull = SyncStatus(lastSynced = now, fullHistorySynced = now - 10 * hour)
-        val staleFull = SyncStatus(lastSynced = now - hour, fullHistorySynced = now - 10 * hour)
+        val freshBack = SyncStatus(lastSynced = now, syncedBackTo = yearAgo, syncedBackAt = now - 10 * hour)
+        val staleBack = SyncStatus(lastSynced = now - hour, syncedBackTo = yearAgo, syncedBackAt = now - 10 * hour)
 
-        assertThat(syncWork(SyncPlan.Whole, Range.All, never, now, hour, week)).isEqualTo(SyncWork.Whole)
-        assertThat(syncWork(SyncPlan.Whole, Range.All, fresh, now, hour, week)).isNull()
-        assertThat(syncWork(recent, Range.Last(3), never, now, hour, week)).isEqualTo(SyncWork.Recent)
-        assertThat(syncWork(recent, Range.Last(3), fresh, now, hour, week)).isNull()
-        assertThat(syncWork(recent, Range.Last(3), stale, now, hour, week)).isEqualTo(SyncWork.Recent)
-        assertThat(syncWork(recent, Range.All, fresh, now, hour, week)).isEqualTo(SyncWork.FullHistory)
-        assertThat(syncWork(recent, Range.All, freshFull, now, hour, week)).isNull()
-        assertThat(syncWork(recent, Range.All, staleFull, now, hour, week)).isEqualTo(SyncWork.Recent)
+        assertThat(syncWork(SyncPlan.Whole, null, never, now, hour, week)).isEqualTo(SyncWork.Whole)
+        assertThat(syncWork(SyncPlan.Whole, null, fresh, now, hour, week)).isNull()
+        assertThat(syncWork(recent, null, never, now, hour, week)).isEqualTo(SyncWork.Recent())
+        assertThat(syncWork(recent, null, fresh, now, hour, week)).isNull()
+        assertThat(syncWork(recent, null, stale, now, hour, week)).isEqualTo(SyncWork.Recent())
+        assertThat(syncWork(recent, yearAgo, fresh, now, hour, week)).isEqualTo(SyncWork.Recent(yearAgo))
+        assertThat(syncWork(recent, yearAgo, freshBack, now, hour, week)).isNull()
+        assertThat(syncWork(recent, yearAgo + day, freshBack, now, hour, week)).isNull()
+        assertThat(syncWork(recent, yearAgo - day, freshBack, now, hour, week)).isEqualTo(SyncWork.Recent(yearAgo - day))
+        assertThat(syncWork(recent, yearAgo, staleBack, now, hour, week)).isEqualTo(SyncWork.Recent())
     }
 
     @Test
-    fun `an all-time read syncs the full history again once it's a week old`() {
-        val fresh = SyncStatus(lastSynced = now, fullHistorySynced = now - week + 1)
-        val stale = SyncStatus(lastSynced = now, fullHistorySynced = now - week)
+    fun `the part older than the window syncs again once it's a week old, only as far back as the read goes`() {
+        val yearAgo = now - 365 * day
+        val fresh = SyncStatus(lastSynced = now, syncedBackTo = yearAgo - 30 * day, syncedBackAt = now - week + 1)
+        val stale = SyncStatus(lastSynced = now, syncedBackTo = yearAgo - 30 * day, syncedBackAt = now - week)
 
-        assertThat(syncWork(recent, Range.All, fresh, now, hour, week)).isNull()
-        assertThat(syncWork(recent, Range.All, stale, now, hour, week)).isEqualTo(SyncWork.FullHistory)
-        assertThat(syncWork(recent, Range.Last(3), stale, now, hour, week)).isNull()
+        assertThat(syncWork(recent, yearAgo, fresh, now, hour, week)).isNull()
+        assertThat(syncWork(recent, yearAgo, stale, now, hour, week)).isEqualTo(SyncWork.Recent(yearAgo))
+        assertThat(syncWork(recent, null, stale, now, hour, week)).isNull()
     }
 
     @Test
-    fun `a running full history covers a recent sync, not the other way round`() {
-        assertThat(SyncWork.FullHistory.covers(SyncWork.Recent)).isTrue()
-        assertThat(SyncWork.Recent.covers(SyncWork.FullHistory)).isFalse()
+    fun `a running sync covers one that goes no further back`() {
+        assertThat(SyncWork.Recent(backTo = 5).covers(SyncWork.Recent())).isTrue()
+        assertThat(SyncWork.Recent(backTo = 5).covers(SyncWork.Recent(backTo = 8))).isTrue()
+        assertThat(SyncWork.Recent(backTo = 8).covers(SyncWork.Recent(backTo = 5))).isFalse()
+        assertThat(SyncWork.Recent().covers(SyncWork.Recent(backTo = 5))).isFalse()
         assertThat(SyncWork.Whole.covers(SyncWork.Whole)).isTrue()
     }
 
     @Test
     fun `a read is covered once synced as far back as it goes`() {
         val recentOnly = SyncStatus(lastSynced = now)
+        val back = recentOnly.copy(syncedBackTo = 100, syncedBackAt = now)
 
-        assertThat(covers(SyncStatus(), SyncPlan.Whole, Range.All)).isFalse()
-        assertThat(covers(recentOnly, SyncPlan.Whole, Range.All)).isTrue()
-        assertThat(covers(recentOnly, recent, Range.Last(3))).isTrue()
-        assertThat(covers(recentOnly, recent, Range.All)).isFalse()
-        assertThat(covers(recentOnly.copy(fullHistorySynced = now), recent, Range.All)).isTrue()
+        assertThat(covers(SyncStatus(), backTo = null)).isFalse()
+        assertThat(covers(recentOnly, backTo = null)).isTrue()
+        assertThat(covers(recentOnly, backTo = 100)).isFalse()
+        assertThat(covers(back, backTo = 100)).isTrue()
+        assertThat(covers(back, backTo = 150)).isTrue()
+        assertThat(covers(back, backTo = 50)).isFalse()
     }
 
     @Test
@@ -126,11 +137,11 @@ class SyncRulesTest {
     }
 
     @Test
-    fun `the full history's max age is the default when Remote Config has none or a bad one, debug builds too`() {
-        assertThat(fullHistoryMaxAgeMillis(remoteDays = 30, defaultDays = 7)).isEqualTo(TimeUnit.DAYS.toMillis(30))
-        assertThat(fullHistoryMaxAgeMillis(remoteDays = null, defaultDays = 7)).isEqualTo(week)
-        assertThat(fullHistoryMaxAgeMillis(remoteDays = 0, defaultDays = 7)).isEqualTo(week)
-        assertThat(fullHistoryMaxAgeMillis(remoteDays = -1, defaultDays = 7)).isEqualTo(week)
+    fun `the older part's max age is the default when Remote Config has none or a bad one, debug builds too`() {
+        assertThat(olderMaxAgeMillis(remoteDays = 30, defaultDays = 7)).isEqualTo(TimeUnit.DAYS.toMillis(30))
+        assertThat(olderMaxAgeMillis(remoteDays = null, defaultDays = 7)).isEqualTo(week)
+        assertThat(olderMaxAgeMillis(remoteDays = 0, defaultDays = 7)).isEqualTo(week)
+        assertThat(olderMaxAgeMillis(remoteDays = -1, defaultDays = 7)).isEqualTo(week)
     }
 
     private fun utc(year: Int, month: Int, day: Int): Long = Calendar.getInstance(TimeZone.getTimeZone("UTC")).run {

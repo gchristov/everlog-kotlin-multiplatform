@@ -5,47 +5,63 @@ import java.util.Calendar
 import java.util.concurrent.TimeUnit
 
 // What a sync does
-internal enum class SyncWork {
+internal sealed interface SyncWork {
     // The whole collection or document, in one read
-    Whole,
+    data object Whole : SyncWork
 
-    // The last months of a SyncPlan.Recent collection, then a count check once its full history has synced
-    Recent,
-
-    // A SyncPlan.Recent collection's full history, in chunks
-    FullHistory;
+    /**
+     * The last months of a SyncPlan.Recent collection. With [backTo], also the documents older than that, back to
+     * [backTo] by the plan's date field, in pages. Without it, it checks the counts of the part synced before.
+     */
+    data class Recent(val backTo: Long? = null) : SyncWork
 
     // A sync running [this] makes asking for [other] unnecessary
-    fun covers(other: SyncWork): Boolean = this == other || (this == FullHistory && other == Recent)
+    fun covers(other: SyncWork): Boolean = when {
+        this == other -> true
+        this is Recent && other is Recent -> other.backTo == null || (backTo != null && backTo <= other.backTo)
+        else -> false
+    }
 }
 
 // A sync time in the future means the clock moved back since, so it can't be trusted
 internal fun isDue(lastSynced: Long?, now: Long, maxAgeMillis: Long): Boolean =
     lastSynced == null || lastSynced > now || now - lastSynced >= maxAgeMillis
 
-internal fun needsFullHistory(plan: SyncPlan, range: Range): Boolean = when (plan) {
-    SyncPlan.Whole -> false
-    is SyncPlan.Recent -> range == Range.All || (range is Range.Last && range.months > plan.months)
+/**
+ * How far back by the plan's date field a read from [from] needs the cache synced beyond the recent window, or null
+ * when the window covers it.
+ */
+internal fun reachesBack(plan: SyncPlan, from: Long?, now: Long): Long? = when (plan) {
+    SyncPlan.Whole -> null
+    is SyncPlan.Recent -> from?.takeIf { it < windowStart(now, plan.months) }
 }
 
 /**
- * Null when the cache is fresh enough for this read. The full history syncs again every [fullHistoryMaxAgeMillis],
- * for older documents edited on another phone, which neither the recent sync nor the count check sees.
+ * Null when the cache is fresh enough for this read. The part older than the window syncs again every
+ * [olderMaxAgeMillis], for documents edited on another phone, which neither the recent sync nor the count check
+ * sees.
+ *
+ * @param backTo What [reachesBack] says the read needs
  */
-internal fun syncWork(plan: SyncPlan, range: Range, status: SyncStatus, now: Long, maxAgeMillis: Long, fullHistoryMaxAgeMillis: Long): SyncWork? = when {
+internal fun syncWork(plan: SyncPlan, backTo: Long?, status: SyncStatus, now: Long, maxAgeMillis: Long, olderMaxAgeMillis: Long): SyncWork? = when {
     plan == SyncPlan.Whole -> SyncWork.Whole.takeIf { isDue(status.lastSynced, now, maxAgeMillis) }
-    needsFullHistory(plan, range) && isDue(status.fullHistorySynced, now, fullHistoryMaxAgeMillis) -> SyncWork.FullHistory
-    isDue(status.lastSynced, now, maxAgeMillis) -> SyncWork.Recent
+    backTo != null && (status.syncedBackTo == null || status.syncedBackTo > backTo) -> SyncWork.Recent(backTo)
+    // Only as far back as this read goes, so what's kept fresh doesn't grow with every read further back
+    backTo != null && isDue(status.syncedBackAt, now, olderMaxAgeMillis) -> SyncWork.Recent(backTo)
+    isDue(status.lastSynced, now, maxAgeMillis) -> SyncWork.Recent()
     else -> null
 }
 
 // Whether the cache has been synced as far back as this read goes
-internal fun covers(status: SyncStatus, plan: SyncPlan, range: Range): Boolean =
-    if (needsFullHistory(plan, range)) status.fullHistorySynced != null else status.lastSynced != null
+internal fun covers(status: SyncStatus, backTo: Long?): Boolean = when {
+    status.lastSynced == null -> false
+    backTo == null -> true
+    else -> status.syncedBackTo != null && status.syncedBackTo <= backTo
+}
 
 /**
  * The cache once it's covered. Before that, what's cached when there's any, unless the read needs a complete
- * copy, e.g. the full history, which a part of would show wrong totals. Otherwise the shimmer, until a sync fails.
+ * copy, e.g. a year of history, which a part of would show wrong totals. Otherwise the shimmer, until a sync fails.
  *
  * @param cacheBehind The cache hasn't shown anything since the last sync finished. Firestore can report a
  * read done before its listeners show what it brought, so an empty cache then isn't the server's answer.
@@ -75,8 +91,8 @@ internal fun windowStart(now: Long, months: Int): Long = Calendar.getInstance().
     timeInMillis
 }
 
-// A missing or invalid value falls back to the default. Debug builds too: a full history on every read is too much.
-fun fullHistoryMaxAgeMillis(remoteDays: Long?, defaultDays: Long): Long =
+// A missing or invalid value falls back to the default. Debug builds too: the older part on every read is too much.
+fun olderMaxAgeMillis(remoteDays: Long?, defaultDays: Long): Long =
     TimeUnit.DAYS.toMillis(if (remoteDays == null || remoteDays <= 0) defaultDays else remoteDays)
 
 // Debug builds sync on every read, like Remote Config. A missing or invalid value falls back to the default.

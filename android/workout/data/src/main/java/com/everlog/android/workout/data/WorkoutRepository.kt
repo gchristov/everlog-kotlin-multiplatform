@@ -23,16 +23,16 @@ import kotlinx.coroutines.flow.flowOf
 
 interface WorkoutRepository {
     /**
-     * The user's workouts, newest first, as they change. [Range.All] waits for the full history the first time
-     * after an install, then shows the cache while it syncs again weekly; a range within the last
-     * [RealWorkoutRepository]'s sync months never waits for it. None without a signed-in user.
+     * The user's workouts of the [range]'s last months, newest first, as they change. A range longer than
+     * [RealWorkoutRepository]'s sync months waits the first time for the part older than them to sync, then shows the
+     * cache while it syncs again weekly. None without a signed-in user.
      */
     fun workouts(range: Range): Flow<Load<List<ELWorkout>>>
 
     /**
      * The user's workouts created from [from] until before [until], read once and in no particular order: for going
-     * through the history a part at a time. Waits for the full history the first time it reads further back than
-     * the sync months. None without a signed-in user.
+     * through the history a part at a time. Waits the first time it reads further back than the sync months, for
+     * that part to sync. None without a signed-in user.
      */
     suspend fun workoutsCreatedBetween(from: Long, until: Long?): Either<Throwable, List<ELWorkout>>
 

@@ -34,8 +34,11 @@ interface CollectionBackend<T> {
     // The [size] documents from the server that follow the first [after] cached ones, in the order screens show them
     suspend fun fetchPage(after: Int, size: Int): Int
 
-    // One chunk of the whole collection by document id, after [afterId]
-    suspend fun fetchChunk(afterId: String?, size: Int): Chunk
+    /**
+     * The next [size] documents from [from] until before [until] by the plan's date field, oldest first, after
+     * [after], from the server into the cache.
+     */
+    suspend fun fetchBetween(from: Long, until: Long, after: Cursor?, size: Int): Chunk
 
     /**
      * The documents with these [ids] from the server into the cache, at most [MaxIdsPerRead] at a time as Firestore
@@ -43,16 +46,21 @@ interface CollectionBackend<T> {
      */
     suspend fun fetchIds(ids: Collection<String>): Set<String>
 
-    suspend fun countOnServer(): Long
+    // From [since] by the plan's date field
+    suspend fun countOnServer(since: Long): Long
 
-    // Documents the server has confirmed, so edits still waiting to upload don't count
-    suspend fun countInCache(): Long
+    // From [from] until before [until] by the plan's date field. Documents the server has confirmed, so edits still
+    // waiting to upload don't count.
+    suspend fun countInCache(from: Long, until: Long?): Long
 }
 
 // How many ids Firestore takes in one `in` query
 const val MaxIdsPerRead = 30
 
-data class Chunk(val count: Int, val lastId: String?)
+// Where a page of documents ordered by date ended: the last one's date and id
+data class Cursor(val date: Long, val id: String)
+
+data class Chunk(val count: Int, val last: Cursor?)
 
 data class CachedDocuments<T>(val items: List<T>, val documents: Int)
 

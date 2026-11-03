@@ -19,7 +19,7 @@ data class RemoteConfig (
         // How old synced data may get before reading it asks the server again (DataSync); null for the default
         var dataSyncMaxAgeMinutes: Long? = null,
         // How old a full workout history may get before reading all of it syncs it again (DataSync); null for the default
-        var dataSyncFullHistoryMaxAgeDays: Long? = null
+        var dataSyncOlderMaxAgeDays: Long? = null
 
 ) : Serializable {
 
@@ -30,7 +30,8 @@ data class RemoteConfig (
     private val TEMPLATE_EDITOR_V2 = "template_editor_v2"
     private val FEEDBACK_FORMS = "feedback_forms"
     private val DATA_SYNC_MAX_AGE_MINUTES = "data_sync_max_age_minutes"
-    private val DATA_SYNC_FULL_HISTORY_MAX_AGE_DAYS = "data_sync_full_history_max_age_days"
+    // Named after the full history it used to be for, kept so the console's value still applies
+    private val DATA_SYNC_OLDER_MAX_AGE_DAYS = "data_sync_full_history_max_age_days"
 
     fun populateFromSource(config: FirebaseRemoteConfig): RemoteConfig {
         notificationHome = getObjectFromRemoteConfig(NOTIFICATION_HOME, HomeNotification::class.java, config)
@@ -40,7 +41,7 @@ data class RemoteConfig (
         templateEditorV2 = config.getBoolean(TEMPLATE_EDITOR_V2)
         feedbackForms = getObjectFromRemoteConfig(FEEDBACK_FORMS, FeedbackForms::class.java, config)
         dataSyncMaxAgeMinutes = config.longOrNull(DATA_SYNC_MAX_AGE_MINUTES)
-        dataSyncFullHistoryMaxAgeDays = config.longOrNull(DATA_SYNC_FULL_HISTORY_MAX_AGE_DAYS)
+        dataSyncOlderMaxAgeDays = config.longOrNull(DATA_SYNC_OLDER_MAX_AGE_DAYS)
         return this
     }
 

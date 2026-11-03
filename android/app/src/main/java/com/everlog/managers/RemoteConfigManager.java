@@ -96,9 +96,9 @@ public class RemoteConfigManager extends PreferencesManager {
 
     // Null when Remote Config has none, then DataSync falls back to its default
     @Nullable
-    public Long dataSyncFullHistoryMaxAgeDays() {
+    public Long dataSyncOlderMaxAgeDays() {
         RemoteConfig localConfig = loadLocalRemoteConfig();
-        return localConfig != null ? localConfig.getDataSyncFullHistoryMaxAgeDays() : null;
+        return localConfig != null ? localConfig.getDataSyncOlderMaxAgeDays() : null;
     }
 
     // Config refresh

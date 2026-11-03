@@ -6,20 +6,29 @@ import org.junit.Test
 
 class PreferencesSyncRecordsTest {
 
-    private val records = PreferencesSyncRecords(InMemorySharedPreferences())
+    private val preferences = InMemorySharedPreferences()
+    private val records = PreferencesSyncRecords(preferences)
 
     @Test
     fun `records are kept per source until cleared`() {
         records.setLastSynced("user/workouts", 10)
-        records.setFullHistorySynced("user/workouts", 5)
+        records.setSyncedBack("user/workouts", SyncedBack(to = 2, at = 5))
 
         assertThat(records.lastSynced("user/workouts")).isEqualTo(10)
-        assertThat(records.fullHistorySynced("user/workouts")).isEqualTo(5)
+        assertThat(records.syncedBack("user/workouts")).isEqualTo(SyncedBack(to = 2, at = 5))
         assertThat(records.lastSynced("user/routines")).isNull()
+        assertThat(records.syncedBack("user/routines")).isNull()
 
         records.clear()
 
         assertThat(records.lastSynced("user/workouts")).isNull()
-        assertThat(records.fullHistorySynced("user/workouts")).isNull()
+        assertThat(records.syncedBack("user/workouts")).isNull()
+    }
+
+    @Test
+    fun `an older version's full history record isn't read as synced back`() {
+        preferences.edit().putLong("fullHistorySynced:user/workouts", 5).apply()
+
+        assertThat(records.syncedBack("user/workouts")).isNull()
     }
 }

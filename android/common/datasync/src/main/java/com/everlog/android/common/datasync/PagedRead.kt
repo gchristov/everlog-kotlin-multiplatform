@@ -52,7 +52,8 @@ class PagedRead<T> internal constructor(
             this.shown = shown.items.size
             fetchFromServerWhenShort(shown, status, paging)
             val short = shown.items.size < shown.limit
-            val page = Page(shown.items, paging.loadingMore, endReached = short && (status.fullHistorySynced != null || paging.serverExhausted))
+            // The cache can't tell there's nothing older: the server says so once a page comes back short
+            val page = Page(shown.items, paging.loadingMore, endReached = short && paging.serverExhausted)
             loadOf(page, shown.items.isEmpty(), covered = status.lastSynced != null, needsComplete = false, status, view.cacheBehind)
         }
             .catch { emit(Load.Unavailable(it)) }
@@ -69,8 +70,7 @@ class PagedRead<T> internal constructor(
     // Once the recent sync has landed, so its pages aren't read twice. Once per limit, so a failure doesn't retry in a loop.
     private fun fetchFromServerWhenShort(shown: Shown<T>, status: SyncStatus, paging: Paging) {
         val short = shown.items.size < shown.limit
-        val historyLeft = status.fullHistorySynced == null && !paging.serverExhausted
-        if (!short || !historyLeft || status.lastSynced == null || status.syncing || paging.loadingMore || paging.fetchedFor >= shown.limit) return
+        if (!short || paging.serverExhausted || status.lastSynced == null || status.syncing || paging.loadingMore || paging.fetchedFor >= shown.limit) return
         if (!this.paging.compareAndSet(paging, paging.copy(loadingMore = true, fetchedFor = shown.limit))) return
         scope.launch {
             try {

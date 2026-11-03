@@ -34,19 +34,16 @@ sealed interface SyncPlan {
     data object Whole : SyncPlan
 
     /**
-     * The last [months] by [dateField] when due, for big collections (workouts). The full history syncs the
-     * first time a read needs it ([Range.All], or [Range.Last] longer than [months]), then weekly and whenever
-     * the count check finds a difference.
+     * The last [months] by [dateField] when due, for big collections (workouts). A read further back syncs the
+     * part it needs the first time, then weekly and whenever the count check finds a difference. There's no
+     * reading all of it: each read says how far back it goes.
      */
     data class Recent(val dateField: String, val months: Int) : SyncPlan
 }
 
-// How much of a collection a screen reads
+// How much of a SyncPlan.Recent collection a screen follows, by the plan's date field
 sealed interface Range {
 
-    data object All : Range
-
-    // By the plan's date field, so only for a SyncPlan.Recent collection
     data class Last(val months: Int) : Range
 }
 

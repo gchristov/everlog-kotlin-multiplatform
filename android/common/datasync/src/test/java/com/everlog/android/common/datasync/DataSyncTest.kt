@@ -22,13 +22,13 @@ class DataSyncTest {
 
     private var now = 1_790_000_000_000L
     private var maxAge = TimeUnit.HOURS.toMillis(1)
-    private val fullHistoryMaxAge = TimeUnit.DAYS.toMillis(7)
+    private val olderMaxAge = TimeUnit.DAYS.toMillis(7)
     private val records = InMemorySyncRecords()
     private val syncScope = CoroutineScope(SupervisorJob() + Dispatchers.Unconfined)
     private val readers = CoroutineScope(SupervisorJob() + Dispatchers.Unconfined)
     private val dataSync = DataSync(
         records = records,
-        settings = SyncSettings(maxAgeMillis = { maxAge }, fullHistoryMaxAgeMillis = { fullHistoryMaxAge }, timeoutMillis = 100, chunkSize = 2),
+        settings = SyncSettings(maxAgeMillis = { maxAge }, olderMaxAgeMillis = { olderMaxAge }, timeoutMillis = 100, chunkSize = 2),
         clock = { now },
         scope = syncScope,
         stopTimeoutMillis = 0,
@@ -36,10 +36,13 @@ class DataSyncTest {
 
     private val day = TimeUnit.DAYS.toMillis(1)
     private val recentPlan = SyncPlan.Recent(dateField = "date", months = 3)
+    private val yearBack = windowStart(now, months = 12)
     private val bench = Doc("bench", now - 2 * day)
     private val squat = Doc("squat", now - 10 * day)
     private val deadlift = Doc("deadlift", now - 200 * day)
     private val press = Doc("press", now - 400 * day)
+    private val curl = Doc("curl", now - 150 * day)
+    private val dip = Doc("dip", now - 250 * day)
     private val row = Doc("row", now - 500 * day)
 
     @After
@@ -89,7 +92,7 @@ class DataSyncTest {
 
     @Test
     fun `a complete-only collection shows its cache straight away once it has synced`() {
-        synced("library", fullHistory = false, at = now - 2 * maxAge)
+        synced("library", at = now - 2 * maxAge)
         val backend = FakeCollectionBackend(server = listOf(bench, squat), cached = listOf(bench, squat)).holdingServer()
         val loads = read(dataSync.observe(completeOnly(backend)))
 
@@ -203,7 +206,7 @@ class DataSyncTest {
 
     @Test
     fun `a complete-only collection stays on its cache while a later sync lands`() {
-        synced("library", fullHistory = false, at = now - 2 * maxAge)
+        synced("library", at = now - 2 * maxAge)
         val backend = FakeCollectionBackend(server = listOf(bench, squat), cached = listOf(bench, squat)).holdingServer().apply { cacheLate = true }
         val loads = read(dataSync.observe(completeOnly(backend)))
         backend.gate!!.complete(Unit)
@@ -235,7 +238,7 @@ class DataSyncTest {
         assertThat(loads.last()).isEqualTo(Load.Ready(emptyList<Doc>()))
     }
 
-    // Workouts: recent syncs, full history and ranges
+    // Workouts: the recent window, and reaching further back
 
     @Test
     fun `a recent read syncs only the window and shows what's cached meanwhile`() {
@@ -248,48 +251,45 @@ class DataSyncTest {
 
         assertThat(backend.calls).containsExactly("since")
         assertThat(loads.last()).isEqualTo(Load.Ready(listOf(bench, squat)))
-        assertThat(records.fullHistorySynced).isEmpty()
+        assertThat(records.syncedBack).isEmpty()
     }
 
     @Test
-    fun `an all-time read waits for the full history, in chunks, even with some of it cached`() {
-        val backend = FakeCollectionBackend(server = listOf(bench, squat, deadlift, press, row), cached = listOf(bench)).holdingServer()
-        val loads = read(dataSync.observe(recent(backend), Range.All))
+    fun `a read further back than the window waits for that part, in pages, and no further`() {
+        val backend = FakeCollectionBackend(server = listOf(bench, squat, curl, deadlift, dip, press, row), cached = listOf(bench)).holdingServer()
+        val loads = read(dataSync.observe(recent(backend), Range.Last(months = 12)))
 
         assertThat(loads).containsExactly(Load.Loading)
 
         backend.gate!!.complete(Unit)
 
-        assertThat(backend.calls).containsExactly("chunk:null", "chunk:deadlift", "chunk:row").inOrder()
-        assertThat(loads.last()).isEqualTo(Load.Ready(listOf(bench, squat, deadlift, press, row)))
-        assertThat(records.fullHistorySynced["user/workouts"]).isEqualTo(now)
+        assertThat(backend.calls).containsExactly("since", "between:$yearBack:null", "between:$yearBack:deadlift").inOrder()
+        assertThat(loads.last()).isEqualTo(Load.Ready(listOf(bench, squat, curl, deadlift, dip)))
+        assertThat(records.syncedBack["user/workouts"]).isEqualTo(SyncedBack(to = yearBack, at = now))
         assertThat(records.lastSynced["user/workouts"]).isEqualTo(now)
     }
 
     @Test
-    fun `an all-time read waits for the cache to show the full history once it has synced`() {
-        val all = listOf(bench, deadlift)
-        val backend = FakeCollectionBackend(server = all, cached = listOf(bench)).holdingServer().apply { cacheLate = true }
-        val loads = read(dataSync.observe(recent(backend)))
-        backend.gate!!.complete(Unit)
+    fun `a read within the part synced back reads the cache without syncing`() {
+        syncedBack(to = yearBack - day, at = now - TimeUnit.HOURS.toMillis(2), lastSynced = now)
+        val backend = FakeCollectionBackend(server = listOf(bench, deadlift), cached = listOf(bench, deadlift))
 
-        assertThat(loads).containsExactly(Load.Loading)
+        val loads = read(dataSync.observe(recent(backend), Range.Last(months = 12)))
 
-        backend.deliverCache()
-
-        assertThat(loads).containsExactly(Load.Loading, Load.Ready(all)).inOrder()
+        assertThat(backend.calls).isEmpty()
+        assertThat(loads).containsExactly(Load.Ready(listOf(bench, deadlift)))
     }
 
     @Test
-    fun `an all-time read stays on its cache while a due recent sync lands`() {
-        synced("user/workouts", fullHistory = true, at = now - TimeUnit.HOURS.toMillis(2))
-        val all = listOf(bench, squat, deadlift, press, row)
-        val backend = FakeCollectionBackend(server = all, cached = all).holdingServer().apply { cacheLate = true }
-        val loads = read(dataSync.observe(recent(backend)))
+    fun `a read further back stays on its cache while a due recent sync lands`() {
+        syncedBack(to = yearBack, at = now - TimeUnit.HOURS.toMillis(2))
+        val cached = listOf(bench, squat, deadlift)
+        val backend = FakeCollectionBackend(server = cached, cached = cached).holdingServer().apply { cacheLate = true }
+        val loads = read(dataSync.observe(recent(backend), Range.Last(months = 12)))
         backend.gate!!.complete(Unit)
         backend.deliverCache()
 
-        assertThat(loads).containsExactly(Load.Ready(all))
+        assertThat(loads).containsExactly(Load.Ready(cached))
     }
 
     @Test
@@ -317,109 +317,126 @@ class DataSyncTest {
     }
 
     @Test
-    fun `a read longer than the window needs the full history`() {
-        val backend = FakeCollectionBackend(server = listOf(bench, deadlift, press))
+    fun `readers reaching back at once share one sync`() {
+        val backend = FakeCollectionBackend(server = listOf(bench, deadlift, press)).holdingServer()
+        val statistics = read(dataSync.observe(recent(backend), Range.Last(months = 12)))
+        val read = readers.async { dataSync.read(recent(backend), yearBack, null) }
 
-        val loads = read(dataSync.observe(recent(backend), Range.Last(months = 12)))
+        backend.gate!!.complete(Unit)
 
-        assertThat(backend.calls).containsExactly("chunk:null", "chunk:deadlift").inOrder()
-        assertThat(loads.last()).isEqualTo(Load.Ready(listOf(bench, deadlift)))
+        assertThat(backend.calls).containsExactly("since", "between:$yearBack:null").inOrder()
+        assertThat(statistics.last()).isEqualTo(Load.Ready(listOf(bench, deadlift)))
+        assertThat(read.docs()).containsExactly(bench, deadlift)
     }
 
     @Test
-    fun `readers asking for the full history at once share one full sync`() {
-        val backend = FakeCollectionBackend(server = listOf(bench, deadlift, press)).holdingServer()
-        val overview = read(dataSync.observe(recent(backend), Range.All))
+    fun `a read reaching back during a recent sync runs after it`() {
+        val backend = FakeCollectionBackend(server = listOf(bench, deadlift)).holdingServer()
+        read(dataSync.observe(recent(backend), Range.Last(months = 3)))
         val statistics = read(dataSync.observe(recent(backend), Range.Last(months = 12)))
 
         backend.gate!!.complete(Unit)
 
-        assertThat(backend.calls).containsExactly("chunk:null", "chunk:deadlift").inOrder()
-        assertThat(overview.last()).isEqualTo(Load.Ready(listOf(bench, deadlift, press)))
+        assertThat(backend.calls).containsExactly("since", "since", "between:$yearBack:null").inOrder()
         assertThat(statistics.last()).isEqualTo(Load.Ready(listOf(bench, deadlift)))
     }
 
     @Test
-    fun `a full history asked for during a recent sync runs after it`() {
-        val backend = FakeCollectionBackend(server = listOf(bench, deadlift)).holdingServer()
+    fun `after syncing back, due syncs read the window and check the count of what was synced back`() {
+        syncedBack(to = yearBack, at = now - TimeUnit.HOURS.toMillis(2))
+        val backend = FakeCollectionBackend(server = listOf(bench, deadlift), cached = listOf(bench, deadlift))
+
         read(dataSync.observe(recent(backend), Range.Last(months = 3)))
-        val overview = read(dataSync.observe(recent(backend), Range.All))
-
-        backend.gate!!.complete(Unit)
-
-        assertThat(backend.calls).containsExactly("since", "chunk:null", "chunk:deadlift").inOrder()
-        assertThat(overview.last()).isEqualTo(Load.Ready(listOf(bench, deadlift)))
-    }
-
-    @Test
-    fun `after the full history, due syncs read the window and check the count`() {
-        synced("user/workouts", fullHistory = true, at = now - TimeUnit.HOURS.toMillis(2))
-        val backend = FakeCollectionBackend(server = listOf(bench, press), cached = listOf(bench, press))
-
-        read(dataSync.observe(recent(backend), Range.All))
 
         assertThat(backend.calls).containsExactly("since", "count").inOrder()
-        assertThat(records.fullHistorySynced["user/workouts"]).isEqualTo(now - TimeUnit.HOURS.toMillis(2))
+        assertThat(backend.cacheCounts.first().first).isEqualTo(yearBack)
+        assertThat(records.syncedBack["user/workouts"]).isEqualTo(SyncedBack(to = yearBack, at = now - TimeUnit.HOURS.toMillis(2)))
     }
 
     @Test
-    fun `a week after the full history, an all-time read syncs it again, showing the cache meanwhile`() {
-        synced("user/workouts", fullHistory = true, at = now - TimeUnit.DAYS.toMillis(7))
+    fun `the cache is counted a year at a time`() {
+        val longAgo = now - 800 * day
+        syncedBack(to = longAgo, at = now - TimeUnit.HOURS.toMillis(2))
+        val backend = FakeCollectionBackend(server = listOf(bench), cached = listOf(bench))
+
+        read(dataSync.observe(recent(backend), Range.Last(months = 3)))
+
+        assertThat(backend.cacheCounts).containsExactly(
+            longAgo to longAgo + 365 * day,
+            longAgo + 365 * day to longAgo + 730 * day,
+            longAgo + 730 * day to null,
+        ).inOrder()
+    }
+
+    @Test
+    fun `a week after syncing back, a read reaching back syncs that part again, showing the cache meanwhile`() {
+        syncedBack(to = yearBack, at = now - TimeUnit.DAYS.toMillis(7), lastSynced = now)
         // Edited on another phone months ago: same count, outside the window
-        val edited = press.copy(name = "Overhead press")
-        val backend = FakeCollectionBackend(server = listOf(bench, edited), cached = listOf(bench, press)).holdingServer()
-        val loads = read(dataSync.observe(recent(backend), Range.All))
+        val edited = deadlift.copy(name = "Romanian deadlift")
+        val backend = FakeCollectionBackend(server = listOf(bench, edited), cached = listOf(bench, deadlift)).holdingServer()
+        val loads = read(dataSync.observe(recent(backend), Range.Last(months = 12)))
 
-        assertThat(loads).containsExactly(Load.Ready(listOf(bench, press)))
+        assertThat(loads).containsExactly(Load.Ready(listOf(bench, deadlift)))
 
         backend.gate!!.complete(Unit)
 
-        assertThat(backend.calls).containsExactly("chunk:null", "chunk:press").inOrder()
+        assertThat(backend.calls).containsExactly("since", "between:$yearBack:null").inOrder()
         assertThat(loads.last()).isEqualTo(Load.Ready(listOf(bench, edited)))
-        assertThat(records.fullHistorySynced["user/workouts"]).isEqualTo(now)
+        assertThat(records.syncedBack["user/workouts"]).isEqualTo(SyncedBack(to = yearBack, at = now))
     }
 
     @Test
-    fun `within a week of the full history, a due sync reads only the window`() {
-        synced("user/workouts", fullHistory = true, at = now - TimeUnit.DAYS.toMillis(6))
-        val backend = FakeCollectionBackend(server = listOf(bench, press), cached = listOf(bench, press))
+    fun `a week after syncing back further, a read syncs again only as far back as it goes`() {
+        syncedBack(to = now - 700 * day, at = now - TimeUnit.DAYS.toMillis(7), lastSynced = now)
+        val backend = FakeCollectionBackend(server = listOf(bench, deadlift), cached = listOf(bench, deadlift))
 
-        read(dataSync.observe(recent(backend), Range.All))
+        read(dataSync.observe(recent(backend), Range.Last(months = 12)))
+
+        assertThat(backend.calls).containsExactly("since", "between:$yearBack:null").inOrder()
+        assertThat(records.syncedBack["user/workouts"]).isEqualTo(SyncedBack(to = yearBack, at = now))
+    }
+
+    @Test
+    fun `within a week of syncing back, a due sync reads only the window`() {
+        syncedBack(to = yearBack, at = now - TimeUnit.DAYS.toMillis(6))
+        val backend = FakeCollectionBackend(server = listOf(bench, deadlift), cached = listOf(bench, deadlift))
+
+        read(dataSync.observe(recent(backend), Range.Last(months = 12)))
 
         assertThat(backend.calls).containsExactly("since", "count").inOrder()
     }
 
     @Test
-    fun `a count that differs from the cache's syncs the full history again`() {
-        synced("user/workouts", fullHistory = true, at = now - TimeUnit.HOURS.toMillis(2))
+    fun `a count that differs from the cache's syncs the part synced back again`() {
+        syncedBack(to = yearBack, at = now - TimeUnit.HOURS.toMillis(2))
         // Added on another phone months ago, so the window doesn't bring it
-        val backend = FakeCollectionBackend(server = listOf(bench, deadlift, press), cached = listOf(bench, press))
+        val backend = FakeCollectionBackend(server = listOf(bench, deadlift, dip), cached = listOf(bench, dip))
 
-        val loads = read(dataSync.observe(recent(backend), Range.All))
+        val loads = read(dataSync.observe(recent(backend), Range.Last(months = 12)))
 
-        assertThat(backend.calls).containsExactly("since", "count", "chunk:null", "chunk:deadlift").inOrder()
-        assertThat(loads.last()).isEqualTo(Load.Ready(listOf(bench, deadlift, press)))
-        assertThat(records.fullHistorySynced["user/workouts"]).isEqualTo(now)
+        assertThat(backend.calls).containsExactly("since", "count", "between:$yearBack:null", "between:$yearBack:deadlift").inOrder()
+        assertThat(loads.last()).isEqualTo(Load.Ready(listOf(bench, deadlift, dip)))
+        assertThat(records.syncedBack["user/workouts"]).isEqualTo(SyncedBack(to = yearBack, at = now))
     }
 
     @Test
-    fun `edits waiting to upload don't trigger a full sync`() {
-        synced("user/workouts", fullHistory = true, at = now - TimeUnit.HOURS.toMillis(2))
+    fun `edits waiting to upload don't trigger a sync of the part synced back`() {
+        syncedBack(to = yearBack, at = now - TimeUnit.HOURS.toMillis(2))
         val backend = FakeCollectionBackend(server = listOf(bench), cached = listOf(bench))
         backend.write(squat, uploaded = false)
 
-        read(dataSync.observe(recent(backend), Range.All))
+        read(dataSync.observe(recent(backend), Range.Last(months = 3)))
 
         assertThat(backend.calls).containsExactly("since", "count").inOrder()
     }
 
     @Test
     fun `a count that fails still counts the recent sync`() {
-        synced("user/workouts", fullHistory = true, at = now - TimeUnit.HOURS.toMillis(2))
+        syncedBack(to = yearBack, at = now - TimeUnit.HOURS.toMillis(2))
         val backend = FakeCollectionBackend(server = listOf(bench), cached = listOf(bench))
         backend.fail = { call -> if (call == "count") IllegalStateException("offline") else null }
 
-        read(dataSync.observe(recent(backend), Range.All))
+        read(dataSync.observe(recent(backend), Range.Last(months = 3)))
 
         assertThat(records.lastSynced["user/workouts"]).isEqualTo(now)
         assertThat(dataSync.status.value["user/workouts"]?.lastFailure).isNull()
@@ -442,59 +459,46 @@ class DataSyncTest {
     }
 
     @Test
-    fun `a read further back than the window waits for the full history the first time`() {
+    fun `a read further back than the window waits for that part the first time`() {
         val backend = FakeCollectionBackend(server = listOf(bench, squat, deadlift, press, row), cached = listOf(bench)).holdingServer()
-        val read = readers.async { dataSync.read(recent(backend), now - 450 * day, now - 100 * day) }
+        val read = readers.async { dataSync.read(recent(backend), yearBack, now - 100 * day) }
 
         assertThat(read.isCompleted).isFalse()
 
         backend.gate!!.complete(Unit)
 
-        assertThat(backend.calls).containsExactly("chunk:null", "chunk:deadlift", "chunk:row").inOrder()
-        assertThat(read.docs()).containsExactly(deadlift, press)
-        assertThat(records.fullHistorySynced["user/workouts"]).isEqualTo(now)
+        assertThat(backend.calls).containsExactly("since", "between:$yearBack:null").inOrder()
+        assertThat(read.docs()).containsExactly(deadlift)
+        assertThat(records.syncedBack["user/workouts"]).isEqualTo(SyncedBack(to = yearBack, at = now))
     }
 
     @Test
-    fun `a read of a synced part of the history reads the cache without waiting`() {
-        synced("user/workouts", fullHistory = true, at = now - TimeUnit.HOURS.toMillis(2))
-        val backend = FakeCollectionBackend(server = listOf(bench, press), cached = listOf(bench, press)).holdingServer()
+    fun `a read of a part synced back reads the cache without waiting`() {
+        syncedBack(to = yearBack, at = now - TimeUnit.HOURS.toMillis(2), lastSynced = now)
+        val backend = FakeCollectionBackend(server = listOf(bench, deadlift), cached = listOf(bench, deadlift)).holdingServer()
 
-        val read = readers.async { dataSync.read(recent(backend), now - 450 * day, now - 100 * day) }
+        val read = readers.async { dataSync.read(recent(backend), yearBack, now - 100 * day) }
 
-        assertThat(read.docs()).containsExactly(press)
+        assertThat(read.docs()).containsExactly(deadlift)
     }
 
     @Test
-    fun `a week after the full history, a read further back syncs it again, reading the cache meanwhile`() {
-        synced("user/workouts", fullHistory = true, at = now - TimeUnit.DAYS.toMillis(7))
-        val backend = FakeCollectionBackend(server = listOf(bench, press), cached = listOf(bench, press)).holdingServer()
+    fun `a read further back than what was synced back waits for the rest`() {
+        syncedBack(to = now - 200 * day, at = now - TimeUnit.HOURS.toMillis(2), lastSynced = now)
+        val backend = FakeCollectionBackend(server = listOf(bench, deadlift, dip), cached = listOf(bench, deadlift)).holdingServer()
 
-        val read = readers.async { dataSync.read(recent(backend), now - 450 * day, now - 100 * day) }
+        val read = readers.async { dataSync.read(recent(backend), yearBack, null) }
 
-        assertThat(read.docs()).containsExactly(press)
+        assertThat(read.isCompleted).isFalse()
         backend.gate!!.complete(Unit)
-        assertThat(backend.calls).containsExactly("chunk:null", "chunk:press").inOrder()
-    }
-
-    @Test
-    fun `a read shares the full history sync of a reader asking for it at the same time`() {
-        val backend = FakeCollectionBackend(server = listOf(bench, deadlift, press)).holdingServer()
-        val overview = read(dataSync.observe(recent(backend), Range.All))
-        val read = readers.async { dataSync.read(recent(backend), now - 450 * day, null) }
-
-        backend.gate!!.complete(Unit)
-
-        assertThat(backend.calls).containsExactly("chunk:null", "chunk:deadlift").inOrder()
-        assertThat(read.docs()).containsExactly(bench, deadlift, press)
-        assertThat(overview.last()).isEqualTo(Load.Ready(listOf(bench, deadlift, press)))
+        assertThat(read.docs()).containsExactly(bench, deadlift, dip)
     }
 
     @Test
     fun `a read that can't sync the part it needs is unavailable`() {
         val backend = FakeCollectionBackend(server = listOf(bench, press), cached = listOf(bench)).apply { fail = { IllegalStateException("offline") } }
 
-        val read = readers.async { dataSync.read(recent(backend), now - 450 * day, null) }
+        val read = readers.async { dataSync.read(recent(backend), yearBack, null) }
 
         assertThat((read.completed() as Load.Unavailable).error).hasMessageThat().isEqualTo("offline")
         assertThat(backend.cacheReads).isEmpty()
@@ -502,20 +506,20 @@ class DataSyncTest {
 
     @Test
     fun `a read after a failed sync tries again rather than failing straight away`() {
-        val backend = FakeCollectionBackend(server = listOf(bench, press)).apply { fail = { IllegalStateException("offline") } }
-        readers.async { dataSync.read(recent(backend), now - 450 * day, null) }
+        val backend = FakeCollectionBackend(server = listOf(bench, deadlift)).apply { fail = { IllegalStateException("offline") } }
+        readers.async { dataSync.read(recent(backend), yearBack, null) }
         backend.fail = { null }
 
-        val read = readers.async { dataSync.read(recent(backend), now - 450 * day, null) }
+        val read = readers.async { dataSync.read(recent(backend), yearBack, null) }
 
-        assertThat(read.docs()).containsExactly(bench, press)
+        assertThat(read.docs()).containsExactly(bench, deadlift)
     }
 
     // Fetching documents by id
 
     @Test
     fun `documents fetched by id reach readers, and the ones the server doesn't have are left out`() {
-        synced("user/routines", fullHistory = false, at = now)
+        synced("user/routines", at = now)
         val backend = FakeCollectionBackend(server = listOf(bench, squat, deadlift), cached = listOf(bench))
         val loads = read(dataSync.observe(whole(backend)))
 
@@ -615,19 +619,19 @@ class DataSyncTest {
     }
 
     @Test
-    fun `a full sync that fails part way isn't recorded, and starts over next time`() {
-        val backend = FakeCollectionBackend(server = listOf(bench, deadlift, press))
-        backend.fail = { call -> if (call == "chunk:deadlift") IllegalStateException("offline") else null }
-        val failed = read(dataSync.observe(recent(backend), Range.All))
+    fun `a sync back that fails part way isn't recorded, and starts over next time`() {
+        val backend = FakeCollectionBackend(server = listOf(bench, curl, deadlift, dip))
+        backend.fail = { call -> if (call == "between:$yearBack:deadlift") IllegalStateException("offline") else null }
+        val failed = read(dataSync.observe(recent(backend), Range.Last(months = 12)))
 
         assertThat(failed.last()).isInstanceOf(Load.Unavailable::class.java)
-        assertThat(records.fullHistorySynced).isEmpty()
+        assertThat(records.syncedBack).isEmpty()
 
         backend.fail = { null }
         backend.calls.clear()
-        read(dataSync.observe(recent(backend), Range.All))
+        read(dataSync.observe(recent(backend), Range.Last(months = 12)))
 
-        assertThat(backend.calls).containsExactly("chunk:null", "chunk:deadlift").inOrder()
+        assertThat(backend.calls).containsExactly("since", "between:$yearBack:null", "between:$yearBack:deadlift").inOrder()
     }
 
     @Test
@@ -696,7 +700,7 @@ class DataSyncTest {
 
     @Test
     fun `signing out ends reads, stops syncs and forgets them`() {
-        synced("user/plans", fullHistory = false, at = now)
+        synced("user/plans", at = now)
         val backend = FakeCollectionBackend(server = listOf(bench)).holdingServer()
         var ended = false
         readers.launch {
@@ -722,9 +726,13 @@ class DataSyncTest {
 
     private fun document(backend: FakeDocumentBackend) = DocumentSource("profile", "user", backend)
 
-    private fun synced(key: String, fullHistory: Boolean, at: Long) {
+    private fun synced(key: String, at: Long) {
         records.lastSynced[key] = at
-        if (fullHistory) records.fullHistorySynced[key] = at
+    }
+
+    private fun syncedBack(to: Long, at: Long, lastSynced: Long = at) {
+        records.lastSynced["user/workouts"] = lastSynced
+        records.syncedBack["user/workouts"] = SyncedBack(to, at)
     }
 
     private fun <B : FakeServer> B.holdingServer(): B = apply { gate = CompletableDeferred() }
