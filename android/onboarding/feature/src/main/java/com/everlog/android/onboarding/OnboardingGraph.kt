@@ -1,5 +1,6 @@
 package com.everlog.android.onboarding
 
+import com.everlog.android.common.navigation.Navigator
 import com.everlog.android.onboarding.data.BuildStarterRoutinesUseCase
 import com.everlog.android.onboarding.data.SaveStarterRoutinesUseCase
 import com.everlog.android.settings.data.UserSettings
@@ -19,5 +20,5 @@ interface OnboardingGraph {
 
     val onboardingAnalytics: OnboardingAnalytics
 
-    val onboardingNavigation: OnboardingNavigation
+    val navigator: Navigator
 }
