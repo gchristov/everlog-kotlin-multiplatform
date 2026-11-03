@@ -1,9 +1,9 @@
 package com.everlog.android.history.workouts
 
 import com.everlog.android.common.mvp.fragment.BaseFragmentMvpView
+import java.util.*
 import org.threeten.bp.LocalDate
 import rx.Observable
-import java.util.*
 
 interface MvpViewHistoryHome : BaseFragmentMvpView {
 

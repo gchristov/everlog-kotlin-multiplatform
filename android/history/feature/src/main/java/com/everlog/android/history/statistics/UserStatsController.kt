@@ -2,18 +2,18 @@ package com.everlog.android.history.statistics
 
 import com.everlog.android.common.data.model.workout.ELWorkout
 import com.everlog.android.common.data.model.workout.RangeType
-import com.everlog.android.common.mvp.chart.BaseStatsController
 import com.everlog.android.common.kotlin.WeightUnit
+import com.everlog.android.common.mvp.chart.BaseStatsController
 import com.github.mikephil.charting.data.BarEntry
 import com.github.mikephil.charting.data.Entry
 import com.github.mikephil.charting.data.PieEntry
-import rx.Observable
-import rx.android.schedulers.AndroidSchedulers
-import rx.schedulers.Schedulers
-import org.threeten.bp.DayOfWeek
 import java.io.Serializable
 import java.util.concurrent.TimeUnit
 import kotlin.math.max
+import org.threeten.bp.DayOfWeek
+import rx.Observable
+import rx.android.schedulers.AndroidSchedulers
+import rx.schedulers.Schedulers
 
 class UserStatsController(
     private val weightUnit: WeightUnit,

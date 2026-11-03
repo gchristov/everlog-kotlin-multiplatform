@@ -9,6 +9,7 @@ import android.view.ViewGroup
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.core.content.ContextCompat
+import com.everlog.android.common.design.R as DesignR
 import com.everlog.android.common.kotlin.fromJava
 import com.everlog.android.common.kotlin.toJava
 import com.everlog.android.history.databinding.RowCalendarDayBinding
@@ -20,10 +21,9 @@ import com.kizitonwose.calendarview.model.CalendarMonth
 import com.kizitonwose.calendarview.model.DayOwner
 import com.kizitonwose.calendarview.ui.MonthHeaderFooterBinder
 import com.kizitonwose.calendarview.ui.ViewContainer
-import org.threeten.bp.LocalDate
-import com.everlog.android.common.design.R as DesignR
 import java.util.*
 import kotlin.collections.ArrayList
+import org.threeten.bp.LocalDate
 
 // Reads the settings each time it draws, as the tab stays open while they change
 class CalendarAdapter(private val settings: UserSettings) {

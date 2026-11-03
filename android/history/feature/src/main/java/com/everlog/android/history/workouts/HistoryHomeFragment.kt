@@ -8,26 +8,29 @@ import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.everlog.android.common.design.R as DesignR
+import com.everlog.android.common.kotlin.di.appGraph
 import com.everlog.android.common.kotlin.toJava
 import com.everlog.android.common.kotlin.toLocalDate
-import com.everlog.android.history.HistoryFeature
+import com.everlog.android.common.mvp.R as MvpR
 import com.everlog.android.common.mvp.activity.BaseActivity
-import com.everlog.android.history.workouts.CalendarAdapter
 import com.everlog.android.common.mvp.fragment.BaseFragmentMvpView
 import com.everlog.android.common.mvp.fragment.BaseFragmentPresenter
 import com.everlog.android.common.mvp.fragment.BaseTabFragment
+import com.everlog.android.history.HistoryGraph
 import com.everlog.android.history.HistoryScreenNames
 import com.everlog.android.history.R
 import com.everlog.android.history.databinding.FragmentHistoryHomeBinding
+import com.everlog.android.history.workouts.CalendarAdapter
+import java.time.YearMonth
+import java.util.*
 import org.threeten.bp.LocalDate
 import rx.Observable
 import rx.subjects.PublishSubject
-import com.everlog.android.common.design.R as DesignR
-import com.everlog.android.common.mvp.R as MvpR
-import java.time.YearMonth
-import java.util.*
 
 class HistoryHomeFragment : BaseTabFragment(), MvpViewHistoryHome {
+
+    private val graph by lazy { requireContext().appGraph<HistoryGraph>() }
 
     enum class ViewType {
         CALENDAR,
@@ -105,7 +108,7 @@ class HistoryHomeFragment : BaseTabFragment(), MvpViewHistoryHome {
         val lastMonth = now.plusMonths(1)
         // Remember previous position before resetting
         val currMonth = if (mCalendarSetup) binding.calendarView.findFirstVisibleMonth() else null
-        binding.calendarView.setup(firstMonth, lastMonth, HistoryFeature.dependencies.userSettings().firstDayOfWeek().toJava())
+        binding.calendarView.setup(firstMonth, lastMonth, graph.userSettings.firstDayOfWeek().toJava())
         binding.calendarView.post {
             // The fragment's view may have been destroyed by the time this runs
             if (_binding == null) return@post
@@ -147,7 +150,7 @@ class HistoryHomeFragment : BaseTabFragment(), MvpViewHistoryHome {
     // Setup
 
     override fun setupPresenter() {
-        mPresenter = PresenterHistoryHome()
+        mPresenter = PresenterHistoryHome(graph.userSettings, graph.historyNavigation)
     }
 
     private fun setupListView() {
@@ -156,7 +159,7 @@ class HistoryHomeFragment : BaseTabFragment(), MvpViewHistoryHome {
     }
 
     private fun setupCalendar() {
-        val adapter = CalendarAdapter(HistoryFeature.dependencies.userSettings())
+        val adapter = CalendarAdapter(graph.userSettings)
         binding.calendarView.monthHeaderBinder = adapter.buildMonth(CalendarAdapter.MonthBuilder()
                 .calendar(binding.calendarView))
         binding.calendarView.dayBinder = adapter.buildDay(CalendarAdapter.DayBuilder()

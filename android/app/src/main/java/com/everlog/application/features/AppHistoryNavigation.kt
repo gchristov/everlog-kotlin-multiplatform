@@ -1,20 +1,18 @@
 package com.everlog.application.features
 
-import com.everlog.application.ELApplication
-import com.everlog.android.settings.data.UserSettings
 import android.content.Context
 import com.everlog.android.common.data.model.workout.ELWorkout
-import com.everlog.android.common.data.model.workout.RangeType
-import com.everlog.android.history.HistoryFeatureDependencies
+import com.everlog.android.history.HistoryNavigation
 import com.everlog.config.FeedbackSource
 import com.everlog.managers.RemoteConfigManager
-import com.everlog.managers.analytics.AnalyticsManager
 import com.everlog.ui.navigator.ELNavigator
+import dev.zacsweers.metro.AppScope
+import dev.zacsweers.metro.ContributesBinding
+import dev.zacsweers.metro.Inject
 
-class AppHistoryFeatureDependencies : HistoryFeatureDependencies {
-    override fun userSettings(): UserSettings = ELApplication.graph.userSettings
-
-
+@ContributesBinding(AppScope::class)
+@Inject
+class AppHistoryNavigation : HistoryNavigation {
     override fun openWorkoutDetails(context: Context, workout: ELWorkout) =
         ELNavigator(context).openWorkoutDetails(workout, false, false)
 
@@ -22,6 +20,4 @@ class AppHistoryFeatureDependencies : HistoryFeatureDependencies {
         RemoteConfigManager.manager.feedbackFormUrl(FeedbackSource.ACTIVITY_STATISTICS) != null
 
     override fun openStatisticsFeedback(context: Context) = ELNavigator(context).openFeedbackForm(FeedbackSource.ACTIVITY_STATISTICS)
-
-    override fun statisticsRangeModified(range: RangeType) = AnalyticsManager.manager.statisticsRangeModified(range)
 }

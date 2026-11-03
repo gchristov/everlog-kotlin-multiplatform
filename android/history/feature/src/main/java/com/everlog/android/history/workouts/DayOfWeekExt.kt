@@ -1,11 +1,11 @@
 package com.everlog.android.history.workouts
 
 import com.everlog.android.common.kotlin.WeekDay
+import java.util.*
 import org.threeten.bp.DayOfWeek
 import org.threeten.bp.LocalDate
 import org.threeten.bp.format.TextStyle
 import org.threeten.bp.temporal.TemporalAdjusters
-import java.util.*
 
 fun DayOfWeek.buildWeekDays(): List<WeekDay> {
     var now = LocalDate.now()
