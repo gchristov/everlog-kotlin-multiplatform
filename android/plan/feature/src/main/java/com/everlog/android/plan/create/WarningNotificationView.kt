@@ -95,6 +95,6 @@ class WarningNotificationView(context: Context, attrs: AttributeSet?) : BaseView
     // Setup
 
     public override fun setupPresenter() {
-        mPresenter = PresenterWarningNotification(context.appGraph<PlanGraph>().planNavigation)
+        mPresenter = PresenterWarningNotification(context.appGraph<PlanGraph>().navigator)
     }
 }

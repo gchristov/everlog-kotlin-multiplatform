@@ -61,7 +61,7 @@ class WeekDaysFragment : BaseFragment(), MvpViewWeekDays {
 
     override fun setupPresenter() {
         val graph = requireContext().appGraph<PlanGraph>()
-        mPresenter = PresenterWeekDays(graph.planProgress, graph.userSession, graph.planAnalytics, graph.planNavigation)
+        mPresenter = PresenterWeekDays(graph.planProgress, graph.userSession, graph.planAnalytics, graph.navigator)
     }
 
     private fun setupListView() {

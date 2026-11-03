@@ -13,9 +13,11 @@ import com.everlog.android.common.design.R as DesignR
 import com.everlog.android.common.kotlin.Utils
 import com.everlog.android.common.mvp.activity.BaseActivityPresenter
 import com.everlog.android.common.mvp.util.KeyboardUtils
+import com.everlog.android.common.navigation.Navigator
+import com.everlog.android.common.navigation.TemplatePicker
+import com.everlog.android.common.navigation.openForResult
 import com.everlog.android.plan.PlanAnalytics
 import com.everlog.android.plan.PlanExtras
-import com.everlog.android.plan.PlanNavigation
 import com.everlog.android.plan.PlanRequestCodes
 import com.everlog.android.plan.R
 import com.everlog.android.plan.adapter.PlanDayAdapter
@@ -40,7 +42,7 @@ class PresenterCreatePlan(
     private val planProgress: PlanProgress,
     private val session: UserSession,
     private val analytics: PlanAnalytics,
-    private val navigation: PlanNavigation,
+    private val navigator: Navigator,
 ) : BaseActivityPresenter<MvpViewCreatePlan>() {
 
 
@@ -118,7 +120,7 @@ class PresenterCreatePlan(
             }
             return
         }
-        navigation.pickedTemplate(requestCode, resultCode, data)?.let(::handleRoutinePicked)
+        TemplatePicker.result(requestCode, resultCode, data)?.let(::handleRoutinePicked)
         super.onActivityResult(requestCode, resultCode, data)
     }
 
@@ -485,10 +487,10 @@ class PresenterCreatePlan(
         }))
         // Days
         mDaysAdapter.addDataManager(mDaysDataListManager)
-        mDaysAdapter.registerBinder(PlanDayAdapter.Binder(analytics, navigation, object : PlanDayAdapter.OnPlanDayListener {
+        mDaysAdapter.registerBinder(PlanDayAdapter.Binder(analytics, navigator, session, object : PlanDayAdapter.OnPlanDayListener {
             override fun onClickChooseRoutine(day: ELPlanDay, position: Int) {
                 mSelectedDay = position
-                mvpView?.getActivity()?.let(navigation::openTemplatePicker)
+                mvpView?.getActivity()?.let { navigator.openForResult(it, TemplatePicker) }
             }
 
             override fun onDayEdited() {

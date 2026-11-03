@@ -8,20 +8,23 @@ import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import com.ahamed.multiviewadapter.ItemBinder
 import com.ahamed.multiviewadapter.ItemViewHolder
+import com.everlog.android.auth.data.UserSession
 import com.everlog.android.common.design.R as DesignR
 import com.everlog.android.common.mvp.list.OnListItemListener
 import com.everlog.android.common.mvp.view.showPopupMenu
+import com.everlog.android.common.navigation.Navigator
 import com.everlog.android.plan.PlanAnalytics
-import com.everlog.android.plan.PlanNavigation
 import com.everlog.android.plan.R
 import com.everlog.android.plan.data.model.ELPlanDay
 import com.everlog.android.plan.databinding.RowPlanDayBinding
+import com.everlog.android.plan.runProFeature
 
 class PlanDayAdapter {
 
     class Binder(
         private val analytics: PlanAnalytics,
-        private val navigation: PlanNavigation,
+        private val navigator: Navigator,
+        private val session: UserSession,
         private val mListener: OnPlanDayListener,
     ) : ItemBinder<ELPlanDay, ViewHolder>() {
 
@@ -39,7 +42,7 @@ class PlanDayAdapter {
         }
 
         override fun create(inflater: LayoutInflater, parent: ViewGroup): ViewHolder {
-            return ViewHolder(inflater.inflate(R.layout.row_plan_day, parent, false), ongoing, edit, analytics, navigation, mListener)
+            return ViewHolder(inflater.inflate(R.layout.row_plan_day, parent, false), ongoing, edit, analytics, navigator, session, mListener)
         }
 
         override fun canBindData(item: Any): Boolean {
@@ -55,7 +58,8 @@ class PlanDayAdapter {
                      private val ongoing: Boolean,
                      private val edit: Boolean,
                      private val analytics: PlanAnalytics,
-                     private val navigation: PlanNavigation,
+                     private val navigator: Navigator,
+                     private val session: UserSession,
                      private val listener: OnPlanDayListener) : ItemViewHolder<ELPlanDay>(itemView) {
 
         private val binding = RowPlanDayBinding.bind(itemView)
@@ -88,7 +92,7 @@ class PlanDayAdapter {
         }
 
         private fun proRunLocked(block: Runnable) {
-            if (item.proLocked) navigation.runProFeature(itemView.context) { block.run() } else block.run()
+            if (item.proLocked) runProFeature(itemView.context, session, navigator) { block.run() } else block.run()
         }
 
         // Render

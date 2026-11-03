@@ -6,8 +6,9 @@ import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.everlog.android.common.data.store.ELDocumentStore
 import com.everlog.android.common.design.R as DesignR
 import com.everlog.android.common.mvp.activity.BaseActivityPresenter
+import com.everlog.android.common.navigation.Home
+import com.everlog.android.common.navigation.Navigator
 import com.everlog.android.plan.PlanAnalytics
-import com.everlog.android.plan.PlanNavigation
 import com.everlog.android.plan.R
 import com.everlog.android.plan.create.CreatePlanActivity
 import com.everlog.android.plan.data.PlanBroadcasts
@@ -21,7 +22,7 @@ import org.greenrobot.eventbus.ThreadMode
 class PresenterPlanDetails(
     private val planProgress: PlanProgress,
     private val analytics: PlanAnalytics,
-    private val navigation: PlanNavigation,
+    private val navigator: Navigator,
 ) : BaseActivityPresenter<MvpViewPlanDetails>() {
 
 
@@ -205,7 +206,7 @@ class PresenterPlanDetails(
         planProgress.setOngoingPlan(toEdit)
         analytics.started()
         LocalBroadcastManager.getInstance(mvpView.context).sendBroadcast(Intent(PlanBroadcasts.CURRENT_PLAN_STARTED))
-        mvpView?.getActivity()?.let(navigation::openHome)
+        mvpView?.getActivity()?.let { navigator.open(it, Home) }
     }
 
     private fun handleDeletePlan(plan: ELPlan) {

@@ -140,7 +140,7 @@ class PlanDetailsActivity : BaseActivity(), MvpViewPlanDetails {
     // Setup
 
     override fun setupPresenter() {
-        mPresenter = PresenterPlanDetails(graph.planProgress, graph.planAnalytics, graph.planNavigation)
+        mPresenter = PresenterPlanDetails(graph.planProgress, graph.planAnalytics, graph.navigator)
     }
 
     override fun getRequiredExtras(): List<String> {

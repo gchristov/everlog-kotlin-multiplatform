@@ -2,10 +2,11 @@ package com.everlog.android.plan.create
 
 import com.everlog.android.common.kotlin.Utils
 import com.everlog.android.common.mvp.view.BaseViewPresenter
-import com.everlog.android.plan.PlanNavigation
+import com.everlog.android.common.navigation.Navigator
+import com.everlog.android.common.navigation.ProBuy
 
 class PresenterWarningNotification(
-    private val navigation: PlanNavigation,
+    private val navigator: Navigator,
 ) : BaseViewPresenter<MvpViewWarningNotification>() {
 
     override fun onReady() {
@@ -40,7 +41,7 @@ class PresenterWarningNotification(
     private fun handleShowAction() {
         when (mvpView.getType()) {
             WarningNotificationView.WarningType.PRO_PLAN_DAYS,
-            WarningNotificationView.WarningType.PRO_MUSCLE_GOALS-> context?.let(navigation::openProBuy)
+            WarningNotificationView.WarningType.PRO_MUSCLE_GOALS-> context?.let { navigator.open(it, ProBuy) }
         }
     }
 }
