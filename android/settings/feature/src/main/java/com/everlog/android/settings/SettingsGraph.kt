@@ -1,6 +1,7 @@
 package com.everlog.android.settings
 
 import com.everlog.android.auth.data.UserSession
+import com.everlog.android.common.navigation.Navigator
 import com.everlog.android.settings.data.UserSettings
 import dev.zacsweers.metro.AppScope
 import dev.zacsweers.metro.ContributesTo
@@ -14,7 +15,7 @@ interface SettingsGraph {
 
     val settingsAnalytics: SettingsAnalytics
 
-    val settingsNavigation: SettingsNavigation
+    val navigator: Navigator
 
     val settingsConfig: SettingsConfig
 
