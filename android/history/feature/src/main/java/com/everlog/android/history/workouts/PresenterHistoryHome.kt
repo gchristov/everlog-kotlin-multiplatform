@@ -6,7 +6,8 @@ import com.everlog.android.common.data.model.workout.ELWorkout
 import com.everlog.android.common.kotlin.toLocalDate
 import com.everlog.android.common.mvp.fragment.BaseFragmentPresenter
 import com.everlog.android.common.mvp.list.BaseTimelineViewHolder
-import com.everlog.android.history.HistoryNavigation
+import com.everlog.android.common.navigation.Navigator
+import com.everlog.android.common.navigation.WorkoutDetails
 import com.everlog.android.history.R
 import com.everlog.android.history.workouts.HistoryAdapter
 import com.everlog.android.settings.data.UserSettings
@@ -24,7 +25,7 @@ import rx.Observable
 
 class PresenterHistoryHome(
     private val settings: UserSettings,
-    private val navigation: HistoryNavigation,
+    private val navigator: Navigator,
 ) : BaseFragmentPresenter<MvpViewHistoryHome>() {
 
     private val mAdapter = RecyclerAdapter()
@@ -204,7 +205,7 @@ class PresenterHistoryHome(
             }
 
             override fun onItemClicked(item: ELWorkout, position: Int) {
-                context?.let { navigation.openWorkoutDetails(it, item) }
+                context?.let { navigator.open(it, WorkoutDetails(item, justFinished = false, fromPlan = false)) }
             }
         }))
     }
