@@ -1,26 +1,28 @@
 package com.everlog.android.template.picker
 
-import com.everlog.android.template.TemplateNavigation
 import android.app.Activity
 import android.content.Intent
 import androidx.recyclerview.widget.RecyclerView
 import com.ahamed.multiviewadapter.DataListManager
 import com.ahamed.multiviewadapter.RecyclerAdapter
 import com.everlog.android.common.data.model.ELRoutine
-import com.everlog.android.template.data.store.ELColStoreRoutinesLoadedEvent
-import com.everlog.android.template.data.store.TemplateStores
+import com.everlog.android.common.mvp.activity.BaseActivityPresenter
+import com.everlog.android.common.navigation.Navigator
+import com.everlog.android.common.navigation.TemplateEditor
+import com.everlog.android.common.navigation.openForResult
 import com.everlog.android.template.R
 import com.everlog.android.template.TemplateExtras
 import com.everlog.android.template.TemplateRequestCodes
+import com.everlog.android.template.data.store.ELColStoreRoutinesLoadedEvent
+import com.everlog.android.template.data.store.TemplateStores
 import com.everlog.android.template.picker.RoutinePickerAdapter
-import com.everlog.android.common.mvp.activity.BaseActivityPresenter
+import java.util.*
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
 import rx.Observable
-import java.util.*
 
 class PresenterRoutinePicker(
-    private val navigation: TemplateNavigation,
+    private val navigator: Navigator,
 ) : BaseActivityPresenter<MvpViewRoutinePicker>() {
 
     private var listAdapter: RecyclerAdapter? = null
@@ -112,7 +114,7 @@ class PresenterRoutinePicker(
     }
 
     private fun handleAddRoutine() {
-        mvpView.getActivity()?.let { navigation.openTemplateEditor(it, null) }
+        mvpView.getActivity()?.let { navigator.openForResult(it, TemplateEditor(showDetailsOnSuccess = false)) }
     }
 
     // Setup

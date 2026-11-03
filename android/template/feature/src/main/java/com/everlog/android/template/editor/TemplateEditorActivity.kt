@@ -1,16 +1,19 @@
 package com.everlog.android.template.editor
 
-import com.everlog.android.template.TemplateGraph
-import com.everlog.android.common.kotlin.di.appGraph
 import android.content.Context
 import android.content.Intent
 import androidx.activity.viewModels
 import androidx.compose.runtime.Composable
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
+import com.everlog.android.common.kotlin.di.appGraph
 import com.everlog.android.common.mvp.activity.SignedInComposeActivity
+import com.everlog.android.common.navigation.ExerciseDetails
+import com.everlog.android.common.navigation.ExercisePicker
+import com.everlog.android.common.navigation.openForResult
 import com.everlog.android.template.R
 import com.everlog.android.template.TemplateExtras
+import com.everlog.android.template.TemplateGraph
 import com.everlog.android.template.details.RoutineDetailsActivity
 import kotlinx.coroutines.Dispatchers
 
@@ -20,7 +23,7 @@ import kotlinx.coroutines.Dispatchers
  */
 class TemplateEditorActivity : SignedInComposeActivity() {
     private val graph by lazy { appGraph<TemplateGraph>() }
-    private val navigation by lazy { graph.templateNavigation }
+    private val navigator by lazy { graph.navigator }
 
     private val viewModel by viewModels<TemplateEditorViewModel> {
         viewModelFactory {
@@ -41,15 +44,15 @@ class TemplateEditorActivity : SignedInComposeActivity() {
     @Composable
     override fun Content() = TemplateEditorScreen(
         viewModel = viewModel,
-        onAddExercise = { navigation.openExercisePicker(this) },
-        onOpenExercise = { exercise, tab -> navigation.openExerciseDetails(this, exercise, tab) },
+        onAddExercise = { navigator.openForResult(this, ExercisePicker) },
+        onOpenExercise = { exercise, tab -> navigator.open(this, ExerciseDetails(exercise, tab)) },
         onExit = ::exit,
     )
 
     @Deprecated("The exercise picker opens with startActivityForResult")
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        navigation.pickedExerciseGroups(requestCode, resultCode, data)?.let(viewModel::onExercisesPicked)
+        ExercisePicker.result(requestCode, resultCode, data)?.let(viewModel::onExercisesPicked)
     }
 
     // The routine goes back as the old editor's did: the routine picker starts a workout from a new one

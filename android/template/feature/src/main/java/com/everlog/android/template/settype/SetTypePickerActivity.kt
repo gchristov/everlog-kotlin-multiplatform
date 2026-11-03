@@ -1,7 +1,5 @@
 package com.everlog.android.template.settype
 
-import com.everlog.android.template.TemplateGraph
-import com.everlog.android.common.kotlin.di.appGraph
 import android.view.View
 import androidx.appcompat.widget.Toolbar
 import androidx.core.view.ViewCompat
@@ -9,14 +7,16 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.updateLayoutParams
 import androidx.core.view.updatePadding
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.everlog.android.common.design.R as DesignR
+import com.everlog.android.common.kotlin.di.appGraph
 import com.everlog.android.common.mvp.activity.BaseActivity
 import com.everlog.android.common.mvp.activity.BaseActivityMvpView
 import com.everlog.android.common.mvp.activity.BaseActivityPresenter
 import com.everlog.android.template.R
 import com.everlog.android.template.TemplateExtras
+import com.everlog.android.template.TemplateGraph
 import com.everlog.android.template.TemplateScreenNames
 import com.everlog.android.template.databinding.ActivitySetTypePickerBinding
-import com.everlog.android.common.design.R as DesignR
 
 class SetTypePickerActivity : BaseActivity(), MvpViewSetTypePicker {
 
@@ -72,7 +72,7 @@ class SetTypePickerActivity : BaseActivity(), MvpViewSetTypePicker {
 
     override fun setupPresenter() {
         val graph = appGraph<TemplateGraph>()
-        mPresenter = PresenterSetTypePicker(graph.templateAnalytics, graph.templateNavigation)
+        mPresenter = PresenterSetTypePicker(graph.templateAnalytics, graph.navigator)
     }
 
     private fun setupTopBar() {

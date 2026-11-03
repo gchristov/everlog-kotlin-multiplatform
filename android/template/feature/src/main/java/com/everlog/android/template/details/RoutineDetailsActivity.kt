@@ -1,7 +1,5 @@
 package com.everlog.android.template.details
 
-import com.everlog.android.template.TemplateGraph
-import com.everlog.android.common.kotlin.di.appGraph
 import android.content.Context
 import android.content.Intent
 import android.view.Menu
@@ -12,24 +10,26 @@ import androidx.appcompat.widget.Toolbar
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.everlog.android.template.R
-import com.everlog.android.template.TemplateExtras
-import com.everlog.android.template.TemplateScreenNames
-import com.everlog.android.template.databinding.ActivityRoutineDetailsBinding
-import com.everlog.android.template.details.SummaryCardCollapsing
 import com.everlog.android.common.data.model.ELRoutine
+import com.everlog.android.common.design.R as DesignR
+import com.everlog.android.common.kotlin.di.appGraph
 import com.everlog.android.common.mvp.activity.BaseActivity
 import com.everlog.android.common.mvp.activity.BaseActivityMvpView
 import com.everlog.android.common.mvp.activity.BaseActivityPresenter
 import com.everlog.android.common.mvp.util.ELGlideModule
+import com.everlog.android.template.R
+import com.everlog.android.template.TemplateExtras
+import com.everlog.android.template.TemplateGraph
+import com.everlog.android.template.TemplateScreenNames
+import com.everlog.android.template.databinding.ActivityRoutineDetailsBinding
+import com.everlog.android.template.details.SummaryCardCollapsing
 import com.google.android.material.appbar.AppBarLayout
 import com.google.android.material.appbar.AppBarLayout.OnOffsetChangedListener
 import com.google.android.material.appbar.SubtitleCollapsingToolbarLayout
 import com.jakewharton.rxbinding.view.RxView
+import kotlin.math.abs
 import rx.Observable
 import rx.subjects.PublishSubject
-import com.everlog.android.common.design.R as DesignR
-import kotlin.math.abs
 
 open class RoutineDetailsActivity : BaseActivity(), MvpViewRoutineDetails {
 
@@ -146,7 +146,7 @@ open class RoutineDetailsActivity : BaseActivity(), MvpViewRoutineDetails {
 
     override fun setupPresenter() {
         val graph = appGraph<TemplateGraph>()
-        mPresenter = PresenterRoutineDetails(graph.userSettings, graph.templateAnalytics, graph.templateNavigation, graph.ongoingPlanRepository)
+        mPresenter = PresenterRoutineDetails(graph.userSettings, graph.templateAnalytics, graph.navigator, graph.ongoingPlanRepository)
     }
 
     private fun setupTopBar() {

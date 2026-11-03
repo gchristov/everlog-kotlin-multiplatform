@@ -6,10 +6,13 @@ import android.content.Intent
 import com.everlog.android.common.data.model.exercise.ELExercise
 import com.everlog.android.common.data.model.exercise.ELExerciseGroup
 import com.everlog.android.common.data.model.workout.ELWorkout
+import com.everlog.android.common.navigation.ExerciseDetails
+import com.everlog.android.common.navigation.ExercisePicker
 import com.everlog.android.common.navigation.ExerciseTab
-import com.everlog.android.template.TemplateNavigation
-import com.everlog.android.workout.WorkoutNavigation
 import com.everlog.android.common.navigation.FeedbackSource
+import com.everlog.android.common.navigation.Navigator
+import com.everlog.android.common.navigation.openForResult
+import com.everlog.android.workout.WorkoutNavigation
 import com.everlog.constants.ELActivityRequestCodes
 import com.everlog.constants.ELConstants
 import com.everlog.managers.apprate.RatePromptTrigger
@@ -23,17 +26,16 @@ import dev.zacsweers.metro.Inject
 @ContributesBinding(AppScope::class)
 @Inject
 class AppWorkoutNavigation(
-    // The exercise screens open the same way from a template and a workout
-    private val templateNavigation: TemplateNavigation,
+    private val navigator: Navigator,
 ) : WorkoutNavigation {
 
-    override fun openExercisePicker(activity: Activity) = templateNavigation.openExercisePicker(activity)
+    override fun openExercisePicker(activity: Activity) = navigator.openForResult(activity, ExercisePicker)
 
     override fun pickedExerciseGroups(requestCode: Int, resultCode: Int, data: Intent?): List<ELExerciseGroup>? =
-        templateNavigation.pickedExerciseGroups(requestCode, resultCode, data)
+        ExercisePicker.result(requestCode, resultCode, data)
 
     override fun openExerciseDetails(context: Context, exercise: ELExercise, tab: ExerciseTab) =
-        templateNavigation.openExerciseDetails(context, exercise, tab)
+        navigator.open(context, ExerciseDetails(exercise, tab))
 
     override fun openSetSuggestions(activity: Activity) = ELNavigator(activity).openMuscleGoal()
 
