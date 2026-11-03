@@ -4,7 +4,12 @@ import com.everlog.android.onboarding.OnboardingAnalytics
 import com.everlog.android.onboarding.OnboardingScreenNames
 import com.everlog.android.onboarding.OnboardingStep
 import com.everlog.managers.analytics.AnalyticsManager
+import dev.zacsweers.metro.AppScope
+import dev.zacsweers.metro.ContributesBinding
+import dev.zacsweers.metro.Inject
 
+@ContributesBinding(AppScope::class)
+@Inject
 class AppOnboardingAnalytics : OnboardingAnalytics {
     private val analytics = AnalyticsManager.manager
 

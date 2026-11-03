@@ -7,7 +7,6 @@ import com.everlog.android.common.kotlin.AppContext
 import com.everlog.android.common.kotlin.di.GraphOwner
 import com.everlog.android.common.mvp.CommonMvp
 import com.everlog.android.exercise.data.store.ExerciseStores
-import com.everlog.android.onboarding.OnboardingFeature
 import com.everlog.android.plan.data.store.PlanStores
 import com.everlog.android.pro.ProFeature
 import com.everlog.android.settings.data.store.SettingsStores
@@ -15,7 +14,6 @@ import com.everlog.android.template.data.store.TemplateStores
 import com.everlog.android.workout.data.store.WorkoutStores
 import com.everlog.application.features.AppCommonDataDependencies
 import com.everlog.application.features.AppCommonMvpDependencies
-import com.everlog.application.features.AppOnboardingFeatureDependencies
 import com.everlog.application.features.AppProFeatureDependencies
 import com.everlog.config.AppConfig
 import com.jakewharton.threetenabp.AndroidThreeTen
@@ -46,7 +44,6 @@ class ELApplication : Application(), GraphOwner {
         SettingsStores.session = graph.userSession
         CommonMvp.dependencies = AppCommonMvpDependencies()
         ProFeature.dependencies = AppProFeatureDependencies()
-        OnboardingFeature.dependencies = AppOnboardingFeatureDependencies()
         AndroidThreeTen.init(this)
         AppConfig.configuration.configureApp()
     }
