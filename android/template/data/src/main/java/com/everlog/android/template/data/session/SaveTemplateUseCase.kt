@@ -2,8 +2,12 @@ package com.everlog.android.template.data.session
 
 import arrow.core.Either
 import com.everlog.android.common.data.model.ELRoutine
-import com.everlog.android.template.data.session.OngoingPlanRepository
+import com.everlog.android.common.kotlin.di.IoDispatcher
 import com.everlog.android.template.data.RoutineRepository
+import com.everlog.android.template.data.session.OngoingPlanRepository
+import dev.zacsweers.metro.AppScope
+import dev.zacsweers.metro.ContributesBinding
+import dev.zacsweers.metro.Inject
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.withContext
 
@@ -16,8 +20,10 @@ interface SaveTemplateUseCase {
     suspend operator fun invoke(routine: ELRoutine): Either<Throwable, Unit>
 }
 
+@ContributesBinding(AppScope::class)
+@Inject
 class RealSaveTemplateUseCase(
-    private val dispatcher: CoroutineDispatcher,
+    @IoDispatcher private val dispatcher: CoroutineDispatcher,
     private val routineRepository: RoutineRepository,
     private val ongoingPlanRepository: OngoingPlanRepository,
 ) : SaveTemplateUseCase {

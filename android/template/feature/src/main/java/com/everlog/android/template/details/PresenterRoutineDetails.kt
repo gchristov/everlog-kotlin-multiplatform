@@ -1,5 +1,9 @@
 package com.everlog.android.template.details
 
+import com.everlog.android.template.data.session.OngoingPlanRepository
+import com.everlog.android.template.TemplateNavigation
+import com.everlog.android.template.TemplateAnalytics
+import com.everlog.android.settings.data.UserSettings
 import com.everlog.android.common.design.R as DesignR
 import android.content.DialogInterface
 import com.ahamed.multiviewadapter.DataListManager
@@ -8,13 +12,17 @@ import com.everlog.android.common.data.model.ELRoutine
 import com.everlog.android.template.data.store.ELDocStoreRoutineLoadedEvent
 import com.everlog.android.template.data.store.TemplateStores
 import com.everlog.android.template.R
-import com.everlog.android.template.TemplateFeature
 import com.everlog.android.common.mvp.activity.BaseActivityPresenter
 import com.everlog.android.common.mvp.list.ExerciseGroupSummaryAdapter
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
 
-open class PresenterRoutineDetails<T : MvpViewRoutineDetails> : BaseActivityPresenter<T>() {
+open class PresenterRoutineDetails<T : MvpViewRoutineDetails>(
+    private val settings: UserSettings,
+    private val analytics: TemplateAnalytics,
+    private val navigation: TemplateNavigation,
+    private val ongoingPlan: OngoingPlanRepository,
+) : BaseActivityPresenter<T>() {
 
     private var toEdit: ELRoutine? = null
     private var loadedItemOnce = false
@@ -70,7 +78,7 @@ open class PresenterRoutineDetails<T : MvpViewRoutineDetails> : BaseActivityPres
         subscriptions.add(mvpView.onClickEdit()
                 .compose(applyUISchedulers())
                 .subscribe {
-                    mvpView.getActivity()?.let { TemplateFeature.dependencies.openTemplateEditor(it, toEdit) }
+                    mvpView.getActivity()?.let { navigation.openTemplateEditor(it, toEdit) }
                 })
     }
 
@@ -99,7 +107,7 @@ open class PresenterRoutineDetails<T : MvpViewRoutineDetails> : BaseActivityPres
                 .compose(applyUISchedulers())
                 .subscribe {
                     if (toEdit?.canBePerformed() == true) {
-                        mvpView.getActivity()?.let { TemplateFeature.dependencies.startWorkout(it, toEdit!!, performingFromPlan()) }
+                        mvpView.getActivity()?.let { navigation.startWorkout(it, toEdit!!, performingFromPlan()) }
                     } else {
                         mvpView.showOK(R.string.routines_cannot_perform_title, R.string.routines_cannot_perform_prompt)
                     }
@@ -131,9 +139,9 @@ open class PresenterRoutineDetails<T : MvpViewRoutineDetails> : BaseActivityPres
 
     private fun handleDeleteRoutine(routine: ELRoutine) {
         TemplateStores.routineStore().delete(routine)
-        TemplateFeature.dependencies.templateAnalytics().routineDeleted()
+        analytics.routineDeleted()
         // Replace routine for ongoing plan
-        mvpView.getActivity()?.let { TemplateFeature.dependencies.removeFromOngoingPlan(it, routine) }
+        ongoingPlan.removeRoutine(routine)
         mvpView?.closeScreen()
     }
 
@@ -147,8 +155,8 @@ open class PresenterRoutineDetails<T : MvpViewRoutineDetails> : BaseActivityPres
         mAdapter.addDataManager(mDataListManager)
         mAdapter.registerBinders(ExerciseGroupSummaryAdapter().build(ExerciseGroupSummaryAdapter.Builder()
                 .setShowTemplates(true)
-                .setWeightUnit(TemplateFeature.dependencies.userSettings().weightUnit())
-                .setOnExerciseClicked { context, exercise -> TemplateFeature.dependencies.openExerciseDetails(context, exercise) }
+                .setWeightUnit(settings.weightUnit())
+                .setOnExerciseClicked { context, exercise -> navigation.openExerciseDetails(context, exercise) }
         ))
     }
 

@@ -1,5 +1,7 @@
 package com.everlog.android.template.picker
 
+import com.everlog.android.template.TemplateGraph
+import com.everlog.android.common.kotlin.di.appGraph
 import android.view.View
 import androidx.appcompat.widget.Toolbar
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -97,7 +99,7 @@ class RoutinePickerActivity : BaseActivity(), MvpViewRoutinePicker {
     // Setup
 
     public override fun setupPresenter() {
-        mPresenter = PresenterRoutinePicker()
+        mPresenter = PresenterRoutinePicker(appGraph<TemplateGraph>().templateNavigation)
     }
 
     private fun setupTopBar() {

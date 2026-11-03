@@ -1,5 +1,6 @@
 package com.everlog.android.template.picker
 
+import com.everlog.android.template.TemplateNavigation
 import android.app.Activity
 import android.content.Intent
 import androidx.recyclerview.widget.RecyclerView
@@ -10,7 +11,6 @@ import com.everlog.android.template.data.store.ELColStoreRoutinesLoadedEvent
 import com.everlog.android.template.data.store.TemplateStores
 import com.everlog.android.template.R
 import com.everlog.android.template.TemplateExtras
-import com.everlog.android.template.TemplateFeature
 import com.everlog.android.template.TemplateRequestCodes
 import com.everlog.android.template.picker.RoutinePickerAdapter
 import com.everlog.android.common.mvp.activity.BaseActivityPresenter
@@ -19,7 +19,9 @@ import org.greenrobot.eventbus.ThreadMode
 import rx.Observable
 import java.util.*
 
-class PresenterRoutinePicker : BaseActivityPresenter<MvpViewRoutinePicker>() {
+class PresenterRoutinePicker(
+    private val navigation: TemplateNavigation,
+) : BaseActivityPresenter<MvpViewRoutinePicker>() {
 
     private var listAdapter: RecyclerAdapter? = null
     private var mDataListManager: DataListManager<ELRoutine>? = null
@@ -110,7 +112,7 @@ class PresenterRoutinePicker : BaseActivityPresenter<MvpViewRoutinePicker>() {
     }
 
     private fun handleAddRoutine() {
-        mvpView.getActivity()?.let { TemplateFeature.dependencies.openTemplateEditor(it, null) }
+        mvpView.getActivity()?.let { navigation.openTemplateEditor(it, null) }
     }
 
     // Setup

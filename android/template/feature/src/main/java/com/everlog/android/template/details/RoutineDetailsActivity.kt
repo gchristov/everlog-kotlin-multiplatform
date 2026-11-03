@@ -1,5 +1,7 @@
 package com.everlog.android.template.details
 
+import com.everlog.android.template.TemplateGraph
+import com.everlog.android.common.kotlin.di.appGraph
 import android.content.Context
 import android.content.Intent
 import android.view.Menu
@@ -143,7 +145,8 @@ open class RoutineDetailsActivity : BaseActivity(), MvpViewRoutineDetails {
     // Setup
 
     override fun setupPresenter() {
-        mPresenter = PresenterRoutineDetails()
+        val graph = appGraph<TemplateGraph>()
+        mPresenter = PresenterRoutineDetails(graph.userSettings, graph.templateAnalytics, graph.templateNavigation, graph.ongoingPlanRepository)
     }
 
     private fun setupTopBar() {

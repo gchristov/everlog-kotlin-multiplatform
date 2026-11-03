@@ -48,7 +48,7 @@ import rx.Observable
 class AppWorkoutFeatureDependencies : WorkoutFeatureDependencies {
     override fun userSettings(): UserSettings = ELApplication.graph.userSettings
 
-    private val templates = AppTemplateFeatureDependencies()
+    private val templates = AppTemplateNavigation()
 
     override fun ongoingWorkoutRepository(): OngoingWorkoutRepository = RealOngoingWorkoutRepository()
 

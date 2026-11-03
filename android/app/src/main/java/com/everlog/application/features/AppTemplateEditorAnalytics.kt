@@ -5,7 +5,12 @@ import com.everlog.android.common.session.ValueField
 import com.everlog.android.template.TemplateScreenNames
 import com.everlog.android.template.editor.TemplateEditorAnalytics
 import com.everlog.managers.analytics.AnalyticsManager
+import dev.zacsweers.metro.AppScope
+import dev.zacsweers.metro.ContributesBinding
+import dev.zacsweers.metro.Inject
 
+@ContributesBinding(AppScope::class)
+@Inject
 class AppTemplateEditorAnalytics : TemplateEditorAnalytics {
     private val analytics = AnalyticsManager.manager
 

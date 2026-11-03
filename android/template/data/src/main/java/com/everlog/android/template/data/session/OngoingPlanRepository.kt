@@ -10,4 +10,7 @@ interface OngoingPlanRepository {
      * Puts [routine] in place of the plan's copy of it, if there's an ongoing plan and the routine is in it.
      */
     fun replaceRoutine(routine: ELRoutine)
+
+    // Takes a deleted routine out of the ongoing plan, if it's in it
+    fun removeRoutine(routine: ELRoutine)
 }

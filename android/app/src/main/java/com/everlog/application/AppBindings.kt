@@ -6,7 +6,7 @@ import com.everlog.android.common.data.store.CollectionStore
 import com.everlog.android.common.datasync.DataSync
 import com.everlog.android.common.kotlin.di.IoDispatcher
 import com.everlog.android.exercise.data.ExerciseUsage
-import com.everlog.android.template.data.RealRoutineRepository
+import com.everlog.android.template.data.RoutineRepository
 import com.everlog.android.workout.data.RealWorkoutRepository
 import com.everlog.application.features.AppExerciseUsage
 import com.everlog.config.AppConfig
@@ -28,11 +28,11 @@ object AppBindings {
     @Provides
     fun workoutsStore(): CollectionStore<ELWorkout> = ELDatastore.workoutsStore()
 
-    // The routine and workout repositories join the graph with their features
+    // The workout repository joins the graph with its feature
     @Provides
-    fun exerciseUsage(@IoDispatcher io: CoroutineDispatcher, dataSync: DataSync, session: UserSession): ExerciseUsage =
+    fun exerciseUsage(routines: RoutineRepository, @IoDispatcher io: CoroutineDispatcher, dataSync: DataSync, session: UserSession): ExerciseUsage =
         AppExerciseUsage(
-            RealRoutineRepository(io, dataSync, session) { ELDatastore.routineStore() },
+            routines,
             RealWorkoutRepository(io, dataSync, AppConfig.configuration.workoutSyncMonths, session),
         )
 }
