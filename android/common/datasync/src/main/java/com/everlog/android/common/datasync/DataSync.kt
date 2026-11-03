@@ -107,6 +107,25 @@ class DataSync(
     }
 
     /**
+     * What's cached from [from] until before [until] by the plan's date field, read once rather than followed:
+     * for going through a long history a part at a time, without a listener holding all of it in memory. Like
+     * [observe], it syncs when due, and waits for the first sync that reaches back to [from].
+     */
+    suspend fun <T> read(source: CollectionSource<T>, from: Long, until: Long?): Load<List<T>> {
+        val plan = requireNotNull(source.plan as? SyncPlan.Recent) { "Reading by date needs a SyncPlan.Recent collection" }
+        val range = if (from >= windowStart(clock(), plan.months)) Range.Last(plan.months) else Range.All
+        requestSync(source, range)
+        if (!covers(currentStatus(source.key), source.plan, range)) {
+            synchronized(lock) { running[source.key]?.job }?.join()
+            val status = currentStatus(source.key)
+            if (!covers(status, source.plan, range)) {
+                return Load.Unavailable(status.lastFailure ?: IllegalStateException("${source.name} hasn't synced"))
+            }
+        }
+        return Load.Ready(source.backend.cachedBetween(from, until))
+    }
+
+    /**
      * Brings the documents with these [ids] from the server into the cache, where readers see them: for documents a
      * read found missing, e.g. a library exercise added since the library last synced, or one of the user's own
      * created on another phone. Ready with the ids the server has, the rest don't exist.

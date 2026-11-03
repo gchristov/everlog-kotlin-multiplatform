@@ -50,6 +50,24 @@ class WorkoutPrefillControllerTest {
     }
 
     @Test
+    fun `history prefills from a session a year ago`() {
+        val history = listOf(workout(now - TimeUnit.DAYS.toMillis(365), bench to listOf(loggedSet(8, 60f))))
+
+        assertThat(WorkoutPrefillController.buildPrefillSource(bench, history, now, settings.weightUnit()).lastSession).isNotNull()
+    }
+
+    @Test
+    fun `history leaves sets empty when the exercise was last done more than a year ago`() {
+        val history = listOf(workout(now - TimeUnit.DAYS.toMillis(366), bench to listOf(loggedSet(8, 60f))))
+        val ongoing = workout(now, bench to listOf(plannedSet()))
+
+        prefill(ongoing, history)
+
+        assertThat(WorkoutPrefillController.buildPrefillSource(bench, history, now, settings.weightUnit()).lastSession).isNull()
+        assertThat(weights(ongoing, bench)).containsExactly(-1f)
+    }
+
+    @Test
     fun `history uses the most recently completed session regardless of store order`() {
         // The store orders by created date, so an older workout can come first
         val history = listOf(

@@ -30,6 +30,13 @@ interface WorkoutRepository {
     fun workouts(range: Range): Flow<Load<List<ELWorkout>>>
 
     /**
+     * The user's workouts created from [from] until before [until], read once and in no particular order: for going
+     * through the history a part at a time. Waits for the full history the first time it reads further back than
+     * the sync months. None without a signed-in user.
+     */
+    suspend fun workoutsCreatedBetween(from: Long, until: Long?): Either<Throwable, List<ELWorkout>>
+
+    /**
      * When the user last did each exercise, by the exercise's uuid, from their [workouts] most recent workouts
      * of the last months.
      */
@@ -56,22 +63,29 @@ class RealWorkoutRepository(
 
     private fun workouts(range: Range, complete: Boolean): Flow<Load<List<ELWorkout>>> {
         val userId = session.user()?.id ?: return flowOf(Load.Ready(emptyList()))
-        return dataSync.observe(
-            CollectionSource(
-                "workouts",
-                userId,
-                SyncPlan.Recent(dateField = FirestoreFields.CREATED_DATE, months = syncMonths),
-                FirestoreCollection(
-                    FirestorePaths.workouts(userId),
-                    order = { it.orderBy(FirestoreFields.CREATED_DATE, Query.Direction.DESCENDING) },
-                    dateField = FirestoreFields.CREATED_DATE,
-                    dispatcher = dispatcher,
-                ) { it.toObject(ELWorkout::class.java) },
-            ),
-            range,
-            complete,
-        )
+        return dataSync.observe(workoutsOf(userId), range, complete)
     }
+
+    override suspend fun workoutsCreatedBetween(from: Long, until: Long?): Either<Throwable, List<ELWorkout>> {
+        val userId = session.user()?.id ?: return Either.Right(emptyList())
+        return when (val load = dataSync.read(workoutsOf(userId), from, until)) {
+            is Load.Ready -> Either.Right(load.value)
+            is Load.Unavailable -> Either.Left(load.error)
+            Load.Loading -> error("A read waits for its sync")
+        }
+    }
+
+    private fun workoutsOf(userId: String) = CollectionSource(
+        "workouts",
+        userId,
+        SyncPlan.Recent(dateField = FirestoreFields.CREATED_DATE, months = syncMonths),
+        FirestoreCollection(
+            FirestorePaths.workouts(userId),
+            order = { it.orderBy(FirestoreFields.CREATED_DATE, Query.Direction.DESCENDING) },
+            dateField = FirestoreFields.CREATED_DATE,
+            dispatcher = dispatcher,
+        ) { it.toObject(ELWorkout::class.java) },
+    )
 
     // Waits for the recent sync until there's been one: the cache may hold only single workouts opened before
     override suspend fun exerciseLastDone(workouts: Int): Either<Throwable, Map<String, Long>> =

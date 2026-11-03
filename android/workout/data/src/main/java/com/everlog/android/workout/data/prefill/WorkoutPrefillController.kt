@@ -19,7 +19,11 @@ class WorkoutPrefillController {
 
         // How far back a 1RM still counts. After a longer break, the last session's weights are a
         // safer place to restart than a percentage of an old 1RM.
-        private val ORM_WINDOW_MILLIS = TimeUnit.DAYS.toMillis(90)
+        internal val ORM_WINDOW_MILLIS = TimeUnit.DAYS.toMillis(90)
+
+        // How far back a last session still counts. Older than that, entering the weights again is easier than
+        // working from a session that may no longer reflect what the user lifts, and the history read stays small.
+        internal val LAST_SESSION_WINDOW_MILLIS = TimeUnit.DAYS.toMillis(365)
 
         /**
          * Fills the empty values of the given exercises' sets.
@@ -86,7 +90,7 @@ class WorkoutPrefillController {
         }
 
         /**
-         * Looks at all of the user's history rather than a calendar range, so prefilling
+         * Looks at the last year of the user's history rather than a calendar range, so prefilling
          * doesn't reset when a new month starts.
          *
          * @param newestFirst the user's workouts, most recently completed first
@@ -97,11 +101,8 @@ class WorkoutPrefillController {
                                         weightUnit: WeightUnit): PrefillSource {
             // Sessions where the exercise was actually logged, newest first
             val sessions = newestFirst
-                    .flatMap { workout ->
-                        workout.findExercise(exercise).orEmpty()
-                                .filter { it.getSetsWithData().isNotEmpty() }
-                                .map { ELExerciseHistory(it, workout) }
-                    }
+                    .filter { now - it.completedDate <= LAST_SESSION_WINDOW_MILLIS }
+                    .flatMap { workout -> workout.sessionsOf(exercise).map { ELExerciseHistory(it, workout) } }
             val orm = best1RM(sessions.filter { now - it.workout!!.completedDate <= ORM_WINDOW_MILLIS }, weightUnit)
             return PrefillSource(sessions.firstOrNull(), orm)
         }
@@ -111,3 +112,7 @@ class WorkoutPrefillController {
         }
     }
 }
+
+// Where the workout logged the exercise, leaving out the times it was in the workout but never done
+internal fun ELWorkout.sessionsOf(exercise: ELExercise): List<ELRoutineExercise> =
+        findExercise(exercise).orEmpty().filter { it.getSetsWithData().isNotEmpty() }

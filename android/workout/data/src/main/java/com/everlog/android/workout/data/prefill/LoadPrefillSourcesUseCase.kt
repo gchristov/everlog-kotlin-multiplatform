@@ -2,8 +2,6 @@ package com.everlog.android.workout.data.prefill
 
 import arrow.core.Either
 import com.everlog.android.common.data.model.exercise.ELExercise
-import com.everlog.android.common.datasync.Range
-import com.everlog.android.common.kotlin.Load
 import com.everlog.android.common.kotlin.di.DefaultDispatcher
 import com.everlog.android.settings.data.UserSettings
 import com.everlog.android.workout.data.WorkoutRepository
@@ -12,7 +10,6 @@ import dev.zacsweers.metro.AppScope
 import dev.zacsweers.metro.ContributesBinding
 import dev.zacsweers.metro.Inject
 import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.withContext
 
 /**
@@ -38,12 +35,12 @@ class RealLoadPrefillSourcesUseCase(
         settings: UserSettings,
     ) : this(dispatcher, workoutRepository, settings, System::currentTimeMillis)
 
-    // An exercise's last session can be from any time, so this reads the whole history: the first time after an
-    // install, once it has synced
-    override suspend operator fun invoke(exercises: List<ELExercise>): Either<Throwable, Map<String, PrefillSource>> =
-        when (val history = workoutRepository.workouts(Range.All).first { it != Load.Loading }) {
-            is Load.Ready -> Either.Right(withContext(dispatcher) { WorkoutPrefillController.buildPrefillSources(exercises, history.value, clock(), settings.weightUnit()) })
-            is Load.Unavailable -> Either.Left(history.error)
-            Load.Loading -> error("Filtered out")
+    // Usually only the last months. An exercise not done in those reads the rest of the year, which waits for the
+    // full history the first time after an install.
+    override suspend operator fun invoke(exercises: List<ELExercise>): Either<Throwable, Map<String, PrefillSource>> {
+        val now = clock()
+        return prefillHistory(exercises, now, workoutRepository::workoutsCreatedBetween).map { history ->
+            withContext(dispatcher) { WorkoutPrefillController.buildPrefillSources(exercises, history, now, settings.weightUnit()) }
         }
+    }
 }
