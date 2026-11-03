@@ -52,8 +52,15 @@ import com.everlog.android.common.compose.elements.keypad.AppKeypadTimerStyle
 import com.everlog.android.common.compose.elements.keypad.AppKeypadToggle
 import com.everlog.android.common.compose.theme.Theme
 import com.everlog.android.common.data.model.exercise.ELExercise
+import com.everlog.android.common.design.R as DesignR
 import com.everlog.android.common.kotlin.UnitUtils
 import com.everlog.android.common.kotlin.WeightUnit
+import com.everlog.android.common.kotlin.format.displayWeight
+import com.everlog.android.common.kotlin.format.formatClock
+import com.everlog.android.common.kotlin.format.formatWeight
+import com.everlog.android.common.kotlin.format.unitLabel
+import com.everlog.android.common.kotlin.format.unitName
+import com.everlog.android.common.navigation.ExerciseTab
 import com.everlog.android.common.session.SetMode
 import com.everlog.android.common.session.SetRef
 import com.everlog.android.common.session.ValueField
@@ -62,11 +69,9 @@ import com.everlog.android.common.session.WorkoutExercise
 import com.everlog.android.common.session.WorkoutRound
 import com.everlog.android.common.session.WorkoutSet
 import com.everlog.android.common.session.set
-import com.everlog.android.workout.setsuggestions.SetSuggestion
 import com.everlog.android.common.sessionui.exercisetable.CellFocus
 import com.everlog.android.common.sessionui.exercisetable.ExampleTable
 import com.everlog.android.common.sessionui.exercisetable.ExerciseEditList
-import com.everlog.android.common.sessionui.exercisetable.ExerciseTab
 import com.everlog.android.common.sessionui.exercisetable.ExerciseTable
 import com.everlog.android.common.sessionui.exercisetable.ExerciseTableActions
 import com.everlog.android.common.sessionui.exercisetable.SuggestedMark
@@ -74,14 +79,9 @@ import com.everlog.android.common.sessionui.exercisetable.TableView
 import com.everlog.android.common.sessionui.exercisetable.exerciseName
 import com.everlog.android.common.sessionui.exercisetable.focusLabel
 import com.everlog.android.workout.R
-import com.everlog.android.common.kotlin.format.formatClock
-import com.everlog.android.common.kotlin.format.displayWeight
-import com.everlog.android.common.kotlin.format.formatWeight
-import com.everlog.android.common.kotlin.format.unitLabel
-import com.everlog.android.common.kotlin.format.unitName
-import kotlinx.coroutines.android.awaitFrame
-import com.everlog.android.common.design.R as DesignR
+import com.everlog.android.workout.setsuggestions.SetSuggestion
 import kotlin.math.roundToInt
+import kotlinx.coroutines.android.awaitFrame
 import kotlinx.coroutines.launch
 
 /**

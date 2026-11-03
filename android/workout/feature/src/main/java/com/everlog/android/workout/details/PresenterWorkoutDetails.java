@@ -22,7 +22,7 @@ import com.everlog.android.common.data.model.workout.ELWorkout;
 import com.everlog.android.common.mvp.activity.BaseActivityPresenter;
 import com.everlog.android.common.kotlin.Utils;
 import com.everlog.android.common.mvp.list.ExerciseGroupSummaryAdapter;
-import com.everlog.android.common.sessionui.exercisetable.ExerciseTab;
+import com.everlog.android.common.navigation.ExerciseTab;
 import com.google.firebase.firestore.SetOptions;
 
 import org.apache.commons.lang3.SerializationUtils;

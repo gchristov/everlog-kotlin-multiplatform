@@ -8,7 +8,7 @@ import com.everlog.android.common.data.model.set.ELSetType
 import com.everlog.android.exercise.ExerciseFeedbackForm
 import com.everlog.android.exercise.ExerciseNavigation
 import com.everlog.android.exercise.details.ExerciseDetailsActivity
-import com.everlog.config.FeedbackSource
+import com.everlog.android.common.navigation.FeedbackSource
 import com.everlog.constants.ELActivityRequestCodes
 import com.everlog.constants.ELConstants
 import com.everlog.ui.navigator.ELNavigator

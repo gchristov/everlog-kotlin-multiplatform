@@ -1,6 +1,5 @@
 package com.everlog.android.template.editor
 
-import com.everlog.android.common.design.R as DesignR
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -44,14 +43,15 @@ import com.everlog.android.common.compose.elements.keypad.AppKeypadNote
 import com.everlog.android.common.compose.elements.keypad.AppKeypadToggle
 import com.everlog.android.common.compose.theme.Theme
 import com.everlog.android.common.data.model.exercise.ELExercise
+import com.everlog.android.common.design.R as DesignR
 import com.everlog.android.common.kotlin.WeightUnit
+import com.everlog.android.common.kotlin.format.formatClock
+import com.everlog.android.common.navigation.ExerciseTab
 import com.everlog.android.common.session.SetMode
 import com.everlog.android.common.session.set
-import com.everlog.android.common.sessionui.exercisetable.ExerciseTab
 import com.everlog.android.common.sessionui.exercisetable.exerciseName
 import com.everlog.android.common.sessionui.exercisetable.focusLabel
 import com.everlog.android.template.R
-import com.everlog.android.common.kotlin.format.formatClock
 import kotlinx.coroutines.android.awaitFrame
 import kotlinx.coroutines.launch
 

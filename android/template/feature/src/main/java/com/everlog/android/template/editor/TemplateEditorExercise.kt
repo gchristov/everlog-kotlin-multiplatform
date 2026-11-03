@@ -1,6 +1,5 @@
 package com.everlog.android.template.editor
 
-import com.everlog.android.common.design.R as DesignR
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -44,14 +43,15 @@ import com.everlog.android.common.compose.elements.AppText
 import com.everlog.android.common.compose.elements.AppThumbnail
 import com.everlog.android.common.compose.theme.Theme
 import com.everlog.android.common.data.model.exercise.ELExercise
+import com.everlog.android.common.design.R as DesignR
 import com.everlog.android.common.kotlin.format.formatClock
 import com.everlog.android.common.kotlin.format.setTypeTitle
+import com.everlog.android.common.navigation.ExerciseTab
 import com.everlog.android.common.session.SetMode
 import com.everlog.android.common.session.SetRef
 import com.everlog.android.common.session.WorkoutBlock
 import com.everlog.android.common.session.WorkoutSet
 import com.everlog.android.common.sessionui.exercisetable.CellFocus
-import com.everlog.android.common.sessionui.exercisetable.ExerciseTab
 import com.everlog.android.common.sessionui.exercisetable.GroupThumbnail
 import com.everlog.android.common.sessionui.exercisetable.GroupThumbnailSizes
 import com.everlog.android.common.sessionui.exercisetable.InsetDeleteButton

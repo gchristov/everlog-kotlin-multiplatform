@@ -1,5 +1,6 @@
 package com.everlog.config
 
+import com.everlog.android.common.navigation.FeedbackSource
 import com.google.common.truth.Truth.assertThat
 import org.junit.Test
 

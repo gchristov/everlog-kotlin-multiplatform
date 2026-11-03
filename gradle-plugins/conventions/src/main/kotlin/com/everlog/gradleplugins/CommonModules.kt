@@ -9,5 +9,6 @@ internal object CommonModules {
     const val FIREBASE = ":android:common:firebase"
     const val KOTLIN = ":android:common:kotlin"
     const val MVVM = ":android:common:mvvm"
+    const val NAVIGATION = ":android:common:navigation"
     const val TEST = ":android:common:test"
 }

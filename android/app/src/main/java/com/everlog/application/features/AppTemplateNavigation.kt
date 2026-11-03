@@ -6,10 +6,10 @@ import android.content.Intent
 import com.everlog.android.common.data.model.ELRoutine
 import com.everlog.android.common.data.model.exercise.ELExercise
 import com.everlog.android.common.data.model.exercise.ELExerciseGroup
-import com.everlog.android.common.sessionui.exercisetable.ExerciseTab
+import com.everlog.android.common.navigation.ExerciseTab
 import com.everlog.android.exercise.details.ExerciseDetailsActivity
 import com.everlog.android.template.TemplateNavigation
-import com.everlog.config.FeedbackSource
+import com.everlog.android.common.navigation.FeedbackSource
 import com.everlog.constants.ELActivityRequestCodes
 import com.everlog.constants.ELConstants
 import com.everlog.ui.activities.home.routine.create.CreateRoutineActivity

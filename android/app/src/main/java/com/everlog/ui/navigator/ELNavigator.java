@@ -25,7 +25,7 @@ import com.everlog.android.exercise.picker.ExercisePickerActivity;
 import com.everlog.android.plan.data.model.ELPlan;
 import com.everlog.android.settings.data.model.ELIntegration;
 import com.everlog.android.showcase.DesignSystemActivity;
-import com.everlog.config.FeedbackSource;
+import com.everlog.android.common.navigation.FeedbackSource;
 import com.everlog.constants.ELActivityRequestCodes;
 import com.everlog.constants.ELConstants;
 import com.everlog.managers.AppUsageReminderManager;

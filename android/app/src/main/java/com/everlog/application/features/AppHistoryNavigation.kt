@@ -3,7 +3,7 @@ package com.everlog.application.features
 import android.content.Context
 import com.everlog.android.common.data.model.workout.ELWorkout
 import com.everlog.android.history.HistoryNavigation
-import com.everlog.config.FeedbackSource
+import com.everlog.android.common.navigation.FeedbackSource
 import com.everlog.managers.RemoteConfigManager
 import com.everlog.ui.navigator.ELNavigator
 import dev.zacsweers.metro.AppScope

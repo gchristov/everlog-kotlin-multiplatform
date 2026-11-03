@@ -2,7 +2,7 @@ package com.everlog.ui.navigator;
 
 import androidx.annotation.Nullable;
 
-import com.everlog.config.FeedbackSource;
+import com.everlog.android.common.navigation.FeedbackSource;
 import com.everlog.android.settings.data.model.ELIntegration;
 import com.everlog.android.common.data.model.ELRoutine;
 import com.everlog.android.common.data.model.exercise.ELExercise;

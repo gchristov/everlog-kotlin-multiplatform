@@ -1,7 +1,7 @@
 package com.everlog.ui.navigator
 
 import android.app.Activity
-import com.everlog.config.FeedbackSource
+import com.everlog.android.common.navigation.FeedbackSource
 import com.everlog.managers.RemoteConfigManager
 
 /**
