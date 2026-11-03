@@ -1,18 +1,25 @@
 package com.everlog.android.plan.details
 
-import com.everlog.android.common.design.R as DesignR
 import com.ahamed.multiviewadapter.DataListManager
 import com.ahamed.multiviewadapter.RecyclerAdapter
-import com.everlog.android.plan.data.model.ELPlan
-import com.everlog.android.plan.data.model.ELPlanDay
+import com.everlog.android.auth.data.UserSession
+import com.everlog.android.common.design.R as DesignR
 import com.everlog.android.common.mvp.fragment.BaseFragmentPresenter
-import com.everlog.android.plan.PlanFeature
+import com.everlog.android.plan.PlanAnalytics
+import com.everlog.android.plan.PlanNavigation
 import com.everlog.android.plan.adapter.PlanDayAdapter
 import com.everlog.android.plan.adapter.applyProLock
+import com.everlog.android.plan.data.PlanProgress
+import com.everlog.android.plan.data.model.ELPlan
+import com.everlog.android.plan.data.model.ELPlanDay
 
-class PresenterWeekDays : BaseFragmentPresenter<MvpViewWeekDays>() {
+class PresenterWeekDays(
+    private val planProgress: PlanProgress,
+    private val session: UserSession,
+    private val analytics: PlanAnalytics,
+    private val navigation: PlanNavigation,
+) : BaseFragmentPresenter<MvpViewWeekDays>() {
 
-    private val planProgress = PlanFeature.dependencies.planProgress()
 
     private var mPlan: ELPlan? = null
     private var mWeekIndex = 0
@@ -38,7 +45,7 @@ class PresenterWeekDays : BaseFragmentPresenter<MvpViewWeekDays>() {
     private fun loadWeek() {
         mDataListManager.clear()
         val week = mPlan?.weeks?.get(mWeekIndex)
-        week?.applyProLock(PlanFeature.dependencies.userSession().user())
+        week?.applyProLock(session.user())
         mDataListManager.addAll(week?.getDays() ?: ArrayList())
         mAdapter.notifyDataSetChanged()
     }
@@ -52,11 +59,11 @@ class PresenterWeekDays : BaseFragmentPresenter<MvpViewWeekDays>() {
 
     private fun setupListViews() {
         mAdapter.addDataManager(mDataListManager)
-        mAdapter.registerBinder(PlanDayAdapter.Binder(object : PlanDayAdapter.OnPlanDayListener {
+        mAdapter.registerBinder(PlanDayAdapter.Binder(analytics, navigation, object : PlanDayAdapter.OnPlanDayListener {
             override fun onItemClicked(item: ELPlanDay, position: Int) {
                 val routine = item.getRoutine()
                 if (routine != null) {
-                    context?.let { PlanFeature.dependencies.openTemplateDetails(it, routine) }
+                    context?.let { navigation.openTemplateDetails(it, routine) }
                 } else {
                     mvpView.showOK(DesignR.string.plan_details_rest_title, DesignR.string.plan_details_rest_prompt)
                 }

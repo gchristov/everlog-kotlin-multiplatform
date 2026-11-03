@@ -1,25 +1,21 @@
 package com.everlog.android.plan.create
 
-import com.everlog.android.auth.data.requireUserId
-import com.everlog.android.common.design.R as DesignR
 import android.app.Activity
 import android.app.Activity.RESULT_OK
 import android.content.DialogInterface
 import android.content.Intent
 import com.ahamed.multiviewadapter.DataListManager
 import com.ahamed.multiviewadapter.RecyclerAdapter
+import com.everlog.android.auth.data.UserSession
+import com.everlog.android.auth.data.requireUserId
 import com.everlog.android.common.data.model.ELRoutine
-import com.everlog.android.plan.data.model.ELPlan
-import com.everlog.android.plan.data.model.ELPlanDay
-import com.everlog.android.plan.data.model.ELPlanWeek
-import com.everlog.android.plan.data.store.ELDocStorePlanLoadedEvent
-import com.everlog.android.plan.data.store.PlanStores
-import com.everlog.android.plan.details.PlanDetailsActivity
-import com.everlog.android.common.mvp.activity.BaseActivityPresenter
+import com.everlog.android.common.design.R as DesignR
 import com.everlog.android.common.kotlin.Utils
+import com.everlog.android.common.mvp.activity.BaseActivityPresenter
 import com.everlog.android.common.mvp.util.KeyboardUtils
+import com.everlog.android.plan.PlanAnalytics
 import com.everlog.android.plan.PlanExtras
-import com.everlog.android.plan.PlanFeature
+import com.everlog.android.plan.PlanNavigation
 import com.everlog.android.plan.PlanRequestCodes
 import com.everlog.android.plan.R
 import com.everlog.android.plan.adapter.PlanDayAdapter
@@ -27,15 +23,26 @@ import com.everlog.android.plan.adapter.PlanWeekAdapter
 import com.everlog.android.plan.adapter.applyProLock
 import com.everlog.android.plan.cover.CoverImagePickerActivity
 import com.everlog.android.plan.data.PlanBroadcasts
+import com.everlog.android.plan.data.PlanProgress
+import com.everlog.android.plan.data.model.ELPlan
+import com.everlog.android.plan.data.model.ELPlanDay
+import com.everlog.android.plan.data.model.ELPlanWeek
+import com.everlog.android.plan.data.store.ELDocStorePlanLoadedEvent
+import com.everlog.android.plan.data.store.PlanStores
+import com.everlog.android.plan.details.PlanDetailsActivity
 import com.google.firebase.firestore.SetOptions
 import com.imagepick.dialog.ELPickerDialog
 // import icepick.State
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
 
-class PresenterCreatePlan : BaseActivityPresenter<MvpViewCreatePlan>() {
+class PresenterCreatePlan(
+    private val planProgress: PlanProgress,
+    private val session: UserSession,
+    private val analytics: PlanAnalytics,
+    private val navigation: PlanNavigation,
+) : BaseActivityPresenter<MvpViewCreatePlan>() {
 
-    private val planProgress = PlanFeature.dependencies.planProgress()
 
     // @State
     @JvmField
@@ -111,7 +118,7 @@ class PresenterCreatePlan : BaseActivityPresenter<MvpViewCreatePlan>() {
             }
             return
         }
-        PlanFeature.dependencies.pickedTemplate(requestCode, resultCode, data)?.let(::handleRoutinePicked)
+        navigation.pickedTemplate(requestCode, resultCode, data)?.let(::handleRoutinePicked)
         super.onActivityResult(requestCode, resultCode, data)
     }
 
@@ -278,9 +285,9 @@ class PresenterCreatePlan : BaseActivityPresenter<MvpViewCreatePlan>() {
                 sendBroadcast(Intent(PlanBroadcasts.CURRENT_PLAN_CHANGED))
             }
             if (mEditMode) {
-                PlanFeature.dependencies.planAnalytics().modified()
+                analytics.modified()
             } else {
-                PlanFeature.dependencies.planAnalytics().created()
+                analytics.created()
                 toEdit?.let { plan -> mvpView?.getActivity()?.let { it.startActivity(PlanDetailsActivity.launchIntent(it, plan)) } }
             }
         }
@@ -334,7 +341,7 @@ class PresenterCreatePlan : BaseActivityPresenter<MvpViewCreatePlan>() {
         toEdit!!.weeks[mSelectedWeek!!].getDays()[mSelectedDay!!].setRoutine(routine)
         refreshInfo()
         refreshLists()
-        PlanFeature.dependencies.planAnalytics().daySetToTemplate()
+        analytics.daySetToTemplate()
     }
 
     private fun showPanel(flow: CreatePlanActivity.Flow, weekNumber: Int = -1) {
@@ -345,7 +352,7 @@ class PresenterCreatePlan : BaseActivityPresenter<MvpViewCreatePlan>() {
     private fun addWeek(week: ELPlanWeek?) {
         if (week != null) {
             mWeeksDataListManager.add(week)
-            PlanFeature.dependencies.planAnalytics().weekAdded()
+            analytics.weekAdded()
         } else {
             mvpView?.showToast(R.string.create_plan_error_max_weeks)
         }
@@ -355,7 +362,7 @@ class PresenterCreatePlan : BaseActivityPresenter<MvpViewCreatePlan>() {
     private fun deleteWeek(index: Int) {
         toEdit?.removeWeek(index)
         mWeeksDataListManager.remove(index)
-        PlanFeature.dependencies.planAnalytics().weekDeleted()
+        analytics.weekDeleted()
         mvpView?.showToast(R.string.create_plan_week_deleted)
         refreshInfo()
         Utils.runWithDelay({
@@ -399,7 +406,7 @@ class PresenterCreatePlan : BaseActivityPresenter<MvpViewCreatePlan>() {
     private fun showDays(week: ELPlanWeek?, weekIndex: Int) {
         mSelectedWeek = weekIndex
         mDaysDataListManager.clear()
-        week?.applyProLock(PlanFeature.dependencies.userSession().user())
+        week?.applyProLock(session.user())
         mDaysDataListManager.addAll(week?.getDays() ?: ArrayList())
         mDaysAdapter.notifyDataSetChanged()
         showPanel(CreatePlanActivity.Flow.DAYS, weekIndex)
@@ -450,7 +457,7 @@ class PresenterCreatePlan : BaseActivityPresenter<MvpViewCreatePlan>() {
              of days and workouts attached, which will definitely go over at some point.
             */
             if (toEdit == null) {
-                toEdit = ELPlan.newPlan(PlanFeature.dependencies.userSession().requireUserId())
+                toEdit = ELPlan.newPlan(session.requireUserId())
                 PlanStores.planStore().create(toEdit!!, SetOptions.merge())
             }
         }
@@ -478,10 +485,10 @@ class PresenterCreatePlan : BaseActivityPresenter<MvpViewCreatePlan>() {
         }))
         // Days
         mDaysAdapter.addDataManager(mDaysDataListManager)
-        mDaysAdapter.registerBinder(PlanDayAdapter.Binder(object : PlanDayAdapter.OnPlanDayListener {
+        mDaysAdapter.registerBinder(PlanDayAdapter.Binder(analytics, navigation, object : PlanDayAdapter.OnPlanDayListener {
             override fun onClickChooseRoutine(day: ELPlanDay, position: Int) {
                 mSelectedDay = position
-                mvpView?.getActivity()?.let(PlanFeature.dependencies::openTemplatePicker)
+                mvpView?.getActivity()?.let(navigation::openTemplatePicker)
             }
 
             override fun onDayEdited() {

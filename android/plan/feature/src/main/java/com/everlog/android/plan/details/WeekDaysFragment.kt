@@ -4,12 +4,14 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.everlog.android.plan.data.model.ELPlan
-import com.everlog.android.plan.databinding.FragmentPlanWeekBinding
+import com.everlog.android.common.kotlin.di.appGraph
 import com.everlog.android.common.mvp.fragment.BaseFragment
 import com.everlog.android.common.mvp.fragment.BaseFragmentMvpView
 import com.everlog.android.common.mvp.fragment.BaseFragmentPresenter
+import com.everlog.android.plan.PlanGraph
 import com.everlog.android.plan.R
+import com.everlog.android.plan.data.model.ELPlan
+import com.everlog.android.plan.databinding.FragmentPlanWeekBinding
 
 class WeekDaysFragment : BaseFragment(), MvpViewWeekDays {
 
@@ -58,7 +60,8 @@ class WeekDaysFragment : BaseFragment(), MvpViewWeekDays {
     // Setup
 
     override fun setupPresenter() {
-        mPresenter = PresenterWeekDays()
+        val graph = requireContext().appGraph<PlanGraph>()
+        mPresenter = PresenterWeekDays(graph.planProgress, graph.userSession, graph.planAnalytics, graph.planNavigation)
     }
 
     private fun setupListView() {
