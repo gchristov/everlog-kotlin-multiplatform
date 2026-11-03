@@ -11,7 +11,6 @@ import com.everlog.android.exercise.data.store.ExerciseStores
 import com.everlog.android.onboarding.OnboardingFeature
 import com.everlog.android.plan.data.store.PlanStores
 import com.everlog.android.pro.ProFeature
-import com.everlog.android.settings.SettingsFeature
 import com.everlog.android.settings.data.store.SettingsStores
 import com.everlog.android.template.data.store.TemplateStores
 import com.everlog.android.workout.data.store.WorkoutStores
@@ -20,7 +19,6 @@ import com.everlog.application.features.AppCommonDataDependencies
 import com.everlog.application.features.AppCommonMvpDependencies
 import com.everlog.application.features.AppOnboardingFeatureDependencies
 import com.everlog.application.features.AppProFeatureDependencies
-import com.everlog.application.features.AppSettingsFeatureDependencies
 import com.everlog.config.AppConfig
 import com.jakewharton.threetenabp.AndroidThreeTen
 import dev.zacsweers.metro.createGraphFactory
@@ -49,7 +47,6 @@ class ELApplication : Application(), GraphOwner {
         PlanStores.session = graph.userSession
         SettingsStores.session = graph.userSession
         CommonMvp.dependencies = AppCommonMvpDependencies()
-        SettingsFeature.dependencies = AppSettingsFeatureDependencies()
         ProFeature.dependencies = AppProFeatureDependencies()
         AuthFeature.dependencies = AppAuthFeatureDependencies()
         OnboardingFeature.dependencies = AppOnboardingFeatureDependencies()
