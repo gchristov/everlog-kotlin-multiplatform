@@ -1,4 +1,4 @@
-package com.everlog.android.history.statistics
+package com.everlog.android.statistics.ui
 
 import com.everlog.android.common.data.model.workout.ELWorkout
 import com.everlog.android.common.data.model.workout.RangeType

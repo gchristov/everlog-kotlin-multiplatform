@@ -2,7 +2,7 @@ package com.everlog.application.features
 
 import com.everlog.android.common.data.model.workout.ELWorkout
 import com.everlog.android.common.data.model.workout.RangeType
-import com.everlog.android.history.statistics.UserStatsController
+import com.everlog.android.statistics.ui.UserStatsController
 import com.everlog.android.settings.data.UserSettings
 import com.everlog.android.workout.WorkoutStats
 import dev.zacsweers.metro.AppScope

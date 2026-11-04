@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="statistics_longest_session">longest session</string>
+    <string name="statistics_minutes">Minutes</string>
+    <string name="statistics_muscles_trained">Muscles Trained</string>
+    <string name="statistics_session_duration">Session Duration</string>
+    <string name="statistics_session_duration_avg">Avg. Session Duration</string>
+</resources>

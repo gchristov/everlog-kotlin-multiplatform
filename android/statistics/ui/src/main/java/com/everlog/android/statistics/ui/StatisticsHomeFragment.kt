@@ -1,4 +1,4 @@
-package com.everlog.android.history.statistics
+package com.everlog.android.statistics.ui
 
 import android.graphics.PorterDuff
 import android.view.LayoutInflater
@@ -21,17 +21,14 @@ import com.everlog.android.common.mvp.chart.ChartRenderer
 import com.everlog.android.common.mvp.fragment.BaseFragmentMvpView
 import com.everlog.android.common.mvp.fragment.BaseFragmentPresenter
 import com.everlog.android.common.mvp.fragment.BaseTabFragment
-import com.everlog.android.history.HistoryGraph
-import com.everlog.android.history.HistoryScreenNames
-import com.everlog.android.history.R
-import com.everlog.android.history.databinding.FragmentHomeStatisticsBinding
+import com.everlog.android.statistics.ui.databinding.FragmentHomeStatisticsBinding
 import com.jakewharton.rxbinding.view.RxView
 import rx.Observable
 import rx.subjects.PublishSubject
 
 class StatisticsHomeFragment : BaseTabFragment(), MvpViewStatisticsHome {
 
-    private val graph by lazy { requireContext().appGraph<HistoryGraph>() }
+    private val graph by lazy { requireContext().appGraph<StatisticsGraph>() }
 
     private var mPresenter: PresenterStatisticsHome? = null
     private var _binding: FragmentHomeStatisticsBinding? = null
@@ -61,7 +58,7 @@ class StatisticsHomeFragment : BaseTabFragment(), MvpViewStatisticsHome {
     }
 
     override fun getAnalyticsScreenName(): String {
-        return HistoryScreenNames.STATISTICS
+        return StatisticsScreenNames.STATISTICS
     }
 
     override fun <T : BaseFragmentMvpView> getPresenter(): BaseFragmentPresenter<T>? {
@@ -134,7 +131,7 @@ class StatisticsHomeFragment : BaseTabFragment(), MvpViewStatisticsHome {
     // Setup
 
     override fun setupPresenter() {
-        mPresenter = PresenterStatisticsHome(graph.userSettings, graph.historyAnalytics, graph.navigator)
+        mPresenter = PresenterStatisticsHome(graph.userSettings, graph.statisticsAnalytics, graph.navigator)
     }
 
     private fun setupCharts() {

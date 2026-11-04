@@ -1,7 +1,7 @@
-package com.everlog.android.history
+package com.everlog.android.statistics.ui
 
 import com.everlog.android.common.data.model.workout.RangeType
 
-interface HistoryAnalytics {
+interface StatisticsAnalytics {
     fun statisticsRangeModified(range: RangeType)
 }

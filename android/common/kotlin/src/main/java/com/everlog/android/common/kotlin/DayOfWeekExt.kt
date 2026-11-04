@@ -1,6 +1,5 @@
-package com.everlog.android.history.workouts
+package com.everlog.android.common.kotlin
 
-import com.everlog.android.common.kotlin.WeekDay
 import java.util.*
 import org.threeten.bp.DayOfWeek
 import org.threeten.bp.LocalDate

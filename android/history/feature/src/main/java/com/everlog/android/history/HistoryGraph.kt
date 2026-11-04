@@ -10,7 +10,5 @@ import dev.zacsweers.metro.ContributesTo
 interface HistoryGraph {
     val userSettings: UserSettings
 
-    val historyAnalytics: HistoryAnalytics
-
     val navigator: Navigator
 }
