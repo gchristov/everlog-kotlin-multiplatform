@@ -16,6 +16,8 @@ data class RemoteConfig (
         var setSuggestionsV2: Boolean = false,
         // The template editor in Compose instead of CreateRoutineActivity, from every entry point
         var templateEditorV2: Boolean = false,
+        // Home's Week tab in Compose instead of WeekHomeFragment
+        var weekTabV2: Boolean = false,
         var feedbackForms: FeedbackForms? = null,
         // How old synced data may get before reading it asks the server again (DataSync); null for the default
         var dataSyncMaxAgeMinutes: Long? = null,
@@ -29,6 +31,7 @@ data class RemoteConfig (
     private val EXERCISE_DETAILS_V2 = "exercise_details_v2"
     private val SET_SUGGESTIONS_V2 = "set_suggestions_v2"
     private val TEMPLATE_EDITOR_V2 = "template_editor_v2"
+    private val WEEK_TAB_V2 = "week_tab_v2"
     private val FEEDBACK_FORMS = "feedback_forms"
     private val DATA_SYNC_MAX_AGE_MINUTES = "data_sync_max_age_minutes"
     // Named after the full history it used to be for, kept so the console's value still applies
@@ -40,6 +43,7 @@ data class RemoteConfig (
         exerciseDetailsV2 = config.getBoolean(EXERCISE_DETAILS_V2)
         setSuggestionsV2 = config.getBoolean(SET_SUGGESTIONS_V2)
         templateEditorV2 = config.getBoolean(TEMPLATE_EDITOR_V2)
+        weekTabV2 = config.getBoolean(WEEK_TAB_V2)
         feedbackForms = getObjectFromRemoteConfig(FEEDBACK_FORMS, FeedbackForms::class.java, config)
         dataSyncMaxAgeMinutes = config.longOrNull(DATA_SYNC_MAX_AGE_MINUTES)
         dataSyncOlderMaxAgeDays = config.longOrNull(DATA_SYNC_OLDER_MAX_AGE_DAYS)

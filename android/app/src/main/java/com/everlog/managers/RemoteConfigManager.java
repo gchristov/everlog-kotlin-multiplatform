@@ -79,6 +79,12 @@ public class RemoteConfigManager extends PreferencesManager {
         return localConfig != null && localConfig.getTemplateEditorV2();
     }
 
+    // Home's Week tab in Compose; off until Remote Config says otherwise
+    public boolean weekTabV2() {
+        RemoteConfig localConfig = loadLocalRemoteConfig();
+        return localConfig != null && localConfig.getWeekTabV2();
+    }
+
     // The feedback form to open from a source, or null when there's none and the entry point is hidden
     @Nullable
     public String feedbackFormUrl(FeedbackSource source) {

@@ -27,6 +27,8 @@ import com.everlog.android.home.activity.ActivityHomeFragment
 import com.everlog.android.settings.SettingsHomeFragment
 import com.everlog.android.home.HomeHost
 import com.everlog.android.home.week.WeekHomeFragment
+import com.everlog.android.home.weektab.WeekTabFragment
+import com.everlog.managers.RemoteConfigManager
 import com.everlog.ui.fragments.home.workouts.WorkoutsHomeFragment
 import com.everlog.android.common.mvp.view.tab.ELFragmentPagerAdapter
 import com.everlog.android.common.kotlin.Utils
@@ -271,7 +273,7 @@ class HomeActivity : BaseActivity(), MvpViewHome, HomeHost {
 
     private fun setupNavigation() {
         val fragments = ArrayList<Fragment>()
-        fragments.add(WeekHomeFragment())
+        fragments.add(if (RemoteConfigManager.manager.weekTabV2()) WeekTabFragment() else WeekHomeFragment())
         fragments.add(WorkoutsHomeFragment())
         fragments.add(ActivityHomeFragment())
         fragments.add(SettingsHomeFragment())

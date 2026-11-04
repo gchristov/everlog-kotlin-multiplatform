@@ -6,6 +6,7 @@ import com.everlog.android.home.data.HomeNotifications
 import com.everlog.android.plan.data.PlanProgress
 import com.everlog.android.plan.ui.PlanAnalytics
 import com.everlog.android.settings.data.UserSettings
+import com.everlog.android.workout.data.WorkoutRepository
 import dev.zacsweers.metro.AppScope
 import dev.zacsweers.metro.ContributesTo
 
@@ -27,4 +28,6 @@ interface HomeGraph {
     val planAnalytics: PlanAnalytics
 
     val navigator: Navigator
+
+    val workoutRepository: WorkoutRepository
 }
