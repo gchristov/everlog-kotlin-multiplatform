@@ -1,18 +1,5 @@
 package com.everlog.android.plan
 
-
-interface PlanAnalytics {
-    fun created()
-    fun modified()
-    fun deleted()
-    fun started()
-    fun stopped()
-    fun weekAdded()
-    fun weekDeleted()
-    fun daySetToTemplate()
-    fun daySetToRest()
-}
-
 // What the plan screens are opened with and hand back. The app reads the same names.
 object PlanExtras {
     const val PLAN_UUID = "EXTRA_PLAN_UUID"

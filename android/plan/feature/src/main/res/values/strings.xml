@@ -28,7 +28,6 @@
     <string name="create_plan_title_edit">Edit Plan</string>
     <string name="create_plan_week_deleted">Week deleted</string>
     <string name="create_plan_weeks">Workout Schedule</string>
-    <string name="home_week_plan_start">Start day</string>
     <string name="plan_details_not_found">Plan not found</string>
     <string name="plan_details_not_found_prompt">It looks like we couldn\'t find this plan.</string>
     <string name="plan_details_not_found_prompt_current">It looks like we couldn\'t find your current plan. Would you like to stop it?</string>
@@ -44,6 +43,4 @@
     <string name="pro_prompt_plan_subtitle">Tap to upgrade and unlock unlimited plan schedules</string>
     <string name="pro_prompt_plan_title">Free plans are limited to %1$d day a week</string>
     <string name="stop">Stop</string>
-    <string name="tap_to_setup">Tap to setup</string>
-    <string name="tap_to_setup_upgrade">Pro upgrade required</string>
 </resources>

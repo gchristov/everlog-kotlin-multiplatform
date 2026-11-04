@@ -7,9 +7,9 @@ import com.everlog.android.common.design.R as DesignR
 import com.everlog.android.common.mvp.fragment.BaseFragmentPresenter
 import com.everlog.android.common.navigation.Navigator
 import com.everlog.android.common.navigation.TemplateDetails
-import com.everlog.android.plan.PlanAnalytics
-import com.everlog.android.plan.adapter.PlanDayAdapter
-import com.everlog.android.plan.adapter.applyProLock
+import com.everlog.android.plan.ui.PlanAnalytics
+import com.everlog.android.plan.ui.PlanDayAdapter
+import com.everlog.android.plan.ui.applyProLock
 import com.everlog.android.plan.data.PlanProgress
 import com.everlog.android.plan.data.model.ELPlan
 import com.everlog.android.plan.data.model.ELPlanDay

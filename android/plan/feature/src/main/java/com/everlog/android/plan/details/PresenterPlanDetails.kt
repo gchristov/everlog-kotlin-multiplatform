@@ -8,7 +8,7 @@ import com.everlog.android.common.design.R as DesignR
 import com.everlog.android.common.mvp.activity.BaseActivityPresenter
 import com.everlog.android.common.navigation.Home
 import com.everlog.android.common.navigation.Navigator
-import com.everlog.android.plan.PlanAnalytics
+import com.everlog.android.plan.ui.PlanAnalytics
 import com.everlog.android.plan.R
 import com.everlog.android.plan.create.CreatePlanActivity
 import com.everlog.android.plan.data.PlanBroadcasts

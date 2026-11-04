@@ -16,13 +16,13 @@ import com.everlog.android.common.mvp.util.KeyboardUtils
 import com.everlog.android.common.navigation.Navigator
 import com.everlog.android.common.navigation.TemplatePicker
 import com.everlog.android.common.navigation.openForResult
-import com.everlog.android.plan.PlanAnalytics
+import com.everlog.android.plan.ui.PlanAnalytics
 import com.everlog.android.plan.PlanExtras
 import com.everlog.android.plan.PlanRequestCodes
 import com.everlog.android.plan.R
-import com.everlog.android.plan.adapter.PlanDayAdapter
+import com.everlog.android.plan.ui.PlanDayAdapter
 import com.everlog.android.plan.adapter.PlanWeekAdapter
-import com.everlog.android.plan.adapter.applyProLock
+import com.everlog.android.plan.ui.applyProLock
 import com.everlog.android.plan.cover.CoverImagePickerActivity
 import com.everlog.android.plan.data.PlanBroadcasts
 import com.everlog.android.plan.data.PlanProgress

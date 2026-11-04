@@ -1,6 +1,6 @@
 package com.everlog.application.features
 
-import com.everlog.android.plan.PlanAnalytics
+import com.everlog.android.plan.ui.PlanAnalytics
 import com.everlog.managers.analytics.AnalyticsManager
 import dev.zacsweers.metro.AppScope
 import dev.zacsweers.metro.ContributesBinding

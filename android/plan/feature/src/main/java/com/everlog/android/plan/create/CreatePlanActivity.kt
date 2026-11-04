@@ -30,6 +30,7 @@ import com.everlog.android.plan.R
 import com.everlog.android.plan.create.WarningNotificationView
 import com.everlog.android.plan.data.model.ELPlan
 import com.everlog.android.plan.databinding.ActivityPlanCreateBinding
+import com.everlog.android.plan.ui.R as PlanUiR
 import com.facebook.shimmer.ShimmerFrameLayout
 import com.jakewharton.rxbinding.view.RxView
 import com.jakewharton.rxbinding.widget.RxTextView
@@ -111,7 +112,7 @@ class CreatePlanActivity : BaseActivity(), MvpViewCreatePlan {
             binding.root.findViewById<ImageView>(R.id.imageView).setImageDrawable(null)
         }
         // Weeks
-        binding.root.findViewById<TextView>(R.id.weeksField).text = if (plan.hasWeeksWithWorkouts()) resources.getQuantityString(R.plurals.weeks, plan.weeks.size, plan.weeks.size) else getString(R.string.tap_to_setup)
+        binding.root.findViewById<TextView>(R.id.weeksField).text = if (plan.hasWeeksWithWorkouts()) resources.getQuantityString(R.plurals.weeks, plan.weeks.size, plan.weeks.size) else getString(PlanUiR.string.tap_to_setup)
         // Pro upgrade
         binding.daysContainer.proUpgradePrompt.setType(WarningNotificationView.WarningType.PRO_PLAN_DAYS)
         binding.daysContainer.proUpgradePrompt.visibility = if (graph.userSession.user()?.isPro() == true) View.GONE else View.VISIBLE
