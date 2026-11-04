@@ -88,6 +88,7 @@ dependencies {
     implementation(projects.android.pro.feature)
     implementation(projects.android.settings.feature)
     implementation(projects.android.showcase.feature)
+    implementation(projects.android.statistics.ui)
     implementation(projects.android.template.feature)
     implementation(projects.android.workout.feature)
 

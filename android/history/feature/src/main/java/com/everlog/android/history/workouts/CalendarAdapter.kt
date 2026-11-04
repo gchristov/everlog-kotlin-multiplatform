@@ -10,6 +10,7 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.core.content.ContextCompat
 import com.everlog.android.common.design.R as DesignR
+import com.everlog.android.common.kotlin.buildWeekDays
 import com.everlog.android.common.kotlin.fromJava
 import com.everlog.android.common.kotlin.toJava
 import com.everlog.android.history.databinding.RowCalendarDayBinding
