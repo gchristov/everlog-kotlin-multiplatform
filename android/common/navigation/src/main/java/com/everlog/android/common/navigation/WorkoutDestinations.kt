@@ -6,6 +6,9 @@ import com.everlog.android.common.data.model.workout.ELWorkout
 // Starts a workout from [routine]
 data class StartWorkout(val routine: ELRoutine, val fromPlan: Boolean) : Destination
 
+// Shows [routine] with a button to start a workout from it
+data class StartWorkoutConfirmation(val routine: ELRoutine, val fromPlan: Boolean) : Destination
+
 data class WorkoutDetails(
     val workout: ELWorkout,
     val justFinished: Boolean = false,

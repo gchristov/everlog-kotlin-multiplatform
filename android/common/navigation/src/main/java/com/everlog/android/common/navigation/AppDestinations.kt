@@ -12,6 +12,9 @@ data class PrivacyPolicy(val title: String) : Destination
 
 data object PlayStoreListing : Destination
 
+// [url] in the browser
+data class WebLink(val url: String) : Destination
+
 // The system share sheet with a link to the app
 data object ShareApp : Destination
 

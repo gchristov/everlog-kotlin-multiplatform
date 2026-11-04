@@ -102,4 +102,6 @@
     <string name="login_terms">Terms &amp; Conditions</string>
     <string name="login_terms_privacy">Privacy Policy</string>
     <string name="time">Time</string>
+    <string name="home_add_title">Start workout</string>
+    <string name="home_week">Week</string>
 </resources>

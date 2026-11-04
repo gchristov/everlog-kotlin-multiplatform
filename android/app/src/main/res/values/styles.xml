@@ -51,10 +51,6 @@
         <item name="android:textSize">13sp</item>
     </style>
 
-    <style name="SettingsCategory.Large">
-        <item name="android:textSize">18sp</item>
-    </style>
-
     <!-- BottomSheet theme. -->
 
 </resources>

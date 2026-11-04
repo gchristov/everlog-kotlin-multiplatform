@@ -3,7 +3,6 @@ package com.everlog.managers.apprate;
 import android.content.SharedPreferences;
 
 import com.everlog.android.common.persistence.PreferencesManager;
-import com.everlog.config.HomeNotification;
 
 import java.util.Date;
 
@@ -15,10 +14,6 @@ public class AppLaunchState extends PreferencesManager {
         DAYS_SINCE_LAST_LAUNCH,
         LAUNCH_COUNT,
         CONSECUTIVE_DAYS_LAUNCH_COUNT,
-
-        // Home notification
-
-        HOME_NOTIFICATION_LAST_DISMISSED_ID,
 
         // Rate
 
@@ -82,16 +77,6 @@ public class AppLaunchState extends PreferencesManager {
 
     void setFirstLaunchDate(Date date) {
         savePreference(date.getTime(), PreferenceKeys.FIRST_LAUNCH_DATE.name());
-    }
-
-    // Home notification
-
-    String homeNotificationLastDismissedId() {
-        return getPreference(PreferenceKeys.HOME_NOTIFICATION_LAST_DISMISSED_ID.name(), (String) null);
-    }
-
-    void setHomeNotificationLastDismissedId(HomeNotification notification) {
-        savePreference(notification.dismissalId(), PreferenceKeys.HOME_NOTIFICATION_LAST_DISMISSED_ID.name());
     }
 
     // Rate

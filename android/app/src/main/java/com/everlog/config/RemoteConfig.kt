@@ -1,5 +1,6 @@
 package com.everlog.config
 
+import com.everlog.android.home.data.model.HomeNotification
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig
 import com.google.gson.Gson
 import timber.log.Timber

@@ -1,7 +1,6 @@
 package com.everlog.managers.apprate;
 
 import com.everlog.config.AppConfig;
-import com.everlog.config.HomeNotification;
 
 import java.util.Calendar;
 import java.util.Date;
@@ -57,20 +56,6 @@ public class AppLaunchManager {
     }
 
     // Triggers
-
-    public boolean shouldShowHomeNotification(HomeNotification notification) {
-        if (notification != null && notification.canShow()) {
-            String lastDismissedId = AppLaunchState.state.homeNotificationLastDismissedId();
-            return !notification.dismissalId().equals(lastDismissedId);
-        }
-        return false;
-    }
-
-    public void homeNotificationDismissed(HomeNotification notification) {
-        if (notification != null) {
-            AppLaunchState.state.setHomeNotificationLastDismissedId(notification);
-        }
-    }
 
     public boolean shouldPromptAppUpdate(int availableVersionCode, Date now) {
         if (AppLaunchState.state.appUpdateDeclinedVersionCode() != availableVersionCode) {

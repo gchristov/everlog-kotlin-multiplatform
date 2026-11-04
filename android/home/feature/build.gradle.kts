@@ -10,7 +10,21 @@ android {
 }
 
 dependencies {
+    implementation(projects.android.home.data)
     implementation(projects.android.history.ui)
     implementation(projects.android.statistics.ui)
+    implementation(projects.android.plan.data)
+    implementation(projects.android.plan.ui)
+    implementation(projects.android.auth.data)
+    implementation(projects.android.settings.data)
+    implementation(projects.android.workout.data)
     implementation(projects.android.common.mvp)
+    implementation(libs.rxbinding)
+    implementation(libs.timber)
+    implementation(libs.circular.progress.view) {
+        isTransitive = false
+    }
+    implementation(libs.maskable.layout) {
+        isTransitive = false
+    }
 }

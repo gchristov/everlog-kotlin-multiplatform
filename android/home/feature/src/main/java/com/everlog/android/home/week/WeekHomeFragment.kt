@@ -1,0 +1,171 @@
+package com.everlog.android.home.week
+
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import com.everlog.android.common.kotlin.di.appGraph
+import com.everlog.android.common.mvp.activity.BaseActivity
+import com.everlog.android.common.mvp.fragment.BaseFragmentMvpView
+import com.everlog.android.common.mvp.fragment.BaseFragmentPresenter
+import com.everlog.android.common.mvp.fragment.BaseTabFragment
+import com.everlog.android.home.HomeGraph
+import com.everlog.android.home.HomeHost
+import com.everlog.android.home.HomeScreenNames
+import com.everlog.android.home.R
+import com.everlog.android.home.data.model.HomeNotification
+import com.everlog.android.home.databinding.FragmentHomeWeekBinding
+import com.everlog.android.home.week.views.PlanWeekView
+import com.everlog.android.home.week.views.PlanWeekView.PlanWeekListener
+import com.everlog.android.home.week.views.StatisticsWeekView
+import com.everlog.android.home.week.views.StatisticsWeekView.StatisticsWeekListener
+import rx.Observable
+import rx.subjects.PublishSubject
+
+class WeekHomeFragment : BaseTabFragment(), MvpViewWeekHome {
+
+    private val graph by lazy { requireContext().appGraph<HomeGraph>() }
+
+    private val mWeekStatistics by lazy { StatisticsWeekView(graph.userSettings) }
+    private val mWeekPlan by lazy { PlanWeekView(graph.userSession, graph.planAnalytics, graph.navigator) }
+    private val mWeekViews by lazy { arrayOf(mWeekStatistics, mWeekPlan) }
+
+    private var mPresenter: PresenterWeekHome? = null
+    private var _binding: FragmentHomeWeekBinding? = null
+    private val binding get() = _binding!!
+
+    private val mPlanClick = PublishSubject.create<Void>()
+    private val mPlanStartClick = PublishSubject.create<Void>()
+    private val mPlanSkipClick = PublishSubject.create<Void>()
+    private val mWeekStatsClick = PublishSubject.create<Void>()
+    private val mWeekGoalClick = PublishSubject.create<Void>()
+    private val mWeekEmptyStateClick = PublishSubject.create<Void>()
+
+    override fun onFragmentCreated() {
+        setupWeekViews()
+    }
+
+    override fun getAnalyticsScreenName(): String {
+        return HomeScreenNames.WEEK
+    }
+
+    override fun getTitleResId(): Int {
+        return -1
+    }
+
+    override fun getLayoutResId(): Int {
+        return R.layout.fragment_home_week
+    }
+
+    override fun getBindingView(inflater: LayoutInflater, container: ViewGroup?): View? {
+        _binding = FragmentHomeWeekBinding.inflate(inflater, container, false)
+        return binding.root
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+    }
+
+    override fun <T : BaseFragmentMvpView> getPresenter(): BaseFragmentPresenter<T>? {
+        return mPresenter as? BaseFragmentPresenter<T>
+    }
+
+    override fun onClickWeekStats(): Observable<Void> {
+        return mWeekStatsClick
+    }
+
+    override fun onClickWeekGoal(): Observable<Void> {
+        return mWeekGoalClick
+    }
+
+    override fun onClickWeekEmptyState(): Observable<Void> {
+        return mWeekEmptyStateClick
+    }
+
+    override fun onClickPlan(): Observable<Void> {
+        return mPlanClick
+    }
+
+    override fun onClickPlanSkip(): Observable<Void> {
+        return mPlanSkipClick
+    }
+
+    override fun onClickPlanStart(): Observable<Void> {
+        return mPlanStartClick
+    }
+
+    override fun render(state: WeekViewState) {
+        val parent = activity as? BaseActivity ?: return
+        mWeekViews.forEach { it.render(state, parent) }
+        when (state) {
+            is WeekViewState.Stats -> {
+                binding.toolbar.title = mWeekStatistics.title
+                (activity as? HomeHost)?.setWeekEmpty(state.stats.workoutsCompleted <= 0)
+            }
+            is WeekViewState.Plan -> {
+                binding.toolbar.title = mWeekPlan.title
+            }
+            is WeekViewState.Loading -> {
+                binding.toolbar.title = if (state.isPlan) mWeekPlan.title else mWeekStatistics.title
+            }
+        }
+    }
+
+    override fun showHomeNotification(notification: HomeNotification?) {
+        binding.notificationView.showHomeNotification(notification)
+    }
+
+    override fun showStatistics() {
+        (activity as? HomeHost)?.showStatistics()
+    }
+
+    override fun showSettings() {
+        (activity as? HomeHost)?.showSettings()
+    }
+
+    override fun showCreateActivity() {
+        (activity as? HomeHost)?.showAddMenu()
+    }
+
+    // Setup
+
+    override fun setupPresenter() {
+        mPresenter = PresenterWeekHome(graph.userSettings, graph.planProgress, graph.homeConfig, graph.homeAnalytics, graph.navigator)
+    }
+
+    private fun setupWeekViews() {
+        mWeekViews.forEach { it.onCreateView(view) }
+        (activity as? BaseActivity)?.let { parent ->
+            val initialState = WeekViewState.Loading(graph.planProgress.hasOngoingPlan())
+            mWeekViews.forEach { it.render(initialState, parent) }
+        }
+        mWeekStatistics.setListener(object : StatisticsWeekListener {
+
+            override fun onClickStats() {
+                mWeekStatsClick.onNext(null)
+            }
+
+            override fun onClickGoal() {
+                mWeekGoalClick.onNext(null)
+            }
+
+            override fun onClickEmptyState() {
+                mWeekEmptyStateClick.onNext(null)
+            }
+        })
+        mWeekPlan.setListener(object : PlanWeekListener {
+
+            override fun onClickStart() {
+                mPlanStartClick.onNext(null)
+            }
+
+            override fun onClickPlan() {
+                mPlanClick.onNext(null)
+            }
+
+            override fun onClickSkip() {
+                mPlanSkipClick.onNext(null)
+            }
+        })
+    }
+}
