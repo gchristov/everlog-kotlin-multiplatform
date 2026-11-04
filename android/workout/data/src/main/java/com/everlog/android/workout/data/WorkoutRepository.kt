@@ -23,6 +23,12 @@ import kotlinx.coroutines.flow.flowOf
 
 interface WorkoutRepository {
     /**
+     * The user's workouts of the last [months] months, following the cache as it changes, in no particular order:
+     * for a screen showing the recent weeks. Empty without a signed-in user.
+     */
+    fun recentWorkouts(months: Int): Flow<Load<List<ELWorkout>>>
+
+    /**
      * The user's workouts created from [from] until before [until], read once and in no particular order: for going
      * through the history a part at a time. Waits the first time it reads further back than the sync months, for
      * that part to sync. None without a signed-in user.
@@ -56,6 +62,8 @@ class RealWorkoutRepository(
         val userId = session.user()?.id ?: return flowOf(Load.Ready(emptyList()))
         return dataSync.observe(workoutsOf(userId), range, complete)
     }
+
+    override fun recentWorkouts(months: Int): Flow<Load<List<ELWorkout>>> = workouts(Range.Last(months), complete = false)
 
     override suspend fun workoutsCreatedBetween(from: Long, until: Long?): Either<Throwable, List<ELWorkout>> {
         val userId = session.user()?.id ?: return Either.Right(emptyList())

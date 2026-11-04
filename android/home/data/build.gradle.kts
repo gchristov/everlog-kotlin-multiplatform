@@ -12,4 +12,5 @@ android {
 dependencies {
     implementation(projects.android.common.persistence)
     testImplementation(libs.gson)
+    testImplementation(projects.android.common.dataTest)
 }
