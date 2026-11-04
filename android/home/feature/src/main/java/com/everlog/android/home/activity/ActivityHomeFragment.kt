@@ -1,4 +1,4 @@
-package com.everlog.android.history
+package com.everlog.android.home.activity
 
 import android.view.LayoutInflater
 import android.view.View
@@ -6,9 +6,9 @@ import android.view.ViewGroup
 import com.everlog.android.common.mvp.fragment.BaseFragmentMvpView
 import com.everlog.android.common.mvp.fragment.BaseFragmentPresenter
 import com.everlog.android.common.mvp.fragment.BaseTabFragment
-import com.everlog.android.history.R
-import com.everlog.android.history.databinding.FragmentHomeActivityBinding
 import com.everlog.android.history.ui.HistoryHomeFragment
+import com.everlog.android.home.R
+import com.everlog.android.home.databinding.FragmentHomeActivityBinding
 import com.everlog.android.statistics.ui.StatisticsHomeFragment
 
 class ActivityHomeFragment : BaseTabFragment(), MvpViewActivityHome {
