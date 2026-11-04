@@ -1,7 +1,7 @@
 package com.everlog.application.features
 
 import com.everlog.android.common.data.model.set.ELSetType
-import com.everlog.android.common.session.ValueField
+import com.everlog.android.workoutbuilder.data.ValueField
 import com.everlog.android.template.TemplateScreenNames
 import com.everlog.android.template.editor.TemplateEditorAnalytics
 import com.everlog.managers.analytics.AnalyticsManager

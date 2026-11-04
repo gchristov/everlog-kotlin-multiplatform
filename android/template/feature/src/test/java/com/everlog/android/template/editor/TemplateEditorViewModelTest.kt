@@ -8,7 +8,7 @@ import com.everlog.android.common.data.model.exercise.ELRoutineExercise
 import com.everlog.android.common.data.model.set.ELSet
 import com.everlog.android.common.data.model.set.ELSetType
 import com.everlog.android.common.kotlin.Load
-import com.everlog.android.common.session.SessionDefaults
+import com.everlog.android.workoutbuilder.data.WorkoutBuilderDefaults
 import com.everlog.android.common.test.FakeCoroutineDispatcher
 import com.everlog.android.common.test.InMemorySharedPreferences
 import com.everlog.android.exercise.data.model.library.LibraryExercise
@@ -26,11 +26,11 @@ import com.everlog.android.template.editor.TemplateLoad
 import com.everlog.android.template.editor.TemplateMainKey
 import com.everlog.android.template.editor.edited
 import com.everlog.android.template.editor.timeForAllSets
-import com.everlog.android.common.session.SetMode
-import com.everlog.android.common.session.SetRef
-import com.everlog.android.common.session.ValueField
-import com.everlog.android.common.session.set
-import com.everlog.android.common.sessionui.exercisetable.CellFocus
+import com.everlog.android.workoutbuilder.data.SetMode
+import com.everlog.android.workoutbuilder.data.SetRef
+import com.everlog.android.workoutbuilder.data.ValueField
+import com.everlog.android.workoutbuilder.data.set
+import com.everlog.android.workoutbuilder.ui.exercisetable.CellFocus
 import com.google.common.truth.Truth.assertThat
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -236,7 +236,7 @@ class TemplateEditorViewModelTest {
     @Test
     fun `rest steps by the timer's step, never below one step, for every group`() {
         val viewModel = loaded()
-        val step = SessionDefaults.TIME_STEP_SECONDS
+        val step = WorkoutBuilderDefaults.TIME_STEP_SECONDS
 
         viewModel.onRestTapped()
         viewModel.onRestStep(1)
@@ -252,7 +252,7 @@ class TemplateEditorViewModelTest {
     fun `a template saved without rest keeps it on minus, and plus starts it at a step`() {
         load.state.value = Load.Ready(push().apply { exerciseGroups.forEach { it.restTimeSeconds = 0 } })
         val viewModel = viewModel()
-        val step = SessionDefaults.TIME_STEP_SECONDS
+        val step = WorkoutBuilderDefaults.TIME_STEP_SECONDS
 
         viewModel.onRestStep(-1)
         assertThat(viewModel.state.value.restSeconds).isEqualTo(0)
@@ -264,7 +264,7 @@ class TemplateEditorViewModelTest {
     @Test
     fun `adding sets stops at the most an exercise can have`() {
         val viewModel = loaded()
-        val max = SessionDefaults.MAX_EXERCISE_SETS
+        val max = WorkoutBuilderDefaults.MAX_EXERCISE_SETS
 
         repeat(max) { viewModel.onAddSet(viewModel.blocks[0].id) }
 

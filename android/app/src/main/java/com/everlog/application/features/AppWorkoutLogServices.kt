@@ -3,7 +3,7 @@ package com.everlog.application.features
 import android.content.Context
 import com.everlog.android.common.data.model.set.ELSetType
 import com.everlog.android.common.data.model.workout.ELWorkout
-import com.everlog.android.common.session.ValueField
+import com.everlog.android.workoutbuilder.data.ValueField
 import com.everlog.android.workout.WorkoutScreenNames
 import com.everlog.android.workout.data.notification.ShownSet
 import com.everlog.android.workout.log.KeypadHiddenBy

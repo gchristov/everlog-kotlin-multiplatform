@@ -5,7 +5,7 @@ import com.everlog.android.common.data.model.workout.ELWorkout
 import com.everlog.android.common.kotlin.WeightUnit
 import com.everlog.android.settings.data.UserSettings
 import com.everlog.android.settings.data.MuscleGoal
-import com.everlog.android.common.session.ValueField
+import com.everlog.android.workoutbuilder.data.ValueField
 import com.everlog.android.workout.data.notification.ShownSet
 
 /**

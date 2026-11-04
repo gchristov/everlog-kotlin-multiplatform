@@ -4,7 +4,7 @@ import androidx.core.content.ContextCompat
 import com.everlog.BuildConfig
 import com.everlog.R
 import com.everlog.android.common.data.model.exercise.ELExerciseGroup
-import com.everlog.android.common.session.SessionDefaults
+import com.everlog.android.workoutbuilder.data.WorkoutBuilderDefaults
 import com.everlog.managers.ErrorManager
 import com.everlog.managers.RemoteConfigManager
 import com.everlog.managers.analytics.AnalyticsManager
@@ -15,9 +15,9 @@ import com.google.firebase.firestore.persistentCacheSettings
 class AppConfig {
 
     val defaultRestTimeSeconds = ELExerciseGroup.DEFAULT_REST_TIME_SECONDS
-    val defaultExerciseTimeSeconds = SessionDefaults.EXERCISE_TIME_SECONDS
+    val defaultExerciseTimeSeconds = WorkoutBuilderDefaults.EXERCISE_TIME_SECONDS
 
-    val maxExerciseSets = SessionDefaults.MAX_EXERCISE_SETS
+    val maxExerciseSets = WorkoutBuilderDefaults.MAX_EXERCISE_SETS
 
     // Qualifying actions needed before each rating prompt, from any trigger. Its size caps the prompts.
     val ratePromptActionGoals = listOf(3, 3, 4)

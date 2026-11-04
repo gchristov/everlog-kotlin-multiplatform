@@ -17,18 +17,19 @@ android/
 
 A feature has only the modules it has code for: a `data` module once it has data of its own, `test-fixtures` once other modules' tests need its fakes, and a `ui` module once another feature shows its UI (see [Feature ui modules](#feature-ui-modules)). No empty modules wait for code.
 
-| Feature | `feature` holds | `data` holds |
-| --- | --- | --- |
-| `auth` | Login, reset password | The signed-in user (`UserSession`, `RealUserSession`), the user, device and consent stores and models |
-| `onboarding` | The onboarding: welcome, questions, building and the reveal | The starter routines |
-| `exercise` | The exercise picker, detail and create screens | `ExerciseRepository`, the exercise library and guide use cases, the exercise stores, `ExerciseImageStorage` |
-| `workout` | The workout screen, Set suggestions, workout details, `WorkoutService` and its notification | `WorkoutManager`, the ongoing workout, prefill, the workout stores, `WorkoutBroadcasts` |
-| `template` | The template editor, template details, the start-a-workout screen, the template and set type pickers | `RoutineRepository`, the template load and save use cases, the routine stores, `OngoingPlanRepository` |
-| `plan` | Plan create, details and week days, the cover picker, the congratulations screen | `PlanProgress` (the ongoing plan), the plan stores and models, the cover images API, `PlanBroadcasts` |
-| `history` | The Activity tab: statistics and the workouts calendar | No `data` module: the tab reads `workout:data` |
-| `pro` | The Pro screen, `BillingManager` | The Pro models |
-| `settings` | Settings, the integration screen | The user's settings (`UserSettings`, `RealUserSettings`), the integration store and model |
-| `showcase` | The design system showcase (debug builds only) | No `data` module |
+| Feature | `feature` holds | `ui` holds | `data` holds |
+| --- | --- | --- | --- |
+| `auth` | Login, reset password |  | The signed-in user (`UserSession`, `RealUserSession`), the user, device and consent stores and models |
+| `onboarding` | The onboarding: welcome, questions, building and the reveal |  | The starter routines |
+| `exercise` | The exercise picker, detail and create screens |  | `ExerciseRepository`, the exercise library and guide use cases, the exercise stores, `ExerciseImageStorage` |
+| `workout` | The workout screen, Set suggestions, workout details, `WorkoutService` and its notification |  | `WorkoutManager`, the ongoing workout, prefill, the workout stores, `WorkoutBroadcasts` |
+| `workout-builder` | No `feature` module | The exercise table and edit list the workout screen and the template editor show (`exercisetable`) | The workout being built (blocks, rounds, sets), its mapping to and from `ELWorkout` and the rules that edit it |
+| `template` | The template editor, template details, the start-a-workout screen, the template and set type pickers |  | `RoutineRepository`, the template load and save use cases, the routine stores, `OngoingPlanRepository` |
+| `plan` | Plan create, details and week days, the cover picker, the congratulations screen |  | `PlanProgress` (the ongoing plan), the plan stores and models, the cover images API, `PlanBroadcasts` |
+| `history` | The Activity tab: statistics and the workouts calendar |  | No `data` module: the tab reads `workout:data` |
+| `pro` | The Pro screen, `BillingManager` |  | The Pro models |
+| `settings` | Settings, the integration screen |  | The user's settings (`UserSettings`, `RealUserSettings`), the integration store and model |
+| `showcase` | The design system showcase (debug builds only) |  | No `data` module |
 
 Each `data` module gives its stores one entry point, e.g. `WorkoutStores` or `PlanStores`, which the app's `ELDatastore` hands out to the code still using it.
 
@@ -46,8 +47,6 @@ Common modules:
 | `common:firebase` | Firebase, the field names and `FirestorePaths` (each user's collections take the user id) |
 | `common:navigation` | The `Navigator` every feature opens other features' and the app's screens through, and the destinations: one per screen opened from outside its feature, with what it's opened with and, for screens that hand something back, how to read their result. The app's `AppNavigator` implements it |
 | `common:persistence` | `PreferencesManager`, the app's key-value storage. The user's settings (`UserSettings`) go to `settings:data` |
-| `common:session` | The workout session model the workout screen and the template editor edit (blocks, rounds, sets) and its rules. A stopgap until each feature owns its part |
-| `common:session-ui` | The exercise table and edit list both screens show. A stopgap until the table has its own UI model and joins the design system |
 | `common:data` | The models every feature shares (sets, exercises, routines, workouts), with their R8 keep rule, and the store base classes with their EventBus events, until they're split into the features' `data` modules. Feature-only models live in their feature's `data` module, each with its own keep rule |
 | `common:data-test` | Fixtures for building the shared models in tests |
 
@@ -70,7 +69,7 @@ The convention plugins enforce these: a module that declares a dependency breaki
 
 ## Feature ui modules
 
-A feature's `ui` module holds the UI it offers for other features' screens to show inside them: a tab, a section, a row, with their UI models, view-models and the rules behind them. The feature's own `feature` module uses it too. Two features showing the same domain UI, e.g. the exercise table that the workout screen and the template editor both edit, share it through one `ui` module rather than through the app or a common module.
+A feature's `ui` module holds the UI it offers for other features' screens to show inside them: a tab, a section, a row, with their UI models, view-models and the rules behind them. The feature's own `feature` module uses it too. Two features showing the same domain UI, e.g. the exercise table that the workout screen and the template editor both edit (`workout-builder:ui`), share it through one `ui` module rather than through the app or a common module.
 
 - **A whole screen stays in `feature`** and opens through the `Navigator`. A `ui` module holds what's embedded in someone else's screen.
 - **Stateless, domain-free pieces go to the design system** (`common:compose`): a button, a list row, a progress ring. Pieces that know the domain or hold state (sets, workouts, a history list with its view-model) go to the `ui` module of the feature they belong to.

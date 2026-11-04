@@ -3,15 +3,15 @@ package com.everlog.android.workout.log
 import com.everlog.android.common.data.model.workout.ELWorkout
 import com.everlog.android.common.kotlin.WeightUnit
 import com.everlog.android.settings.data.MuscleGoal
-import com.everlog.android.common.session.DeletedSets
-import com.everlog.android.common.session.SetMode
-import com.everlog.android.common.session.SetRef
-import com.everlog.android.common.session.ValueField
-import com.everlog.android.common.session.WorkoutBlock
-import com.everlog.android.common.session.WorkoutSet
-import com.everlog.android.common.session.set
-import com.everlog.android.common.session.unfinishedSets
-import com.everlog.android.common.sessionui.exercisetable.CellFocus
+import com.everlog.android.workoutbuilder.data.DeletedSets
+import com.everlog.android.workoutbuilder.data.SetMode
+import com.everlog.android.workoutbuilder.data.SetRef
+import com.everlog.android.workoutbuilder.data.ValueField
+import com.everlog.android.workoutbuilder.data.WorkoutBlock
+import com.everlog.android.workoutbuilder.data.WorkoutSet
+import com.everlog.android.workoutbuilder.data.set
+import com.everlog.android.workoutbuilder.data.unfinishedSets
+import com.everlog.android.workoutbuilder.ui.exercisetable.CellFocus
 
 internal data class WorkoutLogState(
     val name: String,

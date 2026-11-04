@@ -47,10 +47,10 @@ import com.everlog.android.common.design.R as DesignR
 import com.everlog.android.common.kotlin.WeightUnit
 import com.everlog.android.common.kotlin.format.formatClock
 import com.everlog.android.common.navigation.ExerciseTab
-import com.everlog.android.common.session.SetMode
-import com.everlog.android.common.session.set
-import com.everlog.android.common.sessionui.exercisetable.exerciseName
-import com.everlog.android.common.sessionui.exercisetable.focusLabel
+import com.everlog.android.workoutbuilder.data.SetMode
+import com.everlog.android.workoutbuilder.data.set
+import com.everlog.android.workoutbuilder.ui.exercisetable.exerciseName
+import com.everlog.android.workoutbuilder.ui.exercisetable.focusLabel
 import com.everlog.android.template.R
 import kotlinx.coroutines.android.awaitFrame
 import kotlinx.coroutines.launch

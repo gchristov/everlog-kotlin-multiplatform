@@ -1,11 +1,11 @@
 package com.everlog.android.workout.data.prefill
 
 import com.everlog.android.common.data.model.exercise.ELExercise
-import com.everlog.android.common.session.ValueField
-import com.everlog.android.common.session.WorkoutBlock
-import com.everlog.android.common.session.WorkoutExercise
-import com.everlog.android.common.session.WorkoutRound
-import com.everlog.android.common.session.WorkoutSet
+import com.everlog.android.workoutbuilder.data.ValueField
+import com.everlog.android.workoutbuilder.data.WorkoutBlock
+import com.everlog.android.workoutbuilder.data.WorkoutExercise
+import com.everlog.android.workoutbuilder.data.WorkoutRound
+import com.everlog.android.workoutbuilder.data.WorkoutSet
 import com.everlog.android.workout.data.prefill.BaseWorkoutPrefillController.PrefillSource
 import com.everlog.android.workout.data.prefill.WorkoutSetPrefill
 import com.google.common.truth.Truth.assertThat

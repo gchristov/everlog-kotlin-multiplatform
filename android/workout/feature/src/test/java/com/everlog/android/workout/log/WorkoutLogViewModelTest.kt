@@ -16,13 +16,13 @@ import com.everlog.android.common.kotlin.WeightUnit
 import com.everlog.android.common.test.FakeCoroutineDispatcher
 import com.everlog.android.exercise.data.model.library.LibraryExercise
 import com.everlog.android.settings.data.MuscleGoal
-import com.everlog.android.common.session.SessionDefaults
+import com.everlog.android.workoutbuilder.data.WorkoutBuilderDefaults
 import com.everlog.android.workout.data.prefill.BaseWorkoutPrefillController.PrefillSource
 import com.everlog.android.workout.data.prefill.LoadPrefillSourcesUseCase
-import com.everlog.android.common.session.SetMode
-import com.everlog.android.common.session.SetRef
-import com.everlog.android.common.session.ValueField
-import com.everlog.android.common.session.WorkoutSet
+import com.everlog.android.workoutbuilder.data.SetMode
+import com.everlog.android.workoutbuilder.data.SetRef
+import com.everlog.android.workoutbuilder.data.ValueField
+import com.everlog.android.workoutbuilder.data.WorkoutSet
 import com.everlog.android.workout.data.prefill.WorkoutSetPrefill
 import com.everlog.android.workout.log.KeypadHiddenBy
 import com.everlog.android.workout.log.KeypadMainKey
@@ -38,10 +38,10 @@ import com.everlog.android.workout.log.WorkoutLogSettings
 import com.everlog.android.workout.log.WorkoutLogViewModel
 import com.everlog.android.workout.log.WorkoutTimer
 import com.everlog.android.workout.log.stopped
-import com.everlog.android.common.session.set
+import com.everlog.android.workoutbuilder.data.set
 import com.everlog.android.workout.data.OngoingWorkoutRepository
 import com.everlog.android.workout.data.notification.ShownSet
-import com.everlog.android.common.sessionui.exercisetable.CellFocus
+import com.everlog.android.workoutbuilder.ui.exercisetable.CellFocus
 import com.everlog.android.common.kotlin.format.displayWeight
 import com.google.common.truth.Truth.assertThat
 import kotlinx.coroutines.CompletableDeferred
@@ -728,8 +728,8 @@ class WorkoutLogViewModelTest {
         val viewModel = viewModel()
         repeat(20) { viewModel.onAddSet(viewModel.blocks[0].id) }
 
-        assertThat(viewModel.blocks[0].rounds).hasSize(SessionDefaults.MAX_EXERCISE_SETS)
-        assertThat(viewModel.state.value.message).isEqualTo(WorkoutLogMessage.TooManySets(SessionDefaults.MAX_EXERCISE_SETS))
+        assertThat(viewModel.blocks[0].rounds).hasSize(WorkoutBuilderDefaults.MAX_EXERCISE_SETS)
+        assertThat(viewModel.state.value.message).isEqualTo(WorkoutLogMessage.TooManySets(WorkoutBuilderDefaults.MAX_EXERCISE_SETS))
     }
 
     @Test

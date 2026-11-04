@@ -45,9 +45,9 @@ import com.everlog.android.common.kotlin.AppContext
 import com.everlog.android.common.kotlin.UnitUtils
 import com.everlog.android.common.kotlin.WeightUnit
 import com.everlog.android.common.navigation.ExerciseTab
-import com.everlog.android.common.session.SessionDefaults
-import com.everlog.android.common.session.ValueField
-import com.everlog.android.common.sessionui.exercisetable.ExerciseTableTags
+import com.everlog.android.workoutbuilder.data.WorkoutBuilderDefaults
+import com.everlog.android.workoutbuilder.data.ValueField
+import com.everlog.android.workoutbuilder.ui.exercisetable.ExerciseTableTags
 import com.everlog.android.exercise.data.model.library.LibraryExercise
 import com.everlog.android.settings.data.MuscleGoal
 import com.everlog.android.settings.testfixtures.FakeUserSettings
@@ -493,7 +493,7 @@ class WorkoutLogScenarioTest {
         tick(0, 0, 0).performClick()
 
         // Adding sets stops at the most an exercise can have, and the snackbar says so
-        val max = SessionDefaults.MAX_EXERCISE_SETS
+        val max = WorkoutBuilderDefaults.MAX_EXERCISE_SETS
         showExercise(0)
         repeat(max - 1) {
             // By its click action: the button can sit under the keypad, which takes a tap there

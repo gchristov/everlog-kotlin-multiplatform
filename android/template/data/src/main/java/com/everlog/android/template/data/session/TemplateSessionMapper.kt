@@ -5,11 +5,11 @@ import com.everlog.android.common.data.model.exercise.ELExerciseGroup
 import com.everlog.android.common.data.model.exercise.ELRoutineExercise
 import com.everlog.android.common.data.model.set.ELSet
 import com.everlog.android.common.data.model.set.ELSetType
-import com.everlog.android.common.session.SessionIds
-import com.everlog.android.common.session.SetMode
-import com.everlog.android.common.session.WorkoutBlock
-import com.everlog.android.common.session.WorkoutSet
-import com.everlog.android.common.session.toSessionBlock
+import com.everlog.android.workoutbuilder.data.WorkoutBuilderIds
+import com.everlog.android.workoutbuilder.data.SetMode
+import com.everlog.android.workoutbuilder.data.WorkoutBlock
+import com.everlog.android.workoutbuilder.data.WorkoutSet
+import com.everlog.android.workoutbuilder.data.toBuilderBlock
 import org.apache.commons.lang3.SerializationUtils
 
 // Maps a routine (a workout template) between ELRoutine and the session's blocks, so the template editor can use the
@@ -17,10 +17,10 @@ import org.apache.commons.lang3.SerializationUtils
 // or requiredTimeSeconds. In the blocks they sit in the sets' reps and time, the values the table shows and the
 // keypad types into. Templates hold no weight.
 
-fun ELRoutine.toTemplateBlocks(ids: SessionIds): List<WorkoutBlock> = exerciseGroups.map { it.toTemplateBlock(ids) }
+fun ELRoutine.toTemplateBlocks(ids: WorkoutBuilderIds): List<WorkoutBlock> = exerciseGroups.map { it.toTemplateBlock(ids) }
 
-fun ELExerciseGroup.toTemplateBlock(ids: SessionIds): WorkoutBlock {
-    val block = toSessionBlock(ids)
+fun ELExerciseGroup.toTemplateBlock(ids: WorkoutBuilderIds): WorkoutBlock {
+    val block = toBuilderBlock(ids)
     return block.copy(rounds = block.rounds.map { round -> round.copy(sets = round.sets.map { it.asTarget() }) })
 }
 

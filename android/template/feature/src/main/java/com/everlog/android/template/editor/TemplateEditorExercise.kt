@@ -47,16 +47,16 @@ import com.everlog.android.common.design.R as DesignR
 import com.everlog.android.common.kotlin.format.formatClock
 import com.everlog.android.common.kotlin.format.setTypeTitle
 import com.everlog.android.common.navigation.ExerciseTab
-import com.everlog.android.common.session.SetMode
-import com.everlog.android.common.session.SetRef
-import com.everlog.android.common.session.WorkoutBlock
-import com.everlog.android.common.session.WorkoutSet
-import com.everlog.android.common.sessionui.exercisetable.CellFocus
-import com.everlog.android.common.sessionui.exercisetable.GroupThumbnail
-import com.everlog.android.common.sessionui.exercisetable.GroupThumbnailSizes
-import com.everlog.android.common.sessionui.exercisetable.InsetDeleteButton
-import com.everlog.android.common.sessionui.exercisetable.countField
-import com.everlog.android.common.sessionui.exercisetable.typedSeconds
+import com.everlog.android.workoutbuilder.data.SetMode
+import com.everlog.android.workoutbuilder.data.SetRef
+import com.everlog.android.workoutbuilder.data.WorkoutBlock
+import com.everlog.android.workoutbuilder.data.WorkoutSet
+import com.everlog.android.workoutbuilder.ui.exercisetable.CellFocus
+import com.everlog.android.workoutbuilder.ui.exercisetable.GroupThumbnail
+import com.everlog.android.workoutbuilder.ui.exercisetable.GroupThumbnailSizes
+import com.everlog.android.workoutbuilder.ui.exercisetable.InsetDeleteButton
+import com.everlog.android.workoutbuilder.ui.exercisetable.countField
+import com.everlog.android.workoutbuilder.ui.exercisetable.typedSeconds
 import com.everlog.android.template.R
 
 private object ExerciseSizes {

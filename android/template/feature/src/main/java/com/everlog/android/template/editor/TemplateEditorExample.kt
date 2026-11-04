@@ -17,12 +17,12 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.clearAndSetSemantics
 import com.everlog.android.common.compose.theme.Theme
 import com.everlog.android.common.data.model.exercise.ELExercise
-import com.everlog.android.common.session.WorkoutBlock
-import com.everlog.android.common.session.WorkoutExercise
-import com.everlog.android.common.session.WorkoutRound
-import com.everlog.android.common.session.WorkoutSet
-import com.everlog.android.common.sessionui.exercisetable.ExampleLabel
-import com.everlog.android.common.sessionui.exercisetable.blockingTouches
+import com.everlog.android.workoutbuilder.data.WorkoutBlock
+import com.everlog.android.workoutbuilder.data.WorkoutExercise
+import com.everlog.android.workoutbuilder.data.WorkoutRound
+import com.everlog.android.workoutbuilder.data.WorkoutSet
+import com.everlog.android.workoutbuilder.ui.exercisetable.ExampleLabel
+import com.everlog.android.workoutbuilder.ui.exercisetable.blockingTouches
 
 private const val ExampleAlpha = 0.35f
 

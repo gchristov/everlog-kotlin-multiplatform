@@ -6,7 +6,7 @@ import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import com.everlog.android.common.compose.elements.AppDialog
 import com.everlog.android.common.compose.elements.AppDialogAction
-import com.everlog.android.common.session.block
+import com.everlog.android.workoutbuilder.data.block
 import com.everlog.android.workout.R
 import com.everlog.android.common.compose.components.rest.RestStepper
 
