@@ -86,6 +86,7 @@ dependencies {
     implementation(projects.android.history.ui)
     implementation(projects.android.onboarding.feature)
     implementation(projects.android.plan.feature)
+    implementation(projects.android.plan.ui)
     implementation(projects.android.pro.feature)
     implementation(projects.android.settings.feature)
     implementation(projects.android.showcase.feature)

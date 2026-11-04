@@ -1,4 +1,4 @@
-package com.everlog.android.plan.adapter
+package com.everlog.android.plan.ui
 
 import android.content.Context
 import android.graphics.Typeface
@@ -13,11 +13,8 @@ import com.everlog.android.common.design.R as DesignR
 import com.everlog.android.common.mvp.list.OnListItemListener
 import com.everlog.android.common.mvp.view.showPopupMenu
 import com.everlog.android.common.navigation.Navigator
-import com.everlog.android.plan.PlanAnalytics
-import com.everlog.android.plan.R
 import com.everlog.android.plan.data.model.ELPlanDay
-import com.everlog.android.plan.databinding.RowPlanDayBinding
-import com.everlog.android.plan.runProFeature
+import com.everlog.android.plan.ui.databinding.RowPlanDayBinding
 
 class PlanDayAdapter {
 

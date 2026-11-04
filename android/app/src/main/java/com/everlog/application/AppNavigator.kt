@@ -14,6 +14,8 @@ import com.everlog.android.common.navigation.Home
 import com.everlog.android.common.navigation.Login
 import com.everlog.android.common.navigation.Navigator
 import com.everlog.android.common.navigation.Onboarding
+import com.everlog.android.common.navigation.PlanCongratulations
+import com.everlog.android.common.navigation.PlanDetails
 import com.everlog.android.common.navigation.PlayStoreListing
 import com.everlog.android.common.navigation.PrivacyPolicy
 import com.everlog.android.common.navigation.ProBuy
@@ -34,6 +36,7 @@ import com.everlog.android.common.navigation.WorkoutDetails
 import com.everlog.android.exercise.details.ExerciseDetailsActivity
 import com.everlog.android.exercise.picker.ExercisePickerActivity
 import com.everlog.android.plan.congratulate.CongratulateActivity
+import com.everlog.android.plan.details.PlanDetailsActivity
 import com.everlog.android.template.picker.RoutinePickerActivity
 import com.everlog.android.template.settype.SetTypePickerActivity
 import com.everlog.constants.ELConstants
@@ -72,6 +75,8 @@ class AppNavigator : Navigator {
             ProBuy -> navigator.openProBuy()
             ProBuyOrManage -> navigator.openProBuyOrManage()
             ProCongratulations -> navigator.openCongratulate(CongratulateActivity.Type.PRO)
+            is PlanDetails -> context.startActivity(PlanDetailsActivity.launchIntent(context, destination.planUuid))
+            PlanCongratulations -> navigator.openCongratulate(CongratulateActivity.Type.PLAN_FINISH)
             is ExerciseDetails -> navigator.openExerciseDetails(
                 ExerciseDetailsActivity.Companion.Properties().exercise(destination.exercise).type(
                     when (destination.tab) {

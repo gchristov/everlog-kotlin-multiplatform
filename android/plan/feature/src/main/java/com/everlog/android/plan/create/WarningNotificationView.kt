@@ -14,7 +14,7 @@ import com.everlog.android.common.mvp.view.BaseViewMvpView
 import com.everlog.android.common.mvp.view.BaseViewPresenter
 import com.everlog.android.plan.PlanGraph
 import com.everlog.android.plan.R
-import com.everlog.android.plan.adapter.MAX_FREE_WEEK_DAYS
+import com.everlog.android.plan.ui.MAX_FREE_WEEK_DAYS
 import com.everlog.android.plan.databinding.ViewNotificationWarningBinding
 import com.jakewharton.rxbinding.view.RxView
 import rx.Observable

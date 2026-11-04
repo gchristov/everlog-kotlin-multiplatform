@@ -1,4 +1,4 @@
-package com.everlog.android.plan
+package com.everlog.android.plan.ui
 
 import android.content.Context
 import com.everlog.android.auth.data.UserSession

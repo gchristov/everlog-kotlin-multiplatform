@@ -1,4 +1,4 @@
-package com.everlog.android.plan.adapter
+package com.everlog.android.plan.ui
 
 import com.everlog.android.plan.data.model.ELPlanWeek
 import com.everlog.android.auth.data.model.ELUser

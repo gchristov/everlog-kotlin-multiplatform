@@ -39,6 +39,9 @@ class PlanDetailsActivity : BaseActivity(), MvpViewPlanDetails {
         @JvmStatic
         fun launchIntent(context: Context, plan: ELPlan): Intent =
             Intent(context, PlanDetailsActivity::class.java).putExtra(PlanExtras.PLAN_UUID, plan.uuid)
+
+        fun launchIntent(context: Context, planUuid: String): Intent =
+            Intent(context, PlanDetailsActivity::class.java).putExtra(PlanExtras.PLAN_UUID, planUuid)
     }
 
     private var mPresenter: PresenterPlanDetails? = null
