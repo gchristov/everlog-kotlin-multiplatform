@@ -1,0 +1,222 @@
+package com.everlog.android.home.week.views;
+
+import com.everlog.android.auth.data.UserSession;
+import com.everlog.android.common.navigation.Navigator;
+import com.everlog.android.common.navigation.TemplateDetails;
+import com.everlog.android.plan.ui.PlanAnalytics;
+import android.content.Context;
+import android.view.View;
+import android.widget.ProgressBar;
+import android.widget.TextView;
+
+import com.ahamed.multiviewadapter.DataListManager;
+import com.ahamed.multiviewadapter.RecyclerAdapter;
+import com.everlog.android.home.R;
+import com.everlog.android.plan.data.model.ELPlan;
+import com.everlog.android.plan.data.model.ELPlanDay;
+import com.everlog.android.plan.data.model.ELPlanState;
+import com.everlog.android.common.mvp.activity.BaseActivity;
+import com.everlog.android.plan.ui.PlanDayAdapter;
+import com.everlog.android.plan.ui.PlanProLockKt;
+import com.everlog.android.common.mvp.dialog.DialogBuilder;
+import com.everlog.android.home.week.WeekViewState;
+import com.facebook.shimmer.ShimmerFrameLayout;
+
+import androidx.annotation.Nullable;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
+public class PlanWeekView implements IWeekView {
+
+    View mParentView;
+    View mContentView;
+    TextView mFinishPlanBtn;
+    ShimmerFrameLayout mShimmerContainer;
+
+    // Progress
+
+    View mPlanProgressView;
+    TextView mPlanNameLbl;
+    TextView mPlanProgressLbl;
+    ProgressBar mPlanProgressBar;
+
+    // Days
+
+    TextView mPlanWeekLbl;
+    RecyclerView mPlanWeekList;
+
+    private Context mContext;
+    private final RecyclerAdapter mAdapter = new RecyclerAdapter();
+    private final DataListManager<ELPlanDay> mDataListManager = new DataListManager<>(mAdapter);
+    private PlanWeekListener mListener;
+
+    private final UserSession mSession;
+    private final PlanAnalytics mAnalytics;
+    private final Navigator mNavigator;
+
+    public PlanWeekView(UserSession session, PlanAnalytics analytics, Navigator navigator) {
+        mSession = session;
+        mAnalytics = analytics;
+        mNavigator = navigator;
+    }
+
+    @Override
+    public void onCreateView(View view) {
+        this.mContext = view.getContext();
+        
+        mParentView = view.findViewById(R.id.planParentView);
+        mContentView = view.findViewById(R.id.planContentView);
+        mFinishPlanBtn = view.findViewById(R.id.finishPlanBtn);
+        mShimmerContainer = view.findViewById(R.id.planShimmerView);
+        mPlanProgressView = view.findViewById(R.id.planProgressView);
+        mPlanNameLbl = view.findViewById(R.id.planNameLbl);
+        mPlanProgressLbl = view.findViewById(R.id.planProgressLbl);
+        mPlanProgressBar = view.findViewById(R.id.planProgressBar);
+        mPlanWeekLbl = view.findViewById(R.id.planWeekLbl);
+        mPlanWeekList = view.findViewById(R.id.planWeekList);
+
+        if (mPlanProgressView != null) {
+            mPlanProgressView.setOnClickListener(v -> {
+                if (mListener != null) {
+                    mListener.onClickPlan();
+                }
+            });
+        }
+        mFinishPlanBtn.setOnClickListener(v -> {
+            if (mListener != null) {
+                mListener.onClickStart();
+            }
+        });
+        setupList();
+    }
+
+    public void setListener(PlanWeekListener listener) {
+        this.mListener = listener;
+    }
+
+    @Override
+    public String getTitle() {
+        return getString(R.string.home_week_plan);
+    }
+
+    @Override
+    public void render(WeekViewState state, BaseActivity parent) {
+        boolean isPlanShape = state instanceof WeekViewState.Plan
+                || (state instanceof WeekViewState.Loading && ((WeekViewState.Loading) state).isPlan());
+        boolean loading = state instanceof WeekViewState.Loading;
+
+        mPlanProgressView.setVisibility(isPlanShape ? View.VISIBLE : View.GONE);
+        mParentView.setVisibility(isPlanShape ? View.VISIBLE : View.GONE);
+        parent.toggleShimmerLayout(mShimmerContainer, isPlanShape && loading, true);
+
+        if (!isPlanShape) {
+            return;
+        }
+
+        // Render with the real plan once loaded, or null (same as before it ever loaded)
+        // while loading -- keeps the labels showing their "--" placeholder under the shimmer.
+        ELPlan plan = state instanceof WeekViewState.Plan ? ((WeekViewState.Plan) state).getPlan() : null;
+        ELPlanState planState = state instanceof WeekViewState.Plan ? ((WeekViewState.Plan) state).getState() : null;
+        renderFinish(plan, planState);
+        renderPlan(plan, planState);
+        renderPlanDays(plan, planState);
+        mContentView.setVisibility(!loading && plan != null && planState != null ? View.VISIBLE : View.GONE);
+    }
+
+    private void renderFinish(@Nullable ELPlan plan, @Nullable ELPlanState state) {
+        ELPlanDay day = null;
+        if (plan != null && state != null) {
+            day = plan.getNextDay();
+        }
+        mFinishPlanBtn.setVisibility(day == null ? View.VISIBLE : View.GONE);
+    }
+
+    private void renderPlan(@Nullable ELPlan plan, @Nullable ELPlanState state) {
+        if (plan == null || state == null) {
+            mPlanNameLbl.setText("--");
+            mPlanProgressLbl.setText("--");
+        } else {
+            int progress = plan.getProgress();
+            mPlanNameLbl.setText(plan.getName());
+            mPlanProgressLbl.setText(String.format("%d %%", progress));
+            mPlanProgressBar.setProgress(progress);
+        }
+    }
+
+    private void renderPlanDays(@Nullable ELPlan plan, @Nullable ELPlanState state) {
+        mDataListManager.clear();
+        if (plan == null || state == null) {
+            mPlanWeekLbl.setVisibility(View.INVISIBLE);
+            mPlanWeekList.setVisibility(View.INVISIBLE);
+        } else {
+            int currentDay = plan.getDayIndex();
+            int week = currentDay / 7;
+            if (week >= plan.getWeeks().size()) {
+                // If we've passed the last week, use the last plan week
+                week = plan.getWeeks().size() - 1;
+            }
+            PlanProLockKt.applyProLock(plan.getWeeks().get(week), mSession.user());
+            ELPlanDay day = plan.getWeeks().get(week).getDays().get(currentDay % 7);
+            day.setNext(true);
+            mPlanWeekLbl.setText(String.format("Week %d of %d", week + 1, plan.getWeeks().size()));
+            mPlanWeekLbl.setVisibility(View.VISIBLE);
+            mPlanWeekList.setVisibility(View.VISIBLE);
+            mDataListManager.addAll(plan.getWeeks().get(week).getDays());
+        }
+        mAdapter.notifyDataSetChanged();
+    }
+
+    // Utils
+
+    private String getString(int stringResId) {
+        return mContext.getString(stringResId);
+    }
+
+    // Setup
+
+    private void setupList() {
+        mAdapter.addDataManager(mDataListManager);
+        mAdapter.registerBinder(new PlanDayAdapter.Binder(mAnalytics, mNavigator, mSession, new PlanDayAdapter.OnPlanDayListener() {
+            @Override
+            public void onClickSkip(ELPlanDay day) {
+                if (mListener != null) {
+                    mListener.onClickSkip();
+                }
+            }
+
+            @Override
+            public void onClickStart(ELPlanDay day) {
+                if (mListener != null) {
+                    mListener.onClickStart();
+                }
+            }
+
+            @Override
+            public void onItemClicked(ELPlanDay item, int position) {
+                if (item.getRoutine() != null) {
+                    mNavigator.open(mContext, new TemplateDetails(item.getRoutine(), true));
+                } else {
+                    DialogBuilder.showOKPrompt(mContext,
+                            mContext.getString(com.everlog.android.common.design.R.string.plan_details_rest_title),
+                            getString(com.everlog.android.common.design.R.string.plan_details_rest_prompt));
+                }
+            }
+
+            @Override
+            public void onClickChooseRoutine(ELPlanDay day, int position) {
+            }
+
+            @Override
+            public void onDayEdited() {
+            }
+        }).setOngoing(true));
+        mPlanWeekList.setLayoutManager(new LinearLayoutManager(mContext));
+        mPlanWeekList.setAdapter(mAdapter);
+    }
+
+    public interface PlanWeekListener {
+        void onClickSkip();
+        void onClickStart();
+        void onClickPlan();
+    }
+}

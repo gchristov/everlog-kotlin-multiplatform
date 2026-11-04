@@ -188,6 +188,7 @@ object AuthManager : PreferencesManager() {
         ELApplication.graph.userSession.clearUser()
         AnalyticsManager.manager.userLogout()
         AppLaunchManager.manager.clearAppUserData()
+        ELApplication.graph.homeNotifications.clear()
         ELApplication.graph.realUserSettings.clearUserPreferences()
         ELApplication.graph.planProgress.clearOngoingPlan()
         mAuth?.signOut()

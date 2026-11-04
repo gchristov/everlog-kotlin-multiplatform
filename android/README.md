@@ -24,7 +24,7 @@ A feature has only the modules it has code for: a `data` module once it has data
 | `exercise` | The exercise picker, detail and create screens |  | `ExerciseRepository`, the exercise library and guide use cases, the exercise stores, `ExerciseImageStorage` |
 | `workout` | The workout screen, Set suggestions, workout details, `WorkoutService` and its notification |  | `WorkoutManager`, the ongoing workout, prefill, the workout stores, `WorkoutBroadcasts` |
 | `workout-builder` | No `feature` module | The exercise table and edit list the workout screen and the template editor show (`exercisetable`) | The workout being built (blocks, rounds, sets), its mapping to and from `ELWorkout` and the rules that edit it |
-| `home` | The Activity tab, which shows the statistics and history pages | | No `data` module |
+| `home` | Home's Week tab with its banner, and the Activity tab, which shows the statistics and history pages | | The banner's Remote Config model and whether the user dismissed it (`HomeNotifications`) |
 | `template` | The template editor, template details, the start-a-workout screen, the template and set type pickers |  | `RoutineRepository`, the template load and save use cases, the routine stores, `OngoingPlanRepository` |
 | `plan` | Plan create, details and week days, the cover picker, the congratulations screen | The plan day row (`PlanDayAdapter`) that plan details and the Week tab show, the Pro gate and lock it uses, `PlanAnalytics` | `PlanProgress` (the ongoing plan), the plan stores and models, the cover images API, `PlanBroadcasts` |
 | `history` | No `feature` module | The Activity tab's history page: the workouts calendar and list | No `data` module: the history reads `workout:data` |
@@ -105,7 +105,7 @@ Services the app shares, like the user's settings, are an interface with a `Real
 
 `:android:app` keeps what ties the features together or belongs to no single one, and what's due to be deleted rather than moved:
 
-- **The shell**: `ELApplication` with each feature's dependencies (`application/features`), `SplashActivity` (the launcher, which keeps its class name), Home with its Week and Workouts tabs and home notifications, the `Navigator`, `AppConfig` and Remote Config, the data migrations, `AppDataSync`, FCM, the alarm receivers and their notifications, and the web view.
+- **The shell**: `ELApplication` with each feature's dependencies (`application/features`), `SplashActivity` (the launcher, which keeps its class name), Home (`HomeActivity`, which its tabs reach through `HomeHost`) with its Workouts tab, the `Navigator`, `AppConfig` and Remote Config, the data migrations, `AppDataSync`, FCM, the alarm receivers and their notifications, and the web view.
 - **Managers on the app's services**: `AuthManager`, `AnalyticsManager`, the rating prompt, in-app updates, `BillingBridge`, `FirestorePathManager`, Google Fit, `ELUserStore` and `ELDatastore`.
 - **Shared XML pieces only the app uses**: `AppDialogs` and the other pickers and inputs in `ui/dialog`, and the views and adapters the screens above use.
 - **The old screens behind v2 flags** (`CreateRoutineActivity`, `CreateExerciseGroupsActivity`, `MuscleGoalActivity` and their adapters), which go when their flags are removed rather than moving into modules.

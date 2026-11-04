@@ -5,12 +5,14 @@ import com.everlog.android.common.design.R as DesignR
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.DialogInterface
+import android.app.Activity
 import android.content.Intent
 import android.content.IntentFilter
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.everlog.R
 import com.everlog.android.common.data.model.ELRoutine
 import com.everlog.android.common.data.model.workout.ELWorkout
+import com.everlog.constants.ELActivityRequestCodes
 import com.everlog.constants.ELConstants
 import com.everlog.data.datastores.ELDatastore
 import com.everlog.managers.ErrorManager
@@ -57,6 +59,15 @@ class PresenterHome : BaseActivityPresenter<MvpViewHome>() {
     override fun init() {
         super.init()
         setupBroadcastReceivers()
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        // The template picked from the start workout menu
+        if (requestCode == ELActivityRequestCodes.REQUEST_PICK_ROUTINE && resultCode == Activity.RESULT_OK) {
+            val routine = data?.getSerializableExtra(ELConstants.EXTRA_ROUTINE) as? ELRoutine ?: return
+            navigator.openPerformRoutineConfirmation(routine, false)
+        }
     }
 
     override fun onReady() {
@@ -220,7 +231,7 @@ class PresenterHome : BaseActivityPresenter<MvpViewHome>() {
 
     private fun handleAdd() {
         ELPickerDialog.withActivity(mvpView.getActivity())
-                .title(R.string.home_add_title)
+                .title(DesignR.string.home_add_title)
                 .menuLayout(R.menu.menu_sheet_home_add)
                 .actionListener { which: Int ->
                     when (which) {

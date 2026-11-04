@@ -14,8 +14,6 @@
 
 
 
-    <dimen name="card_week_statistics_width">154dp</dimen>
-    <dimen name="card_week_statistics_height">170dp</dimen>
 
     <dimen name="exercise_categories_row_size">100dp</dimen>
     <dimen name="exercise_categories_title_text_size">32sp</dimen>

@@ -4,6 +4,7 @@ import android.content.Context
 import com.everlog.android.auth.data.UserSession
 import com.everlog.android.exercise.data.ExerciseImageStorage
 import com.everlog.android.exercise.data.ExerciseLookup
+import com.everlog.android.home.data.HomeNotifications
 import com.everlog.android.plan.data.PlanProgress
 import com.everlog.android.settings.data.RealUserSettings
 import com.everlog.android.settings.data.UserSettings
@@ -22,6 +23,8 @@ interface AppGraph {
     val userSession: UserSession
 
     val planProgress: PlanProgress
+
+    val homeNotifications: HomeNotifications
 
     val exerciseImageStorage: ExerciseImageStorage
 

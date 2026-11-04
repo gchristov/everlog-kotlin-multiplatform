@@ -18,11 +18,9 @@
     <string name="error_play_store">Unable to find Play Store app</string>
 
 
-    <string name="home_add_title">Start workout</string>
     <string name="home_add_start_routine">From your templates</string>
     <string name="home_add_start_empty">Pick exercises as you go</string>
 
-    <string name="home_week">Week</string>
     <string name="home_workouts">Workouts</string>
     <string name="home_start_workout">Start workout</string>
     <string name="app_update_ready">An update is ready to install</string>
@@ -34,13 +32,6 @@
         <item quantity="one">You have an ongoing workout with %1$d completed set. Discarding deletes it.</item>
         <item quantity="other">You have an ongoing workout with %1$d completed sets. Discarding deletes them.</item>
     </plurals>
-    <string name="home_week_goal_achieved">Goal\nachieved!</string>
-    <string name="home_week_goal_left">more to go!</string>
-    <string name="home_week_plan">Plan</string>
-    <string name="home_week_plan_skip_prompt">Once a day is skipped you will not be able to go back and redo it. Are you sure you want to skip this day?</string>
-    <string name="home_week_plan_finish">Finish plan</string>
-    <string name="home_week_empty_title">Ready to train?</string>
-    <string name="home_week_empty_subtitle">Pick a workout and go — takes 2 taps.</string>
 
 
     <string name="home_workouts_plans">Plans</string>

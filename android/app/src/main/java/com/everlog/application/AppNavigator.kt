@@ -7,6 +7,7 @@ import com.everlog.android.common.navigation.DesignSystem
 import com.everlog.android.common.navigation.Destination
 import com.everlog.android.common.navigation.ExerciseDetails
 import com.everlog.android.common.navigation.ExerciseGroupsEditor
+import com.everlog.android.common.navigation.ExerciseLibrary
 import com.everlog.android.common.navigation.ExercisePicker
 import com.everlog.android.common.navigation.ExerciseTab
 import com.everlog.android.common.navigation.FeedbackForm
@@ -28,10 +29,12 @@ import com.everlog.android.common.navigation.SetTypePicker
 import com.everlog.android.common.navigation.ShareApp
 import com.everlog.android.common.navigation.ShareWorkout
 import com.everlog.android.common.navigation.StartWorkout
+import com.everlog.android.common.navigation.StartWorkoutConfirmation
 import com.everlog.android.common.navigation.TemplateDetails
 import com.everlog.android.common.navigation.TemplateEditor
 import com.everlog.android.common.navigation.TemplatePicker
 import com.everlog.android.common.navigation.Terms
+import com.everlog.android.common.navigation.WebLink
 import com.everlog.android.common.navigation.WorkoutDetails
 import com.everlog.android.exercise.details.ExerciseDetailsActivity
 import com.everlog.android.exercise.picker.ExercisePickerActivity
@@ -65,6 +68,7 @@ class AppNavigator : Navigator {
             is Terms -> navigator.openWebView(ELConstants.URL_TERMS, destination.title)
             is PrivacyPolicy -> navigator.openWebView(ELConstants.URL_PRIVACY, destination.title)
             PlayStoreListing -> navigator.openPlayStoreAppDetails()
+            is WebLink -> navigator.openUrl(destination.url)
             ShareApp -> navigator.shareApp()
             is ShareWorkout -> navigator.shareWorkout(destination.workout)
             is AppSettingsPrompt -> navigator.promptForAppSettings(destination.rationale)
@@ -77,6 +81,7 @@ class AppNavigator : Navigator {
             ProCongratulations -> navigator.openCongratulate(CongratulateActivity.Type.PRO)
             is PlanDetails -> context.startActivity(PlanDetailsActivity.launchIntent(context, destination.planUuid))
             PlanCongratulations -> navigator.openCongratulate(CongratulateActivity.Type.PLAN_FINISH)
+            ExerciseLibrary -> navigator.openExercises()
             is ExerciseDetails -> navigator.openExerciseDetails(
                 ExerciseDetailsActivity.Companion.Properties().exercise(destination.exercise).type(
                     when (destination.tab) {
@@ -87,6 +92,7 @@ class AppNavigator : Navigator {
             )
             is TemplateDetails -> navigator.openRoutineDetails(destination.routine, destination.viewOnly)
             is StartWorkout -> navigator.startWorkout(destination.routine, true, destination.fromPlan)
+            is StartWorkoutConfirmation -> navigator.openPerformRoutineConfirmation(destination.routine, destination.fromPlan)
             is WorkoutDetails -> navigator.openWorkoutDetails(destination.workout, destination.justFinished, destination.fromPlan)
         }
     }

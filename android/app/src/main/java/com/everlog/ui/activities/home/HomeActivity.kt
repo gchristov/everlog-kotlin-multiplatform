@@ -25,7 +25,8 @@ import com.everlog.android.common.mvp.activity.BaseActivityMvpView
 import com.everlog.android.common.mvp.activity.BaseActivityPresenter
 import com.everlog.android.home.activity.ActivityHomeFragment
 import com.everlog.android.settings.SettingsHomeFragment
-import com.everlog.ui.fragments.home.week.WeekHomeFragment
+import com.everlog.android.home.HomeHost
+import com.everlog.android.home.week.WeekHomeFragment
 import com.everlog.ui.fragments.home.workouts.WorkoutsHomeFragment
 import com.everlog.android.common.mvp.view.tab.ELFragmentPagerAdapter
 import com.everlog.android.common.kotlin.Utils
@@ -35,7 +36,7 @@ import rx.Observable
 import rx.subjects.PublishSubject
 import com.everlog.android.common.design.R as DesignR
 
-class HomeActivity : BaseActivity(), MvpViewHome {
+class HomeActivity : BaseActivity(), MvpViewHome, HomeHost {
 
     private var mPresenter: PresenterHome? = null
     private lateinit var binding: ActivityHomeBinding
@@ -234,27 +235,27 @@ class HomeActivity : BaseActivity(), MvpViewHome {
         }
     }
 
-    fun showPlans() {
+    override fun showPlans() {
         binding.pager.setCurrentItem(1, true)
     }
 
-    fun showStatistics() {
+    override fun showStatistics() {
         val pos = 2
         binding.pager.setCurrentItem(pos, true)
         val statsFragment = mAdapter?.getItem(pos) as? ActivityHomeFragment
         statsFragment?.showStatistics()
     }
 
-    fun showSettings() {
+    override fun showSettings() {
         binding.pager.setCurrentItem(3, true)
     }
 
-    fun showCreateActivity() {
+    override fun showAddMenu() {
         mOnClickAdd.onNext(null)
     }
 
-    fun setWeekEmptyState(isEmpty: Boolean) {
-        mPresenter?.setWeekIsEmpty(isEmpty)
+    override fun setWeekEmpty(empty: Boolean) {
+        mPresenter?.setWeekIsEmpty(empty)
     }
 
     private fun animateAppearance() {

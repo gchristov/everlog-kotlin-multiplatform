@@ -12,6 +12,9 @@ enum class ExerciseTab {
 
 data class ExerciseDetails(val exercise: ELExercise, val tab: ExerciseTab = ExerciseTab.Info) : Destination
 
+// The exercise library to browse, handing nothing back
+data object ExerciseLibrary : Destination
+
 // Picks exercises, handed back as exercise groups
 data object ExercisePicker : ResultDestination<List<ELExerciseGroup>>, ScreenResult<List<ELExerciseGroup>> {
     override val screenResult get() = this
