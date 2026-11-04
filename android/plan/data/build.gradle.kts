@@ -22,5 +22,4 @@ dependencies {
     implementation(libs.retrofit.rxjava)
     implementation(libs.okhttp.logging)
     implementation(libs.timber)
-    testImplementation(projects.android.plan.testFixtures)
 }

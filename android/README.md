@@ -11,10 +11,11 @@ android/
   common/<name>/             setup and code shared by other modules
   <feature>/data/            a feature's repositories, use cases and stores
   <feature>/feature/         a feature's screens and view-models
+  <feature>/ui/              UI a feature offers for other features' screens to show
   <feature>/test-fixtures/   a feature's fakes and test robots, for other modules' tests
 ```
 
-Every feature has all three modules, even while one is empty:
+A feature has only the modules it has code for: a `data` module once it has data of its own, `test-fixtures` once other modules' tests need its fakes, and a `ui` module once another feature shows its UI (see [Feature ui modules](#feature-ui-modules)). No empty modules wait for code.
 
 | Feature | `feature` holds | `data` holds |
 | --- | --- | --- |
@@ -24,10 +25,10 @@ Every feature has all three modules, even while one is empty:
 | `workout` | The workout screen, Set suggestions, workout details, `WorkoutService` and its notification | `WorkoutManager`, the ongoing workout, prefill, the workout stores, `WorkoutBroadcasts` |
 | `template` | The template editor, template details, the start-a-workout screen, the template and set type pickers | `RoutineRepository`, the template load and save use cases, the routine stores, `OngoingPlanRepository` |
 | `plan` | Plan create, details and week days, the cover picker, the congratulations screen | `PlanProgress` (the ongoing plan), the plan stores and models, the cover images API, `PlanBroadcasts` |
-| `history` | The Activity tab: statistics and the workouts calendar | Nothing yet: the tab reads `workout:data` |
+| `history` | The Activity tab: statistics and the workouts calendar | No `data` module: the tab reads `workout:data` |
 | `pro` | The Pro screen, `BillingManager` | The Pro models |
 | `settings` | Settings, the integration screen | The user's settings (`UserSettings`, `RealUserSettings`), the integration store and model |
-| `showcase` | The design system showcase (debug builds only) | |
+| `showcase` | The design system showcase (debug builds only) | No `data` module |
 
 Each `data` module gives its stores one entry point, e.g. `WorkoutStores` or `PlanStores`, which the app's `ELDatastore` hands out to the code still using it.
 
@@ -58,13 +59,22 @@ The convention plugins enforce these: a module that declares a dependency breaki
 
 - **app → feature → data → common.** The app depends on every `feature` module. A feature depends on its own `data` module and on any other feature's `data` module it uses, e.g. `auth:data` for the user or `settings:data` for the settings.
 - **Only data modules and the app depend on `datasync`**, each declaring it where it reads through it. Screens read through their feature's data module, and `datasync` itself uses only common modules without UI.
-- **A feature never depends on another feature's UI.** Screens open each other through the app's `Navigator`, so a `feature` module never depends on another feature's `feature` module.
+- **A feature never depends on another feature's screens.** Screens open each other through the app's `Navigator`, so a `feature` module never depends on another feature's `feature` module. What one feature shows inside another's screen comes from a `ui` module, which any `feature` module may depend on.
+- **A `ui` module depends on other features' `ui` and `data` modules and on common modules, UI ones too**, never on a `feature` module (its own included) or on `datasync`.
 - **Data may depend on other features' data**, and on their `test-fixtures` in tests.
 - **Each module declares the modules it uses**, as `implementation`. A module exposes another as `api` only when that module's types are part of its own public API (e.g. `auth:data` exposes `pro:data`, as `ELUser` holds the Pro subscription), never to hand another feature's data on to the modules using it. The plugins can't check this one, so check it in review.
-- **Data never depends on UI**: no `feature` modules, `common:compose`, `common:compose-test`, `common:mvp` or `common:design`.
+- **Data never depends on UI**: no `feature` or `ui` modules, `common:compose`, `common:compose-test`, `common:mvp` or `common:design`.
 - **Nothing depends on the app**, and **common modules never depend on a feature's modules.**
-- **Code moves with its tests**, never ahead of them. A feature's tests go to its `feature` or `data` module when the code they test does, and common modules hold only common code and its tests.
+- **Code moves with its tests**, never ahead of them. A feature's tests go to its `feature`, `ui` or `data` module when the code they test does, and common modules hold only common code and its tests.
 - **Test support goes through `test-fixtures` modules and the `common:*-test` modules** (`common:test`, `common:compose-test`, `common:data-test`), which only test configurations (`testImplementation`, `androidTestImplementation`) and other test support may depend on. Their code lives in `main`, with their dependencies as `api`, because a module's `test` sources can't be shared. A feature's `feature` and `data` modules use its `test-fixtures` for their tests, and other features' `test-fixtures` for the data they use.
+
+## Feature ui modules
+
+A feature's `ui` module holds the UI it offers for other features' screens to show inside them: a tab, a section, a row, with their UI models, view-models and the rules behind them. The feature's own `feature` module uses it too. Two features showing the same domain UI, e.g. the exercise table that the workout screen and the template editor both edit, share it through one `ui` module rather than through the app or a common module.
+
+- **A whole screen stays in `feature`** and opens through the `Navigator`. A `ui` module holds what's embedded in someone else's screen.
+- **Stateless, domain-free pieces go to the design system** (`common:compose`): a button, a list row, a progress ring. Pieces that know the domain or hold state (sets, workouts, a history list with its view-model) go to the `ui` module of the feature they belong to.
+- **XML/MVP code may live in a `ui` module** while it moves, so code can be untangled before it's rebuilt in Compose.
 
 ## What a feature gets from the app
 
@@ -108,14 +118,14 @@ Each module applies one plugin for its type, from `gradle-plugins/conventions`, 
 | `common` | `everlog.android.module` (plus `everlog.android.compose` for Compose code) | An Android library on the shared SDK, Java and desugaring setup, with `common:test` for unit tests |
 | `<feature>/data` | `everlog.android.data` | The module setup, with `common:kotlin`, `common:firebase` and `common:data` as `api` |
 | `datasync` | `everlog.android.module` | The module setup |
-| `<feature>/feature` | `everlog.android.feature` | The module setup and Compose, with `common:compose`, `common:design` and `common:mvvm`, and `common:compose-test` for instrumented tests |
+| `<feature>/feature`, `<feature>/ui` | `everlog.android.feature` | The module setup and Compose, with `common:compose`, `common:design`, `common:mvvm` and `common:navigation`, and `common:compose-test` for instrumented tests |
 | `<feature>/test-fixtures` | `everlog.android.module` | The module setup |
 | `common:test` | `everlog.android.base` | The shared setup only, as `everlog.android.module` adds `common:test` itself |
 | `app` | `everlog.android.applicationBinary` and `everlog.android.firebase` | The application, version code and name, and google-services, Crashlytics and Performance |
 
 ## Adding a module
 
-1. Create `android/<path>/build.gradle.kts` with the plugin for its type and a `namespace` matching its path: `com.everlog.android.<feature>` for a feature's `feature` module, `com.everlog.android.<feature>.<type>` for its `data` and `test-fixtures` modules, or `com.everlog.android.common.<name>`, without dashes (`test-fixtures` becomes `testfixtures`).
+1. Create `android/<path>/build.gradle.kts` with the plugin for its type and a `namespace` matching its path: `com.everlog.android.<feature>` for a feature's `feature` module, `com.everlog.android.<feature>.<type>` for its `data`, `ui` and `test-fixtures` modules, or `com.everlog.android.common.<name>`, without dashes (`test-fixtures` becomes `testfixtures`).
 2. Include it in `settings.gradle.kts`, and depend on it through the type-safe accessors (`projects.android.exercise.data`).
 3. Resources move with the code that uses them, and resources several modules use go to `common:design`. Each module has its own `R` class, so code reads another module's resources through that module's `R`: in Kotlin `import com.everlog.android.common.design.R as DesignR` and then `DesignR.color.main_accent`, in Java the full name. XML refers to them as before (`@color/main_accent`). A library module can't see the app's resources, so anything a moved resource refers to moves with it.
 4. Code moved into the module takes the namespace as its package, except what the system keeps by its full class name outside a running process: the launcher activity (home screen shortcuts), receivers behind scheduled alarms, and anything a notification posted from an alarm points at. These keep their package and name, so an app update can't break them. A foreground service, its notification and the screens they open can be renamed: they all go when the process dies, and an update always kills it. Move the R8 keep rules for anything Firestore or Gson maps by reflection into the module's `consumerProguardFiles`, and check them with `./gradlew :android:app:minifyReleaseWithR8` and the mapping.

@@ -11,5 +11,4 @@ android {
 
 dependencies {
     api(libs.billing)
-    testImplementation(projects.android.pro.testFixtures)
 }

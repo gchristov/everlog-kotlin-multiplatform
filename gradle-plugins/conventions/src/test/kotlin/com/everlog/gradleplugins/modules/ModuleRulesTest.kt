@@ -12,6 +12,7 @@ class ModuleRulesTest {
         assertThat(Module.of(":android:common:compose-test")).isEqualTo(Module.Common("compose-test"))
         assertThat(Module.of(":android:exercise:test-fixtures"))
             .isEqualTo(Module.Feature("exercise", FeatureModuleType.TEST_FIXTURES))
+        assertThat(Module.of(":android:workout-builder:ui")).isEqualTo(Module.Feature("workout-builder", FeatureModuleType.UI))
         assertThat(Module.of(":android:exercise:other")).isNull()
         assertThat(Module.of(":gradle-plugins:conventions")).isNull()
     }
@@ -21,6 +22,7 @@ class ModuleRulesTest {
         assertThat(broken(":android:workout:data", ":android:datasync")).isNull()
         assertThat(broken(":android:app", ":android:datasync")).isNull()
         assertThat(broken(":android:workout:feature", ":android:datasync")).isNotNull()
+        assertThat(broken(":android:history:ui", ":android:datasync")).isNotNull()
         assertThat(broken(":android:workout:test-fixtures", ":android:datasync", forTests = true)).isNotNull()
         assertThat(broken(":android:common:data", ":android:datasync")).isNotNull()
     }
@@ -54,12 +56,25 @@ class ModuleRulesTest {
     }
 
     @Test
-    fun `a feature depends on any feature's data but never on another feature's UI`() {
+    fun `a feature depends on any feature's data and ui but never on another feature's screens`() {
         assertThat(broken(":android:exercise:feature", ":android:exercise:data")).isNull()
         assertThat(broken(":android:exercise:feature", ":android:workout:data")).isNull()
+        assertThat(broken(":android:exercise:feature", ":android:history:ui")).isNull()
+        assertThat(broken(":android:history:feature", ":android:history:ui")).isNull()
         assertThat(broken(":android:exercise:feature", ":android:workout:feature")).isNotNull()
         assertThat(broken(":android:exercise:feature", ":android:exercise:test-fixtures", forTests = true)).isNull()
         assertThat(broken(":android:exercise:feature", ":android:workout:test-fixtures", forTests = true)).isNull()
+    }
+
+    @Test
+    fun `a ui module depends on data and other ui modules but never on screens`() {
+        assertThat(broken(":android:home:ui", ":android:history:ui")).isNull()
+        assertThat(broken(":android:history:ui", ":android:workout:data")).isNull()
+        assertThat(broken(":android:history:ui", ":android:common:compose")).isNull()
+        assertThat(broken(":android:history:ui", ":android:common:mvp")).isNull()
+        assertThat(broken(":android:history:ui", ":android:history:test-fixtures", forTests = true)).isNull()
+        assertThat(broken(":android:history:ui", ":android:history:feature")).isNotNull()
+        assertThat(broken(":android:history:ui", ":android:workout:feature")).isNotNull()
     }
 
     @Test
@@ -67,22 +82,25 @@ class ModuleRulesTest {
         assertThat(broken(":android:workout:data", ":android:exercise:data")).isNull()
         assertThat(broken(":android:workout:data", ":android:exercise:test-fixtures", forTests = true)).isNull()
         assertThat(broken(":android:workout:data", ":android:workout:feature")).isNotNull()
+        assertThat(broken(":android:workout:data", ":android:workout-builder:ui")).isNotNull()
         assertThat(broken(":android:workout:data", ":android:common:compose")).isNotNull()
         assertThat(broken(":android:workout:data", ":android:common:mvp")).isNotNull()
         assertThat(broken(":android:workout:data", ":android:common:design")).isNotNull()
     }
 
     @Test
-    fun `test fixtures depend on data but not on another feature's UI`() {
+    fun `test fixtures depend on data and ui but not on another feature's screens`() {
         assertThat(broken(":android:workout:test-fixtures", ":android:workout:feature")).isNull()
         assertThat(broken(":android:workout:test-fixtures", ":android:exercise:data")).isNull()
         assertThat(broken(":android:workout:test-fixtures", ":android:common:test")).isNull()
+        assertThat(broken(":android:workout:test-fixtures", ":android:workout-builder:ui")).isNull()
         assertThat(broken(":android:workout:test-fixtures", ":android:exercise:feature")).isNotNull()
     }
 
     @Test
     fun `test support is only for tests`() {
         assertThat(broken(":android:exercise:feature", ":android:exercise:test-fixtures")).isNotNull()
+        assertThat(broken(":android:history:ui", ":android:history:test-fixtures")).isNotNull()
         assertThat(broken(":android:exercise:data", ":android:common:test")).isNotNull()
         assertThat(broken(":android:common:compose-test", ":android:common:test")).isNull()
         assertThat(broken(":android:exercise:data", ":android:common:data-test")).isNotNull()

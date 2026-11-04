@@ -10,7 +10,6 @@ android {
 }
 
 dependencies {
-    implementation(projects.android.history.data)
     implementation(projects.android.settings.data)
     implementation(projects.android.workout.data)
     implementation(projects.android.common.mvp)
@@ -18,6 +17,4 @@ dependencies {
     implementation(libs.calendarview)
     implementation(libs.rotate.layout)
     implementation(libs.timber)
-    testImplementation(projects.android.history.testFixtures)
-    androidTestImplementation(projects.android.history.testFixtures)
 }

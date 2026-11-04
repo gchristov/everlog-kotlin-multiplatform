@@ -74,7 +74,6 @@ dependencies {
     implementation(projects.android.common.sessionUi)
     implementation(projects.android.auth.data)
     implementation(projects.android.exercise.data)
-    implementation(projects.android.history.data)
     implementation(projects.android.onboarding.data)
     implementation(projects.android.plan.data)
     implementation(projects.android.pro.data)

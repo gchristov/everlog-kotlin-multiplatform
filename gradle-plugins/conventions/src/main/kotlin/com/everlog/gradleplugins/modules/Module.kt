@@ -40,6 +40,7 @@ internal val Module.isTestSupport
 internal enum class FeatureModuleType(val dirName: String) {
     DATA("data"),
     FEATURE("feature"),
+    UI("ui"),
     TEST_FIXTURES("test-fixtures");
 
     companion object {
