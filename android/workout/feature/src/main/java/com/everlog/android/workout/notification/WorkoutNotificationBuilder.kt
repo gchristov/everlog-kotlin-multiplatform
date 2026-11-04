@@ -12,7 +12,7 @@ import com.everlog.android.workout.R
 import com.everlog.android.common.data.model.set.ELSetType
 import com.everlog.android.common.data.model.workout.ELWorkout
 import com.everlog.android.workout.WorkoutExtras
-import com.everlog.android.common.session.toSessionSet
+import com.everlog.android.workoutbuilder.data.toBuilderSet
 import com.everlog.android.workout.log.WorkoutLogActivity
 import com.everlog.android.workout.notification.WorkoutNotificationState.Done
 import com.everlog.android.workout.notification.WorkoutNotificationState.NextSet
@@ -24,7 +24,7 @@ import com.everlog.android.common.kotlin.format.EmptyValue
 import com.everlog.android.common.kotlin.format.displayWeight
 import com.everlog.android.common.kotlin.format.formatClock
 import com.everlog.android.common.kotlin.format.formatWeight
-import com.everlog.android.common.sessionui.exercisetable.lastTimeText
+import com.everlog.android.workoutbuilder.ui.exercisetable.lastTimeText
 import com.everlog.android.common.kotlin.format.unitLabel
 import com.everlog.android.common.design.R as DesignR
 
@@ -189,7 +189,7 @@ class WorkoutNotificationBuilder(private val context: Context, private val weigh
      * e.g. "Set 1/1 • Tap to edit".
      */
     private fun setSummary(state: NextSet, promptIfEmpty: Boolean = true): String {
-        val set = state.set.toSessionSet().copy(timeSeconds = state.timeSeconds)
+        val set = state.set.toBuilderSet().copy(timeSeconds = state.timeSeconds)
         val values = lastTimeText(set, weightUnit, unitLabel(weightUnit))
                 ?: if (promptIfEmpty) context.getString(R.string.workout_notification_tap_to_edit) else null
         return listOfNotNull(setLabel(state), values).joinToString(" • ")

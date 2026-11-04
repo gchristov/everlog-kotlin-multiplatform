@@ -30,8 +30,8 @@ import com.everlog.android.common.data.model.set.ELSet
 import com.everlog.android.common.data.model.set.ELSetType
 import com.everlog.android.common.kotlin.Load
 import com.everlog.android.common.navigation.ExerciseTab
-import com.everlog.android.common.session.SessionDefaults
-import com.everlog.android.common.session.ValueField
+import com.everlog.android.workoutbuilder.data.WorkoutBuilderDefaults
+import com.everlog.android.workoutbuilder.data.ValueField
 import com.everlog.android.exercise.data.model.library.LibraryExercise
 import com.everlog.android.template.data.session.LoadTemplateUseCase
 import com.everlog.android.template.data.session.SaveTemplateUseCase
@@ -206,7 +206,7 @@ class TemplateEditorScenarioTest {
         cell(0, 2).assertTextEquals("8")
 
         // Adding sets stops at the most an exercise can have, and says so
-        val max = SessionDefaults.MAX_EXERCISE_SETS
+        val max = WorkoutBuilderDefaults.MAX_EXERCISE_SETS
         repeat(max - 2) { addSet(0) }
         cell(0, max - 1).assertTextEquals("8")
         compose.onNodeWithText("You cannot add more than $max sets per exercise").assertExists()

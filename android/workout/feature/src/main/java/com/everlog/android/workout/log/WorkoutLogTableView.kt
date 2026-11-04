@@ -1,7 +1,7 @@
 package com.everlog.android.workout.log
 
-import com.everlog.android.common.sessionui.exercisetable.Countdown
-import com.everlog.android.common.sessionui.exercisetable.TableView
+import com.everlog.android.workoutbuilder.ui.exercisetable.Countdown
+import com.everlog.android.workoutbuilder.ui.exercisetable.TableView
 
 internal fun WorkoutLogState.tableView(unitLabel: String) = TableView(
     unit = unit,

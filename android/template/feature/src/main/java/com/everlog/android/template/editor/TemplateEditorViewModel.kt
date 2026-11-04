@@ -16,25 +16,25 @@ import com.everlog.android.template.data.session.groupExercises
 import com.everlog.android.template.data.session.setExerciseMode
 import com.everlog.android.template.data.session.ungroupExercises
 import com.everlog.android.template.data.session.withTimeForAllSets
-import com.everlog.android.common.session.ExerciseRef
-import com.everlog.android.common.session.SessionDefaults
-import com.everlog.android.common.session.SessionIds
-import com.everlog.android.common.session.SetMode
-import com.everlog.android.common.session.SetRef
-import com.everlog.android.common.session.addRound
-import com.everlog.android.common.session.block
-import com.everlog.android.common.session.deleteSet
-import com.everlog.android.common.session.moveBlock
-import com.everlog.android.common.session.refs
-import com.everlog.android.common.session.restore
-import com.everlog.android.common.session.set
-import com.everlog.android.common.session.setValue
-import com.everlog.android.common.session.withExercises
-import com.everlog.android.common.sessionui.exercisetable.CellFocus
-import com.everlog.android.common.sessionui.exercisetable.parse
-import com.everlog.android.common.sessionui.exercisetable.steppedValue
-import com.everlog.android.common.sessionui.exercisetable.typedAfterBackspace
-import com.everlog.android.common.sessionui.exercisetable.typedAfterKey
+import com.everlog.android.workoutbuilder.data.ExerciseRef
+import com.everlog.android.workoutbuilder.data.WorkoutBuilderDefaults
+import com.everlog.android.workoutbuilder.data.WorkoutBuilderIds
+import com.everlog.android.workoutbuilder.data.SetMode
+import com.everlog.android.workoutbuilder.data.SetRef
+import com.everlog.android.workoutbuilder.data.addRound
+import com.everlog.android.workoutbuilder.data.block
+import com.everlog.android.workoutbuilder.data.deleteSet
+import com.everlog.android.workoutbuilder.data.moveBlock
+import com.everlog.android.workoutbuilder.data.refs
+import com.everlog.android.workoutbuilder.data.restore
+import com.everlog.android.workoutbuilder.data.set
+import com.everlog.android.workoutbuilder.data.setValue
+import com.everlog.android.workoutbuilder.data.withExercises
+import com.everlog.android.workoutbuilder.ui.exercisetable.CellFocus
+import com.everlog.android.workoutbuilder.ui.exercisetable.parse
+import com.everlog.android.workoutbuilder.ui.exercisetable.steppedValue
+import com.everlog.android.workoutbuilder.ui.exercisetable.typedAfterBackspace
+import com.everlog.android.workoutbuilder.ui.exercisetable.typedAfterKey
 import java.util.UUID
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Job
@@ -57,7 +57,7 @@ internal class TemplateEditorViewModel(
     private val analytics: TemplateEditorAnalytics,
     private val ownExerciseUpdates: () -> Flow<List<LibraryExercise>>,
     private val clock: () -> Long = System::currentTimeMillis,
-    private val ids: SessionIds = SessionIds(),
+    private val ids: WorkoutBuilderIds = WorkoutBuilderIds(),
 ) : CommonViewModel<TemplateEditorState>(
     dispatcher,
     TemplateEditorState(isNew = uuid == null, load = if (uuid == null) TemplateLoad.Ready else TemplateLoad.Loading),
@@ -329,8 +329,8 @@ internal class TemplateEditorViewModel(
     }
 
     companion object {
-        private val MaxSets = SessionDefaults.MAX_EXERCISE_SETS
-        private val RestStepSeconds = SessionDefaults.TIME_STEP_SECONDS
+        private val MaxSets = WorkoutBuilderDefaults.MAX_EXERCISE_SETS
+        private val RestStepSeconds = WorkoutBuilderDefaults.TIME_STEP_SECONDS
         // Templates hold reps and times only, so the unit never applies
         private val NoWeights = WeightUnit.KILOGRAM
     }

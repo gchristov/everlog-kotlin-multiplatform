@@ -3,8 +3,8 @@ package com.everlog.android.workout.notification
 import com.everlog.android.common.data.model.set.ELSet
 import com.everlog.android.common.data.model.workout.ELWorkout
 import com.everlog.android.common.data.model.workout.ELWorkoutState
-import com.everlog.android.common.session.SetMode
-import com.everlog.android.common.session.toSessionSet
+import com.everlog.android.workoutbuilder.data.SetMode
+import com.everlog.android.workoutbuilder.data.toBuilderSet
 import com.everlog.android.workout.data.notification.ShownSet
 
 /**
@@ -85,7 +85,7 @@ sealed class WorkoutNotificationState {
             val exercise = group.getExercisesForSetIndex(state.setIndex).getOrNull(state.exerciseIndex) ?: return null
             val set = exercise.sets.getOrNull(state.setIndex) ?: return null
             val timerRunning = set.remainingTimeSeconds != null
-            val values = set.toSessionSet()
+            val values = set.toBuilderSet()
             return NextSet(
                     exerciseName = exercise.getName() ?: "",
                     exercisePosition = state.exerciseIndex + 1,

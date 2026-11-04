@@ -14,7 +14,7 @@ dependencies {
     implementation(projects.android.exercise.data)
     implementation(projects.android.settings.data)
     implementation(projects.android.common.mvp)
-    implementation(projects.android.common.sessionUi)
+    implementation(projects.android.workoutBuilder.ui)
     implementation(libs.rxbinding)
     implementation(libs.collapsingtoolbar.subtitle)
     testImplementation(projects.android.template.testFixtures)

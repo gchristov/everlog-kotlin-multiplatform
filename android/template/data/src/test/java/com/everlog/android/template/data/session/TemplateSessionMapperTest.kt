@@ -5,11 +5,11 @@ import com.everlog.android.common.data.model.exercise.ELExercise
 import com.everlog.android.common.data.model.exercise.ELExerciseGroup
 import com.everlog.android.common.data.model.exercise.ELRoutineExercise
 import com.everlog.android.common.data.model.set.ELSet
-import com.everlog.android.common.session.SessionIds
-import com.everlog.android.common.session.SetMode
-import com.everlog.android.common.session.SetRef
-import com.everlog.android.common.session.WorkoutSet
-import com.everlog.android.common.session.deleteSet
+import com.everlog.android.workoutbuilder.data.WorkoutBuilderIds
+import com.everlog.android.workoutbuilder.data.SetMode
+import com.everlog.android.workoutbuilder.data.SetRef
+import com.everlog.android.workoutbuilder.data.WorkoutSet
+import com.everlog.android.workoutbuilder.data.deleteSet
 import com.everlog.android.template.data.session.DefaultTimeSeconds
 import com.google.common.truth.Truth.assertThat
 import org.junit.Test
@@ -24,7 +24,7 @@ class TemplateSessionMapperTest {
     fun `a template's targets become the values the editor shows`() {
         val routine = routine(group("SINGLE", bench to listOf(ELSet(requiredReps = 10), ELSet(requiredReps = 8), ELSet())))
 
-        val sets = routine.toTemplateBlocks(SessionIds()).single().rounds.map { it.sets.single() }
+        val sets = routine.toTemplateBlocks(WorkoutBuilderIds()).single().rounds.map { it.sets.single() }
 
         assertThat(sets).containsExactly(WorkoutSet(reps = 10), WorkoutSet(reps = 8), WorkoutSet()).inOrder()
     }
@@ -33,7 +33,7 @@ class TemplateSessionMapperTest {
     fun `a timed target is a time set`() {
         val routine = routine(group("SINGLE", bench to listOf(ELSet(requiredTimeSeconds = 45))))
 
-        val set = routine.toTemplateBlocks(SessionIds()).single().rounds.single().sets.single()
+        val set = routine.toTemplateBlocks(WorkoutBuilderIds()).single().rounds.single().sets.single()
 
         assertThat(set).isEqualTo(WorkoutSet(mode = SetMode.Time, timeSeconds = 45))
     }
@@ -42,7 +42,7 @@ class TemplateSessionMapperTest {
     fun `performed values and weights in a template are ignored`() {
         val routine = routine(group("SINGLE", bench to listOf(ELSet(requiredReps = 10, reps = 8, weight = 60f, completedDate = 1L))))
 
-        val set = routine.toTemplateBlocks(SessionIds()).single().rounds.single().sets.single()
+        val set = routine.toTemplateBlocks(WorkoutBuilderIds()).single().rounds.single().sets.single()
 
         assertThat(set).isEqualTo(WorkoutSet(reps = 10))
     }
@@ -53,7 +53,7 @@ class TemplateSessionMapperTest {
             fly to listOf(ELSet(requiredReps = 15), ELSet(requiredReps = 12)),
             raise to listOf(ELSet(requiredTimeSeconds = 30), ELSet(requiredTimeSeconds = 40))))
 
-        val saved = routine.withTemplateBlocks(routine.toTemplateBlocks(SessionIds()), restSeconds = 60)
+        val saved = routine.withTemplateBlocks(routine.toTemplateBlocks(WorkoutBuilderIds()), restSeconds = 60)
 
         val group = saved.exerciseGroups.single()
         assertThat(group.uuid).isEqualTo("group")
@@ -67,7 +67,7 @@ class TemplateSessionMapperTest {
     @Test
     fun `only the set's kind of target is saved, never a weight`() {
         val routine = routine(group("SINGLE", bench to listOf(ELSet(requiredReps = 10))))
-        val blocks = routine.toTemplateBlocks(SessionIds()).setExerciseMode(blockId = 1, exercise = 0, mode = SetMode.Time)
+        val blocks = routine.toTemplateBlocks(WorkoutBuilderIds()).setExerciseMode(blockId = 1, exercise = 0, mode = SetMode.Time)
 
         val set = routine.withTemplateBlocks(blocks, restSeconds = 60).exerciseGroups.single().exercises.single().sets.single()
 
@@ -79,7 +79,7 @@ class TemplateSessionMapperTest {
         val routine = routine(group("SUPER",
             fly to listOf(ELSet(requiredReps = 15), ELSet(requiredReps = 12)),
             raise to listOf(ELSet(requiredReps = 10))))
-        val blocks = routine.toTemplateBlocks(SessionIds())
+        val blocks = routine.toTemplateBlocks(WorkoutBuilderIds())
         val block = blocks.single()
         val (edited, _) = blocks.deleteSet(SetRef(block.id, block.rounds[0].id, 0))!!
 
@@ -98,7 +98,7 @@ class TemplateSessionMapperTest {
     fun `every group gets the template's rest`() {
         val routine = routine(group("SINGLE", bench to listOf(ELSet(requiredReps = 5))), group("SINGLE", fly to listOf(ELSet(requiredReps = 12))))
 
-        val saved = routine.withTemplateBlocks(routine.toTemplateBlocks(SessionIds()), restSeconds = 90)
+        val saved = routine.withTemplateBlocks(routine.toTemplateBlocks(WorkoutBuilderIds()), restSeconds = 90)
 
         assertThat(saved.exerciseGroups.map { it.restTimeSeconds }).containsExactly(90, 90)
     }

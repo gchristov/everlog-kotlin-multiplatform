@@ -2,14 +2,14 @@ package com.everlog.android.template.data.session
 
 import com.everlog.android.common.data.model.exercise.ELExerciseGroup
 import com.everlog.android.common.data.model.set.ELSetType
-import com.everlog.android.common.session.ExerciseRef
-import com.everlog.android.common.session.SessionDefaults
-import com.everlog.android.common.session.SessionIds
-import com.everlog.android.common.session.SetMode
-import com.everlog.android.common.session.WorkoutBlock
-import com.everlog.android.common.session.WorkoutRound
-import com.everlog.android.common.session.WorkoutSet
-import com.everlog.android.common.session.block
+import com.everlog.android.workoutbuilder.data.ExerciseRef
+import com.everlog.android.workoutbuilder.data.WorkoutBuilderDefaults
+import com.everlog.android.workoutbuilder.data.WorkoutBuilderIds
+import com.everlog.android.workoutbuilder.data.SetMode
+import com.everlog.android.workoutbuilder.data.WorkoutBlock
+import com.everlog.android.workoutbuilder.data.WorkoutRound
+import com.everlog.android.workoutbuilder.data.WorkoutSet
+import com.everlog.android.workoutbuilder.data.block
 import java.util.UUID
 
 // How the template editor changes a template's blocks. Adding rounds, deleting sets and moving exercises are the
@@ -17,13 +17,13 @@ import java.util.UUID
 
 const val NewExerciseSets = 3
 const val DefaultReps = 10
-val DefaultTimeSeconds = SessionDefaults.EXERCISE_TIME_SECONDS
+val DefaultTimeSeconds = WorkoutBuilderDefaults.EXERCISE_TIME_SECONDS
 
 /**
  * Exercises picked for a template, which start with [NewExerciseSets] sets of [DefaultReps]. A group that already
  * has targets keeps them.
  */
-fun List<WorkoutBlock>.addTemplateGroups(groups: List<ELExerciseGroup>, ids: SessionIds): List<WorkoutBlock> =
+fun List<WorkoutBlock>.addTemplateGroups(groups: List<ELExerciseGroup>, ids: WorkoutBuilderIds): List<WorkoutBlock> =
     this + groups.map { group ->
         val block = group.toTemplateBlock(ids)
         val empty = block.rounds.all { round -> round.sets.all { it.reps == null && it.timeSeconds == null } }
@@ -64,7 +64,7 @@ private fun List<WorkoutBlock>.updateExerciseSets(blockId: Long, exercise: Int, 
  * came from keep their other exercises, as a single when one is left. Picking the whole of one block only changes
  * its type.
  */
-fun List<WorkoutBlock>.groupExercises(picked: Collection<ExerciseRef>, type: ELSetType, ids: SessionIds): List<WorkoutBlock> {
+fun List<WorkoutBlock>.groupExercises(picked: Collection<ExerciseRef>, type: ELSetType, ids: WorkoutBuilderIds): List<WorkoutBlock> {
     val ordered = ordered(picked).ifEmpty { return this }
     val first = block(ordered.first().blockId) ?: return this
     if (ordered.all { it.blockId == first.id } && ordered.size == first.exercises.size) {
@@ -92,7 +92,7 @@ fun List<WorkoutBlock>.groupExercises(picked: Collection<ExerciseRef>, type: ELS
  * Takes the [picked] exercises out of their supersets and circuits, each as a single right after the group it left.
  * A group left with one exercise becomes a single. Picked exercises that are singles already stay as they are.
  */
-fun List<WorkoutBlock>.ungroupExercises(picked: Collection<ExerciseRef>, ids: SessionIds): List<WorkoutBlock> = flatMap { block ->
+fun List<WorkoutBlock>.ungroupExercises(picked: Collection<ExerciseRef>, ids: WorkoutBuilderIds): List<WorkoutBlock> = flatMap { block ->
     val out = picked.filter { it.blockId == block.id }.map { it.index }.sorted()
     if (block.exercises.size < 2 || out.isEmpty()) return@flatMap listOf(block)
     val singles = out.map { index ->

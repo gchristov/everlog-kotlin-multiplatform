@@ -1,10 +1,10 @@
 package com.everlog.android.template.editor
 
 import com.everlog.android.common.data.model.ELRoutine
-import com.everlog.android.common.session.DeletedSets
-import com.everlog.android.common.session.SetRef
-import com.everlog.android.common.session.WorkoutBlock
-import com.everlog.android.common.sessionui.exercisetable.CellFocus
+import com.everlog.android.workoutbuilder.data.DeletedSets
+import com.everlog.android.workoutbuilder.data.SetRef
+import com.everlog.android.workoutbuilder.data.WorkoutBlock
+import com.everlog.android.workoutbuilder.ui.exercisetable.CellFocus
 
 /**
  * The template editor's state. [routine] is the template as loaded (or new), which saving copies [name],

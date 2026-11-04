@@ -7,44 +7,44 @@ import com.everlog.android.common.data.model.workout.ELWorkoutState
 import com.everlog.android.common.mvvm.CommonViewModel
 import com.everlog.android.exercise.data.model.library.LibraryExercise
 import com.everlog.android.exercise.data.model.library.toELExercise
-import com.everlog.android.common.session.SessionDefaults
+import com.everlog.android.workoutbuilder.data.WorkoutBuilderDefaults
 import com.everlog.android.workout.data.prefill.BaseWorkoutPrefillController.PrefillSource
 import com.everlog.android.workout.data.prefill.LoadPrefillSourcesUseCase
-import com.everlog.android.common.session.SessionIds
-import com.everlog.android.common.session.SetMode
-import com.everlog.android.common.session.SetRef
-import com.everlog.android.common.session.ValueField
-import com.everlog.android.common.session.WorkoutBlock
+import com.everlog.android.workoutbuilder.data.WorkoutBuilderIds
+import com.everlog.android.workoutbuilder.data.SetMode
+import com.everlog.android.workoutbuilder.data.SetRef
+import com.everlog.android.workoutbuilder.data.ValueField
+import com.everlog.android.workoutbuilder.data.WorkoutBlock
 import com.everlog.android.workout.data.prefill.WorkoutSetPrefill
-import com.everlog.android.common.session.addGroups
-import com.everlog.android.common.session.addRound
-import com.everlog.android.common.session.block
-import com.everlog.android.common.session.completeSet
-import com.everlog.android.common.session.deleteBlock
-import com.everlog.android.common.session.deleteSet
+import com.everlog.android.workoutbuilder.data.addGroups
+import com.everlog.android.workoutbuilder.data.addRound
+import com.everlog.android.workoutbuilder.data.block
+import com.everlog.android.workoutbuilder.data.completeSet
+import com.everlog.android.workoutbuilder.data.deleteBlock
+import com.everlog.android.workoutbuilder.data.deleteSet
 import com.everlog.android.workout.data.prefill.filledFromHistory
 import com.everlog.android.workout.data.prefill.withSuggestionsRefilled
 import com.everlog.android.workout.data.prefill.lastSets
-import com.everlog.android.common.session.moveBlock
-import com.everlog.android.common.session.nextOpenAfter
-import com.everlog.android.common.session.refs
-import com.everlog.android.common.session.restore
-import com.everlog.android.common.session.round
-import com.everlog.android.common.session.set
-import com.everlog.android.common.session.setMode
-import com.everlog.android.common.session.setValue
-import com.everlog.android.common.session.uncompleteSet
+import com.everlog.android.workoutbuilder.data.moveBlock
+import com.everlog.android.workoutbuilder.data.nextOpenAfter
+import com.everlog.android.workoutbuilder.data.refs
+import com.everlog.android.workoutbuilder.data.restore
+import com.everlog.android.workoutbuilder.data.round
+import com.everlog.android.workoutbuilder.data.set
+import com.everlog.android.workoutbuilder.data.setMode
+import com.everlog.android.workoutbuilder.data.setValue
+import com.everlog.android.workoutbuilder.data.uncompleteSet
 import com.everlog.android.workout.data.prefill.withAddedRoundFilled
-import com.everlog.android.common.session.withExercises
-import com.everlog.android.common.session.withRestSeconds
-import com.everlog.android.common.session.withSessionBlocks
+import com.everlog.android.workoutbuilder.data.withExercises
+import com.everlog.android.workoutbuilder.data.withRestSeconds
+import com.everlog.android.workoutbuilder.data.withBuilderBlocks
 import com.everlog.android.workout.data.OngoingWorkoutRepository
 import com.everlog.android.workout.data.notification.ShownSet
-import com.everlog.android.common.sessionui.exercisetable.CellFocus
-import com.everlog.android.common.sessionui.exercisetable.parse
-import com.everlog.android.common.sessionui.exercisetable.steppedValue
-import com.everlog.android.common.sessionui.exercisetable.typedAfterBackspace
-import com.everlog.android.common.sessionui.exercisetable.typedAfterKey
+import com.everlog.android.workoutbuilder.ui.exercisetable.CellFocus
+import com.everlog.android.workoutbuilder.ui.exercisetable.parse
+import com.everlog.android.workoutbuilder.ui.exercisetable.steppedValue
+import com.everlog.android.workoutbuilder.ui.exercisetable.typedAfterBackspace
+import com.everlog.android.workoutbuilder.ui.exercisetable.typedAfterKey
 import java.util.Date
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Job
@@ -78,7 +78,7 @@ internal class WorkoutLogViewModel(
     private val prefill: WorkoutSetPrefill,
     private val ownExerciseUpdates: () -> Flow<List<LibraryExercise>>,
     private val clock: () -> Long = System::currentTimeMillis,
-    private val ids: SessionIds = SessionIds(),
+    private val ids: WorkoutBuilderIds = WorkoutBuilderIds(),
     private val tickMillis: Long? = TickMillis,
 ) : CommonViewModel<WorkoutLogState>(dispatcher, initialWorkoutLogState(workout, ids, settings, clock())) {
 
@@ -568,7 +568,7 @@ internal class WorkoutLogViewModel(
     fun onFinishConfirmed() = finish()
 
     private fun finish() {
-        val finished = workout.withSessionBlocks(state.value.blocks, finished = true)
+        val finished = workout.withBuilderBlocks(state.value.blocks, finished = true)
         finished.setCompletedDateAsDate(Date(clock()))
         repository.clearOngoing()
         analytics.workoutCompleted()
@@ -627,7 +627,7 @@ internal class WorkoutLogViewModel(
 
     private fun save() {
         if (state.value.exit == null) {
-            repository.saveOngoing(workout.withSessionBlocks(state.value.blocks))
+            repository.saveOngoing(workout.withBuilderBlocks(state.value.blocks))
             notifyWorkout()
         }
     }
@@ -647,8 +647,8 @@ internal class WorkoutLogViewModel(
 
     companion object {
         private const val TickMillis = 1000L
-        private val TimerStepSeconds = SessionDefaults.TIME_STEP_SECONDS
-        private val MaxSets = SessionDefaults.MAX_EXERCISE_SETS
+        private val TimerStepSeconds = WorkoutBuilderDefaults.TIME_STEP_SECONDS
+        private val MaxSets = WorkoutBuilderDefaults.MAX_EXERCISE_SETS
         private const val TAG = "WorkoutLogViewModel"
 
         /**

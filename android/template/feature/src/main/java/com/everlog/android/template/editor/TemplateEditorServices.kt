@@ -1,7 +1,7 @@
 package com.everlog.android.template.editor
 
 import com.everlog.android.common.data.model.set.ELSetType
-import com.everlog.android.common.session.ValueField
+import com.everlog.android.workoutbuilder.data.ValueField
 
 interface TemplateEditorAnalytics {
     // Logged as the screen shows, before its other events, so they're credited to it

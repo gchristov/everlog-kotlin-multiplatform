@@ -5,13 +5,13 @@ import com.everlog.android.common.data.model.exercise.ELExerciseGroup
 import com.everlog.android.common.data.model.exercise.ELRoutineExercise
 import com.everlog.android.common.data.model.set.ELSet
 import com.everlog.android.common.data.model.set.ELSetType
-import com.everlog.android.common.session.ExerciseRef
-import com.everlog.android.common.session.SessionIds
-import com.everlog.android.common.session.SetMode
-import com.everlog.android.common.session.WorkoutBlock
-import com.everlog.android.common.session.WorkoutExercise
-import com.everlog.android.common.session.WorkoutRound
-import com.everlog.android.common.session.WorkoutSet
+import com.everlog.android.workoutbuilder.data.ExerciseRef
+import com.everlog.android.workoutbuilder.data.WorkoutBuilderIds
+import com.everlog.android.workoutbuilder.data.SetMode
+import com.everlog.android.workoutbuilder.data.WorkoutBlock
+import com.everlog.android.workoutbuilder.data.WorkoutExercise
+import com.everlog.android.workoutbuilder.data.WorkoutRound
+import com.everlog.android.workoutbuilder.data.WorkoutSet
 import com.everlog.android.template.data.session.DefaultTimeSeconds
 import com.google.common.truth.Truth.assertThat
 import org.junit.Test
@@ -26,7 +26,7 @@ class TemplateSessionRulesTest {
     fun `a picked exercise starts with three sets of ten`() {
         val picked = ELExerciseGroup(uuid = "g", type = "SINGLE", exercises = mutableListOf(ELRoutineExercise.buildRoutineExercise(bench)))
 
-        val block = emptyList<WorkoutBlock>().addTemplateGroups(listOf(picked), SessionIds()).single()
+        val block = emptyList<WorkoutBlock>().addTemplateGroups(listOf(picked), WorkoutBuilderIds()).single()
 
         assertThat(block.rounds.map { it.sets }).containsExactly(
             listOf(WorkoutSet(reps = 10)),
@@ -45,7 +45,7 @@ class TemplateSessionRulesTest {
             exercises = mutableListOf(ELRoutineExercise.buildRoutineExercise(fly), ELRoutineExercise.buildRoutineExercise(raise)),
         )
 
-        val blocks = existing.addTemplateGroups(listOf(picked), SessionIds(start = 100))
+        val blocks = existing.addTemplateGroups(listOf(picked), WorkoutBuilderIds(start = 100))
 
         assertThat(blocks.first()).isEqualTo(existing.single())
         assertThat(blocks.last().rounds.map { round -> round.sets.map { it.reps } }).containsExactly(listOf(10, 10), listOf(10, 10), listOf(10, 10))
@@ -57,7 +57,7 @@ class TemplateSessionRulesTest {
             ELRoutineExercise("item", bench, mutableListOf(ELSet(requiredTimeSeconds = 60))),
         ))
 
-        val block = emptyList<WorkoutBlock>().addTemplateGroups(listOf(picked), SessionIds()).single()
+        val block = emptyList<WorkoutBlock>().addTemplateGroups(listOf(picked), WorkoutBuilderIds()).single()
 
         assertThat(block.rounds.map { it.sets }).containsExactly(listOf(WorkoutSet(mode = SetMode.Time, timeSeconds = 60)))
     }
@@ -140,7 +140,7 @@ class TemplateSessionRulesTest {
     fun `picked singles become one group where the first was, their sets lined up by copying the shorter one's last`() {
         val blocks = listOf(single(1, benchItem, 10, 8, 8), single(2, squatItem, 5), single(3, flyItem, 15, 12))
 
-        val grouped = blocks.groupExercises(listOf(ExerciseRef(3, 0), ExerciseRef(1, 0)), ELSetType.SUPER, SessionIds(100))
+        val grouped = blocks.groupExercises(listOf(ExerciseRef(3, 0), ExerciseRef(1, 0)), ELSetType.SUPER, WorkoutBuilderIds(100))
 
         assertThat(grouped.shape()).containsExactly("SUPER" to listOf("bench-item", "fly-item"), "SINGLE" to listOf("squat-item")).inOrder()
         assertThat(grouped[0].rounds.map { round -> round.sets.map { it.reps } })
@@ -153,7 +153,7 @@ class TemplateSessionRulesTest {
     fun `an exercise picked out of a superset leaves the other as a single`() {
         val blocks = listOf(superset(1, flyItem, raiseItem, rounds = 2), single(2, squatItem, 5, 5))
 
-        val grouped = blocks.groupExercises(listOf(ExerciseRef(1, 1), ExerciseRef(2, 0)), ELSetType.SUPER, SessionIds(100))
+        val grouped = blocks.groupExercises(listOf(ExerciseRef(1, 1), ExerciseRef(2, 0)), ELSetType.SUPER, WorkoutBuilderIds(100))
 
         assertThat(grouped.shape()).containsExactly("SUPER" to listOf("raise-item", "squat-item"), "SINGLE" to listOf("fly-item")).inOrder()
     }
@@ -162,8 +162,8 @@ class TemplateSessionRulesTest {
     fun `picking the whole of one block only changes its type`() {
         val blocks = listOf(superset(1, flyItem, raiseItem, rounds = 2), single(2, benchItem, 8))
 
-        val changed = blocks.groupExercises(listOf(ExerciseRef(1, 0), ExerciseRef(1, 1)), ELSetType.CIRCUIT, SessionIds(100))
-        val dropped = blocks.groupExercises(listOf(ExerciseRef(2, 0)), ELSetType.DROP, SessionIds(100))
+        val changed = blocks.groupExercises(listOf(ExerciseRef(1, 0), ExerciseRef(1, 1)), ELSetType.CIRCUIT, WorkoutBuilderIds(100))
+        val dropped = blocks.groupExercises(listOf(ExerciseRef(2, 0)), ELSetType.DROP, WorkoutBuilderIds(100))
 
         assertThat(changed[0]).isEqualTo(blocks[0].copy(type = "CIRCUIT"))
         assertThat(dropped[1]).isEqualTo(blocks[1].copy(type = "DROP"))
@@ -173,8 +173,8 @@ class TemplateSessionRulesTest {
     fun `ungrouping takes exercises out as singles right after their group, which keeps the rest`() {
         val blocks = listOf(superset(1, flyItem, raiseItem, rounds = 2), single(2, squatItem, 5))
 
-        val one = blocks.ungroupExercises(listOf(ExerciseRef(1, 0)), SessionIds(100))
-        val both = blocks.ungroupExercises(listOf(ExerciseRef(1, 0), ExerciseRef(1, 1)), SessionIds(100))
+        val one = blocks.ungroupExercises(listOf(ExerciseRef(1, 0)), WorkoutBuilderIds(100))
+        val both = blocks.ungroupExercises(listOf(ExerciseRef(1, 0), ExerciseRef(1, 1)), WorkoutBuilderIds(100))
 
         assertThat(one.shape()).containsExactly(
             "SINGLE" to listOf("raise-item"), "SINGLE" to listOf("fly-item"), "SINGLE" to listOf("squat-item"),
@@ -183,7 +183,7 @@ class TemplateSessionRulesTest {
         assertThat(both.shape()).containsExactly(
             "SINGLE" to listOf("fly-item"), "SINGLE" to listOf("raise-item"), "SINGLE" to listOf("squat-item"),
         ).inOrder()
-        assertThat(blocks.ungroupExercises(listOf(ExerciseRef(2, 0)), SessionIds(100))).isEqualTo(blocks)
+        assertThat(blocks.ungroupExercises(listOf(ExerciseRef(2, 0)), WorkoutBuilderIds(100))).isEqualTo(blocks)
     }
 
     private fun block(id: Long, sets: List<List<WorkoutSet>>) = WorkoutBlock(

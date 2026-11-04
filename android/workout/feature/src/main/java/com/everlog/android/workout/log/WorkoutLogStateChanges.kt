@@ -1,23 +1,23 @@
 package com.everlog.android.workout.log
 
 import com.everlog.android.common.data.model.workout.ELWorkout
-import com.everlog.android.common.session.SessionIds
-import com.everlog.android.common.session.SetRef
-import com.everlog.android.common.session.ValueField
-import com.everlog.android.common.session.WorkoutBlock
-import com.everlog.android.common.session.nextOpenAfter
-import com.everlog.android.common.session.refs
-import com.everlog.android.common.session.set
-import com.everlog.android.common.session.setValue
-import com.everlog.android.common.session.toSessionBlocks
-import com.everlog.android.common.sessionui.exercisetable.CellFocus
-import com.everlog.android.common.sessionui.exercisetable.countField
+import com.everlog.android.workoutbuilder.data.WorkoutBuilderIds
+import com.everlog.android.workoutbuilder.data.SetRef
+import com.everlog.android.workoutbuilder.data.ValueField
+import com.everlog.android.workoutbuilder.data.WorkoutBlock
+import com.everlog.android.workoutbuilder.data.nextOpenAfter
+import com.everlog.android.workoutbuilder.data.refs
+import com.everlog.android.workoutbuilder.data.set
+import com.everlog.android.workoutbuilder.data.setValue
+import com.everlog.android.workoutbuilder.data.toBuilderBlocks
+import com.everlog.android.workoutbuilder.ui.exercisetable.CellFocus
+import com.everlog.android.workoutbuilder.ui.exercisetable.countField
 import com.everlog.android.common.kotlin.format.storedWeight
 
 // How the workout screen's state changes, as plain functions the view-model builds its events from
 
-internal fun initialWorkoutLogState(workout: ELWorkout, ids: SessionIds, settings: WorkoutLogSettings, now: Long): WorkoutLogState {
-    val blocks = workout.toSessionBlocks(ids)
+internal fun initialWorkoutLogState(workout: ELWorkout, ids: WorkoutBuilderIds, settings: WorkoutLogSettings, now: Long): WorkoutLogState {
+    val blocks = workout.toBuilderBlocks(ids)
     return WorkoutLogState(
         name = workout.getName().orEmpty(),
         startedAt = workout.createdDate,

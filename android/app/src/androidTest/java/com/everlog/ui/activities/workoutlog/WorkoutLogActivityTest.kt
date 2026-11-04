@@ -30,7 +30,7 @@ import com.everlog.android.common.data.model.exercise.ELRoutineExercise
 import com.everlog.android.common.data.model.set.ELSet
 import com.everlog.android.common.data.model.set.ELSetType
 import com.everlog.android.common.data.model.workout.ELWorkout
-import com.everlog.android.common.sessionui.exercisetable.ExerciseTableTags
+import com.everlog.android.workoutbuilder.ui.exercisetable.ExerciseTableTags
 import com.everlog.android.exercise.details.ExerciseDetailsActivity
 import com.everlog.android.exercise.picker.ExercisePickerActivity
 import com.everlog.android.workout.data.WorkoutManager

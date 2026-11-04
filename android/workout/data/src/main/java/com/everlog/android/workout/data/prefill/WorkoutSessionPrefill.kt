@@ -1,11 +1,11 @@
 package com.everlog.android.workout.data.prefill
 
 import com.everlog.android.common.data.model.set.ELSet
-import com.everlog.android.common.session.ValueField
-import com.everlog.android.common.session.WorkoutBlock
-import com.everlog.android.common.session.WorkoutSet
-import com.everlog.android.common.session.toELSet
-import com.everlog.android.common.session.toSessionSet
+import com.everlog.android.workoutbuilder.data.ValueField
+import com.everlog.android.workoutbuilder.data.WorkoutBlock
+import com.everlog.android.workoutbuilder.data.WorkoutSet
+import com.everlog.android.workoutbuilder.data.toELSet
+import com.everlog.android.workoutbuilder.data.toBuilderSet
 import com.everlog.android.settings.data.UserSettings
 import com.everlog.android.workout.data.prefill.BaseWorkoutPrefillController.PrefillSource
 
@@ -38,7 +38,7 @@ class RealWorkoutSetPrefill(private val settings: UserSettings) : WorkoutSetPref
     private fun WorkoutSet.throughELSet(fill: (ELSet) -> Unit): WorkoutSet {
         val set = toELSet()
         fill(set)
-        return set.toSessionSet()
+        return set.toBuilderSet()
     }
 }
 
@@ -100,7 +100,7 @@ fun WorkoutBlock.withSuggestionsRefilled(sources: Map<String, PrefillSource>, pr
         })
     })
 
-fun PrefillSource.lastSets(): List<WorkoutSet> = lastSession?.exercise?.sets.orEmpty().map { it.toSessionSet() }
+fun PrefillSource.lastSets(): List<WorkoutSet> = lastSession?.exercise?.sets.orEmpty().map { it.toBuilderSet() }
 
 // A value the history changed is the set's suggestion
 private fun WorkoutSet.suggesting(filled: WorkoutSet): WorkoutSet = filled.copy(
