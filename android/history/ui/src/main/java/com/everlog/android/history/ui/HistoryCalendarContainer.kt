@@ -1,4 +1,4 @@
-package com.everlog.android.history.workouts
+package com.everlog.android.history.ui
 
 import com.everlog.android.common.data.model.workout.ELWorkout
 import org.threeten.bp.LocalDate

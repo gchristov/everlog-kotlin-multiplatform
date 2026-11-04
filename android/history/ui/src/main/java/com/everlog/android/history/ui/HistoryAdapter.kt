@@ -1,4 +1,4 @@
-package com.everlog.android.history.workouts
+package com.everlog.android.history.ui
 
 import android.view.LayoutInflater
 import android.view.View
@@ -13,8 +13,7 @@ import com.everlog.android.common.mvp.list.BaseTimelineViewHolder.OnTimelineList
 import com.everlog.android.common.mvp.util.ViewUtils.dpToPx
 import com.everlog.android.common.mvp.util.ViewUtils.getRawDimension
 import com.everlog.android.common.mvp.util.ViewUtils.setMargins
-import com.everlog.android.history.R
-import com.everlog.android.history.databinding.RowHistoryBinding
+import com.everlog.android.history.ui.databinding.RowHistoryBinding
 import com.everlog.android.settings.data.UserSettings
 import java.util.*
 

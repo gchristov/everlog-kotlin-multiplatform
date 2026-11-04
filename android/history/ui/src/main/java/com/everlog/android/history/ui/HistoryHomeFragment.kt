@@ -1,4 +1,4 @@
-package com.everlog.android.history.workouts
+package com.everlog.android.history.ui
 
 import android.graphics.PorterDuff
 import android.view.LayoutInflater
@@ -17,11 +17,7 @@ import com.everlog.android.common.mvp.activity.BaseActivity
 import com.everlog.android.common.mvp.fragment.BaseFragmentMvpView
 import com.everlog.android.common.mvp.fragment.BaseFragmentPresenter
 import com.everlog.android.common.mvp.fragment.BaseTabFragment
-import com.everlog.android.history.HistoryGraph
-import com.everlog.android.history.HistoryScreenNames
-import com.everlog.android.history.R
-import com.everlog.android.history.databinding.FragmentHistoryHomeBinding
-import com.everlog.android.history.workouts.CalendarAdapter
+import com.everlog.android.history.ui.databinding.FragmentHistoryHomeBinding
 import java.time.YearMonth
 import java.util.*
 import org.threeten.bp.LocalDate

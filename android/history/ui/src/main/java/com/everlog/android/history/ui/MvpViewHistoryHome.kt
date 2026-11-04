@@ -1,4 +1,4 @@
-package com.everlog.android.history.workouts
+package com.everlog.android.history.ui
 
 import com.everlog.android.common.mvp.fragment.BaseFragmentMvpView
 import java.util.*
