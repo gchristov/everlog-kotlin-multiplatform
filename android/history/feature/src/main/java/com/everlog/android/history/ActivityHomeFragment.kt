@@ -8,7 +8,7 @@ import com.everlog.android.common.mvp.fragment.BaseFragmentPresenter
 import com.everlog.android.common.mvp.fragment.BaseTabFragment
 import com.everlog.android.history.R
 import com.everlog.android.history.databinding.FragmentHomeActivityBinding
-import com.everlog.android.history.workouts.HistoryHomeFragment
+import com.everlog.android.history.ui.HistoryHomeFragment
 import com.everlog.android.statistics.ui.StatisticsHomeFragment
 
 class ActivityHomeFragment : BaseTabFragment(), MvpViewActivityHome {
@@ -36,7 +36,7 @@ class ActivityHomeFragment : BaseTabFragment(), MvpViewActivityHome {
     }
 
     override fun getAnalyticsScreenName(): String {
-        return HistoryScreenNames.ACTIVITY
+        return ActivityScreenNames.ACTIVITY
     }
 
     override fun getTitleResId(): Int {

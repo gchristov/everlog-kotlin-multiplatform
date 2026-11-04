@@ -26,7 +26,7 @@ A feature has only the modules it has code for: a `data` module once it has data
 | `workout-builder` | No `feature` module | The exercise table and edit list the workout screen and the template editor show (`exercisetable`) | The workout being built (blocks, rounds, sets), its mapping to and from `ELWorkout` and the rules that edit it |
 | `template` | The template editor, template details, the start-a-workout screen, the template and set type pickers |  | `RoutineRepository`, the template load and save use cases, the routine stores, `OngoingPlanRepository` |
 | `plan` | Plan create, details and week days, the cover picker, the congratulations screen |  | `PlanProgress` (the ongoing plan), the plan stores and models, the cover images API, `PlanBroadcasts` |
-| `history` | The Activity tab, with the workouts calendar and list |  | No `data` module: the tab reads `workout:data` |
+| `history` | The Activity tab, which shows the statistics and history pages | The Activity tab's history page: the workouts calendar and list | No `data` module: the history reads `workout:data` |
 | `statistics` | No `feature` module | The Activity tab's statistics page and the stats the Week tab shows (`UserStatsController`) | No `data` module: the stats read `workout:data` |
 | `pro` | The Pro screen, `BillingManager` |  | The Pro models |
 | `settings` | Settings, the integration screen |  | The user's settings (`UserSettings`, `RealUserSettings`), the integration store and model |

@@ -83,6 +83,7 @@ dependencies {
     implementation(projects.android.auth.feature)
     implementation(projects.android.exercise.feature)
     implementation(projects.android.history.feature)
+    implementation(projects.android.history.ui)
     implementation(projects.android.onboarding.feature)
     implementation(projects.android.plan.feature)
     implementation(projects.android.pro.feature)

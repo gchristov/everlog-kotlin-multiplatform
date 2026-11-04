@@ -1,4 +1,4 @@
-package com.everlog.android.history.workouts
+package com.everlog.android.history.ui
 
 import com.ahamed.multiviewadapter.DataListManager
 import com.ahamed.multiviewadapter.RecyclerAdapter
@@ -8,8 +8,6 @@ import com.everlog.android.common.mvp.fragment.BaseFragmentPresenter
 import com.everlog.android.common.mvp.list.BaseTimelineViewHolder
 import com.everlog.android.common.navigation.Navigator
 import com.everlog.android.common.navigation.WorkoutDetails
-import com.everlog.android.history.R
-import com.everlog.android.history.workouts.HistoryAdapter
 import com.everlog.android.settings.data.UserSettings
 import com.everlog.android.workout.data.store.ELColStoreWorkoutsLoadedEvent
 import com.everlog.android.workout.data.store.WorkoutStores
