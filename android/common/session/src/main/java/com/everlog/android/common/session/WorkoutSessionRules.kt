@@ -72,7 +72,7 @@ data class Completion(
 /**
  * Completes the current set and moves on. In a superset or circuit, a round with exercises still to do goes back
  * to the earliest of them, without rest. Once the round is done it moves on to the next set not done, and rest
- * starts, unless that was the last set not done in the workout.
+ * starts, even after the last set not done, as the next set is often added during it.
  */
 fun List<WorkoutBlock>.completeCurrent(current: SetRef, now: Long): Completion {
     val blocks = updateSet(current) { it.completed(now) }
@@ -81,8 +81,7 @@ fun List<WorkoutBlock>.completeCurrent(current: SetRef, now: Long): Completion {
     if (leftInRound != null) {
         return Completion(blocks, SetRef(current.blockId, current.roundId, leftInRound), startsRest = false)
     }
-    val next = blocks.nextOpenAfter(current)
-    return Completion(blocks, next, startsRest = next != null)
+    return Completion(blocks, blocks.nextOpenAfter(current), startsRest = true)
 }
 
 /**
@@ -96,7 +95,7 @@ fun List<WorkoutBlock>.completeSet(ref: SetRef, current: SetRef?, now: Long): Co
     val blocks = updateSet(ref) { it.completed(now) }
     val next = current ?: blocks.nextOpenAfter(ref)
     val roundDone = blocks.round(ref.blockId, ref.roundId)?.done == true
-    return Completion(blocks, next, startsRest = roundDone && next != null)
+    return Completion(blocks, next, startsRest = roundDone)
 }
 
 /**
