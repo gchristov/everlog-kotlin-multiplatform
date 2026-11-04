@@ -6,6 +6,7 @@ import com.everlog.android.common.data.model.workout.ELWorkout
 import com.everlog.android.common.datatest.at
 import com.everlog.android.common.datatest.loggedSet
 import com.everlog.android.common.datatest.workout
+import com.everlog.android.common.kotlin.Load
 import com.everlog.android.common.kotlin.WeightUnit
 import com.everlog.android.common.test.FakeCoroutineDispatcher
 import com.everlog.android.settings.testfixtures.FakeUserSettings
@@ -13,6 +14,8 @@ import com.everlog.android.workout.data.WorkoutRepository
 import com.google.common.truth.Truth.assertThat
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.async
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.yield
 import org.junit.Test
@@ -81,5 +84,7 @@ class RealLoadPrefillSourcesUseCaseTest {
         }
 
         override suspend fun exerciseLastDone(workouts: Int): Either<Throwable, Map<String, Long>> = Either.Right(emptyMap())
+
+        override fun recentWorkouts(months: Int): Flow<Load<List<ELWorkout>>> = flowOf(Load.Ready(history))
     }
 }
