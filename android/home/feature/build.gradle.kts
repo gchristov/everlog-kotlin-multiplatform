@@ -3,7 +3,7 @@ plugins {
 }
 
 android {
-    namespace = "com.everlog.android.history"
+    namespace = "com.everlog.android.home"
     buildFeatures {
         viewBinding = true
     }
