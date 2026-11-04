@@ -16,6 +16,4 @@ dependencies {
     implementation(libs.rxbinding)
     implementation(libs.timber)
     implementation(libs.shapeOfView)
-    testImplementation(projects.android.pro.testFixtures)
-    androidTestImplementation(projects.android.pro.testFixtures)
 }
