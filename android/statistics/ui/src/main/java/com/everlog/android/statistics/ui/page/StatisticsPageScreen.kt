@@ -29,6 +29,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.everlog.android.common.compose.elements.AppBlurBox
 import com.everlog.android.common.compose.elements.AppChip
 import com.everlog.android.common.compose.elements.AppChipStyle
 import com.everlog.android.common.compose.elements.AppMenu
@@ -71,26 +72,35 @@ internal fun StatisticsPageContent(
             snackbar.currentSnackbarData?.dismiss()
         }
     }
-    Box(modifier = Modifier.fillMaxSize()) {
-        StatisticsPageBody(state = state, onPeriodPicked = onPeriodPicked, onFeedback = onFeedback)
-        AppSnackbarHost(
-            hostState = snackbar,
-            modifier = Modifier.align(Alignment.BottomCenter).navigationBarsPadding().padding(bottom = PageSizes.SnackbarBottom).testTag(StatisticsPageTags.Failed),
-        )
+    // The page scrolls behind the picker, which blurs it
+    AppBlurBox(
+        modifier = Modifier.fillMaxSize(),
+        overlay = {
+            PeriodPicker(
+                period = state.period,
+                onPicked = onPeriodPicked,
+                modifier = Modifier.align(Alignment.TopEnd).padding(horizontal = Theme.spacing.large),
+            )
+            AppSnackbarHost(
+                hostState = snackbar,
+                modifier = Modifier.align(Alignment.BottomCenter).navigationBarsPadding().padding(bottom = PageSizes.SnackbarBottom).testTag(StatisticsPageTags.Failed),
+            )
+        },
+    ) {
+        StatisticsPageBody(state = state, onFeedback = onFeedback)
     }
 }
 
 @Composable
-private fun StatisticsPageBody(state: StatisticsPageState, onPeriodPicked: (StatsPeriod) -> Unit, onFeedback: () -> Unit) {
+private fun StatisticsPageBody(state: StatisticsPageState, onFeedback: () -> Unit) {
     Column(
         modifier = Modifier
             .fillMaxSize()
             .verticalScroll(rememberScrollState())
             .padding(horizontal = Theme.spacing.large)
-            .padding(top = Theme.spacing.large, bottom = PageSizes.BottomPadding),
+            .padding(top = PageSizes.TopPadding, bottom = PageSizes.BottomPadding),
         verticalArrangement = Arrangement.spacedBy(Theme.spacing.large),
     ) {
-        PeriodPicker(period = state.period, onPicked = onPeriodPicked, modifier = Modifier.align(Alignment.End))
         if (state.loading) {
             StatisticsLoading()
         } else {
@@ -115,6 +125,7 @@ private fun PeriodPicker(period: StatsPeriod, onPicked: (StatsPeriod) -> Unit, m
             onClick = { open = true },
             style = AppChipStyle.Action,
             dropdown = true,
+            floating = true,
             modifier = Modifier.testTag(StatisticsPageTags.Period),
         )
         AppMenu(
@@ -201,6 +212,8 @@ private val StatsPeriod.title: Int
 private const val SummaryRows = 3
 
 private object PageSizes {
+    // Room for the period picker above the page
+    val TopPadding = 64.dp
     // Room for Home's start workout button over the end of the page
     val BottomPadding = 180.dp
     // Above Home's tab bar and its start workout button, which the page runs under
