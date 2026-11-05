@@ -69,7 +69,8 @@ class ActivityTabActivityTest {
 
         // The tab chip, not the hidden title the tab also keeps
         onView(allOf(withText("History"), isDisplayed())).perform(click())
-        compose.waitUntil("the history to load", LoadMillis) { exists(HistoryPageTags.Calendar) || exists(HistoryPageTags.Example) }
+        // In whichever view it opens on: the list, unless the calendar was picked last time
+        compose.waitUntil("the history to load", LoadMillis) { exists(HistoryPageTags.List) || exists(HistoryPageTags.Calendar) || exists(HistoryPageTags.Example) }
         compose.waitUntil("the history page to show", WaitMillis) { displayed(HistoryPageTags.View) }
 
         // The week's days open the statistics, though the history was the page shown last
