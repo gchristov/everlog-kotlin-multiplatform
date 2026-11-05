@@ -61,7 +61,7 @@ class ExerciseInfoFragment(exercise: ELExercise, stats: ExerciseStatsController.
     }
 
     override fun getAnalyticsScreenName(): String {
-        return ExerciseScreenNames.INFO
+        return ExerciseScreenNames.INFO_V2
     }
 
     override fun getTabPresenter(): BasePresenterExerciseTab<*>? {

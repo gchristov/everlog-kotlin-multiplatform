@@ -38,6 +38,7 @@ You'll also need `android/app/src/debug/google-services.json` / `android/app/src
 There's no `bq`/`gcloud` CLI installed. Query the GA4 export (`everlog-prod.analytics_173607556.events_*`) and Crashlytics export (`everlog-prod.firebase_crashlytics`) with the local helper instead. It runs in Docker with a gitignored service-account key from `tools/bigquery/`:
 - `./tools/bigquery/bq_query.sh bigquery-credentials-prod.json --query "SELECT ..."`, or pass a `.sql` file. Add `--output tools/bigquery/<name>.csv` to save results. CSVs there are gitignored because they contain user PII. `--dry-run` and `--max-gb N` limit the cost.
 - The KPI dashboard (Roadmap metrics for real new users, the paid test read) is built by `tools/monitoring`: `./tools/monitoring/refresh.sh`, then publish `tools/monitoring/out/dashboard.html` to the artifact URL in `tools/monitoring/README.md`. Its SQL holds the canonical real-user filters (robots, sideloads, the owner's account); reuse them in ad hoc queries.
+- A screen rebuilt in Compose logs its screen view as `<old name>_v2` (e.g. `screen_week_v2`), so its views tell apart from the old screen's: count both names in a query about that screen. A new Compose screen replacing an old one gets a `_v2` name the same way. The list is in `tools/monitoring/README.md`'s Definitions.
 
 ### Versioning
 

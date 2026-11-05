@@ -65,7 +65,7 @@ class StatisticsPageFragment : BaseTabFragment() {
     }
 
     override fun getAnalyticsScreenName(): String {
-        return StatisticsScreenNames.STATISTICS
+        return StatisticsScreenNames.STATISTICS_V2
     }
 
     override fun getTitleResId(): Int {
