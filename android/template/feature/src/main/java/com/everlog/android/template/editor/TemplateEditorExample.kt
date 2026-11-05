@@ -1,7 +1,6 @@
 package com.everlog.android.template.editor
 
 import com.everlog.android.common.design.R as DesignR
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
@@ -10,21 +9,17 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.CompositingStrategy
-import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.semantics.clearAndSetSemantics
+import com.everlog.android.common.compose.elements.AppExample
+import com.everlog.android.common.compose.elements.AppExampleLabel
 import com.everlog.android.common.compose.theme.Theme
 import com.everlog.android.common.data.model.exercise.ELExercise
 import com.everlog.android.workoutbuilder.data.WorkoutBlock
 import com.everlog.android.workoutbuilder.data.WorkoutExercise
 import com.everlog.android.workoutbuilder.data.WorkoutRound
 import com.everlog.android.workoutbuilder.data.WorkoutSet
-import com.everlog.android.workoutbuilder.ui.exercisetable.ExampleLabel
-import com.everlog.android.workoutbuilder.ui.exercisetable.blockingTouches
 
-private const val ExampleAlpha = 0.35f
 
 /**
  * A template with no exercises: its details, then a faded example exercise under an EXAMPLE label, which can't be
@@ -43,17 +38,9 @@ internal fun TemplateEditorExample(state: TemplateEditorState, viewModel: Templa
     ) {
         TemplateDetails(state, viewModel)
         ExercisesHeader()
-        ExampleLabel(modifier = Modifier.padding(bottom = Theme.spacing.medium))
-        Box(modifier = Modifier.testTag(TemplateEditorTags.Example)) {
-            // Faded as one layer, so overlapping parts don't show through each other
-            Column(
-                modifier = Modifier
-                    .graphicsLayer {
-                        alpha = ExampleAlpha
-                        compositingStrategy = CompositingStrategy.Offscreen
-                    }
-                    .clearAndSetSemantics {},
-            ) {
+        AppExampleLabel(modifier = Modifier.padding(bottom = Theme.spacing.medium))
+        AppExample(modifier = Modifier.testTag(TemplateEditorTags.Example)) {
+            Column {
                 example.forEach { block ->
                     TemplateExercise(
                         index = -1,
@@ -69,7 +56,6 @@ internal fun TemplateEditorExample(state: TemplateEditorState, viewModel: Templa
                     ExerciseActions(index = -1, onAddSet = {}, onJoin = {}, onSplit = null)
                 }
             }
-            Box(modifier = Modifier.matchParentSize().blockingTouches())
         }
     }
 }
