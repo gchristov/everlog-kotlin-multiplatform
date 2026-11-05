@@ -1,6 +1,7 @@
 package com.everlog.android.history.ui
 
 import com.everlog.android.common.navigation.Navigator
+import com.everlog.android.history.data.HistoryPreferences
 import com.everlog.android.settings.data.UserSettings
 import com.everlog.android.workout.data.WorkoutRepository
 import dev.zacsweers.metro.AppScope
@@ -14,4 +15,6 @@ interface HistoryGraph {
     val navigator: Navigator
 
     val workoutRepository: WorkoutRepository
+
+    val historyPreferences: HistoryPreferences
 }

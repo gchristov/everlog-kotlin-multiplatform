@@ -84,6 +84,7 @@ dependencies {
     implementation(projects.android.exercise.feature)
     implementation(projects.android.home.data)
     implementation(projects.android.home.feature)
+    implementation(projects.android.history.data)
     implementation(projects.android.history.ui)
     implementation(projects.android.onboarding.feature)
     implementation(projects.android.plan.feature)

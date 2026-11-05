@@ -18,6 +18,8 @@ import com.everlog.android.common.data.model.ELRoutine
 import com.everlog.android.common.data.model.workout.ELWorkout
 import com.everlog.android.common.kotlin.AppContext
 import com.everlog.android.common.kotlin.Load
+import com.everlog.android.history.data.HistoryPreferences
+import com.everlog.android.history.data.HistoryView
 import com.everlog.android.settings.testfixtures.FakeUserSettings
 import com.everlog.android.workout.data.WorkoutHistory
 import com.everlog.android.workout.testfixtures.FakeWorkoutRepository
@@ -59,6 +61,17 @@ class HistoryPageScenarioTest {
     private val today = LocalDate.now()
     private val workouts = FakeWorkoutRepository()
     private val opened = mutableListOf<String>()
+
+    // The journeys start on the calendar, as picked last time; the view-model's tests cover opening on the list
+    private val preferences = object : HistoryPreferences {
+        var saved = HistoryView.Calendar
+
+        override fun view() = saved
+
+        override fun setView(view: HistoryView) {
+            saved = view
+        }
+    }
 
     @Test
     fun pickingDaysOnTheCalendar() {
@@ -172,7 +185,7 @@ class HistoryPageScenarioTest {
     }
 
     private fun show() {
-        val viewModel = HistoryPageViewModel(Dispatchers.Main, workouts, FakeUserSettings(), listOf("Legs", "Push", "Pull")) { today }
+        val viewModel = HistoryPageViewModel(Dispatchers.Main, workouts, FakeUserSettings(), preferences, listOf("Legs", "Push", "Pull")) { today }
         compose.setContent {
             Theme {
                 HistoryPageScreen(viewModel = viewModel, onWorkout = { opened += it.getName().orEmpty() })

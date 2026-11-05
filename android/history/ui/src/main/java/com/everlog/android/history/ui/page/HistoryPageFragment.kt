@@ -34,6 +34,7 @@ class HistoryPageFragment : BaseTabFragment() {
                     dispatcher = Dispatchers.Main,
                     workouts = graph.workoutRepository,
                     settings = graph.userSettings,
+                    preferences = graph.historyPreferences,
                     exampleNames = ExampleNames.map(::getString),
                     today = { LocalDate.now() },
                 )

@@ -7,5 +7,6 @@ android {
 }
 
 dependencies {
+    implementation(projects.android.common.persistence)
     testImplementation(projects.android.common.dataTest)
 }
