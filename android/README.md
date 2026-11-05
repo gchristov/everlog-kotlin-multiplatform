@@ -28,7 +28,7 @@ A feature has only the modules it has code for: a `data` module once it has data
 | `template` | The template editor, template details, the start-a-workout screen, the template and set type pickers |  | `RoutineRepository`, the template load and save use cases, the routine stores, `OngoingPlanRepository` |
 | `plan` | Plan create, details and week days, the cover picker, the congratulations screen | The plan day row (`PlanDayAdapter`) that plan details and the Week tab show, the Pro gate and lock it uses, `PlanAnalytics` | `PlanProgress` (the ongoing plan) and its rules (`OngoingPlanRules`: the current week, the next step, skipping and completing days), the plan stores and models, the cover images API, `PlanBroadcasts` |
 | `history` | No `feature` module | The Activity tab's history page: the workouts calendar and list | No `data` module: the history reads `workout:data` |
-| `statistics` | No `feature` module | The Activity tab's statistics page and the stats the Week tab shows (`UserStatsController`) | No `data` module: the stats read `workout:data` |
+| `statistics` | No `feature` module | The Activity tab's statistics page and the stats the Week tab shows (`UserStatsController`) | A period's numbers and chart points (`userStats`) for the Compose statistics page |
 | `pro` | The Pro screen, `BillingManager` |  | The Pro models |
 | `settings` | Settings, the integration screen |  | The user's settings (`UserSettings`, `RealUserSettings`), the integration store and model |
 | `showcase` | The design system showcase (debug builds only) |  | No `data` module |

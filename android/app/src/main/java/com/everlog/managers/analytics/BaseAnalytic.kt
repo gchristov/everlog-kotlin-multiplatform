@@ -245,7 +245,8 @@ abstract class BaseAnalytic : Analytic {
 
     override fun statisticsRangeModified(rangeType: RangeType) {
         val map = HashMap<String, Any?>()
-        map[AnalyticsConstants.PROPERTY_TYPE] = rangeType
+        // By name: analytics drops a parameter that isn't text or a number
+        map[AnalyticsConstants.PROPERTY_TYPE] = rangeType.name
         logEvent(AnalyticsConstants.EVENT_STATISTICS_RANGE_MODIFIED, map)
     }
 
