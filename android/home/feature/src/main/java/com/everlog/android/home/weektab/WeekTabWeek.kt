@@ -16,6 +16,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -191,13 +192,23 @@ private fun StatSurface(onClick: () -> Unit, modifier: Modifier = Modifier, cont
     )
 }
 
+// The section header and stat cards the week will show, at their sizes, running off the screen like the real row
 @Composable
-internal fun WeekStatsLoading(modifier: Modifier = Modifier) {
+internal fun WeekStatsLoading(contentPadding: PaddingValues) {
     val brush = rememberShimmerBrush()
-    Column(modifier = modifier.testTag(WeekTabTags.Loading), verticalArrangement = Arrangement.spacedBy(Theme.spacing.large)) {
-        Box(modifier = Modifier.width(WeekTabSizes.LoadingHeaderWidth).height(WeekTabSizes.LoadingHeaderHeight).background(brush, DayShape))
-        Row(horizontalArrangement = Arrangement.spacedBy(Theme.spacing.large)) {
-            repeat(2) {
+    Column(modifier = Modifier.testTag(WeekTabTags.Loading), verticalArrangement = Arrangement.spacedBy(Theme.spacing.large)) {
+        Box(
+            modifier = Modifier
+                .padding(contentPadding)
+                .width(WeekTabSizes.LoadingHeaderWidth)
+                .height(WeekTabSizes.LoadingHeaderHeight)
+                .background(brush, DayShape),
+        )
+        Row(
+            modifier = Modifier.horizontalScroll(rememberScrollState(), enabled = false).padding(contentPadding),
+            horizontalArrangement = Arrangement.spacedBy(Theme.spacing.large),
+        ) {
+            repeat(LoadingCards) {
                 Box(
                     modifier = Modifier
                         .size(width = WeekTabSizes.StatCardWidth, height = WeekTabSizes.StatCardHeight)
@@ -218,18 +229,28 @@ internal fun EmptyWeekCard(today: LocalDate, onStart: () -> Unit, modifier: Modi
         shape = Theme.shapes.surface,
         shadowElevation = WeekTabSizes.CardElevation,
     ) {
-        Column(modifier = Modifier.padding(Theme.spacing.large), verticalArrangement = Arrangement.spacedBy(Theme.spacing.small)) {
+        Column(modifier = Modifier.padding(Theme.spacing.large)) {
             AppText(text = today.formatted().uppercase(), style = Theme.typography.small, color = onAccent)
-            AppText(text = stringResource(R.string.home_week_empty_title), style = Theme.typography.heading, color = onAccent)
-            AppText(text = stringResource(R.string.home_week_empty_subtitle), style = Theme.typography.body, color = onAccent)
+            AppText(
+                text = stringResource(R.string.home_week_empty_title),
+                style = Theme.typography.heading,
+                color = onAccent,
+                modifier = Modifier.padding(top = Theme.spacing.small),
+            )
+            AppText(
+                text = stringResource(R.string.home_week_empty_subtitle),
+                style = Theme.typography.body,
+                color = onAccent,
+                modifier = Modifier.padding(top = Theme.spacing.extraSmall),
+            )
             Surface(
                 onClick = onStart,
-                modifier = Modifier.fillMaxWidth().padding(top = Theme.spacing.small),
+                modifier = Modifier.fillMaxWidth().padding(top = Theme.spacing.large),
                 color = Theme.backgrounds.surface,
                 shape = Theme.shapes.button,
             ) {
                 Row(
-                    modifier = Modifier.padding(Theme.spacing.medium),
+                    modifier = Modifier.heightIn(min = Theme.sizes.button).padding(horizontal = Theme.spacing.medium),
                     horizontalArrangement = Arrangement.Center,
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
@@ -268,3 +289,6 @@ private val DayShape = RoundedCornerShape(WeekTabSizes.DayCorner)
 private const val GoalAnimationMillis = 2000
 
 private const val GoalTrackAlpha = 0.45f
+
+// One more than fit on a phone, so the row reads as running on like the cards
+private const val LoadingCards = 3

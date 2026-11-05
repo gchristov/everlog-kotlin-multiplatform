@@ -60,7 +60,7 @@ internal fun WeekTabContent(
             }
             WeekDays(state = state, onClick = actions.showStatistics, modifier = margin)
             if (state.loading) {
-                WeekStatsLoading(modifier = margin)
+                WeekStatsLoading(contentPadding = PaddingValues(horizontal = Theme.spacing.large))
             } else {
                 AppSectionHeader(text = stringResource(DesignR.string.statistics_title), modifier = margin)
                 WeekStatCards(
@@ -90,6 +90,6 @@ internal object WeekTabSizes {
     val StartIcon = 24.dp
     val DayCorner = 4.dp
     val LoadingHeaderWidth = 120.dp
-    val LoadingHeaderHeight = 16.dp
+    val LoadingHeaderHeight = 20.dp
     val CardElevation = 2.dp
 }
