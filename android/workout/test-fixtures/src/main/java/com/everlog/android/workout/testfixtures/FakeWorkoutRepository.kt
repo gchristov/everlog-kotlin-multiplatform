@@ -3,12 +3,14 @@ package com.everlog.android.workout.testfixtures
 import arrow.core.Either
 import com.everlog.android.common.data.model.workout.ELWorkout
 import com.everlog.android.common.kotlin.Load
+import com.everlog.android.workout.data.WorkoutHistory
+import com.everlog.android.workout.data.WorkoutHistoryRead
 import com.everlog.android.workout.data.WorkoutRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 
 // Workouts set by the test: [recent] for any number of months, unless [synced] or a month count in [byMonths] has
-// its own. Each is Loading until the test says otherwise.
+// its own, and [history] for the paged read. Each is Loading until the test says otherwise.
 class FakeWorkoutRepository : WorkoutRepository {
     val recent = MutableStateFlow<Load<List<ELWorkout>>>(Load.Loading)
     var synced: MutableStateFlow<Load<List<ELWorkout>>>? = null
@@ -16,6 +18,17 @@ class FakeWorkoutRepository : WorkoutRepository {
 
     // How many reads of each month count have started, for a retry
     val reads = mutableMapOf<Int, Int>()
+
+    val history = FakeWorkoutHistoryRead()
+
+    // How many history reads have started, to tell a read dropped and started again
+    var historyReads = 0
+        private set
+
+    override fun history(pageSize: Int): WorkoutHistoryRead {
+        historyReads++
+        return history
+    }
 
     override fun syncedWorkouts(): Flow<Load<List<ELWorkout>>> = synced ?: recent
 
@@ -28,4 +41,16 @@ class FakeWorkoutRepository : WorkoutRepository {
         Either.Right(emptyList())
 
     override suspend fun exerciseLastDone(workouts: Int): Either<Throwable, Map<String, Long>> = Either.Right(emptyMap())
+}
+
+// The history as the test sets it, counting the pages asked for
+class FakeWorkoutHistoryRead : WorkoutHistoryRead {
+    override val loads = MutableStateFlow<Load<WorkoutHistory>>(Load.Loading)
+
+    var loadMoreCalls = 0
+        private set
+
+    override fun loadMore() {
+        loadMoreCalls++
+    }
 }

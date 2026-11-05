@@ -11,6 +11,7 @@ import com.everlog.android.datasync.SyncPlan
 import com.everlog.android.common.firebase.FirestoreFields
 import com.everlog.android.common.firebase.FirestorePaths
 import com.everlog.android.common.kotlin.Load
+import com.everlog.android.common.kotlin.map
 import com.everlog.android.common.kotlin.di.IoDispatcher
 import com.google.firebase.firestore.Query
 import dev.zacsweers.metro.AppScope
@@ -20,6 +21,7 @@ import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.flow.map
 
 interface WorkoutRepository {
     /**
@@ -33,6 +35,12 @@ interface WorkoutRepository {
      * for a screen showing the recent weeks. Empty without a signed-in user.
      */
     fun recentWorkouts(months: Int): Flow<Load<List<ELWorkout>>>
+
+    /**
+     * The user's whole history, newest first, a page at a time: for a list the user scrolls back through. Holds only
+     * the pages shown so far, so a screen drops the read when the user leaves it. Empty without a signed-in user.
+     */
+    fun history(pageSize: Int = HistoryPageSize): WorkoutHistoryRead
 
     /**
      * The user's workouts created from [from] until before [until], read once and in no particular order: for going
@@ -49,6 +57,7 @@ interface WorkoutRepository {
 
     companion object {
         const val RecentWorkouts = 30
+        const val HistoryPageSize = 50
     }
 }
 
@@ -72,6 +81,16 @@ class RealWorkoutRepository(
     override fun syncedWorkouts(): Flow<Load<List<ELWorkout>>> = workouts(Range.Last(syncMonths), complete = false)
 
     override fun recentWorkouts(months: Int): Flow<Load<List<ELWorkout>>> = workouts(Range.Last(months), complete = false)
+
+    override fun history(pageSize: Int): WorkoutHistoryRead {
+        val userId = session.user()?.id ?: return NoHistory
+        val pages = dataSync.pages(workoutsOf(userId), pageSize)
+        return object : WorkoutHistoryRead {
+            override val loads = pages.loads.map { load -> load.map { WorkoutHistory(it.items, it.loadingMore, it.endReached) } }
+
+            override fun loadMore() = pages.loadMore()
+        }
+    }
 
     override suspend fun workoutsCreatedBetween(from: Long, until: Long?): Either<Throwable, List<ELWorkout>> {
         val userId = session.user()?.id ?: return Either.Right(emptyList())
@@ -101,6 +120,12 @@ class RealWorkoutRepository(
             is Load.Unavailable -> Either.Left(load.error)
             Load.Loading -> error("Filtered out")
         }
+}
+
+private object NoHistory : WorkoutHistoryRead {
+    override val loads = flowOf(Load.Ready(WorkoutHistory(emptyList(), loadingMore = false, complete = true)))
+
+    override fun loadMore() = Unit
 }
 
 // When each exercise was last done in these workouts, by the exercise's uuid
