@@ -1,6 +1,7 @@
 package com.everlog.android.history.ui.page
 
 import androidx.compose.ui.test.SemanticsMatcher
+import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.hasAnyAncestor
 import androidx.compose.ui.test.hasTestTag
 import androidx.compose.ui.test.hasText
@@ -102,6 +103,23 @@ class HistoryPageScenarioTest {
         shown(days.map { finished(it, "Workout $it") } + finished(older, "The first"), complete = true)
         compose.onNodeWithTag(HistoryPageTags.List).performScrollToIndex(0)
         compose.waitUntil(WaitMillis) { exists(hasText("The first")) }
+    }
+
+    @Test
+    fun scrollingBackThroughTheCalendar() {
+        val earlier = today.minusMonths(2).withDayOfMonth(10)
+        show()
+        shown(listOf(finished(today, "Today"), finished(earlier, "Earlier")))
+        compose.waitUntil(WaitMillis) { exists(hasTestTag(HistoryPageTags.Calendar)) }
+
+        // The oldest month shown asks for the next page, which adds months above it without moving it
+        compose.onNodeWithTag(HistoryPageTags.Calendar).performScrollToNode(hasTestTag(HistoryPageTags.day(earlier)))
+        compose.waitUntil(WaitMillis) { workouts.history.loadMoreCalls >= 1 }
+        val oldest = today.minusMonths(5).withDayOfMonth(10)
+        shown(listOf(finished(today, "Today"), finished(earlier, "Earlier"), finished(oldest, "Oldest")), complete = true)
+        compose.waitForIdle()
+        compose.onNodeWithTag(HistoryPageTags.day(earlier), useUnmergedTree = true).assertIsDisplayed()
+        compose.onNodeWithTag(HistoryPageTags.Calendar).performScrollToNode(hasTestTag(HistoryPageTags.day(oldest)))
     }
 
     @Test

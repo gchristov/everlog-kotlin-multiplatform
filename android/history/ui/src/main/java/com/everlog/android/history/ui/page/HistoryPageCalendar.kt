@@ -38,6 +38,7 @@ import com.kizitonwose.calendar.core.CalendarDay
 import com.kizitonwose.calendar.core.CalendarMonth
 import com.kizitonwose.calendar.core.DayPosition
 import java.util.Locale
+import org.threeten.bp.DayOfWeek
 import org.threeten.bp.LocalDate
 import org.threeten.bp.YearMonth
 import org.threeten.bp.format.TextStyle
@@ -55,11 +56,14 @@ internal fun HistoryCalendar(
 ) {
     val months = calendarMonths(state.days, state.today)
     val workoutDays = remember(state.days) { state.days.mapTo(HashSet()) { it.date } }
+    // Built from the first values only: the library makes a new state, back on this month, whenever its arguments
+    // change, so later months and settings go through its setters below
+    val initial = remember { InitialCalendar(months, YearMonth.from(state.today), state.firstDayOfWeek) }
     val calendar = rememberCalendarState(
-        startMonth = months.start.toJavaMonth(),
-        endMonth = months.endInclusive.toJavaMonth(),
-        firstVisibleMonth = YearMonth.from(state.today).toJavaMonth(),
-        firstDayOfWeek = state.firstDayOfWeek.toJava(),
+        startMonth = initial.months.start.toJavaMonth(),
+        endMonth = initial.months.endInclusive.toJavaMonth(),
+        firstVisibleMonth = initial.opensOn.toJavaMonth(),
+        firstDayOfWeek = initial.firstDayOfWeek.toJava(),
     )
     LaunchedEffect(months, state.firstDayOfWeek) {
         calendar.startMonth = months.start.toJavaMonth()
@@ -167,6 +171,8 @@ private fun CalendarDayCell(
         )
     }
 }
+
+private class InitialCalendar(val months: ClosedRange<YearMonth>, val opensOn: YearMonth, val firstDayOfWeek: DayOfWeek)
 
 private fun YearMonth.toJavaMonth(): java.time.YearMonth = java.time.YearMonth.of(year, monthValue)
 
