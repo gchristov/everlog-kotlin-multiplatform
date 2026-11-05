@@ -23,6 +23,7 @@ import com.everlog.android.workout.data.WorkoutHistory
 import com.everlog.android.workout.testfixtures.FakeWorkoutRepository
 import com.google.common.truth.Truth.assertThat
 import com.jakewharton.threetenabp.AndroidThreeTen
+import java.io.IOException
 import java.util.concurrent.TimeUnit
 import kotlinx.coroutines.Dispatchers
 import org.junit.Rule
@@ -120,6 +121,20 @@ class HistoryPageScenarioTest {
         compose.waitForIdle()
         compose.onNodeWithTag(HistoryPageTags.day(earlier), useUnmergedTree = true).assertIsDisplayed()
         compose.onNodeWithTag(HistoryPageTags.Calendar).performScrollToNode(hasTestTag(HistoryPageTags.day(oldest)))
+    }
+
+    @Test
+    fun tryingAgainWhenTheHistoryCantLoad() {
+        show()
+        workouts.history.loads.value = Load.Unavailable(IOException("timed out"))
+        compose.waitUntil(WaitMillis) { exists(hasText("Couldn't load your history.")) }
+
+        workouts.history.loads.value = Load.Loading
+        compose.onNodeWithText("Try again").performClick()
+        compose.waitUntil(WaitMillis) { workouts.historyReads == 2 && !exists(hasText("Couldn't load your history.")) }
+
+        shown(listOf(finished(today, "Legs")))
+        compose.waitUntil(WaitMillis) { exists(hasTestTag(HistoryPageTags.WorkoutDot)) }
     }
 
     @Test

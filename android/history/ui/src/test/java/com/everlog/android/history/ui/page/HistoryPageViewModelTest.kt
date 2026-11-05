@@ -154,13 +154,23 @@ class HistoryPageViewModelTest {
     }
 
     @Test
-    fun `offline before the history ever synced, there's nothing to show`() {
+    fun `offline before the history ever synced, it can be tried again`() {
         val viewModel = viewModel()
 
         workouts.history.loads.value = Load.Unavailable(IOException("offline"))
 
         assertThat(viewModel.state.value.loading).isFalse()
-        assertThat(viewModel.state.value.complete).isTrue()
+        assertThat(viewModel.state.value.failed).isTrue()
         assertThat(viewModel.state.value.days).isEmpty()
+
+        workouts.history.loads.value = Load.Loading
+        viewModel.onTryAgain()
+
+        assertThat(workouts.historyReads).isEqualTo(2)
+        assertThat(viewModel.state.value.loading).isTrue()
+        assertThat(viewModel.state.value.failed).isFalse()
+
+        shown(newest)
+        assertThat(viewModel.state.value.days).hasSize(1)
     }
 }

@@ -15,7 +15,9 @@ import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyListState
+import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.SnackbarResult
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -23,6 +25,7 @@ import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -37,6 +40,7 @@ import com.everlog.android.common.compose.elements.AppCircularProgressIndicator
 import com.everlog.android.common.compose.elements.AppMenu
 import com.everlog.android.common.compose.elements.AppMenuItem
 import com.everlog.android.common.compose.elements.AppSnackbarHost
+import com.everlog.android.common.compose.elements.AppSurface
 import com.everlog.android.common.compose.elements.AppText
 import com.everlog.android.common.compose.elements.rememberShimmerBrush
 import com.everlog.android.common.compose.theme.Theme
@@ -56,6 +60,7 @@ internal fun HistoryPageScreen(viewModel: HistoryPageViewModel, onWorkout: (ELWo
         onReachedOldest = viewModel::onReachedOldest,
         onScrolledToDay = viewModel::onScrolledToDay,
         onEmptyDayShown = viewModel::onEmptyDayShown,
+        onTryAgain = viewModel::onTryAgain,
         onWorkout = onWorkout,
     )
 }
@@ -68,17 +73,31 @@ internal fun HistoryPageContent(
     onReachedOldest: () -> Unit,
     onScrolledToDay: () -> Unit,
     onEmptyDayShown: () -> Unit,
+    onTryAgain: () -> Unit,
     onWorkout: (ELWorkout) -> Unit,
 ) {
     val snackbar = remember { SnackbarHostState() }
     val emptyDay = stringResource(R.string.history_empty_day_prompt)
+    val failedMessage = stringResource(R.string.history_failed)
+    val tryAgain = stringResource(R.string.history_try_again)
+    val failed by rememberUpdatedState(state.failed)
     val scope = rememberCoroutineScope()
+    suspend fun showFailed() {
+        if (snackbar.showSnackbar(failedMessage, actionLabel = tryAgain, duration = SnackbarDuration.Indefinite) == SnackbarResult.ActionPerformed) {
+            onTryAgain()
+        }
+    }
+    LaunchedEffect(state.failed) {
+        if (state.failed) showFailed() else snackbar.currentSnackbarData?.takeIf { it.visuals.actionLabel != null }?.dismiss()
+    }
     LaunchedEffect(state.emptyDayPicked) {
         if (state.emptyDayPicked) {
             // Outside this effect, which clearing the flag ends
             scope.launch {
                 snackbar.currentSnackbarData?.dismiss()
                 snackbar.showSnackbar(emptyDay)
+                // Back to the way to try again, which the message replaced
+                if (failed) showFailed()
             }
             onEmptyDayShown()
         }
@@ -108,14 +127,18 @@ internal fun HistoryPageContent(
             modifier = Modifier.align(Alignment.TopEnd).padding(horizontal = Theme.spacing.large),
         )
         if (state.loadingMore) {
-            AppCircularProgressIndicator(
+            // On a surface, so it reads over the days scrolling under it
+            AppSurface(
                 modifier = Modifier.align(Alignment.TopCenter).padding(top = PageSizes.TopPadding).testTag(HistoryPageTags.LoadingMore),
-            )
+                contentPadding = PaddingValues(Theme.spacing.small),
+            ) {
+                AppCircularProgressIndicator()
+            }
         }
         AppSnackbarHost(
             hostState = snackbar,
             modifier = Modifier.align(Alignment.BottomCenter).navigationBarsPadding().padding(bottom = PageSizes.SnackbarBottom)
-                .testTag(HistoryPageTags.EmptyDay),
+                .testTag(HistoryPageTags.Snackbar),
         )
     }
 }

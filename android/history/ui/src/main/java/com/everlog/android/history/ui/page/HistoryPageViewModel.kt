@@ -27,6 +27,8 @@ data class HistoryPageState(
     val loadingMore: Boolean = false,
     // The first workout is shown: nothing older to load
     val complete: Boolean = false,
+    // The first page couldn't load, as the history never synced and the server can't be reached: try again
+    val failed: Boolean = false,
     // A day picked on the calendar, for the list to scroll to once
     val scrollTo: LocalDate? = null,
     // A day without workouts was picked, to say so once
@@ -68,6 +70,12 @@ class HistoryPageViewModel(
         job = null
         read = null
         setState { initialState(settings, today()).copy(view = view) }
+    }
+
+    fun onTryAgain() {
+        job?.cancel()
+        setState { copy(loading = true, failed = false) }
+        startReading()
     }
 
     fun onViewPicked(view: HistoryView) {
@@ -112,10 +120,10 @@ class HistoryPageViewModel(
                             loading = false,
                             loadingMore = load.value.loadingMore,
                             complete = load.value.complete,
+                            failed = false,
                         )
                     }
-                    // Offline before the workouts ever synced: nothing to show
-                    is Load.Unavailable -> setState { copy(loading = false, complete = true) }
+                    is Load.Unavailable -> setState { copy(loading = false, failed = true) }
                     Load.Loading -> Unit
                 }
             }
