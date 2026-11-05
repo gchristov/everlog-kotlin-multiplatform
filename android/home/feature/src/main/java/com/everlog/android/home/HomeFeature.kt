@@ -30,5 +30,8 @@ interface HomeConfig {
 // The names analytics already has for Home's tabs
 object HomeScreenNames {
     const val WEEK = "screen_week"
+
+    // The Compose tab, so its views tell apart from the old one's
+    const val WEEK_V2 = "screen_week_v2"
     const val ACTIVITY = "screen_activity"
 }

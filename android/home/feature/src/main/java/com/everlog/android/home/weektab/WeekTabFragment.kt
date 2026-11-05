@@ -100,7 +100,7 @@ class WeekTabFragment : BaseTabFragment() {
     }
 
     override fun getAnalyticsScreenName(): String {
-        return HomeScreenNames.WEEK
+        return HomeScreenNames.WEEK_V2
     }
 
     override fun getTitleResId(): Int {

@@ -88,7 +88,7 @@ first_sets AS (
       AND x.ts <= LEAST(COALESCE(o.fw_completed, TIMESTAMP_ADD(o.fw_start, INTERVAL 4 HOUR)), COALESCE(o.fw_stopped, TIMESTAMP_ADD(o.fw_start, INTERVAL 4 HOUR)), COALESCE(o.next_start, TIMESTAMP_ADD(o.fw_start, INTERVAL 4 HOUR)), TIMESTAMP_ADD(o.fw_start, INTERVAL 4 HOUR))) AS fw_sets,
     COUNTIF(x.event_name LIKE 'workout_service_%' AND x.ts >= o.fw_start
       AND x.ts <= LEAST(COALESCE(o.fw_completed, TIMESTAMP_ADD(o.fw_start, INTERVAL 4 HOUR)), COALESCE(o.fw_stopped, TIMESTAMP_ADD(o.fw_start, INTERVAL 4 HOUR)), TIMESTAMP_ADD(o.fw_start, INTERVAL 4 HOUR))) AS fw_notif_actions,
-    COUNTIF(x.event_name IN ('screen_exercise_details') OR (x.event_name = 'screen_view' AND x.screen IN ('screen_exercise_details','screen_exercise_info','screen_exercise_history','screen_exercise_statistics'))
+    COUNTIF(x.event_name IN ('screen_exercise_details') OR (x.event_name = 'screen_view' AND x.screen IN ('screen_exercise_details','screen_exercise_info','screen_exercise_info_v2','screen_exercise_history','screen_exercise_statistics'))
       AND x.ts >= o.fw_start AND x.ts <= TIMESTAMP_ADD(o.fw_start, INTERVAL 4 HOUR)) AS fw_exercise_browse
   FROM first_outcome o JOIN x USING (user_key)
   GROUP BY 1
@@ -107,13 +107,13 @@ agg AS (
     LOGICAL_OR(screen = 'screen_home' AND d < 1) AS home_d0,
     LOGICAL_OR(screen = 'screen_home') AS home_ever,
     -- day-0 exploration
-    LOGICAL_OR(d < 1 AND screen = 'screen_week') AS d0_week,
+    LOGICAL_OR(d < 1 AND screen IN ('screen_week','screen_week_v2')) AS d0_week,
     LOGICAL_OR(d < 1 AND screen = 'screen_workouts') AS d0_workouts_tab,
-    LOGICAL_OR(d < 1 AND screen IN ('screen_statistics','screen_activity')) AS d0_stats,
+    LOGICAL_OR(d < 1 AND screen IN ('screen_statistics','screen_statistics_v2','screen_activity')) AS d0_stats,
     LOGICAL_OR(d < 1 AND screen = 'screen_settings') AS d0_settings,
-    LOGICAL_OR(d < 1 AND screen = 'screen_history') AS d0_history,
+    LOGICAL_OR(d < 1 AND screen IN ('screen_history','screen_history_v2')) AS d0_history,
     LOGICAL_OR(d < 1 AND screen = 'screen_exercises') AS d0_exercises_list,
-    LOGICAL_OR(d < 1 AND screen IN ('screen_exercise_details','screen_exercise_info','screen_exercise_history','screen_exercise_statistics')) AS d0_exercise_detail,
+    LOGICAL_OR(d < 1 AND screen IN ('screen_exercise_details','screen_exercise_info','screen_exercise_info_v2','screen_exercise_history','screen_exercise_statistics')) AS d0_exercise_detail,
     LOGICAL_OR(d < 1 AND screen = 'screen_routine_details') AS d0_routine_details,
     LOGICAL_OR(d < 1 AND screen = 'screen_plan_details') AS d0_plan_details,
     LOGICAL_OR(d < 1 AND screen = 'screen_pro') AS d0_pro,
@@ -158,7 +158,7 @@ agg AS (
     COUNTIF(event_name = 'workout_details_saved_as_routine') AS saved_as_routine,
     COUNTIF(event_name = 'workout_details_shared') AS shared,
     COUNTIF(event_name = 'integration_connected') AS integrations,
-    COUNTIF(event_name = 'screen_view' AND screen IN ('screen_statistics','screen_activity')) AS stats_views,
+    COUNTIF(event_name = 'screen_view' AND screen IN ('screen_statistics','screen_statistics_v2','screen_activity')) AS stats_views,
     COUNTIF(event_name = 'screen_view' AND screen IN ('screen_exercise_statistics','screen_exercise_history')) AS exercise_stats_views,
     COUNTIF(event_name = 'screen_view' AND screen = 'screen_pro') AS pro_views,
     COUNTIF(event_name = 'pro_buy_purchased') AS pro_purchases,

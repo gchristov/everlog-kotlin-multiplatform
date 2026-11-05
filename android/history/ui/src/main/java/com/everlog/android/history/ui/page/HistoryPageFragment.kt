@@ -74,7 +74,7 @@ class HistoryPageFragment : BaseTabFragment() {
     }
 
     override fun getAnalyticsScreenName(): String {
-        return HistoryScreenNames.HISTORY
+        return HistoryScreenNames.HISTORY_V2
     }
 
     override fun getTitleResId(): Int {
