@@ -31,4 +31,5 @@ dependencies {
     testImplementation(projects.android.common.dataTest)
     testImplementation(projects.android.settings.testFixtures)
     testImplementation(projects.android.workout.testFixtures)
+    testImplementation(projects.android.plan.testFixtures)
 }

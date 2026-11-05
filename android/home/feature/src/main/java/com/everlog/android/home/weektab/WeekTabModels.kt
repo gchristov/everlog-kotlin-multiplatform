@@ -1,5 +1,6 @@
 package com.everlog.android.home.weektab
 
+import com.everlog.android.common.data.model.ELRoutine
 import com.everlog.android.common.kotlin.WeightUnit
 import com.everlog.android.home.data.week.WeekStats
 import org.threeten.bp.LocalDate
@@ -12,6 +13,9 @@ data class WeekTabState(
     // Until the week's workouts first load; the days show already
     val loading: Boolean = true,
     val banner: WeekTabBanner? = null,
+    // The plan the user is following, which the tab shows instead of the week
+    val plan: WeekTabPlan? = null,
+    val prompt: WeekTabPrompt? = null,
 ) {
     val empty: Boolean get() = !loading && stats.workouts == 0
 
@@ -19,6 +23,44 @@ data class WeekTabState(
 
     // Of the weekly goal, from 0 to 1
     val goalProgress: Float get() = if (weeklyGoal <= 0) 1f else (stats.workouts.toFloat() / weeklyGoal).coerceAtMost(1f)
+}
+
+data class WeekTabPlan(
+    val uuid: String?,
+    val name: String,
+    // Of the plan's days done, from 0 to 100
+    val progress: Int,
+    // From 1
+    val weekNumber: Int,
+    val weekCount: Int,
+    val days: List<WeekTabPlanDay>,
+) {
+    // Every day is done, so the plan can be finished
+    val done: Boolean get() = days.none { it.next }
+}
+
+data class WeekTabPlanDay(
+    // From 1, within the week
+    val number: Int,
+    // Null for a rest day, or a day with nothing set
+    val routine: ELRoutine?,
+    val complete: Boolean,
+    val next: Boolean,
+)
+
+enum class WeekTabPrompt {
+    SkipDay,
+    RestDay,
+}
+
+// What starting the plan's next day opens, if anything
+sealed interface WeekTabPlanStart {
+    data class Workout(val routine: ELRoutine) : WeekTabPlanStart
+
+    data object Finished : WeekTabPlanStart
+
+    // A rest day, marked done in place
+    data object Nothing : WeekTabPlanStart
 }
 
 data class WeekTabBanner(

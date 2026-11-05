@@ -132,8 +132,7 @@ internal fun WeekStatCards(
 @Composable
 private fun GoalCard(state: WeekTabState, onClick: () -> Unit) {
     val progress by animateFloatAsState(targetValue = state.goalProgress, animationSpec = tween(GoalAnimationMillis), label = "goal")
-    // As grey as the XML tab's track, which the separator colour is too faint for
-    val track = Theme.contentColors.secondary.copy(alpha = GoalTrackAlpha)
+    val track = WeekTabColors.line
     val accent = Theme.contentColors.action
     StatSurface(onClick = onClick, modifier = Modifier.testTag(WeekTabTags.Goal)) {
         Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
@@ -287,8 +286,6 @@ private fun LocalDate.formatted(): String = DateTimeUtils.toDate(atStartOfDay(Zo
 private val DayShape = RoundedCornerShape(WeekTabSizes.DayCorner)
 
 private const val GoalAnimationMillis = 2000
-
-private const val GoalTrackAlpha = 0.45f
 
 // One more than fit on a phone, so the row reads as running on like the cards
 private const val LoadingCards = 3

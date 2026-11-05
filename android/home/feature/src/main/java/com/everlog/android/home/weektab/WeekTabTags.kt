@@ -8,4 +8,10 @@ object WeekTabTags {
     const val Empty = "weekTab.empty"
     const val Banner = "weekTab.banner"
     const val BannerClose = "weekTab.bannerClose"
+    const val Plan = "weekTab.plan"
+    const val SkipDay = "weekTab.skipDay"
+    const val StartDay = "weekTab.startDay"
+    const val FinishPlan = "weekTab.finishPlan"
+
+    fun planDay(number: Int) = "weekTab.planDay.$number"
 }
