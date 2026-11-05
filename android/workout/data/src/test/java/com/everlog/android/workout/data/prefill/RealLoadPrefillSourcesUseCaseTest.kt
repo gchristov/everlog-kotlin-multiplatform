@@ -10,6 +10,7 @@ import com.everlog.android.common.kotlin.Load
 import com.everlog.android.common.kotlin.WeightUnit
 import com.everlog.android.common.test.FakeCoroutineDispatcher
 import com.everlog.android.settings.testfixtures.FakeUserSettings
+import com.everlog.android.workout.data.WorkoutHistoryRead
 import com.everlog.android.workout.data.WorkoutRepository
 import com.google.common.truth.Truth.assertThat
 import kotlinx.coroutines.CompletableDeferred
@@ -88,5 +89,7 @@ class RealLoadPrefillSourcesUseCaseTest {
         override fun recentWorkouts(months: Int): Flow<Load<List<ELWorkout>>> = flowOf(Load.Ready(history))
 
         override fun syncedWorkouts(): Flow<Load<List<ELWorkout>>> = flowOf(Load.Ready(history))
+
+        override fun history(pageSize: Int): WorkoutHistoryRead = error("Not read by prefill")
     }
 }
