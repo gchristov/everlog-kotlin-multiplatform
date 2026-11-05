@@ -13,6 +13,17 @@ runs:
       uses: ./.github/actions/setup-gradle
       with:
         ndk: 'false'
+    - name: Give Gradle more memory
+      shell: bash
+      # Building every module's test APK at once ran out of heap now and then (D8, packaging) under the project's 4 GB,
+      # while the emulator boots alongside it on the same runner. In the user properties, so the build and the tests
+      # share one daemon; the Kotlin daemon gets its own cap, as it takes Gradle's otherwise.
+      run: |
+        mkdir -p "${GRADLE_USER_HOME:-$HOME/.gradle}"
+        cat >> "${GRADLE_USER_HOME:-$HOME/.gradle}/gradle.properties" <<'EOF'
+        org.gradle.jvmargs=-Xms1g -Xmx6g -XX:+HeapDumpOnOutOfMemoryError -Dfile.encoding=UTF-8
+        kotlin.daemon.jvmargs=-Xmx2g
+        EOF
     - name: Start building the app and test APKs
       shell: bash
       # In the background, so the build overlaps the emulator's setup and boot; the tests wait for it below. With
