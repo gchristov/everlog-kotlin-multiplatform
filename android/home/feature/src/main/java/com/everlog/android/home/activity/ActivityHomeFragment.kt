@@ -8,6 +8,7 @@ import com.everlog.android.common.mvp.fragment.BaseFragmentMvpView
 import com.everlog.android.common.mvp.fragment.BaseFragmentPresenter
 import com.everlog.android.common.mvp.fragment.BaseTabFragment
 import com.everlog.android.history.ui.HistoryHomeFragment
+import com.everlog.android.history.ui.page.HistoryPageFragment
 import com.everlog.android.home.HomeGraph
 import com.everlog.android.home.HomeScreenNames
 import com.everlog.android.home.R
@@ -56,6 +57,13 @@ class ActivityHomeFragment : BaseTabFragment(), MvpViewActivityHome {
 //        binding.tabsPage.pager.setCurrentItem(0, true)
     }
 
+    // Home moved to another tab: the history's pages can go. From the fragment manager, which holds the pages
+    // restored after process death rather than the ones setupPager made.
+    fun onTabLeft() {
+        if (!isAdded) return
+        childFragmentManager.fragments.filterIsInstance<HistoryPageFragment>().forEach { it.onTabLeft() }
+    }
+
     // Setup
 
     override fun setupPresenter() {
@@ -65,7 +73,7 @@ class ActivityHomeFragment : BaseTabFragment(), MvpViewActivityHome {
     private fun setupPager() {
         val fragments = ArrayList<BaseTabFragment>()
         fragments.add(if (graph.homeConfig.statisticsV2()) StatisticsPageFragment() else StatisticsHomeFragment())
-        fragments.add(HistoryHomeFragment())
+        fragments.add(if (graph.homeConfig.historyV2()) HistoryPageFragment() else HistoryHomeFragment())
         binding.tabsPage.setTabs(childFragmentManager, fragments)
     }
 }

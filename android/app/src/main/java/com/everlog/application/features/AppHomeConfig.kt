@@ -16,4 +16,6 @@ class AppHomeConfig : HomeConfig {
     override val appVersionCode: Int = BuildConfig.VERSION_CODE
 
     override fun statisticsV2(): Boolean = RemoteConfigManager.manager.statisticsV2()
+
+    override fun historyV2(): Boolean = RemoteConfigManager.manager.historyV2()
 }

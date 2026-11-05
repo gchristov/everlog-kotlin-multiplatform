@@ -91,6 +91,12 @@ public class RemoteConfigManager extends PreferencesManager {
         return localConfig != null && localConfig.getStatisticsV2();
     }
 
+    // The Activity tab's history page in Compose; off until Remote Config says otherwise
+    public boolean historyV2() {
+        RemoteConfig localConfig = loadLocalRemoteConfig();
+        return localConfig != null && localConfig.getHistoryV2();
+    }
+
     // The feedback form to open from a source, or null when there's none and the entry point is hidden
     @Nullable
     public String feedbackFormUrl(FeedbackSource source) {

@@ -3,4 +3,6 @@
     <string name="history_empty_day_prompt">No events found for this day</string>
     <string name="view_type_calendar">Calendar</string>
     <string name="view_type_list">List</string>
+    <string name="history_failed">Couldn\'t load your history.</string>
+    <string name="history_try_again">Try again</string>
 </resources>
