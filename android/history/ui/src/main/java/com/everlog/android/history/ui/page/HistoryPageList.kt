@@ -37,11 +37,13 @@ import com.everlog.android.common.compose.theme.Theme
 import com.everlog.android.common.data.model.workout.ELWorkout
 import com.everlog.android.common.kotlin.format.workoutSummary
 import java.util.Locale
+import org.threeten.bp.LocalDate
 import org.threeten.bp.format.TextStyle
 
 /**
  * The days with workouts, oldest at the top, opening on the newest at the bottom. Scrolling up to the oldest day
- * shown asks for older ones, which go in above without moving the days in view.
+ * shown asks for older ones, which go in above without moving the days in view. A workout saved while the newest is
+ * in view brings the list down to it, like a chat; one saved while the user is further back leaves them there.
  */
 @Composable
 internal fun HistoryList(
@@ -56,9 +58,19 @@ internal fun HistoryList(
     val opened = remember(listState) { OpenedFlag() }
     LaunchedEffect(listState, days.isNotEmpty()) {
         if (days.isNotEmpty() && !opened.value) {
-            listState.scrollToItem(days.lastIndex)
+            listState.scrollToEnd(days)
             opened.value = true
         }
+    }
+    val newest = days.lastOrNull()?.let { NewestDay(it.date, it.workouts.size) }
+    val followed = remember(listState) { FollowedNewest() }
+    LaunchedEffect(newest) {
+        val previous = followed.value
+        followed.value = newest
+        if (previous == null || newest == null || !opened.value) return@LaunchedEffect
+        // The day that was newest is still in view, so the user was at the end: follow the new one there
+        val previousIndex = days.indexOfFirst { it.date == previous.date }
+        if (previousIndex >= 0 && listState.layoutInfo.visibleItemsInfo.any { it.index >= previousIndex }) listState.scrollToEnd(days)
     }
     LaunchedEffect(state.scrollTo) {
         val day = state.scrollTo ?: return@LaunchedEffect
@@ -138,6 +150,15 @@ private fun Line(visible: Boolean, modifier: Modifier) {
 
 // Whether the list has opened on the newest day, so reaching the top before that doesn't load older ones
 private class OpenedFlag(var value: Boolean = false)
+
+private data class NewestDay(val date: LocalDate, val workouts: Int)
+
+// The newest day as the list last saw it, to tell a workout saved on it or after it
+private class FollowedNewest(var value: NewestDay? = null)
+
+// Down to the end of the last day, past the bottom padding that keeps it clear of Home's button: scrolling to the
+// day alone puts its top at the top, which a tall day overflows. The offset is cut back to how far the list goes.
+private suspend fun LazyListState.scrollToEnd(days: List<HistoryDay>) = scrollToItem(days.lastIndex, Int.MAX_VALUE)
 
 private object ListSizes {
     val DateWidth = 40.dp
