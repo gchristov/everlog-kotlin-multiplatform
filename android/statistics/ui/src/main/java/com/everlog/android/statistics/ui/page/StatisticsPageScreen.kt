@@ -213,7 +213,7 @@ private const val SummaryRows = 3
 
 private object PageSizes {
     // Room for the period picker above the page
-    val TopPadding = 64.dp
+    val TopPadding = 76.dp
     // Room for Home's start workout button over the end of the page
     val BottomPadding = 180.dp
     // Above Home's tab bar and its start workout button, which the page runs under
