@@ -53,6 +53,7 @@
     <string name="workout_log_add_exercise">Add exercise</string>
     <string name="workout_log_done">Done</string>
     <string name="workout_log_example_exercise">Example exercise</string>
+    <string name="example_label">EXAMPLE · NOT YOUR DATA</string>
     <string name="workout_log_reps">Reps</string>
     <string name="workout_log_set_deleted">Set deleted</string>
     <string name="workout_log_time">Time</string>
