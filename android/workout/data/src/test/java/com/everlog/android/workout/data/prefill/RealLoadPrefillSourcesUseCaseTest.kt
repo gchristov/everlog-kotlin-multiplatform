@@ -86,5 +86,7 @@ class RealLoadPrefillSourcesUseCaseTest {
         override suspend fun exerciseLastDone(workouts: Int): Either<Throwable, Map<String, Long>> = Either.Right(emptyMap())
 
         override fun recentWorkouts(months: Int): Flow<Load<List<ELWorkout>>> = flowOf(Load.Ready(history))
+
+        override fun syncedWorkouts(): Flow<Load<List<ELWorkout>>> = flowOf(Load.Ready(history))
     }
 }

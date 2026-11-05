@@ -1,7 +1,6 @@
 package com.everlog.managers.analytics
 
 import com.everlog.android.common.data.model.set.ELSetType
-import com.everlog.android.common.data.model.workout.RangeType
 import com.everlog.android.settings.data.MuscleGoal
 import com.everlog.managers.appupdate.AppUpdateController
 
@@ -53,7 +52,8 @@ interface Analytic {
     fun setGroupCompleted(source: String, type: ELSetType?, exercises: Int)
     fun setEdited(type: ELSetType?, timed: Boolean)
 
-    fun statisticsRangeModified(rangeType: RangeType)
+    // By the range's name, e.g. WEEK or LAST_12_MONTHS
+    fun statisticsRangeModified(range: String)
 
     fun settingsMuscleGoalModified(value: MuscleGoal?)
     fun settingsWeightModified(value: Float?)

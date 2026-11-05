@@ -71,9 +71,7 @@ fun userStats(
         averageMillis = if (inPeriod.isEmpty()) 0 else totalMillis / inPeriod.size,
         longestMillis = inPeriod.maxOfOrNull { (workout, _) -> workout.getDurationMillis() } ?: 0,
         maxWeight = inPeriod.fold(0f) { best, (workout, _) -> max(best, workout.getMaxWeight(weightUnit)) },
-        muscles = buildMap {
-            inPeriod.forEach { (workout, _) -> workout.getCategoryCounts().forEach { (category, count) -> put(category, (get(category) ?: 0) + count) } }
-        },
+        muscles = muscleCounts(inPeriod.map { (workout, _) -> workout }),
         weightLifted = buckets.map { (start, inBucket) ->
             StatsPoint(start, inBucket.sumOf { (workout, _) -> workout.getTotalWeight(weightUnit).toDouble() }.toFloat())
         },
@@ -81,6 +79,14 @@ fun userStats(
             StatsPoint(start, inBucket.map { (workout, _) -> TimeUnit.MILLISECONDS.toMinutes(workout.getDurationMillis()).toFloat() }.average().toFloat())
         },
     )
+}
+
+// Exercises without a category, e.g. one whose exercise has gone, don't count, rather than fail the whole period as
+// ELWorkout.getCategoryCounts does
+private fun muscleCounts(workouts: List<ELWorkout>): Map<String, Int> = buildMap {
+    workouts.flatMap { it.getExerciseGroups() }.flatMap { it.exercises }.forEach { exercise ->
+        exercise.exercise?.category?.let { put(it, (get(it) ?: 0) + 1) }
+    }
 }
 
 private fun StatsPeriod.start(today: LocalDate, firstDayOfWeek: DayOfWeek): LocalDate = when (this) {

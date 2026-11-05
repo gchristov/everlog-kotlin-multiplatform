@@ -14,4 +14,6 @@ class AppHomeConfig : HomeConfig {
     override fun notification(): HomeNotification? = RemoteConfigManager.manager.notificationHome()
 
     override val appVersionCode: Int = BuildConfig.VERSION_CODE
+
+    override fun statisticsV2(): Boolean = RemoteConfigManager.manager.statisticsV2()
 }

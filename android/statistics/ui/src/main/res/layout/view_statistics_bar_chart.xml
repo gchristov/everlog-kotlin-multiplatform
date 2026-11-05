@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- The statistics page's bar chart with its axis label up the side, for Compose to show (StatisticsPageCharts) -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="center"
+    android:orientation="horizontal">
+
+    <com.github.rongi.rotate_layout.layout.RotateLayout
+        android:id="@+id/axisTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/margin_12"
+        app:angle="90">
+
+        <TextView
+            android:id="@+id/axisTitleLbl"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:textAllCaps="true"
+            android:textColor="@color/gray_2"
+            android:textSize="@dimen/statistics_vertical_text_size" />
+    </com.github.rongi.rotate_layout.layout.RotateLayout>
+
+    <com.github.mikephil.charting.charts.BarChart
+        android:id="@+id/chart"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginLeft="@dimen/margin_10"
+        android:layout_marginTop="@dimen/activity_margin"
+        android:layout_marginRight="@dimen/margin_10"
+        android:layout_marginBottom="@dimen/activity_margin" />
+</LinearLayout>

@@ -2,7 +2,6 @@ package com.everlog.managers.analytics
 
 import android.os.Bundle
 import com.everlog.android.common.data.model.set.ELSetType
-import com.everlog.android.common.data.model.workout.RangeType
 import com.everlog.android.settings.data.MuscleGoal
 import com.everlog.managers.appupdate.AppUpdateController
 import com.everlog.utils.device.DeviceUtils
@@ -243,10 +242,10 @@ abstract class BaseAnalytic : Analytic {
         logEvent(AnalyticsConstants.EVENT_SET_EDITED, map)
     }
 
-    override fun statisticsRangeModified(rangeType: RangeType) {
+    override fun statisticsRangeModified(range: String) {
         val map = HashMap<String, Any?>()
-        // By name: analytics drops a parameter that isn't text or a number
-        map[AnalyticsConstants.PROPERTY_TYPE] = rangeType.name
+        // A name, as analytics drops a parameter that isn't text or a number
+        map[AnalyticsConstants.PROPERTY_TYPE] = range
         logEvent(AnalyticsConstants.EVENT_STATISTICS_RANGE_MODIFIED, map)
     }
 
