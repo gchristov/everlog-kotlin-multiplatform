@@ -34,6 +34,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.everlog.android.common.compose.elements.AppBlurBox
 import com.everlog.android.common.compose.elements.AppChip
 import com.everlog.android.common.compose.elements.AppChipStyle
 import com.everlog.android.common.compose.elements.AppCircularProgressIndicator
@@ -105,7 +106,30 @@ internal fun HistoryPageContent(
     // Kept while switching between the calendar and the list, and started again with each read
     val listState = remember(state.read) { LazyListState() }
     val padding = PaddingValues(start = Theme.spacing.large, top = PageSizes.TopPadding, end = Theme.spacing.large, bottom = PageSizes.BottomPadding)
-    Box(modifier = Modifier.fillMaxSize()) {
+    // The days scroll behind the picker and the spinner, which blur them
+    AppBlurBox(
+        modifier = Modifier.fillMaxSize(),
+        overlay = {
+            ViewPicker(
+                view = state.view,
+                onPicked = onViewPicked,
+                modifier = Modifier.align(Alignment.TopEnd).padding(horizontal = Theme.spacing.large),
+            )
+            if (state.loadingMore) {
+                AppSurface(
+                    modifier = Modifier.align(Alignment.TopCenter).padding(top = PageSizes.TopPadding).testTag(HistoryPageTags.LoadingMore),
+                    contentPadding = PaddingValues(Theme.spacing.small),
+                ) {
+                    AppCircularProgressIndicator()
+                }
+            }
+            AppSnackbarHost(
+                hostState = snackbar,
+                modifier = Modifier.align(Alignment.BottomCenter).navigationBarsPadding().padding(bottom = PageSizes.SnackbarBottom)
+                    .testTag(HistoryPageTags.Snackbar),
+            )
+        },
+    ) {
         when {
             state.loading -> HistoryLoading(state.view, padding)
             state.view == HistoryView.List && state.days.isEmpty() -> HistoryEmpty(padding)
@@ -121,25 +145,6 @@ internal fun HistoryPageContent(
                 HistoryCalendar(state = state, contentPadding = padding, onDayPicked = onDayPicked, onReachedOldest = onReachedOldest)
             }
         }
-        ViewPicker(
-            view = state.view,
-            onPicked = onViewPicked,
-            modifier = Modifier.align(Alignment.TopEnd).padding(horizontal = Theme.spacing.large),
-        )
-        if (state.loadingMore) {
-            // On a surface, so it reads over the days scrolling under it
-            AppSurface(
-                modifier = Modifier.align(Alignment.TopCenter).padding(top = PageSizes.TopPadding).testTag(HistoryPageTags.LoadingMore),
-                contentPadding = PaddingValues(Theme.spacing.small),
-            ) {
-                AppCircularProgressIndicator()
-            }
-        }
-        AppSnackbarHost(
-            hostState = snackbar,
-            modifier = Modifier.align(Alignment.BottomCenter).navigationBarsPadding().padding(bottom = PageSizes.SnackbarBottom)
-                .testTag(HistoryPageTags.Snackbar),
-        )
     }
 }
 
@@ -152,6 +157,7 @@ private fun ViewPicker(view: HistoryView, onPicked: (HistoryView) -> Unit, modif
             onClick = { open = true },
             style = AppChipStyle.Action,
             dropdown = true,
+            floating = true,
             modifier = Modifier.testTag(HistoryPageTags.View),
         )
         AppMenu(
@@ -221,7 +227,7 @@ private const val DaysInWeek = 7
 
 private object PageSizes {
     // Room for the view picker above the content
-    val TopPadding = 64.dp
+    val TopPadding = 67.dp
     // Room for Home's start-workout button below the content
     val BottomPadding = 180.dp
     val SnackbarBottom = 128.dp
