@@ -242,10 +242,8 @@ class HomeActivity : BaseActivity(), MvpViewHome, HomeHost {
     }
 
     override fun showStatistics() {
-        val pos = 2
-        binding.pager.setCurrentItem(pos, true)
-        val statsFragment = mAdapter?.getItem(pos) as? ActivityHomeFragment
-        statsFragment?.showStatistics()
+        binding.pager.setCurrentItem(ActivityTab, true)
+        supportFragmentManager.fragments.filterIsInstance<ActivityHomeFragment>().forEach { it.showStatistics() }
     }
 
     override fun showSettings() {

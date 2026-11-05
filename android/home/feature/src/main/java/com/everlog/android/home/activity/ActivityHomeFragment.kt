@@ -54,7 +54,7 @@ class ActivityHomeFragment : BaseTabFragment(), MvpViewActivityHome {
     }
 
     fun showStatistics() {
-//        binding.tabsPage.pager.setCurrentItem(0, true)
+        _binding?.tabsPage?.showPage(StatisticsPage)
     }
 
     // Home moved to another tab: the history's pages can go. From the fragment manager, which holds the pages
@@ -77,3 +77,5 @@ class ActivityHomeFragment : BaseTabFragment(), MvpViewActivityHome {
         binding.tabsPage.setTabs(childFragmentManager, fragments)
     }
 }
+
+private const val StatisticsPage = 0
