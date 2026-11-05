@@ -37,9 +37,10 @@ import com.github.mikephil.charting.data.PieEntry
 import com.github.mikephil.charting.formatter.ValueFormatter
 import org.threeten.bp.LocalDate
 
-// The three charts, MPAndroidChart's views drawn by ChartRenderer as on the XML page, inside Compose cards
+// The three charts, MPAndroidChart's views drawn by ChartRenderer as on the XML page, inside Compose cards. Without
+// [touchable], e.g. in an example, they don't answer touches, which reach them past Compose.
 @Composable
-internal fun StatisticsCharts(state: StatisticsPageState, modifier: Modifier = Modifier) {
+internal fun StatisticsCharts(state: StatisticsPageState, modifier: Modifier = Modifier, touchable: Boolean = true) {
     val context = LocalContext.current
     val renderer = remember(context) { ChartRenderer(context) }
     val axis = remember(state.period, state.today) { AxisLabels(state.period, state.today) }
@@ -48,7 +49,10 @@ internal fun StatisticsCharts(state: StatisticsPageState, modifier: Modifier = M
         ChartCard(title = stringResource(R.string.statistics_muscles_trained), modifier = Modifier.testTag(StatisticsPageTags.MusclesChart)) {
             AndroidView(
                 factory = { PieChart(it) },
-                update = { chart -> renderer.renderPieChart(chart, stats.muscles.toSortedMap(String.CASE_INSENSITIVE_ORDER).map { (category, count) -> PieEntry(count.toFloat(), categoryTitle(category)) }) },
+                update = { chart ->
+                    renderer.renderPieChart(chart, stats.muscles.toSortedMap(String.CASE_INSENSITIVE_ORDER).map { (category, count) -> PieEntry(count.toFloat(), categoryTitle(category)) })
+                    chart.setTouchEnabled(touchable)
+                },
                 modifier = Modifier.fillMaxSize().padding(horizontal = ChartSizes.SideMargin, vertical = Theme.spacing.large),
             )
         }
@@ -58,13 +62,15 @@ internal fun StatisticsCharts(state: StatisticsPageState, modifier: Modifier = M
                 factory = { LayoutInflater.from(it).inflate(R.layout.view_statistics_bar_chart, null) },
                 update = { view ->
                     view.findViewById<TextView>(R.id.axisTitleLbl).text = weightTitle
+                    val chart = view.findViewById<BarChart>(R.id.chart)
                     renderer.renderBarChart(
-                        chart = view.findViewById<BarChart>(R.id.chart),
+                        chart = chart,
                         axisLeftLabelY = view.findViewById(R.id.axisTitle),
                         granularityAxisX = 1f,
                         formatterAxisX = axis,
                         data = arrayOf(ChartRenderer.ChartDataDescriptor(stats.weightLifted.map { BarEntry(state.period.chartX(it.start), it.value) })),
                     )
+                    chart.setTouchEnabled(touchable)
                 },
                 modifier = Modifier.fillMaxSize(),
             )
@@ -76,13 +82,15 @@ internal fun StatisticsCharts(state: StatisticsPageState, modifier: Modifier = M
                 factory = { LayoutInflater.from(it).inflate(R.layout.view_statistics_line_chart, null) },
                 update = { view ->
                     view.findViewById<TextView>(R.id.axisTitleLbl).text = minutes
+                    val chart = view.findViewById<LineChart>(R.id.chart)
                     renderer.renderLineChart(
-                        chart = view.findViewById<LineChart>(R.id.chart),
+                        chart = chart,
                         axisLeftLabelY = view.findViewById(R.id.axisTitle),
                         granularityAxisX = 1f,
                         formatterAxisX = axis,
                         data = arrayOf(ChartRenderer.ChartDataDescriptor(stats.duration.map { Entry(state.period.chartX(it.start), it.value) })),
                     )
+                    chart.setTouchEnabled(touchable)
                 },
                 modifier = Modifier.fillMaxSize(),
             )

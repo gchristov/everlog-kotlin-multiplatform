@@ -1,5 +1,6 @@
 package com.everlog.android.statistics.ui.page
 
+import androidx.compose.ui.test.SemanticsMatcher
 import androidx.compose.ui.test.hasAnyAncestor
 import androidx.compose.ui.test.hasTestTag
 import androidx.compose.ui.test.hasText
@@ -106,6 +107,20 @@ class StatisticsPageScenarioTest {
         compose.waitUntil(WaitMillis) { workoutsShown("1") }
     }
 
+    @Test
+    fun anEmptyWeekShowsAnExample() {
+        workouts.recent.value = Load.Ready(emptyList())
+        show()
+
+        // Under its label, faded and out of the semantics tree, so the real numbers aren't there
+        compose.waitUntil(WaitMillis) { exists(hasTestTag(StatisticsPageTags.Example)) }
+        compose.onNodeWithTag(StatisticsPageTags.Workouts).assertDoesNotExist()
+
+        workouts.recent.value = Load.Ready(listOf(finishedToday()))
+        compose.waitUntil(WaitMillis) { workoutsShown("1") }
+        compose.onNodeWithTag(StatisticsPageTags.Example).assertDoesNotExist()
+    }
+
     private fun pick(period: String) {
         compose.onNodeWithTag(StatisticsPageTags.Period).performClick()
         compose.onNode(hasText(period) and !hasAnyAncestor(hasTestTag(StatisticsPageTags.Period)) and !hasTestTag(StatisticsPageTags.Period))
@@ -129,7 +144,9 @@ class StatisticsPageScenarioTest {
     private fun workoutsShown(count: String) =
         compose.onAllNodes(hasText(count) and hasAnyAncestor(hasTestTag(StatisticsPageTags.Workouts))).fetchSemanticsNodes().isNotEmpty()
 
-    private fun exists(text: String) = compose.onAllNodes(hasText(text)).fetchSemanticsNodes().isNotEmpty()
+    private fun exists(text: String) = exists(hasText(text))
+
+    private fun exists(matcher: SemanticsMatcher) = compose.onAllNodes(matcher).fetchSemanticsNodes().isNotEmpty()
 
     private class Analytics(private val picked: MutableList<StatsPeriod>) : StatisticsAnalytics {
         override fun statisticsRangeModified(range: RangeType) = Unit
