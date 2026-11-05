@@ -151,6 +151,27 @@ class HistoryPageScenarioTest {
     }
 
     @Test
+    fun aWorkoutSavedAtTheNewestIsFollowed() {
+        val days = (1..20).map { today.minusDays(it.toLong()) }
+        show()
+        pickView("List")
+        shown(days.map { finished(it, "Workout $it") })
+        compose.waitUntil(WaitMillis) { exists(hasText("Workout ${days.first()}")) }
+
+        // At the newest, workouts saved today come into view, down to the last of them, though the day is taller than
+        // the room under the list
+        val todays = (1..4).map { finished(today, "Today's $it") }
+        shown(days.map { finished(it, "Workout $it") } + todays)
+        compose.waitUntil(WaitMillis) { displayed("Today's 4") }
+
+        // Further back, another stays out of view
+        compose.onNodeWithTag(HistoryPageTags.List).performScrollToIndex(0)
+        shown(days.map { finished(it, "Workout $it") } + todays + finished(today, "Later"))
+        compose.waitForIdle()
+        assertThat(displayed("Later")).isFalse()
+    }
+
+    @Test
     fun noWorkoutsYet() {
         show()
         pickView("List")
@@ -192,6 +213,8 @@ class HistoryPageScenarioTest {
             }
         }
     }
+
+    private fun displayed(text: String) = runCatching { compose.onNodeWithText(text).assertIsDisplayed() }.isSuccess
 
     // Unmerged, as a day's dot is inside its clickable cell
     private fun exists(matcher: SemanticsMatcher) = compose.onAllNodes(matcher, useUnmergedTree = true).fetchSemanticsNodes().isNotEmpty()
