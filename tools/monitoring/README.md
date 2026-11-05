@@ -68,7 +68,7 @@ These are **test devices**, left out for good: a device that once ran a nightly 
 - **Setup on day one:** within 24 hours of install, the user kept the starter templates or built their own in onboarding (`onboarding_finished` outcome `starter_templates` or `own_template`), created a routine, exercise or plan, or started a plan. Onboarding's own `settings_*_modified` events don't count, since every finished onboarding sends them.
 - **Tourist:** no setup and no workout started on day one.
 - **Week-one lifter:** a new user who finished a workout within 7 days of install.
-- **Screen names:** a screen rebuilt in Compose logs its own name with `_v2` (`screen_week_v2`, `screen_statistics_v2`, `screen_history_v2`, `screen_exercise_info_v2`, `screen_workout_v2`, `screen_exercise_picker_v2`, `screen_create_routine_v2`), while its old version keeps the old name. A query about a screen counts both names, as `analysis/baseline_users.sql` does, or its numbers drop as people move to the new screen. The dashboard itself only reads `screen_home`.
+- **Screen names:** a screen rebuilt in Compose logs its own name with `_v2` (`screen_week_v2`, `screen_statistics_v2`, `screen_history_v2`, `screen_exercise_info_v2`, `screen_workout_v2`, `screen_exercises_v2` (the exercise picker browsing from Home), `screen_exercise_picker_v2` (picking for a workout or template), `screen_create_routine_v2`), while its old version keeps the old name. Names that didn't exist yet change nothing in the 2021–2023 baseline, so adding them keeps it reproducible. A query about a screen counts both names, as `analysis/baseline_users.sql` does, or its numbers drop as people move to the new screen. The dashboard itself only reads `screen_home`.
 
 ## The page, section by section
 
