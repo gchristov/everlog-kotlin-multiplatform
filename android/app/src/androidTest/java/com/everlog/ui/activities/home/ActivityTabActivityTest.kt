@@ -62,13 +62,14 @@ class ActivityTabActivityTest {
         val home = ActivityScenario.launch(HomeActivity::class.java)
         home.onActivity { it.findViewById<ViewPager>(R.id.pager).currentItem = ActivityTab }
 
-        // Each page has loaded once its content shows instead of the shimmer
-        compose.waitUntil(LoadMillis) { exists(StatisticsPageTags.Workouts) }
+        // Each page has loaded once its content shows instead of the shimmer: the account's, or the example when the
+        // week has no workouts yet
+        compose.waitUntil(LoadMillis) { exists(StatisticsPageTags.Workouts) || exists(StatisticsPageTags.Example) }
         compose.onNodeWithTag(StatisticsPageTags.Period).assertIsDisplayed()
 
         // The tab chip, not the hidden title the tab also keeps
         onView(allOf(withText("History"), isDisplayed())).perform(click())
-        compose.waitUntil(LoadMillis) { exists(HistoryPageTags.Calendar) }
+        compose.waitUntil(LoadMillis) { exists(HistoryPageTags.Calendar) || exists(HistoryPageTags.Example) }
         compose.waitUntil(WaitMillis) { displayed(HistoryPageTags.View) }
 
         // The week's days open the statistics, though the history was the page shown last

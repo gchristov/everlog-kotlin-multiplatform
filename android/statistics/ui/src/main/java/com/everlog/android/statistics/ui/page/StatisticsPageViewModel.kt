@@ -25,6 +25,8 @@ data class StatisticsPageState(
     val failed: Boolean = false,
     // Whether there's a feedback form to ask for more statistics with
     val feedback: Boolean = false,
+    // Sample stats to show, faded, while the period has no workouts or couldn't load
+    val example: UserStats? = null,
 )
 
 /**
@@ -108,11 +110,14 @@ class StatisticsPageViewModel(
         val shown = if (period == StatsPeriod.Last12Months) year else synced
         val date = today()
         setState {
+            val loading = shown == null && !failed
+            val stats = userStats(shown.orEmpty(), period, date, settings.firstDayOfWeek(), settings.weightUnit())
             copy(
                 today = date,
                 weightUnit = settings.weightUnit(),
-                loading = shown == null && !failed,
-                stats = userStats(shown.orEmpty(), period, date, settings.firstDayOfWeek(), settings.weightUnit()),
+                loading = loading,
+                stats = stats,
+                example = if (!loading && stats.workouts == 0) exampleStats(period, date, settings.firstDayOfWeek(), settings.weightUnit()) else null,
             )
         }
     }

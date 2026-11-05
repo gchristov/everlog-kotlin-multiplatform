@@ -32,6 +32,8 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.everlog.android.common.compose.elements.AppBlurBox
 import com.everlog.android.common.compose.elements.AppChip
 import com.everlog.android.common.compose.elements.AppChipStyle
+import com.everlog.android.common.compose.elements.AppExample
+import com.everlog.android.common.compose.elements.AppExampleLabel
 import com.everlog.android.common.compose.elements.AppMenu
 import com.everlog.android.common.compose.elements.AppMenuItem
 import com.everlog.android.common.compose.elements.AppSnackbarHost
@@ -76,6 +78,15 @@ internal fun StatisticsPageContent(
     AppBlurBox(
         modifier = Modifier.fillMaxSize(),
         overlay = {
+            if (state.example != null) {
+                // Level with the picker
+                Box(
+                    modifier = Modifier.align(Alignment.TopStart).padding(horizontal = Theme.spacing.large).height(PageSizes.PickerHeight),
+                    contentAlignment = Alignment.CenterStart,
+                ) {
+                    AppExampleLabel(modifier = Modifier.testTag(StatisticsPageTags.Example), floating = true)
+                }
+            }
             PeriodPicker(
                 period = state.period,
                 onPicked = onPeriodPicked,
@@ -101,11 +112,20 @@ private fun StatisticsPageBody(state: StatisticsPageState, onFeedback: () -> Uni
             .padding(top = PageSizes.TopPadding, bottom = PageSizes.BottomPadding),
         verticalArrangement = Arrangement.spacedBy(Theme.spacing.large),
     ) {
-        if (state.loading) {
-            StatisticsLoading()
-        } else {
-            SummaryCards(state)
-            StatisticsCharts(state)
+        val example = state.example
+        when {
+            state.loading -> StatisticsLoading()
+            example != null -> AppExample {
+                val exampleState = state.copy(stats = example)
+                Column(verticalArrangement = Arrangement.spacedBy(Theme.spacing.large)) {
+                    SummaryCards(exampleState)
+                    StatisticsCharts(exampleState, touchable = false)
+                }
+            }
+            else -> {
+                SummaryCards(state)
+                StatisticsCharts(state)
+            }
         }
         if (state.feedback) {
             Column(modifier = Modifier.fillMaxWidth().testTag(StatisticsPageTags.Feedback), horizontalAlignment = Alignment.CenterHorizontally) {
@@ -214,6 +234,8 @@ private const val SummaryRows = 3
 private object PageSizes {
     // Room for the period picker above the page
     val TopPadding = 67.dp
+    // The picker's chip, for the example label beside it
+    val PickerHeight = 36.dp
     // Room for Home's start workout button over the end of the page
     val BottomPadding = 180.dp
     // Above Home's tab bar and its start workout button, which the page runs under

@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
@@ -31,22 +30,21 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.everlog.android.common.compose.elements.AppBlurBox
 import com.everlog.android.common.compose.elements.AppChip
+import com.everlog.android.common.compose.elements.AppExample
+import com.everlog.android.common.compose.elements.AppExampleLabel
 import com.everlog.android.common.compose.elements.AppChipStyle
 import com.everlog.android.common.compose.elements.AppCircularProgressIndicator
 import com.everlog.android.common.compose.elements.AppMenu
 import com.everlog.android.common.compose.elements.AppMenuItem
 import com.everlog.android.common.compose.elements.AppSnackbarHost
 import com.everlog.android.common.compose.elements.AppSurface
-import com.everlog.android.common.compose.elements.AppText
 import com.everlog.android.common.compose.elements.rememberShimmerBrush
 import com.everlog.android.common.compose.theme.Theme
 import com.everlog.android.common.data.model.workout.ELWorkout
-import com.everlog.android.common.design.R as DesignR
 import com.everlog.android.history.ui.R
 import kotlinx.coroutines.launch
 import org.threeten.bp.LocalDate
@@ -110,6 +108,15 @@ internal fun HistoryPageContent(
     AppBlurBox(
         modifier = Modifier.fillMaxSize(),
         overlay = {
+            if (state.example != null) {
+                // Level with the picker
+                Box(
+                    modifier = Modifier.align(Alignment.TopStart).padding(horizontal = Theme.spacing.large).height(PageSizes.PickerHeight),
+                    contentAlignment = Alignment.CenterStart,
+                ) {
+                    AppExampleLabel(modifier = Modifier.testTag(HistoryPageTags.Example), floating = true)
+                }
+            }
             ViewPicker(
                 view = state.view,
                 onPicked = onViewPicked,
@@ -132,7 +139,7 @@ internal fun HistoryPageContent(
     ) {
         when {
             state.loading -> HistoryLoading(state.view, padding)
-            state.view == HistoryView.List && state.days.isEmpty() -> HistoryEmpty(padding)
+            state.example != null -> HistoryExample(state.copy(days = state.example), padding)
             state.view == HistoryView.List -> HistoryList(
                 state = state,
                 listState = listState,
@@ -177,16 +184,21 @@ private fun ViewPicker(view: HistoryView, onPicked: (HistoryView) -> Unit, modif
     }
 }
 
+// The sample days in the view picked, faded and still, opening on the newest like the real ones
 @Composable
-private fun HistoryEmpty(padding: PaddingValues) {
-    Box(modifier = Modifier.fillMaxSize().padding(padding).padding(top = PageSizes.EmptyTop), contentAlignment = Alignment.TopCenter) {
-        AppText(
-            text = stringResource(DesignR.string.history_empty_prompt),
-            style = Theme.typography.subtitle,
-            color = Theme.contentColors.secondary,
-            textAlign = TextAlign.Center,
-            modifier = Modifier.width(PageSizes.EmptyWidth).testTag(HistoryPageTags.Empty),
-        )
+private fun HistoryExample(example: HistoryPageState, padding: PaddingValues) {
+    AppExample(modifier = Modifier.fillMaxSize()) {
+        when (example.view) {
+            HistoryView.List -> HistoryList(
+                state = example,
+                listState = remember { LazyListState() },
+                contentPadding = padding,
+                onWorkout = {},
+                onReachedOldest = {},
+                onScrolledToDay = {},
+            )
+            HistoryView.Calendar -> HistoryCalendar(state = example, contentPadding = padding, onDayPicked = {}, onReachedOldest = {})
+        }
     }
 }
 
@@ -231,8 +243,8 @@ private object PageSizes {
     // Room for Home's start-workout button below the content
     val BottomPadding = 180.dp
     val SnackbarBottom = 128.dp
-    val EmptyTop = 48.dp
-    val EmptyWidth = 250.dp
+    // The picker's chip, for the example label beside it
+    val PickerHeight = 36.dp
     const val LoadingRows = 4
     const val LoadingWeeks = 5
     val LoadingRowHeight = 80.dp

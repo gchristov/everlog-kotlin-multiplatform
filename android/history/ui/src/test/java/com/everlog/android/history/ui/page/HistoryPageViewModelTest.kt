@@ -19,7 +19,7 @@ class HistoryPageViewModelTest {
     private val workouts = FakeWorkoutRepository()
     private val settings = FakeUserSettings()
 
-    private fun viewModel() = HistoryPageViewModel(FakeCoroutineDispatcher, workouts, settings) { today }
+    private fun viewModel() = HistoryPageViewModel(FakeCoroutineDispatcher, workouts, settings, listOf("Legs", "Push", "Pull")) { today }
 
     private fun finishedOn(day: LocalDate, hour: Int = 18): ELWorkout {
         val completed = day.atTime(hour, 0).atZone(ZoneId.systemDefault()).toInstant().toEpochMilli()
@@ -141,6 +141,32 @@ class HistoryPageViewModelTest {
         viewModel.refresh()
 
         assertThat(workouts.historyReads).isEqualTo(1)
+    }
+
+    @Test
+    fun `no workouts shows sample days, by name, until the first one`() {
+        val viewModel = viewModel()
+        assertThat(viewModel.state.value.example).isNull()
+
+        shown(complete = true)
+
+        val example = viewModel.state.value.example!!
+        assertThat(example.last().date).isAtMost(today)
+        assertThat(example.flatMap { it.workouts }.mapNotNull { it.getName() }.toSet()).containsExactly("Legs", "Push", "Pull")
+
+        shown(newest, complete = true)
+        assertThat(viewModel.state.value.example).isNull()
+    }
+
+    @Test
+    fun `a history that can't load shows the sample days too, and leaving drops them`() {
+        val viewModel = viewModel()
+
+        workouts.history.loads.value = Load.Unavailable(IOException("offline"))
+        assertThat(viewModel.state.value.example).isNotEmpty()
+
+        viewModel.onLeft()
+        assertThat(viewModel.state.value.example).isNull()
     }
 
     @Test

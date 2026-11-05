@@ -6,6 +6,7 @@ import com.everlog.android.common.mvvm.CommonViewModel
 import com.everlog.android.settings.data.UserSettings
 import com.everlog.android.workout.data.WorkoutHistoryRead
 import com.everlog.android.workout.data.WorkoutRepository
+import com.everlog.android.workout.data.example.exampleWorkouts
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Job
 import org.threeten.bp.DayOfWeek
@@ -35,6 +36,8 @@ data class HistoryPageState(
     val emptyDayPicked: Boolean = false,
     // Which read the days come from: a new one starts again from the newest, scrolled to the bottom
     val read: Int = 0,
+    // Sample days to show, faded, while there are no workouts or the first page couldn't load
+    val example: List<HistoryDay>? = null,
 )
 
 /**
@@ -47,6 +50,8 @@ class HistoryPageViewModel(
     dispatcher: CoroutineDispatcher,
     private val workouts: WorkoutRepository,
     private val settings: UserSettings,
+    // The sample workouts' names, e.g. Legs, Push and Pull
+    private val exampleNames: List<String>,
     private val today: () -> LocalDate,
 ) : CommonViewModel<HistoryPageState>(dispatcher, initialState(settings, today())) {
 
@@ -115,20 +120,24 @@ class HistoryPageViewModel(
             history.loads.collect { load ->
                 when (load) {
                     is Load.Ready -> setState {
+                        val days = historyDays(load.value.workouts)
                         copy(
-                            days = historyDays(load.value.workouts),
+                            days = days,
                             loading = false,
                             loadingMore = load.value.loadingMore,
                             complete = load.value.complete,
                             failed = false,
+                            example = if (days.isEmpty()) example() else null,
                         )
                     }
-                    is Load.Unavailable -> setState { copy(loading = false, failed = true) }
+                    is Load.Unavailable -> setState { copy(loading = false, failed = true, example = example()) }
                     Load.Loading -> Unit
                 }
             }
         }
     }
+
+    private fun example() = historyDays(exampleWorkouts(today(), exampleNames))
 
     private companion object {
         fun initialState(settings: UserSettings, today: LocalDate) = HistoryPageState(

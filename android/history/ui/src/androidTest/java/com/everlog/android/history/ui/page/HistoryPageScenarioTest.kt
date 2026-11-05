@@ -144,9 +144,17 @@ class HistoryPageScenarioTest {
 
         shown(emptyList(), complete = true)
 
-        compose.waitUntil(WaitMillis) { exists(hasTestTag(HistoryPageTags.Empty)) }
+        // The example shows in either view, under its label, faded and out of the semantics tree
+        compose.waitUntil(WaitMillis) { exists(hasTestTag(HistoryPageTags.Example)) }
+        compose.onNodeWithTag(HistoryPageTags.List).assertDoesNotExist()
         pickView("Calendar")
-        compose.onNodeWithTag(HistoryPageTags.Calendar).assertExists()
+        compose.onNodeWithTag(HistoryPageTags.Example).assertExists()
+        compose.onNodeWithTag(HistoryPageTags.Calendar).assertDoesNotExist()
+
+        // The first workout replaces it
+        shown(listOf(finished(today, "Legs")), complete = true)
+        compose.waitUntil(WaitMillis) { exists(hasTestTag(HistoryPageTags.Calendar)) }
+        compose.onNodeWithTag(HistoryPageTags.Example).assertDoesNotExist()
     }
 
     private fun shown(history: List<ELWorkout>, complete: Boolean = false) {
@@ -164,7 +172,7 @@ class HistoryPageScenarioTest {
     }
 
     private fun show() {
-        val viewModel = HistoryPageViewModel(Dispatchers.Main, workouts, FakeUserSettings()) { today }
+        val viewModel = HistoryPageViewModel(Dispatchers.Main, workouts, FakeUserSettings(), listOf("Legs", "Push", "Pull")) { today }
         compose.setContent {
             Theme {
                 HistoryPageScreen(viewModel = viewModel, onWorkout = { opened += it.getName().orEmpty() })

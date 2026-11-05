@@ -17,6 +17,7 @@ import com.everlog.android.common.mvp.fragment.BaseTabFragment
 import com.everlog.android.common.navigation.WorkoutDetails
 import com.everlog.android.history.ui.HistoryGraph
 import com.everlog.android.history.ui.HistoryScreenNames
+import com.everlog.android.history.ui.R
 import kotlinx.coroutines.Dispatchers
 import org.threeten.bp.LocalDate
 
@@ -33,6 +34,7 @@ class HistoryPageFragment : BaseTabFragment() {
                     dispatcher = Dispatchers.Main,
                     workouts = graph.workoutRepository,
                     settings = graph.userSettings,
+                    exampleNames = ExampleNames.map(::getString),
                     today = { LocalDate.now() },
                 )
             }
@@ -87,3 +89,5 @@ class HistoryPageFragment : BaseTabFragment() {
         mPresenter = PresenterHistoryPage(refresh = { viewModel.refresh() })
     }
 }
+
+private val ExampleNames = listOf(R.string.history_example_legs, R.string.history_example_push, R.string.history_example_pull)

@@ -8,4 +8,5 @@ object StatisticsPageTags {
     const val Workouts = "statistics.workouts"
     const val MusclesChart = "statistics.musclesChart"
     const val Feedback = "statistics.feedback"
+    const val Example = "statistics.example"
 }

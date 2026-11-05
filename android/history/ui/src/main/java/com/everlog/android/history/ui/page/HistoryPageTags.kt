@@ -7,7 +7,7 @@ object HistoryPageTags {
     const val View = "history.view"
     const val Loading = "history.loading"
     const val LoadingMore = "history.loadingMore"
-    const val Empty = "history.empty"
+    const val Example = "history.example"
     const val Snackbar = "history.snackbar"
     const val Calendar = "history.calendar"
     const val List = "history.list"

@@ -171,6 +171,37 @@ class StatisticsPageViewModelTest {
         assertThat(state.feedback).isTrue()
     }
 
+    @Test
+    fun `a period without workouts shows a full example of it, and a period with them doesn't`() {
+        val viewModel = viewModel()
+        assertThat(viewModel.state.value.example).isNull()
+
+        workouts.recent.value = Load.Ready(emptyList())
+
+        val example = viewModel.state.value.example!!
+        assertThat(example.period).isEqualTo(StatsPeriod.Week)
+        assertThat(example.workouts).isEqualTo(3)
+        assertThat(example.muscles).isNotEmpty()
+
+        workouts.recent.value = Load.Ready(history)
+        assertThat(viewModel.state.value.example).isNull()
+    }
+
+    @Test
+    fun `when the last 12 months can't load, their example shows with the way to try again`() {
+        workouts.byMonths[12] = year
+        val viewModel = viewModel()
+        workouts.recent.value = Load.Ready(history)
+        viewModel.onPeriodPicked(StatsPeriod.Last12Months)
+        assertThat(viewModel.state.value.example).isNull()
+
+        year.value = Load.Unavailable(IOException("timed out"))
+
+        assertThat(viewModel.state.value.failed).isTrue()
+        assertThat(viewModel.state.value.example!!.period).isEqualTo(StatsPeriod.Last12Months)
+        assertThat(viewModel.state.value.example!!.weightLifted).hasSize(12)
+    }
+
     private class FakeAnalytics : StatisticsAnalytics {
         val picked = mutableListOf<StatsPeriod>()
 
