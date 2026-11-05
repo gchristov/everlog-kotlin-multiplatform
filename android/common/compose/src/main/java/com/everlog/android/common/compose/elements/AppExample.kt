@@ -40,13 +40,17 @@ fun AppExample(modifier: Modifier = Modifier, content: @Composable () -> Unit) {
 
 /**
  * EXAMPLE · NOT YOUR DATA, in an outlined pill, over an [AppExample].
+ *
+ * @param floating Over content that scrolls behind it: blurs it, like a floating [AppChip]. Needs an [AppScreen] or
+ * [AppBlurBox] around the content to blur, and has a solid background otherwise.
  */
 @Composable
-fun AppExampleLabel(modifier: Modifier = Modifier) {
+fun AppExampleLabel(modifier: Modifier = Modifier, floating: Boolean = false) {
     AppText(
         modifier = modifier
             .clip(Theme.shapes.button)
             .border(1.dp, Theme.backgrounds.separator, Theme.shapes.button)
+            .then(if (floating) Modifier.appBlur() else Modifier)
             .padding(horizontal = Theme.spacing.medium, vertical = Theme.spacing.extraSmall),
         text = stringResource(DesignR.string.example_label),
         style = Theme.typography.small,
