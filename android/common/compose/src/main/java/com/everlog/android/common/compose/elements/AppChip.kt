@@ -29,6 +29,8 @@ import com.everlog.android.common.design.R as DesignR
  *
  * @param selected Tints it in the accent, e.g. the current tab in a row of chips that switch pages.
  * @param dropdown Ends it with a down arrow, when it opens a menu.
+ * @param floating Over content that scrolls behind it: blurs it, like [AppFooter], instead of its own background.
+ * Needs an [AppScreen] or [AppBlurBox] around the content to blur, and has a solid background otherwise.
  */
 @Composable
 fun AppChip(
@@ -38,6 +40,7 @@ fun AppChip(
     style: AppChipStyle = AppChipStyle.Default,
     selected: Boolean = false,
     dropdown: Boolean = false,
+    floating: Boolean = false,
 ) {
     val (content, border, background) = when {
         selected -> Triple(Theme.contentColors.action, Theme.contentColors.action, Theme.backgrounds.selected)
@@ -49,7 +52,7 @@ fun AppChip(
             .height(ChipSizes.Height)
             .clip(Theme.shapes.button)
             .border(1.dp, border, Theme.shapes.button)
-            .background(background)
+            .then(if (floating) Modifier.appBlur() else Modifier.background(background))
             .clickable(onClick = onClick)
             .padding(start = Theme.spacing.large, end = if (dropdown) Theme.spacing.medium else Theme.spacing.large),
         verticalAlignment = Alignment.CenterVertically,

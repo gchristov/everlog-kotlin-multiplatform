@@ -47,11 +47,8 @@ import com.everlog.android.common.compose.elements.AppButton
 import com.everlog.android.common.compose.elements.AppIcon
 import com.everlog.android.common.compose.elements.AppIconButton
 import com.everlog.android.common.compose.elements.AppText
-import com.everlog.android.common.compose.elements.LocalAppScreenHazeState
+import com.everlog.android.common.compose.elements.appBlur
 import com.everlog.android.common.compose.theme.Theme
-import dev.chrisbanes.haze.HazeStyle
-import dev.chrisbanes.haze.HazeTint
-import dev.chrisbanes.haze.hazeEffect
 import com.everlog.android.common.design.R as DesignR
 
 /**
@@ -130,7 +127,7 @@ fun AppKeypad(
         modifier = modifier
             .fillMaxWidth()
             .clip(shape)
-            .keypadBlur()
+            .appBlur()
             .border(1.dp, Theme.backgrounds.separator, shape)
             // Takes the touches on its empty space, so they don't reach the content behind it
             .pointerInput(Unit) { detectTapGestures { } }
@@ -391,26 +388,6 @@ private fun RowScope.Key(
 // Figures the same width, so numbers don't jiggle as they change
 @Composable
 internal fun keypadNumberStyle() = Theme.typography.heading.copy(fontFeatureSettings = "tnum")
-
-// The same blur and tint as AppFooter
-@Composable
-private fun Modifier.keypadBlur(): Modifier {
-    val hazeState = LocalAppScreenHazeState.current
-    return if (hazeState != null) {
-        hazeEffect(
-            state = hazeState,
-            style = HazeStyle(
-                backgroundColor = Theme.backgrounds.primary,
-                tint = HazeTint(Theme.backgrounds.blurOverlay),
-                blurRadius = 20.dp,
-                noiseFactor = 0f,
-                fallbackTint = HazeTint(Theme.backgrounds.primary),
-            ),
-        )
-    } else {
-        background(Theme.backgrounds.primary)
-    }
-}
 
 private object NoInput : AppKeypadInput {
     override fun onDigit(digit: Char) = Unit

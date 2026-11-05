@@ -24,9 +24,6 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.everlog.android.common.compose.theme.Theme
-import dev.chrisbanes.haze.HazeStyle
-import dev.chrisbanes.haze.HazeTint
-import dev.chrisbanes.haze.hazeEffect
 
 data class AppFooterAction(
     val text: String,
@@ -75,7 +72,7 @@ fun AppFooter(
                 .widthIn(max = LocalAppScreenMaxContentWidth.current)
                 .fillMaxWidth()
                 .clip(shape)
-                .footerBlur()
+                .appBlur()
                 .border(1.dp, Theme.backgrounds.separator, shape)
                 .padding(Theme.spacing.large),
             contentKey = { it.transitionKey },
@@ -116,26 +113,6 @@ private fun FooterHeader(text: String) {
         style = Theme.typography.caption,
         color = Theme.contentColors.secondary,
     )
-}
-
-// The content behind, blurred under the tint, or a solid background where there's no blur
-@Composable
-private fun Modifier.footerBlur(): Modifier {
-    val hazeState = LocalAppScreenHazeState.current
-    return if (hazeState != null) {
-        hazeEffect(
-            state = hazeState,
-            style = HazeStyle(
-                backgroundColor = Theme.backgrounds.primary,
-                tint = HazeTint(Theme.backgrounds.blurOverlay),
-                blurRadius = 20.dp,
-                noiseFactor = 0f,
-                fallbackTint = HazeTint(Theme.backgrounds.primary),
-            ),
-        )
-    } else {
-        background(Theme.backgrounds.primary)
-    }
 }
 
 @Composable
