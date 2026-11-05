@@ -33,6 +33,10 @@ class TabsPage : LinearLayout {
         setupLayout()
     }
 
+    fun showPage(position: Int) {
+        binding.pager.setCurrentItem(position, true)
+    }
+
     fun setTabs(fragmentManager: FragmentManager,
                 fragments: List<BaseTabFragment>,
                 selectedIndex: Int? = 0,
