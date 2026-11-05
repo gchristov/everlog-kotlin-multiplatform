@@ -57,6 +57,20 @@ These are **test devices**, left out for good: a device that once ran a nightly 
 ./tools/bigquery/bq_query.sh bigquery-credentials-prod.json tools/monitoring/checks/robots.sql
 ```
 
+## Watching a release
+
+After a release starts rolling out, and daily while it does, run the two release checks. They use the same real-user filters as the dashboard and return counts only:
+
+```bash
+./tools/bigquery/bq_query.sh bigquery-credentials-prod.json tools/monitoring/checks/release_adoption.sql
+./tools/bigquery/bq_query.sh bigquery-credentials-prod.json tools/monitoring/checks/release_crashes.sql
+```
+
+- **`release_adoption.sql`:** how many devices are on each version, and whether people on the new one start and finish workouts as before. A jump in `resumed` (workouts brought back after the app was killed) or `exceptions` on the new version is worth a look.
+- **`release_crashes.sql`:** crashes by day, version and issue, fatal first, from Crashlytics' realtime table (the batch one lags a day). Besides the dashboard's filters it leaves out what reaches Crashlytics from Play's robots: their accounts, the Test Lab key and OnePlus8Pro on Android 11. An issue groups crashes by stack, so it's split by message too.
+
+Both look back 7 days: change the `INTERVAL` to look further. For one person's timeline (e.g. a user who wrote in), query by their `user_id` ad hoc and don't commit it.
+
 ## Definitions
 
 - **New users:** new accounts (`user_registered`) on real installs, plus real installs that never got an account. People reinstalling and logging in to an older account aren't new. Each user's events are followed across devices by their account, plus the anonymous events on the device they installed on.
@@ -99,6 +113,8 @@ These are **test devices**, left out for good: a device that once ran a nightly 
 | `sql/new_users.sql` | One row per real new user since 2026-01-01, with the flags every new-user metric is built from |
 | `sql/core.sql` | Workouts finished and people who lifted, per week and per month since 2025 (all real users) |
 | `checks/robots.sql` | Not on the dashboard: installs per month and what each filter removes |
+| `checks/release_crashes.sql` | Not on the dashboard: crashes in the last 7 days by day, version and issue (Crashlytics) |
+| `checks/release_adoption.sql` | Not on the dashboard: each version's devices, installs, workouts, resumes and exceptions in the last 7 days |
 | `analysis/*.sql` | Not on the dashboard: the queries behind the Funnel baseline in Notion (see below) |
 | `config.json` | Onboarding v1 date, paid test start date, campaigns and spend, labelled chart markers |
 | `build.py` | Works out every number into `out/data.json` and fills it into the page |
