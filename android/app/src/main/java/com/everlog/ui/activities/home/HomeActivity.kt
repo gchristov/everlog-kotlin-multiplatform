@@ -297,6 +297,8 @@ class HomeActivity : BaseActivity(), MvpViewHome, HomeHost {
             }
 
             override fun onPageSelected(p0: Int) {
+                // The pager's own fragments, which after process death aren't the adapter's
+                if (p0 != ActivityTab) supportFragmentManager.fragments.filterIsInstance<ActivityHomeFragment>().forEach { it.onTabLeft() }
                 mPresenter?.setSelectedTab(p0)
                 val pendingTabId = mIndexMapTabId[p0]
                 val activeTabId = binding.tabBar.selectedItemId
@@ -315,3 +317,5 @@ class HomeActivity : BaseActivity(), MvpViewHome, HomeHost {
         }
     }
 }
+
+private const val ActivityTab = 2

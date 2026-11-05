@@ -22,6 +22,9 @@ interface HomeConfig {
 
     // The Activity tab's statistics page in Compose
     fun statisticsV2(): Boolean
+
+    // The Activity tab's history page in Compose
+    fun historyV2(): Boolean
 }
 
 // The names analytics already has for Home's tabs

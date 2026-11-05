@@ -349,6 +349,8 @@ class WeekTabViewModelTest {
         override val appVersionCode = 2_240_000
 
         override fun statisticsV2() = false
+
+        override fun historyV2() = false
     }
 
     private class FakeHomeAnalytics : HomeAnalytics {
