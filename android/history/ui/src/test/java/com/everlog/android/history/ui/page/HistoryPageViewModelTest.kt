@@ -3,6 +3,8 @@ package com.everlog.android.history.ui.page
 import com.everlog.android.common.data.model.workout.ELWorkout
 import com.everlog.android.common.kotlin.Load
 import com.everlog.android.common.test.FakeCoroutineDispatcher
+import com.everlog.android.history.data.HistoryPreferences
+import com.everlog.android.history.data.HistoryView
 import com.everlog.android.settings.testfixtures.FakeUserSettings
 import com.everlog.android.workout.data.WorkoutHistory
 import com.everlog.android.workout.testfixtures.FakeWorkoutRepository
@@ -19,7 +21,9 @@ class HistoryPageViewModelTest {
     private val workouts = FakeWorkoutRepository()
     private val settings = FakeUserSettings()
 
-    private fun viewModel() = HistoryPageViewModel(FakeCoroutineDispatcher, workouts, settings, listOf("Legs", "Push", "Pull")) { today }
+    private val preferences = FakeHistoryPreferences()
+
+    private fun viewModel() = HistoryPageViewModel(FakeCoroutineDispatcher, workouts, settings, preferences, listOf("Legs", "Push", "Pull")) { today }
 
     private fun finishedOn(day: LocalDate, hour: Int = 18): ELWorkout {
         val completed = day.atTime(hour, 0).atZone(ZoneId.systemDefault()).toInstant().toEpochMilli()
@@ -34,10 +38,10 @@ class HistoryPageViewModelTest {
     }
 
     @Test
-    fun `opens on the calendar, loading, with today picked`() {
+    fun `opens on the list, loading, with today picked`() {
         val state = viewModel().state.value
 
-        assertThat(state.view).isEqualTo(HistoryView.Calendar)
+        assertThat(state.view).isEqualTo(HistoryView.List)
         assertThat(state.loading).isTrue()
         assertThat(state.selected).isEqualTo(today)
     }
@@ -88,6 +92,7 @@ class HistoryPageViewModelTest {
 
     @Test
     fun `picking a day without workouts says so and stays on the calendar`() {
+        preferences.saved = HistoryView.Calendar
         val viewModel = viewModel()
         shown(newest)
 
@@ -170,6 +175,21 @@ class HistoryPageViewModelTest {
     }
 
     @Test
+    fun `opens on the view last picked, and a day picked on the calendar doesn't change it`() {
+        preferences.saved = HistoryView.Calendar
+        val viewModel = viewModel()
+        assertThat(viewModel.state.value.view).isEqualTo(HistoryView.Calendar)
+        shown(newest)
+
+        viewModel.onDayPicked(today.minusDays(1))
+        assertThat(viewModel.state.value.view).isEqualTo(HistoryView.List)
+        assertThat(preferences.saved).isEqualTo(HistoryView.Calendar)
+
+        viewModel.onViewPicked(HistoryView.List)
+        assertThat(preferences.saved).isEqualTo(HistoryView.List)
+    }
+
+    @Test
     fun `settings changed while away show on refresh`() {
         val viewModel = viewModel()
         settings.setFirstDayOfWeek(DayOfWeek.SUNDAY)
@@ -198,5 +218,15 @@ class HistoryPageViewModelTest {
 
         shown(newest)
         assertThat(viewModel.state.value.days).hasSize(1)
+    }
+
+    private class FakeHistoryPreferences : HistoryPreferences {
+        var saved = HistoryView.List
+
+        override fun view() = saved
+
+        override fun setView(view: HistoryView) {
+            saved = view
+        }
     }
 }

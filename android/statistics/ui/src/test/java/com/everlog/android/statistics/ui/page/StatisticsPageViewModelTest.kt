@@ -9,6 +9,7 @@ import com.everlog.android.common.kotlin.Load
 import com.everlog.android.common.kotlin.WeightUnit
 import com.everlog.android.common.test.FakeCoroutineDispatcher
 import com.everlog.android.settings.testfixtures.FakeUserSettings
+import com.everlog.android.statistics.data.StatisticsPreferences
 import com.everlog.android.statistics.data.StatsPeriod
 import com.everlog.android.statistics.ui.StatisticsAnalytics
 import com.everlog.android.workout.testfixtures.FakeWorkoutRepository
@@ -32,7 +33,9 @@ class StatisticsPageViewModelTest {
     private val analytics = FakeAnalytics()
     private var feedback = false
 
-    private fun viewModel() = StatisticsPageViewModel(FakeCoroutineDispatcher, workouts, settings, analytics, { feedback }) { today }
+    private val preferences = FakeStatisticsPreferences()
+
+    private fun viewModel() = StatisticsPageViewModel(FakeCoroutineDispatcher, workouts, settings, analytics, preferences, { feedback }) { today }
 
     private fun finishedOn(day: LocalDate): ELWorkout {
         val completed = day.atTime(18, 0).atZone(ZoneId.systemDefault()).toInstant().toEpochMilli()
@@ -200,6 +203,40 @@ class StatisticsPageViewModelTest {
         assertThat(viewModel.state.value.failed).isTrue()
         assertThat(viewModel.state.value.example!!.period).isEqualTo(StatsPeriod.Last12Months)
         assertThat(viewModel.state.value.example!!.weightLifted).hasSize(12)
+    }
+
+    @Test
+    fun `opens on the period last picked, reading the last 12 months straight away`() {
+        workouts.byMonths[12] = year
+        preferences.saved = StatsPeriod.Last12Months
+        val viewModel = viewModel()
+        workouts.recent.value = Load.Ready(history)
+
+        assertThat(viewModel.state.value.period).isEqualTo(StatsPeriod.Last12Months)
+        assertThat(workouts.reads[12]).isEqualTo(1)
+        assertThat(viewModel.state.value.loading).isTrue()
+
+        year.value = Load.Ready(history)
+        assertThat(viewModel.state.value.stats.workouts).isEqualTo(3)
+    }
+
+    @Test
+    fun `picking a period keeps it for next time`() {
+        val viewModel = viewModel()
+
+        viewModel.onPeriodPicked(StatsPeriod.Month)
+
+        assertThat(preferences.saved).isEqualTo(StatsPeriod.Month)
+    }
+
+    private class FakeStatisticsPreferences : StatisticsPreferences {
+        var saved = StatsPeriod.Week
+
+        override fun period() = saved
+
+        override fun setPeriod(period: StatsPeriod) {
+            saved = period
+        }
     }
 
     private class FakeAnalytics : StatisticsAnalytics {

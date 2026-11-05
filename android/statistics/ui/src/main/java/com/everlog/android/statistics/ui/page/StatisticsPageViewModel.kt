@@ -5,6 +5,7 @@ import com.everlog.android.common.kotlin.Load
 import com.everlog.android.common.kotlin.WeightUnit
 import com.everlog.android.common.mvvm.CommonViewModel
 import com.everlog.android.settings.data.UserSettings
+import com.everlog.android.statistics.data.StatisticsPreferences
 import com.everlog.android.statistics.data.StatsPeriod
 import com.everlog.android.statistics.data.UserStats
 import com.everlog.android.statistics.data.userStats
@@ -41,9 +42,10 @@ class StatisticsPageViewModel(
     private val workouts: WorkoutRepository,
     private val settings: UserSettings,
     private val analytics: StatisticsAnalytics,
+    private val preferences: StatisticsPreferences,
     private val feedback: () -> Boolean,
     private val today: () -> LocalDate,
-) : CommonViewModel<StatisticsPageState>(dispatcher, initialState(settings, today(), feedback())) {
+) : CommonViewModel<StatisticsPageState>(dispatcher, initialState(preferences.period(), settings, today(), feedback())) {
 
     private var synced: List<ELWorkout>? = null
     private var year: List<ELWorkout>? = null
@@ -61,6 +63,8 @@ class StatisticsPageViewModel(
                 if (state.value.period != StatsPeriod.Last12Months) show()
             }
         }
+        // Opening on the last 12 months, as last picked
+        if (state.value.period == StatsPeriod.Last12Months) readYear()
     }
 
     fun refresh() {
@@ -71,6 +75,7 @@ class StatisticsPageViewModel(
     fun onPeriodPicked(period: StatsPeriod) {
         if (period == state.value.period) return
         analytics.statisticsPeriodPicked(period)
+        preferences.setPeriod(period)
         setState { copy(period = period) }
         if (period == StatsPeriod.Last12Months) readYear() else dropYear()
         show()
@@ -125,9 +130,9 @@ class StatisticsPageViewModel(
     private companion object {
         const val YearMonths = 12
 
-        fun initialState(settings: UserSettings, today: LocalDate, feedback: Boolean) = StatisticsPageState(
-            period = StatsPeriod.Week,
-            stats = userStats(emptyList(), StatsPeriod.Week, today, settings.firstDayOfWeek(), settings.weightUnit()),
+        fun initialState(period: StatsPeriod, settings: UserSettings, today: LocalDate, feedback: Boolean) = StatisticsPageState(
+            period = period,
+            stats = userStats(emptyList(), period, today, settings.firstDayOfWeek(), settings.weightUnit()),
             today = today,
             weightUnit = settings.weightUnit(),
             feedback = feedback,

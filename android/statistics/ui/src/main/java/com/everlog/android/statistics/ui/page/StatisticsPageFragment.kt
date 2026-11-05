@@ -35,6 +35,7 @@ class StatisticsPageFragment : BaseTabFragment() {
                     workouts = graph.workoutRepository,
                     settings = graph.userSettings,
                     analytics = graph.statisticsAnalytics,
+                    preferences = graph.statisticsPreferences,
                     feedback = { graph.navigator.canOpen(Feedback) },
                     today = { LocalDate.now() },
                 )

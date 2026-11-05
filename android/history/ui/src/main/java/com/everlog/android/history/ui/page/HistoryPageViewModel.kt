@@ -3,6 +3,8 @@ package com.everlog.android.history.ui.page
 import com.everlog.android.common.kotlin.Load
 import com.everlog.android.common.kotlin.WeightUnit
 import com.everlog.android.common.mvvm.CommonViewModel
+import com.everlog.android.history.data.HistoryPreferences
+import com.everlog.android.history.data.HistoryView
 import com.everlog.android.settings.data.UserSettings
 import com.everlog.android.workout.data.WorkoutHistoryRead
 import com.everlog.android.workout.data.WorkoutRepository
@@ -11,8 +13,6 @@ import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Job
 import org.threeten.bp.DayOfWeek
 import org.threeten.bp.LocalDate
-
-enum class HistoryView { Calendar, List }
 
 data class HistoryPageState(
     val view: HistoryView,
@@ -50,10 +50,11 @@ class HistoryPageViewModel(
     dispatcher: CoroutineDispatcher,
     private val workouts: WorkoutRepository,
     private val settings: UserSettings,
+    private val preferences: HistoryPreferences,
     // The sample workouts' names, e.g. Legs, Push and Pull
     private val exampleNames: List<String>,
     private val today: () -> LocalDate,
-) : CommonViewModel<HistoryPageState>(dispatcher, initialState(settings, today())) {
+) : CommonViewModel<HistoryPageState>(dispatcher, initialState(preferences.view(), settings, today())) {
 
     private var read: WorkoutHistoryRead? = null
     private var job: Job? = null
@@ -74,7 +75,7 @@ class HistoryPageViewModel(
         job?.cancel()
         job = null
         read = null
-        setState { initialState(settings, today()).copy(view = view) }
+        setState { initialState(view, settings, today()) }
     }
 
     fun onTryAgain() {
@@ -83,7 +84,9 @@ class HistoryPageViewModel(
         startReading()
     }
 
+    // Opening on it from now on. A day picked on the calendar switches to the list for that day without that.
     fun onViewPicked(view: HistoryView) {
+        preferences.setView(view)
         setState { copy(view = view) }
     }
 
@@ -140,8 +143,8 @@ class HistoryPageViewModel(
     private fun example() = historyDays(exampleWorkouts(today(), exampleNames))
 
     private companion object {
-        fun initialState(settings: UserSettings, today: LocalDate) = HistoryPageState(
-            view = HistoryView.Calendar,
+        fun initialState(view: HistoryView, settings: UserSettings, today: LocalDate) = HistoryPageState(
+            view = view,
             days = emptyList(),
             today = today,
             selected = today,

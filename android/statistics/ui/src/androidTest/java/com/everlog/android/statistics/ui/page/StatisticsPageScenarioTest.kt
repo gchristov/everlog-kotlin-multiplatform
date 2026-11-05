@@ -17,6 +17,7 @@ import com.everlog.android.common.data.model.workout.RangeType
 import com.everlog.android.common.kotlin.AppContext
 import com.everlog.android.common.kotlin.Load
 import com.everlog.android.settings.testfixtures.FakeUserSettings
+import com.everlog.android.statistics.data.StatisticsPreferences
 import com.everlog.android.statistics.data.StatsPeriod
 import com.everlog.android.statistics.ui.StatisticsAnalytics
 import com.everlog.android.workout.testfixtures.FakeWorkoutRepository
@@ -133,7 +134,7 @@ class StatisticsPageScenarioTest {
     }
 
     private fun show() {
-        val viewModel = StatisticsPageViewModel(Dispatchers.Main, workouts, FakeUserSettings(), Analytics(picked), { true }) { today }
+        val viewModel = StatisticsPageViewModel(Dispatchers.Main, workouts, FakeUserSettings(), Analytics(picked), Preferences(), { true }) { today }
         compose.setContent {
             Theme {
                 StatisticsPageScreen(viewModel = viewModel, onFeedback = { feedbackOpened = true })
@@ -147,6 +148,16 @@ class StatisticsPageScenarioTest {
     private fun exists(text: String) = exists(hasText(text))
 
     private fun exists(matcher: SemanticsMatcher) = compose.onAllNodes(matcher).fetchSemanticsNodes().isNotEmpty()
+
+    private class Preferences : StatisticsPreferences {
+        private var period = StatsPeriod.Week
+
+        override fun period() = period
+
+        override fun setPeriod(period: StatsPeriod) {
+            this.period = period
+        }
+    }
 
     private class Analytics(private val picked: MutableList<StatsPeriod>) : StatisticsAnalytics {
         override fun statisticsRangeModified(range: RangeType) = Unit

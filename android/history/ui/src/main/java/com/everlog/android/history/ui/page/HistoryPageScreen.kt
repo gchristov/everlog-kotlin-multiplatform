@@ -45,6 +45,7 @@ import com.everlog.android.common.compose.elements.AppSurface
 import com.everlog.android.common.compose.elements.rememberShimmerBrush
 import com.everlog.android.common.compose.theme.Theme
 import com.everlog.android.common.data.model.workout.ELWorkout
+import com.everlog.android.history.data.HistoryView
 import com.everlog.android.history.ui.R
 import kotlinx.coroutines.launch
 import org.threeten.bp.LocalDate
