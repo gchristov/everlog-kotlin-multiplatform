@@ -42,7 +42,7 @@ class ActivityTabActivityTest {
 
     @get:Rule
     val rules: RuleChain = RuleChain
-        .outerRule(Timeout.builder().withTimeout(3, TimeUnit.MINUTES).withLookingForStuckThread(true).build())
+        .outerRule(Timeout.builder().withTimeout(4, TimeUnit.MINUTES).withLookingForStuckThread(true).build())
         .around(compose)
 
     private val instrumentation = InstrumentationRegistry.getInstrumentation()
@@ -64,19 +64,19 @@ class ActivityTabActivityTest {
 
         // Each page has loaded once its content shows instead of the shimmer: the account's, or the example when the
         // week has no workouts yet
-        compose.waitUntil(LoadMillis) { exists(StatisticsPageTags.Workouts) || exists(StatisticsPageTags.Example) }
+        compose.waitUntil("the statistics to load", LoadMillis) { exists(StatisticsPageTags.Workouts) || exists(StatisticsPageTags.Example) }
         compose.onNodeWithTag(StatisticsPageTags.Period).assertIsDisplayed()
 
         // The tab chip, not the hidden title the tab also keeps
         onView(allOf(withText("History"), isDisplayed())).perform(click())
-        compose.waitUntil(LoadMillis) { exists(HistoryPageTags.Calendar) || exists(HistoryPageTags.Example) }
-        compose.waitUntil(WaitMillis) { displayed(HistoryPageTags.View) }
+        compose.waitUntil("the history to load", LoadMillis) { exists(HistoryPageTags.Calendar) || exists(HistoryPageTags.Example) }
+        compose.waitUntil("the history page to show", WaitMillis) { displayed(HistoryPageTags.View) }
 
         // The week's days open the statistics, though the history was the page shown last
         home.onActivity { it.findViewById<ViewPager>(R.id.pager).currentItem = WeekTab }
-        compose.waitUntil(LoadMillis) { exists(WeekTabTags.Days) }
+        compose.waitUntil("the week to load", LoadMillis) { exists(WeekTabTags.Days) }
         compose.onNodeWithTag(WeekTabTags.Days).performClick()
-        compose.waitUntil(WaitMillis) { home.currentTab() == ActivityTab && displayed(StatisticsPageTags.Period) }
+        compose.waitUntil("the statistics page to show", WaitMillis) { home.currentTab() == ActivityTab && displayed(StatisticsPageTags.Period) }
     }
 
     private fun flagsOn() = RemoteConfigManager.manager.statisticsV2() && RemoteConfigManager.manager.historyV2()
@@ -95,7 +95,8 @@ class ActivityTabActivityTest {
     private companion object {
         const val WeekTab = 0
         const val ActivityTab = 2
-        const val LoadMillis = 30_000L
+        // A first read on a new emulator syncs the account's last 3 months first
+        const val LoadMillis = 60_000L
         const val WaitMillis = 5_000L
         const val PollMillis = 250L
     }
