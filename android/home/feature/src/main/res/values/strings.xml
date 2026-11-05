@@ -7,4 +7,6 @@
     <string name="home_week_plan">Plan</string>
     <string name="home_week_plan_finish">Finish plan</string>
     <string name="home_week_plan_skip_prompt">Once a day is skipped you will not be able to go back and redo it. Are you sure you want to skip this day?</string>
+    <string name="home_banner_update_required">App update required</string>
+    <string name="home_banner_close">Close</string>
 </resources>

@@ -19,6 +19,7 @@ dependencies {
     implementation(projects.android.settings.data)
     implementation(projects.android.workout.data)
     implementation(projects.android.common.mvp)
+    implementation(libs.androidx.lifecycle.runtime.compose)
     implementation(libs.rxbinding)
     implementation(libs.timber)
     implementation(libs.circular.progress.view) {
@@ -27,4 +28,7 @@ dependencies {
     implementation(libs.maskable.layout) {
         isTransitive = false
     }
+    testImplementation(projects.android.common.dataTest)
+    testImplementation(projects.android.settings.testFixtures)
+    testImplementation(projects.android.workout.testFixtures)
 }
