@@ -227,7 +227,7 @@ private const val DaysInWeek = 7
 
 private object PageSizes {
     // Room for the view picker above the content
-    val TopPadding = 76.dp
+    val TopPadding = 70.dp
     // Room for Home's start-workout button below the content
     val BottomPadding = 180.dp
     val SnackbarBottom = 128.dp
