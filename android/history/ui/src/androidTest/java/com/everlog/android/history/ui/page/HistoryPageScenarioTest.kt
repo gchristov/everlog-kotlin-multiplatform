@@ -75,7 +75,7 @@ class HistoryPageScenarioTest {
         // Today has no workouts: it says so and stays on the calendar
         compose.onNodeWithTag(HistoryPageTags.Calendar).performScrollToNode(hasTestTag(HistoryPageTags.day(today)))
         compose.onNodeWithTag(HistoryPageTags.day(today)).performClick()
-        compose.waitUntil(WaitMillis) { exists(hasText("No events found for this day")) }
+        compose.waitUntil(WaitMillis) { exists(hasText("No workouts on this day.")) }
         compose.onNodeWithTag(HistoryPageTags.Calendar).assertExists()
 
         // A day with workouts opens the list on it, and its workout opens
