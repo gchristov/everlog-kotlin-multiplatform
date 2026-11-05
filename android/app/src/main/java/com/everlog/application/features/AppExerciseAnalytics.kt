@@ -18,5 +18,5 @@ class AppExerciseAnalytics : ExerciseAnalytics {
 
     override fun exerciseDeleted() = analytics.exerciseDeleted()
 
-    override fun statisticsRangeModified(range: RangeType) = analytics.statisticsRangeModified(range)
+    override fun statisticsRangeModified(range: RangeType) = analytics.statisticsRangeModified(range.name)
 }

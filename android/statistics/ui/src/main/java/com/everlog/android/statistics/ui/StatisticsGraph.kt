@@ -2,6 +2,7 @@ package com.everlog.android.statistics.ui
 
 import com.everlog.android.common.navigation.Navigator
 import com.everlog.android.settings.data.UserSettings
+import com.everlog.android.workout.data.WorkoutRepository
 import dev.zacsweers.metro.AppScope
 import dev.zacsweers.metro.ContributesTo
 
@@ -13,4 +14,6 @@ interface StatisticsGraph {
     val statisticsAnalytics: StatisticsAnalytics
 
     val navigator: Navigator
+
+    val workoutRepository: WorkoutRepository
 }

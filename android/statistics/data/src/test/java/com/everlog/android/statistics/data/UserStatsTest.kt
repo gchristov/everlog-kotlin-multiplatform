@@ -97,6 +97,19 @@ class UserStatsTest {
     }
 
     @Test
+    fun `exercises without a category don't count towards the muscles`() {
+        val uncategorised = finished(today, withSquat = true).apply {
+            routine!!.exerciseGroups[1].exercises[0].exercise = ELExercise(uuid = "squat", category = null)
+            routine!!.exerciseGroups[0].exercises[0].exercise = null
+        }
+
+        val stats = stats(StatsPeriod.Week, uncategorised)
+
+        assertThat(stats.workouts).isEqualTo(1)
+        assertThat(stats.muscles).isEmpty()
+    }
+
+    @Test
     fun `an empty period has nothing to average or chart`() {
         val stats = stats(StatsPeriod.Week, finished(LocalDate.of(2026, 10, 1)))
 

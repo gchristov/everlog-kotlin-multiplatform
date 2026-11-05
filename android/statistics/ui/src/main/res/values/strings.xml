@@ -5,4 +5,7 @@
     <string name="statistics_muscles_trained">Muscles Trained</string>
     <string name="statistics_session_duration">Session Duration</string>
     <string name="statistics_session_duration_avg">Avg. Session Duration</string>
+    <string name="statistics_period_last_12_months">Last 12 months</string>
+    <string name="statistics_year_failed">Couldn\'t load the last 12 months.</string>
+    <string name="statistics_try_again">Try again</string>
 </resources>
