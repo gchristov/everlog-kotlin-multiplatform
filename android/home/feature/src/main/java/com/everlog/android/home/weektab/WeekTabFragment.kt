@@ -18,8 +18,12 @@ import com.everlog.android.common.mvp.fragment.BaseFragmentPresenter
 import com.everlog.android.common.mvp.fragment.BaseTabFragment
 import com.everlog.android.common.navigation.Destination
 import com.everlog.android.common.navigation.ExerciseLibrary
+import com.everlog.android.common.navigation.PlanCongratulations
+import com.everlog.android.common.navigation.PlanDetails
 import com.everlog.android.common.navigation.PlayStoreListing
 import com.everlog.android.common.navigation.SetSuggestions
+import com.everlog.android.common.navigation.StartWorkoutConfirmation
+import com.everlog.android.common.navigation.TemplateDetails
 import com.everlog.android.common.navigation.WebLink
 import com.everlog.android.home.HomeGraph
 import com.everlog.android.home.HomeHost
@@ -46,6 +50,7 @@ class WeekTabFragment : BaseTabFragment() {
                     dispatcher = Dispatchers.Main,
                     workouts = graph.workoutRepository,
                     settings = graph.userSettings,
+                    planProgress = graph.planProgress,
                     notifications = graph.homeNotifications,
                     config = graph.homeConfig,
                     analytics = graph.homeAnalytics,
@@ -84,6 +89,9 @@ class WeekTabFragment : BaseTabFragment() {
                             showSettings = { host?.showSettings() },
                             showStartWorkout = { host?.showAddMenu() },
                             open = ::open,
+                            showPlan = { navigate(PlanDetails(it)) },
+                            showTemplate = { navigate(TemplateDetails(it, viewOnly = true)) },
+                            startPlanDay = ::startPlanDay,
                         ),
                     )
                 }
@@ -120,6 +128,14 @@ class WeekTabFragment : BaseTabFragment() {
                 HomeNotification.ActionType.NONE, HomeNotification.ActionType.MAINTENANCE -> Unit
             }
             HomeNotificationTap.Nothing -> Unit
+        }
+    }
+
+    private fun startPlanDay(start: WeekTabPlanStart) {
+        when (start) {
+            is WeekTabPlanStart.Workout -> navigate(StartWorkoutConfirmation(start.routine, fromPlan = true))
+            WeekTabPlanStart.Finished -> navigate(PlanCongratulations)
+            WeekTabPlanStart.Nothing -> Unit
         }
     }
 

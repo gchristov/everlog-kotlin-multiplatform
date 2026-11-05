@@ -1,5 +1,6 @@
 package com.everlog.android.home.weektab
 
+import com.everlog.android.common.data.model.ELRoutine
 import com.everlog.android.common.data.model.workout.ELWorkout
 import com.everlog.android.common.kotlin.Load
 import com.everlog.android.common.mvvm.CommonViewModel
@@ -10,6 +11,13 @@ import com.everlog.android.home.data.HomeNotifications
 import com.everlog.android.home.data.model.HomeNotification
 import com.everlog.android.home.data.tap
 import com.everlog.android.home.data.week.weekStats
+import com.everlog.android.plan.data.PlanNextStep
+import com.everlog.android.plan.data.PlanProgress
+import com.everlog.android.plan.data.currentWeek
+import com.everlog.android.plan.data.model.ELPlan
+import com.everlog.android.plan.data.nextStep
+import com.everlog.android.plan.data.withNextDaySkipped
+import com.everlog.android.plan.data.withNextRestDayDone
 import com.everlog.android.settings.data.UserSettings
 import com.everlog.android.workout.data.WorkoutRepository
 import kotlinx.coroutines.CoroutineDispatcher
@@ -17,13 +25,14 @@ import org.threeten.bp.LocalDate
 
 /**
  * Home's Week tab: the user's current week (its days, their weekly goal and the week's numbers) from the workouts
- * DataSync keeps, and the banner Remote Config sets. Settings, the date and the banner are read again on [refresh],
- * when the tab shows or they change.
+ * DataSync keeps, or the plan they're following in its place, and the banner Remote Config sets. Settings, the date,
+ * the plan and the banner are read again on [refresh], when the tab shows or they change.
  */
 class WeekTabViewModel(
     dispatcher: CoroutineDispatcher,
     workouts: WorkoutRepository,
     private val settings: UserSettings,
+    private val planProgress: PlanProgress,
     private val notifications: HomeNotifications,
     private val config: HomeConfig,
     private val analytics: HomeAnalytics,
@@ -35,6 +44,7 @@ class WeekTabViewModel(
     private var shownBannerId: String? = null
 
     init {
+        refreshPlan()
         refreshBanner()
         launchCoroutine {
             workouts.recentWorkouts(RecentMonths).collect { load ->
@@ -50,7 +60,46 @@ class WeekTabViewModel(
 
     fun refresh() {
         setState { withWeek(recent) }
+        refreshPlan()
         refreshBanner()
+    }
+
+    fun onSkipDay() {
+        setState { copy(prompt = WeekTabPrompt.SkipDay) }
+    }
+
+    fun onSkipDayConfirmed() {
+        setState { copy(prompt = null) }
+        ongoingPlan()?.let { save(it.withNextDaySkipped()) }
+    }
+
+    fun onPromptDismissed() {
+        setState { copy(prompt = null) }
+    }
+
+    // What the plan's next day opens, for the screen to open it; a rest day is marked done here
+    fun onStartDay(): WeekTabPlanStart {
+        val plan = ongoingPlan() ?: return WeekTabPlanStart.Nothing
+        return when (val step = plan.nextStep()) {
+            is PlanNextStep.Workout -> WeekTabPlanStart.Workout(step.routine)
+            PlanNextStep.RestDay -> {
+                save(plan.withNextRestDayDone())
+                analytics.planDayCompleted()
+                WeekTabPlanStart.Nothing
+            }
+            PlanNextStep.Finish -> {
+                planProgress.clearOngoingPlan()
+                analytics.planCompleted()
+                refreshPlan()
+                WeekTabPlanStart.Finished
+            }
+        }
+    }
+
+    // A rest day has nothing to open, so it explains itself; a workout day returns its template to open
+    fun onDayTapped(day: WeekTabPlanDay): ELRoutine? {
+        if (day.routine == null) setState { copy(prompt = WeekTabPrompt.RestDay) }
+        return day.routine
     }
 
     fun onBannerClosed() {
@@ -81,6 +130,31 @@ class WeekTabViewModel(
             stats = weekStats(workouts, date, settings.firstDayOfWeek(), settings.weightUnit()),
             weeklyGoal = settings.weeklyWorkoutsGoal(),
             weightUnit = settings.weightUnit(),
+        )
+    }
+
+    private fun ongoingPlan(): ELPlan? = if (planProgress.hasOngoingPlan()) planProgress.ongoingPlan() else null
+
+    private fun save(plan: ELPlan) {
+        planProgress.setOngoingPlan(plan)
+        refreshPlan()
+    }
+
+    private fun refreshPlan() {
+        setState { copy(plan = ongoingPlan()?.toPlan()) }
+    }
+
+    private fun ELPlan.toPlan(): WeekTabPlan? {
+        val week = currentWeek() ?: return null
+        return WeekTabPlan(
+            uuid = uuid,
+            name = name.orEmpty(),
+            progress = getProgress(),
+            weekNumber = week.index + 1,
+            weekCount = week.weekCount,
+            days = week.days.mapIndexed { index, day ->
+                WeekTabPlanDay(number = index + 1, routine = day.getRoutine(), complete = day.complete, next = index == week.nextDay)
+            },
         )
     }
 

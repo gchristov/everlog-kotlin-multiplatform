@@ -1,5 +1,6 @@
 package com.everlog.android.home.weektab
 
+import com.everlog.android.common.data.model.ELRoutine
 import com.everlog.android.common.data.model.exercise.ELExercise
 import com.everlog.android.common.data.model.workout.ELWorkout
 import com.everlog.android.common.datatest.loggedSet
@@ -11,6 +12,8 @@ import com.everlog.android.home.HomeConfig
 import com.everlog.android.home.data.HomeNotificationTap
 import com.everlog.android.home.data.HomeNotifications
 import com.everlog.android.home.data.model.HomeNotification
+import com.everlog.android.plan.data.model.ELPlan
+import com.everlog.android.plan.testfixtures.FakePlanProgress
 import com.everlog.android.settings.testfixtures.FakeUserSettings
 import com.everlog.android.workout.testfixtures.FakeWorkoutRepository
 import com.google.common.truth.Truth.assertThat
@@ -32,8 +35,9 @@ class WeekTabViewModelTest {
     private val notifications = FakeHomeNotifications()
     private val config = FakeHomeConfig()
     private val analytics = FakeHomeAnalytics()
+    private val planProgress = FakePlanProgress()
 
-    private fun viewModel() = WeekTabViewModel(FakeCoroutineDispatcher, workouts, settings, notifications, config, analytics) { today }
+    private fun viewModel() = WeekTabViewModel(FakeCoroutineDispatcher, workouts, settings, planProgress, notifications, config, analytics) { today }
 
     private fun finishedOn(day: LocalDate): ELWorkout {
         val completed = day.atTime(18, 0).atZone(ZoneId.systemDefault()).toInstant().toEpochMilli()
@@ -200,6 +204,130 @@ class WeekTabViewModelTest {
         assertThat(analytics.tapped).isEmpty()
     }
 
+    // Plan
+
+    private val legs = ELRoutine(uuid = "legs", name = "Legs")
+
+    // [weeks] weeks with legs on each week's first day and rest on the others, and [done] days done
+    private fun plan(weeks: Int = 2, done: Int = 0): ELPlan {
+        val plan = ELPlan.newPlan("user").apply { name = "Strength" }
+        repeat(weeks - 1) { plan.addNewWeek() }
+        plan.weeks.forEach { week ->
+            week.getDays().forEachIndexed { index, day -> if (index == 0) day.setRoutine(legs) else day.setRest(true) }
+        }
+        plan.weeks.flatMap { it.getDays() }.take(done).forEach { it.complete = true }
+        return plan
+    }
+
+    @Test
+    fun `shows the plan the user is following instead of the week`() {
+        planProgress.plan = plan(weeks = 2, done = 8)
+
+        val shown = viewModel().state.value.plan!!
+
+        assertThat(shown.name).isEqualTo("Strength")
+        assertThat(shown.progress).isEqualTo(8 * 100 / 14)
+        assertThat(shown.weekNumber).isEqualTo(2)
+        assertThat(shown.weekCount).isEqualTo(2)
+        assertThat(shown.days.map { it.complete }).containsExactly(true, false, false, false, false, false, false).inOrder()
+        assertThat(shown.days.single { it.next }.number).isEqualTo(2)
+        assertThat(shown.days[0].routine).isEqualTo(legs)
+        assertThat(shown.done).isFalse()
+    }
+
+    @Test
+    fun `without a plan there's no plan to show`() {
+        assertThat(viewModel().state.value.plan).isNull()
+    }
+
+    @Test
+    fun `a plan started or stopped elsewhere shows on the next refresh`() {
+        val viewModel = viewModel()
+
+        planProgress.plan = plan()
+        viewModel.refresh()
+        assertThat(viewModel.state.value.plan).isNotNull()
+
+        planProgress.clearOngoingPlan()
+        viewModel.refresh()
+        assertThat(viewModel.state.value.plan).isNull()
+    }
+
+    @Test
+    fun `skipping a day asks first, then marks it a done rest day`() {
+        planProgress.plan = plan()
+        val viewModel = viewModel()
+
+        viewModel.onSkipDay()
+        assertThat(viewModel.state.value.prompt).isEqualTo(WeekTabPrompt.SkipDay)
+        assertThat(planProgress.plan!!.getNextDay()!!.complete).isFalse()
+
+        viewModel.onSkipDayConfirmed()
+
+        assertThat(viewModel.state.value.prompt).isNull()
+        assertThat(planProgress.plan!!.weeks[0].getDays()[0].getRest()).isTrue()
+        assertThat(viewModel.state.value.plan!!.days.single { it.next }.number).isEqualTo(2)
+    }
+
+    @Test
+    fun `dismissing the skip prompt leaves the day as it was`() {
+        planProgress.plan = plan()
+        val viewModel = viewModel()
+        viewModel.onSkipDay()
+
+        viewModel.onPromptDismissed()
+
+        assertThat(viewModel.state.value.prompt).isNull()
+        assertThat(planProgress.plan!!.getNextDay()!!.complete).isFalse()
+    }
+
+    @Test
+    fun `starting a workout day opens its template without changing the plan`() {
+        planProgress.plan = plan()
+        val viewModel = viewModel()
+
+        assertThat(viewModel.onStartDay()).isEqualTo(WeekTabPlanStart.Workout(legs))
+        assertThat(planProgress.plan!!.getNextDay()!!.complete).isFalse()
+    }
+
+    @Test
+    fun `starting a rest day marks it done in place`() {
+        planProgress.plan = plan(done = 1)
+        val viewModel = viewModel()
+
+        assertThat(viewModel.onStartDay()).isEqualTo(WeekTabPlanStart.Nothing)
+
+        assertThat(planProgress.plan!!.weeks[0].getDays()[1].complete).isTrue()
+        assertThat(viewModel.state.value.plan!!.days.single { it.next }.number).isEqualTo(3)
+        assertThat(analytics.planDaysCompleted).isEqualTo(1)
+    }
+
+    @Test
+    fun `finishing a done plan ends it and goes back to the week`() {
+        planProgress.plan = plan(weeks = 1, done = 7)
+        val viewModel = viewModel()
+        assertThat(viewModel.state.value.plan!!.done).isTrue()
+
+        assertThat(viewModel.onStartDay()).isEqualTo(WeekTabPlanStart.Finished)
+
+        assertThat(planProgress.plan).isNull()
+        assertThat(viewModel.state.value.plan).isNull()
+        assertThat(analytics.plansCompleted).isEqualTo(1)
+    }
+
+    @Test
+    fun `tapping a workout day opens its template, a rest day explains itself`() {
+        planProgress.plan = plan()
+        val viewModel = viewModel()
+        val days = viewModel.state.value.plan!!.days
+
+        assertThat(viewModel.onDayTapped(days[0])).isEqualTo(legs)
+        assertThat(viewModel.state.value.prompt).isNull()
+
+        assertThat(viewModel.onDayTapped(days[1])).isNull()
+        assertThat(viewModel.state.value.prompt).isEqualTo(WeekTabPrompt.RestDay)
+    }
+
     private class FakeHomeNotifications : HomeNotifications {
         val dismissedIds = mutableListOf<String>()
 
@@ -225,10 +353,16 @@ class WeekTabViewModelTest {
         val shown = mutableListOf<String?>()
         val dismissed = mutableListOf<String?>()
         val tapped = mutableListOf<String?>()
+        var planDaysCompleted = 0
+        var plansCompleted = 0
 
-        override fun planDayCompleted() = Unit
+        override fun planDayCompleted() {
+            planDaysCompleted++
+        }
 
-        override fun planCompleted() = Unit
+        override fun planCompleted() {
+            plansCompleted++
+        }
 
         override fun notificationShown(title: String?) {
             shown += title
