@@ -497,6 +497,22 @@ class DataSyncTest {
     }
 
     @Test
+    fun `going back a year at a time fetches each year once`() {
+        val twoYearsBack = windowStart(now, months = 24)
+        val older = Doc("older", now - 600 * day)
+        // Edited on another phone since the last year synced back: within the week, so not fetched again yet
+        val edited = deadlift.copy(name = "Romanian deadlift")
+        val backend = FakeCollectionBackend(server = listOf(bench, edited, older), cached = listOf(bench, deadlift))
+        syncedBack(to = yearBack, at = now - day, lastSynced = now)
+
+        val read = readers.async { dataSync.read(recent(backend), twoYearsBack, yearBack) }
+
+        assertThat(read.docs()).containsExactly(older)
+        assertThat(backend.cache.value).containsExactly(bench, deadlift, older)
+        assertThat(records.syncedBack["user/workouts"]).isEqualTo(SyncedBack(to = twoYearsBack, at = now - day))
+    }
+
+    @Test
     fun `a read that can't sync the part it needs is unavailable`() {
         val backend = FakeCollectionBackend(server = listOf(bench, press), cached = listOf(bench)).apply { fail = { IllegalStateException("offline") } }
 

@@ -232,10 +232,11 @@ class DataSync(
                 val recent = withSyncTimeout(source.name) { backend.fetchSince(windowFrom) }
                 // The part synced back before only changes here: one missing (evicted, deleted on another phone) or
                 // added elsewhere shows as a different count
-                val syncedBackTo = currentStatus(source.key).syncedBackTo
-                val backTo = work.backTo ?: syncedBackTo?.takeIf { countsDiffer(source, since = it) }
-                if (backTo != null && backTo < windowFrom) {
-                    SyncResult(recent + older(source, backTo, windowFrom), syncedBackTo = backTo)
+                val status = currentStatus(source.key)
+                val backTo = work.backTo ?: status.syncedBackTo?.takeIf { countsDiffer(source, since = it) }
+                val older = backTo?.let { olderSync(it, windowFrom, status, startedAt, settings.olderMaxAgeMillis()) }
+                if (older != null) {
+                    SyncResult(recent + older(source, older.from, older.until), syncedBack = older.recorded)
                 } else {
                     SyncResult(recent)
                 }
@@ -281,19 +282,19 @@ class DataSync(
         try {
             val result = sync(startedAt)
             records.setLastSynced(key, startedAt)
-            result.syncedBackTo?.let { records.setSyncedBack(key, SyncedBack(it, startedAt)) }
+            result.syncedBack?.let { records.setSyncedBack(key, it) }
             updateStatus(key) {
                 it.copy(
                     lastSynced = startedAt,
-                    syncedBackTo = result.syncedBackTo ?: it.syncedBackTo,
-                    syncedBackAt = if (result.syncedBackTo != null) startedAt else it.syncedBackAt,
+                    syncedBackTo = result.syncedBack?.to ?: it.syncedBackTo,
+                    syncedBackAt = result.syncedBack?.at ?: it.syncedBackAt,
                     syncing = false,
                     syncs = it.syncs + 1,
                     lastFetched = result.documents,
                 )
             }
             Timber.tag(TAG).i("Synced %s (%s): %d documents in %d ms", name, work, result.documents, clock() - startedAt)
-            report(SyncReport(name, work.reportName(result.syncedBackTo != null), result.documents, clock() - startedAt, failure = null))
+            report(SyncReport(name, work.reportName(result.syncedBack != null), result.documents, clock() - startedAt, failure = null))
         } catch (e: CancellationException) {
             // Only sign-out cancels, and it forgets the status
             throw e
@@ -341,8 +342,8 @@ class DataSync(
 
     private class RunningSync(val work: SyncWork, val job: Job)
 
-    // [syncedBackTo] when it synced back that far beyond the window
-    private class SyncResult(val documents: Int, val syncedBackTo: Long? = null)
+    // [syncedBack] when it synced back beyond the window
+    private class SyncResult(val documents: Int, val syncedBack: SyncedBack? = null)
 
     private class Reading<T>(val value: T)
 
