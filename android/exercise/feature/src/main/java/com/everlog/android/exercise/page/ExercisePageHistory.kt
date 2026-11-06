@@ -1,6 +1,8 @@
 package com.everlog.android.exercise.page
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -32,6 +34,9 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontWeight
 import com.everlog.android.common.compose.elements.AppCircularProgressIndicator
 import com.everlog.android.common.compose.elements.AppExample
 import com.everlog.android.common.compose.elements.AppExampleLabel
@@ -157,32 +162,61 @@ private fun Sessions(
     }
 }
 
-// The day on a timeline, beside the workout's name and what the exercise added up to, then each set
+// The day on a timeline, beside the workout's name and what the exercise added up to, then each set numbered in a
+// circle: the old screen's layout, kept local until the history is redesigned
 @Composable
 private fun SessionRow(session: ExerciseSession, first: Boolean, last: Boolean, unit: WeightUnit, key: String) {
     val context = LocalContext.current
     val day = Instant.ofEpochMilli(session.completedDate).atZone(ZoneId.systemDefault()).toLocalDate()
     val exercise = session.exercise
     AppTimelineItem(date = day, first = first, last = last, modifier = Modifier.testTag(ExercisePageTags.session(key))) {
-        AppListGroup {
-            row {
-                AppListItem(
-                    title = session.workoutName.orEmpty(),
-                    subtitle = exerciseSummary(context, exercise.getTotalWeight(unit), exercise.getTotalReps(), exercise.getTotalTimeSeconds(), unit),
-                )
-            }
-            exercise.getSetsWithData().forEachIndexed { setIndex, set ->
-                setSummary(context, set.summaryValues(useTemplate = false), unit)?.let { summary ->
-                    row {
-                        AppListItem(
-                            title = summary,
-                            leading = { AppText(text = "${setIndex + 1}", style = Theme.typography.caption, color = Theme.contentColors.secondary) },
-                        )
-                    }
+        Column(modifier = Modifier.padding(top = Theme.spacing.extraSmall, bottom = SessionSizes.ExtraBottom)) {
+            AppText(text = session.workoutName.orEmpty(), style = Theme.typography.heading)
+            AppText(
+                text = exerciseSummary(context, exercise.getTotalWeight(unit), exercise.getTotalReps(), exercise.getTotalTimeSeconds(), unit),
+                style = SessionSizes.Summary,
+                color = Theme.contentColors.secondary,
+                modifier = Modifier.padding(top = Theme.spacing.extraSmall),
+            )
+            Column(
+                modifier = Modifier.padding(top = Theme.spacing.large),
+                verticalArrangement = Arrangement.spacedBy(Theme.spacing.small),
+            ) {
+                exercise.getSetsWithData().forEachIndexed { setIndex, set ->
+                    setSummary(context, set.summaryValues(useTemplate = false), unit)?.let { summary -> SetRow(number = setIndex + 1, summary = summary) }
                 }
             }
         }
     }
+}
+
+@Composable
+private fun SetRow(number: Int, summary: String) {
+    Row(verticalAlignment = Alignment.CenterVertically) {
+        Box(
+            modifier = Modifier
+                .padding(SessionSizes.SetNumberInset)
+                .size(SessionSizes.SetNumber)
+                .border(SessionSizes.SetNumberBorder, Theme.contentColors.primary, CircleShape),
+            contentAlignment = Alignment.Center,
+        ) {
+            AppText(text = number.toString(), style = SessionSizes.SetNumberText)
+        }
+        AppText(text = summary, style = SessionSizes.Set, modifier = Modifier.padding(start = SessionSizes.SetGap))
+    }
+}
+
+// The old screen's sizes (row_history_exercise, row_set_summary)
+private object SessionSizes {
+    val Summary = TextStyle(fontSize = 15.sp)
+    val Set = TextStyle(fontSize = 18.sp, fontWeight = FontWeight.Medium)
+    val SetNumberText = TextStyle(fontSize = 15.sp)
+    val SetNumber = 31.dp
+    val SetNumberInset = 2.dp
+    val SetNumberBorder = 1.dp
+    val SetGap = 10.dp
+    // On top of the timeline's spacing, as the old rows were 20dp apart
+    val ExtraBottom = 4.dp
 }
 
 // A few sessions' rows on the timeline, as the list will show them
