@@ -4,7 +4,6 @@ import androidx.activity.compose.BackHandler
 import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -28,7 +27,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.compose.LifecycleResumeEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.everlog.android.common.compose.elements.AppBar
-import com.everlog.android.common.compose.elements.AppBarHeader
 import com.everlog.android.common.compose.elements.AppChip
 import com.everlog.android.common.compose.elements.AppDialog
 import com.everlog.android.common.compose.elements.AppDialogAction
@@ -103,7 +101,7 @@ internal class ExercisePageActions(
     val onFeedback: () -> Unit,
 )
 
-// The exercise's name over chip tabs, then the tabs' pages side by side, swiped or picked
+// The exercise's name and category in the bar, chip tabs under it, then the tabs' pages side by side, swiped or picked
 @Composable
 internal fun ExercisePageContent(state: ExercisePageState, tab: ExercisePageTab, actions: ExercisePageActions) {
     val pager = rememberPagerState(initialPage = tab.ordinal) { ExercisePageTab.entries.size }
@@ -115,6 +113,8 @@ internal fun ExercisePageContent(state: ExercisePageState, tab: ExercisePageTab,
     AppScreen(
         topBar = {
             AppBar(
+                title = state.exercise.name.orEmpty(),
+                subtitle = categoryTitle(state.exercise.category),
                 showBack = true,
                 actions = if (state.own) {
                     {
@@ -129,12 +129,8 @@ internal fun ExercisePageContent(state: ExercisePageState, tab: ExercisePageTab,
                 } else {
                     null
                 },
-                header = {
-                    Column {
-                        AppBarHeader(title = state.exercise.name.orEmpty(), eyebrow = categoryTitle(state.exercise.category))
-                        PageTabs(pager)
-                    }
-                },
+                // Stays put over the pages, as the bar has no header to scroll away
+                header = { PageTabs(pager) },
             )
         },
     ) { contentPadding ->
