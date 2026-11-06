@@ -11,6 +11,9 @@ interface SyncRecords {
     fun syncedBack(key: String): SyncedBack?
     fun setLastSynced(key: String, at: Long)
     fun setSyncedBack(key: String, syncedBack: SyncedBack)
+    // The oldest document's date by the plan's date field, as the server last said
+    fun oldest(key: String): Long?
+    fun setOldest(key: String, date: Long)
     fun clear()
 }
 
@@ -33,6 +36,10 @@ class PreferencesSyncRecords(private val preferences: SharedPreferences) : SyncR
     override fun setSyncedBack(key: String, syncedBack: SyncedBack) =
         preferences.edit().putLong(SYNCED_BACK_TO + key, syncedBack.to).putLong(SYNCED_BACK_AT + key, syncedBack.at).apply()
 
+    override fun oldest(key: String): Long? = read(OLDEST + key)
+
+    override fun setOldest(key: String, date: Long) = write(OLDEST + key, date)
+
     override fun clear() = preferences.edit().clear().apply()
 
     private fun read(key: String): Long? = if (preferences.contains(key)) preferences.getLong(key, 0) else null
@@ -45,5 +52,6 @@ class PreferencesSyncRecords(private val preferences: SharedPreferences) : SyncR
         // Older versions' "fullHistorySynced:" records are left unread: those phones sync back again what reads need
         private const val SYNCED_BACK_TO = "syncedBackTo:"
         private const val SYNCED_BACK_AT = "syncedBackAt:"
+        private const val OLDEST = "oldest:"
     }
 }

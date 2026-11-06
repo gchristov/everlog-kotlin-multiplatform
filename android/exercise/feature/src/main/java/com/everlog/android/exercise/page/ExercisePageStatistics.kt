@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -26,6 +25,7 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
+import com.everlog.android.common.compose.elements.AppBlurBox
 import com.everlog.android.common.compose.elements.AppChip
 import com.everlog.android.common.compose.elements.AppChipStyle
 import com.everlog.android.common.compose.elements.AppExample
@@ -57,24 +57,44 @@ import com.everlog.android.workout.data.exercisehistory.ExerciseStatsRange
 import org.threeten.bp.LocalDate
 
 // The range's numbers and charts, as the Activity tab's statistics page shows them, with a faded example while the
-// range has no sessions
+// range has no sessions. The page scrolls under the range picker, which blurs it.
 @Composable
 internal fun ExercisePageStatistics(state: ExercisePageState, actions: ExercisePageActions) {
+    val example = state.statsExample
+    AppBlurBox(
+        modifier = Modifier.fillMaxSize(),
+        overlay = {
+            if (example != null) {
+                // Level with the picker
+                Box(
+                    modifier = Modifier.align(Alignment.TopStart).padding(horizontal = Theme.spacing.large).height(StatisticsSizes.PickerHeight),
+                    contentAlignment = Alignment.CenterStart,
+                ) {
+                    AppExampleLabel(modifier = Modifier.testTag(ExercisePageTags.StatisticsExample), floating = true)
+                }
+            }
+            RangePicker(
+                range = state.range,
+                onPicked = actions.onRangePicked,
+                modifier = Modifier.align(Alignment.TopEnd).padding(horizontal = Theme.spacing.large),
+            )
+        },
+    ) {
+        StatisticsBody(state, actions)
+    }
+}
+
+@Composable
+private fun StatisticsBody(state: ExercisePageState, actions: ExercisePageActions) {
     val example = state.statsExample
     Column(
         modifier = Modifier
             .fillMaxSize()
             .verticalScroll(rememberScrollState())
             .padding(horizontal = Theme.spacing.large)
-            .padding(bottom = Theme.spacing.large)
-            .navigationBarsPadding(),
+            .padding(top = StatisticsSizes.TopPadding, bottom = Theme.spacing.large),
         verticalArrangement = Arrangement.spacedBy(Theme.spacing.large),
     ) {
-        Row(verticalAlignment = Alignment.CenterVertically) {
-            if (example != null) AppExampleLabel(modifier = Modifier.testTag(ExercisePageTags.StatisticsExample))
-            Box(modifier = Modifier.weight(1f))
-            RangePicker(range = state.range, onPicked = actions.onRangePicked)
-        }
         when {
             state.loading -> StatisticsLoading()
             example != null -> AppExample {
@@ -105,14 +125,15 @@ internal fun ExercisePageStatistics(state: ExercisePageState, actions: ExerciseP
 }
 
 @Composable
-private fun RangePicker(range: ExerciseStatsRange, onPicked: (ExerciseStatsRange) -> Unit) {
+private fun RangePicker(range: ExerciseStatsRange, onPicked: (ExerciseStatsRange) -> Unit, modifier: Modifier = Modifier) {
     var open by remember { mutableStateOf(false) }
-    Box {
+    Box(modifier = modifier) {
         AppChip(
             text = stringResource(range.title),
             onClick = { open = true },
             style = AppChipStyle.Action,
             dropdown = true,
+            floating = true,
             modifier = Modifier.testTag(ExercisePageTags.Range),
         )
         AppMenu(
@@ -212,6 +233,10 @@ private val ExerciseStatsRange.title: Int
     }
 
 private object StatisticsSizes {
+    // Room for the range picker above the page, and a group's spacing below it, as on the Activity tab
+    val TopPadding = 52.dp
+    // The picker's chip, for the example label beside it
+    val PickerHeight = 36.dp
     val LoadingTitleHeight = 14.dp
     val LoadingLineCorner = 6.dp
 }

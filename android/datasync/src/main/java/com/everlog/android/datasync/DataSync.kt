@@ -71,7 +71,7 @@ class DataSync(
     // A SyncPlan.Whole collection, all of it, as it changes
     fun <T> observe(source: CollectionSource<T>): Flow<Load<List<T>>> {
         require(source.plan == SyncPlan.Whole) { "A SyncPlan.Recent collection is read by range" }
-        return observe(source, since = null, variant = "whole", complete = false)
+        return observe(source, since = { null }, variant = "whole", complete = false)
     }
 
     /**
@@ -83,20 +83,27 @@ class DataSync(
     fun <T> observe(source: CollectionSource<T>, range: Range, complete: Boolean = false): Flow<Load<List<T>>> {
         require(source.plan is SyncPlan.Recent) { "Only a SyncPlan.Recent collection is read by range" }
         val months = (range as Range.Last).months
-        return observe(source, since = windowStart(clock(), months), variant = if (complete) "$range|complete" else range.toString(), complete)
+        return observe(source, since = { windowStart(clock(), months) }, variant = if (complete) "$range|complete" else range.toString(), complete)
     }
 
-    private fun <T> observe(source: CollectionSource<T>, since: Long?, variant: String, complete: Boolean): Flow<Load<List<T>>> {
-        val backTo = reachesBack(source.plan, since, clock())
-        val needsComplete = complete || source.completeOnly || backTo != null
-        return observe(source.key, variant, sync = { requestSync(source, backTo) }) { status ->
-            source.backend.cachedDocuments(since).withSyncStatus(status) { currentStatus(source.key) }.map { view ->
+    /**
+     * @param since Where the range starts, as of now. Asked again for every sync and every check of whether the cache
+     * covers it, as the shared listener outlives the reader that started it: one started before a sync failed, say,
+     * would otherwise wait for its own start, which the later sync that succeeds goes back from a little after.
+     */
+    private fun <T> observe(source: CollectionSource<T>, since: () -> Long?, variant: String, complete: Boolean): Flow<Load<List<T>>> {
+        val backTo = { reachesBack(source.plan, since(), clock()) }
+        val needsComplete = complete || source.completeOnly || backTo() != null
+        return observe(source.key, variant, sync = { requestSync(source, backTo()) }) { status ->
+            // The listener's own start: a little earlier than the range's as time goes on, which only shows more
+            val listenedSince = since()
+            source.backend.cachedDocuments(listenedSince).withSyncStatus(status) { currentStatus(source.key) }.map { view ->
                 val cached = view.cached.items
                 // Only for the whole collection: a window holds fewer documents than a sync of more of it brings
-                if (needsComplete && since == null && !caughtUp(view.cached.documents, view.status, view.cacheBehind)) {
+                if (needsComplete && listenedSince == null && !caughtUp(view.cached.documents, view.status, view.cacheBehind)) {
                     Load.Loading
                 } else {
-                    loadOf(cached, cached.isEmpty(), covers(view.status, backTo), needsComplete, view.status, view.cacheBehind)
+                    loadOf(cached, cached.isEmpty(), covers(view.status, backTo()), needsComplete, view.status, view.cacheBehind)
                 }
             }
         }
@@ -143,17 +150,20 @@ class DataSync(
     /**
      * The date of a SyncPlan.Recent collection's oldest document by the plan's date field, from the server, as the
      * cache may not reach back that far: where going back through the whole collection a part at a time ends. One
-     * server read. Ready with null when the collection is empty.
+     * server read. Ready with null when the collection is empty. Offline, the date the server last gave, so a history
+     * already synced still goes back to its start; Unavailable when it never gave one.
      */
     suspend fun oldest(source: CollectionSource<*>): Load<Long?> {
         require(source.plan is SyncPlan.Recent) { "Only a SyncPlan.Recent collection has a date to go back by" }
         return try {
-            Load.Ready(withSyncTimeout(source.name) { Reading(source.backend.oldestOnServer()) }.value)
+            val oldest = withSyncTimeout(source.name) { Reading(source.backend.oldestOnServer()) }.value
+            oldest?.let { records.setOldest(source.key, it) }
+            Load.Ready(oldest)
         } catch (e: CancellationException) {
             throw e
         } catch (e: Exception) {
             Timber.tag(TAG).w("Couldn't read %s's oldest date: %s", source.name, e.message)
-            Load.Unavailable(e)
+            records.oldest(source.key)?.let { Load.Ready(it) } ?: Load.Unavailable(e)
         }
     }
 

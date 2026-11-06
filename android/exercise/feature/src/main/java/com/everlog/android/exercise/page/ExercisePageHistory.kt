@@ -5,9 +5,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.asPaddingValues
-import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -65,15 +62,16 @@ import org.threeten.bp.ZoneId
 @Composable
 internal fun ExercisePageHistory(state: ExercisePageState, actions: ExercisePageActions) {
     val example = state.historyExample
-    val bottom = HistorySizes.BottomPadding + WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding()
-    val padding = PaddingValues(start = Theme.spacing.large, end = Theme.spacing.large, bottom = bottom)
+    val bottom = HistorySizes.BottomPadding
+    // Room at the top for the spinner while an older year loads, so it doesn't sit on the oldest session
+    val padding = PaddingValues(start = Theme.spacing.large, top = HistorySizes.TopPadding, end = Theme.spacing.large, bottom = bottom)
     Box(modifier = Modifier.fillMaxSize()) {
         when {
             state.loading -> HistoryLoading(padding)
             // Opening on the newest, as the history does, under the label
             example != null -> AppExample(modifier = Modifier.fillMaxSize().testTag(ExercisePageTags.HistoryExample)) {
                 val listState = rememberLazyListState(initialFirstVisibleItemIndex = example.lastIndex)
-                Sessions(example.reversed(), state.weightUnit, PaddingValues(start = Theme.spacing.large, top = HistorySizes.ExampleTop, end = Theme.spacing.large, bottom = bottom), listState)
+                Sessions(example.reversed(), state.weightUnit, PaddingValues(start = Theme.spacing.large, top = HistorySizes.TopPadding, end = Theme.spacing.large, bottom = bottom), listState)
             }
             else -> HistoryList(state, padding, actions.onHistoryEnd)
         }
@@ -224,8 +222,8 @@ private suspend fun LazyListState.scrollToEnd(sessions: List<ExerciseSession>) =
 
 private object HistorySizes {
     val BottomPadding = 32.dp
-    // Room for the example's label above the sessions
-    val ExampleTop = 44.dp
+    // The spinner, or the example's label, above the sessions, a group's spacing apart
+    val TopPadding = 52.dp
     val LoadingRowHeight = 120.dp
     val LoadingTitleHeight = 14.dp
     val LoadingLineCorner = 6.dp
