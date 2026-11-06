@@ -35,8 +35,9 @@ internal fun WorkoutLogDialogs(state: WorkoutLogState, viewModel: WorkoutLogView
                 title = stringResource(R.string.workout_log_delete_exercise_title, name),
                 body = stringResource(R.string.workout_log_delete_exercise_body),
                 onDismissRequest = viewModel::onDialogDismissed,
-                primaryAction = AppDialogAction(stringResource(DesignR.string.workout_log_delete)) { viewModel.onDeleteExerciseConfirmed(dialog.blockId) },
-                secondaryAction = AppDialogAction(stringResource(DesignR.string.cancel), viewModel::onDialogDismissed),
+                // Keeping the exercise is the primary action, as in every prompt to delete something
+                primaryAction = AppDialogAction(stringResource(DesignR.string.cancel), viewModel::onDialogDismissed),
+                secondaryAction = AppDialogAction(stringResource(DesignR.string.workout_log_delete)) { viewModel.onDeleteExerciseConfirmed(dialog.blockId) },
             )
         }
         is WorkoutLogDialog.Discard -> if (dialog.setsCompleted > 0) {
