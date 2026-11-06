@@ -180,7 +180,7 @@ private object CalendarSizes {
     val MonthHeaderHeight = 80.dp
     val DayGap = 3.dp
     val Line = 1.dp
-    val TodayRing = 5.dp
+    val TodayRing = 3.dp
     val Dot = 10.dp
     val DotMargin = 6.dp
     val TextMargin = 4.dp
