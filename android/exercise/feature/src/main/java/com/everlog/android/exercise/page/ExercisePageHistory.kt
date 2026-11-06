@@ -4,26 +4,22 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -44,6 +40,8 @@ import com.everlog.android.common.compose.elements.AppExample
 import com.everlog.android.common.compose.elements.AppExampleLabel
 import com.everlog.android.common.compose.elements.AppSurface
 import com.everlog.android.common.compose.elements.AppText
+import com.everlog.android.common.compose.elements.AppTimelineItem
+import com.everlog.android.common.compose.elements.TimelineSizes
 import com.everlog.android.common.compose.elements.list.AppListGroup
 import com.everlog.android.common.compose.elements.list.AppListItem
 import com.everlog.android.common.compose.elements.rememberShimmerBrush
@@ -57,10 +55,7 @@ import com.everlog.android.statistics.ui.R as StatisticsR
 import com.everlog.android.workout.data.exercisehistory.ExerciseSession
 import kotlinx.coroutines.delay
 import org.threeten.bp.Instant
-import org.threeten.bp.LocalDate
 import org.threeten.bp.ZoneId
-import org.threeten.bp.format.TextStyle
-import java.util.Locale
 
 /**
  * Each time the exercise was done, on a timeline as the Activity tab's history shows workouts: oldest at the top,
@@ -170,17 +165,8 @@ private fun SessionRow(session: ExerciseSession, first: Boolean, last: Boolean, 
     val context = LocalContext.current
     val day = Instant.ofEpochMilli(session.completedDate).atZone(ZoneId.systemDefault()).toLocalDate()
     val exercise = session.exercise
-    Row(modifier = Modifier.fillMaxWidth().height(IntrinsicSize.Min).testTag(ExercisePageTags.session(key))) {
-        DateColumn(day)
-        Column(
-            modifier = Modifier.fillMaxHeight().padding(end = Theme.spacing.large),
-            horizontalAlignment = Alignment.CenterHorizontally,
-        ) {
-            Line(visible = !first, modifier = Modifier.height(HistorySizes.LineAboveDot))
-            Box(modifier = Modifier.padding(vertical = Theme.spacing.extraSmall).size(HistorySizes.Dot).background(Theme.backgrounds.separator, CircleShape))
-            Line(visible = !last, modifier = Modifier.weight(1f))
-        }
-        AppListGroup(modifier = Modifier.weight(1f).padding(bottom = Theme.spacing.large)) {
+    AppTimelineItem(date = day, first = first, last = last, modifier = Modifier.testTag(ExercisePageTags.session(key))) {
+        AppListGroup {
             row {
                 AppListItem(
                     title = session.workoutName.orEmpty(),
@@ -201,27 +187,6 @@ private fun SessionRow(session: ExerciseSession, first: Boolean, last: Boolean, 
     }
 }
 
-@Composable
-private fun DateColumn(day: LocalDate) {
-    Column(
-        modifier = Modifier.widthIn(min = HistorySizes.DateWidth).padding(top = HistorySizes.DateTop, end = Theme.spacing.large),
-        horizontalAlignment = Alignment.End,
-    ) {
-        AppText(text = day.dayOfMonth.toString(), style = Theme.typography.bodyBold, color = Theme.contentColors.secondary)
-        AppText(text = day.month.getDisplayName(TextStyle.SHORT, Locale.getDefault()).uppercase(), style = Theme.typography.small, color = Theme.contentColors.secondary)
-        AppText(text = day.year.toString(), style = Theme.typography.small, color = Theme.contentColors.secondary)
-    }
-}
-
-@Composable
-private fun Line(visible: Boolean, modifier: Modifier) {
-    if (visible) {
-        Box(modifier = modifier.width(HistorySizes.Line).background(Theme.backgrounds.separator))
-    } else {
-        Spacer(modifier = modifier.width(HistorySizes.Line))
-    }
-}
-
 // A few sessions' rows on the timeline, as the list will show them
 @Composable
 private fun HistoryLoading(padding: PaddingValues) {
@@ -232,7 +197,7 @@ private fun HistoryLoading(padding: PaddingValues) {
     ) {
         repeat(HistorySizes.LoadingRows) {
             Row {
-                Spacer(modifier = Modifier.width(HistorySizes.DateWidth + Theme.spacing.large * 2 + HistorySizes.Line))
+                Spacer(modifier = Modifier.width(TimelineSizes.DateWidth + Theme.spacing.large * 2 + TimelineSizes.Line))
                 AppSurface(modifier = Modifier.weight(1f).height(HistorySizes.LoadingRowHeight)) {
                     Box(modifier = Modifier.fillMaxWidth(0.5f).height(HistorySizes.LoadingTitleHeight).background(brush, RoundedCornerShape(HistorySizes.LoadingLineCorner)))
                 }
@@ -258,11 +223,6 @@ private class FollowedNewest(var value: String? = null)
 private suspend fun LazyListState.scrollToEnd(sessions: List<ExerciseSession>) = scrollToItem(sessions.lastIndex, Int.MAX_VALUE)
 
 private object HistorySizes {
-    val DateWidth = 40.dp
-    val DateTop = 6.dp
-    val LineAboveDot = 27.dp
-    val Dot = 8.dp
-    val Line = 2.dp
     val BottomPadding = 32.dp
     // Room for the example's label above the sessions
     val ExampleTop = 44.dp

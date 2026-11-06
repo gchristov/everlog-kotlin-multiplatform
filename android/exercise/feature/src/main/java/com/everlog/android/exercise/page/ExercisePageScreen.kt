@@ -2,15 +2,11 @@ package com.everlog.android.exercise.page
 
 import androidx.activity.compose.BackHandler
 import androidx.annotation.StringRes
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.pager.HorizontalPager
-import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHostState
@@ -19,7 +15,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
@@ -27,14 +22,13 @@ import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.compose.LifecycleResumeEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.everlog.android.common.compose.elements.AppBar
-import com.everlog.android.common.compose.elements.AppChip
+import com.everlog.android.common.compose.elements.AppChipTabs
 import com.everlog.android.common.compose.elements.AppDialog
 import com.everlog.android.common.compose.elements.AppDialogAction
 import com.everlog.android.common.compose.elements.AppMenuItem
 import com.everlog.android.common.compose.elements.AppOverflowMenu
 import com.everlog.android.common.compose.elements.AppScreen
 import com.everlog.android.common.compose.elements.AppSnackbarHost
-import com.everlog.android.common.compose.theme.Theme
 import com.everlog.android.common.data.model.exercise.ELExercise
 import com.everlog.android.common.design.R as DesignR
 import com.everlog.android.common.kotlin.format.ArrayResourceTypeUtils
@@ -43,7 +37,6 @@ import com.everlog.android.exercise.details.info.ExerciseInfoContent
 import com.everlog.android.exercise.details.info.ExerciseInfoViewModel
 import com.everlog.android.statistics.ui.R as StatisticsR
 import com.everlog.android.workout.data.exercisehistory.ExerciseStatsRange
-import kotlinx.coroutines.launch
 
 /**
  * Renders the view-model's state and forwards what's tapped to it. Other screens open through the lambdas.
@@ -130,7 +123,13 @@ internal fun ExercisePageContent(state: ExercisePageState, tab: ExercisePageTab,
                     null
                 },
                 // Stays put over the pages, as the bar has no header to scroll away
-                header = { PageTabs(pager) },
+                header = {
+                    AppChipTabs(
+                        tabs = ExercisePageTab.entries.map { stringResource(it.title) },
+                        pager = pager,
+                        tabModifier = { Modifier.testTag(ExercisePageTags.tab(ExercisePageTab.entries[it])) },
+                    )
+                },
             )
         },
     ) { contentPadding ->
@@ -166,25 +165,6 @@ internal fun ExercisePageContent(state: ExercisePageState, tab: ExercisePageTab,
             primaryAction = AppDialogAction(text = stringResource(DesignR.string.delete), onClick = actions.onDeleteConfirmed),
             secondaryAction = AppDialogAction(text = stringResource(DesignR.string.cancel), onClick = actions.onDeleteCancelled),
         )
-    }
-}
-
-// The tabs as chips, the one shown picked
-@Composable
-private fun PageTabs(pager: PagerState) {
-    val scope = rememberCoroutineScope()
-    Row(
-        modifier = Modifier.fillMaxWidth().padding(start = Theme.spacing.large, end = Theme.spacing.large, bottom = Theme.spacing.large),
-        horizontalArrangement = Arrangement.spacedBy(Theme.spacing.small),
-    ) {
-        ExercisePageTab.entries.forEach { tab ->
-            AppChip(
-                text = stringResource(tab.title),
-                selected = pager.currentPage == tab.ordinal,
-                onClick = { scope.launch { pager.animateScrollToPage(tab.ordinal) } },
-                modifier = Modifier.testTag(ExercisePageTags.tab(tab)),
-            )
-        }
     }
 }
 
