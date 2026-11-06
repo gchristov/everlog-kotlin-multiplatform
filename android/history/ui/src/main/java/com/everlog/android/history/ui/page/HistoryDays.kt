@@ -22,12 +22,11 @@ fun historyDays(workouts: List<ELWorkout>, zone: ZoneId = ZoneId.systemDefault()
  */
 fun List<HistoryDay>.newestPage(workouts: Int): List<HistoryDay> {
     var kept = 0
-    val newest = takeLastWhile { day ->
+    return takeLastWhile { day ->
         val keep = kept == 0 || kept + day.workouts.size <= workouts
         if (keep) kept += day.workouts.size
         keep
     }
-    return newest
 }
 
 /**
