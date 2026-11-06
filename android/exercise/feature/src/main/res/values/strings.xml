@@ -71,4 +71,8 @@
     <string name="exercise_statistics_reps_weight">Reps vs. Weight</string>
     <string name="exercise_statistics_times_performed">Times Performed</string>
     <string name="exercise_statistics_total_reps">Total Reps</string>
+    <string name="exercise_page_delete_failed">Couldn\'t delete the exercise.</string>
+    <string name="exercise_page_edit">Edit</string>
+    <string name="exercise_page_example_workout">Workout</string>
+    <string name="exercise_page_older_failed">Couldn\'t load older workouts.</string>
 </resources>

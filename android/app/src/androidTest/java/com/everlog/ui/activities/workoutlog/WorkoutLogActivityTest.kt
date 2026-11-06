@@ -32,6 +32,7 @@ import com.everlog.android.common.data.model.set.ELSetType
 import com.everlog.android.common.data.model.workout.ELWorkout
 import com.everlog.android.workoutbuilder.ui.exercisetable.ExerciseTableTags
 import com.everlog.android.exercise.details.ExerciseDetailsActivity
+import com.everlog.android.exercise.page.ExercisePageActivity
 import com.everlog.android.exercise.picker.ExercisePickerActivity
 import com.everlog.android.workout.data.WorkoutManager
 import com.everlog.android.workout.details.WorkoutDetailsActivity
@@ -108,15 +109,16 @@ class WorkoutLogActivityTest {
         compose.onNodeWithTag(ExerciseTableTags.tick(ExerciseTableTags.set(0, 0, 0))).performClick()
         compose.waitUntil(TIMEOUT) { ongoingFirstSetDone() }
 
-        // Its name opens its details on Info, and its menu's History on History
-        val details = watchLaunches(ExerciseDetailsActivity::class.java)
+        // Its name opens its details on Info, and its menu's History on History: the Compose page or the old one, as
+        // Remote Config's exercise_details_v2 says
+        val details = listOf(watchLaunches(ExercisePageActivity::class.java), watchLaunches(ExerciseDetailsActivity::class.java))
         compose.onNodeWithText("Bench press").performClick()
         val info = openedAndClosed(details)
         compose.onNodeWithTag(ExerciseTableTags.menu(0)).performClick()
         compose.onNode(hasText("History") and hasAnyAncestor(isPopup())).performClick()
         val history = openedAndClosed(details)
-        assertThat(listOf(info, history).map { it.getSerializableExtra(ELConstants.EXTRA_TYPE) })
-            .containsExactly(ExerciseDetailsActivity.Companion.Type.INFO, ExerciseDetailsActivity.Companion.Type.HISTORY).inOrder()
+        assertThat(listOf(info, history).map { it.getSerializableExtra(ELConstants.EXTRA_TYPE).toString().lowercase() })
+            .containsExactly("info", "history").inOrder()
 
         // Add exercise opens the picker, whose picks come back to the table
         val pickerOpened = returnFromPicker(group("e2e-squat", "Squat"))
@@ -181,9 +183,12 @@ class WorkoutLogActivityTest {
 
     // The intent the watched activity opened with, once it has. It's then closed, so the test goes on from the screen
     // under it. The monitor keeps the last activity it saw, so one already closed doesn't count.
-    private fun openedAndClosed(monitor: Instrumentation.ActivityMonitor): Intent {
-        compose.waitUntil(TIMEOUT) { monitor.lastActivity?.let { it !in closed } == true }
-        val opened = monitor.lastActivity
+    private fun openedAndClosed(monitor: Instrumentation.ActivityMonitor): Intent = openedAndClosed(listOf(monitor))
+
+    // The first of these watched activities to open
+    private fun openedAndClosed(monitors: List<Instrumentation.ActivityMonitor>): Intent {
+        compose.waitUntil(TIMEOUT) { monitors.any { monitor -> monitor.lastActivity?.let { it !in closed } == true } }
+        val opened = monitors.mapNotNull { it.lastActivity }.first { it !in closed }
         closed += opened
         instrumentation.runOnMainSync { opened.finish() }
         compose.waitUntil(TIMEOUT) { opened.isDestroyed }

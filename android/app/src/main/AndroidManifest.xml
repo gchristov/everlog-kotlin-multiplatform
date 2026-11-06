@@ -148,6 +148,11 @@
             android:windowSoftInputMode="stateHidden|adjustResize"
             android:exported="false" />
         <activity
+            android:name="com.everlog.android.exercise.page.ExercisePageActivity"
+            android:configChanges="keyboardHidden|orientation|screenSize"
+            android:theme="@style/AppTheme.NoActionBar"
+            android:exported="false" />
+        <activity
             android:name="com.everlog.android.exercise.details.ExerciseDetailsActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:theme="@style/AppTheme.NoActionBar"

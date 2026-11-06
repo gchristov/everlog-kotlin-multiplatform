@@ -1,5 +1,10 @@
 package com.everlog.android.exercise
 
+import com.everlog.android.exercise.data.DeleteExerciseUseCase
+import com.everlog.android.exercise.data.ExerciseRepository
+import com.everlog.android.exercise.page.ExercisePageAnalytics
+import com.everlog.android.workout.data.WorkoutRepository
+
 import com.everlog.android.auth.data.UserSession
 import com.everlog.android.common.data.model.workout.ELWorkout
 import com.everlog.android.common.data.store.CollectionStore
@@ -38,4 +43,12 @@ interface ExerciseGraph {
 
     // The user's workouts, for the exercise's statistics and history
     val workoutsStore: CollectionStore<ELWorkout>
+
+    val workoutRepository: WorkoutRepository
+
+    val exerciseRepository: ExerciseRepository
+
+    val deleteExercise: DeleteExerciseUseCase
+
+    val exercisePageAnalytics: ExercisePageAnalytics
 }
