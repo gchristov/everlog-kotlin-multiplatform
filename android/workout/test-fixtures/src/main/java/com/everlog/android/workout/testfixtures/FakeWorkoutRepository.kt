@@ -6,6 +6,8 @@ import com.everlog.android.common.kotlin.Load
 import com.everlog.android.workout.data.WorkoutHistory
 import com.everlog.android.workout.data.WorkoutHistoryRead
 import com.everlog.android.workout.data.WorkoutRepository
+import com.everlog.android.workout.data.exercisehistory.ExerciseHistory
+import com.everlog.android.workout.data.exercisehistory.ExerciseHistoryRead
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 
@@ -41,6 +43,28 @@ class FakeWorkoutRepository : WorkoutRepository {
         Either.Right(emptyList())
 
     override suspend fun exerciseLastDone(workouts: Int): Either<Throwable, Map<String, Long>> = Either.Right(emptyMap())
+
+    val exerciseHistory = FakeExerciseHistoryRead()
+
+    // The exercises whose history was read, by uuid
+    val exerciseHistoryReads = mutableListOf<String>()
+
+    override fun exerciseHistory(exerciseUuid: String): ExerciseHistoryRead {
+        exerciseHistoryReads += exerciseUuid
+        return exerciseHistory
+    }
+}
+
+// An exercise's history as the test sets it, counting the years asked for
+class FakeExerciseHistoryRead : ExerciseHistoryRead {
+    override val loads = MutableStateFlow<Load<ExerciseHistory>>(Load.Loading)
+
+    var loadMoreCalls = 0
+        private set
+
+    override fun loadMore() {
+        loadMoreCalls++
+    }
 }
 
 // The history as the test sets it, counting the pages asked for

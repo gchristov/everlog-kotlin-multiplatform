@@ -46,6 +46,9 @@ interface CollectionBackend<T> {
      */
     suspend fun fetchIds(ids: Collection<String>): Set<String>
 
+    // The plan's date field of the oldest document on the server, or null when there are none
+    suspend fun oldestOnServer(): Long?
+
     // From [since] by the plan's date field
     suspend fun countOnServer(since: Long): Long
 

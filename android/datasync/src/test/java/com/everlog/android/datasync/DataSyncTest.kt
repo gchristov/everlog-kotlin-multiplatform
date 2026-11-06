@@ -586,6 +586,32 @@ class DataSyncTest {
         assertThat((fetched as Load.Unavailable).error).isInstanceOf(SyncTimeoutException::class.java)
     }
 
+    @Test
+    fun `the oldest date comes from the server, past what's cached`() {
+        val backend = FakeCollectionBackend(server = listOf(bench, deadlift, row), cached = listOf(bench))
+
+        val oldest = runBlocking { dataSync.oldest(recent(backend)) }
+
+        assertThat(oldest).isEqualTo(Load.Ready(row.date))
+        assertThat(backend.calls).containsExactly("oldest")
+    }
+
+    @Test
+    fun `an empty collection has no oldest date`() {
+        val oldest = runBlocking { dataSync.oldest(recent(FakeCollectionBackend())) }
+
+        assertThat(oldest).isEqualTo(Load.Ready(null))
+    }
+
+    @Test
+    fun `the oldest date is unavailable when the server can't be reached or doesn't answer`() {
+        val offline = FakeCollectionBackend(server = listOf(bench)).apply { fail = { IllegalStateException("offline") } }
+        val hanging = FakeCollectionBackend(server = listOf(bench)).apply { hang = true }
+
+        assertThat(runBlocking { dataSync.oldest(recent(offline)) }).isInstanceOf(Load.Unavailable::class.java)
+        assertThat((runBlocking { dataSync.oldest(recent(hanging)) } as Load.Unavailable).error).isInstanceOf(SyncTimeoutException::class.java)
+    }
+
     // Failures
 
     @Test

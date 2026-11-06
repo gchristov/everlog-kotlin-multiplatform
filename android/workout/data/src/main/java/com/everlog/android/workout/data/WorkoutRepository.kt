@@ -3,20 +3,24 @@ package com.everlog.android.workout.data
 import arrow.core.Either
 import com.everlog.android.auth.data.UserSession
 import com.everlog.android.common.data.model.workout.ELWorkout
+import com.everlog.android.common.firebase.FirestoreFields
+import com.everlog.android.common.firebase.FirestorePaths
+import com.everlog.android.common.kotlin.Load
+import com.everlog.android.common.kotlin.di.IoDispatcher
+import com.everlog.android.common.kotlin.map
 import com.everlog.android.datasync.CollectionSource
 import com.everlog.android.datasync.DataSync
 import com.everlog.android.datasync.FirestoreCollection
 import com.everlog.android.datasync.Range
 import com.everlog.android.datasync.SyncPlan
-import com.everlog.android.common.firebase.FirestoreFields
-import com.everlog.android.common.firebase.FirestorePaths
-import com.everlog.android.common.kotlin.Load
-import com.everlog.android.common.kotlin.map
-import com.everlog.android.common.kotlin.di.IoDispatcher
+import com.everlog.android.workout.data.exercisehistory.ExerciseHistory
+import com.everlog.android.workout.data.exercisehistory.ExerciseHistoryPages
+import com.everlog.android.workout.data.exercisehistory.ExerciseHistoryRead
 import com.google.firebase.firestore.Query
 import dev.zacsweers.metro.AppScope
 import dev.zacsweers.metro.ContributesBinding
 import dev.zacsweers.metro.Inject
+import java.util.Calendar
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
@@ -43,6 +47,12 @@ interface WorkoutRepository {
     fun history(pageSize: Int = HistoryPageSize): WorkoutHistoryRead
 
     /**
+     * One exercise's history, by the exercise's uuid: the last [ExerciseHistoryMonths] months as they change, then
+     * a year at a time further back, as far as the first workout. Empty without a signed-in user.
+     */
+    fun exerciseHistory(exerciseUuid: String): ExerciseHistoryRead
+
+    /**
      * The user's workouts created from [from] until before [until], read once and in no particular order: for going
      * through the history a part at a time. Waits the first time it reads further back than the sync months, for
      * that part to sync. None without a signed-in user.
@@ -58,6 +68,7 @@ interface WorkoutRepository {
     companion object {
         const val RecentWorkouts = 30
         const val HistoryPageSize = 50
+        const val ExerciseHistoryMonths = 12
     }
 }
 
@@ -92,13 +103,25 @@ class RealWorkoutRepository(
         }
     }
 
+    override fun exerciseHistory(exerciseUuid: String): ExerciseHistoryRead {
+        val userId = session.user()?.id ?: return NoExerciseHistory
+        val source = workoutsOf(userId)
+        // The same read as the Activity tab's last 12 months, so the two share one listener when both are open
+        val recent = recentWorkouts(WorkoutRepository.ExerciseHistoryMonths)
+        return ExerciseHistoryPages(
+            exerciseUuid = exerciseUuid,
+            recent = recent,
+            // After the read above starts, so the years before it overlap it rather than leave a gap
+            recentFrom = monthsAgo(WorkoutRepository.ExerciseHistoryMonths),
+            oldest = { dataSync.oldest(source).toEither() },
+            readBetween = { from, until -> dataSync.read(source, from, until).toEither() },
+            dispatcher = dispatcher,
+        )
+    }
+
     override suspend fun workoutsCreatedBetween(from: Long, until: Long?): Either<Throwable, List<ELWorkout>> {
         val userId = session.user()?.id ?: return Either.Right(emptyList())
-        return when (val load = dataSync.read(workoutsOf(userId), from, until)) {
-            is Load.Ready -> Either.Right(load.value)
-            is Load.Unavailable -> Either.Left(load.error)
-            Load.Loading -> error("A read waits for its sync")
-        }
+        return dataSync.read(workoutsOf(userId), from, until).toEither()
     }
 
     private fun workoutsOf(userId: String) = CollectionSource(
@@ -120,6 +143,24 @@ class RealWorkoutRepository(
             is Load.Unavailable -> Either.Left(load.error)
             Load.Loading -> error("Filtered out")
         }
+}
+
+private object NoExerciseHistory : ExerciseHistoryRead {
+    override val loads = flowOf(Load.Ready(ExerciseHistory(emptyList(), loadingMore = false, complete = true, failed = false)))
+
+    override fun loadMore() = Unit
+}
+
+private fun monthsAgo(months: Int): Long = Calendar.getInstance().run {
+    add(Calendar.MONTH, -months)
+    timeInMillis
+}
+
+// A one-off read has waited for its sync, so it's never Loading
+private fun <T> Load<T>.toEither(): Either<Throwable, T> = when (this) {
+    is Load.Ready -> Either.Right(value)
+    is Load.Unavailable -> Either.Left(error)
+    Load.Loading -> error("A read waits for its sync")
 }
 
 private object NoHistory : WorkoutHistoryRead {

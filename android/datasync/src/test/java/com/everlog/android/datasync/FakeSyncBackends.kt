@@ -107,6 +107,11 @@ class FakeCollectionBackend(server: List<Doc> = emptyList(), cached: List<Doc> =
         return found.map { it.id }.toSet()
     }
 
+    override suspend fun oldestOnServer(): Long? {
+        serverCall("oldest")
+        return server.minOfOrNull { it.date }
+    }
+
     override suspend fun countOnServer(since: Long): Long {
         serverCall("count")
         return server.count { it.date >= since }.toLong()
