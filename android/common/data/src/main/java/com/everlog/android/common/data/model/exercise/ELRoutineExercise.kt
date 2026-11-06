@@ -42,17 +42,6 @@ data class ELRoutineExercise(
         return map
     }
 
-    override fun equals(other: Any?): Boolean {
-        if (other == null || other !is ELRoutineExercise) {
-            return false
-        }
-        return this.uuid.equals(other.uuid)
-    }
-
-    override fun hashCode(): Int {
-        return this.uuid.hashCode()
-    }
-
     fun modifyWeight(offset: Float, setIndex: Int, unit: WeightUnit) {
         val set: ELSet = sets[setIndex]
         if (set.getWeight(unit) + offset <= 0) {

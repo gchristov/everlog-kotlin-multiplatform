@@ -6,6 +6,7 @@ import com.everlog.android.common.data.model.exercise.ELExerciseGroup
 import com.everlog.android.common.data.model.exercise.ELRoutineExercise
 import com.everlog.android.common.data.model.set.ELSet
 import com.everlog.android.common.datatest.at
+import com.everlog.android.common.datatest.loggedSet
 import com.everlog.android.common.datatest.workout
 import com.google.common.truth.Truth.assertThat
 import org.junit.Test
@@ -13,6 +14,15 @@ import org.junit.Test
 class ELWorkoutTest {
 
     private val plank = ELExercise(uuid = "plank", name = "Plank")
+
+    // Screens drop a copy equal to the one they show, so an edited set would never reach them
+    @Test
+    fun `a workout whose set was edited isn't equal to the one before`() {
+        val before = workout(at(2026, 11, 4), plank to listOf(loggedSet(reps = 15, weightKg = 10f)))
+        val edited = workout(at(2026, 11, 4), plank to listOf(loggedSet(reps = 15, weightKg = 15f)))
+
+        assertThat(edited).isNotEqualTo(before)
+    }
 
     @Test
     fun `starting a workout copies template targets and clears timer countdowns`() {

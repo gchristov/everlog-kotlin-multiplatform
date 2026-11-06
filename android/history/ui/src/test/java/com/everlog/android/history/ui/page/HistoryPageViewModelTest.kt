@@ -1,7 +1,11 @@
 package com.everlog.android.history.ui.page
 
 import com.everlog.android.common.data.model.workout.ELWorkout
+import com.everlog.android.common.data.model.exercise.ELExercise
+import com.everlog.android.common.datatest.loggedSet
+import com.everlog.android.common.datatest.workout
 import com.everlog.android.common.kotlin.Load
+import com.everlog.android.common.kotlin.WeightUnit
 import com.everlog.android.common.test.FakeCoroutineDispatcher
 import com.everlog.android.history.data.HistoryPreferences
 import com.everlog.android.history.data.HistoryView
@@ -54,6 +58,18 @@ class HistoryPageViewModelTest {
 
         assertThat(viewModel.state.value.loading).isFalse()
         assertThat(viewModel.state.value.days.map { it.date }).containsExactly(today.minusDays(10), today.minusDays(1)).inOrder()
+    }
+
+    @Test
+    fun `a set edited elsewhere shows in place`() {
+        val viewModel = viewModel()
+        val squat = ELExercise(uuid = "squat", name = "Squat")
+        val completed = today.minusDays(1).atTime(18, 0).atZone(ZoneId.systemDefault()).toInstant().toEpochMilli()
+        shown(workout(completed, squat to listOf(loggedSet(reps = 15, weightKg = 10f))))
+
+        shown(workout(completed, squat to listOf(loggedSet(reps = 15, weightKg = 20f))))
+
+        assertThat(viewModel.state.value.days.single().workouts.single().getTotalWeight(WeightUnit.KILOGRAM)).isEqualTo(300f)
     }
 
     @Test
