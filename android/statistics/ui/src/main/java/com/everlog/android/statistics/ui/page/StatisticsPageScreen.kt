@@ -31,7 +31,6 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -44,6 +43,8 @@ import com.everlog.android.common.compose.elements.AppIcon
 import com.everlog.android.common.compose.elements.AppMenu
 import com.everlog.android.common.compose.elements.AppMenuItem
 import com.everlog.android.common.compose.elements.AppSnackbarHost
+import com.everlog.android.common.compose.elements.AppStatTile
+import com.everlog.android.common.compose.elements.AppStatTilePlaceholder
 import com.everlog.android.common.compose.elements.AppSurface
 import com.everlog.android.common.compose.elements.AppText
 import com.everlog.android.common.compose.elements.list.AppListGroup
@@ -197,7 +198,7 @@ private fun SummaryCards(state: StatisticsPageState) {
     Column(verticalArrangement = Arrangement.spacedBy(Theme.spacing.large), modifier = Modifier.testTag(StatisticsPageTags.Workouts)) {
         cards.chunked(2).forEach { row ->
             Row(horizontalArrangement = Arrangement.spacedBy(Theme.spacing.large)) {
-                row.forEach { SummaryCard(it, modifier = Modifier.weight(1f)) }
+                row.forEach { AppStatTile(value = it.value, unit = it.unit, label = it.label, modifier = Modifier.weight(1f)) }
             }
         }
     }
@@ -208,22 +209,7 @@ private data class Summary(val value: String, val unit: String?, val label: Stri
 @Composable
 private fun label(@StringRes id: Int) = stringResource(id).lowercase().makeSingleLine()
 
-@Composable
-private fun SummaryCard(summary: Summary, modifier: Modifier = Modifier) {
-    AppSurface(modifier = modifier) {
-        Column(modifier = Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally) {
-            Row(verticalAlignment = Alignment.Bottom) {
-                AppText(text = summary.value, style = Theme.typography.heading)
-                summary.unit?.let {
-                    AppText(text = it, style = Theme.typography.caption, color = Theme.contentColors.secondary, modifier = Modifier.padding(start = Theme.spacing.extraSmall))
-                }
-            }
-            AppText(text = summary.label, style = Theme.typography.caption, color = Theme.contentColors.secondary, textAlign = TextAlign.Center)
-        }
-    }
-}
-
-// The summary cards, each with its value over its label, and a chart's card with its title, as the page will show them
+// The stat tiles, and a chart's card with its title, as the page will show them
 @Composable
 private fun StatisticsLoading() {
     val brush = rememberShimmerBrush()
@@ -231,16 +217,7 @@ private fun StatisticsLoading() {
         repeat(SummaryRows) {
             Row(horizontalArrangement = Arrangement.spacedBy(Theme.spacing.large)) {
                 repeat(2) {
-                    AppSurface(modifier = Modifier.weight(1f)) {
-                        Column(
-                            modifier = Modifier.fillMaxWidth().height(PageSizes.LoadingCardContentHeight),
-                            horizontalAlignment = Alignment.CenterHorizontally,
-                            verticalArrangement = Arrangement.spacedBy(Theme.spacing.small, Alignment.CenterVertically),
-                        ) {
-                            LoadingLine(brush, fraction = 0.35f, height = PageSizes.LoadingValueHeight)
-                            LoadingLine(brush, fraction = 0.65f, height = PageSizes.LoadingLabelHeight)
-                        }
-                    }
+                    AppStatTilePlaceholder(brush, modifier = Modifier.weight(1f))
                 }
             }
         }
@@ -274,10 +251,6 @@ private object PageSizes {
     val BottomPadding = 180.dp
     // Above Home's tab bar and its start workout button, which the page runs under
     val SnackbarBottom = 128.dp
-    // A summary card's value and label, as tall as their text
-    val LoadingCardContentHeight = 40.dp
-    val LoadingValueHeight = 18.dp
-    val LoadingLabelHeight = 10.dp
     // A chart's title, at the chart card's own padding
     val LoadingTitleHeight = 14.dp
     val LoadingLineCorner = 6.dp

@@ -46,6 +46,14 @@ The label above a group or card: `--font-subtitle`, `--content-secondary`, one l
 A card: background `--background-surface`, radius `--radius-surface`, padding `--space-lg` (none
 when its content pads itself, like list rows). Text inside is `--content-primary`.
 
+## AppStatTile
+
+One number on an `AppSurface`, centred: the value in `--font-heading`, with an optional unit beside it
+in `--font-caption` `--content-secondary` (`--space-xs` apart, bottoms aligned), over a label in
+`--font-caption` `--content-secondary`, e.g. "2,450 kg" over "volume lifted". Tiles sit two to a row,
+`--space-lg` apart both ways. While loading, each tile shows two shimmer bars instead (18px and 10px
+tall, 35% and 65% wide, radius 6px, `--space-sm` apart) in a tile 40px tall inside its padding.
+
 ## AppListGroup / AppGroupedList
 
 Settings-style groups. Each group: an optional `AppSectionHeader`, then its rows drawn as one card,
