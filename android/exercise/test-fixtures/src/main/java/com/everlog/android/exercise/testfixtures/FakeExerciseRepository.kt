@@ -53,4 +53,14 @@ class FakeExerciseRepository(
         fetches += uuids
         return fetch(uuids)
     }
+
+    var deleteResult: Either<Throwable, Unit> = Either.Right(Unit)
+
+    // The uuids of the own exercises deleted, in order
+    val deletedExercises = mutableListOf<String>()
+
+    override suspend fun deleteOwnExercise(uuid: String): Either<Throwable, Unit> {
+        deletedExercises += uuid
+        return deleteResult
+    }
 }

@@ -2,6 +2,8 @@ package com.everlog.android.exercise.data
 
 import arrow.core.Either
 import com.everlog.android.auth.data.UserSession
+import com.everlog.android.auth.data.requireUserId
+import com.everlog.android.common.data.CommonData
 import com.everlog.android.common.data.model.exercise.ELExercise
 import com.everlog.android.datasync.CollectionSource
 import com.everlog.android.datasync.DataSync
@@ -31,6 +33,8 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.transform
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
+import kotlinx.coroutines.withTimeoutOrNull
+import timber.log.Timber
 
 interface ExerciseRepository {
     /**
@@ -76,6 +80,18 @@ interface ExerciseRepository {
      * found.
      */
     suspend fun fetchExercises(uuids: Set<String>): Load<Set<String>>
+
+    /**
+     * Deletes one of the user's own exercises. Like the rest of the app, it works offline: Firestore drops it from the
+     * cache straight away and deletes it on the server once back online, so if the server hasn't confirmed it within
+     * [ServerTimeout], it counts as deleted. It fails if the delete is rejected, e.g. with no user. Nothing is deleted
+     * during a Firebase Test Lab run.
+     */
+    suspend fun deleteOwnExercise(uuid: String): Either<Throwable, Unit>
+
+    companion object {
+        const val ServerTimeout = 5_000L
+    }
 }
 
 @ContributesBinding(AppScope::class)
@@ -146,6 +162,19 @@ class RealExerciseRepository(
         completeOnly = true,
     )
 
+    override suspend fun deleteOwnExercise(uuid: String): Either<Throwable, Unit> = withContext(dispatcher) {
+        Either.catch {
+            if (CommonData.dependencies.isTestLabRun()) {
+                Timber.tag(TAG).w("Not deleting an exercise in a Firebase Test Lab run")
+                return@catch
+            }
+            val document = FirestorePaths.exercises(session.requireUserId()).document(uuid)
+            // delete() completes with null, so a plain await() can't tell a confirmed delete from a timeout
+            val confirmed = withTimeoutOrNull(ExerciseRepository.ServerTimeout) { document.delete().await(); true }
+            if (confirmed == null) Timber.tag(TAG).w("Deleted an exercise offline, it syncs once back online")
+        }
+    }
+
     override fun registry(): Flow<Load<ExerciseRegistry?>> = dataSync.observe(
         DocumentSource("exerciseRegistry", userId = null, FirestoreDocument(FirestorePaths.exerciseRegistry, dispatcher) {
             it.toObject(ExerciseRegistryDto::class.java)?.toRegistry()
@@ -157,6 +186,10 @@ class RealExerciseRepository(
         toObject(LibraryExerciseDto::class.java)?.let { dto -> dto.toLibraryExercise(documentId = id, own = own)?.let { StoredExercise(it, dto.hidden) } }
 
     private fun List<StoredExercise>.visible() = filterNot { it.hidden }.map { it.exercise }
+
+    private companion object {
+        const val TAG = "ExerciseRepository"
+    }
 
     // Hidden ones leave the library but stay readable by history
     private data class StoredExercise(val exercise: LibraryExercise, val hidden: Boolean)

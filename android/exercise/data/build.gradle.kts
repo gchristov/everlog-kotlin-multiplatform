@@ -18,4 +18,5 @@ dependencies {
     implementation(libs.rxandroid)
     implementation(libs.timber)
     testImplementation(projects.android.exercise.testFixtures)
+    testImplementation(projects.android.auth.testFixtures)
 }
