@@ -17,8 +17,9 @@ bottom padding equal to the footer's height. On tablets the content and footer a
 ## AppBar
 
 Row at the top, background `--background-primary`, 64px tall: an optional back arrow (24px icon,
-`--content-primary`) on the left, an optional title in `--font-heading`, and optional actions on the
-right (icon buttons or `AppTertiaryButton`s). No shadow, no divider.
+`--content-primary`) on the left, an optional title in `--font-heading` with an optional subtitle under
+it in `--font-caption` `--content-secondary` (e.g. an exercise's category under its name), and optional
+actions on the right (icon buttons or `AppTertiaryButton`s). No shadow, no divider.
 
 Optional header under the row (`AppBarHeader`): padding `--space-lg`, items `--space-sm` apart:
 - eyebrow (optional): `--font-caption`, `--content-action`, e.g. "Welcome to Everlog"

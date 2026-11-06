@@ -174,7 +174,7 @@ public class ELNavigator implements Navigator {
 
     @Override
     public void openExerciseDetails(ExerciseDetailsActivity.Companion.@NotNull Properties properties) {
-        startActivity(ExerciseDetailsActivity.launchIntent(mContext, properties));
+        startActivity(ExercisePageRoutingKt.exerciseDetailsIntent(mContext, properties));
     }
 
     @Override

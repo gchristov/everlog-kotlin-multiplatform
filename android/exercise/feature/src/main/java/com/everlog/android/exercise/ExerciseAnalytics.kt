@@ -19,4 +19,9 @@ object ExerciseScreenNames {
     const val INFO_V2 = "screen_exercise_info_v2"
     const val STATISTICS = "screen_exercise_statistics"
     const val HISTORY = "screen_exercise_history"
+
+    // The Compose exercise page and its tabs (Info logs INFO_V2)
+    const val DETAILS_V2 = "screen_exercise_details_v2"
+    const val STATISTICS_V2 = "screen_exercise_statistics_v2"
+    const val HISTORY_V2 = "screen_exercise_history_v2"
 }

@@ -12,6 +12,7 @@ import com.everlog.android.common.compose.elements.list.AppGroupedListScope
 @Composable
 internal fun ShowcasePage(
     title: String,
+    subtitle: String? = null,
     actions: (@Composable RowScope.() -> Unit)? = null,
     footer: @Composable () -> Unit = {},
     content: AppGroupedListScope.() -> Unit,
@@ -20,6 +21,7 @@ internal fun ShowcasePage(
         topBar = {
             AppBar(
                 title = title,
+                subtitle = subtitle,
                 showBack = true,
                 actions = actions,
             )

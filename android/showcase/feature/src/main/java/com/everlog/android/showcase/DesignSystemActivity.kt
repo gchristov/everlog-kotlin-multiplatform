@@ -139,7 +139,7 @@ private val HubSections = listOf(
 
 @Composable
 private fun DesignSystemHome(onOpen: (DesignSystemPage) -> Unit) {
-    ShowcasePage(title = "Design system") {
+    ShowcasePage(title = "Design system", subtitle = "Every element, with examples") {
         HubSections.forEach { (section, entries) ->
             group(key = section, header = { section }) {
                 items(count = entries.size, key = { entries[it].page }) { index ->

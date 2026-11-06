@@ -20,6 +20,7 @@ import com.everlog.android.common.data.model.exercise.ELExerciseGroup
 import com.everlog.android.exercise.picker.ExercisePickerActivity
 import com.everlog.constants.ELConstants
 import com.everlog.android.exercise.details.ExerciseDetailsActivity
+import com.everlog.android.exercise.page.ExercisePageActivity
 import com.everlog.testutil.E2EAccount
 import com.google.common.truth.Truth.assertThat
 import java.util.concurrent.TimeUnit
@@ -47,17 +48,18 @@ class ExercisePickerActivityTest {
         .around(compose)
 
     private val instrumentation = InstrumentationRegistry.getInstrumentation()
-    private var details: Instrumentation.ActivityMonitor? = null
+    // The Compose page or the old one, as Remote Config's exercise_details_v2 says
+    private var details: List<Instrumentation.ActivityMonitor> = emptyList()
 
     @Before
     fun setUp() {
         E2EAccount.signIn()
-        details = instrumentation.addMonitor(ExerciseDetailsActivity::class.java.name, null, true)
+        details = listOf(ExercisePageActivity::class.java, ExerciseDetailsActivity::class.java).map { instrumentation.addMonitor(it.name, null, true) }
     }
 
     @After
     fun tearDown() {
-        details?.let(instrumentation::removeMonitor)
+        details.forEach(instrumentation::removeMonitor)
     }
 
     @Test
@@ -74,7 +76,7 @@ class ExercisePickerActivityTest {
 
         // A long press opens the exercise rather than picking it
         compose.onNodeWithText(Exercise).performTouchInput { longClick() }
-        compose.waitUntil(WaitMillis) { details!!.hits > 0 }
+        compose.waitUntil(WaitMillis) { details.sumOf { it.hits } > 0 }
 
         compose.onNodeWithText(Exercise).performClick()
         compose.onNodeWithText("Add 1 exercise").performClick()

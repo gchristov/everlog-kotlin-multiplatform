@@ -50,7 +50,8 @@ import kotlin.math.abs
 import kotlin.math.roundToInt
 
 /**
- * Same as the XML toolbar: black background, 20sp medium title.
+ * Same as the XML toolbar: black background, 20sp medium title, with an optional [subtitle] under it, e.g. an
+ * exercise's category under its name.
  *
  * @param header A larger header under the bar's row, usually an [AppBarHeader]. It's part of the
  * app bar rather than the content, so it sits right under the row on every screen.
@@ -63,6 +64,7 @@ import kotlin.math.roundToInt
 @Composable
 fun AppBar(
     title: String? = null,
+    subtitle: String? = null,
     showBack: Boolean = false,
     contentColor: Color = Theme.contentColors.primary,
     actions: @Composable (RowScope.() -> Unit)? = null,
@@ -72,6 +74,7 @@ fun AppBar(
     Column(modifier = Modifier.background(Theme.backgrounds.primary)) {
         AppBarRow(
             title = title,
+            subtitle = subtitle,
             showBack = showBack,
             contentColor = contentColor,
             actions = actions,
@@ -92,6 +95,7 @@ fun AppBar(
 @Composable
 private fun AppBarRow(
     title: String?,
+    subtitle: String?,
     showBack: Boolean,
     contentColor: Color,
     actions: @Composable (RowScope.() -> Unit)?,
@@ -110,7 +114,7 @@ private fun AppBarRow(
     TopAppBar(
         title = {
             title?.let { title ->
-                AppText(
+                Column(
                     modifier = if (titleProgress != null) {
                         Modifier
                             .graphicsLayer {
@@ -123,11 +127,22 @@ private fun AppBarRow(
                     } else {
                         Modifier
                     },
-                    text = title,
-                    color = contentColor,
-                    style = Theme.typography.heading,
-                    maxLines = 1,
-                )
+                ) {
+                    AppText(
+                        text = title,
+                        color = contentColor,
+                        style = Theme.typography.heading,
+                        maxLines = 1,
+                    )
+                    subtitle?.let {
+                        AppText(
+                            text = it,
+                            color = Theme.contentColors.secondary,
+                            style = Theme.typography.caption,
+                            maxLines = 1,
+                        )
+                    }
+                }
             }
         },
         navigationIcon = {

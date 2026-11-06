@@ -20,7 +20,8 @@ import com.everlog.android.exercise.ExerciseGraph
 import com.everlog.android.exercise.R
 import com.everlog.android.exercise.create.CreateExerciseActivity
 import com.everlog.android.exercise.data.model.library.toELExercise
-import com.everlog.android.exercise.details.ExerciseDetailsActivity
+import com.everlog.android.exercise.page.ExercisePageTab
+import com.everlog.android.exercise.page.exercisePageIntent
 import kotlinx.coroutines.Dispatchers
 
 /**
@@ -59,7 +60,7 @@ class ExercisePickerActivity : CommonComposeActivity() {
     override fun Content() = ExercisePickerScreen(
         viewModel = viewModel,
         onResult = ::finishWithPicks,
-        onOpenExercise = { startActivity(ExerciseDetailsActivity.launchIntent(this, ExerciseDetailsActivity.Companion.Properties().exercise(it.toELExercise()))) },
+        onOpenExercise = { startActivity(exercisePageIntent(this, it.toELExercise(), ExercisePageTab.Info)) },
         onCreateExercise = { name -> startActivityForResult(CreateExerciseActivity.createIntent(this, name), CreateExerciseActivity.REQUEST_CODE) },
         onPickSetType = { count -> navigator.openForResult(this, SetTypePicker(count)) },
         onSendFeedback = sendFeedback,
