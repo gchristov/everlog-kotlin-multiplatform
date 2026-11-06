@@ -34,6 +34,20 @@ class HistoryDaysTest {
     }
 
     @Test
+    fun `the newest page keeps the newest days up to its workouts`() {
+        val days = historyDays(listOf(9, 10, 11, 12).flatMap { day -> List(2) { finished(LocalDate.of(2026, 11, day), hour = 9 + it) } }, zone)
+
+        assertThat(days.newestPage(workouts = 5).map { it.date.dayOfMonth }).containsExactly(11, 12).inOrder()
+    }
+
+    @Test
+    fun `the newest page keeps the newest day whole, however many it has`() {
+        val days = historyDays(List(3) { finished(LocalDate.of(2026, 11, 12), hour = 9 + it) }, zone)
+
+        assertThat(days.newestPage(workouts = 2).single().workouts).hasSize(3)
+    }
+
+    @Test
     fun `the calendar runs from the oldest day shown to this month`() {
         val days = historyDays(listOf(finished(LocalDate.of(2026, 3, 14), hour = 9)), zone)
 

@@ -11,6 +11,7 @@ import com.everlog.android.history.data.HistoryPreferences
 import com.everlog.android.history.data.HistoryView
 import com.everlog.android.settings.testfixtures.FakeUserSettings
 import com.everlog.android.workout.data.WorkoutHistory
+import com.everlog.android.workout.data.WorkoutRepository
 import com.everlog.android.workout.testfixtures.FakeWorkoutRepository
 import com.google.common.truth.Truth.assertThat
 import java.io.IOException
@@ -134,16 +135,17 @@ class HistoryPageViewModelTest {
     }
 
     @Test
-    fun `leaving drops the pages, and coming back reads again from the newest in the same view`() {
+    fun `leaving keeps the newest page, shown while coming back reads again from the newest in the same view`() {
         val viewModel = viewModel()
-        shown(newest, older)
+        shown(newest, older, complete = true)
         viewModel.onViewPicked(HistoryView.List)
         val firstRead = viewModel.state.value.read
 
         viewModel.onLeft()
 
-        assertThat(viewModel.state.value.days).isEmpty()
-        assertThat(viewModel.state.value.loading).isTrue()
+        assertThat(viewModel.state.value.days.map { it.date }).containsExactly(today.minusDays(10), today.minusDays(1)).inOrder()
+        assertThat(viewModel.state.value.loading).isFalse()
+        assertThat(viewModel.state.value.complete).isTrue()
         assertThat(viewModel.state.value.view).isEqualTo(HistoryView.List)
         assertThat(workouts.historyReads).isEqualTo(1)
 
@@ -151,7 +153,33 @@ class HistoryPageViewModelTest {
 
         assertThat(workouts.historyReads).isEqualTo(2)
         assertThat(viewModel.state.value.read).isGreaterThan(firstRead)
+        assertThat(viewModel.state.value.loading).isFalse()
         assertThat(viewModel.state.value.days).hasSize(2)
+    }
+
+    @Test
+    fun `leaving lets the older pages go, so there's more to read again`() {
+        val viewModel = viewModel()
+        val pages = List(WorkoutRepository.HistoryPageSize + 10) { finishedOn(today.minusDays(it.toLong() + 1)) }
+        shown(*pages.toTypedArray(), complete = true)
+
+        viewModel.onLeft()
+
+        assertThat(viewModel.state.value.days).hasSize(WorkoutRepository.HistoryPageSize)
+        assertThat(viewModel.state.value.days.last().date).isEqualTo(today.minusDays(1))
+        assertThat(viewModel.state.value.complete).isFalse()
+    }
+
+    @Test
+    fun `leaving forgets the day picked`() {
+        val viewModel = viewModel()
+        shown(newest, older)
+        viewModel.onDayPicked(today.minusDays(10))
+
+        viewModel.onLeft()
+
+        assertThat(viewModel.state.value.selected).isEqualTo(today)
+        assertThat(viewModel.state.value.scrollTo).isNull()
     }
 
     @Test
@@ -180,13 +208,18 @@ class HistoryPageViewModelTest {
     }
 
     @Test
-    fun `a history that can't load shows the sample days too, and leaving drops them`() {
+    fun `a history that can't load shows the sample days too, and coming back tries again under them`() {
         val viewModel = viewModel()
 
         workouts.history.loads.value = Load.Unavailable(IOException("offline"))
         assertThat(viewModel.state.value.example).isNotEmpty()
 
         viewModel.onLeft()
+        assertThat(viewModel.state.value.example).isNotEmpty()
+        assertThat(viewModel.state.value.failed).isFalse()
+
+        viewModel.refresh()
+        shown(newest)
         assertThat(viewModel.state.value.example).isNull()
     }
 

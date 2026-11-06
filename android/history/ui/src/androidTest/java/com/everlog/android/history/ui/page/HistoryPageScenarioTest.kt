@@ -102,7 +102,7 @@ class HistoryPageScenarioTest {
     @Test
     fun scrollingBackThroughTheList() {
         val days = (1..30).map { today.minusDays(it.toLong()) }
-        show()
+        val viewModel = show()
         pickView("List")
 
         // Newest first from the read; the list opens on the newest, at the bottom
@@ -117,6 +117,15 @@ class HistoryPageScenarioTest {
         shown(days.map { finished(it, "Workout $it") } + finished(older, "The first"), complete = true)
         compose.onNodeWithTag(HistoryPageTags.List).performScrollToIndex(0)
         compose.waitUntil(WaitMillis) { exists(hasText("The first")) }
+
+        // Another Home tab and back: the newest page shows straight away, on the newest, while it's read again
+        compose.runOnIdle {
+            viewModel.onLeft()
+            viewModel.refresh()
+        }
+        compose.onNodeWithTag(HistoryPageTags.Loading).assertDoesNotExist()
+        compose.waitUntil(WaitMillis) { displayed("Workout ${days.first()}") }
+        assertThat(workouts.historyReads).isEqualTo(2)
     }
 
     @Test
@@ -209,13 +218,14 @@ class HistoryPageScenarioTest {
         return ELWorkout(completedDate = completed, routine = ELRoutine(name = name)).apply { createdDate = completed - 3_600_000 }
     }
 
-    private fun show() {
+    private fun show(): HistoryPageViewModel {
         val viewModel = HistoryPageViewModel(Dispatchers.Main, workouts, FakeUserSettings(), preferences, listOf("Legs", "Push", "Pull")) { today }
         compose.setContent {
             Theme {
                 HistoryPageScreen(viewModel = viewModel, onWorkout = { opened += it.getName().orEmpty() })
             }
         }
+        return viewModel
     }
 
     private fun displayed(text: String) = runCatching { compose.onNodeWithText(text).assertIsDisplayed() }.isSuccess

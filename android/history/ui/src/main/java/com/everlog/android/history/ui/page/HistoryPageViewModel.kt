@@ -44,7 +44,8 @@ data class HistoryPageState(
  * The Activity tab's history page: the user's workouts on a calendar or a list, oldest at the top and newest at the
  * bottom, going back a page at a time as the user scrolls up, as far as the first workout. Follows the cache, so a
  * workout saved or deleted shows in place. The pages read so far stay while the page is away, e.g. on the statistics
- * page or a workout, until [onLeft] drops them. Settings and the date are read again on [refresh].
+ * page or a workout. Leaving the tab drops all but the newest page ([onLeft]), which shows straight away when the
+ * user comes back while a new read starts. Settings and the date are read again on [refresh].
  */
 class HistoryPageViewModel(
     dispatcher: CoroutineDispatcher,
@@ -70,12 +71,23 @@ class HistoryPageViewModel(
         if (read == null) startReading()
     }
 
-    // The user left the tab the page is on: let the pages go, and start again from the newest when they come back
+    // The user left the tab the page is on: let the older pages go, and read again from the newest when they come back
     fun onLeft() {
         job?.cancel()
         job = null
         read = null
-        setState { initialState(view, settings, today()) }
+        setState {
+            val kept = days.newestPage(WorkoutRepository.HistoryPageSize)
+            copy(
+                days = kept,
+                selected = today,
+                loadingMore = false,
+                complete = complete && kept.size == days.size,
+                failed = false,
+                scrollTo = null,
+                emptyDayPicked = false,
+            )
+        }
     }
 
     fun onTryAgain() {

@@ -115,8 +115,8 @@ internal fun HistoryPageContent(
         if (state.loadingMore) delay(PageSizes.LoadingMoreDelayMillis)
         value = state.loadingMore
     }
-    // Kept while switching between the calendar and the list, and started again with each read
-    val listState = remember(state.read) { LazyListState() }
+    // Kept while switching between the calendar and the list, and across reads (see HistoryList)
+    val listState = remember { LazyListState() }
     val padding = PaddingValues(start = Theme.spacing.large, top = PageSizes.TopPadding, end = Theme.spacing.large, bottom = PageSizes.BottomPadding)
     // The days scroll behind the picker and the spinner, which blur them
     AppBlurBox(
