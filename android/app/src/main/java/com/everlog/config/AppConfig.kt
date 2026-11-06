@@ -60,7 +60,9 @@ class AppConfig {
 
     // Settings only apply before Firestore's first use, so this runs first
     private fun configureFirestore() {
-        FirebaseFirestore.setLoggingEnabled(BuildConfig.DEBUG)
+        // Only on request (-PfirestoreLogging=true): it logs every document, which slows syncs of a long history past
+        // their timeout
+        FirebaseFirestore.setLoggingEnabled(BuildConfig.FIRESTORE_LOGGING)
         FirebaseFirestore.getInstance().firestoreSettings = firestoreSettings {
             setLocalCacheSettings(persistentCacheSettings { setSizeBytes(firestoreCacheSizeBytes) })
         }

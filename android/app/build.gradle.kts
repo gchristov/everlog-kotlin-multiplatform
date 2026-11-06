@@ -43,9 +43,11 @@ android {
             isDebuggable = true
             buildConfigField("String", "E2E_TEST_USER_EMAIL", "\"${envSecret("E2E_TEST_USER_EMAIL")}\"")
             buildConfigField("String", "E2E_TEST_USER_PASSWORD", "\"${envSecret("E2E_TEST_USER_PASSWORD")}\"")
+            buildConfigField("boolean", "FIRESTORE_LOGGING", (findProperty("firestoreLogging") == "true").toString())
         }
         getByName("release") {
             signingConfig = signingConfigs.getByName("release")
+            buildConfigField("boolean", "FIRESTORE_LOGGING", "false")
             isMinifyEnabled = true
             isShrinkResources = true
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
