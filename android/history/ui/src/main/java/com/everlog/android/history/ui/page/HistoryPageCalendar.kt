@@ -166,7 +166,7 @@ private fun CalendarDayCell(
             color = if (selected) Theme.contentColors.onAction else Theme.contentColors.primary,
             modifier = Modifier.align(Alignment.BottomEnd).padding(
                 end = if (selected) CalendarSizes.SelectedTextMargin else CalendarSizes.DayGap + CalendarSizes.TextMargin,
-                bottom = if (selected) CalendarSizes.SelectedTextMargin else CalendarSizes.DayGap,
+                bottom = if (selected) CalendarSizes.SelectedTextMargin else CalendarSizes.DayGap + CalendarSizes.TextBottomMargin,
             ),
         )
     }
@@ -182,8 +182,10 @@ private object CalendarSizes {
     val Line = 1.dp
     val TodayRing = 3.dp
     val Dot = 10.dp
-    val DotMargin = 6.dp
-    val TextMargin = 4.dp
+    val DotMargin = 8.dp
+    val TextMargin = 8.dp
+    // Less than at the side, as the number's line already leaves room below it
+    val TextBottomMargin = 4.dp
     // Keeps the picked day's text inside its circle
     val SelectedTextMargin = 10.dp
     const val FutureAlpha = 0.5f
