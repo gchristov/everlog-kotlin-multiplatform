@@ -55,15 +55,17 @@ internal fun HistoryList(
     onScrolledToDay: () -> Unit,
 ) {
     val days = state.days
-    val opened = remember(listState) { OpenedFlag() }
-    LaunchedEffect(listState, days.isNotEmpty()) {
+    // Each read opens on the newest again. The list keeps its state across reads, as a new one scrolled before its
+    // first layout, when a read starts over days already shown, never moves.
+    val opened = remember(listState, state.read) { OpenedFlag() }
+    LaunchedEffect(listState, state.read, days.isNotEmpty()) {
         if (days.isNotEmpty() && !opened.value) {
             listState.scrollToEnd(days)
             opened.value = true
         }
     }
     val newest = days.lastOrNull()?.let { NewestDay(it.date, it.workouts.size) }
-    val followed = remember(listState) { FollowedNewest() }
+    val followed = remember(listState, state.read) { FollowedNewest() }
     LaunchedEffect(newest) {
         val previous = followed.value
         followed.value = newest

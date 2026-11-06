@@ -52,6 +52,8 @@ internal fun StatisticsCharts(state: StatisticsPageState, modifier: Modifier = M
                 update = { chart ->
                     renderer.renderPieChart(chart, stats.muscles.toSortedMap(String.CASE_INSENSITIVE_ORDER).map { (category, count) -> PieEntry(count.toFloat(), categoryTitle(category)) })
                     chart.setTouchEnabled(touchable)
+                    // A drag that turned the pie would hold the page still: it scrolls, and a tap still picks a slice
+                    chart.isRotationEnabled = false
                 },
                 modifier = Modifier.fillMaxSize().padding(horizontal = ChartSizes.SideMargin, vertical = Theme.spacing.large),
             )

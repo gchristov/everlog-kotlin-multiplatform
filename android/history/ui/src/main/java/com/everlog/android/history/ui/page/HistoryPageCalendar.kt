@@ -44,7 +44,7 @@ import org.threeten.bp.YearMonth
 import org.threeten.bp.format.TextStyle
 
 /**
- * The months from the oldest workout shown to next month, opening on this month. Reaching the oldest month asks for
+ * The months from the oldest workout shown to this month, opening on it. Reaching the oldest month asks for
  * older workouts, which add months above without moving the ones in view.
  */
 @Composable
@@ -165,8 +165,8 @@ private fun CalendarDayCell(
             style = if (selected) Theme.typography.bodyBold else Theme.typography.body,
             color = if (selected) Theme.contentColors.onAction else Theme.contentColors.primary,
             modifier = Modifier.align(Alignment.BottomEnd).padding(
-                end = if (selected) CalendarSizes.SelectedTextMargin else CalendarSizes.DayGap + CalendarSizes.TextMargin,
-                bottom = if (selected) CalendarSizes.SelectedTextMargin else CalendarSizes.DayGap,
+                end = CalendarSizes.DayGap + CalendarSizes.TextMargin,
+                bottom = CalendarSizes.DayGap + CalendarSizes.TextBottomMargin,
             ),
         )
     }
@@ -180,11 +180,13 @@ private object CalendarSizes {
     val MonthHeaderHeight = 80.dp
     val DayGap = 3.dp
     val Line = 1.dp
-    val TodayRing = 5.dp
+    val TodayRing = 3.dp
     val Dot = 10.dp
-    val DotMargin = 6.dp
-    val TextMargin = 4.dp
-    // Keeps the picked day's text inside its circle
+    val DotMargin = 8.dp
+    val TextMargin = 8.dp
+    // Less than at the side, as the number's line already leaves room below it
+    val TextBottomMargin = 4.dp
+    // Keeps the picked day's month inside its circle
     val SelectedTextMargin = 10.dp
     const val FutureAlpha = 0.5f
 }

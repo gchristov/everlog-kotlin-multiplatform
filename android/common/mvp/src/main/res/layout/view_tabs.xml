@@ -7,11 +7,12 @@
     android:orientation="vertical"
     tools:background="@color/background_base">
 
+    <!-- As tall as its chips: TabLayout otherwise measures at least 48dp, a gap around them -->
     <com.google.android.material.tabs.TabLayout
         android:id="@+id/tabLayout"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="@dimen/activity_margin"
+        android:layout_height="@dimen/chip_height"
+        android:layout_marginBottom="@dimen/margin_24"
         android:clipToPadding="false"
         android:paddingStart="@dimen/activity_margin"
         app:tabBackground="@android:color/transparent"

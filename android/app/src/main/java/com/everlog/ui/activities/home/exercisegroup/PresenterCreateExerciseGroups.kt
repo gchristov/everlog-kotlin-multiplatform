@@ -46,8 +46,9 @@ abstract class PresenterCreateExerciseGroups<T : MvpViewCreateExerciseGroups> : 
     // @State
     @JvmField
     var mSelectedCommonExerciseTimeSeconds = 0 // -1 - mixed, 0 - not set, >0 is the value
-    // IcePick doesn't like the LinkedHashMap here so it will be a known bug that selection doesn't persist if activity is killed
-    internal var mSelectedExercises = LinkedHashMap<ELRoutineExercise, ELExerciseGroup>()
+    // IcePick doesn't like the LinkedHashMap here so it will be a known bug that selection doesn't persist if activity is killed.
+    // By the exercise's uuid, as its sets change while it's selected, which changes what it equals.
+    internal var mSelectedExercises = LinkedHashMap<String?, Selected>()
 
     internal val mAdapter = RecyclerAdapter()
     private val mGroupSettingsDataListManager = DataListManager<ExerciseGroupCreateHeader>(mAdapter)
@@ -185,7 +186,7 @@ abstract class PresenterCreateExerciseGroups<T : MvpViewCreateExerciseGroups> : 
                 .subscribe {
                     if (mSelectedExercises.isNotEmpty()) {
                         navigator.openExerciseDetails(ExerciseDetailsActivity.Companion.Properties()
-                                .exercise(mSelectedExercises.keys.first().exercise!!))
+                                .exercise(mSelectedExercises.values.first().exercise.exercise!!))
                     }
                 })
     }
@@ -302,9 +303,7 @@ abstract class PresenterCreateExerciseGroups<T : MvpViewCreateExerciseGroups> : 
     }
 
     private fun handleSelectionDelete() {
-        mSelectedExercises.forEach {
-            val exercise = it.key
-            val group = it.value
+        mSelectedExercises.values.forEach { (exercise, group) ->
             if (group.isWithOnlyOneExercise()) {
                 mGroupsDataListManager.remove(group)
                 mSelectedGroups.remove(group)
@@ -364,12 +363,12 @@ abstract class PresenterCreateExerciseGroups<T : MvpViewCreateExerciseGroups> : 
     private fun mergeSelection(type: ELSetType) {
         val newGroup = ELExerciseGroup.buildDefault(type)
         var first: ELExerciseGroup? = null
-        mSelectedExercises.forEach {
+        mSelectedExercises.values.forEach { (exercise, group) ->
             if (first == null) {
                 // Keep track of first item
-                first = it.value
+                first = group
             }
-            newGroup.exercises.add(it.key)
+            newGroup.exercises.add(exercise)
         }
         newGroup.ensureEqualSets()
         // Add new group at the position of the first linked exercise to make it easier for the user
@@ -390,10 +389,10 @@ abstract class PresenterCreateExerciseGroups<T : MvpViewCreateExerciseGroups> : 
     }
 
     private fun toggleSelectedExercise(exercise: ELRoutineExercise, group: ELExerciseGroup) {
-        if (mSelectedExercises.contains(exercise)) {
-            mSelectedExercises.remove(exercise)
+        if (mSelectedExercises.containsKey(exercise.uuid)) {
+            mSelectedExercises.remove(exercise.uuid)
         } else {
-            mSelectedExercises[exercise] = group
+            mSelectedExercises[exercise.uuid] = Selected(exercise, group)
         }
     }
 
@@ -474,7 +473,7 @@ abstract class PresenterCreateExerciseGroups<T : MvpViewCreateExerciseGroups> : 
                     }
 
                     override fun isSelected(exercise: ELRoutineExercise): Boolean {
-                        return mSelectedExercises.containsKey(exercise)
+                        return mSelectedExercises.containsKey(exercise.uuid)
                     }
 
                     override fun onStartTimer(exercise: ELRoutineExercise, set: ELSet) {
@@ -505,3 +504,5 @@ class DefaultPresenterCreateExerciseGroups : PresenterCreateExerciseGroups<MvpVi
         return false
     }
 }
+
+internal data class Selected(val exercise: ELRoutineExercise, val group: ELExerciseGroup)

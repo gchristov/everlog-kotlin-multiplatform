@@ -5,6 +5,7 @@ import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
@@ -13,6 +14,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -31,6 +33,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.Stroke
@@ -39,6 +42,7 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.Dp
 import com.everlog.android.common.compose.elements.AppSurface
 import com.everlog.android.common.compose.elements.AppText
 import com.everlog.android.common.compose.elements.rememberShimmerBrush
@@ -191,7 +195,8 @@ private fun StatSurface(onClick: () -> Unit, modifier: Modifier = Modifier, cont
     )
 }
 
-// The section header and stat cards the week will show, at their sizes, running off the screen like the real row
+// The section header and stat cards the week will show, at their sizes, running off the screen like the real row:
+// the goal's ring, then each card's icon, label and value
 @Composable
 internal fun WeekStatsLoading(contentPadding: PaddingValues) {
     val brush = rememberShimmerBrush()
@@ -207,15 +212,37 @@ internal fun WeekStatsLoading(contentPadding: PaddingValues) {
             modifier = Modifier.horizontalScroll(rememberScrollState(), enabled = false).padding(contentPadding),
             horizontalArrangement = Arrangement.spacedBy(Theme.spacing.large),
         ) {
-            repeat(LoadingCards) {
-                Box(
-                    modifier = Modifier
-                        .size(width = WeekTabSizes.StatCardWidth, height = WeekTabSizes.StatCardHeight)
-                        .background(brush, Theme.shapes.surface),
-                )
+            LoadingCard {
+                Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                    Box(
+                        modifier = Modifier.fillMaxWidth().aspectRatio(1f).padding(WeekTabSizes.GoalProgressWidth / 2)
+                            .border(WeekTabSizes.GoalProgressWidth, brush, CircleShape),
+                    )
+                }
+            }
+            repeat(LoadingCards - 1) {
+                LoadingCard {
+                    Column(modifier = Modifier.fillMaxSize()) {
+                        Box(modifier = Modifier.size(WeekTabSizes.StatIcon).background(brush, CircleShape))
+                        LoadingLine(brush, fraction = 0.8f, modifier = Modifier.padding(top = Theme.spacing.medium))
+                        LoadingLine(brush, fraction = 0.5f, modifier = Modifier.padding(top = Theme.spacing.small))
+                        Spacer(modifier = Modifier.weight(1f))
+                        LoadingLine(brush, fraction = 0.4f, height = WeekTabSizes.LoadingValueHeight)
+                    }
+                }
             }
         }
     }
+}
+
+@Composable
+private fun LoadingCard(content: @Composable () -> Unit) {
+    AppSurface(modifier = Modifier.size(width = WeekTabSizes.StatCardWidth, height = WeekTabSizes.StatCardHeight), content = content)
+}
+
+@Composable
+private fun LoadingLine(brush: Brush, fraction: Float, modifier: Modifier = Modifier, height: Dp = WeekTabSizes.LoadingLineHeight) {
+    Box(modifier = modifier.fillMaxWidth(fraction).height(height).background(brush, DayShape))
 }
 
 @Composable

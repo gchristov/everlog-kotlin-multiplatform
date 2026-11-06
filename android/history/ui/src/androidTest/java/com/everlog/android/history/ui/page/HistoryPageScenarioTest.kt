@@ -102,7 +102,7 @@ class HistoryPageScenarioTest {
     @Test
     fun scrollingBackThroughTheList() {
         val days = (1..30).map { today.minusDays(it.toLong()) }
-        show()
+        val viewModel = show()
         pickView("List")
 
         // Newest first from the read; the list opens on the newest, at the bottom
@@ -117,6 +117,15 @@ class HistoryPageScenarioTest {
         shown(days.map { finished(it, "Workout $it") } + finished(older, "The first"), complete = true)
         compose.onNodeWithTag(HistoryPageTags.List).performScrollToIndex(0)
         compose.waitUntil(WaitMillis) { exists(hasText("The first")) }
+
+        // Another Home tab and back: the newest page shows straight away, on the newest, while it's read again
+        compose.runOnIdle {
+            viewModel.onLeft()
+            viewModel.refresh()
+        }
+        compose.onNodeWithTag(HistoryPageTags.Loading).assertDoesNotExist()
+        compose.waitUntil(WaitMillis) { displayed("Workout ${days.first()}") }
+        assertThat(workouts.historyReads).isEqualTo(2)
     }
 
     @Test
@@ -176,11 +185,15 @@ class HistoryPageScenarioTest {
         show()
         pickView("List")
 
-        shown(emptyList(), complete = true)
+        // Checking the server for older workouts, which the user didn't scroll back for
+        shown(emptyList(), loadingMore = true)
 
         // The example shows in either view, under its label, faded and out of the semantics tree
         compose.waitUntil(WaitMillis) { exists(hasTestTag(HistoryPageTags.Example)) }
         compose.onNodeWithTag(HistoryPageTags.List).assertDoesNotExist()
+        compose.mainClock.advanceTimeBy(1_000)
+        compose.onNodeWithTag(HistoryPageTags.LoadingMore).assertDoesNotExist()
+        shown(emptyList(), complete = true)
         pickView("Calendar")
         compose.onNodeWithTag(HistoryPageTags.Example).assertExists()
         compose.onNodeWithTag(HistoryPageTags.Calendar).assertDoesNotExist()
@@ -191,8 +204,8 @@ class HistoryPageScenarioTest {
         compose.onNodeWithTag(HistoryPageTags.Example).assertDoesNotExist()
     }
 
-    private fun shown(history: List<ELWorkout>, complete: Boolean = false) {
-        workouts.history.loads.value = Load.Ready(WorkoutHistory(history, loadingMore = false, complete = complete))
+    private fun shown(history: List<ELWorkout>, complete: Boolean = false, loadingMore: Boolean = false) {
+        workouts.history.loads.value = Load.Ready(WorkoutHistory(history, loadingMore = loadingMore, complete = complete))
     }
 
     private fun pickView(name: String) {
@@ -205,13 +218,14 @@ class HistoryPageScenarioTest {
         return ELWorkout(completedDate = completed, routine = ELRoutine(name = name)).apply { createdDate = completed - 3_600_000 }
     }
 
-    private fun show() {
+    private fun show(): HistoryPageViewModel {
         val viewModel = HistoryPageViewModel(Dispatchers.Main, workouts, FakeUserSettings(), preferences, listOf("Legs", "Push", "Pull")) { today }
         compose.setContent {
             Theme {
                 HistoryPageScreen(viewModel = viewModel, onWorkout = { opened += it.getName().orEmpty() })
             }
         }
+        return viewModel
     }
 
     private fun displayed(text: String) = runCatching { compose.onNodeWithText(text).assertIsDisplayed() }.isSuccess
