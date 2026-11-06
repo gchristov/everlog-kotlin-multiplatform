@@ -97,6 +97,23 @@ A compact pill button, e.g. a row of filters to start from: height 36px, `--radi
   (e.g. the current tab in a row of chips that switch pages, 8px apart; the app's XML tabs look the same)
 - optional 16px down arrow after the label, `--space-xs` from it, when it opens a menu
 
+## AppChipTabs
+
+Tabs as `AppChip`s in a row (`--space-sm` apart) at the screen margin, `--space-lg` below them, the
+one shown picked (`AppChip`'s selected look). They sit in an `AppBar`'s header, over pages the screen
+swipes between; picking a tab slides to its page.
+
+## AppTimelineItem
+
+One day on a timeline, as the history lists show it, in three columns:
+- the date, right-aligned, at least 40px wide, `--space-lg` before the line, 6px from the top: the
+  day in `--font-body-bold`, then the short month in capitals and the year in `--font-small`, all
+  `--content-secondary`
+- the line: 2px wide in `--background-separator`, 27px above an 8px dot of the same colour
+  (`--space-xs` around it), then down to the next day. No line above the first day or below the last.
+  `--space-lg` after it
+- the day's content, usually an `AppListGroup`, `--space-lg` below it
+
 ## AppSearchBar
 
 A search field in a card: `--background-surface`, `--radius-surface`, at least 48px tall, padding

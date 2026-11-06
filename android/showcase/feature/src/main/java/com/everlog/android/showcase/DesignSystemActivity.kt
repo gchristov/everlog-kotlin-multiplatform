@@ -38,6 +38,8 @@ internal enum class DesignSystemPage {
     Menus,
     Cards,
     StatTiles,
+    ChipTabs,
+    Timeline,
     Examples,
     HeroHeader,
     Dialogs,
@@ -77,6 +79,8 @@ internal fun DesignSystemScreen(viewModel: DesignSystemViewModel) {
         DesignSystemPage.Menus -> DesignSystemMenus(onButtonClick = onButtonClick)
         DesignSystemPage.Cards -> DesignSystemCards(onButtonClick = onButtonClick)
         DesignSystemPage.StatTiles -> DesignSystemStatTiles()
+        DesignSystemPage.ChipTabs -> DesignSystemChipTabs()
+        DesignSystemPage.Timeline -> DesignSystemTimeline()
         DesignSystemPage.Examples -> DesignSystemExamples()
         DesignSystemPage.HeroHeader -> DesignSystemHeroHeader()
         DesignSystemPage.Dialogs -> DesignSystemDialogs()
@@ -117,6 +121,8 @@ private val HubSections = listOf(
         HubEntry(DesignSystemPage.Menus, "Menus", "Further options behind a ⋮ button, in the app bar or on a row"),
         HubEntry(DesignSystemPage.Cards, "Cards", "The card surface, with text and actions"),
         HubEntry(DesignSystemPage.StatTiles, "Stat tiles", "Numbers on cards, two to a row, and their loading shimmer"),
+        HubEntry(DesignSystemPage.ChipTabs, "Chip tabs", "Tabs as chips over pages, swiped or picked"),
+        HubEntry(DesignSystemPage.Timeline, "Timeline", "Days on a line, each beside its own content, as the history lists show them"),
         HubEntry(DesignSystemPage.Examples, "Examples", "A faded sample of what an empty screen becomes, under the EXAMPLE label"),
         HubEntry(DesignSystemPage.HeroHeader, "Hero header", "A large title at the top of a screen's content"),
         HubEntry(DesignSystemPage.Dialogs, "Dialogs", "A title, body text and actions, and the text field"),
