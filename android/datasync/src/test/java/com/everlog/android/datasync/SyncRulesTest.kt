@@ -129,6 +129,38 @@ class SyncRulesTest {
     }
 
     @Test
+    fun `a sync back fetches only what the cache doesn't reach yet, keeping when the rest last synced`() {
+        val windowFrom = windowStart(now, months = 3)
+        val yearAgo = now - 365 * day
+        val twoYearsAgo = now - 730 * day
+        val syncedBack = SyncStatus(lastSynced = now, syncedBackTo = yearAgo, syncedBackAt = now - day)
+
+        assertThat(olderSync(twoYearsAgo, windowFrom, syncedBack, now, week))
+            .isEqualTo(OlderSync(from = twoYearsAgo, until = yearAgo, recorded = SyncedBack(twoYearsAgo, now - day)))
+    }
+
+    @Test
+    fun `a sync back fetches everything up to the window the first time, when the rest is due, or for a recount`() {
+        val windowFrom = windowStart(now, months = 3)
+        val yearAgo = now - 365 * day
+        val twoYearsAgo = now - 730 * day
+        val due = SyncStatus(lastSynced = now, syncedBackTo = yearAgo, syncedBackAt = now - week)
+        val fresh = SyncStatus(lastSynced = now, syncedBackTo = yearAgo, syncedBackAt = now - day)
+        val everything = OlderSync(from = twoYearsAgo, until = windowFrom, recorded = SyncedBack(twoYearsAgo, now))
+
+        assertThat(olderSync(twoYearsAgo, windowFrom, SyncStatus(lastSynced = now), now, week)).isEqualTo(everything)
+        assertThat(olderSync(twoYearsAgo, windowFrom, due, now, week)).isEqualTo(everything)
+        assertThat(olderSync(yearAgo, windowFrom, fresh, now, week)).isEqualTo(OlderSync(yearAgo, windowFrom, SyncedBack(yearAgo, now)))
+    }
+
+    @Test
+    fun `a sync back within the window fetches nothing older`() {
+        val windowFrom = windowStart(now, months = 3)
+
+        assertThat(olderSync(windowFrom, windowFrom, SyncStatus(lastSynced = now), now, week)).isNull()
+    }
+
+    @Test
     fun `the max age is zero in debug builds, the default when Remote Config has none or a bad one`() {
         assertThat(maxAgeMillis(debug = true, remoteMinutes = 60, defaultMinutes = 60)).isEqualTo(0)
         assertThat(maxAgeMillis(debug = false, remoteMinutes = 15, defaultMinutes = 60)).isEqualTo(TimeUnit.MINUTES.toMillis(15))

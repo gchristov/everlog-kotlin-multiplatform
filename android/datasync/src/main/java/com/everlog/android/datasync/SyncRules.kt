@@ -60,6 +60,26 @@ internal fun covers(status: SyncStatus, backTo: Long?): Boolean = when {
 }
 
 /**
+ * What a sync back to [backTo] fetches beyond the recent window, from [windowFrom], and what it then records as
+ * synced back. Only the part the cache doesn't reach yet, so a read further back than the last doesn't fetch again
+ * what that one brought, unless the part synced back is due to sync again anyway. Null when the window covers it.
+ */
+internal fun olderSync(backTo: Long, windowFrom: Long, status: SyncStatus, now: Long, olderMaxAgeMillis: Long): OlderSync? {
+    if (backTo >= windowFrom) return null
+    val syncedBackTo = status.syncedBackTo
+    val syncedBackAt = status.syncedBackAt
+    return if (syncedBackTo != null && syncedBackAt != null && backTo < syncedBackTo && !isDue(syncedBackAt, now, olderMaxAgeMillis)) {
+        // Keeps when the part synced before last synced, so it still syncs again when that's due
+        OlderSync(from = backTo, until = syncedBackTo, recorded = SyncedBack(backTo, syncedBackAt))
+    } else {
+        OlderSync(from = backTo, until = windowFrom, recorded = SyncedBack(backTo, now))
+    }
+}
+
+// The documents from [from] until before [until] by the plan's date field
+internal data class OlderSync(val from: Long, val until: Long, val recorded: SyncedBack)
+
+/**
  * The cache once it's covered. Before that, what's cached when there's any, unless the read needs a complete
  * copy, e.g. a year of history, which a part of would show wrong totals. Otherwise the shimmer, until a sync fails.
  *

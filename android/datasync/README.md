@@ -100,7 +100,9 @@ A `Recent` collection keeps two records per user, in `DataSync.xml`:
 Reaching back:
 
 - **The first time** a read goes further back than `syncedBackTo` (or the window, before there's one), it syncs
-  just the missing stretch, from the read's date up to the window: by date, oldest first, in pages of 200
+  just the missing stretch, from the read's date up to `syncedBackTo` (or the window), keeping `syncedBackAt`, so
+  going back a year at a time fetches each year once. When the stretch synced back before is due its weekly sync,
+  it syncs everything from the read's date up to the window instead. Either way by date, oldest first, in pages of 200
   (`AppConfig.dataSyncChunkSize`), ordered by date and id so documents of the same date aren't skipped. It's
   recorded once the last page has landed, so an interrupted sync starts over.
 - **Every hour**, with the recent window, it compares the server's count of the synced-back stretch (one read per
