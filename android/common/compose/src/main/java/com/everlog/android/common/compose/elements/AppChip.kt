@@ -74,7 +74,7 @@ enum class AppChipStyle {
     Action,
 }
 
-private object ChipSizes {
+internal object ChipSizes {
     val Height = 36.dp
     val Icon = 16.dp
 }
