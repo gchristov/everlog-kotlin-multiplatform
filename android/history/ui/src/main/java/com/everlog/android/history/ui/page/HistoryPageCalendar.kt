@@ -44,7 +44,7 @@ import org.threeten.bp.YearMonth
 import org.threeten.bp.format.TextStyle
 
 /**
- * The months from the oldest workout shown to next month, opening on this month. Reaching the oldest month asks for
+ * The months from the oldest workout shown to this month, opening on it. Reaching the oldest month asks for
  * older workouts, which add months above without moving the ones in view.
  */
 @Composable

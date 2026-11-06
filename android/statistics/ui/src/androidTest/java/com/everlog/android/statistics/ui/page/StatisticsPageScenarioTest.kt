@@ -78,7 +78,7 @@ class StatisticsPageScenarioTest {
         compose.waitUntil(WaitMillis) { exists("This month") && workoutsShown("2") }
         assertThat(workouts.reads[12]).isNull()
 
-        compose.onNodeWithText("Let us know").performScrollTo().performClick()
+        compose.onNodeWithTag(StatisticsPageTags.Feedback).performScrollTo().performClick()
         assertThat(feedbackOpened).isTrue()
         assertThat(picked).containsExactly(StatsPeriod.Month)
     }
@@ -116,10 +116,12 @@ class StatisticsPageScenarioTest {
         // Under its label, faded and out of the semantics tree, so the real numbers aren't there
         compose.waitUntil(WaitMillis) { exists(hasTestTag(StatisticsPageTags.Example)) }
         compose.onNodeWithTag(StatisticsPageTags.Workouts).assertDoesNotExist()
+        compose.onNodeWithTag(StatisticsPageTags.Feedback).assertDoesNotExist()
 
         workouts.recent.value = Load.Ready(listOf(finishedToday()))
         compose.waitUntil(WaitMillis) { workoutsShown("1") }
         compose.onNodeWithTag(StatisticsPageTags.Example).assertDoesNotExist()
+        compose.onNodeWithTag(StatisticsPageTags.Feedback).assertExists()
     }
 
     private fun pick(period: String) {

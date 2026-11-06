@@ -5,6 +5,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -12,6 +13,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHostState
@@ -24,9 +26,13 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.everlog.android.common.compose.elements.AppBlurBox
@@ -34,12 +40,14 @@ import com.everlog.android.common.compose.elements.AppChip
 import com.everlog.android.common.compose.elements.AppChipStyle
 import com.everlog.android.common.compose.elements.AppExample
 import com.everlog.android.common.compose.elements.AppExampleLabel
+import com.everlog.android.common.compose.elements.AppIcon
 import com.everlog.android.common.compose.elements.AppMenu
 import com.everlog.android.common.compose.elements.AppMenuItem
 import com.everlog.android.common.compose.elements.AppSnackbarHost
 import com.everlog.android.common.compose.elements.AppSurface
-import com.everlog.android.common.compose.elements.AppTertiaryButton
 import com.everlog.android.common.compose.elements.AppText
+import com.everlog.android.common.compose.elements.list.AppListGroup
+import com.everlog.android.common.compose.elements.list.AppListItem
 import com.everlog.android.common.compose.elements.rememberShimmerBrush
 import com.everlog.android.common.compose.theme.Theme
 import com.everlog.android.common.design.R as DesignR
@@ -127,10 +135,17 @@ private fun StatisticsPageBody(state: StatisticsPageState, onFeedback: () -> Uni
                 StatisticsCharts(state)
             }
         }
-        if (state.feedback) {
-            Column(modifier = Modifier.fillMaxWidth().testTag(StatisticsPageTags.Feedback), horizontalAlignment = Alignment.CenterHorizontally) {
-                AppText(text = stringResource(DesignR.string.statistics_footer_text), style = Theme.typography.body, color = Theme.contentColors.secondary)
-                AppTertiaryButton(onClick = onFeedback, text = stringResource(DesignR.string.exercises_footer_link))
+        if (state.feedback && example == null) {
+            AppListGroup {
+                row {
+                    AppListItem(
+                        modifier = Modifier.testTag(StatisticsPageTags.Feedback),
+                        title = stringResource(DesignR.string.feedback_send),
+                        subtitle = stringResource(R.string.statistics_feedback_subtitle),
+                        leading = { AppIcon(imageVector = ImageVector.vectorResource(DesignR.drawable.ic_feedback), tint = Theme.contentColors.action) },
+                        onClick = onFeedback,
+                    )
+                }
             }
         }
     }
@@ -208,18 +223,37 @@ private fun SummaryCard(summary: Summary, modifier: Modifier = Modifier) {
     }
 }
 
-// The summary cards and a chart, as the page will show them
+// The summary cards, each with its value over its label, and a chart's card with its title, as the page will show them
 @Composable
 private fun StatisticsLoading() {
     val brush = rememberShimmerBrush()
     Column(modifier = Modifier.testTag(StatisticsPageTags.Loading), verticalArrangement = Arrangement.spacedBy(Theme.spacing.large)) {
         repeat(SummaryRows) {
             Row(horizontalArrangement = Arrangement.spacedBy(Theme.spacing.large)) {
-                repeat(2) { Box(modifier = Modifier.weight(1f).height(PageSizes.LoadingCardHeight).background(brush, Theme.shapes.surface)) }
+                repeat(2) {
+                    AppSurface(modifier = Modifier.weight(1f)) {
+                        Column(
+                            modifier = Modifier.fillMaxWidth().height(PageSizes.LoadingCardContentHeight),
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            verticalArrangement = Arrangement.spacedBy(Theme.spacing.small, Alignment.CenterVertically),
+                        ) {
+                            LoadingLine(brush, fraction = 0.35f, height = PageSizes.LoadingValueHeight)
+                            LoadingLine(brush, fraction = 0.65f, height = PageSizes.LoadingLabelHeight)
+                        }
+                    }
+                }
             }
         }
-        Box(modifier = Modifier.fillMaxWidth().height(PageSizes.LoadingChartHeight).background(brush, Theme.shapes.surface))
+        AppSurface(modifier = Modifier.fillMaxWidth().height(PageSizes.LoadingChartHeight), contentPadding = PaddingValues()) {
+            LoadingLine(brush, fraction = 0.4f, height = PageSizes.LoadingTitleHeight, modifier = Modifier.padding(Theme.spacing.large))
+            Box(modifier = Modifier.fillMaxWidth().height(1.dp).background(Theme.backgrounds.separator))
+        }
     }
+}
+
+@Composable
+private fun LoadingLine(brush: Brush, fraction: Float, height: Dp, modifier: Modifier = Modifier) {
+    Box(modifier = modifier.fillMaxWidth(fraction).height(height).background(brush, RoundedCornerShape(PageSizes.LoadingLineCorner)))
 }
 
 private val StatsPeriod.title: Int
@@ -232,14 +266,20 @@ private val StatsPeriod.title: Int
 private const val SummaryRows = 3
 
 private object PageSizes {
-    // Room for the period picker above the page
-    val TopPadding = 67.dp
+    // Room for the period picker above the page, and a group's spacing below it
+    val TopPadding = 52.dp
     // The picker's chip, for the example label beside it
     val PickerHeight = 36.dp
     // Room for Home's start workout button over the end of the page
     val BottomPadding = 180.dp
     // Above Home's tab bar and its start workout button, which the page runs under
     val SnackbarBottom = 128.dp
-    val LoadingCardHeight = 72.dp
+    // A summary card's value and label, as tall as their text
+    val LoadingCardContentHeight = 40.dp
+    val LoadingValueHeight = 18.dp
+    val LoadingLabelHeight = 10.dp
+    // A chart's title, at the chart card's own padding
+    val LoadingTitleHeight = 14.dp
+    val LoadingLineCorner = 6.dp
     val LoadingChartHeight = 350.dp
 }

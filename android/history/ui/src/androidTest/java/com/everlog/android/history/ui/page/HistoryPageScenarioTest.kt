@@ -176,11 +176,15 @@ class HistoryPageScenarioTest {
         show()
         pickView("List")
 
-        shown(emptyList(), complete = true)
+        // Checking the server for older workouts, which the user didn't scroll back for
+        shown(emptyList(), loadingMore = true)
 
         // The example shows in either view, under its label, faded and out of the semantics tree
         compose.waitUntil(WaitMillis) { exists(hasTestTag(HistoryPageTags.Example)) }
         compose.onNodeWithTag(HistoryPageTags.List).assertDoesNotExist()
+        compose.mainClock.advanceTimeBy(1_000)
+        compose.onNodeWithTag(HistoryPageTags.LoadingMore).assertDoesNotExist()
+        shown(emptyList(), complete = true)
         pickView("Calendar")
         compose.onNodeWithTag(HistoryPageTags.Example).assertExists()
         compose.onNodeWithTag(HistoryPageTags.Calendar).assertDoesNotExist()
@@ -191,8 +195,8 @@ class HistoryPageScenarioTest {
         compose.onNodeWithTag(HistoryPageTags.Example).assertDoesNotExist()
     }
 
-    private fun shown(history: List<ELWorkout>, complete: Boolean = false) {
-        workouts.history.loads.value = Load.Ready(WorkoutHistory(history, loadingMore = false, complete = complete))
+    private fun shown(history: List<ELWorkout>, complete: Boolean = false, loadingMore: Boolean = false) {
+        workouts.history.loads.value = Load.Ready(WorkoutHistory(history, loadingMore = loadingMore, complete = complete))
     }
 
     private fun pickView(name: String) {

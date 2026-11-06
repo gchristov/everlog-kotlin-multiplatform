@@ -17,11 +17,11 @@ fun historyDays(workouts: List<ELWorkout>, zone: ZoneId = ZoneId.systemDefault()
         .map { (date, onDay) -> HistoryDay(date, onDay) }
 
 /**
- * The calendar's months: from the oldest day shown so far, which moves back as older pages load, to the month after
- * [today]. Just this month and the next while there's nothing to show.
+ * The calendar's months: from the oldest day shown so far, which moves back as older pages load, to [today]'s.
+ * Just this month while there's nothing to show.
  */
 fun calendarMonths(days: List<HistoryDay>, today: LocalDate): ClosedRange<YearMonth> {
     val now = YearMonth.from(today)
     val first = days.firstOrNull()?.let { YearMonth.from(it.date) }?.takeIf { it < now } ?: now
-    return first..now.plusMonths(1)
+    return first..now
 }

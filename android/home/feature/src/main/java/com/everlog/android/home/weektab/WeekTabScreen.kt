@@ -132,6 +132,9 @@ internal object WeekTabSizes {
     val DayCorner = 4.dp
     val LoadingHeaderWidth = 120.dp
     val LoadingHeaderHeight = 20.dp
+    // A line of body text, and a stat's value
+    val LoadingLineHeight = 14.dp
+    val LoadingValueHeight = 22.dp
     val CardElevation = 2.dp
     val PlanProgressHeight = 6.dp
     val Marker = 27.dp
