@@ -107,7 +107,11 @@ class ExercisePageViewModel(
         historyJob = launchCoroutine {
             read.loads.collect { load ->
                 when (load) {
-                    is Load.Ready -> setState { withHistory(load.value) }
+                    is Load.Ready -> {
+                        setState { withHistory(load.value) }
+                        // Nothing to show yet: read further back until a session, the first workout or a failure
+                        load.value.run { if (sessions.isEmpty() && !loadingMore && !complete && !failed) read.loadMore() }
+                    }
                     is Load.Unavailable -> setState { copy(loading = false, failed = true) }
                     Load.Loading -> Unit
                 }
@@ -152,7 +156,8 @@ class ExercisePageViewModel(
                 today = date,
                 stats = stats,
                 statsExample = if (!loading && stats.timesPerformed == 0) exampleStats(range, date) else null,
-                historyExample = if (complete && sessions.isEmpty()) exampleSessions(date, exampleName) else null,
+                // As on the Activity tab: once there turn out to be none, or when they couldn't load
+                historyExample = if (sessions.isEmpty() && (complete || failed)) exampleSessions(date, exampleName) else null,
             )
         }
     }

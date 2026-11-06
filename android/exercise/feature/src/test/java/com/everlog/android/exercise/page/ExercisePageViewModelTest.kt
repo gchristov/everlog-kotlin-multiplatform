@@ -96,6 +96,22 @@ class ExercisePageViewModelTest {
     }
 
     @Test
+    fun `with no sessions in the last months, the history reads further back by itself`() {
+        viewModel()
+
+        history.loads.value = Load.Ready(ExerciseHistory(emptyList(), loadingMore = false, complete = false, failed = false))
+
+        assertThat(history.loadMoreCalls).isEqualTo(1)
+
+        // Not while a year is on its way, at the first workout, or after a year failed (the list offers Try again)
+        history.loads.value = Load.Ready(ExerciseHistory(emptyList(), loadingMore = true, complete = false, failed = false))
+        history.loads.value = Load.Ready(ExerciseHistory(emptyList(), loadingMore = false, complete = true, failed = false))
+        history.loads.value = Load.Ready(ExerciseHistory(emptyList(), loadingMore = false, complete = false, failed = true))
+
+        assertThat(history.loadMoreCalls).isEqualTo(1)
+    }
+
+    @Test
     fun `the page and each tab shown are logged`() {
         val viewModel = viewModel()
 
@@ -198,6 +214,9 @@ class ExercisePageViewModelTest {
 
         assertThat(viewModel.state.value.failed).isTrue()
         assertThat(viewModel.state.value.loading).isFalse()
+        // Both tabs show their example under the error, as the Activity tab does
+        assertThat(viewModel.state.value.statsExample).isNotNull()
+        assertThat(viewModel.state.value.historyExample).isNotEmpty()
 
         // A new read starts over
         history.loads.value = Load.Loading
