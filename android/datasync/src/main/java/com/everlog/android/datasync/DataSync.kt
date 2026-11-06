@@ -141,6 +141,23 @@ class DataSync(
     }
 
     /**
+     * The date of a SyncPlan.Recent collection's oldest document by the plan's date field, from the server, as the
+     * cache may not reach back that far: where going back through the whole collection a part at a time ends. One
+     * server read. Ready with null when the collection is empty.
+     */
+    suspend fun oldest(source: CollectionSource<*>): Load<Long?> {
+        require(source.plan is SyncPlan.Recent) { "Only a SyncPlan.Recent collection has a date to go back by" }
+        return try {
+            Load.Ready(withSyncTimeout(source.name) { Reading(source.backend.oldestOnServer()) }.value)
+        } catch (e: CancellationException) {
+            throw e
+        } catch (e: Exception) {
+            Timber.tag(TAG).w("Couldn't read %s's oldest date: %s", source.name, e.message)
+            Load.Unavailable(e)
+        }
+    }
+
+    /**
      * Brings the documents with these [ids] from the server into the cache, where readers see them: for documents a
      * read found missing, e.g. a library exercise added since the library last synced, or one of the user's own
      * created on another phone. Ready with the ids the server has, the rest don't exist.

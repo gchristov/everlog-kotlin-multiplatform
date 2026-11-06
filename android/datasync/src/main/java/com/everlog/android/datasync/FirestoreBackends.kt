@@ -89,6 +89,12 @@ class FirestoreCollection<T : Any>(
         documents.whereIn(FieldPath.documentId(), batch).get(Source.SERVER).await().documents.map { it.id }
     }.toSet()
 
+    override suspend fun oldestOnServer(): Long? {
+        val dateField = requireDateField()
+        val oldest = documents.orderBy(dateField).limit(1).get(Source.SERVER).await().documents.firstOrNull()
+        return (oldest?.get(dateField) as? Number)?.toLong()
+    }
+
     override suspend fun countOnServer(since: Long): Long =
         documents.whereGreaterThanOrEqualTo(requireDateField(), since).count().get(AggregateSource.SERVER).await().count
 
