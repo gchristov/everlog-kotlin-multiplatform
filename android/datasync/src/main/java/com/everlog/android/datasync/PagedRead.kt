@@ -19,8 +19,9 @@ import kotlin.coroutines.cancellation.CancellationException
 /**
  * @param loadingMore A page is on its way from the server, for a footer spinner.
  * @param endReached Nothing older, here or on the server.
+ * @param failed The last older page couldn't come from the server: [PagedRead.loadMore] tries it again.
  */
-data class Page<T>(val items: List<T>, val loadingMore: Boolean, val endReached: Boolean)
+data class Page<T>(val items: List<T>, val loadingMore: Boolean, val endReached: Boolean, val failed: Boolean = false)
 
 /**
  * One screen's pages of a collection (DataSync.pages). Its cache listener grows by a page at a time, so
@@ -53,7 +54,7 @@ class PagedRead<T> internal constructor(
             fetchFromServerWhenShort(shown, status, paging)
             val short = shown.items.size < shown.limit
             // The cache can't tell there's nothing older: the server says so once a page comes back short
-            val page = Page(shown.items, paging.loadingMore, endReached = short && paging.serverExhausted)
+            val page = Page(shown.items, paging.loadingMore, endReached = short && paging.serverExhausted, failed = paging.failed)
             loadOf(page, shown.items.isEmpty(), covered = status.lastSynced != null, needsComplete = false, status, view.cacheBehind)
         }
             .catch { emit(Load.Unavailable(it)) }
@@ -63,6 +64,7 @@ class PagedRead<T> internal constructor(
 
     // For a screen scrolled to the end. While the cache is still short of the last page, it retries that page instead.
     fun loadMore() {
+        paging.update { it.copy(failed = false) }
         val current = limit.value
         if (shown < current) paging.update { it.copy(fetchedFor = 0) } else limit.value = current + pageSize
     }
@@ -75,12 +77,12 @@ class PagedRead<T> internal constructor(
         scope.launch {
             try {
                 val fetched = fetchPage(shown.items.size)
-                this@PagedRead.paging.update { it.copy(loadingMore = false, serverExhausted = fetched < pageSize) }
+                this@PagedRead.paging.update { it.copy(loadingMore = false, serverExhausted = fetched < pageSize, failed = false) }
             } catch (e: CancellationException) {
                 throw e
             } catch (e: Exception) {
                 Timber.tag(TAG).w("Couldn't load an older page: %s", e.message)
-                this@PagedRead.paging.update { it.copy(loadingMore = false) }
+                this@PagedRead.paging.update { it.copy(loadingMore = false, failed = true) }
             }
         }
     }
@@ -92,6 +94,7 @@ class PagedRead<T> internal constructor(
         val serverExhausted: Boolean = false,
         // The limit a server page was last fetched for
         val fetchedFor: Int = 0,
+        val failed: Boolean = false,
     )
 }
 

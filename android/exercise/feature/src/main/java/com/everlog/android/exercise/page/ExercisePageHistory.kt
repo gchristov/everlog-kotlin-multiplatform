@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -32,7 +31,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -47,16 +45,12 @@ import com.everlog.android.common.compose.elements.AppSurface
 import com.everlog.android.common.compose.elements.AppText
 import com.everlog.android.common.compose.elements.AppTimelineItem
 import com.everlog.android.common.compose.elements.TimelineSizes
-import com.everlog.android.common.compose.elements.list.AppListGroup
-import com.everlog.android.common.compose.elements.list.AppListItem
 import com.everlog.android.common.compose.elements.rememberShimmerBrush
 import com.everlog.android.common.compose.theme.Theme
 import com.everlog.android.common.data.model.set.summaryValues
 import com.everlog.android.common.kotlin.WeightUnit
 import com.everlog.android.common.kotlin.format.exerciseSummary
 import com.everlog.android.common.kotlin.format.setSummary
-import com.everlog.android.exercise.R
-import com.everlog.android.statistics.ui.R as StatisticsR
 import com.everlog.android.workout.data.exercisehistory.ExerciseSession
 import kotlinx.coroutines.delay
 import org.threeten.bp.Instant
@@ -136,7 +130,7 @@ private fun HistoryList(state: ExercisePageState, padding: PaddingValues, onReac
     LaunchedEffect(atOldest, oldestFirst.size, state.loadingMore, opened) {
         if (atOldest && opened) onReachedOldest()
     }
-    Sessions(oldestFirst, state.weightUnit, padding, listState, olderFailed = state.olderFailed, onRetryOlder = onReachedOldest)
+    Sessions(oldestFirst, state.weightUnit, padding, listState)
 }
 
 @Composable
@@ -145,24 +139,8 @@ private fun Sessions(
     unit: WeightUnit,
     padding: PaddingValues,
     listState: LazyListState,
-    olderFailed: Boolean = false,
-    onRetryOlder: () -> Unit = {},
 ) {
     LazyColumn(modifier = Modifier.fillMaxSize().testTag(ExercisePageTags.History), state = listState, contentPadding = padding) {
-        if (olderFailed) {
-            item(key = "olderFailed") {
-                AppListGroup(modifier = Modifier.padding(bottom = Theme.spacing.large)) {
-                    row {
-                        AppListItem(
-                            modifier = Modifier.testTag(ExercisePageTags.OlderFailed),
-                            title = stringResource(R.string.exercise_page_older_failed),
-                            subtitle = stringResource(StatisticsR.string.statistics_try_again),
-                            onClick = onRetryOlder,
-                        )
-                    }
-                }
-            }
-        }
         // Only sessions are items, so older ones going in above keep the ones in view by their key
         val keys = sessionKeys(oldestFirst)
         itemsIndexed(oldestFirst, key = { index, _ -> keys[index] }) { index, session ->

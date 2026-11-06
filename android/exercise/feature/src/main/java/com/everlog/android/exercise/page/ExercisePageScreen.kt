@@ -73,6 +73,7 @@ internal fun ExercisePageScreen(
             onTabShown = viewModel::onTabShown,
             onRangePicked = viewModel::onRangePicked,
             onHistoryEnd = viewModel::onHistoryEnd,
+            onTryOlderAgain = viewModel::onTryOlderAgain,
             onTryAgain = viewModel::onTryAgain,
             onFeedback = onFeedback,
         ),
@@ -89,6 +90,7 @@ internal class ExercisePageActions(
     val onTabShown: (ExercisePageTab) -> Unit,
     val onRangePicked: (ExerciseStatsRange) -> Unit,
     val onHistoryEnd: () -> Unit,
+    val onTryOlderAgain: () -> Unit,
     val onTryAgain: () -> Unit,
     val onFeedback: () -> Unit,
 )
@@ -169,7 +171,7 @@ internal fun ExercisePageContent(state: ExercisePageState, tab: ExercisePageTab,
     }
 }
 
-// The last 12 months that couldn't load, with Try again, and a delete that failed
+// The last 12 months or an older year that couldn't load, with Try again, and a delete that failed
 @Composable
 private fun Snackbars(state: ExercisePageState, snackbar: SnackbarHostState, actions: ExercisePageActions) {
     val failedMessage = stringResource(StatisticsR.string.statistics_year_failed)
@@ -179,6 +181,15 @@ private fun Snackbars(state: ExercisePageState, snackbar: SnackbarHostState, act
             val result = snackbar.showSnackbar(failedMessage, actionLabel = tryAgain, duration = SnackbarDuration.Indefinite)
             if (result == SnackbarResult.ActionPerformed) actions.onTryAgain()
         } else {
+            snackbar.currentSnackbarData?.dismiss()
+        }
+    }
+    val olderFailed = stringResource(R.string.exercise_page_older_failed)
+    LaunchedEffect(state.olderFailed) {
+        if (state.olderFailed) {
+            val result = snackbar.showSnackbar(olderFailed, actionLabel = tryAgain, duration = SnackbarDuration.Indefinite)
+            if (result == SnackbarResult.ActionPerformed) actions.onTryOlderAgain()
+        } else if (!state.failed) {
             snackbar.currentSnackbarData?.dismiss()
         }
     }

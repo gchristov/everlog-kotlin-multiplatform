@@ -148,7 +148,7 @@ class PagedReadTest {
     }
 
     @Test
-    fun `a page that fails isn't retried on its own, and loading more retries it`() {
+    fun `a page that fails says so, isn't retried on its own, and loading more retries it`() {
         val backend = FakeCollectionBackend(server = workouts)
         val pages = dataSync.pages(source(backend), pageSize = 20)
         val loads = read(pages.loads)
@@ -157,7 +157,7 @@ class PagedReadTest {
         pages.loadMore()
 
         assertThat(backend.calls).containsExactly("since", "page:31").inOrder()
-        assertThat(loads.last()).isEqualTo(ready(workouts.take(31)))
+        assertThat(loads.last()).isEqualTo(ready(workouts.take(31), failed = true))
 
         backend.fail = { null }
         pages.loadMore()
@@ -185,8 +185,8 @@ class PagedReadTest {
     private fun source(backend: FakeCollectionBackend) =
         CollectionSource("workouts", "user", SyncPlan.Recent(dateField = "date", months = 3), backend)
 
-    private fun ready(items: List<Doc>, loadingMore: Boolean = false, endReached: Boolean = false) =
-        Load.Ready(Page(items, loadingMore, endReached))
+    private fun ready(items: List<Doc>, loadingMore: Boolean = false, endReached: Boolean = false, failed: Boolean = false) =
+        Load.Ready(Page(items, loadingMore, endReached, failed))
 
     private fun <T> read(flow: Flow<T>): List<T> {
         val loads = CopyOnWriteArrayList<T>()

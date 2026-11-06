@@ -38,8 +38,8 @@ class HistoryPageViewModelTest {
     private val newest = finishedOn(today.minusDays(1))
     private val older = finishedOn(today.minusDays(10))
 
-    private fun shown(vararg workouts: ELWorkout, loadingMore: Boolean = false, complete: Boolean = false) {
-        this.workouts.history.loads.value = Load.Ready(WorkoutHistory(workouts.toList(), loadingMore, complete))
+    private fun shown(vararg workouts: ELWorkout, loadingMore: Boolean = false, complete: Boolean = false, failed: Boolean = false) {
+        this.workouts.history.loads.value = Load.Ready(WorkoutHistory(workouts.toList(), loadingMore, complete, failed))
     }
 
     @Test
@@ -155,6 +155,25 @@ class HistoryPageViewModelTest {
         assertThat(viewModel.state.value.read).isGreaterThan(firstRead)
         assertThat(viewModel.state.value.loading).isFalse()
         assertThat(viewModel.state.value.days).hasSize(2)
+    }
+
+    @Test
+    fun `an older page that couldn't load is said, and only Try again reads it again`() {
+        val viewModel = viewModel()
+        shown(newest, failed = true)
+
+        viewModel.onReachedOldest()
+
+        assertThat(viewModel.state.value.olderFailed).isTrue()
+        assertThat(workouts.history.loadMoreCalls).isEqualTo(0)
+
+        viewModel.onTryOlderAgain()
+
+        assertThat(workouts.history.loadMoreCalls).isEqualTo(1)
+
+        shown(newest, older)
+
+        assertThat(viewModel.state.value.olderFailed).isFalse()
     }
 
     @Test

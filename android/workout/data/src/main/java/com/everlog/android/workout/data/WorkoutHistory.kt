@@ -9,8 +9,9 @@ import kotlinx.coroutines.flow.Flow
  *
  * @param loadingMore An older page is on its way from the server.
  * @param complete Nothing older: the first workout is in [workouts].
+ * @param failed The last older page couldn't load: [WorkoutHistoryRead.loadMore] tries it again.
  */
-data class WorkoutHistory(val workouts: List<ELWorkout>, val loadingMore: Boolean, val complete: Boolean)
+data class WorkoutHistory(val workouts: List<ELWorkout>, val loadingMore: Boolean, val complete: Boolean, val failed: Boolean = false)
 
 // One screen's read of the history, following the cache, so workouts saved or deleted anywhere show in place
 interface WorkoutHistoryRead {

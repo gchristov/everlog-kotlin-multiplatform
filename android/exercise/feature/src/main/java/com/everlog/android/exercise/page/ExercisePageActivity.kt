@@ -38,6 +38,7 @@ class ExercisePageActivity : SignedInComposeActivity() {
                     ownExerciseUpdates = graph.exerciseRepository::ownExerciseUpdates,
                     deleteExercise = graph.deleteExercise,
                     settings = graph.userSettings,
+                    preferences = graph.exerciseStatsPreferences,
                     analytics = graph.exercisePageAnalytics,
                     feedback = { graph.navigator.canOpen(Feedback) },
                     // Named after the exercise's muscles, so the example looks like it could be the user's

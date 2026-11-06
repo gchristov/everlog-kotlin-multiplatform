@@ -4,6 +4,7 @@ import com.everlog.android.exercise.data.DeleteExerciseUseCase
 import com.everlog.android.exercise.data.ExerciseRepository
 import com.everlog.android.exercise.page.ExercisePageAnalytics
 import com.everlog.android.workout.data.WorkoutRepository
+import com.everlog.android.workout.data.exercisehistory.ExerciseStatsPreferences
 
 import com.everlog.android.auth.data.UserSession
 import com.everlog.android.common.data.model.workout.ELWorkout
@@ -51,4 +52,6 @@ interface ExerciseGraph {
     val deleteExercise: DeleteExerciseUseCase
 
     val exercisePageAnalytics: ExercisePageAnalytics
+
+    val exerciseStatsPreferences: ExerciseStatsPreferences
 }

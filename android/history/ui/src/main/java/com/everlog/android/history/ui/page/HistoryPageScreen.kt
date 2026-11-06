@@ -69,6 +69,7 @@ internal fun HistoryPageScreen(viewModel: HistoryPageViewModel, onWorkout: (ELWo
         onScrolledToDay = viewModel::onScrolledToDay,
         onEmptyDayShown = viewModel::onEmptyDayShown,
         onTryAgain = viewModel::onTryAgain,
+        onTryOlderAgain = viewModel::onTryOlderAgain,
         onWorkout = onWorkout,
     )
 }
@@ -82,6 +83,7 @@ internal fun HistoryPageContent(
     onScrolledToDay: () -> Unit,
     onEmptyDayShown: () -> Unit,
     onTryAgain: () -> Unit,
+    onTryOlderAgain: () -> Unit,
     onWorkout: (ELWorkout) -> Unit,
 ) {
     val snackbar = remember { SnackbarHostState() }
@@ -97,6 +99,16 @@ internal fun HistoryPageContent(
     }
     LaunchedEffect(state.failed) {
         if (state.failed) showFailed() else snackbar.currentSnackbarData?.takeIf { it.visuals.actionLabel != null }?.dismiss()
+    }
+    val olderFailedMessage = stringResource(R.string.history_older_failed)
+    LaunchedEffect(state.olderFailed) {
+        if (state.olderFailed) {
+            if (snackbar.showSnackbar(olderFailedMessage, actionLabel = tryAgain, duration = SnackbarDuration.Indefinite) == SnackbarResult.ActionPerformed) {
+                onTryOlderAgain()
+            }
+        } else if (!state.failed) {
+            snackbar.currentSnackbarData?.takeIf { it.visuals.actionLabel != null }?.dismiss()
+        }
     }
     LaunchedEffect(state.emptyDayPicked) {
         if (state.emptyDayPicked) {
