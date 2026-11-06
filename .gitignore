@@ -23,6 +23,7 @@ build_file_checksums.ser
 .idea/deviceManager.xml
 .idea/migrations.xml
 .idea/vcs.xml
+.idea/kotlinc.xml
 *.iml
 *.ipr
 *.iws
