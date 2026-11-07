@@ -38,9 +38,9 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import com.everlog.android.common.compose.elements.AppBlurBox
-import com.everlog.android.common.compose.elements.AppCircularProgressIndicator
 import com.everlog.android.common.compose.elements.AppExample
 import com.everlog.android.common.compose.elements.AppExampleLabel
+import com.everlog.android.common.compose.elements.AppFloatingProgress
 import com.everlog.android.common.compose.elements.AppSurface
 import com.everlog.android.common.compose.elements.AppText
 import com.everlog.android.common.compose.elements.AppTimelineItem
@@ -65,8 +65,10 @@ import org.threeten.bp.ZoneId
 internal fun ExercisePageHistory(state: ExercisePageState, actions: ExercisePageActions) {
     val example = state.historyExample
     val bottom = HistorySizes.BottomPadding
-    // Room at the top for the spinner while an older year loads, so it doesn't sit on the oldest session
-    val padding = PaddingValues(start = Theme.spacing.large, top = HistorySizes.TopPadding, end = Theme.spacing.large, bottom = bottom)
+    // Room at the top for the example's label, otherwise the screen margin. The spinner for an older year floats over
+    // the oldest session, which it blurs.
+    val top = if (example != null) HistorySizes.ExampleTopPadding else Theme.spacing.large
+    val padding = PaddingValues(start = Theme.spacing.large, top = top, end = Theme.spacing.large, bottom = bottom)
     // Only once a year has taken a moment: one the cache has comes back at once, and would flash it
     val showLoadingMore by produceState(false, state.loadingMore) {
         if (state.loadingMore) delay(HistorySizes.LoadingMoreDelayMillis)
@@ -80,12 +82,7 @@ internal fun ExercisePageHistory(state: ExercisePageState, actions: ExercisePage
                 AppExampleLabel(modifier = Modifier.align(Alignment.TopStart).padding(horizontal = Theme.spacing.large), floating = true)
             }
             if (showLoadingMore && state.sessions.isNotEmpty()) {
-                AppSurface(
-                    modifier = Modifier.align(Alignment.TopCenter).padding(top = Theme.spacing.small).testTag(ExercisePageTags.LoadingMore),
-                    contentPadding = PaddingValues(Theme.spacing.small),
-                ) {
-                    AppCircularProgressIndicator()
-                }
+                AppFloatingProgress(modifier = Modifier.align(Alignment.TopCenter).padding(top = Theme.spacing.small).testTag(ExercisePageTags.LoadingMore))
             }
         },
     ) {
@@ -254,8 +251,8 @@ private suspend fun LazyListState.scrollToEnd(sessions: List<ExerciseSession>) =
 
 private object HistorySizes {
     val BottomPadding = 32.dp
-    // The spinner, or the example's label, above the sessions, a group's spacing apart
-    val TopPadding = 52.dp
+    // The example's label above the sessions, a group's spacing apart
+    val ExampleTopPadding = 52.dp
     // The Activity tab's history shimmer (HistoryPageScreen)
     val LoadingDateHeight = 24.dp
     val LoadingRowContentHeight = 48.dp

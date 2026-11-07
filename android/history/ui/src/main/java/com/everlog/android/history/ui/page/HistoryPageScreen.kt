@@ -44,7 +44,7 @@ import com.everlog.android.common.compose.elements.AppChip
 import com.everlog.android.common.compose.elements.AppExample
 import com.everlog.android.common.compose.elements.AppExampleLabel
 import com.everlog.android.common.compose.elements.AppChipStyle
-import com.everlog.android.common.compose.elements.AppCircularProgressIndicator
+import com.everlog.android.common.compose.elements.AppFloatingProgress
 import com.everlog.android.common.compose.elements.AppMenu
 import com.everlog.android.common.compose.elements.AppMenuItem
 import com.everlog.android.common.compose.elements.AppSnackbarHost
@@ -150,12 +150,7 @@ internal fun HistoryPageContent(
             )
             // Not over the example: with no workouts, the check for older ones on the server isn't one the user asked for
             if (showLoadingMore && state.example == null) {
-                AppSurface(
-                    modifier = Modifier.align(Alignment.TopCenter).padding(top = PageSizes.TopPadding).testTag(HistoryPageTags.LoadingMore),
-                    contentPadding = PaddingValues(Theme.spacing.small),
-                ) {
-                    AppCircularProgressIndicator()
-                }
+                AppFloatingProgress(modifier = Modifier.align(Alignment.TopCenter).padding(top = PageSizes.TopPadding).testTag(HistoryPageTags.LoadingMore))
             }
             AppSnackbarHost(
                 hostState = snackbar,
