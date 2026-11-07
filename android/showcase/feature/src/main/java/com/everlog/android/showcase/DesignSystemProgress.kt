@@ -17,6 +17,9 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.everlog.android.common.compose.elements.AppCircularProgressIndicator
+import com.everlog.android.common.compose.elements.AppFloatingProgress
+import com.everlog.android.common.compose.elements.AppSurface
+import com.everlog.android.common.compose.elements.AppText
 import com.everlog.android.common.compose.elements.rememberShimmerBrush
 import com.everlog.android.common.compose.theme.Theme
 
@@ -27,6 +30,17 @@ internal fun DesignSystemProgress() {
         item(key = "indicatorExample") {
             Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
                 AppCircularProgressIndicator()
+            }
+        }
+        group(key = "floating", header = { "Floating progress" }) {}
+        item(key = "floatingExample") {
+            // Over a surface, as at the top of a list while older items load
+            Box(modifier = Modifier.fillMaxWidth()) {
+                AppSurface(modifier = Modifier.fillMaxWidth()) {
+                    AppText(text = "Push day", style = Theme.typography.title)
+                    AppText(text = "3 exercises • 12 sets", color = Theme.contentColors.secondary)
+                }
+                AppFloatingProgress(modifier = Modifier.align(Alignment.TopCenter).padding(top = Theme.spacing.small))
             }
         }
         group(key = "shimmer", header = { "Shimmer" }) {}

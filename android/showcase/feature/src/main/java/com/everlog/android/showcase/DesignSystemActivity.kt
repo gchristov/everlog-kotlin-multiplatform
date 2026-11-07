@@ -130,7 +130,7 @@ private val HubSections = listOf(
         HubEntry(DesignSystemPage.Footer, "Footer", "Actions in a card pinned to the bottom, blurring what scrolls behind"),
         HubEntry(DesignSystemPage.Keypad, "Keypad", "A number keypad in a card docked at the bottom, with its timer and note strips"),
         HubEntry(DesignSystemPage.Snackbar, "Snackbar", "A short message over the bottom of the screen, with Undo"),
-        HubEntry(DesignSystemPage.Progress, "Progress", "A circular progress indicator and the loading shimmer"),
+        HubEntry(DesignSystemPage.Progress, "Progress", "A circular progress indicator, floating progress and the loading shimmer"),
     ),
     "Behaviours" to listOf(
         HubEntry(DesignSystemPage.ScrollBehaviors, "App bar scroll behaviours", "Whole screens to try how an app bar's header scrolls"),
