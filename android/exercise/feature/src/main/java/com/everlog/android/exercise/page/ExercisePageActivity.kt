@@ -41,8 +41,12 @@ class ExercisePageActivity : SignedInComposeActivity() {
                     preferences = graph.exerciseStatsPreferences,
                     analytics = graph.exercisePageAnalytics,
                     feedback = { graph.navigator.canOpen(Feedback) },
-                    // Named after the exercise's muscles, so the example looks like it could be the user's
-                    exampleName = categoryTitle(exercise.category) ?: getString(R.string.exercise_page_example_workout),
+                    // Named after the exercise's muscles and the splits it could be in, so the example looks like the user's
+                    exampleNames = listOf(
+                        categoryTitle(exercise.category) ?: getString(R.string.exercise_page_example_workout),
+                        getString(R.string.exercise_page_example_upper_body),
+                        getString(R.string.exercise_page_example_full_body),
+                    ),
                     today = { LocalDate.now() },
                 )
             }

@@ -312,7 +312,7 @@ class ExercisePageViewModelTest {
         preferences = ranges,
         analytics = analytics,
         feedback = { feedback },
-        exampleName = "Chest",
+        exampleNames = listOf("Chest", "Upper body", "Full body"),
         today = { today },
     )
 

@@ -28,7 +28,7 @@ import timber.log.Timber
  * @param userId The signed-in user's, whose own exercises they can edit and delete
  * @param readHistory The exercise's history by its uuid (WorkoutRepository.exerciseHistory)
  * @param ownExerciseUpdates The user's own exercises as they change
- * @param exampleName The example sessions' workout name
+ * @param exampleNames The workouts the example's sessions are in
  */
 class ExercisePageViewModel(
     dispatcher: CoroutineDispatcher,
@@ -42,7 +42,7 @@ class ExercisePageViewModel(
     private val preferences: ExerciseStatsPreferences,
     private val analytics: ExercisePageAnalytics,
     private val feedback: () -> Boolean,
-    private val exampleName: String?,
+    private val exampleNames: List<String>,
     private val today: () -> LocalDate,
 ) : CommonViewModel<ExercisePageState>(dispatcher, initialState(exercise, exercise.isEditable(userId), preferences.range(), settings, today(), feedback())) {
 
@@ -166,13 +166,13 @@ class ExercisePageViewModel(
                 stats = stats,
                 statsExample = if (!loading && stats.timesPerformed == 0) exampleStats(range, date) else null,
                 // As on the Activity tab: once there turn out to be none, or when they couldn't load
-                historyExample = if (sessions.isEmpty() && (complete || failed || olderFailed)) exampleSessions(date, exampleName) else null,
+                historyExample = if (sessions.isEmpty() && (complete || failed || olderFailed)) exampleSessions(date, exampleNames) else null,
             )
         }
     }
 
     private fun ExercisePageState.exampleStats(range: ExerciseStatsRange, date: LocalDate) =
-        exerciseStats(exampleSessions(date, exampleName), range, date, settings.firstDayOfWeek(), weightUnit)
+        exerciseStats(exampleSessions(date, exampleNames), range, date, settings.firstDayOfWeek(), weightUnit)
 
     private companion object {
         const val TAG = "ExercisePage"
