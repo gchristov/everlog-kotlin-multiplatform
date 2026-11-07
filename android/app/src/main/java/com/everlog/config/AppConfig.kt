@@ -66,6 +66,9 @@ class AppConfig {
         FirebaseFirestore.getInstance().firestoreSettings = firestoreSettings {
             setLocalCacheSettings(persistentCacheSettings { setSizeBytes(firestoreCacheSizeBytes) })
         }
+        // Without an index, a cache query by date reads every cached document of the collection, which takes tens of
+        // seconds on a long history. The SDK builds indexes in the background for the queries that need them.
+        FirebaseFirestore.getInstance().persistentCacheIndexManager?.enableIndexAutoCreation()
     }
 
     private fun configureErrorManager() {
