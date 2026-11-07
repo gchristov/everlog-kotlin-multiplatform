@@ -214,6 +214,13 @@ other two at the end.
 
 A spinner in `--content-action`.
 
+## AppFloatingProgress
+
+A small spinner floating over content that keeps showing beneath it, e.g. centred at the top of a history list
+while older items load: a 24px spinner (3px stroke, `--content-action`) in a 40px circle of
+`--background-surface-raised` (the snackbar's colour) with a shadow, so it stands apart from the cards it floats
+over. Never a rounded square, and never in the cards' own `--background-surface`.
+
 ## AppIcon
 
 24px icons in `--content-primary` (or `--content-action` for accents), from the app's own vector
