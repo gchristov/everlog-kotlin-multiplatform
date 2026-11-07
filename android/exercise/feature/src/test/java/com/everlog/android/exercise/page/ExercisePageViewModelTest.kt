@@ -16,6 +16,7 @@ import com.everlog.android.settings.testfixtures.FakeUserSettings
 import com.everlog.android.workout.data.exercisehistory.ExerciseHistory
 import com.everlog.android.workout.data.exercisehistory.ExerciseSession
 import com.everlog.android.workout.data.exercisehistory.ExerciseStatsRange
+import com.everlog.android.workout.testfixtures.FakeExerciseStatsPreferences
 import com.everlog.android.workout.testfixtures.FakeWorkoutRepository
 import com.google.common.truth.Truth.assertThat
 import kotlinx.coroutines.flow.Flow
@@ -39,6 +40,7 @@ class ExercisePageViewModelTest {
     private val ownExercises = MutableSharedFlow<List<LibraryExercise>>(replay = 1)
     private val deletes = FakeDelete()
     private var feedback = true
+    private val ranges = FakeExerciseStatsPreferences()
 
     // Main journeys
 
@@ -91,6 +93,22 @@ class ExercisePageViewModelTest {
         history.loads.value = ready(session("a", today, loggedSet(5, 100f)))
 
         viewModel.onHistoryEnd()
+
+        assertThat(history.loadMoreCalls).isEqualTo(1)
+    }
+
+    @Test
+    fun `with no sessions in the last months, the history reads further back by itself`() {
+        viewModel()
+
+        history.loads.value = Load.Ready(ExerciseHistory(emptyList(), loadingMore = false, complete = false, failed = false))
+
+        assertThat(history.loadMoreCalls).isEqualTo(1)
+
+        // Not while a year is on its way, at the first workout, or after a year failed (the list offers Try again)
+        history.loads.value = Load.Ready(ExerciseHistory(emptyList(), loadingMore = true, complete = false, failed = false))
+        history.loads.value = Load.Ready(ExerciseHistory(emptyList(), loadingMore = false, complete = true, failed = false))
+        history.loads.value = Load.Ready(ExerciseHistory(emptyList(), loadingMore = false, complete = false, failed = true))
 
         assertThat(history.loadMoreCalls).isEqualTo(1)
     }
@@ -198,6 +216,9 @@ class ExercisePageViewModelTest {
 
         assertThat(viewModel.state.value.failed).isTrue()
         assertThat(viewModel.state.value.loading).isFalse()
+        // Both tabs show their example under the error, as the Activity tab does
+        assertThat(viewModel.state.value.statsExample).isNotNull()
+        assertThat(viewModel.state.value.historyExample).isNotEmpty()
 
         // A new read starts over
         history.loads.value = Load.Loading
@@ -250,14 +271,33 @@ class ExercisePageViewModelTest {
     }
 
     @Test
-    fun `an older year that couldn't be read is shown, for scrolling to the end to try again`() {
+    fun `an older year that couldn't be read is said, and only Try again reads it again`() {
         val viewModel = viewModel()
 
         history.loads.value = Load.Ready(ExerciseHistory(emptyList(), loadingMore = false, complete = false, failed = true))
         viewModel.onHistoryEnd()
 
         assertThat(viewModel.state.value.olderFailed).isTrue()
+        assertThat(viewModel.state.value.historyExample).isNotEmpty()
+        assertThat(history.loadMoreCalls).isEqualTo(0)
+
+        viewModel.onTryOlderAgain()
+
         assertThat(history.loadMoreCalls).isEqualTo(1)
+    }
+
+    @Test
+    fun `statistics open on the range last picked, and a new pick is remembered for every exercise`() {
+        ranges.setRange(ExerciseStatsRange.Week)
+
+        val viewModel = viewModel()
+
+        assertThat(viewModel.state.value.range).isEqualTo(ExerciseStatsRange.Week)
+
+        viewModel.onRangePicked(ExerciseStatsRange.Last12Months)
+
+        assertThat(ranges.range()).isEqualTo(ExerciseStatsRange.Last12Months)
+        assertThat(viewModel(own).state.value.range).isEqualTo(ExerciseStatsRange.Last12Months)
     }
 
     private fun viewModel(exercise: ELExercise = bench) = ExercisePageViewModel(
@@ -269,6 +309,7 @@ class ExercisePageViewModelTest {
         ownExerciseUpdates = { ownExercises },
         deleteExercise = deletes,
         settings = settings,
+        preferences = ranges,
         analytics = analytics,
         feedback = { feedback },
         exampleName = "Chest",

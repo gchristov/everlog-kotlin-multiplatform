@@ -4,6 +4,7 @@
     <string name="view_type_calendar">Calendar</string>
     <string name="view_type_list">List</string>
     <string name="history_failed">Couldn\'t load your history.</string>
+    <string name="history_older_failed">Couldn\'t load older workouts.</string>
     <string name="history_try_again">Try again</string>
     <string name="history_example_legs">Legs</string>
     <string name="history_example_push">Push</string>

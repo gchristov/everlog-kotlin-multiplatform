@@ -13,9 +13,12 @@ class PreferencesSyncRecordsTest {
     fun `records are kept per source until cleared`() {
         records.setLastSynced("user/workouts", 10)
         records.setSyncedBack("user/workouts", SyncedBack(to = 2, at = 5))
+        records.setOldest("user/workouts", 1)
 
         assertThat(records.lastSynced("user/workouts")).isEqualTo(10)
         assertThat(records.syncedBack("user/workouts")).isEqualTo(SyncedBack(to = 2, at = 5))
+        assertThat(records.oldest("user/workouts")).isEqualTo(1)
+        assertThat(records.oldest("user/routines")).isNull()
         assertThat(records.lastSynced("user/routines")).isNull()
         assertThat(records.syncedBack("user/routines")).isNull()
 
@@ -23,6 +26,7 @@ class PreferencesSyncRecordsTest {
 
         assertThat(records.lastSynced("user/workouts")).isNull()
         assertThat(records.syncedBack("user/workouts")).isNull()
+        assertThat(records.oldest("user/workouts")).isNull()
     }
 
     @Test

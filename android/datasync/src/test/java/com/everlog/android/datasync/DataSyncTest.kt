@@ -597,6 +597,17 @@ class DataSyncTest {
     }
 
     @Test
+    fun `offline, the oldest date is the one the server last gave`() {
+        val backend = FakeCollectionBackend(server = listOf(bench, row))
+        runBlocking { dataSync.oldest(recent(backend)) }
+        backend.fail = { IllegalStateException("offline") }
+
+        val oldest = runBlocking { dataSync.oldest(recent(backend)) }
+
+        assertThat(oldest).isEqualTo(Load.Ready(row.date))
+    }
+
+    @Test
     fun `an empty collection has no oldest date`() {
         val oldest = runBlocking { dataSync.oldest(recent(FakeCollectionBackend())) }
 
@@ -628,6 +639,23 @@ class DataSyncTest {
         val retried = read(dataSync.observe(whole(backend)))
 
         assertThat(retried.last()).isEqualTo(Load.Ready(listOf(bench)))
+    }
+
+    @Test
+    fun `a read further back that failed loads when tried again minutes later, for its earlier readers too`() {
+        val backend = FakeCollectionBackend(server = listOf(bench, deadlift), cached = listOf(bench))
+        backend.fail = { IllegalStateException("offline") }
+        val first = read(dataSync.observe(recent(backend), Range.Last(months = 12)))
+
+        assertThat(first.last()).isInstanceOf(Load.Unavailable::class.java)
+
+        // Back online a few minutes on: trying again syncs back from a later date than the first read's
+        now += TimeUnit.MINUTES.toMillis(5)
+        backend.fail = { null }
+        val retried = read(dataSync.observe(recent(backend), Range.Last(months = 12)))
+
+        assertThat(retried.last()).isEqualTo(Load.Ready(listOf(bench, deadlift)))
+        assertThat(first.last()).isEqualTo(Load.Ready(listOf(bench, deadlift)))
     }
 
     @Test

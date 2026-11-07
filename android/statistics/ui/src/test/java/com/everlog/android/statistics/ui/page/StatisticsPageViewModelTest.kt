@@ -191,6 +191,21 @@ class StatisticsPageViewModelTest {
     }
 
     @Test
+    fun `the last 12 months that failed and then load, synced by another screen, show without the error`() {
+        workouts.byMonths[12] = year
+        val viewModel = viewModel()
+        workouts.recent.value = Load.Ready(history)
+        viewModel.onPeriodPicked(StatsPeriod.Last12Months)
+        year.value = Load.Unavailable(IOException("timed out"))
+
+        year.value = Load.Ready(history)
+
+        assertThat(viewModel.state.value.failed).isFalse()
+        assertThat(viewModel.state.value.example).isNull()
+        assertThat(viewModel.state.value.stats.workouts).isEqualTo(3)
+    }
+
+    @Test
     fun `when the last 12 months can't load, their example shows with the way to try again`() {
         workouts.byMonths[12] = year
         val viewModel = viewModel()

@@ -97,7 +97,7 @@ class RealWorkoutRepository(
         val userId = session.user()?.id ?: return NoHistory
         val pages = dataSync.pages(workoutsOf(userId), pageSize)
         return object : WorkoutHistoryRead {
-            override val loads = pages.loads.map { load -> load.map { WorkoutHistory(it.items, it.loadingMore, it.endReached) } }
+            override val loads = pages.loads.map { load -> load.map { WorkoutHistory(it.items, it.loadingMore, it.endReached, it.failed) } }
 
             override fun loadMore() = pages.loadMore()
         }

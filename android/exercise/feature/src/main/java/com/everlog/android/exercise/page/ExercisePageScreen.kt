@@ -4,7 +4,6 @@ import androidx.activity.compose.BackHandler
 import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
@@ -74,6 +73,7 @@ internal fun ExercisePageScreen(
             onTabShown = viewModel::onTabShown,
             onRangePicked = viewModel::onRangePicked,
             onHistoryEnd = viewModel::onHistoryEnd,
+            onTryOlderAgain = viewModel::onTryOlderAgain,
             onTryAgain = viewModel::onTryAgain,
             onFeedback = onFeedback,
         ),
@@ -90,6 +90,7 @@ internal class ExercisePageActions(
     val onTabShown: (ExercisePageTab) -> Unit,
     val onRangePicked: (ExerciseStatsRange) -> Unit,
     val onHistoryEnd: () -> Unit,
+    val onTryOlderAgain: () -> Unit,
     val onTryAgain: () -> Unit,
     val onFeedback: () -> Unit,
 )
@@ -133,7 +134,9 @@ internal fun ExercisePageContent(state: ExercisePageState, tab: ExercisePageTab,
             )
         },
     ) { contentPadding ->
-        Box(modifier = Modifier.fillMaxSize().padding(top = contentPadding.calculateTopPadding())) {
+        // Clear of the system navigation bar, whose inset AppScreen has used up, so a page's own
+        // navigationBarsPadding() adds nothing: three-button navigation's bar would cover the bottom of the page
+        Box(modifier = Modifier.fillMaxSize().padding(bottom = contentPadding.calculateBottomPadding())) {
             HorizontalPager(state = pager, modifier = Modifier.fillMaxSize().testTag(ExercisePageTags.Pager)) { page ->
                 when (ExercisePageTab.entries[page]) {
                     ExercisePageTab.Info -> ExerciseInfoContent(
@@ -153,7 +156,7 @@ internal fun ExercisePageContent(state: ExercisePageState, tab: ExercisePageTab,
             }
             AppSnackbarHost(
                 hostState = snackbar,
-                modifier = Modifier.align(Alignment.BottomCenter).navigationBarsPadding().testTag(ExercisePageTags.Snackbar),
+                modifier = Modifier.align(Alignment.BottomCenter).testTag(ExercisePageTags.Snackbar),
             )
         }
     }
@@ -168,7 +171,7 @@ internal fun ExercisePageContent(state: ExercisePageState, tab: ExercisePageTab,
     }
 }
 
-// The last 12 months that couldn't load, with Try again, and a delete that failed
+// The last 12 months or an older year that couldn't load, with Try again, and a delete that failed
 @Composable
 private fun Snackbars(state: ExercisePageState, snackbar: SnackbarHostState, actions: ExercisePageActions) {
     val failedMessage = stringResource(StatisticsR.string.statistics_year_failed)
@@ -178,6 +181,15 @@ private fun Snackbars(state: ExercisePageState, snackbar: SnackbarHostState, act
             val result = snackbar.showSnackbar(failedMessage, actionLabel = tryAgain, duration = SnackbarDuration.Indefinite)
             if (result == SnackbarResult.ActionPerformed) actions.onTryAgain()
         } else {
+            snackbar.currentSnackbarData?.dismiss()
+        }
+    }
+    val olderFailed = stringResource(R.string.exercise_page_older_failed)
+    LaunchedEffect(state.olderFailed) {
+        if (state.olderFailed) {
+            val result = snackbar.showSnackbar(olderFailed, actionLabel = tryAgain, duration = SnackbarDuration.Indefinite)
+            if (result == SnackbarResult.ActionPerformed) actions.onTryOlderAgain()
+        } else if (!state.failed) {
             snackbar.currentSnackbarData?.dismiss()
         }
     }

@@ -150,6 +150,7 @@ class InMemorySyncRecords : SyncRecords {
 
     val lastSynced = HashMap<String, Long>()
     val syncedBack = HashMap<String, SyncedBack>()
+    val oldest = HashMap<String, Long>()
 
     override fun lastSynced(key: String): Long? = lastSynced[key]
 
@@ -163,8 +164,15 @@ class InMemorySyncRecords : SyncRecords {
         this.syncedBack[key] = syncedBack
     }
 
+    override fun oldest(key: String): Long? = oldest[key]
+
+    override fun setOldest(key: String, date: Long) {
+        oldest[key] = date
+    }
+
     override fun clear() {
         lastSynced.clear()
         syncedBack.clear()
+        oldest.clear()
     }
 }

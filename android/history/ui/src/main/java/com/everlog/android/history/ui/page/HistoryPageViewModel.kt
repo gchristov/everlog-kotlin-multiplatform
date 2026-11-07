@@ -30,6 +30,8 @@ data class HistoryPageState(
     val complete: Boolean = false,
     // The first page couldn't load, as the history never synced and the server can't be reached: try again
     val failed: Boolean = false,
+    // An older page couldn't load from the server: try again
+    val olderFailed: Boolean = false,
     // A day picked on the calendar, for the list to scroll to once
     val scrollTo: LocalDate? = null,
     // A day without workouts was picked, to say so once
@@ -103,10 +105,16 @@ class HistoryPageViewModel(
     }
 
     // The user reached the oldest workout shown
+    // Not after an older page failed, which only Try again reads again, so the list doesn't keep retrying by itself
     fun onReachedOldest() {
         val state = state.value
-        if (state.loading || state.loadingMore || state.complete) return
+        if (state.loading || state.loadingMore || state.complete || state.olderFailed) return
         read?.loadMore()
+    }
+
+    // An older page that couldn't load, read again
+    fun onTryOlderAgain() {
+        if (state.value.olderFailed) read?.loadMore()
     }
 
     fun onDayPicked(date: LocalDate) {
@@ -142,6 +150,7 @@ class HistoryPageViewModel(
                             loadingMore = load.value.loadingMore,
                             complete = load.value.complete,
                             failed = false,
+                            olderFailed = load.value.failed,
                             example = if (days.isEmpty()) example() else null,
                         )
                     }

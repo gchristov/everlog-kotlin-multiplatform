@@ -93,7 +93,11 @@ class StatisticsPageViewModel(
         yearRead = launchCoroutine {
             workouts.recentWorkouts(YearMonths).collect { load ->
                 when (load) {
-                    is Load.Ready -> year = load.value
+                    is Load.Ready -> {
+                        year = load.value
+                        // A sync that lands after one failed, e.g. started by another screen
+                        setState { copy(failed = false) }
+                    }
                     is Load.Unavailable -> setState { copy(failed = true) }
                     Load.Loading -> Unit
                 }

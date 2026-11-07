@@ -31,6 +31,7 @@ import com.everlog.android.settings.testfixtures.FakeUserSettings
 import com.everlog.android.workout.data.exercisehistory.ExerciseHistory
 import com.everlog.android.workout.data.exercisehistory.ExerciseHistoryRead
 import com.everlog.android.workout.data.exercisehistory.ExerciseSession
+import com.everlog.android.workout.data.exercisehistory.ExerciseStatsPreferences
 import com.everlog.android.workout.data.exercisehistory.ExerciseStatsRange
 import com.google.common.truth.Truth.assertThat
 import java.util.concurrent.TimeUnit
@@ -194,6 +195,10 @@ class ExercisePageScenarioTest {
                 }
             },
             settings = FakeUserSettings(),
+            preferences = object : ExerciseStatsPreferences {
+                override fun range() = ExerciseStatsRange.Month
+                override fun setRange(range: ExerciseStatsRange) = Unit
+            },
             analytics = object : ExercisePageAnalytics {
                 override fun screenViewed() = Unit
                 override fun tabViewed(tab: ExercisePageTab) = Unit

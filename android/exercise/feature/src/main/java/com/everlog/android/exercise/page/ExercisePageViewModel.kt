@@ -9,6 +9,7 @@ import com.everlog.android.exercise.data.model.library.LibraryExercise
 import com.everlog.android.settings.data.UserSettings
 import com.everlog.android.workout.data.exercisehistory.ExerciseHistory
 import com.everlog.android.workout.data.exercisehistory.ExerciseHistoryRead
+import com.everlog.android.workout.data.exercisehistory.ExerciseStatsPreferences
 import com.everlog.android.workout.data.exercisehistory.ExerciseStatsRange
 import com.everlog.android.workout.data.exercisehistory.exerciseStats
 import kotlinx.coroutines.CoroutineDispatcher
@@ -20,8 +21,8 @@ import timber.log.Timber
 /**
  * An exercise's page: its Info, Statistics and History. The statistics and the history's last 12 months follow the
  * cache, so a workout saved counts straight away, and older years load a year at a time as the history scrolls back.
- * A user's own exercise edited while the page is open shows the edit. Settings and the date are read again on
- * [onResume].
+ * A user's own exercise edited while the page is open shows the edit. Statistics open on the range last picked for
+ * any exercise. Settings and the date are read again on [onResume].
  *
  * @param exercise As the page was opened with it
  * @param userId The signed-in user's, whose own exercises they can edit and delete
@@ -38,11 +39,12 @@ class ExercisePageViewModel(
     private val ownExerciseUpdates: () -> Flow<List<LibraryExercise>>,
     private val deleteExercise: DeleteExerciseUseCase,
     private val settings: UserSettings,
+    private val preferences: ExerciseStatsPreferences,
     private val analytics: ExercisePageAnalytics,
     private val feedback: () -> Boolean,
     private val exampleName: String?,
     private val today: () -> LocalDate,
-) : CommonViewModel<ExercisePageState>(dispatcher, initialState(exercise, exercise.isEditable(userId), settings, today(), feedback())) {
+) : CommonViewModel<ExercisePageState>(dispatcher, initialState(exercise, exercise.isEditable(userId), preferences.range(), settings, today(), feedback())) {
 
     private val uuid = exercise.uuid.orEmpty()
     private var history: ExerciseHistoryRead? = null
@@ -64,17 +66,24 @@ class ExercisePageViewModel(
     fun onRangePicked(range: ExerciseStatsRange) {
         if (range == state.value.range) return
         analytics.rangePicked(range)
+        preferences.setRange(range)
         setState { copy(range = range) }
         show()
     }
 
-    // The history scrolled to its oldest session: the year before, unless there's nothing older
+    // The history scrolled to its oldest session: the year before, unless there's nothing older. Not after a year
+    // failed, which only Try again reads again, so the list doesn't keep retrying by itself.
     fun onHistoryEnd() {
         val state = state.value
-        if (!state.loading && !state.complete && !state.loadingMore) history?.loadMore()
+        if (!state.loading && !state.complete && !state.loadingMore && !state.olderFailed) history?.loadMore()
     }
 
     fun onTryAgain() = read()
+
+    // An older year that couldn't be read, read again
+    fun onTryOlderAgain() {
+        if (state.value.olderFailed) history?.loadMore()
+    }
 
     fun onDeleteClicked() = setState { copy(deletePrompt = true) }
 
@@ -107,7 +116,11 @@ class ExercisePageViewModel(
         historyJob = launchCoroutine {
             read.loads.collect { load ->
                 when (load) {
-                    is Load.Ready -> setState { withHistory(load.value) }
+                    is Load.Ready -> {
+                        setState { withHistory(load.value) }
+                        // Nothing to show yet: read further back until a session, the first workout or a failure
+                        load.value.run { if (sessions.isEmpty() && !loadingMore && !complete && !failed) read.loadMore() }
+                    }
                     is Load.Unavailable -> setState { copy(loading = false, failed = true) }
                     Load.Loading -> Unit
                 }
@@ -152,7 +165,8 @@ class ExercisePageViewModel(
                 today = date,
                 stats = stats,
                 statsExample = if (!loading && stats.timesPerformed == 0) exampleStats(range, date) else null,
-                historyExample = if (complete && sessions.isEmpty()) exampleSessions(date, exampleName) else null,
+                // As on the Activity tab: once there turn out to be none, or when they couldn't load
+                historyExample = if (sessions.isEmpty() && (complete || failed || olderFailed)) exampleSessions(date, exampleName) else null,
             )
         }
     }
@@ -163,13 +177,13 @@ class ExercisePageViewModel(
     private companion object {
         const val TAG = "ExercisePage"
 
-        fun initialState(exercise: ELExercise, own: Boolean, settings: UserSettings, today: LocalDate, feedback: Boolean) = ExercisePageState(
+        fun initialState(exercise: ELExercise, own: Boolean, range: ExerciseStatsRange, settings: UserSettings, today: LocalDate, feedback: Boolean) = ExercisePageState(
             exercise = exercise,
             own = own,
-            range = ExerciseStatsRange.Month,
+            range = range,
             today = today,
             weightUnit = settings.weightUnit(),
-            stats = exerciseStats(emptyList(), ExerciseStatsRange.Month, today, settings.firstDayOfWeek(), settings.weightUnit()),
+            stats = exerciseStats(emptyList(), range, today, settings.firstDayOfWeek(), settings.weightUnit()),
             feedback = feedback,
         )
     }

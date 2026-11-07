@@ -14,7 +14,6 @@ object ExercisePageTags {
     const val HistoryLoading = "exercisePageHistoryLoading"
     const val HistoryExample = "exercisePageHistoryExample"
     const val LoadingMore = "exercisePageLoadingMore"
-    const val OlderFailed = "exercisePageOlderFailed"
     const val Snackbar = "exercisePageSnackbar"
 
     fun tab(tab: ExercisePageTab) = "exercisePageTab-${tab.name}"

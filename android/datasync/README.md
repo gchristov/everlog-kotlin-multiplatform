@@ -35,6 +35,7 @@ every read says how far back it goes.
 | A calculation over a period, once, e.g. suggestions from the last year | `read(source, from, until)` | Nothing once read | As for `observe` over the same period, and it waits for that |
 | A long list the user scrolls, e.g. the history | `pages(source, pageSize)` | The pages shown so far | The recent window; older pages from the server as the user reaches them |
 | A few documents a read found missing | `fetchIds(source, ids)` | Nothing | Just those documents, 30 per server read |
+| Where a long history starts, to go back through it a year at a time, e.g. an exercise's history | `oldest(source)` | Nothing | One server read; offline, the date it last gave |
 | One document, live: the registry, the user | `observe(source)` on a `DocumentSource` | The document | The document when due |
 
 Rules of thumb:
