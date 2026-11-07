@@ -38,9 +38,9 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import com.everlog.android.common.compose.elements.AppBlurBox
-import com.everlog.android.common.compose.elements.AppCircularProgressIndicator
 import com.everlog.android.common.compose.elements.AppExample
 import com.everlog.android.common.compose.elements.AppExampleLabel
+import com.everlog.android.common.compose.elements.AppFloatingProgress
 import com.everlog.android.common.compose.elements.AppSurface
 import com.everlog.android.common.compose.elements.AppText
 import com.everlog.android.common.compose.elements.AppTimelineItem
@@ -82,12 +82,7 @@ internal fun ExercisePageHistory(state: ExercisePageState, actions: ExercisePage
                 AppExampleLabel(modifier = Modifier.align(Alignment.TopStart).padding(horizontal = Theme.spacing.large), floating = true)
             }
             if (showLoadingMore && state.sessions.isNotEmpty()) {
-                AppSurface(
-                    modifier = Modifier.align(Alignment.TopCenter).padding(top = Theme.spacing.small).testTag(ExercisePageTags.LoadingMore),
-                    contentPadding = PaddingValues(Theme.spacing.small),
-                ) {
-                    AppCircularProgressIndicator()
-                }
+                AppFloatingProgress(modifier = Modifier.align(Alignment.TopCenter).padding(top = Theme.spacing.small).testTag(ExercisePageTags.LoadingMore))
             }
         },
     ) {
