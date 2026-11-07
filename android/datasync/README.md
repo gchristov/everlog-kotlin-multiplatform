@@ -42,9 +42,13 @@ Rules of thumb:
 
 - **Don't follow more than the screen shows.** A list of this week's workouts observes `Range.Last(1)`, not the
   year. A calculation reads once rather than observing.
-- **Read the cache in a few large parts, not many small ones.** Firestore's cache goes through every document of
-  the collection for each query, but keeps only the ones a filter matches. A date range keeps only that range;
-  `limit` doesn't help, as it's applied after everything is decoded. `read` goes by date for this reason.
+- **Read the cache in a few large parts, not many small ones.** Without an index, Firestore's cache goes through
+  every document of the collection for each query, and keeps only the ones a filter matches. The app turns on the
+  SDK's automatic cache indexes (`AppConfig.configureFirestore()`): for a query that scans far more than it keeps,
+  like the workouts by date on a long history, the SDK builds a local index on that field in the background, about
+  50 documents a minute while the app runs, carrying on from where it stopped next launch. Until it's full, and on
+  a small collection, which gets none, queries still scan. `limit` without an indexed order doesn't help, as it's
+  applied after everything is decoded. `read` goes by date for this reason.
 - **For "all time" totals, don't read everything.** Store a running total instead (see Extending it).
 
 ## What a screen sees
