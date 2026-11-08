@@ -161,7 +161,7 @@ private fun buttonContentPadding() = PaddingValues(
 
 
 private val ButtonIconSize = 18.dp
-private const val DisabledAlpha = 0.4f
+internal const val DisabledAlpha = 0.4f
 
 @Preview
 @Composable
