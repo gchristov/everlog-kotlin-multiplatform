@@ -2,6 +2,7 @@ package com.everlog.android.settings.ui.tab
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.selection.toggleable
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
@@ -13,6 +14,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
+import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -133,12 +135,14 @@ internal fun SettingsTabContent(
                         )
                     },
                     SettingsRow("keepScreenOn") {
+                        // The whole row is the switch, so TalkBack reads its title with on or off
                         AppListItem(
-                            modifier = Modifier.testTag(SettingsTabTags.KeepScreenOn),
+                            modifier = Modifier
+                                .testTag(SettingsTabTags.KeepScreenOn)
+                                .toggleable(value = state.keepScreenOn, role = Role.Switch, onValueChange = { onKeepScreenOn() }),
                             title = stringResource(R.string.settings_keep_screen_on),
                             subtitle = stringResource(R.string.settings_keep_screen_on_description),
                             trailing = { AppSwitch(checked = state.keepScreenOn) },
-                            onClick = onKeepScreenOn,
                         )
                     },
                 )
