@@ -125,7 +125,7 @@ private val HubSections = listOf(
         HubEntry(DesignSystemPage.Timeline, "Timeline", "Days on a line, each beside its own content, as the history lists show them"),
         HubEntry(DesignSystemPage.Examples, "Examples", "A faded sample of what an empty screen becomes, under the EXAMPLE label"),
         HubEntry(DesignSystemPage.HeroHeader, "Hero header", "A large title at the top of a screen's content"),
-        HubEntry(DesignSystemPage.Dialogs, "Dialogs", "A title, body text and actions, and the text field"),
+        HubEntry(DesignSystemPage.Dialogs, "Dialogs", "A title, body text and actions, the text field and the stepper"),
         HubEntry(DesignSystemPage.BottomSheet, "Bottom sheet", "Options in a sheet that slides up, closed by picking one"),
         HubEntry(DesignSystemPage.Footer, "Footer", "Actions in a card pinned to the bottom, blurring what scrolls behind"),
         HubEntry(DesignSystemPage.Keypad, "Keypad", "A number keypad in a card docked at the bottom, with its timer and note strips"),
