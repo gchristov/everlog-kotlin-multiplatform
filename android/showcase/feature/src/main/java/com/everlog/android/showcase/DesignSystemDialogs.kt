@@ -11,6 +11,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import com.everlog.android.common.compose.elements.AppDialog
 import com.everlog.android.common.compose.elements.AppDialogAction
 import com.everlog.android.common.compose.elements.AppSecondaryButton
+import com.everlog.android.common.compose.elements.AppStepper
 import com.everlog.android.common.compose.elements.AppTextField
 import com.everlog.android.common.compose.theme.Theme
 
@@ -21,6 +22,8 @@ internal fun DesignSystemDialogs() {
     var showRename by rememberSaveable { mutableStateOf(false) }
     var name by rememberSaveable { mutableStateOf("Push day") }
     var field by rememberSaveable { mutableStateOf("") }
+    var showStepper by rememberSaveable { mutableStateOf(false) }
+    var goal by rememberSaveable { mutableStateOf(3) }
 
     ShowcasePage(title = "Dialogs") {
         group(key = "dialog", header = { "Title, body and two actions" }) {}
@@ -49,6 +52,34 @@ internal fun DesignSystemDialogs() {
                 modifier = Modifier.fillMaxWidth(),
                 onClick = { showRename = true },
                 text = "Rename \"$name\"",
+            )
+        }
+        group(key = "stepper", header = { "Stepper, e.g. a weekly goal from 1 to 7" }) {}
+        item(key = "stepperExample") {
+            AppSecondaryButton(
+                modifier = Modifier.fillMaxWidth(),
+                onClick = { showStepper = true },
+                text = "Weekly goal: $goal",
+            )
+        }
+    }
+
+    if (showStepper) {
+        var edited by rememberSaveable { mutableStateOf(goal) }
+        AppDialog(
+            title = "Weekly workouts goal",
+            onDismissRequest = { showStepper = false },
+            primaryAction = AppDialogAction(text = "Save", onClick = { goal = edited; showStepper = false }),
+            secondaryAction = AppDialogAction(text = "Cancel", onClick = { showStepper = false }),
+        ) {
+            AppStepper(
+                value = "$edited",
+                onDecrease = { edited-- },
+                onIncrease = { edited++ },
+                decreaseDescription = "Fewer",
+                increaseDescription = "More",
+                canDecrease = edited > 1,
+                canIncrease = edited < 7,
             )
         }
     }

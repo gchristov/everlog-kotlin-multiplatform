@@ -149,6 +149,12 @@ pill track, a 24px thumb when on, 16px when off). On: track and border `--conten
 `--content-secondary`. Disabled: the same at 40% opacity. Use it for on/off settings; `AppCheck` is for picking
 rows.
 
+## AppStepper
+
+A value changed a step at a time, e.g. the weekly goal or the rest after each set, usually in a dialog: the value
+in `--font-heading` with tabular figures, between outlined round − and + icon buttons, `--space-lg` apart. A
+button at its limit is disabled (its icon at 40% opacity). Prefer it to a number wheel.
+
 ## AppImage / AppThumbnail
 
 `AppImage` is an image from a URL. `AppThumbnail` is a row's 48px square image with 12px corners, as an
