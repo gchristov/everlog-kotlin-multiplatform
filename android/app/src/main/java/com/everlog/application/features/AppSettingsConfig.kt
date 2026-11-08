@@ -1,8 +1,8 @@
 package com.everlog.application.features
 
 import android.content.Context
-import com.everlog.android.settings.SetSuggestionText
-import com.everlog.android.settings.SettingsConfig
+import com.everlog.android.settings.ui.SetSuggestionText
+import com.everlog.android.settings.ui.SettingsConfig
 import com.everlog.android.settings.data.MuscleGoal
 import com.everlog.android.workout.setsuggestions.SetSuggestion
 import com.everlog.managers.RemoteConfigManager

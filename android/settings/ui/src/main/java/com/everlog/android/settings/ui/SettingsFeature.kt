@@ -1,4 +1,4 @@
-package com.everlog.android.settings
+package com.everlog.android.settings.ui
 
 // How Set suggestions names a goal, for Settings to show
 data class SetSuggestionText(val value: String, val subtitle: String)

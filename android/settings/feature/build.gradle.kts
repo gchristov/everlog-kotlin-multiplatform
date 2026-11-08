@@ -11,6 +11,7 @@ android {
 
 dependencies {
     implementation(projects.android.settings.data)
+    implementation(projects.android.settings.ui)
     implementation(projects.android.auth.data)
     implementation(projects.android.common.mvp)
     implementation(libs.rxbinding)

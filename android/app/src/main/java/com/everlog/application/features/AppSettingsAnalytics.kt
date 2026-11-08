@@ -1,6 +1,6 @@
 package com.everlog.application.features
 
-import com.everlog.android.settings.SettingsAnalytics
+import com.everlog.android.settings.ui.SettingsAnalytics
 import com.everlog.managers.analytics.AnalyticsManager
 import dev.zacsweers.metro.AppScope
 import dev.zacsweers.metro.ContributesBinding
