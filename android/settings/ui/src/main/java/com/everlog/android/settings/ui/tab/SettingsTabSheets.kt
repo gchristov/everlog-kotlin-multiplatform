@@ -102,7 +102,7 @@ internal fun SettingsTabSheets(
                 text = stringResource(R.string.settings_logout_stay),
             )
             AppSecondaryButton(
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier.fillMaxWidth().testTag(SettingsTabTags.LogOutConfirm),
                 onClick = { dismiss(onLogOutConfirmed) },
                 text = stringResource(R.string.settings_logout),
             )
