@@ -44,6 +44,7 @@ internal enum class DesignSystemPage {
     HeroHeader,
     Dialogs,
     BottomSheet,
+    Wheels,
     Footer,
     Keypad,
     Snackbar,
@@ -85,6 +86,7 @@ internal fun DesignSystemScreen(viewModel: DesignSystemViewModel) {
         DesignSystemPage.HeroHeader -> DesignSystemHeroHeader()
         DesignSystemPage.Dialogs -> DesignSystemDialogs()
         DesignSystemPage.BottomSheet -> DesignSystemBottomSheet()
+        DesignSystemPage.Wheels -> DesignSystemWheels()
         DesignSystemPage.Footer -> DesignSystemFooter(onButtonClick = onButtonClick)
         DesignSystemPage.Keypad -> DesignSystemKeypad(onButtonClick = onButtonClick)
         DesignSystemPage.Snackbar -> DesignSystemSnackbar()
@@ -127,6 +129,7 @@ private val HubSections = listOf(
         HubEntry(DesignSystemPage.HeroHeader, "Hero header", "A large title at the top of a screen's content"),
         HubEntry(DesignSystemPage.Dialogs, "Dialogs", "A title, body text and actions, the text field and the stepper"),
         HubEntry(DesignSystemPage.BottomSheet, "Bottom sheet", "Options in a sheet that slides up, closed by picking one"),
+        HubEntry(DesignSystemPage.Wheels, "Wheels", "Values picked by scrolling under a highlighted row, one column or several"),
         HubEntry(DesignSystemPage.Footer, "Footer", "Actions in a card pinned to the bottom, blurring what scrolls behind"),
         HubEntry(DesignSystemPage.Keypad, "Keypad", "A number keypad in a card docked at the bottom, with its timer and note strips"),
         HubEntry(DesignSystemPage.Snackbar, "Snackbar", "A short message over the bottom of the screen, with Undo"),
