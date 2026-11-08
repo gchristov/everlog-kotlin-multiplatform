@@ -5,8 +5,10 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.ime
 import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.union
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ModalBottomSheet
@@ -27,6 +29,10 @@ import kotlinx.coroutines.launch
 interface AppBottomSheetScope : ColumnScope {
     // Slides the sheet away, then runs [then], e.g. what a row was picked for
     fun dismiss(then: () -> Unit = {})
+
+    // Slides the sheet away, then runs [action] instead of onDismissRequest: for an action that closes the sheet's
+    // state itself and needs it still open when it runs, e.g. a prompt's Save that tells analytics it was saved
+    fun close(action: () -> Unit)
 }
 
 /**
@@ -56,7 +62,8 @@ fun AppBottomSheet(
                 .fillMaxWidth()
                 .padding(horizontal = Theme.spacing.large)
                 .padding(bottom = Theme.spacing.large)
-                .windowInsetsPadding(WindowInsets.navigationBars),
+                // Above the keyboard when a field in the sheet has it open
+                .windowInsetsPadding(WindowInsets.navigationBars.union(WindowInsets.ime)),
             verticalArrangement = Arrangement.spacedBy(Theme.spacing.large),
         ) {
             title?.let { AppText(text = it, style = Theme.typography.heading) }
@@ -67,6 +74,10 @@ fun AppBottomSheet(
                             onDismissRequest()
                             then()
                         }
+                    }
+
+                    override fun close(action: () -> Unit) {
+                        scope.launch { sheetState.hide() }.invokeOnCompletion { action() }
                     }
                 }
             }

@@ -278,9 +278,9 @@ internal class TemplateEditorViewModel(
     }
 
     // Never below a step, unless it was saved with less (the old editor could turn rest off), which − then keeps
-    fun onRestStep(direction: Int) {
-        val current = state.value.restSeconds
-        val seconds = (current + direction * RestStepSeconds).coerceAtLeast(minOf(RestStepSeconds, current))
+    // From the rest wheel, already on its steps and in range
+    fun onRestPicked(seconds: Int) {
+        if (seconds == state.value.restSeconds) return
         change { copy(restSeconds = seconds) }
         analytics.restChanged(seconds)
     }
@@ -330,7 +330,6 @@ internal class TemplateEditorViewModel(
 
     companion object {
         private val MaxSets = WorkoutBuilderDefaults.MAX_EXERCISE_SETS
-        private val RestStepSeconds = WorkoutBuilderDefaults.TIME_STEP_SECONDS
         // Templates hold reps and times only, so the unit never applies
         private val NoWeights = WeightUnit.KILOGRAM
     }

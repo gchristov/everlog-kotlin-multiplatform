@@ -22,8 +22,8 @@ import androidx.lifecycle.compose.LifecycleResumeEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.everlog.android.common.compose.elements.AppBar
 import com.everlog.android.common.compose.elements.AppChipTabs
-import com.everlog.android.common.compose.elements.AppDialog
-import com.everlog.android.common.compose.elements.AppDialogAction
+import com.everlog.android.common.compose.elements.AppConfirmSheet
+import com.everlog.android.common.compose.elements.AppSheetAction
 import com.everlog.android.common.compose.elements.AppMenuItem
 import com.everlog.android.common.compose.elements.AppOverflowMenu
 import com.everlog.android.common.compose.elements.AppScreen
@@ -161,12 +161,13 @@ internal fun ExercisePageContent(state: ExercisePageState, tab: ExercisePageTab,
         }
     }
     if (state.deletePrompt) {
-        AppDialog(
+        // Keeping the exercise is the primary action, as in every prompt to delete something
+        AppConfirmSheet(
             title = stringResource(DesignR.string.delete_title),
             body = stringResource(R.string.create_exercise_delete_prompt),
             onDismissRequest = actions.onDeleteCancelled,
-            primaryAction = AppDialogAction(text = stringResource(DesignR.string.delete), onClick = actions.onDeleteConfirmed),
-            secondaryAction = AppDialogAction(text = stringResource(DesignR.string.cancel), onClick = actions.onDeleteCancelled),
+            primaryAction = AppSheetAction(text = stringResource(DesignR.string.cancel), onClick = actions.onDeleteCancelled),
+            secondaryAction = AppSheetAction(text = stringResource(DesignR.string.delete), onClick = actions.onDeleteConfirmed),
         )
     }
 }

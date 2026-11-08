@@ -13,7 +13,8 @@ import com.everlog.android.common.compose.elements.AppBottomSheet
 import com.everlog.android.common.compose.elements.AppBottomSheetScope
 import com.everlog.android.common.compose.elements.AppButton
 import com.everlog.android.common.compose.elements.AppCheck
-import com.everlog.android.common.compose.elements.AppSecondaryButton
+import com.everlog.android.common.compose.elements.AppConfirmSheet
+import com.everlog.android.common.compose.elements.AppSheetAction
 import com.everlog.android.common.compose.elements.AppText
 import com.everlog.android.common.compose.elements.AppWheel
 import com.everlog.android.common.compose.elements.AppWheelColumn
@@ -93,22 +94,20 @@ internal fun SettingsTabSheets(
             )
             DoneButton { dismiss { viewModel.onWeightIncreaseSaved(sheet.quarters) } }
         }
-        SettingsTabSheet.Logout -> AppBottomSheet(
-            onDismissRequest = viewModel::onSheetDismissed,
+        SettingsTabSheet.Logout -> AppConfirmSheet(
             title = stringResource(R.string.settings_logout_title),
-        ) {
-            AppText(text = stringResource(R.string.settings_logout_body), color = Theme.contentColors.secondary)
-            AppButton(
-                modifier = Modifier.fillMaxWidth(),
-                onClick = { dismiss() },
-                text = stringResource(R.string.settings_logout_stay),
-            )
-            AppSecondaryButton(
-                modifier = Modifier.fillMaxWidth().testTag(SettingsTabTags.LogOutConfirm),
-                onClick = { dismiss(onLogOutConfirmed) },
+            body = stringResource(R.string.settings_logout_body),
+            onDismissRequest = viewModel::onSheetDismissed,
+            primaryAction = AppSheetAction(stringResource(R.string.settings_logout_stay), viewModel::onSheetDismissed),
+            secondaryAction = AppSheetAction(
                 text = stringResource(R.string.settings_logout),
-            )
-        }
+                onClick = {
+                    viewModel.onSheetDismissed()
+                    onLogOutConfirmed()
+                },
+                testTag = SettingsTabTags.LogOutConfirm,
+            ),
+        )
     }
 }
 

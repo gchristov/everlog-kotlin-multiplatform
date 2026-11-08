@@ -485,8 +485,9 @@ internal class WorkoutLogViewModel(
     fun onRestTimerSettings() = setState { copy(dialog = WorkoutLogDialog.RestTimer) }
 
     // A rest already running keeps its time
-    fun onRestStep(direction: Int) {
-        val seconds = (state.value.restSeconds + direction * TimerStepSeconds).coerceAtLeast(TimerStepSeconds)
+    // From the rest wheel, already on its steps and in range
+    fun onRestPicked(seconds: Int) {
+        if (seconds == state.value.restSeconds) return
         change { copy(blocks = blocks.withRestSeconds(seconds)) }
         analytics.restChanged(seconds)
     }
