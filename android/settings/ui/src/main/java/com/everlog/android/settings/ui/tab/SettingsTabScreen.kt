@@ -3,7 +3,6 @@ package com.everlog.android.settings.ui.tab
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.runtime.Composable
@@ -14,7 +13,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -154,7 +152,7 @@ internal fun SettingsTabContent(
                     }
                 }
             }
-            group(key = "contact") {
+            group(key = "contact", footer = { state.appInfo }) {
                 val rows = buildList {
                     if (state.showFeedback) {
                         add(SettingsRow("feedback") { ContactRow(DesignR.string.feedback_send, DesignR.drawable.ic_feedback, actions.sendFeedback) })
@@ -166,15 +164,6 @@ internal fun SettingsTabContent(
                     }
                 }
                 items(rows, key = { it.key }) { it.content() }
-            }
-            item(key = "appInfo") {
-                AppText(
-                    modifier = Modifier.fillMaxWidth(),
-                    text = state.appInfo,
-                    style = Theme.typography.caption,
-                    color = Theme.contentColors.secondary,
-                    textAlign = TextAlign.Center,
-                )
             }
         }
     }
@@ -208,7 +197,7 @@ internal fun formatWeightIncrease(value: Float, unit: WeightUnit): String =
 
 private object SettingsTabSizes {
     // Clear of Home's start workout button
-    val BottomPadding = 120.dp
+    val BottomPadding = 136.dp
 }
 
 @Preview
