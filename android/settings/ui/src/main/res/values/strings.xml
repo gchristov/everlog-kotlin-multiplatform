@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="settings_first_week_day">First week day</string>
+    <string name="settings_general">General</string>
+    <string name="settings_keep_screen_on">Keep screen on during workouts</string>
+    <string name="settings_keep_screen_on_description">Stops the screen turning off while you\'re on the workout screen</string>
+    <string name="settings_logout">Log out</string>
+    <string name="settings_logout_prompt">Are you sure you want to log out?</string>
+    <string name="settings_play_store_prompt">Review us on Google Play</string>
+    <string name="settings_share">Share Everlog</string>
+    <string name="settings_unit_weight">Weight unit</string>
+    <string name="settings_weight_increase_description">Used when modifying weight with +/-</string>
+    <string name="settings_logout_title">Log out?</string>
+    <string name="settings_logout_body">Your workouts stay in your account. Log in again to see them.</string>
+    <string name="settings_logout_stay">Stay logged in</string>
+    <plurals name="settings_weekly_goal_workouts">
+        <item quantity="one">%d workout</item>
+        <item quantity="other">%d workouts</item>
+    </plurals>
+    <string name="settings_weight_increase_whole">Whole number</string>
+    <string name="settings_weight_increase_quarters">Quarters</string>
+</resources>

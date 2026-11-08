@@ -25,6 +25,7 @@ import com.everlog.android.common.mvp.activity.BaseActivityMvpView
 import com.everlog.android.common.mvp.activity.BaseActivityPresenter
 import com.everlog.android.home.activity.ActivityHomeFragment
 import com.everlog.android.settings.SettingsHomeFragment
+import com.everlog.android.settings.ui.tab.SettingsTabFragment
 import com.everlog.android.home.HomeHost
 import com.everlog.android.home.week.WeekHomeFragment
 import com.everlog.android.home.weektab.WeekTabFragment
@@ -274,7 +275,7 @@ class HomeActivity : BaseActivity(), MvpViewHome, HomeHost {
         fragments.add(if (RemoteConfigManager.manager.weekTabV2()) WeekTabFragment() else WeekHomeFragment())
         fragments.add(WorkoutsHomeFragment())
         fragments.add(ActivityHomeFragment())
-        fragments.add(SettingsHomeFragment())
+        fragments.add(if (RemoteConfigManager.manager.settingsTabV2()) SettingsTabFragment() else SettingsHomeFragment())
         // Link pager
         mAdapter = ELFragmentPagerAdapter(supportFragmentManager, fragments)
         binding.pager.offscreenPageLimit = fragments.size

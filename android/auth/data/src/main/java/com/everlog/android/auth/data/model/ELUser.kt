@@ -56,7 +56,7 @@ data class ELUser (
     }
 
     fun getFirstName(): String? {
-        if (!TextUtils.isEmpty(displayName)) {
+        if (!displayName.isNullOrEmpty()) {
             val split = displayName!!.split(" ").toTypedArray()
             return split[0]
         }
