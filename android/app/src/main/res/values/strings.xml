@@ -80,12 +80,7 @@
     <string name="muscle_goal_prompt">Training goals give you history-based weight suggestions during workouts to ensure your muscles are working in the most effective way.</string>
     <string name="muscle_goal_1rm">1RM goals suggest a percentage of your 1RM - the max weight you can lift for one repetition - estimated from your recent sets of up to 10 reps. If you haven\'t done an exercise in 3 months, your last session\'s weights are used instead.</string>
 
-    <string name="integrations_connect_permission_needed">We need your permission to access fitness activity on this device to sync with this integration.</string>
 
-    <string name="notifications_newsletter_prompt">Hi %1$s,\n\nWe\'d love to send you our occasional newsletter with Pro-tips and tricks, and announcements of new features with your permission.\n\nInterested in getting the best out of Everlog?</string>
-    <string name="notifications_newsletter_prompt_yes">Yes, I\'d like to receive updates</string>
-    <string name="notifications_newsletter_granted">Perfect, we\'ll keep you up to date!</string>
-    <string name="notifications_newsletter_denied">No problem, you can always opt-in later in Settings</string>
 
     <string name="error_image_intent_null">Image picker option is missing!</string>
 

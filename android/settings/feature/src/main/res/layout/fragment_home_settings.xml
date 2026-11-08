@@ -41,13 +41,6 @@
                 android:layout_marginBottom="@dimen/margin_26" />
 
             <include
-                android:id="@+id/integrationsSection"
-                layout="@layout/include_settings_integrations"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="@dimen/margin_26" />
-
-            <include
                 layout="@layout/include_settings_general"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -55,12 +48,6 @@
 
             <include
                 layout="@layout/include_settings_workouts"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="@dimen/margin_26" />
-
-            <include
-                layout="@layout/include_settings_notifications"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="@dimen/margin_26" />

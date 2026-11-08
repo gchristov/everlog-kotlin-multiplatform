@@ -23,7 +23,6 @@ import com.everlog.android.common.data.model.workout.ELWorkout;
 import com.everlog.android.common.kotlin.format.StatsFormatUtils;
 import com.everlog.android.exercise.picker.ExercisePickerActivity;
 import com.everlog.android.plan.data.model.ELPlan;
-import com.everlog.android.settings.data.model.ELIntegration;
 import com.everlog.android.showcase.DesignSystemActivity;
 import com.everlog.android.common.navigation.FeedbackSource;
 import com.everlog.constants.ELActivityRequestCodes;
@@ -42,7 +41,6 @@ import com.everlog.android.plan.cover.CoverImagePickerActivity;
 import com.everlog.android.exercise.create.CreateExerciseActivity;
 import com.everlog.android.exercise.details.ExerciseDetailsActivity;
 import com.everlog.ui.activities.home.exercisegroup.DefaultCreateExerciseGroupsActivity;
-import com.everlog.android.settings.integration.IntegrationActivity;
 import com.everlog.ui.activities.home.musclegoal.MuscleGoalActivity;
 import com.everlog.android.plan.create.CreatePlanActivity;
 import com.everlog.android.plan.details.PlanDetailsActivity;
@@ -466,12 +464,6 @@ public class ELNavigator implements Navigator {
                         startActivity(intent);
                     }
                 }));
-    }
-
-    @Override
-    public void openIntegration(ELIntegration integration) {
-        startActivity(IntegrationActivity.Companion.launchIntent(mContext, new IntegrationActivity.Companion.Properties()
-                .integration(integration)));
     }
 
     @Override

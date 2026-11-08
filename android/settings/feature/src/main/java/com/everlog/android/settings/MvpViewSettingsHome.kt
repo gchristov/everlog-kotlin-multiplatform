@@ -28,14 +28,6 @@ interface MvpViewSettingsHome : BaseFragmentMvpView {
 
     fun onClickDesignSystem(): Observable<Void>
 
-    // Integrations
-
-    fun onClickManageIntegrationGoogleFit(): Observable<Void>
-
-    // Consent
-
-    fun onCheckChangeNewsletter(): Observable<Boolean>
-
     fun onCheckChangeKeepScreenOn(): Observable<Boolean>
 
     fun showAppInfo(appInfo: String)

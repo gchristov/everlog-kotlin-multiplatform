@@ -175,17 +175,6 @@ class AnalyticsConstants {
         const val EVENT_PLAN_DAY_COMPLETE = "plan_day_complete"
         const val EVENT_PLAN_COVER_MODIFIED = "plan_cover_modified"
 
-        // Integrations
-
-        const val EVENT_INTEGRATION_ACCESS_REQUESTED = "integration_access_requested"
-        const val EVENT_INTEGRATION_CONNECTED = "integration_connected"
-        const val EVENT_INTEGRATION_DISCONNECTED = "integration_disconnected"
-
-        // Consent
-
-        const val EVENT_CONSENT_NEWSLETTER_GRANTED = "consent_newsletter_granted"
-        const val EVENT_CONSENT_NEWSLETTER_DENIED = "consent_newsletter_denied"
-
         // Onboarding
 
         const val EVENT_ONBOARDING_STEP_VIEWED = "onboarding_step_viewed"

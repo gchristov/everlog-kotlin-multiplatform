@@ -22,6 +22,4 @@ interface SettingsGraph {
     val settingsDialogs: SettingsDialogs
 
     val settingsAccount: SettingsAccount
-
-    val googleFitConnection: GoogleFitConnection
 }

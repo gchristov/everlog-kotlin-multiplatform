@@ -8,7 +8,6 @@ import com.everlog.android.common.kotlin.di.GraphOwner
 import com.everlog.android.common.mvp.CommonMvp
 import com.everlog.android.exercise.data.store.ExerciseStores
 import com.everlog.android.plan.data.store.PlanStores
-import com.everlog.android.settings.data.store.SettingsStores
 import com.everlog.android.template.data.store.TemplateStores
 import com.everlog.android.workout.data.store.WorkoutStores
 import com.everlog.application.features.AppCommonDataDependencies
@@ -48,7 +47,6 @@ class ELApplication : Application(), GraphOwner {
         TemplateStores.session = graph.userSession
         WorkoutStores.session = graph.userSession
         PlanStores.session = graph.userSession
-        SettingsStores.session = graph.userSession
         CommonMvp.dependencies = AppCommonMvpDependencies()
         AndroidThreeTen.init(this)
         AppConfig.configuration.configureApp()

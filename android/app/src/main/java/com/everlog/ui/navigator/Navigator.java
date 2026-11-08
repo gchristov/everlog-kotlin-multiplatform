@@ -3,7 +3,6 @@ package com.everlog.ui.navigator;
 import androidx.annotation.Nullable;
 
 import com.everlog.android.common.navigation.FeedbackSource;
-import com.everlog.android.settings.data.model.ELIntegration;
 import com.everlog.android.common.data.model.ELRoutine;
 import com.everlog.android.common.data.model.exercise.ELExercise;
 import com.everlog.android.plan.data.model.ELPlan;
@@ -122,6 +121,4 @@ public interface Navigator {
     void cancelAppUseNotification();
 
     void promptForAppSettings(int rationaleTextResId);
-
-    void openIntegration(ELIntegration integration);
 }
