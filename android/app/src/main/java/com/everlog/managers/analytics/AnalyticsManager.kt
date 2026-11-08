@@ -803,41 +803,6 @@ class AnalyticsManager : Analytic {
         }
     }
 
-    override fun integrationAccessRequested() {
-        Timber.tag(TAG).i("Integration access requested")
-        mAnalytics?.forEach {
-            it.integrationAccessRequested()
-        }
-    }
-
-    override fun integrationConnected() {
-        Timber.tag(TAG).i("Integration connected")
-        mAnalytics?.forEach {
-            it.integrationConnected()
-        }
-    }
-
-    override fun integrationDisconnected() {
-        Timber.tag(TAG).i("Integration disconnected")
-        mAnalytics?.forEach {
-            it.integrationDisconnected()
-        }
-    }
-
-    override fun consentNewsletterGranted() {
-        Timber.tag(TAG).i("Consent newsletter granted")
-        mAnalytics?.forEach {
-            it.consentNewsletterGranted()
-        }
-    }
-
-    override fun consentNewsletterDenied() {
-        Timber.tag(TAG).i("Consent newsletter denied")
-        mAnalytics?.forEach {
-            it.consentNewsletterDenied()
-        }
-    }
-
     override fun onboardingStepViewed(step: String) {
         Timber.tag(TAG).i("Onboarding step viewed: step=%s", step)
         mAnalytics?.forEach {

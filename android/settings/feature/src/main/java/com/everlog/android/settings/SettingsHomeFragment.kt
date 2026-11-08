@@ -5,7 +5,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
-import android.widget.ImageView
 import android.widget.TextView
 import androidx.core.content.ContextCompat
 import com.everlog.android.auth.data.model.ELUser
@@ -25,9 +24,7 @@ import com.everlog.android.common.mvp.view.CheckBoxTriStates
 import com.everlog.android.settings.R
 import com.everlog.android.settings.SettingsGraph
 import com.everlog.android.settings.data.MuscleGoal
-import com.everlog.android.settings.data.model.ELIntegration
 import com.everlog.android.settings.databinding.FragmentHomeSettingsBinding
-import com.everlog.android.settings.integration.getIcon
 import com.jakewharton.rxbinding.view.RxView
 import java.util.*
 import org.threeten.bp.DayOfWeek
@@ -117,14 +114,6 @@ class SettingsHomeFragment : BaseTabFragment(), MvpViewSettingsHome {
         return RxView.clicks(binding.root.findViewById(R.id.designSystemBtn))
     }
 
-    override fun onClickManageIntegrationGoogleFit(): Observable<Void> {
-        return RxView.clicks(binding.root.findViewById(R.id.googleFitBtn))
-    }
-
-    override fun onCheckChangeNewsletter(): Observable<Boolean> {
-        return binding.root.findViewById<CheckBoxTriStates>(R.id.newsletterCheckbox).observeCheckChange()
-    }
-
     override fun onCheckChangeKeepScreenOn(): Observable<Boolean> {
         return binding.root.findViewById<CheckBoxTriStates>(R.id.keepScreenOnCheckbox).observeCheckChange()
     }
@@ -146,13 +135,6 @@ class SettingsHomeFragment : BaseTabFragment(), MvpViewSettingsHome {
         binding.root.findViewById<TextView>(R.id.weightUnitField).text = getString(if (viewModel.weightUnit == WeightUnit.KILOGRAM) KotlinR.string.settings_kilograms else KotlinR.string.settings_pounds)
         // First week day
         binding.root.findViewById<TextView>(R.id.firstWeekDayField).text = viewModel.firstWeekDay?.getDisplayName(TextStyle.FULL, Locale.getDefault())
-        // Integrations
-        binding.root.findViewById<View>(R.id.integrationsSection).visibility = if (viewModel.integrationGoogleFitEnabled == true) View.VISIBLE else View.GONE
-        ELIntegration.Type.GOOGLE_FIT.getIcon()?.let { binding.root.findViewById<ImageView>(R.id.googleFitImg).setImageResource(it) }
-        binding.root.findViewById<TextView>(R.id.googleFitTitle).text = context?.let { ELIntegration.Type.GOOGLE_FIT.getTitle() }
-        binding.root.findViewById<TextView>(R.id.googleFitField).text = getString(if (viewModel.integrationGoogleFitEnabled == true) R.string.integrations_connected else R.string.integrations_connected_prompt)
-        // Notifications
-        binding.root.findViewById<CheckBoxTriStates>(R.id.newsletterCheckbox).setChecked(viewModel.notificationNewsletterEnabled)
     }
 
     private fun showMuscleGoal(goal: MuscleGoal?) {
@@ -190,9 +172,6 @@ class SettingsHomeFragment : BaseTabFragment(), MvpViewSettingsHome {
         val trialDaysLeft = user.proFreeTrialDaysRemaining()
         binding.root.findViewById<View>(R.id.proFreeTrialSummary).visibility = if (user.isProWithinFreeTrial()) View.VISIBLE else View.GONE
         binding.root.findViewById<TextView>(R.id.proFreeTrialSummary).text = if (trialDaysLeft == 0) getString(R.string.settings_pro_free_trial_today) else resources.getQuantityString(R.plurals.settings_pro_free_trial, trialDaysLeft, trialDaysLeft)
-
-        // Notifications
-        binding.root.findViewById<View>(R.id.panelNotifications).visibility = if (user.isAnonymous()) View.GONE else View.VISIBLE
     }
 
     override fun showPickerWeight(value: Float): Observable<Float> =
@@ -208,13 +187,10 @@ class SettingsHomeFragment : BaseTabFragment(), MvpViewSettingsHome {
     // Setup
 
     override fun setupPresenter() {
-        mPresenter = PresenterSettingsHome(graph.userSettings, graph.userSession, graph.settingsAnalytics, graph.navigator, graph.settingsConfig, graph.settingsAccount, graph.googleFitConnection)
+        mPresenter = PresenterSettingsHome(graph.userSettings, graph.userSession, graph.settingsAnalytics, graph.navigator, graph.settingsConfig, graph.settingsAccount)
     }
 
     private fun setupButtons() {
-        binding.root.findViewById<View>(R.id.newsletterBtn).setOnClickListener {
-            binding.root.findViewById<View>(R.id.newsletterCheckbox).performClick()
-        }
         binding.root.findViewById<View>(R.id.keepScreenOnBtn).setOnClickListener {
             binding.root.findViewById<View>(R.id.keepScreenOnCheckbox).performClick()
         }
@@ -234,10 +210,6 @@ class SettingsHomeFragment : BaseTabFragment(), MvpViewSettingsHome {
             private set
         var firstWeekDay: DayOfWeek? = null
             private set
-        var integrationGoogleFitEnabled: Boolean? = null
-            private set
-        var notificationNewsletterEnabled: Boolean? = null
-            private set
 
         fun muscleGoal(muscleGoal: MuscleGoal) = apply { this.muscleGoal = muscleGoal }
         fun weightIncrease(weightIncrease: Float) = apply { this.weightIncrease = weightIncrease }
@@ -245,7 +217,5 @@ class SettingsHomeFragment : BaseTabFragment(), MvpViewSettingsHome {
         fun weightUnit(weightUnit: WeightUnit) = apply { this.weightUnit = weightUnit }
         fun keepScreenOn(keepScreenOn: Boolean) = apply { this.keepScreenOn = keepScreenOn }
         fun firstWeekDay(firstWeekDay: DayOfWeek) = apply { this.firstWeekDay = firstWeekDay }
-        fun integrationGoogleFitEnabled(integrationGoogleFitEnabled: Boolean) = apply { this.integrationGoogleFitEnabled = integrationGoogleFitEnabled }
-        fun notificationNewsletterEnabled(notificationNewsletterEnabled: Boolean?) = apply { this.notificationNewsletterEnabled = notificationNewsletterEnabled }
     }
 }

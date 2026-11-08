@@ -593,26 +593,6 @@ abstract class BaseAnalytic : Analytic {
         logEvent(AnalyticsConstants.EVENT_PLAN_COVER_MODIFIED)
     }
 
-    override fun integrationAccessRequested() {
-        logEvent(AnalyticsConstants.EVENT_INTEGRATION_ACCESS_REQUESTED)
-    }
-
-    override fun integrationConnected() {
-        logEvent(AnalyticsConstants.EVENT_INTEGRATION_CONNECTED)
-    }
-
-    override fun integrationDisconnected() {
-        logEvent(AnalyticsConstants.EVENT_INTEGRATION_DISCONNECTED)
-    }
-
-    override fun consentNewsletterGranted() {
-        logEvent(AnalyticsConstants.EVENT_CONSENT_NEWSLETTER_GRANTED)
-    }
-
-    override fun consentNewsletterDenied() {
-        logEvent(AnalyticsConstants.EVENT_CONSENT_NEWSLETTER_DENIED)
-    }
-
     override fun onboardingStepViewed(step: String) {
         logOnboardingStep(AnalyticsConstants.EVENT_ONBOARDING_STEP_VIEWED, step)
     }

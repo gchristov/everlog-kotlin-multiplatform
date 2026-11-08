@@ -3,12 +3,8 @@ package com.everlog.android.settings
 import android.content.DialogInterface
 import android.content.Intent
 import com.everlog.android.auth.data.UserSession
-import com.everlog.android.auth.data.model.ELConsent
 import com.everlog.android.auth.data.requireUser
-import com.everlog.android.auth.data.requireUserId
-import com.everlog.android.auth.data.store.AuthStores
 import com.everlog.android.auth.data.store.ELDocStoreUserLoadedEvent
-import com.everlog.android.auth.data.store.ELUserConsentStore
 import com.everlog.android.common.design.R as DesignR
 import com.everlog.android.common.kotlin.WeightUnit
 import com.everlog.android.common.kotlin.format.ArrayResourceTypeUtils
@@ -25,11 +21,6 @@ import com.everlog.android.common.navigation.SetSuggestions
 import com.everlog.android.common.navigation.ShareApp
 import com.everlog.android.settings.R
 import com.everlog.android.settings.data.UserSettings
-import com.everlog.android.settings.data.model.ELIntegration
-import com.everlog.android.settings.data.store.ELUserIntegrationStore
-import com.everlog.android.settings.data.store.SettingsStores
-import com.everlog.android.settings.integration.IntegrationActivity
-import com.google.firebase.firestore.SetOptions
 // import icepick.State
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
@@ -44,16 +35,7 @@ class PresenterSettingsHome(
     private val navigator: Navigator,
     private val config: SettingsConfig,
     private val account: SettingsAccount,
-    private val googleFit: GoogleFitConnection,
 ) : BaseFragmentPresenter<MvpViewSettingsHome>() {
-
-
-    // @State
-    @JvmField
-    var mIntegrationGoogleFit: ELIntegration? = null
-    // @State
-    @JvmField
-    var mConsent: ELConsent? = null
 
     override fun onReady() {
         observeMuscleGoalClick()
@@ -68,18 +50,7 @@ class PresenterSettingsHome(
         observeShareClick()
         observeManageProClick()
         observeDesignSystemClick()
-        // Integrations
-        observeManageIntegrationGoogleFitClick()
-        // Consent
-        observeNewsletterCheckChange()
         loadData()
-        loadIntegrationsData()
-        loadConsentData()
-    }
-
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        googleFit.onActivityResult(requestCode, resultCode, data)
     }
 
     override fun onPreferencesChanged() {
@@ -101,22 +72,6 @@ class PresenterSettingsHome(
     @Subscribe(threadMode = ThreadMode.MAIN)
     fun onUserLoaded(event: ELDocStoreUserLoadedEvent) {
         if (isAttachedToView) {
-            loadData()
-        }
-    }
-
-    @Subscribe(threadMode = ThreadMode.MAIN)
-    fun onIntegrationLoaded(event: ELUserIntegrationStore.ELDocStoreIntegrationLoadedEvent) {
-        if (isAttachedToView) {
-            mIntegrationGoogleFit = if (event.error != null) null else { event.item }
-            loadData()
-        }
-    }
-
-    @Subscribe(threadMode = ThreadMode.MAIN)
-    fun onConsentLoaded(event: ELUserConsentStore.ELDocStoreConsentLoadedEvent) {
-        if (isAttachedToView) {
-            mConsent = if (event.error != null) null else event.item
             loadData()
         }
     }
@@ -234,31 +189,6 @@ class PresenterSettingsHome(
                 .subscribe({ context?.let { navigator.open(it, DesignSystem) } }, { throwable -> handleError(throwable) }))
     }
 
-    private fun observeManageIntegrationGoogleFitClick() {
-        subscriptions.add(mvpView.onClickManageIntegrationGoogleFit()
-                .compose(applyUISchedulers())
-                .subscribe({
-                    val integration = mIntegrationGoogleFit
-                    if (integration != null) {
-                        openIntegration(integration)
-                    } else {
-                        googleFit.connect(mvpView) { granted ->
-                            mIntegrationGoogleFit = granted
-                            openIntegration(granted)
-                        }
-                    }
-                }, { throwable -> handleError(throwable) }))
-    }
-
-    private fun observeNewsletterCheckChange() {
-        subscriptions.add(mvpView.onCheckChangeNewsletter()
-                .compose(applyUISchedulers())
-                .subscribe({
-                    saveConsentDecision(it)
-                }, { throwable -> handleError(throwable) }))
-    }
-
-
     private fun logout() {
         account.logout {
             if (isAttachedToView) {
@@ -281,33 +211,11 @@ class PresenterSettingsHome(
                         .weightUnit(settings.weightUnit())
                         .keepScreenOn(settings.keepScreenOn())
                         .firstWeekDay(settings.firstDayOfWeek())
-                        .integrationGoogleFitEnabled(mIntegrationGoogleFit != null)
-                        .notificationNewsletterEnabled(mConsent?.getNewsletter())
         )
     }
 
     private fun showFeedback() {
         mvpView?.showFeedback(navigator.canOpen(FeedbackForm(FeedbackSource.SETTINGS)))
-    }
-
-    private fun loadIntegrationsData() {
-        // Listen for item changes
-        SettingsStores.integrationStore().getItem(ELIntegration.Type.GOOGLE_FIT.name)
-    }
-
-    private fun loadConsentData() {
-        // Listen for item changes
-        AuthStores.consentStore().getItem(null)
-    }
-
-    // Consent
-
-
-    private fun saveConsentDecision(granted: Boolean) {
-        val consent = mConsent ?: ELConsent.newConsent(session.requireUserId(), granted)
-        consent.updateNewsletter(granted)
-        AuthStores.consentStore().create(consent, SetOptions.merge())
-        if (granted) analytics.newsletterGranted() else analytics.newsletterDenied()
     }
 
     // Handlers
@@ -346,10 +254,6 @@ class PresenterSettingsHome(
         loadData()
         notifyPreferencesChanged()
         analytics.firstWeekDayModified(day.name)
-    }
-
-    private fun openIntegration(integration: ELIntegration) {
-        context?.let { it.startActivity(IntegrationActivity.launchIntent(it, IntegrationActivity.Companion.Properties().integration(integration))) }
     }
 
     private fun notifyPreferencesChanged() {

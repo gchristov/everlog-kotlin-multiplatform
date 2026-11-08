@@ -220,34 +220,6 @@
                 android:textSize="14sp" />
         </LinearLayout>
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/activity_margin_half"
-            android:gravity="center"
-            android:orientation="horizontal">
-
-            <LinearLayout
-                android:layout_width="52dp"
-                android:layout_height="wrap_content"
-                android:gravity="center">
-
-                <com.everlog.android.common.mvp.view.CheckBoxTriStates
-                    android:id="@+id/newsletterCheckbox"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    app:buttonTint="@color/main_accent" />
-            </LinearLayout>
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="@dimen/activity_margin"
-                android:text="@string/notifications_newsletter_description"
-                android:textColor="@color/main_accent"
-                android:textSize="14sp" />
-        </LinearLayout>
-
         <com.github.leandroborgesferreira.loadingbutton.customViews.CircularProgressButton
             android:id="@+id/registerBtn"
             style="@style/Button"

@@ -23,8 +23,8 @@ class AppAuthService : AuthService {
         AuthManager.onActivityResult(requestCode, resultCode, data)
     }
 
-    override fun register(fullName: String, email: String, password: String, newsletter: Boolean, listener: AuthActionListener) =
-        AuthManager.register(fullName, email, password, newsletter, listener)
+    override fun register(fullName: String, email: String, password: String, listener: AuthActionListener) =
+        AuthManager.register(fullName, email, password, listener)
 
     override fun requestPasswordReset(email: String, listener: AuthActionListener) = AuthManager.requestPasswordReset(email, listener)
 }

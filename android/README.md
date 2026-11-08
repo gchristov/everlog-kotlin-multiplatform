@@ -19,7 +19,7 @@ A feature has only the modules it has code for: a `data` module once it has data
 
 | Feature | `feature` holds | `ui` holds | `data` holds |
 | --- | --- | --- | --- |
-| `auth` | Login, reset password |  | The signed-in user (`UserSession`, `RealUserSession`), the user, device and consent stores and models |
+| `auth` | Login, reset password |  | The signed-in user (`UserSession`, `RealUserSession`), the user and device stores and models |
 | `onboarding` | The onboarding: welcome, questions, building and the reveal |  | The starter routines |
 | `exercise` | The exercise picker, detail and create screens |  | `ExerciseRepository`, the exercise library and guide use cases, the exercise stores, `ExerciseImageStorage` |
 | `workout` | The workout screen, Set suggestions, workout details, `WorkoutService` and its notification |  | `WorkoutManager`, the ongoing workout, prefill, the workout stores, `WorkoutBroadcasts` |
@@ -30,7 +30,7 @@ A feature has only the modules it has code for: a `data` module once it has data
 | `history` | No `feature` module | The Activity tab's history page: the workouts calendar and list (in Compose in `page` while Remote Config's `history_v2` is on, paging back through `WorkoutRepository.history`) | The view the history page opens on (`HistoryPreferences`); the workouts themselves come from `workout:data` |
 | `statistics` | No `feature` module | The Activity tab's statistics page (in Compose in `page` while Remote Config's `statistics_v2` is on) and the stats the Week tab shows (`UserStatsController`) | A period's numbers and chart points (`userStats`) for the Compose statistics page, and the period it opens on (`StatisticsPreferences`) |
 | `pro` | The Pro screen, `BillingManager` |  | The Pro models |
-| `settings` | Settings, the integration screen |  | The user's settings (`UserSettings`, `RealUserSettings`), the integration store and model |
+| `settings` | Settings |  | The user's settings (`UserSettings`, `RealUserSettings`) |
 | `showcase` | The design system showcase (debug builds only) |  | No `data` module |
 
 Each `data` module gives its stores one entry point, e.g. `WorkoutStores` or `PlanStores`, which the app's `ELDatastore` hands out to the code still using it.
@@ -106,7 +106,7 @@ Services the app shares, like the user's settings, are an interface with a `Real
 `:android:app` keeps what ties the features together or belongs to no single one, and what's due to be deleted rather than moved:
 
 - **The shell**: `ELApplication` with each feature's dependencies (`application/features`), `SplashActivity` (the launcher, which keeps its class name), Home (`HomeActivity`, which its tabs reach through `HomeHost`) with its Workouts tab, the `Navigator`, `AppConfig` and Remote Config, the data migrations, `AppDataSync`, FCM, the alarm receivers and their notifications, and the web view.
-- **Managers on the app's services**: `AuthManager`, `AnalyticsManager`, the rating prompt, in-app updates, `BillingBridge`, `FirestorePathManager`, Google Fit, `ELUserStore` and `ELDatastore`.
+- **Managers on the app's services**: `AuthManager`, `AnalyticsManager`, the rating prompt, in-app updates, `BillingBridge`, `FirestorePathManager`, `ELUserStore` and `ELDatastore`.
 - **Shared XML pieces only the app uses**: `AppDialogs` and the other pickers and inputs in `ui/dialog`, and the views and adapters the screens above use.
 - **The old screens behind v2 flags** (`CreateRoutineActivity`, `CreateExerciseGroupsActivity`, `MuscleGoalActivity` and their adapters), which go when their flags are removed rather than moving into modules.
 

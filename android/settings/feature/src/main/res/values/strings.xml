@@ -4,13 +4,6 @@
         <item quantity="one">Your free trial ends tomorrow</item>
         <item quantity="other">Your free trial ends in %1$d days</item>
     </plurals>
-    <string name="integrations_1">It may take several hours for a workout to appear in this integration. To manually sync, go to Settings -> Google Account -> Sync</string>
-    <string name="integrations_connected">Connected</string>
-    <string name="integrations_connected_prompt">Tap to connect</string>
-    <string name="integrations_disconnect">Disconnect</string>
-    <string name="integrations_disconnect_prompt">Disabling this won\'t affect your history or remove data from this destination.\n\nAre you sure you want to disable this integration?</string>
-    <string name="integrations_title">Integrations</string>
-    <string name="notifications_title">Notifications</string>
     <string name="settings_first_week_day">First week day</string>
     <string name="settings_general">General</string>
     <string name="settings_keep_screen_on">Keep screen on during workouts</string>

@@ -2,18 +2,13 @@ package com.everlog.android.auth.data.store
 
 import com.everlog.android.auth.data.UserSession
 
-// The signed-in user's consent and device stores, one of each until destroy()
+// The signed-in user's device store, one until destroy()
 object AuthStores {
 
     // Set by the app at startup, until the app's graph builds the stores
     lateinit var session: UserSession
 
-    private var consent: ELUserConsentStore? = null
     private var device: ELUserDeviceStore? = null
-
-    @JvmStatic
-    @Synchronized
-    fun consentStore(): ELUserConsentStore = consent ?: ELUserConsentStore(session).also { consent = it }
 
     @JvmStatic
     @Synchronized
@@ -22,8 +17,6 @@ object AuthStores {
     @JvmStatic
     @Synchronized
     fun destroy() {
-        consent?.destroy()
-        consent = null
         device?.destroy()
         device = null
     }

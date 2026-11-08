@@ -20,8 +20,4 @@ class AppSettingsAnalytics : SettingsAnalytics {
     override fun weightUnitModified(unit: String) = analytics.settingsWeightUnitModified(unit)
 
     override fun firstWeekDayModified(day: String) = analytics.settingsFirstWeekDayModified(day)
-
-    override fun newsletterGranted() = analytics.consentNewsletterGranted()
-
-    override fun newsletterDenied() = analytics.consentNewsletterDenied()
 }

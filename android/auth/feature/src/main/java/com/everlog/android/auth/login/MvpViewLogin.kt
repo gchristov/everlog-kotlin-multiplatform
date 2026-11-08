@@ -33,9 +33,6 @@ interface MvpViewLogin : BaseActivityMvpView {
 
     fun termsAccepted(): Boolean
 
-    fun newsletterDecided(): Boolean
-
-    fun newsletterAccepted(): Boolean
 
     fun showGoogleLoading(state: LoginActivity.LoadingState)
 

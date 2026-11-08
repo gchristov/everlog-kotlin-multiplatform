@@ -32,10 +32,6 @@ public class AppDialogs {
         WORKOUT_NOTE
     }
 
-    public enum AppBlockerDialogType {
-        NEWSLETTER,
-    }
-
 	public static Observable<String> showInputStringDialog(Context context,
                                                            String currentValue,
                                                            StringDialogType type) {
@@ -69,7 +65,4 @@ public class AppDialogs {
         return DateTimeDialogs.showDateDialog(context, date);
     }
 
-    public static Observable<Integer> showAppBlockerDialog(Context context, AppBlockerDialogType type) {
-        return AppBlockerDialogs.showAppBlockerDialog(context, type);
-    }
 }

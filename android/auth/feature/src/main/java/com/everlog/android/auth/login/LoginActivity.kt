@@ -192,14 +192,6 @@ class LoginActivity : BaseActivity(), MvpViewLogin {
         return binding.formRegister.termsCheckbox.isChecked
     }
 
-    override fun newsletterDecided(): Boolean {
-        return binding.formRegister.newsletterCheckbox.getState() != CheckBoxTriStates.State.UNKNOWN
-    }
-
-    override fun newsletterAccepted(): Boolean {
-        return binding.formRegister.newsletterCheckbox.getState() == CheckBoxTriStates.State.CHECKED
-    }
-
     override fun showGoogleLoading(state: LoadingState) {
         if (binding.formLogin.root.visibility == View.VISIBLE) {
             setButtonLoading(binding.formLogin.loginGoogleBtn, state, DesignR.color.white_base, com.google.android.gms.base.R.drawable.googleg_disabled_color_18)

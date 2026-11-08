@@ -196,28 +196,24 @@ class PresenterLogin(
                 && TextUtils.isEmpty(emailError)
                 && TextUtils.isEmpty(passwordError)) {
             if (mvpView?.termsAccepted() == true) {
-                if (mvpView?.newsletterDecided() == true) {
-                    KeyboardUtils.hideKeyboard(mvpView.getActivity())
-                    mvpView.showRegisterLoading(LoginActivity.LoadingState.LOADING)
-                    auth.register(name, email, password, mvpView.newsletterAccepted(), object : AuthActionListener() {
-                        override fun onSuccess(user: ELUser, newUser: Boolean) {
-                            saveOnboardingPending(newUser)
-                            if (isAttachedToView) {
-                                mvpView?.showRegisterLoading(LoginActivity.LoadingState.DONE)
-                                Utils.runWithDelay({ continueAfterLogin(newUser) }, DELAY_SUCCESS)
-                            }
+                KeyboardUtils.hideKeyboard(mvpView.getActivity())
+                mvpView.showRegisterLoading(LoginActivity.LoadingState.LOADING)
+                auth.register(name, email, password, object : AuthActionListener() {
+                    override fun onSuccess(user: ELUser, newUser: Boolean) {
+                        saveOnboardingPending(newUser)
+                        if (isAttachedToView) {
+                            mvpView?.showRegisterLoading(LoginActivity.LoadingState.DONE)
+                            Utils.runWithDelay({ continueAfterLogin(newUser) }, DELAY_SUCCESS)
                         }
+                    }
 
-                        override fun onError(throwable: Throwable) {
-                            if (isAttachedToView) {
-                                mvpView.showRegisterLoading(LoginActivity.LoadingState.DEFAULT)
-                                ToastBuilder.showToast(mvpView.context, throwable.message, true)
-                            }
+                    override fun onError(throwable: Throwable) {
+                        if (isAttachedToView) {
+                            mvpView.showRegisterLoading(LoginActivity.LoadingState.DEFAULT)
+                            ToastBuilder.showToast(mvpView.context, throwable.message, true)
                         }
-                    })
-                } else {
-                    mvpView?.showToast(R.string.notifications_newsletter_not_accepted)
-                }
+                    }
+                })
             } else {
                 mvpView?.showToast(R.string.login_terms_not_accepted)
             }

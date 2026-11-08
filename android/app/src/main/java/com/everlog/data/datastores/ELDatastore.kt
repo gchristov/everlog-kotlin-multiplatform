@@ -1,14 +1,11 @@
 package com.everlog.data.datastores
 
 import com.everlog.android.auth.data.store.AuthStores
-import com.everlog.android.auth.data.store.ELUserConsentStore
 import com.everlog.android.auth.data.store.ELUserDeviceStore
 import com.everlog.android.common.data.model.ELRoutine
 import com.everlog.android.common.data.model.workout.ELWorkout
 import com.everlog.android.plan.data.model.ELPlan
 import com.everlog.android.plan.data.store.PlanStores
-import com.everlog.android.settings.data.store.ELUserIntegrationStore
-import com.everlog.android.settings.data.store.SettingsStores
 import com.everlog.android.common.data.store.CollectionStore
 import com.everlog.android.common.data.store.DocumentStore
 import com.everlog.android.exercise.data.store.ELExercisesStore
@@ -62,12 +59,6 @@ class ELDatastore {
         fun planStore(): DocumentStore<ELPlan> = PlanStores.planStore()
 
         @JvmStatic
-        fun integrationStore(): ELUserIntegrationStore = SettingsStores.integrationStore()
-
-        @JvmStatic
-        fun consentStore(): ELUserConsentStore = AuthStores.consentStore()
-
-        @JvmStatic
         fun deviceStore(): ELUserDeviceStore = AuthStores.deviceStore()
 
         @JvmStatic
@@ -78,7 +69,6 @@ class ELDatastore {
             mUserStore?.destroy()
             mUserStore = null
             PlanStores.destroy()
-            SettingsStores.destroy()
             AuthStores.destroy()
         }
     }

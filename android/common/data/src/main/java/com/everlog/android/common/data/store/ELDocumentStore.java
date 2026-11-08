@@ -204,7 +204,7 @@ public abstract class ELDocumentStore<T extends ELFirestoreModel> implements Doc
 
     private void notifyError(boolean fromCache, Throwable throwable) {
         if (throwable instanceof ItemNotFoundError) {
-            // A missing document is a normal empty state (e.g. no Google Fit integration), not a failure
+            // A missing document is a normal empty state (e.g. a user document not created yet), not a failure
             Timber.tag(getTag()).i(throwable.getMessage());
         } else {
             throwable.printStackTrace();

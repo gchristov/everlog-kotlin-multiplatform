@@ -139,13 +139,6 @@ interface Analytic {
     fun planDayComplete()
     fun planCoverModified()
 
-    fun integrationAccessRequested()
-    fun integrationConnected()
-    fun integrationDisconnected()
-
-    fun consentNewsletterGranted()
-    fun consentNewsletterDenied()
-
     fun onboardingStepViewed(step: String)
     fun onboardingStepCompleted(step: String, value: String?)
     fun onboardingStepSkipped(step: String)
