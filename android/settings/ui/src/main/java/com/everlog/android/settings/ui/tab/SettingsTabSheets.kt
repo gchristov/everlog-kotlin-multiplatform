@@ -1,12 +1,14 @@
 package com.everlog.android.settings.ui.tab
 
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.selection.selectable
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.Role
 import com.everlog.android.common.compose.elements.AppBottomSheet
 import com.everlog.android.common.compose.elements.AppBottomSheetScope
 import com.everlog.android.common.compose.elements.AppButton
@@ -102,7 +104,7 @@ internal fun SettingsTabSheets(
                 text = stringResource(R.string.settings_logout_stay),
             )
             AppSecondaryButton(
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier.fillMaxWidth().testTag(SettingsTabTags.LogOutConfirm),
                 onClick = { dismiss(onLogOutConfirmed) },
                 text = stringResource(R.string.settings_logout),
             )
@@ -122,9 +124,9 @@ private fun <T> AppBottomSheetScope.ChoiceGroup(
         choices.forEach { choice ->
             row {
                 AppListItem(
+                    modifier = Modifier.selectable(selected = choice == selected, role = Role.RadioButton) { dismiss { onPick(choice) } },
                     title = name(choice),
                     trailing = { AppCheck(checked = choice == selected) },
-                    onClick = { dismiss { onPick(choice) } },
                 )
             }
         }

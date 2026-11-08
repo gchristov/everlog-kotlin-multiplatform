@@ -15,6 +15,10 @@ class AppWheelTest {
     @Test
     fun `the centred item stays within the list`() {
         assertThat(centredIndex(firstVisible = 6, scrollOffsetPx = 90, itemPx = 100f, count = 7)).isEqualTo(6)
-        assertThat(centredIndex(firstVisible = 0, scrollOffsetPx = 0, itemPx = 100f, count = 0)).isEqualTo(0)
+    }
+
+    @Test
+    fun `before laying out the centred item is the one it was asked to show`() {
+        assertThat(centredIndex(firstVisible = 2, scrollOffsetPx = 0, itemPx = 100f, count = 0)).isEqualTo(2)
     }
 }
