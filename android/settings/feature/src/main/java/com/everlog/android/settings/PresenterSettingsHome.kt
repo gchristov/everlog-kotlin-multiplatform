@@ -21,6 +21,9 @@ import com.everlog.android.common.navigation.SetSuggestions
 import com.everlog.android.common.navigation.ShareApp
 import com.everlog.android.settings.R
 import com.everlog.android.settings.data.UserSettings
+import com.everlog.android.settings.ui.SettingsAccount
+import com.everlog.android.settings.ui.SettingsAnalytics
+import com.everlog.android.settings.ui.SettingsConfig
 // import icepick.State
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode

@@ -1,4 +1,4 @@
-package com.everlog.android.settings
+package com.everlog.android.settings.ui
 
 import com.everlog.android.auth.data.UserSession
 import com.everlog.android.common.navigation.Navigator

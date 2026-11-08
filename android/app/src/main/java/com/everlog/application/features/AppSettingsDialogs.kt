@@ -1,7 +1,7 @@
 package com.everlog.application.features
 
 import android.content.Context
-import com.everlog.android.settings.SettingsDialogs
+import com.everlog.android.settings.ui.SettingsDialogs
 import com.everlog.ui.dialog.AppDialogs
 import dev.zacsweers.metro.AppScope
 import dev.zacsweers.metro.ContributesBinding

@@ -93,6 +93,7 @@ dependencies {
     implementation(projects.android.plan.ui)
     implementation(projects.android.pro.feature)
     implementation(projects.android.settings.feature)
+    implementation(projects.android.settings.ui)
     implementation(projects.android.showcase.feature)
     implementation(projects.android.statistics.data)
     implementation(projects.android.statistics.ui)

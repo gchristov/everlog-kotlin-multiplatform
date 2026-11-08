@@ -1,4 +1,4 @@
-package com.everlog.android.settings
+package com.everlog.android.settings.ui
 
 import android.content.Context
 import com.everlog.android.settings.data.MuscleGoal

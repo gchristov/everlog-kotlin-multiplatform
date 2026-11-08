@@ -22,9 +22,10 @@ import com.everlog.android.common.mvp.util.ELGlideModule
 import com.everlog.android.common.mvp.util.ViewUtils
 import com.everlog.android.common.mvp.view.CheckBoxTriStates
 import com.everlog.android.settings.R
-import com.everlog.android.settings.SettingsGraph
 import com.everlog.android.settings.data.MuscleGoal
 import com.everlog.android.settings.databinding.FragmentHomeSettingsBinding
+import com.everlog.android.settings.ui.SettingsGraph
+import com.everlog.android.settings.ui.SettingsScreenNames
 import com.jakewharton.rxbinding.view.RxView
 import java.util.*
 import org.threeten.bp.DayOfWeek
