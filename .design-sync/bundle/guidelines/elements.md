@@ -162,7 +162,7 @@ one column, or several side by side (e.g. whole kilograms and quarters) with an 
 `--font-heading`. On a `--background-surface` card (`--radius-surface`), five 44px rows show; the centre one sits
 in a band of `--background-selected` with a 1px `--content-action` border and 12px corners, across every column.
 The centre value is `--font-heading` in `--content-primary`, its neighbours `--font-body` in `--content-secondary`,
-the outer two at half opacity; figures are tabular. Each column is as wide as its longest value, snaps to a value,
+the outer two at half opacity; figures are tabular. Each column is as wide as its longest value plus 24px a side, at least 96px, snaps to a value,
 and a tap on a value scrolls it to the centre. Prefer it to a stepper or a number keyboard for picking from a range.
 
 ## AppImage / AppThumbnail
