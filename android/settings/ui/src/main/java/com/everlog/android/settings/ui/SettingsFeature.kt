@@ -14,4 +14,5 @@ interface SettingsAnalytics {
 // The names analytics already has for the settings screens
 object SettingsScreenNames {
     const val HOME = "screen_settings"
+    const val HOME_V2 = "screen_settings_v2"
 }

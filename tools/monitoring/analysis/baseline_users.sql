@@ -110,7 +110,7 @@ agg AS (
     LOGICAL_OR(d < 1 AND screen IN ('screen_week','screen_week_v2')) AS d0_week,
     LOGICAL_OR(d < 1 AND screen = 'screen_workouts') AS d0_workouts_tab,
     LOGICAL_OR(d < 1 AND screen IN ('screen_statistics','screen_statistics_v2','screen_activity')) AS d0_stats,
-    LOGICAL_OR(d < 1 AND screen = 'screen_settings') AS d0_settings,
+    LOGICAL_OR(d < 1 AND screen IN ('screen_settings','screen_settings_v2')) AS d0_settings,
     LOGICAL_OR(d < 1 AND screen IN ('screen_history','screen_history_v2')) AS d0_history,
     LOGICAL_OR(d < 1 AND screen IN ('screen_exercises','screen_exercises_v2')) AS d0_exercises_list,
     LOGICAL_OR(d < 1 AND screen IN ('screen_exercise_details','screen_exercise_info','screen_exercise_info_v2','screen_exercise_history','screen_exercise_statistics')) AS d0_exercise_detail,

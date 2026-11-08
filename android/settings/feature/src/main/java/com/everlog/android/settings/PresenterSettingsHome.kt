@@ -21,6 +21,7 @@ import com.everlog.android.common.navigation.SetSuggestions
 import com.everlog.android.common.navigation.ShareApp
 import com.everlog.android.settings.R
 import com.everlog.android.settings.data.UserSettings
+import com.everlog.android.settings.ui.R as SettingsUiR
 import com.everlog.android.settings.ui.SettingsAccount
 import com.everlog.android.settings.ui.SettingsAnalytics
 import com.everlog.android.settings.ui.SettingsConfig
@@ -130,7 +131,7 @@ class PresenterSettingsHome(
     }
 
     private fun observeLogoutConfirm() {
-        subscriptions.add(mvpView.showDestructivePrompt(R.string.settings_logout, R.string.settings_logout_prompt, R.string.settings_logout, DesignR.string.cancel)
+        subscriptions.add(mvpView.showDestructivePrompt(SettingsUiR.string.settings_logout, SettingsUiR.string.settings_logout_prompt, SettingsUiR.string.settings_logout, DesignR.string.cancel)
                 .compose(applyUISchedulers())
                 .subscribe({ action ->
                     if (action == DialogInterface.BUTTON_POSITIVE) {
@@ -154,7 +155,7 @@ class PresenterSettingsHome(
     private fun observeWeightUnitConfirm() {
         val titles = ArrayResourceTypeUtils.withWeightUnits().titles
         val selectedIndex = ArrayResourceTypeUtils.withWeightUnits().types.indexOf(settings.weightUnit().name)
-        subscriptions.add(mvpView.showPickerMultipleChoice(R.string.settings_unit_weight, titles, selectedIndex)
+        subscriptions.add(mvpView.showPickerMultipleChoice(SettingsUiR.string.settings_unit_weight, titles, selectedIndex)
                 .compose(applyUISchedulers())
                 .subscribe({ value -> handleWeightUnitChanged(value) }, { throwable -> handleError(throwable) }))
     }
@@ -169,7 +170,7 @@ class PresenterSettingsHome(
         val collection = arrayOf(DayOfWeek.MONDAY, DayOfWeek.SUNDAY)
         val titles = collection.map { dayOfWeek -> dayOfWeek.getDisplayName(TextStyle.FULL, Locale.getDefault()) }
         val selectedIndex = collection.indexOf(settings.firstDayOfWeek())
-        subscriptions.add(mvpView.showPickerMultipleChoice(R.string.settings_first_week_day, titles.toTypedArray(), selectedIndex)
+        subscriptions.add(mvpView.showPickerMultipleChoice(SettingsUiR.string.settings_first_week_day, titles.toTypedArray(), selectedIndex)
                 .compose(applyUISchedulers())
                 .subscribe({ value -> handleFirstWeekDayChanged(value) }, { throwable -> handleError(throwable) }))
     }
