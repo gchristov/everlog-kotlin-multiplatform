@@ -1,5 +1,7 @@
 package com.everlog.android.common.compose.elements
 
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -37,24 +39,27 @@ fun AppConfirmSheet(
     AppBottomSheet(onDismissRequest = onDismissRequest, modifier = modifier, title = title) {
         body?.let { AppText(text = it, color = Theme.contentColors.secondary) }
         content?.invoke()
-        AppButton(
-            modifier = Modifier.fillMaxWidth().tagged(primaryAction),
-            onClick = { close(primaryAction.onClick) },
-            text = primaryAction.text,
-        )
-        secondaryAction?.let { action ->
-            AppSecondaryButton(
-                modifier = Modifier.fillMaxWidth().tagged(action),
-                onClick = { close(action.onClick) },
-                text = action.text,
+        val sheet = this
+        Column(verticalArrangement = Arrangement.spacedBy(StackedButtonGap)) {
+            AppButton(
+                modifier = Modifier.fillMaxWidth().tagged(primaryAction),
+                onClick = { sheet.close(primaryAction.onClick) },
+                text = primaryAction.text,
             )
-        }
-        tertiaryAction?.let { action ->
-            AppTertiaryButton(
-                modifier = Modifier.fillMaxWidth().tagged(action),
-                onClick = { close(action.onClick) },
-                text = action.text,
-            )
+            secondaryAction?.let { action ->
+                AppSecondaryButton(
+                    modifier = Modifier.fillMaxWidth().tagged(action),
+                    onClick = { sheet.close(action.onClick) },
+                    text = action.text,
+                )
+            }
+            tertiaryAction?.let { action ->
+                AppTertiaryButton(
+                    modifier = Modifier.fillMaxWidth().tagged(action),
+                    onClick = { sheet.close(action.onClick) },
+                    text = action.text,
+                )
+            }
         }
     }
 }

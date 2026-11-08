@@ -3,6 +3,8 @@
     <dimen name="content_width_tablet">400dp</dimen>
     <dimen name="activity_margin_double">32dp</dimen>
     <dimen name="activity_margin_half">8dp</dimen>
+    <!-- Between buttons stacked in a floating footer, as AppFooter shows them (StackedButtonGap) -->
+    <dimen name="footer_button_gap">7dp</dimen>
     <dimen name="margin_12">12dp</dimen>
     <dimen name="margin_20">20dp</dimen>
     <dimen name="activity_margin">16dp</dimen>

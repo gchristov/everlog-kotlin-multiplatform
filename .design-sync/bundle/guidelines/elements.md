@@ -179,7 +179,7 @@ Actions pinned to the bottom of an `AppScreen`, in a floating card:
 - radius `--radius-surface`, 1px `--background-separator` border, padding `--space-lg`
 - background: the content behind it blurred (20px) under `--background-blur-overlay`
   (`backdrop-filter: blur(20px)`)
-- buttons stacked full width, `--space-sm` apart, in the order given: the primary `AppButton` first,
+- buttons stacked full width, 7px apart (their touch areas leave that much between them), in the order given: the primary `AppButton` first,
   a secondary or tertiary action under it. A single action keeps the lower slot.
 - optional note above the actions in a small card: `--background-primary`, `--font-caption`,
   `--content-secondary`, padding `--space-lg`
@@ -225,7 +225,7 @@ slides the sheet away first, then acts; tapping outside it or swiping it down cl
 
 A question in an `AppBottomSheet`, instead of a dialog (Compose screens have none): the title, an optional line of
 body text in `--font-body` / `--content-secondary`, optional content under it (a text field, a wheel), then its
-buttons full width and stacked, `--space-lg` apart: `AppButton` (the action we want, e.g. Keep going, or Cancel on a
+buttons full width and stacked, 7px apart as in `AppFooter`: `AppButton` (the action we want, e.g. Keep going, or Cancel on a
 delete), `AppSecondaryButton` (the way out or the other choice) and an optional `AppTertiaryButton` (a quieter third,
 e.g. Keep going beside Finish and Discard). A button slides the sheet away, then acts. The sheet rises above the
 keyboard when a field in it has it open.

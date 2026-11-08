@@ -77,7 +77,10 @@
             style="@style/Button.Three"
             android:layout_width="match_parent"
             android:layout_height="42dp"
-            android:layout_margin="@dimen/activity_margin"
+            android:layout_marginStart="@dimen/activity_margin"
+            android:layout_marginTop="@dimen/footer_button_gap"
+            android:layout_marginEnd="@dimen/activity_margin"
+            android:layout_marginBottom="@dimen/activity_margin"
             android:paddingLeft="0dp"
             android:paddingRight="0dp"
             android:text="@string/login_existing" />

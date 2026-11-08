@@ -163,6 +163,10 @@ private fun buttonContentPadding() = PaddingValues(
 private val ButtonIconSize = 18.dp
 internal const val DisabledAlpha = 0.4f
 
+// Between buttons stacked in a footer or a sheet: their 48dp touch areas already add 6dp around each 42dp button, so
+// they show 7dp apart (FloatingFooterView's XML buttons use footer_button_gap to match)
+internal val StackedButtonGap = 1.dp
+
 @Preview
 @Composable
 private fun AppButtonPreview() {
