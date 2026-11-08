@@ -7,6 +7,7 @@
   --background-surface-raised: #26331F;     /* placeholders and raised parts of a card (black_lighter) */
   --background-blur-overlay: rgba(10, 14, 9, 0.44); /* tint over blurred content behind the footer */
   --background-separator: #26331F;          /* 1px dividers between rows, footer border */
+  --background-inset: rgba(0, 0, 0, 0.32);  /* sunk into a card, e.g. a switch's track when off (background_inset) */
   --background-selected: rgba(135, 194, 82, 0.13);   /* faint accent behind a selected option */
   --background-action-muted: rgba(135, 194, 82, 0.4); /* stronger accent, e.g. current progress step */
 

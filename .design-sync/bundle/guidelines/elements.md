@@ -141,6 +141,14 @@ The app's XML popup menus look the same.
 Whether a row is picked, as its trailing content: a 24px circle with a 2px `--background-separator`
 ring, or filled `--content-action` with a 14px tick in `--content-on-action` when picked.
 
+## AppSwitch
+
+Whether a setting is on, as a row's trailing content, the whole row toggling it: Material's switch (a 52×32px
+pill track, a 24px thumb when on, 16px when off). On: track and border `--content-action`, thumb
+`--content-on-action`. Off: track `--background-inset` with a 2px `--background-separator` border, thumb
+`--content-secondary`. Disabled: the same at 40% opacity. Use it for on/off settings; `AppCheck` is for picking
+rows.
+
 ## AppImage / AppThumbnail
 
 `AppImage` is an image from a URL. `AppThumbnail` is a row's 48px square image with 12px corners, as an

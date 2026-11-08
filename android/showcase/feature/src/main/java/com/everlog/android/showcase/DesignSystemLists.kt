@@ -2,8 +2,11 @@ package com.everlog.android.showcase
 
 import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -12,6 +15,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.everlog.android.common.compose.elements.AppCheck
 import com.everlog.android.common.compose.elements.AppIcon
+import com.everlog.android.common.compose.elements.AppSwitch
 import com.everlog.android.common.compose.elements.AppText
 import com.everlog.android.common.compose.elements.AppThumbnail
 import com.everlog.android.common.compose.elements.list.AppListItem
@@ -21,6 +25,7 @@ import com.everlog.android.common.design.R as DesignR
 @Composable
 internal fun DesignSystemLists(onButtonClick: () -> Unit) {
     val checked = remember { mutableStateListOf(1) }
+    var switchedOn by remember { mutableStateOf(true) }
     ShowcasePage(title = "Lists") {
         group(
             key = "items",
@@ -96,6 +101,28 @@ internal fun DesignSystemLists(onButtonClick: () -> Unit) {
                     trailing = { AppCheck(checked = index in checked) },
                     onClick = { if (index in checked) checked.remove(index) else checked.add(index) },
                 )
+            }
+        }
+        group(
+            key = "switches",
+            header = { "Switches" },
+            footer = { "Tap the first row to switch it." },
+        ) {
+            items(count = 2, key = { it }) { index ->
+                if (index == 0) {
+                    AppListItem(
+                        title = "Keep screen on",
+                        subtitle = "AppSwitch, toggled by the row",
+                        trailing = { AppSwitch(checked = switchedOn) },
+                        onClick = { switchedOn = !switchedOn },
+                    )
+                } else {
+                    AppListItem(
+                        title = "Disabled",
+                        subtitle = "When the setting can't be changed",
+                        trailing = { AppSwitch(checked = false, enabled = false) },
+                    )
+                }
             }
         }
         group(key = "single", header = { "A group with one row" }) {

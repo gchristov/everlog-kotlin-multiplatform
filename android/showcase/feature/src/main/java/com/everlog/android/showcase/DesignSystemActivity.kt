@@ -116,7 +116,7 @@ private val HubSections = listOf(
     ),
     "Components" to listOf(
         HubEntry(DesignSystemPage.Buttons, "Buttons", "Primary, secondary and tertiary, enabled and disabled"),
-        HubEntry(DesignSystemPage.Lists, "Lists", "Grouped lists and their rows, thumbnails and checks"),
+        HubEntry(DesignSystemPage.Lists, "Lists", "Grouped lists and their rows, thumbnails, checks and switches"),
         HubEntry(DesignSystemPage.Search, "Search and filters", "The search bar and chips"),
         HubEntry(DesignSystemPage.Menus, "Menus", "Further options behind a ⋮ button, in the app bar or on a row"),
         HubEntry(DesignSystemPage.Cards, "Cards", "The card surface, with text and actions"),
