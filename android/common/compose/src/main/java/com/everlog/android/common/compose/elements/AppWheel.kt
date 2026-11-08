@@ -38,7 +38,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.drop
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.launch
 import com.everlog.android.common.compose.theme.Theme
@@ -105,8 +105,10 @@ private fun WheelColumn(column: AppWheelColumn) {
     val onPick by rememberUpdatedState(column.onPick)
     val selected by rememberUpdatedState(column.selectedIndex)
 
+    // Only once a scroll has settled: the first value says it isn't scrolling before the column has laid out
     LaunchedEffect(state) {
         snapshotFlow { state.isScrollInProgress }
+            .drop(1)
             .filter { !it }
             .collect { if (centred != selected) onPick(centred) }
     }
@@ -171,12 +173,13 @@ private fun WheelColumn(column: AppWheelColumn) {
     }
 }
 
-// The item under the centre row: the first one shown, or the next once it has scrolled more than halfway out
+// The item under the centre row: the first one shown, or the next once it has scrolled more than halfway out. Before
+// the column has laid out it knows of no items, and the first one shown is the one it was asked to show
 private fun centredIndex(state: LazyListState, itemPx: Float): Int =
     centredIndex(state.firstVisibleItemIndex, state.firstVisibleItemScrollOffset, itemPx, state.layoutInfo.totalItemsCount)
 
 internal fun centredIndex(firstVisible: Int, scrollOffsetPx: Int, itemPx: Float, count: Int): Int {
-    if (count == 0) return 0
+    if (count == 0) return firstVisible
     val index = if (scrollOffsetPx > itemPx / 2) firstVisible + 1 else firstVisible
     return index.coerceIn(0, count - 1)
 }
