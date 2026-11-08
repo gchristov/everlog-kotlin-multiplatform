@@ -118,10 +118,10 @@ private fun WheelColumn(column: AppWheelColumn) {
     val centredStyle = Theme.typography.heading.copy(fontFeatureSettings = "tnum")
     val measurer = rememberTextMeasurer()
     val density = LocalDensity.current
-    // As wide as its longest value in the centre row's style, so no value wraps
+    // As wide as its longest value in the centre row's style, so no value wraps, and wide enough to grab easily
     val width = remember(column.items, centredStyle) {
         val widest = column.items.maxOfOrNull { measurer.measure(it, centredStyle, maxLines = 1).size.width } ?: 0
-        with(density) { widest.toDp() } + WheelSizes.ColumnPadding * 2
+        maxOf(with(density) { widest.toDp() } + WheelSizes.ColumnPadding * 2, WheelSizes.MinColumn)
     }
     LazyColumn(
         state = state,
@@ -184,7 +184,8 @@ internal fun centredIndex(firstVisible: Int, scrollOffsetPx: Int, itemPx: Float,
 private object WheelSizes {
     val Item = 44.dp
     const val Visible = 5
-    val ColumnPadding = 16.dp
+    val ColumnPadding = 24.dp
+    val MinColumn = 96.dp
     val BandOutset = 2.dp
     val BandShape = RoundedCornerShape(12.dp)
     const val FarAlpha = 0.5f
