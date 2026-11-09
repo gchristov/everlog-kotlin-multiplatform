@@ -149,12 +149,6 @@ pill track, a 24px thumb when on, 16px when off). On: track and border `--conten
 `--content-secondary`. Disabled: the same at 40% opacity. Use it for on/off settings; `AppCheck` is for picking
 rows.
 
-## AppStepper
-
-A value changed a step at a time, e.g. the weekly goal or the rest after each set, usually in a dialog: the value
-in `--font-heading` with tabular figures, between outlined round − and + icon buttons, `--space-lg` apart. A
-button at its limit is disabled (its icon at 40% opacity). Prefer it to a number wheel.
-
 ## AppWheel
 
 Values picked by scrolling them under a highlighted centre row, usually in an `AppBottomSheet` with a Done button:
@@ -163,7 +157,9 @@ one column, or several side by side (e.g. whole kilograms and quarters) with an 
 in a band of `--background-selected` with a 1px `--content-action` border and 12px corners, across every column.
 The centre value is `--font-heading` in `--content-primary`, its neighbours `--font-body` in `--content-secondary`,
 the outer two at half opacity; figures are tabular. Each column is as wide as its longest value plus 24px a side, at least 96px, snaps to a value,
-and a tap on a value scrolls it to the centre. Prefer it to a stepper or a number keyboard for picking from a range.
+and a tap on a value scrolls it to the centre. Prefer it to a number keyboard for picking from a range: the weekly goal,
+the weight increment (whole and quarters), the rest after each set (`RestWheel`: minutes and seconds in 10s steps),
+a time (hours and minutes).
 
 ## AppImage / AppThumbnail
 
@@ -183,7 +179,7 @@ Actions pinned to the bottom of an `AppScreen`, in a floating card:
 - radius `--radius-surface`, 1px `--background-separator` border, padding `--space-lg`
 - background: the content behind it blurred (20px) under `--background-blur-overlay`
   (`backdrop-filter: blur(20px)`)
-- buttons stacked full width, `--space-sm` apart, in the order given: the primary `AppButton` first,
+- buttons stacked full width, 8px apart, in the order given: the primary `AppButton` first,
   a secondary or tertiary action under it. A single action keeps the lower slot.
 - optional note above the actions in a small card: `--background-primary`, `--font-caption`,
   `--content-secondary`, padding `--space-lg`
@@ -225,14 +221,14 @@ corners and drag handle, for a short set of options (e.g. a workout's options): 
 `--font-heading`, then its content, usually `AppListGroup`s, `--space-lg` apart and from the sides. Picking an option
 slides the sheet away first, then acts; tapping outside it or swiping it down closes it.
 
-## AppDialog
+## AppConfirmSheet
 
-An alert: background `--background-surface`, radius 28px (Material's dialog default), padding 24px, title in `--font-heading`,
-an optional line of body text in `--font-body` / `--content-secondary`, optional content under it
-(`--space-lg` apart), and up to two buttons side by side at the bottom right, sized to their text:
-`AppSecondaryButton` (the way out) then `AppButton` (the action we want). A third, quieter choice (like the
-system dialog's neutral button, e.g. Keep going) is an `AppTertiaryButton` at the start of the same row, with the
-other two at the end.
+A question in an `AppBottomSheet`, instead of a dialog (Compose screens have none): the title, an optional line of
+body text in `--font-body` / `--content-secondary`, optional content under it (a text field, a wheel), then its
+buttons full width and stacked, 8px apart as in `AppFooter`: `AppButton` (the action we want, e.g. Keep going, or Cancel on a
+delete), `AppSecondaryButton` (the way out or the other choice) and an optional `AppTertiaryButton` (a quieter third,
+e.g. Keep going beside Finish and Discard). A button slides the sheet away, then acts. The sheet rises above the
+keyboard when a field in it has it open.
 
 ## AppCircularProgressIndicator
 

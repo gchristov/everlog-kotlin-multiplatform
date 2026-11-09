@@ -881,16 +881,17 @@ class WorkoutLogViewModelTest {
     }
 
     @Test
-    fun `the rest from the options changes every exercise's by 10s, not below 10s`() {
+    fun `the rest picked from the options changes every exercise's`() {
         val viewModel = viewModel()
         viewModel.onRestTimerSettings()
-        viewModel.onRestStep(1)
+        viewModel.onRestPicked(100)
         assertThat(viewModel.state.value.restSeconds).isEqualTo(100)
         assertThat(viewModel.blocks.map { it.restSeconds }).containsExactly(100, 100)
         assertThat(analytics.events.last()).isEqualTo("rest_changed 100")
 
-        repeat(20) { viewModel.onRestStep(-1) }
-        assertThat(viewModel.state.value.restSeconds).isEqualTo(10)
+        val events = analytics.events.size
+        viewModel.onRestPicked(100)
+        assertThat(analytics.events).hasSize(events)
     }
 
     // Filling in from history

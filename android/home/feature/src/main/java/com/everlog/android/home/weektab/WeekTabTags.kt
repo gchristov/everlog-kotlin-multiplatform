@@ -10,6 +10,7 @@ object WeekTabTags {
     const val BannerClose = "weekTab.bannerClose"
     const val Plan = "weekTab.plan"
     const val SkipDay = "weekTab.skipDay"
+    const val SkipConfirm = "weekTab.skipConfirm"
     const val StartDay = "weekTab.startDay"
     const val FinishPlan = "weekTab.finishPlan"
 

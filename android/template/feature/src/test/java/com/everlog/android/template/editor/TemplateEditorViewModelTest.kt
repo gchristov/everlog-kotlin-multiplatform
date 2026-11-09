@@ -234,30 +234,27 @@ class TemplateEditorViewModelTest {
     }
 
     @Test
-    fun `rest steps by the timer's step, never below one step, for every group`() {
+    fun `the rest picked on the wheel applies to every group`() {
         val viewModel = loaded()
-        val step = WorkoutBuilderDefaults.TIME_STEP_SECONDS
 
         viewModel.onRestTapped()
-        viewModel.onRestStep(1)
-        assertThat(viewModel.state.value.restSeconds).isEqualTo(90 + step)
-        repeat(20) { viewModel.onRestStep(-1) }
-        assertThat(viewModel.state.value.restSeconds).isEqualTo(step)
+        viewModel.onRestPicked(150)
+        assertThat(viewModel.state.value.restSeconds).isEqualTo(150)
 
         viewModel.onSave()
-        assertThat(saved.exerciseGroups.map { it.restTimeSeconds }).containsExactly(step, step)
+        assertThat(saved.exerciseGroups.map { it.restTimeSeconds }).containsExactly(150, 150)
     }
 
     @Test
-    fun `a template saved without rest keeps it on minus, and plus starts it at a step`() {
+    fun `a template saved without rest keeps it until a rest is picked`() {
         load.state.value = Load.Ready(push().apply { exerciseGroups.forEach { it.restTimeSeconds = 0 } })
         val viewModel = viewModel()
         val step = WorkoutBuilderDefaults.TIME_STEP_SECONDS
 
-        viewModel.onRestStep(-1)
+        viewModel.onRestTapped()
         assertThat(viewModel.state.value.restSeconds).isEqualTo(0)
         assertThat(viewModel.state.value.hasChanges()).isFalse()
-        viewModel.onRestStep(1)
+        viewModel.onRestPicked(step)
         assertThat(viewModel.state.value.restSeconds).isEqualTo(step)
     }
 
@@ -469,8 +466,8 @@ class TemplateEditorViewModelTest {
         viewModel.onBackspace()
         viewModel.type("10")
         viewModel.onRestTapped()
-        viewModel.onRestStep(1)
-        viewModel.onRestStep(-1)
+        viewModel.onRestPicked(100)
+        viewModel.onRestPicked(90)
         viewModel.onDialogDismissed()
 
         assertThat(viewModel.state.value.hasChanges()).isFalse()

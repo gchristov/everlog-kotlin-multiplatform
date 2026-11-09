@@ -28,8 +28,8 @@ import androidx.lifecycle.compose.LifecycleResumeEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.everlog.android.common.compose.CommonComposeActivity
 import com.everlog.android.common.compose.elements.AppBarScrollBehavior
-import com.everlog.android.common.compose.elements.AppDialog
-import com.everlog.android.common.compose.elements.AppDialogAction
+import com.everlog.android.common.compose.elements.AppConfirmSheet
+import com.everlog.android.common.compose.elements.AppSheetAction
 import com.everlog.android.common.compose.elements.AppScreen
 import com.everlog.android.common.compose.elements.rememberAppBarScrollBehavior
 import com.everlog.android.common.compose.theme.Theme
@@ -254,11 +254,11 @@ private fun SkipSetupDialog(
     onKeepGoing: () -> Unit,
     onSkipSetup: () -> Unit,
 ) {
-    AppDialog(
+    AppConfirmSheet(
         title = stringResource(R.string.onboarding_skip_setup_title),
         body = stringResource(R.string.onboarding_skip_setup_body),
         onDismissRequest = onKeepGoing,
-        primaryAction = AppDialogAction(text = stringResource(R.string.onboarding_keep_going), onClick = onKeepGoing),
-        secondaryAction = AppDialogAction(text = stringResource(R.string.onboarding_skip_setup), onClick = onSkipSetup),
+        primaryAction = AppSheetAction(text = stringResource(R.string.onboarding_keep_going), onClick = onKeepGoing),
+        secondaryAction = AppSheetAction(text = stringResource(R.string.onboarding_skip_setup), onClick = onSkipSetup),
     )
 }

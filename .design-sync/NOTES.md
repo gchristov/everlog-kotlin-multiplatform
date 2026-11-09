@@ -9,7 +9,7 @@
 - **Keep it in step with the code.** When `common:compose` `theme` or an element changes, update the matching
   token or section in `guidelines/elements.md`, rebuild and re-sync. Values come from `theme/*.kt` and
   `common:design res/values/colors.xml` (ARGB colours become `rgba()`); element sizes from each element's source
-  (e.g. AppDialog uses Material's 28dp corners, not `--radius-surface`).
+  (e.g. AppBottomSheet uses Material's 28dp top corners, not `--radius-surface`).
 - Onboarding's selected-answer styling (`--background-selected` + `--content-action-pressed` outline)
   is local to onboarding, not a design system element; the tokens exist, the element spec omits it.
 - **No Node on this Mac.** Run the validator in Docker:

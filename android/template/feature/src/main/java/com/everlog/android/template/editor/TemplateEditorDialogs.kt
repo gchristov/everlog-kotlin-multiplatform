@@ -9,12 +9,14 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
-import com.everlog.android.common.compose.elements.AppDialog
-import com.everlog.android.common.compose.elements.AppDialogAction
+import com.everlog.android.common.compose.elements.AppConfirmSheet
+import com.everlog.android.common.compose.elements.AppSheetAction
 import com.everlog.android.common.compose.elements.AppTextField
 import com.everlog.android.template.R
-import com.everlog.android.common.compose.components.rest.RestStepper
+import com.everlog.android.common.compose.components.rest.RestWheel
+import com.everlog.android.workoutbuilder.data.WorkoutBuilderDefaults
 
+// The template editor's prompts, each a bottom sheet
 @Composable
 internal fun TemplateEditorDialogs(state: TemplateEditorState, viewModel: TemplateEditorViewModel) {
     when (val dialog = state.dialog) {
@@ -22,11 +24,11 @@ internal fun TemplateEditorDialogs(state: TemplateEditorState, viewModel: Templa
         TemplateEditorDialog.Name -> {
             var name by rememberSaveable { mutableStateOf(state.name) }
             val save = { viewModel.onNameSaved(name) }
-            AppDialog(
+            AppConfirmSheet(
                 title = stringResource(R.string.template_editor_name),
                 onDismissRequest = viewModel::onDialogDismissed,
-                primaryAction = AppDialogAction(stringResource(DesignR.string.save), save),
-                secondaryAction = AppDialogAction(stringResource(DesignR.string.cancel), viewModel::onDialogDismissed),
+                primaryAction = AppSheetAction(stringResource(DesignR.string.save), save),
+                secondaryAction = AppSheetAction(stringResource(DesignR.string.cancel), viewModel::onDialogDismissed),
             ) {
                 AppTextField(
                     modifier = Modifier.testTag(TemplateEditorTags.NameField),
@@ -38,20 +40,20 @@ internal fun TemplateEditorDialogs(state: TemplateEditorState, viewModel: Templa
                 )
             }
         }
-        TemplateEditorDialog.Rest -> AppDialog(
+        TemplateEditorDialog.Rest -> AppConfirmSheet(
             title = stringResource(R.string.template_editor_rest),
             body = stringResource(R.string.template_editor_rest_body),
             onDismissRequest = viewModel::onDialogDismissed,
-            primaryAction = AppDialogAction(stringResource(DesignR.string.workout_log_done), viewModel::onDialogDismissed),
+            primaryAction = AppSheetAction(stringResource(DesignR.string.workout_log_done), viewModel::onDialogDismissed),
         ) {
-            RestStepper(seconds = state.restSeconds, onStep = viewModel::onRestStep)
+            RestWheel(seconds = state.restSeconds, stepSeconds = WorkoutBuilderDefaults.TIME_STEP_SECONDS, onPick = viewModel::onRestPicked)
         }
-        TemplateEditorDialog.Leave -> AppDialog(
+        TemplateEditorDialog.Leave -> AppConfirmSheet(
             title = stringResource(R.string.template_editor_leave_title),
             onDismissRequest = viewModel::onDialogDismissed,
-            primaryAction = AppDialogAction(stringResource(DesignR.string.save), viewModel::onSave),
-            secondaryAction = AppDialogAction(stringResource(DesignR.string.discard), viewModel::onDiscard),
-            tertiaryAction = AppDialogAction(stringResource(R.string.template_editor_keep_editing), viewModel::onDialogDismissed),
+            primaryAction = AppSheetAction(stringResource(DesignR.string.save), viewModel::onSave),
+            secondaryAction = AppSheetAction(stringResource(DesignR.string.discard), viewModel::onDiscard),
+            tertiaryAction = AppSheetAction(stringResource(R.string.template_editor_keep_editing), viewModel::onDialogDismissed),
         )
     }
 }

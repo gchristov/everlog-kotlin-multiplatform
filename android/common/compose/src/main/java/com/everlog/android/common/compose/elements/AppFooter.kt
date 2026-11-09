@@ -85,7 +85,9 @@ fun AppFooter(
         ) { content ->
             Column(verticalArrangement = Arrangement.spacedBy(Theme.spacing.small)) {
                 content.header?.let { FooterHeader(text = it) }
-                FooterActions(content.actions)
+                Column(verticalArrangement = Arrangement.spacedBy(StackedButtonGap)) {
+                    FooterActions(content.actions)
+                }
             }
         }
     }

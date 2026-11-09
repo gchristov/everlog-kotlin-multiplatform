@@ -46,7 +46,7 @@ internal fun WeekTabScreen(viewModel: WeekTabViewModel, actions: WeekTabActions)
         onSkip = viewModel::onSkipDay,
         onStart = { actions.startPlanDay(viewModel.onStartDay()) },
     )
-    WeekTabDialogs(
+    WeekTabSheets(
         prompt = state.prompt,
         onSkipConfirmed = viewModel::onSkipDayConfirmed,
         onDismiss = viewModel::onPromptDismissed,

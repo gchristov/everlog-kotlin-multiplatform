@@ -1,10 +1,6 @@
 package com.everlog.android.home.weektab
 
-import androidx.compose.ui.test.filterToOne
-import androidx.compose.ui.test.hasAnyAncestor
-import androidx.compose.ui.test.hasClickAction
 import androidx.compose.ui.test.hasText
-import androidx.compose.ui.test.isDialog
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
@@ -140,15 +136,17 @@ class WeekTabScenarioTest {
         // Skipping asks first, then moves on to the rest day
         compose.onNodeWithTag(WeekTabTags.SkipDay).performClick()
         compose.onNodeWithText("Cancel").performClick()
+        compose.waitUntil(WaitMillis) { !exists("Cancel") }
         assertThat(planProgress.plan!!.getNextDay()!!.complete).isFalse()
         compose.onNodeWithTag(WeekTabTags.SkipDay).performClick()
-        clickDialogButton("Skip")
+        compose.onNodeWithTag(WeekTabTags.SkipConfirm).performClick()
         compose.waitUntil(WaitMillis) { exists("Complete") }
 
         // A rest day explains itself, and completing it marks it done in place
         compose.onNodeWithText("Day 3").performClick()
         compose.waitUntil(WaitMillis) { exists("Make sure", substring = true) }
         compose.onNodeWithText("OK").performClick()
+        compose.waitUntil(WaitMillis) { !exists("Make sure", substring = true) }
         compose.onNodeWithTag(WeekTabTags.StartDay).performClick()
         assertThat(planProgress.plan!!.weeks[0].getDays()[1].complete).isTrue()
         assertThat(started).isEqualTo(WeekTabPlanStart.Nothing)
@@ -200,11 +198,6 @@ class WeekTabScenarioTest {
                 )
             }
         }
-    }
-
-    // The dialog's button, not the day's Skip behind it
-    private fun clickDialogButton(text: String) {
-        compose.onAllNodes(hasText(text) and hasClickAction()).filterToOne(hasAnyAncestor(isDialog())).performClick()
     }
 
     private fun exists(text: String, substring: Boolean = false) =

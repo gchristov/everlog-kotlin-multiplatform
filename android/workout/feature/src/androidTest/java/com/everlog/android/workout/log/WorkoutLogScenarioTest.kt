@@ -325,13 +325,15 @@ class WorkoutLogScenarioTest {
         compose.onNode(hasText("Delete") and hasAnyAncestor(isDialog())).performClick()
         compose.onNodeWithText("Squat").assertDoesNotExist()
 
-        // The workout's options: the rest after each set up by 10s, then Edit workout to drag bench press below the
-        // superset by its grip, and Done
+        // The workout's options: the rest after each set up by 10s on its seconds wheel, then Edit workout to drag
+        // bench press below the superset by its grip, and Done
         compose.onNodeWithContentDescription("Workout options").performClick()
         compose.onNodeWithText("Rest timer").performClick()
-        compose.onNodeWithContentDescription("More rest").performClick()
+        compose.waitUntil(5_000L) { compose.onAllNodes(hasText("10 s")).fetchSemanticsNodes().isNotEmpty() }
+        compose.onNodeWithText("10 s").performClick()
+        compose.waitUntil(5_000L) { "rest_changed 70" in analytics.events }
         compose.onNode(hasText("Done") and hasAnyAncestor(isDialog())).performClick()
-        assertThat(analytics.events).contains("rest_changed 70")
+        compose.waitUntil(5_000L) { compose.onAllNodes(hasText("Done") and hasAnyAncestor(isDialog())).fetchSemanticsNodes().isEmpty() }
         compose.onNodeWithContentDescription("Workout options").performClick()
         compose.onNodeWithText("Edit workout").performClick()
         compose.onNodeWithTag(ExerciseTableTags.editGrip(0)).performTouchInput {

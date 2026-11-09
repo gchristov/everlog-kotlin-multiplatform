@@ -77,6 +77,8 @@
     <string name="onboarding_remind_me">Remind me</string>
     <string name="onboarding_reminder_time_description">Reminder time, %1$s. Opens time picker</string>
     <string name="onboarding_reminder_time_title">Reminder time</string>
+    <string name="onboarding_reminder_hour">Hour</string>
+    <string name="onboarding_reminder_minute">Minute</string>
     <string name="onboarding_reminders_answer">%1$s at %2$s</string>
     <string name="onboarding_reminders_helper">We\'ll only message you on the days you pick.</string>
     <string name="onboarding_reminders_label">Reminders</string>

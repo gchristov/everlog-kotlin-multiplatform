@@ -157,12 +157,16 @@ class TemplateEditorScenarioTest {
         rename("  Legs ")
         compose.onNodeWithText("Legs").assertExists()
 
-        // Rest steps by 10s and never below 10s
+        // Rest on its minutes and seconds wheels, never below 10s: no minutes and no seconds is 10s
         inView(TemplateEditorTags.Rest).performClick()
-        repeat(7) { compose.onNode(hasContentDescription("Less rest")).performClick() }
-        compose.onNode(hasText("0:10") and hasAnyAncestor(isDialog())).assertExists()
-        compose.onNode(hasContentDescription("More rest")).performClick()
+        compose.waitUntil(TIMEOUT) { compose.onAllNodes(hasText("0 min")).fetchSemanticsNodes().isNotEmpty() }
+        compose.onNodeWithText("0 min").performClick()
+        compose.waitUntil(TIMEOUT) { compose.onAllNodes(hasText("0:10")).fetchSemanticsNodes().isNotEmpty() }
+        compose.waitUntil(TIMEOUT) { compose.onAllNodes(hasText("20 s")).fetchSemanticsNodes().isNotEmpty() }
+        compose.onNodeWithText("20 s").performClick()
+        compose.waitUntil(TIMEOUT) { compose.onAllNodes(hasText("0:20")).fetchSemanticsNodes().isNotEmpty() }
         compose.onNode(hasText("Done") and hasAnyAncestor(isDialog())).performClick()
+        compose.waitUntil(TIMEOUT) { compose.onAllNodes(hasText("Done") and hasAnyAncestor(isDialog())).fetchSemanticsNodes().isEmpty() }
         compose.onNodeWithText("0:20").assertExists()
 
         // Saved as a new template with everything above

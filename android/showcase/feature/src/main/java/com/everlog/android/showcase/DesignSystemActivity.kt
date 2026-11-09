@@ -42,7 +42,7 @@ internal enum class DesignSystemPage {
     Timeline,
     Examples,
     HeroHeader,
-    Dialogs,
+    Prompts,
     BottomSheet,
     Wheels,
     Footer,
@@ -84,7 +84,7 @@ internal fun DesignSystemScreen(viewModel: DesignSystemViewModel) {
         DesignSystemPage.Timeline -> DesignSystemTimeline()
         DesignSystemPage.Examples -> DesignSystemExamples()
         DesignSystemPage.HeroHeader -> DesignSystemHeroHeader()
-        DesignSystemPage.Dialogs -> DesignSystemDialogs()
+        DesignSystemPage.Prompts -> DesignSystemPrompts()
         DesignSystemPage.BottomSheet -> DesignSystemBottomSheet()
         DesignSystemPage.Wheels -> DesignSystemWheels()
         DesignSystemPage.Footer -> DesignSystemFooter(onButtonClick = onButtonClick)
@@ -127,7 +127,7 @@ private val HubSections = listOf(
         HubEntry(DesignSystemPage.Timeline, "Timeline", "Days on a line, each beside its own content, as the history lists show them"),
         HubEntry(DesignSystemPage.Examples, "Examples", "A faded sample of what an empty screen becomes, under the EXAMPLE label"),
         HubEntry(DesignSystemPage.HeroHeader, "Hero header", "A large title at the top of a screen's content"),
-        HubEntry(DesignSystemPage.Dialogs, "Dialogs", "A title, body text and actions, the text field and the stepper"),
+        HubEntry(DesignSystemPage.Prompts, "Prompts", "Questions in a bottom sheet with up to three actions, and the text field"),
         HubEntry(DesignSystemPage.BottomSheet, "Bottom sheet", "Options in a sheet that slides up, closed by picking one"),
         HubEntry(DesignSystemPage.Wheels, "Wheels", "Values picked by scrolling under a highlighted row, one column or several"),
         HubEntry(DesignSystemPage.Footer, "Footer", "Actions in a card pinned to the bottom, blurring what scrolls behind"),

@@ -24,14 +24,11 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.TimePicker
-import androidx.compose.material3.TimePickerDefaults
-import androidx.compose.material3.rememberTimePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -49,8 +46,10 @@ import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import com.everlog.android.common.compose.elements.AppDialog
-import com.everlog.android.common.compose.elements.AppDialogAction
+import com.everlog.android.common.compose.elements.AppConfirmSheet
+import com.everlog.android.common.compose.elements.AppSheetAction
+import com.everlog.android.common.compose.elements.AppWheel
+import com.everlog.android.common.compose.elements.AppWheelColumn
 import com.everlog.android.common.compose.elements.AppFooter
 import com.everlog.android.common.compose.elements.AppFooterAction
 import com.everlog.android.common.compose.elements.AppText
@@ -436,7 +435,7 @@ internal fun OnboardingFooter(
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
+// The reminder's time on 24-hour hour and minute wheels, kept until OK
 @Composable
 private fun ReminderTimeDialog(
     hour: Int,
@@ -444,28 +443,18 @@ private fun ReminderTimeDialog(
     onDismiss: () -> Unit,
     onConfirm: (hour: Int, minute: Int) -> Unit,
 ) {
-    val pickerState = rememberTimePickerState(initialHour = hour, initialMinute = minute, is24Hour = true)
-    AppDialog(
+    var pickedHour by rememberSaveable { mutableIntStateOf(hour) }
+    var pickedMinute by rememberSaveable { mutableIntStateOf(minute) }
+    AppConfirmSheet(
         title = stringResource(R.string.onboarding_reminder_time_title),
         onDismissRequest = onDismiss,
-        primaryAction = AppDialogAction(
-            text = stringResource(DesignR.string.ok),
-            onClick = { onConfirm(pickerState.hour, pickerState.minute) },
-        ),
-        secondaryAction = AppDialogAction(text = stringResource(DesignR.string.cancel), onClick = onDismiss),
+        primaryAction = AppSheetAction(text = stringResource(DesignR.string.ok), onClick = { onConfirm(pickedHour, pickedMinute) }),
+        secondaryAction = AppSheetAction(text = stringResource(DesignR.string.cancel), onClick = onDismiss),
     ) {
-        TimePicker(
-            state = pickerState,
-            colors = TimePickerDefaults.colors(
-                clockDialColor = Theme.backgrounds.surfaceRaised,
-                clockDialSelectedContentColor = Theme.contentColors.onAction,
-                clockDialUnselectedContentColor = Theme.contentColors.primary,
-                selectorColor = Theme.contentColors.action,
-                containerColor = Theme.backgrounds.surface,
-                timeSelectorSelectedContainerColor = Theme.backgrounds.actionMuted,
-                timeSelectorUnselectedContainerColor = Theme.backgrounds.surfaceRaised,
-                timeSelectorSelectedContentColor = Theme.contentColors.primary,
-                timeSelectorUnselectedContentColor = Theme.contentColors.primary,
+        AppWheel(
+            columns = listOf(
+                AppWheelColumn((0..23).map { "%02d".format(it) }, pickedHour, { pickedHour = it }, stringResource(R.string.onboarding_reminder_hour)),
+                AppWheelColumn((0..59).map { "%02d".format(it) }, pickedMinute, { pickedMinute = it }, stringResource(R.string.onboarding_reminder_minute)),
             ),
         )
     }
