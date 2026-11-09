@@ -37,6 +37,12 @@ interface RoutineRepository {
     fun routine(uuid: String): Flow<Load<ELRoutine?>>
 
     /**
+     * All of the user's routines (workout templates) as they change, in no particular order, once they've synced
+     * from the server at least once. Empty without a signed-in user.
+     */
+    fun routines(): Flow<Load<List<ELRoutine>>>
+
+    /**
      * Saves the routines to the user's routines in one write, so either all of them are saved or
      * none are. Saving a routine again overwrites it, as routines are saved by their uuid.
      *
@@ -80,7 +86,7 @@ class RealRoutineRepository(
         )
     }
 
-    private fun routines(): Flow<Load<List<ELRoutine>>> {
+    override fun routines(): Flow<Load<List<ELRoutine>>> {
         val userId = session.user()?.id ?: return flowOf(Load.Ready(emptyList()))
         return dataSync.observe(
             CollectionSource(
