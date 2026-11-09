@@ -208,6 +208,10 @@ that needs it arrives.
   - **References outside what's synced.** A shared plan pointing at routines no synced collection holds can bring
     them in with `fetchIds`. Showing them as a list of their own would need a source whose cache listener follows
     just those ids.
+  - **Copying instead of referencing.** Copying a shared plan and its routines into the user's own collections
+    when they add or start it keeps their plans local (offline, editable, unchanged by later edits to the shared
+    one), at the cost of library fixes not reaching copies. Either way the repository joins them, so screens don't
+    change.
 - **Queries and server reads.** A new kind of server read must never be the same query as a cache listener.
   Firestore answers it from the listener's view (see `cacheOnly` in `FirestoreBackends.kt`). Add a case to
   `FirestoreBackendsTest` that follows the data while syncing it.
