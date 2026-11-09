@@ -11,6 +11,7 @@ android {
 
 dependencies {
     implementation(projects.android.auth.data)
+    implementation(projects.android.datasync)
     implementation(projects.android.template.data)
     implementation(projects.android.common.persistence)
     implementation(libs.androidx.localbroadcastmanager)
