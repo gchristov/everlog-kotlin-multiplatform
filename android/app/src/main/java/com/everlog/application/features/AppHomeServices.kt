@@ -1,8 +1,12 @@
 package com.everlog.application.features
 
+import android.content.Context
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.IntentSenderRequest
 import com.everlog.android.common.data.model.workout.ELWorkout
 import com.everlog.android.common.kotlin.AppContext
 import com.everlog.android.common.kotlin.Utils
+import com.everlog.android.home.screen.HomeAppUpdates
 import com.everlog.android.home.screen.HomeServices
 import com.everlog.android.workout.data.WorkoutManager
 import com.everlog.application.ELApplication
@@ -11,6 +15,7 @@ import com.everlog.managers.ErrorManager
 import com.everlog.managers.RemoteConfigManager
 import com.everlog.managers.analytics.AnalyticsManager
 import com.everlog.managers.apprate.AppLaunchManager
+import com.everlog.managers.appupdate.AppUpdateController
 import com.everlog.ui.navigator.ELNavigator
 import com.everlog.utils.FCMUtils
 import dev.zacsweers.metro.AppScope
@@ -57,5 +62,18 @@ class AppHomeServices : HomeServices {
 
     override fun onDestroyed() {
         ELDatastore.destroy()
+    }
+
+    override fun appUpdates(context: Context, launcher: ActivityResultLauncher<IntentSenderRequest>, onReady: () -> Unit): HomeAppUpdates {
+        val controller = AppUpdateController(context, launcher, onReady)
+        return object : HomeAppUpdates {
+            override fun check() = controller.checkForUpdate()
+
+            override fun onFlowResult(resultCode: Int) = controller.onUpdateFlowResult(resultCode)
+
+            override fun restart() = controller.completeUpdate()
+
+            override fun release() = controller.release()
+        }
     }
 }

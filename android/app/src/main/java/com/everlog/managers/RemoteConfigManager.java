@@ -97,6 +97,12 @@ public class RemoteConfigManager extends PreferencesManager {
         return localConfig != null && localConfig.getHistoryV2();
     }
 
+    // Home in Compose with all four Compose tabs; off until Remote Config says otherwise
+    public boolean homeV2() {
+        RemoteConfig localConfig = loadLocalRemoteConfig();
+        return localConfig != null && localConfig.getHomeV2();
+    }
+
     // The feedback form to open from a source, or null when there's none and the entry point is hidden
     @Nullable
     public String feedbackFormUrl(FeedbackSource source) {

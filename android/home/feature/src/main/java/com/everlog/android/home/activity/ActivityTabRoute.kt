@@ -29,8 +29,8 @@ fun ActivityTabRoute(shown: Boolean, pager: PagerState) {
         AppChipTabs(tabs = listOf(stringResource(DesignR.string.statistics_title), stringResource(DesignR.string.history_title)), pager = pager)
         HorizontalPager(state = pager, modifier = Modifier.weight(1f), beyondViewportPageCount = 1) { page ->
             when (page) {
-                ActivityTabPages.Statistics -> StatisticsPageRoute(shown = shown && pager.currentPage == ActivityTabPages.Statistics)
-                else -> HistoryPageRoute(shown = shown && pager.currentPage == ActivityTabPages.History, tabShown = shown)
+                ActivityTabPages.Statistics -> StatisticsPageRoute(shown = shown && pager.settledPage == ActivityTabPages.Statistics)
+                else -> HistoryPageRoute(shown = shown && pager.settledPage == ActivityTabPages.History, tabShown = shown)
             }
         }
     }

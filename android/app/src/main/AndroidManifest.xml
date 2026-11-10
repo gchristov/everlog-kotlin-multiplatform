@@ -215,6 +215,10 @@
             android:windowSoftInputMode="stateHidden"
             android:exported="false" />
         <activity
+            android:name="com.everlog.android.home.screen.ComposeHomeActivity"
+            android:theme="@style/AppTheme.NoActionBar"
+            android:exported="false" />
+        <activity
             android:name="com.everlog.android.showcase.DesignSystemActivity"
             android:theme="@style/AppTheme.NoActionBar"
             android:exported="false" />

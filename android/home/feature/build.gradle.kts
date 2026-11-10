@@ -19,6 +19,7 @@ dependencies {
     implementation(projects.android.plan.ui)
     implementation(projects.android.auth.data)
     implementation(projects.android.settings.data)
+    implementation(projects.android.settings.ui)
     implementation(projects.android.workout.data)
     implementation(projects.android.common.mvp)
     implementation(libs.androidx.lifecycle.runtime.compose)

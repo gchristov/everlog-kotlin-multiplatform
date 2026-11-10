@@ -35,6 +35,7 @@ import com.everlog.managers.apprate.RatePromptController;
 import com.everlog.managers.apprate.RatePromptTrigger;
 import com.everlog.android.workout.notification.WorkoutService;
 import com.everlog.ui.activities.home.HomeActivity;
+import com.everlog.android.home.screen.ComposeHomeActivity;
 import com.everlog.android.onboarding.OnboardingActivity;
 import com.everlog.android.plan.congratulate.CongratulateActivity;
 import com.everlog.android.plan.cover.CoverImagePickerActivity;
@@ -138,7 +139,7 @@ public class ELNavigator implements Navigator {
 
     @Override
     public void openHome() {
-        Intent i = new Intent(mContext, HomeActivity.class);
+        Intent i = new Intent(mContext, RemoteConfigManager.manager.homeV2() ? ComposeHomeActivity.class : HomeActivity.class);
         i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
         startActivity(i);
         closeCurrentActivity();
