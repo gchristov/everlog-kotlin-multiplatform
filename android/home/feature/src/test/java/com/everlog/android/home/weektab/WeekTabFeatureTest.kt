@@ -51,7 +51,7 @@ class WeekTabFeatureTest : FeatureTest() {
         compose.onNodeWithTag(WeekTabTags.Loading).assertExists()
 
         workouts.recent.value = Load.Ready(listOf(finishedToday(), finishedToday()))
-        compose.waitUntil(WaitMillis) { exists("more to go!") }
+        waitUntil(WaitMillis) { exists("more to go!") }
         compose.onNodeWithTag(WeekTabTags.Empty).assertDoesNotExist()
 
         // The goal opens the settings, the days and the numbers the statistics
@@ -66,7 +66,7 @@ class WeekTabFeatureTest : FeatureTest() {
 
         workouts.recent.value = Load.Ready(emptyList())
 
-        compose.waitUntil(WaitMillis) { exists("Ready to train?") }
+        waitUntil(WaitMillis) { exists("Ready to train?") }
         compose.onNodeWithTag(WeekTabTags.Empty).performScrollTo()
         compose.onNodeWithText("Start workout").performClick()
         assertThat(opened).containsExactly("start workout")
@@ -80,7 +80,7 @@ class WeekTabFeatureTest : FeatureTest() {
         compose.onNodeWithText("Tell us").assertExists()
         compose.onNodeWithTag(WeekTabTags.BannerClose).performClick()
 
-        compose.waitUntil(WaitMillis) { !exists("Tell us") }
+        waitUntil(WaitMillis) { !exists("Tell us") }
         assertThat(notifications.dismissedIds).containsExactly("survey")
         assertThat(tapped).isNull()
     }
@@ -93,7 +93,7 @@ class WeekTabFeatureTest : FeatureTest() {
         compose.onNodeWithTag(WeekTabTags.Banner).performClick()
 
         assertThat(tapped).isEqualTo(HomeNotificationTap.OpenUrl("https://example.com"))
-        compose.waitUntil(WaitMillis) { !exists("Tell us") }
+        waitUntil(WaitMillis) { !exists("Tell us") }
         assertThat(notifications.dismissedIds).containsExactly("survey")
     }
 
@@ -112,17 +112,17 @@ class WeekTabFeatureTest : FeatureTest() {
         // Skipping asks first, then moves on to the rest day
         compose.onNodeWithTag(WeekTabTags.SkipDay).performClick()
         compose.onNodeWithText("Cancel").performClick()
-        compose.waitUntil(WaitMillis) { !exists("Cancel") }
+        waitUntil(WaitMillis) { !exists("Cancel") }
         assertThat(planProgress.plan!!.getNextDay()!!.complete).isFalse()
         compose.onNodeWithTag(WeekTabTags.SkipDay).performClick()
         compose.onNodeWithTag(WeekTabTags.SkipConfirm).performClick()
-        compose.waitUntil(WaitMillis) { exists("Complete") }
+        waitUntil(WaitMillis) { exists("Complete") }
 
         // A rest day explains itself, and completing it marks it done in place
         compose.onNodeWithText("Day 3").performClick()
-        compose.waitUntil(WaitMillis) { exists("Make sure", substring = true) }
+        waitUntil(WaitMillis) { exists("Make sure", substring = true) }
         compose.onNodeWithText("OK").performClick()
-        compose.waitUntil(WaitMillis) { !exists("Make sure", substring = true) }
+        waitUntil(WaitMillis) { !exists("Make sure", substring = true) }
         compose.onNodeWithTag(WeekTabTags.StartDay).performClick()
         assertThat(planProgress.plan!!.weeks[0].getDays()[1].complete).isTrue()
         assertThat(started).isEqualTo(WeekTabPlanStart.Nothing)
@@ -138,7 +138,7 @@ class WeekTabFeatureTest : FeatureTest() {
         assertThat(started).isEqualTo(WeekTabPlanStart.Finished)
         assertThat(planProgress.plan).isNull()
         // Back to the week, as the plan is over
-        compose.waitUntil(WaitMillis) { exists("Week") }
+        waitUntil(WaitMillis) { exists("Week") }
     }
 
     private val legs = ELRoutine(uuid = "legs", name = "Legs")

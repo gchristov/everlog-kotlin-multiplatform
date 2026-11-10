@@ -46,12 +46,12 @@ class StatisticsPageFeatureTest : FeatureTest() {
         compose.onNodeWithTag(StatisticsPageTags.Loading).assertExists()
 
         workouts.recent.value = Load.Ready(listOf(finishedToday(), finishedToday()))
-        compose.waitUntil(WaitMillis) { workoutsShown("2") }
+        waitUntil(WaitMillis) { workoutsShown("2") }
         compose.onNodeWithTag(StatisticsPageTags.Loading).assertDoesNotExist()
 
         // The month counts from the same synced workouts, with no read of its own
         pick("This month")
-        compose.waitUntil(WaitMillis) { exists("This month") && workoutsShown("2") }
+        waitUntil(WaitMillis) { exists("This month") && workoutsShown("2") }
         assertThat(workouts.reads[12]).isNull()
 
         compose.onNodeWithTag(StatisticsPageTags.Feedback).performScrollTo().performClick()
@@ -63,27 +63,25 @@ class StatisticsPageFeatureTest : FeatureTest() {
     fun tryingTheLast12MonthsAgain() {
         workouts.recent.value = Load.Ready(listOf(finishedToday()))
         show()
-        compose.waitUntil(WaitMillis) { workoutsShown("1") }
+        waitUntil(WaitMillis) { workoutsShown("1") }
 
         pick("Last 12 months")
         compose.onNodeWithTag(StatisticsPageTags.Loading).assertExists()
 
         year.value = Load.Unavailable(IOException("timed out"))
-        compose.waitUntil(WaitMillis) { exists("Couldn't load the last 12 months.") }
+        waitUntil(WaitMillis) { exists("Couldn't load the last 12 months.") }
 
         year.value = Load.Loading
         compose.onNodeWithText("Try again").performClick()
-        // The snackbar hands its result back through the main looper, which waitUntil doesn't run on its own
-        compose.waitForIdle()
-        compose.waitUntil(WaitMillis) { workouts.reads[12] == 2 }
-        compose.waitUntil(WaitMillis) { !exists("Couldn't load the last 12 months.") }
+        waitUntil(WaitMillis) { workouts.reads[12] == 2 }
+        waitUntil(WaitMillis) { !exists("Couldn't load the last 12 months.") }
 
         year.value = Load.Ready(List(3) { finishedToday() })
-        compose.waitUntil(WaitMillis) { workoutsShown("3") }
+        waitUntil(WaitMillis) { workoutsShown("3") }
 
         // Back to the week, which never stopped following the synced workouts
         pick("This week")
-        compose.waitUntil(WaitMillis) { workoutsShown("1") }
+        waitUntil(WaitMillis) { workoutsShown("1") }
     }
 
     @Test
@@ -92,12 +90,12 @@ class StatisticsPageFeatureTest : FeatureTest() {
         show()
 
         // Under its label, faded and out of the semantics tree, so the real numbers aren't there
-        compose.waitUntil(WaitMillis) { exists(hasTestTag(StatisticsPageTags.Example)) }
+        waitUntil(WaitMillis) { exists(hasTestTag(StatisticsPageTags.Example)) }
         compose.onNodeWithTag(StatisticsPageTags.Workouts).assertDoesNotExist()
         compose.onNodeWithTag(StatisticsPageTags.Feedback).assertDoesNotExist()
 
         workouts.recent.value = Load.Ready(listOf(finishedToday()))
-        compose.waitUntil(WaitMillis) { workoutsShown("1") }
+        waitUntil(WaitMillis) { workoutsShown("1") }
         compose.onNodeWithTag(StatisticsPageTags.Example).assertDoesNotExist()
         compose.onNodeWithTag(StatisticsPageTags.Feedback).assertExists()
     }

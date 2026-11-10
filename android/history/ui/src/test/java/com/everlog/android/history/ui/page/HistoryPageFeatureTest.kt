@@ -56,21 +56,21 @@ class HistoryPageFeatureTest : FeatureTest() {
         compose.onNodeWithTag(HistoryPageTags.Loading).assertExists()
 
         shown(listOf(finished(yesterday, "Legs")))
-        compose.waitUntil(WaitMillis) { exists(hasTestTag(HistoryPageTags.Calendar)) }
+        waitUntil(WaitMillis) { exists(hasTestTag(HistoryPageTags.Calendar)) }
         // On the 1st, yesterday is in the month above
         compose.onNodeWithTag(HistoryPageTags.Calendar).performScrollToNode(hasTestTag(HistoryPageTags.day(yesterday)))
-        compose.waitUntil(WaitMillis) { exists(hasTestTag(HistoryPageTags.WorkoutDot)) }
+        waitUntil(WaitMillis) { exists(hasTestTag(HistoryPageTags.WorkoutDot)) }
 
         // Today has no workouts: it says so and stays on the calendar
         compose.onNodeWithTag(HistoryPageTags.Calendar).performScrollToNode(hasTestTag(HistoryPageTags.day(today)))
         compose.onNodeWithTag(HistoryPageTags.day(today)).performClick()
-        compose.waitUntil(WaitMillis) { exists(hasText("No workouts on this day.")) }
+        waitUntil(WaitMillis) { exists(hasText("No workouts on this day.")) }
         compose.onNodeWithTag(HistoryPageTags.Calendar).assertExists()
 
         // A day with workouts opens the list on it, and its workout opens
         compose.onNodeWithTag(HistoryPageTags.Calendar).performScrollToNode(hasTestTag(HistoryPageTags.day(yesterday)))
         compose.onNodeWithTag(HistoryPageTags.day(yesterday)).performClick()
-        compose.waitUntil(WaitMillis) { exists(hasText("Legs") and hasAnyAncestor(hasTestTag(HistoryPageTags.List))) }
+        waitUntil(WaitMillis) { exists(hasText("Legs") and hasAnyAncestor(hasTestTag(HistoryPageTags.List))) }
         compose.onNodeWithText("Legs").performClick()
         assertThat(opened).containsExactly("Legs")
     }
@@ -83,16 +83,16 @@ class HistoryPageFeatureTest : FeatureTest() {
 
         // Newest first from the read; the list opens on the newest, at the bottom
         shown(days.map { finished(it, "Workout $it") })
-        compose.waitUntil(WaitMillis) { exists(hasText("Workout ${days.first()}")) }
+        waitUntil(WaitMillis) { exists(hasText("Workout ${days.first()}")) }
         assertThat(workouts.history.loadMoreCalls).isEqualTo(0)
 
         // Reaching the oldest asks for the next page, which goes in above
         compose.onNodeWithTag(HistoryPageTags.List).performScrollToIndex(0)
-        compose.waitUntil(WaitMillis) { workouts.history.loadMoreCalls == 1 }
+        waitUntil(WaitMillis) { workouts.history.loadMoreCalls == 1 }
         val older = today.minusDays(60)
         shown(days.map { finished(it, "Workout $it") } + finished(older, "The first"), complete = true)
         compose.onNodeWithTag(HistoryPageTags.List).performScrollToIndex(0)
-        compose.waitUntil(WaitMillis) { exists(hasText("The first")) }
+        waitUntil(WaitMillis) { exists(hasText("The first")) }
 
         // Another Home tab and back: the newest page shows straight away, on the newest, while it's read again
         compose.runOnIdle {
@@ -100,7 +100,7 @@ class HistoryPageFeatureTest : FeatureTest() {
             viewModel.refresh()
         }
         compose.onNodeWithTag(HistoryPageTags.Loading).assertDoesNotExist()
-        compose.waitUntil(WaitMillis) { displayed("Workout ${days.first()}") }
+        waitUntil(WaitMillis) { displayed("Workout ${days.first()}") }
         assertThat(workouts.historyReads).isEqualTo(2)
     }
 
@@ -109,11 +109,11 @@ class HistoryPageFeatureTest : FeatureTest() {
         val earlier = today.minusMonths(2).withDayOfMonth(10)
         show()
         shown(listOf(finished(today, "Today"), finished(earlier, "Earlier")))
-        compose.waitUntil(WaitMillis) { exists(hasTestTag(HistoryPageTags.Calendar)) }
+        waitUntil(WaitMillis) { exists(hasTestTag(HistoryPageTags.Calendar)) }
 
         // The oldest month shown asks for the next page, which adds months above it without moving it
         compose.onNodeWithTag(HistoryPageTags.Calendar).performScrollToNode(hasTestTag(HistoryPageTags.day(earlier)))
-        compose.waitUntil(WaitMillis) { workouts.history.loadMoreCalls >= 1 }
+        waitUntil(WaitMillis) { workouts.history.loadMoreCalls >= 1 }
         val oldest = today.minusMonths(5).withDayOfMonth(10)
         shown(listOf(finished(today, "Today"), finished(earlier, "Earlier"), finished(oldest, "Oldest")), complete = true)
         compose.waitForIdle()
@@ -125,14 +125,14 @@ class HistoryPageFeatureTest : FeatureTest() {
     fun tryingAgainWhenTheHistoryCantLoad() {
         show()
         workouts.history.loads.value = Load.Unavailable(IOException("timed out"))
-        compose.waitUntil(WaitMillis) { exists(hasText("Couldn't load your history.")) }
+        waitUntil(WaitMillis) { exists(hasText("Couldn't load your history.")) }
 
         workouts.history.loads.value = Load.Loading
         compose.onNodeWithText("Try again").performClick()
-        compose.waitUntil(WaitMillis) { workouts.historyReads == 2 && !exists(hasText("Couldn't load your history.")) }
+        waitUntil(WaitMillis) { workouts.historyReads == 2 && !exists(hasText("Couldn't load your history.")) }
 
         shown(listOf(finished(today, "Legs")))
-        compose.waitUntil(WaitMillis) { exists(hasTestTag(HistoryPageTags.WorkoutDot)) }
+        waitUntil(WaitMillis) { exists(hasTestTag(HistoryPageTags.WorkoutDot)) }
     }
 
     @Test
@@ -141,13 +141,13 @@ class HistoryPageFeatureTest : FeatureTest() {
         show()
         pickView("List")
         shown(days.map { finished(it, "Workout $it") })
-        compose.waitUntil(WaitMillis) { exists(hasText("Workout ${days.first()}")) }
+        waitUntil(WaitMillis) { exists(hasText("Workout ${days.first()}")) }
 
         // At the newest, workouts saved today come into view, down to the last of them, though the day is taller than
         // the room under the list
         val todays = (1..4).map { finished(today, "Today's $it") }
         shown(days.map { finished(it, "Workout $it") } + todays)
-        compose.waitUntil(WaitMillis) { displayed("Today's 4") }
+        waitUntil(WaitMillis) { displayed("Today's 4") }
 
         // Further back, another stays out of view
         compose.onNodeWithTag(HistoryPageTags.List).performScrollToIndex(0)
@@ -165,7 +165,7 @@ class HistoryPageFeatureTest : FeatureTest() {
         shown(emptyList(), loadingMore = true)
 
         // The example shows in either view, under its label, faded and out of the semantics tree
-        compose.waitUntil(WaitMillis) { exists(hasTestTag(HistoryPageTags.Example)) }
+        waitUntil(WaitMillis) { exists(hasTestTag(HistoryPageTags.Example)) }
         compose.onNodeWithTag(HistoryPageTags.List).assertDoesNotExist()
         compose.mainClock.advanceTimeBy(1_000)
         compose.onNodeWithTag(HistoryPageTags.LoadingMore).assertDoesNotExist()
@@ -176,7 +176,7 @@ class HistoryPageFeatureTest : FeatureTest() {
 
         // The first workout replaces it
         shown(listOf(finished(today, "Legs")), complete = true)
-        compose.waitUntil(WaitMillis) { exists(hasTestTag(HistoryPageTags.Calendar)) }
+        waitUntil(WaitMillis) { exists(hasTestTag(HistoryPageTags.Calendar)) }
         compose.onNodeWithTag(HistoryPageTags.Example).assertDoesNotExist()
     }
 
