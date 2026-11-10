@@ -7,11 +7,16 @@ android {
     namespace = "com.everlog.android.common.composetest"
 }
 
-// Test support for other modules' tests. It lives in main, with its dependencies as api, because a module's test
+// Test support for other modules' tests: Compose tests on the emulator, and feature tests on the JVM (FeatureTest). It lives in main, with its dependencies as api, because a module's test
 // sources can't be shared.
 
 dependencies {
-    implementation(projects.android.common.compose)
+    api(projects.android.common.compose)
+    implementation(projects.android.common.kotlin)
+    implementation(libs.threetenabp)
+    // FeatureTest builds on Robolectric, which the Compose convention plugin adds to unit tests only: on the emulator,
+    // AndroidJUnit4 would hand tests to it
+    compileOnly(libs.robolectric)
     api(platform(libs.androidx.compose.bom))
     api(libs.androidx.compose.ui.test.junit4)
     api(libs.androidx.test.runner)

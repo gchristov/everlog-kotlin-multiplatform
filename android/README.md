@@ -43,7 +43,7 @@ Common modules:
 | `common:test` | JUnit, Truth, kotlin-test, threetenbp, shared test helpers |
 | `common:design` | Shared resources only: colours, fonts, dimens, drawables, strings. No code unless something strictly needs it |
 | `common:compose` | The design system (theme and elements), `CommonComposeActivity` and shared components |
-| `common:compose-test` | Compose UI test dependencies, test manifest and finders |
+| `common:compose-test` | Compose UI test dependencies, test manifest and finders, and `FeatureTest` with Robolectric for feature tests on the JVM (every Compose module's unit tests get it from the Compose convention plugin) |
 | `common:mvvm` | `CommonViewModel`, `ViewModelFactory` |
 | `common:mvp` | The XML/MVP bases: presenters, base activities, fragments, bottom sheets and views, the generic prompts, EventBus and the broadcasts every presenter listens to, the vendored adapter |
 | `common:firebase` | Firebase, the field names and `FirestorePaths` (each user's collections take the user id) |
