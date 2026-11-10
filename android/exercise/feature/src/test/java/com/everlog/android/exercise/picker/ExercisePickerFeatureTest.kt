@@ -50,35 +50,35 @@ class ExercisePickerFeatureTest : FeatureTest() {
         // Typing searches names and aliases, and the keyboard's search key closes the menu over the list
         searchBar().performTextInput("bent over")
         searchBar().performImeAction()
-        compose.waitUntil(WaitMillis) { !exists("Barbell Bench Press") }
+        waitUntil(WaitMillis) { !exists("Barbell Bench Press") }
         compose.onNodeWithText("Barbell Row").assertExists()
         searchBar().performTextClearance()
         searchBar().performImeAction()
-        compose.waitUntil(WaitMillis) { exists("Barbell Bench Press") }
+        waitUntil(WaitMillis) { exists("Barbell Bench Press") }
 
         // A filter from its chip: Equipment is Dumbbell
         compose.onNodeWithText("Equipment").performClick()
         // The menu's value, with how many exercises it has
         compose.onNode(hasText("Dumbbell") and hasText("1")).performClick()
         compose.onNodeWithText("Done").performClick()
-        compose.waitUntil(WaitMillis) { !exists("Barbell Row") }
+        waitUntil(WaitMillis) { !exists("Barbell Row") }
         compose.onNodeWithText("Dumbbell Bench Press").assertExists()
 
         // Picked one by one, then added on its own
         compose.onNodeWithText("Dumbbell Bench Press").performClick()
         compose.onNodeWithText("Add 1 exercise").performClick()
-        compose.waitUntil(WaitMillis) { result != null }
+        waitUntil(WaitMillis) { result != null }
         assertThat(result).isEqualTo(PickerResult(listOf(DumbbellBench), ELSetType.SINGLE))
 
         // Two picks can go in as a superset, whose kind is picked on another screen
         result = null
         compose.onNodeWithText("Clear all").performClick()
-        compose.waitUntil(WaitMillis) { exists("Barbell Row") }
+        waitUntil(WaitMillis) { exists("Barbell Row") }
         compose.onNodeWithText("Barbell Row").performClick()
         compose.onNodeWithText("Add as a superset").performClick()
         assertThat(setTypeFor).isEqualTo(2)
         viewModel.onAdd(ELSetType.SUPER)
-        compose.waitUntil(WaitMillis) { result != null }
+        waitUntil(WaitMillis) { result != null }
         assertThat(result).isEqualTo(PickerResult(listOf(DumbbellBench, BarbellRow), ELSetType.SUPER))
     }
 
@@ -94,7 +94,7 @@ class ExercisePickerFeatureTest : FeatureTest() {
         // Nothing found offers to create it, named as searched
         searchBar().performTextInput("zercher")
         searchBar().performImeAction()
-        compose.waitUntil(WaitMillis) { exists("Create “zercher”", substring = true) }
+        waitUntil(WaitMillis) { exists("Create “zercher”", substring = true) }
         compose.onNodeWithText("Create “zercher”", substring = true).performClick()
         assertThat(created).isEqualTo("zercher")
 
@@ -112,10 +112,10 @@ class ExercisePickerFeatureTest : FeatureTest() {
     fun aLibraryThatDoesNotLoad() {
         show(PickerMode.Pick, failures = 1)
 
-        compose.waitUntil(WaitMillis) { exists("Couldn't load the exercises.") }
+        waitUntil(WaitMillis) { exists("Couldn't load the exercises.") }
         compose.onNodeWithText("Try again").performClick()
 
-        compose.waitUntil(WaitMillis) { exists("Barbell Row") }
+        waitUntil(WaitMillis) { exists("Barbell Row") }
     }
 
     private fun show(mode: PickerMode, failures: Int = 0, feedbackForm: Boolean = false): ExercisePickerViewModel {
@@ -159,7 +159,7 @@ class ExercisePickerFeatureTest : FeatureTest() {
                 )
             }
         }
-        if (failures == 0) compose.waitUntil(WaitMillis) { exists("Barbell Row") }
+        if (failures == 0) waitUntil(WaitMillis) { exists("Barbell Row") }
         return viewModel
     }
 

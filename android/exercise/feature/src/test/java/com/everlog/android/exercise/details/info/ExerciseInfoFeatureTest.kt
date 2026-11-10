@@ -29,7 +29,7 @@ class ExerciseInfoFeatureTest : FeatureTest() {
 
         guide.value = Load.Ready(ExerciseGuide(instructions = listOf("Lie on the bench", "Press the bar up"), tips = listOf("Keep your feet down")))
 
-        compose.waitUntil(WaitMillis) { exists("Press the bar up") }
+        waitUntil(WaitMillis) { exists("Press the bar up") }
         compose.onNodeWithText("How to do it").assertExists()
         compose.onNodeWithText("Lie on the bench").assertExists()
         compose.onNodeWithText("Tips").assertExists()
@@ -46,7 +46,7 @@ class ExerciseInfoFeatureTest : FeatureTest() {
 
         // Renamed while the screen is open
         viewModel.updateExercise(Bench.copy(name = "Pause bench"))
-        compose.waitUntil(WaitMillis) { exists("P") }
+        waitUntil(WaitMillis) { exists("P") }
     }
 
     private fun show(exercise: ExerciseInfoViewModel.Exercise, loadGuide: Flow<Load<ExerciseGuide>>): ExerciseInfoViewModel {

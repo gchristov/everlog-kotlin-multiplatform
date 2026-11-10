@@ -65,10 +65,10 @@ class ExercisePageFeatureTest : FeatureTest() {
 
         // Statistics from its chip: this month by default, then the last 12 months from the range menu
         compose.onNodeWithTag(ExercisePageTags.tab(ExercisePageTab.Statistics)).performClick()
-        compose.waitUntil(WaitMillis) { exists("times performed") }
+        waitUntil(WaitMillis) { exists("times performed") }
         compose.onNodeWithTag(ExercisePageTags.Range).performClick()
         compose.onNodeWithText("Last 12 months").performClick()
-        compose.waitUntil(WaitMillis) { ranges.isNotEmpty() }
+        waitUntil(WaitMillis) { ranges.isNotEmpty() }
         assertThat(ranges).containsExactly(ExerciseStatsRange.Last12Months)
         compose.onNodeWithTag(ExercisePageTags.Tiles).assertExists()
         compose.onNodeWithText("2").assertExists()
@@ -80,7 +80,7 @@ class ExercisePageFeatureTest : FeatureTest() {
 
         // Info, with the library's steps
         compose.onNodeWithTag(ExercisePageTags.tab(ExercisePageTab.Info)).performClick()
-        compose.waitUntil(WaitMillis) { exists("Lower the bar to your chest.") }
+        waitUntil(WaitMillis) { exists("Lower the bar to your chest.") }
     }
 
     @Test
@@ -97,8 +97,8 @@ class ExercisePageFeatureTest : FeatureTest() {
 
         // The oldest in view asks for the year before, and a year without the exercise for the one before that
         compose.onNodeWithTag(ExercisePageTags.History).performScrollToIndex(0)
-        compose.waitUntil(WaitMillis) { exists("Two years ago workout") }
-        compose.waitUntil(WaitMillis) { reads.single().complete }
+        waitUntil(WaitMillis) { exists("Two years ago workout") }
+        waitUntil(WaitMillis) { reads.single().complete }
         compose.onNodeWithText("Recent workout").assertExists()
     }
 
@@ -111,7 +111,7 @@ class ExercisePageFeatureTest : FeatureTest() {
         compose.onNodeWithText("Edit").performClick()
         assertThat(edited?.uuid).isEqualTo("own")
         ownExercises.tryEmit(listOf(LibraryExercise(uuid = "own", name = "Landmine row", category = "BACK", own = true)))
-        compose.waitUntil(WaitMillis) { exists("Landmine row") }
+        waitUntil(WaitMillis) { exists("Landmine row") }
 
         // Delete asks first
         compose.onNodeWithContentDescription("More options").performClick()
@@ -122,9 +122,7 @@ class ExercisePageFeatureTest : FeatureTest() {
         compose.onNodeWithContentDescription("More options").performClick()
         compose.onNodeWithText("Delete").performClick()
         compose.onNodeWithTag(ExercisePageTags.DeleteConfirm).performClick()
-        // The delete finishes on the main looper, which waitUntil doesn't run on its own
-        compose.waitForIdle()
-        compose.waitUntil(WaitMillis) { closed }
+        waitUntil(WaitMillis) { closed }
         assertThat(deleted.single().name).isEqualTo("Landmine row")
     }
 
@@ -138,7 +136,7 @@ class ExercisePageFeatureTest : FeatureTest() {
         compose.onNodeWithTag(ExercisePageTags.DeleteConfirm).performClick()
         compose.waitForIdle()
 
-        compose.waitUntil(WaitMillis) { exists("Couldn't delete the exercise.") }
+        waitUntil(WaitMillis) { exists("Couldn't delete the exercise.") }
         assertThat(closed).isFalse()
         compose.onNodeWithContentDescription("More options").assertExists()
     }
@@ -154,9 +152,9 @@ class ExercisePageFeatureTest : FeatureTest() {
     fun theLast12MonthsThatCantLoadCanBeTriedAgain() {
         show(bench, ExercisePageTab.Statistics, recent = null)
 
-        compose.waitUntil(WaitMillis) { exists("Couldn't load the last 12 months.") }
+        waitUntil(WaitMillis) { exists("Couldn't load the last 12 months.") }
         compose.onNodeWithText("Try again").performClick()
-        compose.waitUntil(WaitMillis) { reads.size == 2 }
+        waitUntil(WaitMillis) { reads.size == 2 }
     }
 
     private fun show(
