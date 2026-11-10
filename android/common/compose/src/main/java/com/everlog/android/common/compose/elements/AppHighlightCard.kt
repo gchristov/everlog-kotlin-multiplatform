@@ -49,6 +49,7 @@ fun AppHighlightCard(
     onClick: (() -> Unit)? = null,
     onClose: (() -> Unit)? = null,
     closeDescription: String? = null,
+    closeModifier: Modifier = Modifier,
 ) {
     androidx.compose.material3.Surface(
         modifier = modifier.fillMaxWidth(),
@@ -97,6 +98,7 @@ fun AppHighlightCard(
                 }
                 onClose?.let {
                     AppIconButton(
+                        modifier = closeModifier,
                         onClick = it,
                         icon = ImageVector.vectorResource(DesignR.drawable.ic_clear_white),
                         tint = Theme.contentColors.secondary,
