@@ -47,6 +47,19 @@ The label above a group or card: `--font-subtitle`, `--content-secondary`, one l
 A card: background `--background-surface`, radius `--radius-surface`, padding `--space-lg` (none
 when its content pads itself, like list rows). Text inside is `--content-primary`.
 
+## AppHighlightCard
+
+A card that stands out from the others, for one thing the app wants seen: a suggestion, the next step, a
+notification. `--background-surface` tinted with `--background-selected`, a 1px `--background-action-muted` border,
+radius `--radius-surface`, padding `--space-lg`, its rows `--space-md` apart.
+- an optional label in `--font-subtitle` `--content-action`, e.g. "Suggested next", with ✦ before it for something
+  the app worked out for the user (the same ✦ that marks suggested values in the workout's table)
+- the title in `--font-heading`, with optional trailing content beside it (e.g. a few exercise thumbnails), then
+  optional text in `--font-body` `--content-secondary`
+- optional leading content before the text, e.g. a notification's round image
+- up to two buttons side by side, `--space-sm` apart: the outlined secondary first, the filled primary last; or no
+  buttons and the whole card tappable, optionally with a × close button in the corner
+
 ## AppStatTile
 
 One number on an `AppSurface`, centred: the value in `--font-heading`, with an optional unit beside it
