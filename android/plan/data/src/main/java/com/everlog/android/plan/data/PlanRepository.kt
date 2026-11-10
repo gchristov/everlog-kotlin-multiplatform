@@ -77,7 +77,7 @@ class RealPlanRepository(
         combine(plans(), routineRepository.routines()) { plans, routines -> plans.zip(routines, ::withRoutines) }
 }
 
-internal fun withRoutines(plans: List<ELPlan>, routines: List<ELRoutine>): List<PlanWithRoutines> {
+fun withRoutines(plans: List<ELPlan>, routines: List<ELRoutine>): List<PlanWithRoutines> {
     val byUuid = routines.mapNotNull { routine -> routine.uuid?.let { it to routine } }.toMap()
     return plans.map { plan ->
         val used = plan.getRoutinesToResolve()
