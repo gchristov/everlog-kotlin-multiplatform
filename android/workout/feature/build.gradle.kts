@@ -22,5 +22,5 @@ dependencies {
     implementation(libs.achievementView)
     implementation(libs.collapsingtoolbar.subtitle)
     testImplementation(projects.android.common.dataTest)
-    androidTestImplementation(projects.android.settings.testFixtures)
+    testImplementation(projects.android.settings.testFixtures)
 }

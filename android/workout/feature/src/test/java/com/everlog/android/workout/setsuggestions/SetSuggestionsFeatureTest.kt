@@ -1,14 +1,13 @@
 package com.everlog.android.workout.setsuggestions
 
 import androidx.compose.ui.test.hasText
-import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollTo
-import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
 import com.everlog.android.common.compose.theme.Theme
+import com.everlog.android.common.composetest.FeatureTest
 import com.everlog.android.common.kotlin.AppContext
 import com.everlog.android.common.kotlin.WeightUnit
 import com.everlog.android.settings.data.MuscleGoal
@@ -19,28 +18,15 @@ import com.everlog.android.workout.setsuggestions.SetSuggestionsSettings
 import com.everlog.android.workout.setsuggestions.SetSuggestionsTags
 import com.everlog.android.workout.setsuggestions.SetSuggestionsViewModel
 import com.google.common.truth.Truth.assertThat
-import java.util.concurrent.TimeUnit
 import kotlinx.coroutines.Dispatchers
 import org.junit.Before
-import org.junit.Rule
 import org.junit.Test
-import org.junit.rules.RuleChain
-import org.junit.rules.Timeout
-import org.junit.runner.RunWith
 
 /**
  * The Set suggestions screen driven as a user would, with the real view-model over fake settings. The view-model's
  * unit tests cover the details.
  */
-@RunWith(AndroidJUnit4::class)
-class SetSuggestionsScenarioTest {
-
-    private val compose = createComposeRule()
-
-    @get:Rule
-    val rules: RuleChain = RuleChain
-        .outerRule(Timeout.builder().withTimeout(2, TimeUnit.MINUTES).withLookingForStuckThread(true).build())
-        .around(compose)
+class SetSuggestionsFeatureTest : FeatureTest() {
 
     @Before
     fun setUp() {
@@ -70,16 +56,16 @@ class SetSuggestionsScenarioTest {
 
         // Off is a tap away
         compose.onNodeWithTag(SetSuggestionsTags.option(SetSuggestion.Off)).performClick()
-        compose.waitUntil(WaitMillis) { settings.goal == MuscleGoal.NONE }
+        waitUntil(WaitMillis) { settings.goal == MuscleGoal.NONE }
 
         // The sheet explains goal weights with the bench press example, in kg
         compose.onNodeWithTag(SetSuggestionsTags.How).performClick()
-        compose.waitUntil(WaitMillis) { exists("80 kg × 5") }
+        waitUntil(WaitMillis) { exists("80 kg × 5") }
         compose.onNodeWithText("90 kg").assertExists()
         compose.onNodeWithText("72 kg").assertExists()
         compose.onNodeWithText("Build muscle, 80%").assertExists()
         compose.onNodeWithTag(SetSuggestionsTags.HowDone).performClick()
-        compose.waitUntil(WaitMillis) { !exists("80 kg × 5") }
+        waitUntil(WaitMillis) { !exists("80 kg × 5") }
     }
 
     @Test
@@ -88,7 +74,7 @@ class SetSuggestionsScenarioTest {
 
         compose.onNodeWithTag(SetSuggestionsTags.option(SetSuggestion.GetStronger)).performClick()
 
-        compose.waitUntil(WaitMillis) { settings.goal == MuscleGoal.POWER }
+        waitUntil(WaitMillis) { settings.goal == MuscleGoal.POWER }
     }
 
     @Test
@@ -108,7 +94,7 @@ class SetSuggestionsScenarioTest {
 
         compose.onNodeWithTag(SetSuggestionsTags.How).performClick()
 
-        compose.waitUntil(WaitMillis) { exists("180 lb × 5") }
+        waitUntil(WaitMillis) { exists("180 lb × 5") }
         compose.onNodeWithText("202.5 lb").assertExists()
         compose.onNodeWithText("162 lb").assertExists()
     }
