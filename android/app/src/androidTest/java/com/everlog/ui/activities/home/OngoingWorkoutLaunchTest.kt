@@ -34,6 +34,7 @@ import com.everlog.android.common.data.model.workout.ELWorkout
 import com.everlog.constants.ELConstants
 import com.everlog.android.workout.data.WorkoutManager
 import com.everlog.testutil.E2EAccount
+import com.everlog.testutil.Homes
 import com.everlog.android.workout.log.WorkoutLogActivity
 import com.google.common.truth.Truth.assertThat
 import com.google.gson.Gson
@@ -65,6 +66,7 @@ class OngoingWorkoutLaunchTest {
     private val instrumentation = InstrumentationRegistry.getInstrumentation()
     private val context: Context = instrumentation.targetContext
     private val monitors = mutableListOf<Instrumentation.ActivityMonitor>()
+    private val homes = Homes(instrumentation)
 
     @Before
     fun setUp() {
@@ -77,6 +79,7 @@ class OngoingWorkoutLaunchTest {
         WorkoutManager.manager.clearOngoingWorkout()
         instrumentation.runOnMainSync { resumedActivities().forEach(Activity::finish) }
         monitors.forEach(instrumentation::removeMonitor)
+        homes.release()
     }
 
     @Test
@@ -84,13 +87,12 @@ class OngoingWorkoutLaunchTest {
         val workout = workout()
         WorkoutManager.manager.setOngoingWorkout(workout)
         val workoutScreen = watch(WorkoutLogActivity::class.java)
-        val home = watch(HomeActivity::class.java)
 
         launchFromLauncher()
 
         val opened = awaitOpened(workoutScreen)
         assertThat((opened.intent.getSerializableExtra(ELConstants.EXTRA_WORKOUT) as ELWorkout).uuid).isEqualTo(workout.uuid)
-        assertThat(home.hits).isEqualTo(1)
+        assertThat(homes.hits).isEqualTo(1)
         compose.onNodeWithText("Bench press").assertExists()
         compose.waitUntil(TIMEOUT) { workoutNotificationShows() }
         assertThat(WorkoutManager.manager.ongoingWorkout()?.getCompletedSetsCount()).isEqualTo(1)
@@ -99,7 +101,7 @@ class OngoingWorkoutLaunchTest {
         Espresso.pressBack()
         compose.onNode(hasText("Discard") and hasAnyAncestor(isDialog())).performClick()
         compose.waitUntil(TIMEOUT) { opened.isDestroyed }
-        compose.waitUntil(TIMEOUT) { home.lastActivity?.let(::isResumed) == true }
+        compose.waitUntil(TIMEOUT) { homes.resumed() != null }
         assertThat(WorkoutManager.manager.ongoingWorkout()).isNull()
         assertThat(workoutScreen.hits).isEqualTo(1)
         compose.waitUntil(TIMEOUT) { !workoutNotificationShows() }
@@ -123,12 +125,11 @@ class OngoingWorkoutLaunchTest {
 
     @Test
     fun withoutAnOngoingWorkoutTheAppOpensOnHome() {
-        val home = watch(HomeActivity::class.java)
         val workoutScreen = watch(WorkoutLogActivity::class.java)
 
         launchFromLauncher()
 
-        compose.waitUntil(TIMEOUT) { home.lastActivity?.let(::isResumed) == true }
+        compose.waitUntil(LAUNCH_TIMEOUT) { homes.resumed() != null }
         assertThat(workoutScreen.hits).isEqualTo(0)
     }
 
@@ -137,14 +138,17 @@ class OngoingWorkoutLaunchTest {
         // The workout screen opened from home closing without ending the workout, e.g. if it ever couldn't load
         WorkoutManager.manager.setOngoingWorkout(workout())
         val workoutScreen = watch(WorkoutLogActivity::class.java)
-        val home = watch(HomeActivity::class.java)
         launchFromLauncher()
         val opened = awaitOpened(workoutScreen)
 
         instrumentation.runOnMainSync { opened.finish() }
 
-        compose.waitUntil(TIMEOUT) { home.lastActivity?.let(::isResumed) == true }
-        Espresso.onView(withText("Resume Workout")).inRoot(RootMatchers.isDialog()).check(matches(isDisplayed()))
+        compose.waitUntil(TIMEOUT) { homes.resumed() != null }
+        if (homes.isCompose()) {
+            compose.waitUntil(TIMEOUT) { compose.onAllNodes(hasText("Resume Workout") and hasAnyAncestor(isDialog())).fetchSemanticsNodes().isNotEmpty() }
+        } else {
+            Espresso.onView(withText("Resume Workout")).inRoot(RootMatchers.isDialog()).check(matches(isDisplayed()))
+        }
         assertThat(workoutScreen.hits).isEqualTo(1)
         assertThat(WorkoutManager.manager.ongoingWorkout()).isNotNull()
     }
