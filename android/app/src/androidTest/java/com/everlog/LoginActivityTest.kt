@@ -3,7 +3,6 @@ package com.everlog
 import com.everlog.android.auth.R as AuthR
 import android.widget.Button
 import androidx.test.espresso.Espresso.onView
-import androidx.test.espresso.NoMatchingViewException
 import androidx.test.espresso.action.ViewActions.click
 import androidx.test.espresso.action.ViewActions.closeSoftKeyboard
 import androidx.test.espresso.action.ViewActions.typeText
@@ -16,6 +15,8 @@ import androidx.test.espresso.matcher.ViewMatchers.withText
 import androidx.test.ext.junit.rules.ActivityScenarioRule
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.everlog.android.auth.login.LoginActivity
+import com.everlog.testutil.Homes
+import com.google.common.truth.Truth.assertThat
 import org.hamcrest.Matchers.allOf
 import org.junit.Rule
 import org.junit.Test
@@ -45,26 +46,15 @@ class LoginActivityTest {
 
         onView(allOf(withId(AuthR.id.loginBtn), isAssignableFrom(Button::class.java))).perform(click())
 
-        waitForView(R.id.tabBar)
-
-        onView(withId(R.id.tabBar))
-            .check(matches(isDisplayed()))
+        // Whichever Home Remote Config's home_v2 picks
+        val homes = Homes()
+        val deadline = System.currentTimeMillis() + HomeTimeoutMillis
+        while (homes.resumed() == null && System.currentTimeMillis() < deadline) Thread.sleep(500)
+        assertThat(homes.resumed()).isNotNull()
+        homes.release()
     }
 
-    private fun waitForView(viewId: Int, timeoutMs: Long = 10000) {
-        val startTime = System.currentTimeMillis()
-        val endTime = startTime + timeoutMs
-        
-        while (System.currentTimeMillis() < endTime) {
-            try {
-                onView(withId(viewId)).check(matches(isDisplayed()))
-                return
-            } catch (e: NoMatchingViewException) {
-                Thread.sleep(500)
-            } catch (e: AssertionError) {
-                Thread.sleep(500)
-            }
-        }
-        onView(withId(viewId)).check(matches(isDisplayed()))
+    private companion object {
+        const val HomeTimeoutMillis = 10_000L
     }
 }

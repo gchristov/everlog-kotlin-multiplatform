@@ -30,6 +30,7 @@ import com.everlog.android.common.navigation.SetSuggestions
 import com.everlog.android.common.navigation.SetTypePicker
 import com.everlog.android.common.navigation.ShareApp
 import com.everlog.android.common.navigation.ShareWorkout
+import com.everlog.android.common.navigation.ResumeWorkout
 import com.everlog.android.common.navigation.StartEmptyWorkout
 import com.everlog.android.common.navigation.StartWorkout
 import com.everlog.android.common.navigation.StartWorkoutConfirmation
@@ -97,6 +98,7 @@ class AppNavigator : Navigator {
             is TemplateDetails -> navigator.openRoutineDetails(destination.routine, destination.viewOnly)
             is StartWorkout -> navigator.startWorkout(destination.routine, true, destination.fromPlan)
             StartEmptyWorkout -> navigator.startWorkout(ELRoutine.buildEmptyWorkout(), false, false)
+            is ResumeWorkout -> navigator.resumeWorkout(destination.workout)
             is StartWorkoutConfirmation -> navigator.openPerformRoutineConfirmation(destination.routine, destination.fromPlan)
             is WorkoutDetails -> navigator.openWorkoutDetails(destination.workout, destination.justFinished, destination.fromPlan)
         }

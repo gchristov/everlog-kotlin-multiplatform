@@ -10,6 +10,8 @@ android {
 }
 
 dependencies {
+    implementation(libs.androidx.localbroadcastmanager)
+    implementation(libs.androidx.lifecycle.viewmodel.compose)
     implementation(projects.android.home.data)
     implementation(projects.android.history.ui)
     implementation(projects.android.statistics.ui)
@@ -17,6 +19,7 @@ dependencies {
     implementation(projects.android.plan.ui)
     implementation(projects.android.auth.data)
     implementation(projects.android.settings.data)
+    implementation(projects.android.settings.ui)
     implementation(projects.android.workout.data)
     implementation(projects.android.common.mvp)
     implementation(libs.androidx.lifecycle.runtime.compose)

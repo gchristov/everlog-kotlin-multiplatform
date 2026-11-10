@@ -1,5 +1,8 @@
 package com.everlog.android.home.screen
 
+import android.content.Context
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.IntentSenderRequest
 import androidx.lifecycle.SavedStateHandle
 import com.everlog.android.common.data.model.exercise.ELExercise
 import com.everlog.android.common.data.model.set.ELSet
@@ -243,6 +246,9 @@ class HomeViewModelTest {
         }
 
         override fun onDestroyed() = Unit
+
+        override fun appUpdates(context: Context, launcher: ActivityResultLauncher<IntentSenderRequest>, onReady: () -> Unit) =
+            error("Not used by the view-model")
     }
 
     private class FakeAnalytics : HomeAnalytics {

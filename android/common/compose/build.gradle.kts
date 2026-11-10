@@ -18,6 +18,7 @@ dependencies {
     api(libs.androidx.activity.compose)
     implementation(projects.android.common.kotlin)
     implementation(libs.androidx.localbroadcastmanager)
+    implementation(libs.androidx.lifecycle.runtime.compose)
     implementation(libs.coil.compose)
     implementation(libs.timber)
     debugImplementation(libs.androidx.compose.ui.tooling)

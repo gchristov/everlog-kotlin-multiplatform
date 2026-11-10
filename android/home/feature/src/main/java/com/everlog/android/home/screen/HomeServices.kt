@@ -1,5 +1,8 @@
 package com.everlog.android.home.screen
 
+import android.content.Context
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.IntentSenderRequest
 import com.everlog.android.common.data.model.workout.ELWorkout
 
 // What the Compose Home needs from the app, which the app binds
@@ -21,4 +24,19 @@ interface HomeServices {
 
     // Home closing: the old data stores' listeners go
     fun onDestroyed()
+
+    // Play's in-app updates for Home, which shows Play's flow through [launcher]; [onReady] once one has downloaded
+    fun appUpdates(context: Context, launcher: ActivityResultLauncher<IntentSenderRequest>, onReady: () -> Unit): HomeAppUpdates
+}
+
+interface HomeAppUpdates {
+    fun check()
+
+    // Play's update flow finished with [resultCode]
+    fun onFlowResult(resultCode: Int)
+
+    // Installs the downloaded update, which restarts the app
+    fun restart()
+
+    fun release()
 }

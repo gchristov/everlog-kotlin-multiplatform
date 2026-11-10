@@ -6,6 +6,9 @@ import com.everlog.android.common.data.model.workout.ELWorkout
 // Starts a workout from [routine]
 data class StartWorkout(val routine: ELRoutine, val fromPlan: Boolean) : Destination
 
+// The workout left going, on its screen again
+data class ResumeWorkout(val workout: ELWorkout) : Destination
+
 // Starts a workout with no template, adding exercises as it goes
 data object StartEmptyWorkout : Destination
 

@@ -18,7 +18,6 @@
     <string name="workouts_tab_exercises_detail">The library and your own</string>
     <string name="workouts_tab_templates">Your templates</string>
     <string name="workouts_tab_plans">Your plans</string>
-    <string name="workouts_tab_new">New</string>
     <string name="workouts_tab_details">Details</string>
     <string name="workouts_tab_start">Start</string>
     <string name="workouts_tab_no_plans">No plans yet</string>
@@ -81,4 +80,23 @@
     <!-- The example under Get started -->
     <string name="workouts_tab_example_push">Push day</string>
     <string name="workouts_tab_example_pull">Pull day</string>
+    <!-- Home -->
+    <string name="home_start_workout">Start workout</string>
+    <string name="home_new">New</string>
+    <string name="home_start_from_template">From your templates</string>
+    <string name="home_start_empty">Pick exercises as you go</string>
+    <string name="home_new_title">New</string>
+    <string name="home_new_template">Template</string>
+    <string name="home_new_template_detail">The exercises you repeat, to start in one tap</string>
+    <string name="home_new_plan">Plan</string>
+    <string name="home_new_plan_detail">Your templates put into weeks</string>
+    <string name="home_ongoing_title">Resume Workout</string>
+    <string name="home_ongoing_body">You have an ongoing workout. Would you like to resume it?</string>
+    <plurals name="home_ongoing_body_sets">
+        <item quantity="one">You have an ongoing workout with %1$d completed set. Discarding deletes it.</item>
+        <item quantity="other">You have an ongoing workout with %1$d completed sets. Discarding deletes them.</item>
+    </plurals>
+    <string name="home_ongoing_resume">Resume</string>
+    <string name="home_update_ready">An update is ready to install</string>
+    <string name="home_update_restart">Restart</string>
 </resources>

@@ -60,4 +60,5 @@ object HomeScreenNames {
     const val WEEK_V2 = "screen_week_v2"
     const val WORKOUTS_V2 = "screen_workouts_v2"
     const val ACTIVITY = "screen_activity"
+    const val HOME = "screen_home"
 }

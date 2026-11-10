@@ -3,8 +3,6 @@ package com.everlog.android.home.workoutstab
 object WorkoutsTabTags {
     const val Exercises = "workouts:exercises"
     const val Card = "workouts:card"
-    const val NewTemplate = "workouts:newTemplate"
-    const val NewPlan = "workouts:newPlan"
     const val ActivePlan = "workouts:activePlan"
     const val Retry = "workouts:retry"
 
