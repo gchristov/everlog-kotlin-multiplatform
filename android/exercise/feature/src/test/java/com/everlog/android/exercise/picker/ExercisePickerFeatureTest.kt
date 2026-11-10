@@ -2,8 +2,6 @@ package com.everlog.android.exercise.picker
 
 import androidx.compose.ui.test.hasSetTextAction
 import androidx.compose.ui.test.hasText
-import androidx.compose.ui.test.junit4.createComposeRule
-import androidx.compose.ui.test.onAllNodesWithText
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
@@ -12,8 +10,8 @@ import androidx.compose.ui.test.performTextClearance
 import androidx.compose.ui.test.performTextInput
 import androidx.lifecycle.SavedStateHandle
 import androidx.test.espresso.Espresso
-import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.everlog.android.common.compose.theme.Theme
+import com.everlog.android.common.composetest.FeatureTest
 import com.everlog.android.common.data.model.set.ELSetType
 import com.everlog.android.common.kotlin.Load
 import com.everlog.android.exercise.data.LoadExerciseLibraryUseCase
@@ -21,29 +19,16 @@ import com.everlog.android.exercise.data.model.library.ExerciseLibrary
 import com.everlog.android.exercise.data.model.library.ExerciseRegistry
 import com.everlog.android.exercise.data.model.library.LibraryExercise
 import com.google.common.truth.Truth.assertThat
-import java.util.concurrent.TimeUnit
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOf
-import org.junit.Rule
 import org.junit.Test
-import org.junit.rules.RuleChain
-import org.junit.rules.Timeout
-import org.junit.runner.RunWith
 
 /**
  * The exercise picker driven as a user would, with the real view-model over a small library. A few journeys rather
  * than a test per detail: the view-model's and filters' unit tests cover those.
  */
-@RunWith(AndroidJUnit4::class)
-class ExercisePickerScenarioTest {
-
-    private val compose = createComposeRule()
-
-    @get:Rule
-    val rules: RuleChain = RuleChain
-        .outerRule(Timeout.builder().withTimeout(2, TimeUnit.MINUTES).withLookingForStuckThread(true).build())
-        .around(compose)
+class ExercisePickerFeatureTest : FeatureTest() {
 
     private var result: PickerResult? = null
     private var opened: String? = null
@@ -69,6 +54,7 @@ class ExercisePickerScenarioTest {
         compose.onNodeWithText("Barbell Row").assertExists()
         searchBar().performTextClearance()
         searchBar().performImeAction()
+        compose.waitUntil(WaitMillis) { exists("Barbell Bench Press") }
 
         // A filter from its chip: Equipment is Dumbbell
         compose.onNodeWithText("Equipment").performClick()

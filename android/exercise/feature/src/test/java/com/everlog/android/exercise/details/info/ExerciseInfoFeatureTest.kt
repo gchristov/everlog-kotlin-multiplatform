@@ -1,38 +1,24 @@
 package com.everlog.android.exercise.details.info
 
 import androidx.compose.ui.test.hasText
-import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithText
-import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.everlog.android.common.compose.theme.Theme
+import com.everlog.android.common.composetest.FeatureTest
 import com.everlog.android.common.kotlin.Load
-import com.everlog.android.exercise.data.model.library.ExerciseGuide
 import com.everlog.android.exercise.data.LoadExerciseGuideUseCase
+import com.everlog.android.exercise.data.model.library.ExerciseGuide
 import java.io.IOException
-import java.util.concurrent.TimeUnit
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.flowOf
-import org.junit.Rule
 import org.junit.Test
-import org.junit.rules.RuleChain
-import org.junit.rules.Timeout
-import org.junit.runner.RunWith
 
 /**
  * The exercise detail's Info tab with its real view-model: the guide once it loads, and what shows without one.
  * The tab sits in the XML exercise detail screen, so there's no activity of its own to run end to end.
  */
-@RunWith(AndroidJUnit4::class)
-class ExerciseInfoScenarioTest {
-
-    private val compose = createComposeRule()
-
-    @get:Rule
-    val rules: RuleChain = RuleChain
-        .outerRule(Timeout.builder().withTimeout(1, TimeUnit.MINUTES).withLookingForStuckThread(true).build())
-        .around(compose)
+class ExerciseInfoFeatureTest : FeatureTest() {
 
     @Test
     fun aLibraryExerciseShowsItsGuideOnceItLoads() {

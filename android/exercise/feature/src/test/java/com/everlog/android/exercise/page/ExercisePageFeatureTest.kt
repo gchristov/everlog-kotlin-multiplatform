@@ -1,24 +1,18 @@
 package com.everlog.android.exercise.page
 
 import androidx.compose.ui.test.hasAnyDescendant
-import androidx.compose.ui.test.hasClickAction
 import androidx.compose.ui.test.hasScrollToNodeAction
 import androidx.compose.ui.test.hasTestTag
-import androidx.compose.ui.test.onLast
 import androidx.compose.ui.test.hasText
-import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollToIndex
 import androidx.compose.ui.test.performScrollToNode
-import androidx.test.ext.junit.runners.AndroidJUnit4
-import androidx.test.platform.app.InstrumentationRegistry
-import com.everlog.android.common.kotlin.AppContext
-import com.jakewharton.threetenabp.AndroidThreeTen
 import arrow.core.Either
 import com.everlog.android.common.compose.theme.Theme
+import com.everlog.android.common.composetest.FeatureTest
 import com.everlog.android.common.data.model.exercise.ELExercise
 import com.everlog.android.common.data.model.exercise.ELRoutineExercise
 import com.everlog.android.common.data.model.set.ELSet
@@ -34,17 +28,13 @@ import com.everlog.android.workout.data.exercisehistory.ExerciseSession
 import com.everlog.android.workout.data.exercisehistory.ExerciseStatsPreferences
 import com.everlog.android.workout.data.exercisehistory.ExerciseStatsRange
 import com.google.common.truth.Truth.assertThat
-import java.util.concurrent.TimeUnit
+import java.io.IOException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.flowOf
-import org.junit.Rule
 import org.junit.Test
-import org.junit.rules.RuleChain
-import org.junit.rules.Timeout
-import org.junit.runner.RunWith
 import org.threeten.bp.LocalDate
 import org.threeten.bp.ZoneId
 
@@ -52,22 +42,7 @@ import org.threeten.bp.ZoneId
  * An exercise's page driven as a user would, with the real view-model over a fake history. A few journeys rather than
  * a test per detail: the view-model's and the rules' unit tests cover those.
  */
-@RunWith(AndroidJUnit4::class)
-class ExercisePageScenarioTest {
-
-    private val compose = createComposeRule()
-
-    @get:Rule
-    val rules: RuleChain = RuleChain
-        .outerRule(Timeout.builder().withTimeout(2, TimeUnit.MINUTES).withLookingForStuckThread(true).build())
-        .around(compose)
-
-    init {
-        // Set by the app at startup, which a library's tests don't run, and needed before the fields below
-        val context = InstrumentationRegistry.getInstrumentation().targetContext.applicationContext
-        AppContext = context
-        AndroidThreeTen.init(context)
-    }
+class ExercisePageFeatureTest : FeatureTest() {
 
     private val today = LocalDate.now()
     private val bench = ELExercise(uuid = "bench", name = "Bench press", category = "CHEST")
@@ -79,6 +54,7 @@ class ExercisePageScenarioTest {
     private var edited: ELExercise? = null
     private var feedbackSent = 0
     private var closed = false
+    private var deleteFails = false
 
     @Test
     fun browsingAnExercise() {
@@ -145,10 +121,26 @@ class ExercisePageScenarioTest {
 
         compose.onNodeWithContentDescription("More options").performClick()
         compose.onNodeWithText("Delete").performClick()
-        // The dialog's own Delete, next to Cancel
-        compose.onAllNodes(hasText("Delete") and hasClickAction()).onLast().performClick()
+        compose.onNodeWithTag(ExercisePageTags.DeleteConfirm).performClick()
+        // The delete finishes on the main looper, which waitUntil doesn't run on its own
+        compose.waitForIdle()
         compose.waitUntil(WaitMillis) { closed }
         assertThat(deleted.single().name).isEqualTo("Landmine row")
+    }
+
+    @Test
+    fun aDeleteThatFailsKeepsTheExercise() {
+        deleteFails = true
+        show(own, ExercisePageTab.Info, recent = emptyList())
+
+        compose.onNodeWithContentDescription("More options").performClick()
+        compose.onNodeWithText("Delete").performClick()
+        compose.onNodeWithTag(ExercisePageTags.DeleteConfirm).performClick()
+        compose.waitForIdle()
+
+        compose.waitUntil(WaitMillis) { exists("Couldn't delete the exercise.") }
+        assertThat(closed).isFalse()
+        compose.onNodeWithContentDescription("More options").assertExists()
     }
 
     @Test
@@ -190,6 +182,7 @@ class ExercisePageScenarioTest {
             ownExerciseUpdates = { ownExercises },
             deleteExercise = object : DeleteExerciseUseCase {
                 override suspend fun invoke(exercise: ELExercise): Either<Throwable, Unit> {
+                    if (deleteFails) return Either.Left(IOException("offline"))
                     deleted += exercise
                     return Either.Right(Unit)
                 }

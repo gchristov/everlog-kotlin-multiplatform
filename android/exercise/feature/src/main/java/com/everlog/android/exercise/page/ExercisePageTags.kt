@@ -15,6 +15,7 @@ object ExercisePageTags {
     const val HistoryExample = "exercisePageHistoryExample"
     const val LoadingMore = "exercisePageLoadingMore"
     const val Snackbar = "exercisePageSnackbar"
+    const val DeleteConfirm = "exercisePageDeleteConfirm"
 
     fun tab(tab: ExercisePageTab) = "exercisePageTab-${tab.name}"
 
