@@ -5,18 +5,15 @@ import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.hasAnyAncestor
 import androidx.compose.ui.test.hasTestTag
 import androidx.compose.ui.test.hasText
-import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollToIndex
 import androidx.compose.ui.test.performScrollToNode
-import androidx.test.ext.junit.runners.AndroidJUnit4
-import androidx.test.platform.app.InstrumentationRegistry
 import com.everlog.android.common.compose.theme.Theme
+import com.everlog.android.common.composetest.FeatureTest
 import com.everlog.android.common.data.model.ELRoutine
 import com.everlog.android.common.data.model.workout.ELWorkout
-import com.everlog.android.common.kotlin.AppContext
 import com.everlog.android.common.kotlin.Load
 import com.everlog.android.history.data.HistoryPreferences
 import com.everlog.android.history.data.HistoryView
@@ -24,15 +21,9 @@ import com.everlog.android.settings.testfixtures.FakeUserSettings
 import com.everlog.android.workout.data.WorkoutHistory
 import com.everlog.android.workout.testfixtures.FakeWorkoutRepository
 import com.google.common.truth.Truth.assertThat
-import com.jakewharton.threetenabp.AndroidThreeTen
 import java.io.IOException
-import java.util.concurrent.TimeUnit
 import kotlinx.coroutines.Dispatchers
-import org.junit.Rule
 import org.junit.Test
-import org.junit.rules.RuleChain
-import org.junit.rules.Timeout
-import org.junit.runner.RunWith
 import org.threeten.bp.LocalDate
 import org.threeten.bp.ZoneId
 
@@ -41,22 +32,7 @@ import org.threeten.bp.ZoneId
  * on the calendar, scrolling back through the list, and no workouts yet. A few journeys rather than a test per detail:
  * the view-model's unit tests cover those.
  */
-@RunWith(AndroidJUnit4::class)
-class HistoryPageScenarioTest {
-
-    private val compose = createComposeRule()
-
-    @get:Rule
-    val rules: RuleChain = RuleChain
-        .outerRule(Timeout.builder().withTimeout(2, TimeUnit.MINUTES).withLookingForStuckThread(true).build())
-        .around(compose)
-
-    init {
-        // Set by the app at startup, which a library's tests don't run, and needed before the fields below
-        val context = InstrumentationRegistry.getInstrumentation().targetContext.applicationContext
-        AppContext = context
-        AndroidThreeTen.init(context)
-    }
+class HistoryPageFeatureTest : FeatureTest() {
 
     private val today = LocalDate.now()
     private val workouts = FakeWorkoutRepository()
