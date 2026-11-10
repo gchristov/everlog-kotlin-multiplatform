@@ -14,6 +14,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
@@ -23,10 +24,10 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.everlog.android.common.compose.elements.AppBar
 import com.everlog.android.common.compose.elements.AppChipTabs
 import com.everlog.android.common.compose.elements.AppConfirmSheet
-import com.everlog.android.common.compose.elements.AppSheetAction
 import com.everlog.android.common.compose.elements.AppMenuItem
 import com.everlog.android.common.compose.elements.AppOverflowMenu
 import com.everlog.android.common.compose.elements.AppScreen
+import com.everlog.android.common.compose.elements.AppSheetAction
 import com.everlog.android.common.compose.elements.AppSnackbarHost
 import com.everlog.android.common.data.model.exercise.ELExercise
 import com.everlog.android.common.design.R as DesignR
@@ -36,6 +37,7 @@ import com.everlog.android.exercise.details.info.ExerciseInfoContent
 import com.everlog.android.exercise.details.info.ExerciseInfoViewModel
 import com.everlog.android.statistics.ui.R as StatisticsR
 import com.everlog.android.workout.data.exercisehistory.ExerciseStatsRange
+import kotlinx.coroutines.launch
 
 /**
  * Renders the view-model's state and forwards what's tapped to it. Other screens open through the lambdas.
@@ -167,7 +169,11 @@ internal fun ExercisePageContent(state: ExercisePageState, tab: ExercisePageTab,
             body = stringResource(R.string.create_exercise_delete_prompt),
             onDismissRequest = actions.onDeleteCancelled,
             primaryAction = AppSheetAction(text = stringResource(DesignR.string.cancel), onClick = actions.onDeleteCancelled),
-            secondaryAction = AppSheetAction(text = stringResource(DesignR.string.delete), onClick = actions.onDeleteConfirmed),
+            secondaryAction = AppSheetAction(
+                text = stringResource(DesignR.string.delete),
+                onClick = actions.onDeleteConfirmed,
+                testTag = ExercisePageTags.DeleteConfirm,
+            ),
         )
     }
 }
@@ -195,10 +201,12 @@ private fun Snackbars(state: ExercisePageState, snackbar: SnackbarHostState, act
         }
     }
     val deleteFailed = stringResource(R.string.exercise_page_delete_failed)
+    // Shown outside the effect: clearing the flag restarts the effect, which would cancel the snackbar with it
+    val scope = rememberCoroutineScope()
     LaunchedEffect(state.deleteFailed) {
         if (state.deleteFailed) {
             actions.onDeleteFailedShown()
-            snackbar.showSnackbar(deleteFailed)
+            scope.launch { snackbar.showSnackbar(deleteFailed) }
         }
     }
 }

@@ -2,8 +2,6 @@ package com.everlog.android.exercise.picker
 
 import androidx.compose.ui.test.hasSetTextAction
 import androidx.compose.ui.test.hasText
-import androidx.compose.ui.test.junit4.createComposeRule
-import androidx.compose.ui.test.onAllNodesWithText
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
@@ -12,8 +10,8 @@ import androidx.compose.ui.test.performTextClearance
 import androidx.compose.ui.test.performTextInput
 import androidx.lifecycle.SavedStateHandle
 import androidx.test.espresso.Espresso
-import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.everlog.android.common.compose.theme.Theme
+import com.everlog.android.common.composetest.FeatureTest
 import com.everlog.android.common.data.model.set.ELSetType
 import com.everlog.android.common.kotlin.Load
 import com.everlog.android.exercise.data.LoadExerciseLibraryUseCase
@@ -21,29 +19,16 @@ import com.everlog.android.exercise.data.model.library.ExerciseLibrary
 import com.everlog.android.exercise.data.model.library.ExerciseRegistry
 import com.everlog.android.exercise.data.model.library.LibraryExercise
 import com.google.common.truth.Truth.assertThat
-import java.util.concurrent.TimeUnit
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOf
-import org.junit.Rule
 import org.junit.Test
-import org.junit.rules.RuleChain
-import org.junit.rules.Timeout
-import org.junit.runner.RunWith
 
 /**
  * The exercise picker driven as a user would, with the real view-model over a small library. A few journeys rather
  * than a test per detail: the view-model's and filters' unit tests cover those.
  */
-@RunWith(AndroidJUnit4::class)
-class ExercisePickerScenarioTest {
-
-    private val compose = createComposeRule()
-
-    @get:Rule
-    val rules: RuleChain = RuleChain
-        .outerRule(Timeout.builder().withTimeout(2, TimeUnit.MINUTES).withLookingForStuckThread(true).build())
-        .around(compose)
+class ExercisePickerFeatureTest : FeatureTest() {
 
     private var result: PickerResult? = null
     private var opened: String? = null
@@ -65,34 +50,36 @@ class ExercisePickerScenarioTest {
         // Typing searches names and aliases, and the keyboard's search key closes the menu over the list
         searchBar().performTextInput("bent over")
         searchBar().performImeAction()
-        compose.waitUntil(WaitMillis) { !exists("Barbell Bench Press") }
+        waitUntil(WaitMillis) { !exists("Barbell Bench Press") }
         compose.onNodeWithText("Barbell Row").assertExists()
         searchBar().performTextClearance()
         searchBar().performImeAction()
+        waitUntil(WaitMillis) { exists("Barbell Bench Press") }
 
         // A filter from its chip: Equipment is Dumbbell
         compose.onNodeWithText("Equipment").performClick()
-        // The menu's value, with how many exercises it has
+        // The menu's value, with how many exercises it has, once the menu has its counts
+        waitUntil(WaitMillis) { compose.onAllNodes(hasText("Dumbbell") and hasText("1")).fetchSemanticsNodes().isNotEmpty() }
         compose.onNode(hasText("Dumbbell") and hasText("1")).performClick()
         compose.onNodeWithText("Done").performClick()
-        compose.waitUntil(WaitMillis) { !exists("Barbell Row") }
+        waitUntil(WaitMillis) { !exists("Barbell Row") }
         compose.onNodeWithText("Dumbbell Bench Press").assertExists()
 
         // Picked one by one, then added on its own
         compose.onNodeWithText("Dumbbell Bench Press").performClick()
         compose.onNodeWithText("Add 1 exercise").performClick()
-        compose.waitUntil(WaitMillis) { result != null }
+        waitUntil(WaitMillis) { result != null }
         assertThat(result).isEqualTo(PickerResult(listOf(DumbbellBench), ELSetType.SINGLE))
 
         // Two picks can go in as a superset, whose kind is picked on another screen
         result = null
         compose.onNodeWithText("Clear all").performClick()
-        compose.waitUntil(WaitMillis) { exists("Barbell Row") }
+        waitUntil(WaitMillis) { exists("Barbell Row") }
         compose.onNodeWithText("Barbell Row").performClick()
         compose.onNodeWithText("Add as a superset").performClick()
         assertThat(setTypeFor).isEqualTo(2)
         viewModel.onAdd(ELSetType.SUPER)
-        compose.waitUntil(WaitMillis) { result != null }
+        waitUntil(WaitMillis) { result != null }
         assertThat(result).isEqualTo(PickerResult(listOf(DumbbellBench, BarbellRow), ELSetType.SUPER))
     }
 
@@ -108,7 +95,7 @@ class ExercisePickerScenarioTest {
         // Nothing found offers to create it, named as searched
         searchBar().performTextInput("zercher")
         searchBar().performImeAction()
-        compose.waitUntil(WaitMillis) { exists("Create “zercher”", substring = true) }
+        waitUntil(WaitMillis) { exists("Create “zercher”", substring = true) }
         compose.onNodeWithText("Create “zercher”", substring = true).performClick()
         assertThat(created).isEqualTo("zercher")
 
@@ -126,10 +113,10 @@ class ExercisePickerScenarioTest {
     fun aLibraryThatDoesNotLoad() {
         show(PickerMode.Pick, failures = 1)
 
-        compose.waitUntil(WaitMillis) { exists("Couldn't load the exercises.") }
+        waitUntil(WaitMillis) { exists("Couldn't load the exercises.") }
         compose.onNodeWithText("Try again").performClick()
 
-        compose.waitUntil(WaitMillis) { exists("Barbell Row") }
+        waitUntil(WaitMillis) { exists("Barbell Row") }
     }
 
     private fun show(mode: PickerMode, failures: Int = 0, feedbackForm: Boolean = false): ExercisePickerViewModel {
@@ -173,7 +160,7 @@ class ExercisePickerScenarioTest {
                 )
             }
         }
-        if (failures == 0) compose.waitUntil(WaitMillis) { exists("Barbell Row") }
+        if (failures == 0) waitUntil(WaitMillis) { exists("Barbell Row") }
         return viewModel
     }
 
