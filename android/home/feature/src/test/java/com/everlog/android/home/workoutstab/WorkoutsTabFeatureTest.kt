@@ -54,7 +54,7 @@ class WorkoutsTabFeatureTest : FeatureTest() {
 
         compose.onNodeWithText("Push day").performClick()
         // A single exercise with its sets, then a superset under its type, lettered
-        compose.waitUntil(WaitMillis) { shows("3 × 8") }
+        waitUntil(WaitMillis) { shows("3 × 8") }
         compose.onNodeWithText("SUPER SET").assertExists()
         compose.onNodeWithText("3 × 8–12").assertExists()
         compose.onNodeWithText("Lateral raise").assertExists()
@@ -144,7 +144,7 @@ class WorkoutsTabFeatureTest : FeatureTest() {
 
         lists.lists.value = Load.Ready(WorkoutsTabLists(listOf(push), emptyList()))
 
-        compose.waitUntil(WaitMillis) { shows("Your templates") }
+        waitUntil(WaitMillis) { shows("Your templates") }
     }
 
     @Test
@@ -152,11 +152,11 @@ class WorkoutsTabFeatureTest : FeatureTest() {
         show(templates = null, history = null)
         lists.lists.value = Load.Unavailable(IllegalStateException("offline"))
 
-        compose.waitUntil(WaitMillis) { shows("Couldn't load your templates") }
+        waitUntil(WaitMillis) { shows("Couldn't load your templates") }
         compose.onNodeWithTag(WorkoutsTabTags.Retry).performClick()
         lists.lists.value = Load.Ready(WorkoutsTabLists(listOf(push), emptyList()))
 
-        compose.waitUntil(WaitMillis) { shows("Push day") }
+        waitUntil(WaitMillis) { shows("Push day") }
         assertThat(lists.reads).isEqualTo(2)
     }
 
@@ -169,7 +169,7 @@ class WorkoutsTabFeatureTest : FeatureTest() {
 
         recent.history.value = Load.Ready(rotation)
 
-        compose.waitUntil(WaitMillis) { shows("✦ Suggested next") }
+        waitUntil(WaitMillis) { shows("✦ Suggested next") }
     }
 
     @Test

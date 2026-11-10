@@ -57,16 +57,16 @@ class HomeFeatureTest : FeatureTest() {
         compose.onNodeWithText("Week tab").assertExists()
 
         compose.onNodeWithTag(HomeTags.tab(HomeTab.Workouts)).performClick()
-        compose.waitUntil(WaitMillis) { shows("Workouts tab") }
+        waitUntil(WaitMillis) { shows("Workouts tab") }
         compose.onNodeWithText("New").assertExists()
 
         compose.onNodeWithTag(HomeTags.Pager).performTouchInput { swipeLeft() }
-        compose.waitUntil(WaitMillis) { viewModel.state.value.tab == HomeTab.Activity }
+        waitUntil(WaitMillis) { viewModel.state.value.tab == HomeTab.Activity }
         compose.onNodeWithText("Start workout").assertExists()
 
         // Back goes to Week first, then leaves Home to close
         Espresso.pressBack()
-        compose.waitUntil(WaitMillis) { viewModel.state.value.tab == HomeTab.Week }
+        waitUntil(WaitMillis) { viewModel.state.value.tab == HomeTab.Week }
         assertThat(viewModel.onBack()).isFalse()
     }
 
@@ -76,12 +76,12 @@ class HomeFeatureTest : FeatureTest() {
 
         compose.onNodeWithTag(HomeTags.Button).performClick()
         compose.onNode(hasText("From your templates") and hasAnyAncestor(isDialog())).performClick()
-        compose.waitUntil(WaitMillis) { opened == listOf("template picker") }
-        compose.waitUntil(WaitMillis) { viewModel.state.value.sheet == null }
+        waitUntil(WaitMillis) { opened == listOf("template picker") }
+        waitUntil(WaitMillis) { viewModel.state.value.sheet == null }
 
         compose.onNodeWithTag(HomeTags.Button).performClick()
         compose.onNodeWithTag(HomeTags.StartEmpty).performClick()
-        compose.waitUntil(WaitMillis) { opened.last() == "empty workout" }
+        waitUntil(WaitMillis) { opened.last() == "empty workout" }
         assertThat(analytics.startTaps).containsExactly(false, false)
     }
 
@@ -91,11 +91,11 @@ class HomeFeatureTest : FeatureTest() {
 
         compose.onNodeWithTag(HomeTags.Button).performClick()
         compose.onNodeWithTag(HomeTags.NewTemplate).performClick()
-        compose.waitUntil(WaitMillis) { opened == listOf("new template") }
+        waitUntil(WaitMillis) { opened == listOf("new template") }
 
         compose.onNodeWithTag(HomeTags.Button).performClick()
         compose.onNodeWithTag(HomeTags.NewPlan).performClick()
-        compose.waitUntil(WaitMillis) { opened.last() == "new plan" }
+        waitUntil(WaitMillis) { opened.last() == "new plan" }
     }
 
     // Options
@@ -106,7 +106,7 @@ class HomeFeatureTest : FeatureTest() {
         compose.onNodeWithText("Start workout").assertDoesNotExist()
 
         compose.onNodeWithText("Week: start a workout").performClick()
-        compose.waitUntil(WaitMillis) { shows("From your templates") }
+        waitUntil(WaitMillis) { shows("From your templates") }
         assertThat(analytics.startTaps).containsExactly(true)
     }
 
@@ -115,12 +115,12 @@ class HomeFeatureTest : FeatureTest() {
         show()
 
         compose.onNodeWithText("Week: see statistics").performClick()
-        compose.waitUntil(WaitMillis) { viewModel.state.value.tab == HomeTab.Activity }
+        waitUntil(WaitMillis) { viewModel.state.value.tab == HomeTab.Activity }
 
         compose.onNodeWithTag(HomeTags.tab(HomeTab.Week)).performClick()
-        compose.waitUntil(WaitMillis) { shows("Week tab") }
+        waitUntil(WaitMillis) { shows("Week tab") }
         compose.onNodeWithText("Week: see plans").performClick()
-        compose.waitUntil(WaitMillis) { viewModel.state.value.tab == HomeTab.Workouts }
+        waitUntil(WaitMillis) { viewModel.state.value.tab == HomeTab.Workouts }
     }
 
     @Test
@@ -132,7 +132,7 @@ class HomeFeatureTest : FeatureTest() {
         // Delivered on the main looper, which Robolectric runs when told
         shadowOf(Looper.getMainLooper()).idle()
 
-        compose.waitUntil(WaitMillis) { viewModel.state.value.tab == HomeTab.Week }
+        waitUntil(WaitMillis) { viewModel.state.value.tab == HomeTab.Week }
         assertThat(viewModel.state.value.button).isNull()
     }
 
@@ -142,9 +142,9 @@ class HomeFeatureTest : FeatureTest() {
 
         compose.runOnIdle { viewModel.onUpdateReady() }
 
-        compose.waitUntil(WaitMillis) { shows("An update is ready to install") }
+        waitUntil(WaitMillis) { shows("An update is ready to install") }
         compose.onNodeWithText("Restart").performClick()
-        compose.waitUntil(WaitMillis) { restarts == 1 }
+        waitUntil(WaitMillis) { restarts == 1 }
     }
 
     // A workout left going
@@ -158,10 +158,10 @@ class HomeFeatureTest : FeatureTest() {
             viewModel.onResumed()
         }
 
-        compose.waitUntil(WaitMillis) { shows("You have an ongoing workout with 1 completed set. Discarding deletes it.") }
+        waitUntil(WaitMillis) { shows("You have an ongoing workout with 1 completed set. Discarding deletes it.") }
         compose.onNodeWithTag(HomeTags.Resume).performClick()
 
-        compose.waitUntil(WaitMillis) { opened == listOf("resume ${leftGoing.uuid}") }
+        waitUntil(WaitMillis) { opened == listOf("resume ${leftGoing.uuid}") }
         assertThat(services.ongoing).isNotNull()
     }
 
@@ -174,11 +174,11 @@ class HomeFeatureTest : FeatureTest() {
             viewModel.onResumed()
         }
 
-        compose.waitUntil(WaitMillis) { shows("Resume Workout") }
+        waitUntil(WaitMillis) { shows("Resume Workout") }
         compose.onNodeWithTag(HomeTags.Discard).performClick()
 
-        compose.waitUntil(WaitMillis) { services.ongoing == null }
-        compose.waitUntil(WaitMillis) { !shows("Resume Workout") }
+        waitUntil(WaitMillis) { services.ongoing == null }
+        waitUntil(WaitMillis) { !shows("Resume Workout") }
         assertThat(opened).isEmpty()
     }
 
