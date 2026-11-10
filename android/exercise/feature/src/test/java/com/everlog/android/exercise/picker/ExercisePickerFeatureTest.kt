@@ -58,7 +58,8 @@ class ExercisePickerFeatureTest : FeatureTest() {
 
         // A filter from its chip: Equipment is Dumbbell
         compose.onNodeWithText("Equipment").performClick()
-        // The menu's value, with how many exercises it has
+        // The menu's value, with how many exercises it has, once the menu has its counts
+        waitUntil(WaitMillis) { compose.onAllNodes(hasText("Dumbbell") and hasText("1")).fetchSemanticsNodes().isNotEmpty() }
         compose.onNode(hasText("Dumbbell") and hasText("1")).performClick()
         compose.onNodeWithText("Done").performClick()
         waitUntil(WaitMillis) { !exists("Barbell Row") }
