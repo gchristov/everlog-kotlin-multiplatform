@@ -37,9 +37,12 @@ import com.everlog.android.common.design.R as DesignR
 // A row in an open AppExpandableCard: an image, a name and a short value at the end, e.g. an exercise and its sets
 data class AppExpandableCardRow(val title: String, val imageUrl: String?, val trailing: String)
 
+// Rows done together, e.g. a superset: under [label], each image lettered (a, b, c), with no dividers between them
+data class AppExpandableCardGroup(val rows: List<AppExpandableCardRow>, val label: String? = null)
+
 /**
  * A card that opens in place, like a list group: its title over [subtitle] and a peek at the first few rows' images
- * when closed; every row, then [footer], when open. Tapping the title opens and closes it.
+ * when closed; every group of rows, then [footer], when open. Tapping the title opens and closes it.
  *
  * @param subtitle Under the title. Pass null to hide it, e.g. a summary the open rows already say.
  * @param footer Under the rows while it's open, e.g. buttons acting on the whole card.
@@ -47,7 +50,7 @@ data class AppExpandableCardRow(val title: String, val imageUrl: String?, val tr
 @Composable
 fun AppExpandableCard(
     title: String,
-    rows: List<AppExpandableCardRow>,
+    groups: List<AppExpandableCardGroup>,
     open: Boolean,
     onToggle: () -> Unit,
     modifier: Modifier = Modifier,
@@ -63,7 +66,7 @@ fun AppExpandableCard(
             Header(
                 title = title,
                 subtitle = subtitle,
-                imageUrls = rows.take(ExpandableSizes.PeekCount).map { it.imageUrl },
+                imageUrls = groups.flatMap { it.rows }.take(ExpandableSizes.PeekCount).map { it.imageUrl },
                 open = open,
                 onToggle = onToggle,
             )
@@ -75,16 +78,9 @@ fun AppExpandableCard(
                         shrinkVertically(tween(ExpandableMotion.Collapse, easing = ExpandableMotion.Standard)),
             ) {
                 Column {
-                    rows.forEach { row ->
+                    groups.forEach { group ->
                         HorizontalDivider(thickness = 1.dp, color = Theme.backgrounds.separator)
-                        AppListItem(
-                            modifier = Modifier.semantics(mergeDescendants = true) {},
-                            title = row.title,
-                            leading = { AppThumbnail(imageUrl = row.imageUrl, size = Theme.sizes.leading, corner = ExpandableSizes.Corner) },
-                            trailing = {
-                                AppText(text = row.trailing, style = Theme.typography.caption, color = Theme.contentColors.secondary)
-                            },
-                        )
+                        Group(group)
                     }
                     footer?.let {
                         HorizontalDivider(thickness = 1.dp, color = Theme.backgrounds.separator)
@@ -93,6 +89,34 @@ fun AppExpandableCard(
                 }
             }
         }
+    }
+}
+
+@Composable
+private fun Group(group: AppExpandableCardGroup) {
+    val lettered = group.rows.size > 1
+    group.label?.let {
+        AppText(
+            modifier = Modifier.padding(start = Theme.spacing.large, end = Theme.spacing.large, top = Theme.spacing.medium),
+            text = it.uppercase(),
+            style = Theme.typography.small,
+            color = Theme.contentColors.secondary,
+        )
+    }
+    group.rows.forEachIndexed { index, row ->
+        AppListItem(
+            modifier = Modifier.semantics(mergeDescendants = true) {},
+            title = row.title,
+            leading = {
+                AppThumbnail(
+                    imageUrl = row.imageUrl,
+                    size = Theme.sizes.leading,
+                    corner = ExpandableSizes.Corner,
+                    badge = if (lettered) 'a' + index else null,
+                )
+            },
+            trailing = { AppText(text = row.trailing, style = Theme.typography.caption, color = Theme.contentColors.secondary) },
+        )
     }
 }
 
@@ -181,13 +205,15 @@ private object ExpandableSizes {
 private fun AppExpandableCardPreview() {
     Theme {
         Column(verticalArrangement = Arrangement.spacedBy(Theme.spacing.large)) {
-            val rows = listOf(
-                AppExpandableCardRow("Bench Press", null, "3 × 8"),
-                AppExpandableCardRow("Overhead Press", null, "3 × 10"),
-                AppExpandableCardRow("Lateral Raise", null, "3 × 15"),
+            val groups = listOf(
+                AppExpandableCardGroup(listOf(AppExpandableCardRow("Bench Press", null, "3 × 8"))),
+                AppExpandableCardGroup(
+                    label = "Superset",
+                    rows = listOf(AppExpandableCardRow("Overhead Press", null, "3 × 10"), AppExpandableCardRow("Lateral Raise", null, "3 × 15")),
+                ),
             )
-            AppExpandableCard(title = "Push day", subtitle = "Done 2 days ago", rows = rows, open = false, onToggle = {})
-            AppExpandableCard(title = "Pull day", subtitle = "Done yesterday", rows = rows, open = true, onToggle = {})
+            AppExpandableCard(title = "Push day", subtitle = "Done 2 days ago", groups = groups, open = false, onToggle = {})
+            AppExpandableCard(title = "Pull day", subtitle = "Done yesterday", groups = groups, open = true, onToggle = {})
         }
     }
 }

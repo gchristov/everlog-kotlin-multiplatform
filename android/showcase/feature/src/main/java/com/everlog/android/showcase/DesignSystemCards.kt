@@ -13,6 +13,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import com.everlog.android.common.compose.elements.AppButton
 import com.everlog.android.common.compose.elements.AppExpandableCard
+import com.everlog.android.common.compose.elements.AppExpandableCardGroup
 import com.everlog.android.common.compose.elements.AppExpandableCardRow
 import com.everlog.android.common.compose.elements.AppSecondaryButton
 import com.everlog.android.common.compose.elements.AppSurface
@@ -55,18 +56,20 @@ internal fun DesignSystemCards(onButtonClick: () -> Unit) {
 @Composable
 private fun ExpandableCards(onButtonClick: () -> Unit) {
     var open by remember { mutableStateOf(1) }
-    val rows = listOf(
-        AppExpandableCardRow("High Knees", SampleImageUrl, "3 × 30 s"),
-        AppExpandableCardRow("Bench Press", null, "3 × 8"),
-        AppExpandableCardRow("Overhead Press", SampleImageUrl, "3 × 10"),
-        AppExpandableCardRow("Lateral Raise", null, "3 × 15"),
+    val groups = listOf(
+        AppExpandableCardGroup(listOf(AppExpandableCardRow("High Knees", SampleImageUrl, "3 × 30 s"))),
+        AppExpandableCardGroup(listOf(AppExpandableCardRow("Bench Press", null, "3 × 8"))),
+        AppExpandableCardGroup(
+            label = "Superset",
+            rows = listOf(AppExpandableCardRow("Overhead Press", SampleImageUrl, "3 × 10"), AppExpandableCardRow("Lateral Raise", null, "3 × 15")),
+        ),
     )
     Column(verticalArrangement = Arrangement.spacedBy(Theme.spacing.large)) {
         listOf("Push day", "Pull day").forEachIndexed { index, title ->
             AppExpandableCard(
                 title = title,
                 subtitle = "Opens in place with a tap",
-                rows = rows,
+                groups = groups,
                 open = open == index,
                 onToggle = { open = if (open == index) -1 else index },
                 footer = {

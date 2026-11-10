@@ -57,6 +57,9 @@ joined by 1px `--background-separator` dividers), e.g. a workout template.
 - open: the chevron turns to ⌃ and the peek fades out; a row per item below the header: a 48px thumbnail, the name,
   and a short value at the end in `--font-caption` `--content-secondary` (e.g. 3 × 8); then an optional footer
   padded `--space-lg`, e.g. Details and Start buttons side by side
+- a group of rows done together (a superset or circuit): its type over it in `--font-small` `--content-secondary`
+  capitals, its rows lettered a, b, c on their thumbnails' corners (a 16px circle on `--background-primary` with a
+  1px `--background-separator` border, as in the workout's table), and no dividers inside it
 - tapping the header opens and closes it; the rows fade in as it grows (250ms)
 
 ## AppStatTile

@@ -22,6 +22,7 @@ import androidx.compose.ui.unit.Dp
 import com.everlog.android.common.compose.elements.AppBar
 import com.everlog.android.common.compose.elements.AppBarHeader
 import com.everlog.android.common.compose.elements.AppExpandableCard
+import com.everlog.android.common.compose.elements.AppExpandableCardGroup
 import com.everlog.android.common.compose.elements.AppExpandableCardRow
 import com.everlog.android.common.compose.elements.AppFooter
 import com.everlog.android.common.compose.elements.AppFooterAction
@@ -162,11 +163,15 @@ private fun RoutineCard(
         title = routine.name,
         // Open, the rows say the rest
         subtitle = closedSummary.takeUnless { open },
-        rows = routine.exercises.mapIndexed { index, exercise ->
-            AppExpandableCardRow(
-                title = names.getOrNull(index).orEmpty(),
-                imageUrl = imageUrls.getOrNull(index),
-                trailing = setsTarget(exercise),
+        groups = routine.exercises.mapIndexed { index, exercise ->
+            AppExpandableCardGroup(
+                listOf(
+                    AppExpandableCardRow(
+                        title = names.getOrNull(index).orEmpty(),
+                        imageUrl = imageUrls.getOrNull(index),
+                        trailing = setsTarget(exercise),
+                    ),
+                ),
             )
         },
         open = open,
