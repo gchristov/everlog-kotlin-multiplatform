@@ -86,12 +86,9 @@
     <string name="onboarding_reminders_permission">Android will ask to allow notifications when you tap Remind me.</string>
     <string name="onboarding_reminders_title">Want a reminder on training days?</string>
     <string name="onboarding_reveal_build_own">Build my own template</string>
-    <string name="onboarding_reveal_closed">Collapsed</string>
     <!-- Sets × a hold in seconds, e.g. 3 × 30 s -->
     <string name="onboarding_reveal_hold">%1$d × %2$d s</string>
     <string name="onboarding_reveal_looks_good">Looks good</string>
-    <!-- Read out for a routine card, which opens and closes on a tap -->
-    <string name="onboarding_reveal_open">Expanded</string>
     <!-- Sets × reps, e.g. 3 × 8–12 -->
     <string name="onboarding_reveal_reps">%1$d × %2$d–%3$d</string>
     <!-- The week's split, in the summary line, e.g. 3 days · Push / Pull / Legs · Gym · Build muscle -->

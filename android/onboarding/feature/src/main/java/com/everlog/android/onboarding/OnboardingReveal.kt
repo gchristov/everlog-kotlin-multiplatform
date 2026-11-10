@@ -1,26 +1,12 @@
 package com.everlog.android.onboarding
 
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.animateContentSize
-import androidx.compose.animation.core.animateFloatAsState
-import androidx.compose.animation.core.tween
-import androidx.compose.animation.expandVertically
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
-import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.ScrollState
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -28,28 +14,18 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.rotate
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.res.vectorResource
-import androidx.compose.ui.semantics.semantics
-import androidx.compose.ui.semantics.stateDescription
 import androidx.compose.ui.unit.Dp
-import androidx.compose.ui.unit.dp
 import com.everlog.android.common.compose.elements.AppBar
 import com.everlog.android.common.compose.elements.AppBarHeader
+import com.everlog.android.common.compose.elements.AppExpandableCard
+import com.everlog.android.common.compose.elements.AppExpandableCardRow
 import com.everlog.android.common.compose.elements.AppFooter
 import com.everlog.android.common.compose.elements.AppFooterAction
-import com.everlog.android.common.compose.elements.AppIcon
 import com.everlog.android.common.compose.elements.AppScreen
-import com.everlog.android.common.compose.elements.AppSurface
-import com.everlog.android.common.compose.elements.AppText
-import com.everlog.android.common.compose.elements.AppThumbnail
-import com.everlog.android.common.compose.elements.list.AppListItem
 import com.everlog.android.common.compose.elements.rememberAppBarScrollBehavior
 import com.everlog.android.common.compose.theme.Theme
 import com.everlog.android.onboarding.R
@@ -57,7 +33,6 @@ import com.everlog.android.onboarding.data.BuildStarterRoutinesUseCase
 import com.everlog.android.onboarding.data.StarterProfile
 import com.everlog.android.onboarding.data.StarterRoutine
 import com.everlog.android.onboarding.data.StarterWeek
-import com.everlog.android.common.design.R as DesignR
 
 // The reveal from the Everlog Onboarding design: "Here are your workout templates", the summary of
 // the answers, then a card per routine. The first card starts open with its exercises, the others
@@ -169,9 +144,7 @@ private fun RevealRoutines(
     }
 }
 
-// A routine's card, drawn like an AppListGroup: rows with dividers between them. Open: its name over
-// a row per exercise. Closed: its name over its size, with the first three exercises' images and a
-// chevron. An AppListGroup can't animate rows in and out, so it's built from the same pieces.
+// A routine's card: its name over its size and the first exercises' images, opening to a row per exercise
 @Composable
 private fun RoutineCard(
     routine: StarterRoutine,
@@ -185,118 +158,20 @@ private fun RoutineCard(
         pluralStringResource(R.plurals.onboarding_reveal_exercises, routine.exercises.size, routine.exercises.size),
         routine.exercises.sumOf { it.sets }.let { pluralStringResource(R.plurals.onboarding_reveal_sets, it, it) },
     ).joinToString(stringResource(R.string.onboarding_building_separator))
-    AppSurface(
-        modifier = Modifier.fillMaxWidth(),
-        elevation = 0.dp,
-        contentPadding = PaddingValues(),
-    ) {
-        Column(modifier = Modifier.animateContentSize(tween(OnboardingMotion.Collapse, easing = OnboardingMotion.Standard))) {
-            RoutineCardHeader(
-                name = routine.name,
-                closedSummary = closedSummary,
-                imageUrls = imageUrls.take(RevealSizes.StackCount),
-                open = open,
-                onToggle = onToggle,
-            )
-            AnimatedVisibility(
-                visible = open,
-                enter = fadeIn(tween(OnboardingMotion.Expand, OnboardingMotion.ExpandDelay, OnboardingMotion.EmphasizedDecelerate)) +
-                        expandVertically(tween(OnboardingMotion.Collapse, easing = OnboardingMotion.Standard)),
-                exit = fadeOut(tween(OnboardingMotion.FadeOut, easing = OnboardingMotion.EmphasizedAccelerate)) +
-                        shrinkVertically(tween(OnboardingMotion.Collapse, easing = OnboardingMotion.Standard)),
-            ) {
-                Column {
-                    routine.exercises.forEachIndexed { index, exercise ->
-                        HorizontalDivider(thickness = 1.dp, color = Theme.backgrounds.separator)
-                        ExerciseRow(
-                            name = names.getOrNull(index).orEmpty(),
-                            imageUrl = imageUrls.getOrNull(index),
-                            target = setsTarget(exercise),
-                        )
-                    }
-                }
-            }
-        }
-    }
-}
-
-@Composable
-private fun RoutineCardHeader(
-    name: String,
-    closedSummary: String,
-    imageUrls: List<String?>,
-    open: Boolean,
-    onToggle: () -> Unit,
-) {
-    val chevronRotation by animateFloatAsState(
-        targetValue = if (open) 180f else 0f,
-        animationSpec = tween(OnboardingMotion.Collapse, easing = OnboardingMotion.Standard),
-        label = "chevron",
-    )
-    val stateDescription = stringResource(if (open) R.string.onboarding_reveal_open else R.string.onboarding_reveal_closed)
-    AppListItem(
-        modifier = Modifier.semantics(mergeDescendants = true) { this.stateDescription = stateDescription },
-        title = name,
+    AppExpandableCard(
+        title = routine.name,
         // Open, the rows say the rest
         subtitle = closedSummary.takeUnless { open },
-        trailing = {
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(Theme.spacing.small),
-            ) {
-                // Closed: a peek at the exercises, which the rows show once it's open
-                AnimatedVisibility(
-                    visible = !open,
-                    enter = fadeIn(tween(OnboardingMotion.SummaryFade, easing = OnboardingMotion.Standard)),
-                    exit = fadeOut(tween(OnboardingMotion.FadeOut, easing = OnboardingMotion.Standard)),
-                ) {
-                    ThumbnailStack(imageUrls = imageUrls)
-                }
-                AppIcon(
-                    modifier = Modifier.rotate(chevronRotation),
-                    imageVector = ImageVector.vectorResource(DesignR.drawable.ic_keyboard_down),
-                    tint = Theme.contentColors.secondary,
-                )
-            }
-        },
-        onClick = onToggle,
-    )
-}
-
-// An exercise in an open card: its image, name, and sets × reps
-@Composable
-private fun ExerciseRow(
-    name: String,
-    imageUrl: String?,
-    target: String,
-) {
-    AppListItem(
-        modifier = Modifier.semantics(mergeDescendants = true) {},
-        title = name,
-        leading = { AppThumbnail(imageUrl = imageUrl, size = Theme.sizes.leading, corner = RevealSizes.Corner) },
-        trailing = {
-            AppText(
-                text = target,
-                style = Theme.typography.caption,
-                color = Theme.contentColors.secondary,
+        rows = routine.exercises.mapIndexed { index, exercise ->
+            AppExpandableCardRow(
+                title = names.getOrNull(index).orEmpty(),
+                imageUrl = imageUrls.getOrNull(index),
+                trailing = setsTarget(exercise),
             )
         },
+        open = open,
+        onToggle = onToggle,
     )
-}
-
-// The first few exercises' images, overlapping, each ringed in the card's colour so they read apart
-@Composable
-private fun ThumbnailStack(imageUrls: List<String?>) {
-    Row(horizontalArrangement = Arrangement.spacedBy(-RevealSizes.StackOverlap)) {
-        imageUrls.forEach { imageUrl ->
-            AppThumbnail(
-                modifier = Modifier.border(RevealSizes.StackRing, Theme.backgrounds.surface, RoundedCornerShape(RevealSizes.Corner)),
-                imageUrl = imageUrl,
-                size = Theme.sizes.leading,
-                corner = RevealSizes.Corner,
-            )
-        }
-    }
 }
 
 // e.g. 3 × 8–12, or 3 × 30 s for a hold
@@ -318,13 +193,4 @@ internal fun StarterWeek.Split.label(): String = stringResource(
 private object RevealMotion {
     // Each card enters this long after the one above it
     const val CardStagger = 60
-}
-
-// Sizes from the design that the design system doesn't have
-private object RevealSizes {
-    // The workout screen's exercise images
-    val Corner = 12.dp
-    val StackOverlap = 14.dp
-    val StackRing = 2.dp
-    const val StackCount = 3
 }

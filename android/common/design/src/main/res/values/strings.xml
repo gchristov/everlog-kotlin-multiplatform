@@ -105,4 +105,7 @@
     <string name="rest_wheel_seconds">Seconds</string>
     <string name="rest_wheel_minute_value">%1$d min</string>
     <string name="rest_wheel_second_value">%1$02d s</string>
+    <!-- How a screen reader says whether a card that opens in place is open -->
+    <string name="expandable_card_open">Expanded</string>
+    <string name="expandable_card_closed">Collapsed</string>
 </resources>
