@@ -25,7 +25,6 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.everlog.android.common.compose.elements.AppBarHeader
 import com.everlog.android.common.compose.elements.AppSecondaryButton
 import com.everlog.android.common.compose.elements.AppSectionHeader
-import com.everlog.android.common.compose.elements.AppTertiaryButton
 import com.everlog.android.common.compose.elements.AppText
 import com.everlog.android.common.compose.elements.list.AppListGroup
 import com.everlog.android.common.compose.elements.list.AppListItem
@@ -43,7 +42,6 @@ class WorkoutsTabActions(
     val startEmpty: () -> Unit,
     val newTemplate: () -> Unit,
     val showPlan: (uuid: String) -> Unit,
-    val newPlan: () -> Unit,
 )
 
 @Composable
@@ -109,7 +107,7 @@ private fun Lists(
         return
     }
     Section(
-        header = { SectionHeader(stringResource(R.string.workouts_tab_templates), actions.newTemplate, WorkoutsTabTags.NewTemplate, margin) },
+        header = { AppSectionHeader(text = stringResource(R.string.workouts_tab_templates), modifier = margin) },
     ) {
         state.templates.forEach { template ->
             WorkoutsTabTemplateCard(
@@ -125,7 +123,7 @@ private fun Lists(
         }
     }
     Section(
-        header = { SectionHeader(stringResource(R.string.workouts_tab_plans), actions.newPlan, WorkoutsTabTags.NewPlan, margin) },
+        header = { AppSectionHeader(text = stringResource(R.string.workouts_tab_plans), modifier = margin) },
     ) {
         WorkoutsTabPlans(active = state.activePlan, plans = state.plans, onPlanClick = actions.showPlan, modifier = margin)
     }
@@ -134,7 +132,7 @@ private fun Lists(
 // A header close over its cards, which keep the screen's gap between them
 @Composable
 private fun Section(header: @Composable () -> Unit, content: @Composable () -> Unit) {
-    Column(verticalArrangement = Arrangement.spacedBy(Theme.spacing.extraSmall)) {
+    Column(verticalArrangement = Arrangement.spacedBy(Theme.spacing.medium)) {
         header()
         Column(verticalArrangement = Arrangement.spacedBy(Theme.spacing.large)) { content() }
     }
@@ -156,15 +154,6 @@ private fun ExercisesRow(onClick: () -> Unit, modifier: Modifier) {
                 onClick = onClick,
             )
         }
-    }
-}
-
-// A section's header with a New button at its end, until Home gets a floating button for creating
-@Composable
-private fun SectionHeader(text: String, onNew: () -> Unit, newTag: String, modifier: Modifier) {
-    Row(modifier = modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
-        AppSectionHeader(text = text, modifier = Modifier.weight(1f))
-        AppTertiaryButton(modifier = Modifier.testTag(newTag), onClick = onNew, text = stringResource(R.string.workouts_tab_new))
     }
 }
 

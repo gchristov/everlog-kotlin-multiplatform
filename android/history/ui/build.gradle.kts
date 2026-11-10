@@ -10,6 +10,8 @@ android {
 }
 
 dependencies {
+    implementation(libs.androidx.localbroadcastmanager)
+    implementation(libs.androidx.lifecycle.viewmodel.compose)
     implementation(projects.android.history.data)
     implementation(projects.android.settings.data)
     implementation(projects.android.workout.data)
