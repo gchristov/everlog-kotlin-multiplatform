@@ -1,7 +1,6 @@
 package com.everlog.android.home.screen
 
 import android.content.Intent
-import android.os.Looper
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
@@ -31,7 +30,6 @@ import com.everlog.android.plan.testfixtures.FakePlanProgress
 import com.google.common.truth.Truth.assertThat
 import kotlinx.coroutines.Dispatchers
 import org.junit.Test
-import org.robolectric.Shadows.shadowOf
 
 /**
  * The Compose Home driven as a user would, with its real view-model over fakes and stand-ins for the tabs (each has
@@ -129,9 +127,6 @@ class HomeFeatureTest : FeatureTest() {
         planProgress.plan = ELPlan.newPlan("user")
 
         LocalBroadcastManager.getInstance(context).sendBroadcast(Intent(PlanBroadcasts.CURRENT_PLAN_STARTED))
-        // Delivered on the main looper, which Robolectric runs when told
-        shadowOf(Looper.getMainLooper()).idle()
-
         waitUntil(WaitMillis) { viewModel.state.value.tab == HomeTab.Week }
         assertThat(viewModel.state.value.button).isNull()
     }
