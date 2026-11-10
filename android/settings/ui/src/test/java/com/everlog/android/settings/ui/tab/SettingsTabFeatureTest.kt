@@ -2,18 +2,14 @@ package com.everlog.android.settings.ui.tab
 
 import android.content.Context
 import androidx.compose.ui.test.hasText
-import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollToNode
 import androidx.test.espresso.Espresso
-import androidx.test.ext.junit.runners.AndroidJUnit4
-import androidx.test.platform.app.InstrumentationRegistry
 import com.everlog.android.auth.data.model.ELUser
 import com.everlog.android.auth.testfixtures.FakeUserSession
-import com.everlog.android.common.compose.theme.Theme
-import com.everlog.android.common.kotlin.AppContext
+import com.everlog.android.common.composetest.FeatureTest
 import com.everlog.android.common.kotlin.WeightUnit
 import com.everlog.android.settings.data.MuscleGoal
 import com.everlog.android.settings.testfixtures.FakeUserSettings
@@ -21,14 +17,8 @@ import com.everlog.android.settings.ui.SetSuggestionText
 import com.everlog.android.settings.ui.SettingsAnalytics
 import com.everlog.android.settings.ui.SettingsConfig
 import com.google.common.truth.Truth.assertThat
-import com.jakewharton.threetenabp.AndroidThreeTen
-import java.util.concurrent.TimeUnit
 import kotlinx.coroutines.Dispatchers
-import org.junit.Rule
 import org.junit.Test
-import org.junit.rules.RuleChain
-import org.junit.rules.Timeout
-import org.junit.runner.RunWith
 import org.threeten.bp.DayOfWeek
 
 /**
@@ -36,22 +26,7 @@ import org.threeten.bp.DayOfWeek
  * through its sheet, the account and logging out, a guest, and the rows that open other screens. A few journeys rather
  * than a test per detail: the view-model's unit tests cover those.
  */
-@RunWith(AndroidJUnit4::class)
-class SettingsTabScenarioTest {
-
-    private val compose = createComposeRule()
-
-    @get:Rule
-    val rules: RuleChain = RuleChain
-        .outerRule(Timeout.builder().withTimeout(2, TimeUnit.MINUTES).withLookingForStuckThread(true).build())
-        .around(compose)
-
-    init {
-        // Set by the app at startup, which a library's tests don't run
-        val context = InstrumentationRegistry.getInstrumentation().targetContext.applicationContext
-        AppContext = context
-        AndroidThreeTen.init(context)
-    }
+class SettingsTabFeatureTest : FeatureTest() {
 
     private val settings = FakeUserSettings(workoutsGoal = 3, weightStep = 1f, screenOn = true)
     private val session = FakeUserSession(ELUser(id = "user", displayName = "Alex Smith", email = "alex@example.com"))
@@ -173,21 +148,19 @@ class SettingsTabScenarioTest {
             showDeveloper = false,
             onSettingsChanged = { changes++ },
         )
-        compose.setContent {
-            Theme {
-                SettingsTabScreen(
-                    viewModel = viewModel,
-                    actions = SettingsTabActions(
-                        openSetSuggestions = { opened += "set suggestions" },
-                        sendFeedback = { opened += "feedback" },
-                        reviewOnPlay = { opened += "review" },
-                        share = { opened += "share" },
-                        openDesignSystem = { opened += "design system" },
-                        logOut = { opened += "log out" },
-                    ),
-                    describeSetSuggestion = { SetSuggestionText("From last time", "Fill in the reps and weight you did last time") },
-                )
-            }
+        setContent {
+            SettingsTabScreen(
+                viewModel = viewModel,
+                actions = SettingsTabActions(
+                    openSetSuggestions = { opened += "set suggestions" },
+                    sendFeedback = { opened += "feedback" },
+                    reviewOnPlay = { opened += "review" },
+                    share = { opened += "share" },
+                    openDesignSystem = { opened += "design system" },
+                    logOut = { opened += "log out" },
+                ),
+                describeSetSuggestion = { SetSuggestionText("From last time", "Fill in the reps and weight you did last time") },
+            )
         }
     }
 

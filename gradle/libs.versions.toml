@@ -1,4 +1,5 @@
 [versions]
+robolectric = "4.17"
 agp = "8.13.2"
 kotlin = "2.3.21"
 metro = "1.5.1"
@@ -81,6 +82,7 @@ haze = "1.6.10"
 lottie = "6.7.1"
 
 [libraries]
+robolectric = { group = "org.robolectric", name = "robolectric", version.ref = "robolectric" }
 # Gradle plugins, applied through the convention plugins
 android-gradlePlugin = { group = "com.android.tools.build", name = "gradle", version.ref = "agp" }
 kotlin-gradlePlugin = { group = "org.jetbrains.kotlin", name = "kotlin-gradle-plugin", version.ref = "kotlin" }
