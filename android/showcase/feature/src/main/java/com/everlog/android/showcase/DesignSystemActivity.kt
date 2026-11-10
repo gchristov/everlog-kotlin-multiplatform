@@ -121,7 +121,7 @@ private val HubSections = listOf(
         HubEntry(DesignSystemPage.Lists, "Lists", "Grouped lists and their rows, thumbnails, checks and switches"),
         HubEntry(DesignSystemPage.Search, "Search and filters", "The search bar and chips"),
         HubEntry(DesignSystemPage.Menus, "Menus", "Further options behind a ⋮ button, in the app bar or on a row"),
-        HubEntry(DesignSystemPage.Cards, "Cards", "The card surface, with text and actions, and the highlight card"),
+        HubEntry(DesignSystemPage.Cards, "Cards", "The card surface, with text and actions, the card that opens in place and the highlight card"),
         HubEntry(DesignSystemPage.StatTiles, "Stat tiles", "Numbers on cards, two to a row, and their loading shimmer"),
         HubEntry(DesignSystemPage.ChipTabs, "Chip tabs", "Tabs as chips over pages, swiped or picked"),
         HubEntry(DesignSystemPage.Timeline, "Timeline", "Days on a line, each beside its own content, as the history lists show them"),

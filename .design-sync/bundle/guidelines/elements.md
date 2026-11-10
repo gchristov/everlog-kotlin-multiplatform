@@ -47,6 +47,21 @@ The label above a group or card: `--font-subtitle`, `--content-secondary`, one l
 A card: background `--background-surface`, radius `--radius-surface`, padding `--space-lg` (none
 when its content pads itself, like list rows). Text inside is `--content-primary`.
 
+## AppExpandableCard
+
+A card that opens in place, built like an `AppListGroup` (`--background-surface`, radius `--radius-surface`, rows
+joined by 1px `--background-separator` dividers), e.g. a workout template.
+- closed: an `AppListItem` header, the title over an optional subtitle (e.g. "Done 2 days ago"), with a peek at the
+  first three rows' images at its end (48px thumbnails, radius 12px, overlapping by 14px, each ringed 2px in the
+  card's colour, the same stack as `AppThumbnailStack`) and a ⌄ chevron in `--content-secondary`
+- open: the chevron turns to ⌃ and the peek fades out; a row per item below the header: a 48px thumbnail, the name,
+  and a short value at the end in `--font-caption` `--content-secondary` (e.g. 3 × 8); then an optional footer
+  padded `--space-lg`, e.g. Details and Start buttons side by side
+- a group of rows done together (a superset or circuit): its type over it in `--font-small` `--content-secondary`
+  capitals, its rows lettered a, b, c on their thumbnails' corners (a 16px circle on `--background-primary` with a
+  1px `--background-separator` border, as in the workout's table), and no dividers inside it
+- tapping the header opens and closes it; the rows fade in as it grows (250ms)
+
 ## AppHighlightCard
 
 A card that stands out from the others, for one thing the app wants seen: a suggestion, the next step, a

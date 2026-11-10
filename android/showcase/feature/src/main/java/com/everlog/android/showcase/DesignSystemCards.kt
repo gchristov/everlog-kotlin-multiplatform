@@ -2,13 +2,22 @@ package com.everlog.android.showcase
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import com.everlog.android.common.compose.elements.AppButton
+import com.everlog.android.common.compose.elements.AppExpandableCard
+import com.everlog.android.common.compose.elements.AppExpandableCardGroup
+import com.everlog.android.common.compose.elements.AppExpandableCardRow
 import com.everlog.android.common.compose.elements.AppHighlightAction
 import com.everlog.android.common.compose.elements.AppHighlightCard
+import com.everlog.android.common.compose.elements.AppSecondaryButton
 import com.everlog.android.common.compose.elements.AppSurface
 import com.everlog.android.common.compose.elements.AppText
 import com.everlog.android.common.compose.elements.AppThumbnail
@@ -22,6 +31,10 @@ internal fun DesignSystemCards(onButtonClick: () -> Unit) {
             AppSurface(modifier = Modifier.fillMaxWidth()) {
                 CardText()
             }
+        }
+        group(key = "expandable", header = { "Card that opens" }) {}
+        item(key = "expandableExample") {
+            ExpandableCards(onButtonClick)
         }
         group(key = "actions", header = { "Card with actions" }) {}
         item(key = "actionsExample") {
@@ -66,6 +79,36 @@ internal fun DesignSystemCards(onButtonClick: () -> Unit) {
                     primary = AppHighlightAction("Continue", onButtonClick),
                 )
             }
+        }
+    }
+}
+
+@Composable
+private fun ExpandableCards(onButtonClick: () -> Unit) {
+    var open by remember { mutableStateOf(1) }
+    val groups = listOf(
+        AppExpandableCardGroup(listOf(AppExpandableCardRow("High Knees", SampleImageUrl, "3 × 30 s"))),
+        AppExpandableCardGroup(listOf(AppExpandableCardRow("Bench Press", null, "3 × 8"))),
+        AppExpandableCardGroup(
+            label = "Superset",
+            rows = listOf(AppExpandableCardRow("Overhead Press", SampleImageUrl, "3 × 10"), AppExpandableCardRow("Lateral Raise", null, "3 × 15")),
+        ),
+    )
+    Column(verticalArrangement = Arrangement.spacedBy(Theme.spacing.large)) {
+        listOf("Push day", "Pull day").forEachIndexed { index, title ->
+            AppExpandableCard(
+                title = title,
+                subtitle = "Opens in place with a tap",
+                groups = groups,
+                open = open == index,
+                onToggle = { open = if (open == index) -1 else index },
+                footer = {
+                    Row(horizontalArrangement = Arrangement.spacedBy(Theme.spacing.small)) {
+                        AppSecondaryButton(modifier = Modifier.weight(1f), onClick = onButtonClick, text = "Details")
+                        AppButton(modifier = Modifier.weight(1f), onClick = onButtonClick, text = "Start")
+                    }
+                },
+            )
         }
     }
 }
