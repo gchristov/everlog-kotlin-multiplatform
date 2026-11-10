@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHostState
@@ -49,7 +50,13 @@ import com.everlog.android.common.design.R as DesignR
  * and the app update snackbar above the bar, the button moving up out of its way.
  */
 @Composable
-internal fun HomeScreen(viewModel: HomeViewModel, sheetActions: HomeSheetActions, onRestartForUpdate: () -> Unit) {
+internal fun HomeScreen(
+    viewModel: HomeViewModel,
+    sheetActions: HomeSheetActions,
+    onRestartForUpdate: () -> Unit,
+    // A tab's content: the routes, or stand-ins in a test
+    tab: @Composable (tab: HomeTab, shown: Boolean, links: HomeTabLinks) -> Unit = ::HomeTabRoute,
+) {
     val state by viewModel.state.collectAsStateWithLifecycle()
     val pager = rememberPagerState(initialPage = state.tab.ordinal) { HomeTab.entries.size }
     val activityPager = rememberPagerState { ActivityTabPages.Count }
@@ -69,33 +76,31 @@ internal fun HomeScreen(viewModel: HomeViewModel, sheetActions: HomeSheetActions
     val updateAction = stringResource(R.string.home_update_restart)
     LaunchedEffect(state.updateReady) {
         if (!state.updateReady) return@LaunchedEffect
-        viewModel.onUpdateShown()
+        // Marked shown only once it's gone: changing the key first would cancel the snackbar before it showed
         val result = snackbar.showSnackbar(message = updateMessage, actionLabel = updateAction, duration = SnackbarDuration.Indefinite)
+        viewModel.onUpdateShown()
         if (result == SnackbarResult.ActionPerformed) onRestartForUpdate()
     }
 
-    val week = WeekTabHomeActions(
-        showStatistics = {
-            viewModel.onTabSelected(HomeTab.Activity)
-            scope.launch { activityPager.scrollToPage(ActivityTabPages.Statistics) }
-        },
-        showSettings = { viewModel.onTabSelected(HomeTab.Settings) },
-        showPlans = { viewModel.onTabSelected(HomeTab.Workouts) },
-        showStartMenu = viewModel::onStartFromEmptyWeek,
-        onWeekEmpty = viewModel::onWeekEmpty,
+    val links = HomeTabLinks(
+        week = WeekTabHomeActions(
+            showStatistics = {
+                viewModel.onTabSelected(HomeTab.Activity)
+                scope.launch { activityPager.scrollToPage(ActivityTabPages.Statistics) }
+            },
+            showSettings = { viewModel.onTabSelected(HomeTab.Settings) },
+            showPlans = { viewModel.onTabSelected(HomeTab.Workouts) },
+            showStartMenu = viewModel::onStartFromEmptyWeek,
+            onWeekEmpty = viewModel::onWeekEmpty,
+        ),
+        activityPager = activityPager,
     )
     Column(modifier = Modifier.fillMaxSize().background(Theme.backgrounds.primary)) {
         Box(modifier = Modifier.weight(1f)) {
             // Every tab stays alive, as in the old Home's pager, so going back to one keeps its place
-            HorizontalPager(state = pager, modifier = Modifier.fillMaxSize(), beyondViewportPageCount = HomeTab.entries.size) { page ->
+            HorizontalPager(state = pager, modifier = Modifier.fillMaxSize().testTag(HomeTags.Pager), beyondViewportPageCount = HomeTab.entries.size) { page ->
                 // Once the pager settles, so tabs passed on the way to another don't count as shown
-                val shown = pager.settledPage == page
-                when (HomeTab.entries[page]) {
-                    HomeTab.Week -> WeekTabRoute(shown = shown, home = week)
-                    HomeTab.Workouts -> WorkoutsTabRoute(shown = shown)
-                    HomeTab.Activity -> ActivityTabRoute(shown = shown, pager = activityPager)
-                    HomeTab.Settings -> SettingsTabRoute(shown = shown)
-                }
+                tab(HomeTab.entries[page], pager.settledPage == page, links)
             }
             Column(modifier = Modifier.align(Alignment.BottomCenter).fillMaxWidth(), horizontalAlignment = Alignment.End) {
                 FloatingButton(button = state.button, onClick = viewModel::onButtonTapped)
@@ -109,6 +114,19 @@ internal fun HomeScreen(viewModel: HomeViewModel, sheetActions: HomeSheetActions
         )
     }
     HomeSheets(state = state, viewModel = viewModel, actions = sheetActions)
+}
+
+// What a tab can ask of Home: the Week tab's links, and the Activity tab's pages, which the Week tab opens on Statistics
+class HomeTabLinks(val week: WeekTabHomeActions, val activityPager: PagerState)
+
+@Composable
+internal fun HomeTabRoute(tab: HomeTab, shown: Boolean, links: HomeTabLinks) {
+    when (tab) {
+        HomeTab.Week -> WeekTabRoute(shown = shown, home = links.week)
+        HomeTab.Workouts -> WorkoutsTabRoute(shown = shown)
+        HomeTab.Activity -> ActivityTabRoute(shown = shown, pager = links.activityPager)
+        HomeTab.Settings -> SettingsTabRoute(shown = shown)
+    }
 }
 
 @Composable

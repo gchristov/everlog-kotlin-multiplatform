@@ -1,6 +1,7 @@
 package com.everlog.android.home.screen
 
 object HomeTags {
+    const val Pager = "home:pager"
     const val Button = "home:button"
     const val StartFromTemplate = "home:start:template"
     const val StartEmpty = "home:start:empty"
