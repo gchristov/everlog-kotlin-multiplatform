@@ -2,6 +2,7 @@ package com.everlog.application
 
 import android.content.Context
 import android.content.Intent
+import com.everlog.android.common.data.model.ELRoutine
 import com.everlog.android.common.navigation.AppSettingsPrompt
 import com.everlog.android.common.navigation.DesignSystem
 import com.everlog.android.common.navigation.Destination
@@ -16,6 +17,7 @@ import com.everlog.android.common.navigation.Login
 import com.everlog.android.common.navigation.Navigator
 import com.everlog.android.common.navigation.Onboarding
 import com.everlog.android.common.navigation.PlanCongratulations
+import com.everlog.android.common.navigation.NewPlan
 import com.everlog.android.common.navigation.PlanDetails
 import com.everlog.android.common.navigation.PlayStoreListing
 import com.everlog.android.common.navigation.PrivacyPolicy
@@ -28,6 +30,7 @@ import com.everlog.android.common.navigation.SetSuggestions
 import com.everlog.android.common.navigation.SetTypePicker
 import com.everlog.android.common.navigation.ShareApp
 import com.everlog.android.common.navigation.ShareWorkout
+import com.everlog.android.common.navigation.StartEmptyWorkout
 import com.everlog.android.common.navigation.StartWorkout
 import com.everlog.android.common.navigation.StartWorkoutConfirmation
 import com.everlog.android.common.navigation.TemplateDetails
@@ -81,6 +84,7 @@ class AppNavigator : Navigator {
             ProCongratulations -> navigator.openCongratulate(CongratulateActivity.Type.PRO)
             is PlanDetails -> context.startActivity(PlanDetailsActivity.launchIntent(context, destination.planUuid))
             PlanCongratulations -> navigator.openCongratulate(CongratulateActivity.Type.PLAN_FINISH)
+            NewPlan -> navigator.openEditPlan(null)
             ExerciseLibrary -> navigator.openExercises()
             is ExerciseDetails -> navigator.openExerciseDetails(
                 ExerciseDetailsActivity.Companion.Properties().exercise(destination.exercise).type(
@@ -92,6 +96,7 @@ class AppNavigator : Navigator {
             )
             is TemplateDetails -> navigator.openRoutineDetails(destination.routine, destination.viewOnly)
             is StartWorkout -> navigator.startWorkout(destination.routine, true, destination.fromPlan)
+            StartEmptyWorkout -> navigator.startWorkout(ELRoutine.buildEmptyWorkout(), false, false)
             is StartWorkoutConfirmation -> navigator.openPerformRoutineConfirmation(destination.routine, destination.fromPlan)
             is WorkoutDetails -> navigator.openWorkoutDetails(destination.workout, destination.justFinished, destination.fromPlan)
         }

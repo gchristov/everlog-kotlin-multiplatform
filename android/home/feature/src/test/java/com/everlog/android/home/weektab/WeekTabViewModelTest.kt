@@ -380,6 +380,10 @@ class WeekTabViewModelTest {
             tapped += title
         }
 
+        override fun workoutsCardShown(kind: String) = Unit
+
+        override fun workoutsTabStarted(from: String, card: String?, suggested: Boolean) = Unit
+
         override fun startWorkoutTapped(fromEmptyWeek: Boolean) = Unit
 
         override fun workoutResumedOnLaunch(setsCompleted: Int) = Unit

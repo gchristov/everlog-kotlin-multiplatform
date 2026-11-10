@@ -13,6 +13,8 @@ interface Analytic {
     fun notificationHomeShown(title: String?)
     fun notificationHomeTapped(title: String?)
     fun notificationHomeDismissed(title: String?)
+    fun workoutsCardShown(kind: String)
+    fun workoutsTabStarted(from: String, card: String?, suggested: Boolean)
     fun appUsageReminderShown(attempt: Int, title: String?)
     fun appUsageReminderOpened(attempt: Int, title: String?)
 

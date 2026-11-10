@@ -281,5 +281,9 @@ class HomeViewModelTest {
         override fun ongoingWorkoutDiscarded() {
             discarded++
         }
+
+        override fun workoutsCardShown(kind: String) = Unit
+
+        override fun workoutsTabStarted(from: String, card: String?, suggested: Boolean) = Unit
     }
 }

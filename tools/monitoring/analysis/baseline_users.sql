@@ -108,7 +108,7 @@ agg AS (
     LOGICAL_OR(screen = 'screen_home') AS home_ever,
     -- day-0 exploration
     LOGICAL_OR(d < 1 AND screen IN ('screen_week','screen_week_v2')) AS d0_week,
-    LOGICAL_OR(d < 1 AND screen = 'screen_workouts') AS d0_workouts_tab,
+    LOGICAL_OR(d < 1 AND screen IN ('screen_workouts','screen_workouts_v2')) AS d0_workouts_tab,
     LOGICAL_OR(d < 1 AND screen IN ('screen_statistics','screen_statistics_v2','screen_activity')) AS d0_stats,
     LOGICAL_OR(d < 1 AND screen IN ('screen_settings','screen_settings_v2')) AS d0_settings,
     LOGICAL_OR(d < 1 AND screen IN ('screen_history','screen_history_v2')) AS d0_history,

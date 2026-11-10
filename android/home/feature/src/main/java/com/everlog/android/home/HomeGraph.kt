@@ -3,6 +3,8 @@ package com.everlog.android.home
 import com.everlog.android.auth.data.UserSession
 import com.everlog.android.common.navigation.Navigator
 import com.everlog.android.home.data.HomeNotifications
+import com.everlog.android.home.data.workouts.LoadTemplateHistoryUseCase
+import com.everlog.android.home.data.workouts.LoadWorkoutsTabListsUseCase
 import com.everlog.android.home.screen.HomeServices
 import com.everlog.android.plan.data.PlanProgress
 import com.everlog.android.plan.ui.PlanAnalytics
@@ -31,6 +33,10 @@ interface HomeGraph {
     val navigator: Navigator
 
     val workoutRepository: WorkoutRepository
+
+    val loadWorkoutsTabLists: LoadWorkoutsTabListsUseCase
+
+    val loadTemplateHistory: LoadTemplateHistoryUseCase
 
     val homeServices: HomeServices
 }
