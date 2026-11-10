@@ -22,8 +22,6 @@ data class RemoteConfig (
         var statisticsV2: Boolean = false,
         // The Activity tab's history page in Compose instead of HistoryHomeFragment
         var historyV2: Boolean = false,
-        // Home's Settings tab in Compose instead of SettingsHomeFragment
-        var settingsTabV2: Boolean = false,
         var feedbackForms: FeedbackForms? = null,
         // How old synced data may get before reading it asks the server again (DataSync); null for the default
         var dataSyncMaxAgeMinutes: Long? = null,
@@ -40,7 +38,6 @@ data class RemoteConfig (
     private val WEEK_TAB_V2 = "week_tab_v2"
     private val STATISTICS_V2 = "statistics_v2"
     private val HISTORY_V2 = "history_v2"
-    private val SETTINGS_TAB_V2 = "settings_tab_v2"
     private val FEEDBACK_FORMS = "feedback_forms"
     private val DATA_SYNC_MAX_AGE_MINUTES = "data_sync_max_age_minutes"
     // Named after the full history it used to be for, kept so the console's value still applies
@@ -55,7 +52,6 @@ data class RemoteConfig (
         weekTabV2 = config.getBoolean(WEEK_TAB_V2)
         statisticsV2 = config.getBoolean(STATISTICS_V2)
         historyV2 = config.getBoolean(HISTORY_V2)
-        settingsTabV2 = config.getBoolean(SETTINGS_TAB_V2)
         feedbackForms = getObjectFromRemoteConfig(FEEDBACK_FORMS, FeedbackForms::class.java, config)
         dataSyncMaxAgeMinutes = config.longOrNull(DATA_SYNC_MAX_AGE_MINUTES)
         dataSyncOlderMaxAgeDays = config.longOrNull(DATA_SYNC_OLDER_MAX_AGE_DAYS)

@@ -30,7 +30,7 @@ A feature has only the modules it has code for: a `data` module once it has data
 | `history` | No `feature` module | The Activity tab's history page: the workouts calendar and list (in Compose in `page` while Remote Config's `history_v2` is on, paging back through `WorkoutRepository.history`) | The view the history page opens on (`HistoryPreferences`); the workouts themselves come from `workout:data` |
 | `statistics` | No `feature` module | The Activity tab's statistics page (in Compose in `page` while Remote Config's `statistics_v2` is on) and the stats the Week tab shows (`UserStatsController`) | A period's numbers and chart points (`userStats`) for the Compose statistics page, and the period it opens on (`StatisticsPreferences`) |
 | `pro` | The Pro screen, `BillingManager` |  | The Pro models |
-| `settings` | The XML Settings tab, while `settings_tab_v2` is off | Home's Settings tab in Compose (`tab`, while Remote Config's `settings_tab_v2` is on) and what both Settings tabs need from the app (`SettingsGraph` and its interfaces) | The user's settings (`UserSettings`, `RealUserSettings`) |
+| `settings` | The XML Settings tab, for today's Home | Home's Settings tab in Compose (`tab`, `SettingsTabRoute`, for the Compose Home) and what both Settings tabs need from the app (`SettingsGraph` and its interfaces) | The user's settings (`UserSettings`, `RealUserSettings`) |
 | `showcase` | The design system showcase (debug builds only) |  | No `data` module |
 
 Each `data` module gives its stores one entry point, e.g. `WorkoutStores` or `PlanStores`, which the app's `ELDatastore` hands out to the code still using it.

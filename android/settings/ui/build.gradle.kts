@@ -12,6 +12,8 @@ dependencies {
     implementation(projects.android.common.mvp)
     implementation(libs.rxjava)
     implementation(libs.androidx.lifecycle.runtime.compose)
+    implementation(libs.androidx.lifecycle.viewmodel.compose)
+    implementation(libs.androidx.localbroadcastmanager)
     testImplementation(projects.android.settings.testFixtures)
     testImplementation(projects.android.auth.testFixtures)
     androidTestImplementation(projects.android.settings.testFixtures)
