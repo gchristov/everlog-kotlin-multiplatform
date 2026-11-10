@@ -22,5 +22,5 @@ dependencies {
     implementation(libs.coil.compose)
     implementation(libs.timber)
     debugImplementation(libs.androidx.compose.ui.tooling)
-    androidTestImplementation(projects.android.common.composeTest)
+    testImplementation(projects.android.common.composeTest)
 }

@@ -10,7 +10,6 @@ import androidx.compose.ui.test.hasContentDescription
 import androidx.compose.ui.test.hasTestTag
 import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.isDialog
-import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
@@ -19,9 +18,9 @@ import androidx.compose.ui.test.performSemanticsAction
 import androidx.compose.ui.test.performTextReplacement
 import androidx.compose.ui.test.performTouchInput
 import androidx.test.espresso.Espresso
-import androidx.test.ext.junit.runners.AndroidJUnit4
 import arrow.core.Either
 import com.everlog.android.common.compose.theme.Theme
+import com.everlog.android.common.composetest.FeatureTest
 import com.everlog.android.common.data.model.ELRoutine
 import com.everlog.android.common.data.model.exercise.ELExercise
 import com.everlog.android.common.data.model.exercise.ELExerciseGroup
@@ -30,8 +29,6 @@ import com.everlog.android.common.data.model.set.ELSet
 import com.everlog.android.common.data.model.set.ELSetType
 import com.everlog.android.common.kotlin.Load
 import com.everlog.android.common.navigation.ExerciseTab
-import com.everlog.android.workoutbuilder.data.WorkoutBuilderDefaults
-import com.everlog.android.workoutbuilder.data.ValueField
 import com.everlog.android.exercise.data.model.library.LibraryExercise
 import com.everlog.android.template.data.session.LoadTemplateUseCase
 import com.everlog.android.template.data.session.SaveTemplateUseCase
@@ -43,35 +40,23 @@ import com.everlog.android.template.editor.TemplateEditorTags
 import com.everlog.android.template.editor.TemplateEditorViewModel
 import com.everlog.android.template.editor.opened
 import com.everlog.android.template.editor.timeForAllSets
+import com.everlog.android.workoutbuilder.data.ValueField
+import com.everlog.android.workoutbuilder.data.WorkoutBuilderDefaults
 import com.google.common.truth.Truth.assertThat
-import java.util.concurrent.TimeUnit
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
-import org.junit.Rule
 import org.junit.Test
-import org.junit.rules.RuleChain
-import org.junit.rules.Timeout
-import org.junit.runner.RunWith
 
 /**
  * The template editor driven as a user would, through its exercises, keypad and dialogs, with the real view-model. A
- * few high level journeys rather than a test per detail (the view-model's unit tests cover those), as each one is
- * slow: building a template, editing one with a superset, reorganising it, deleting an exercise, the ways of leaving,
+ * few high level journeys rather than a test per detail (the view-model's unit tests cover those):
+ * building a template, editing one with a superset, reorganising it, deleting an exercise, the ways of leaving,
  * and loading or saving that fails.
  * Loading and saving are fakes here; TemplateEditorActivityTest goes through the real activity and Firestore.
  */
-@RunWith(AndroidJUnit4::class)
-class TemplateEditorScenarioTest {
-
-    val compose = createComposeRule()
-
-    // The longest journeys take a couple of minutes on a slow emulator
-    @get:Rule
-    val rules: RuleChain = RuleChain
-        .outerRule(Timeout.builder().withTimeout(4, TimeUnit.MINUTES).withLookingForStuckThread(true).build())
-        .around(compose)
+class TemplateEditorFeatureTest : FeatureTest() {
 
     private val load = FakeLoadTemplate()
     private val save = FakeSaveTemplate()
@@ -159,19 +144,19 @@ class TemplateEditorScenarioTest {
 
         // Rest on its minutes and seconds wheels, never below 10s: no minutes and no seconds is 10s
         inView(TemplateEditorTags.Rest).performClick()
-        compose.waitUntil(TIMEOUT) { compose.onAllNodes(hasText("0 min")).fetchSemanticsNodes().isNotEmpty() }
+        waitUntil(TIMEOUT) { compose.onAllNodes(hasText("0 min")).fetchSemanticsNodes().isNotEmpty() }
         compose.onNodeWithText("0 min").performClick()
-        compose.waitUntil(TIMEOUT) { compose.onAllNodes(hasText("0:10")).fetchSemanticsNodes().isNotEmpty() }
-        compose.waitUntil(TIMEOUT) { compose.onAllNodes(hasText("20 s")).fetchSemanticsNodes().isNotEmpty() }
+        waitUntil(TIMEOUT) { compose.onAllNodes(hasText("0:10")).fetchSemanticsNodes().isNotEmpty() }
+        waitUntil(TIMEOUT) { compose.onAllNodes(hasText("20 s")).fetchSemanticsNodes().isNotEmpty() }
         compose.onNodeWithText("20 s").performClick()
-        compose.waitUntil(TIMEOUT) { compose.onAllNodes(hasText("0:20")).fetchSemanticsNodes().isNotEmpty() }
+        waitUntil(TIMEOUT) { compose.onAllNodes(hasText("0:20")).fetchSemanticsNodes().isNotEmpty() }
         compose.onNode(hasText("Done") and hasAnyAncestor(isDialog())).performClick()
-        compose.waitUntil(TIMEOUT) { compose.onAllNodes(hasText("Done") and hasAnyAncestor(isDialog())).fetchSemanticsNodes().isEmpty() }
+        waitUntil(TIMEOUT) { compose.onAllNodes(hasText("Done") and hasAnyAncestor(isDialog())).fetchSemanticsNodes().isEmpty() }
         compose.onNodeWithText("0:20").assertExists()
 
         // Saved as a new template with everything above
         compose.onNodeWithTag(TemplateEditorTags.Save).performClick()
-        compose.waitUntil(TIMEOUT) { exit != null }
+        waitUntil(TIMEOUT) { exit != null }
         val saved = save.saved.single()
         assertThat(exit).isEqualTo(TemplateEditorExit.Saved(saved, isNew = true))
         assertThat(saved.name).isEqualTo("Legs")
@@ -229,10 +214,11 @@ class TemplateEditorScenarioTest {
         compose.onNode(hasContentDescription("Close")).performClick()
         compose.onNode(hasText("Keep editing") and hasAnyAncestor(isDialog())).performClick()
         assertThat(exit).isNull()
+        waitUntil(TIMEOUT) { compose.onAllNodes(hasText("Keep editing")).fetchSemanticsNodes().isEmpty() }
         Espresso.pressBack()
         compose.onNode(hasText("Save") and hasAnyAncestor(isDialog())).performClick()
 
-        compose.waitUntil(TIMEOUT) { exit != null }
+        waitUntil(TIMEOUT) { exit != null }
         val saved = save.saved.single()
         assertThat(exit).isEqualTo(TemplateEditorExit.Saved(saved, isNew = false))
         assertThat(saved.uuid).isEqualTo("push")
@@ -264,7 +250,7 @@ class TemplateEditorScenarioTest {
         compose.onNodeWithText("SUPER SET").assertDoesNotExist()
 
         compose.onNodeWithTag(TemplateEditorTags.Save).performClick()
-        compose.waitUntil(TIMEOUT) { exit != null }
+        waitUntil(TIMEOUT) { exit != null }
         val saved = save.saved.single()
         assertThat(saved.exerciseGroups.map { it.type }).containsExactly(ELSetType.SINGLE.name, ELSetType.SINGLE.name)
         assertThat(saved.exerciseGroups.map { it.exercises.single().exercise?.name }).containsExactly("Bench press", "Cable fly").inOrder()
@@ -297,7 +283,7 @@ class TemplateEditorScenarioTest {
         compose.onNodeWithText("Lateral raise").assertExists()
 
         compose.onNodeWithTag(TemplateEditorTags.Save).performClick()
-        compose.waitUntil(TIMEOUT) { exit != null }
+        waitUntil(TIMEOUT) { exit != null }
         val saved = save.saved.single()
         assertThat(saved.exerciseGroups.map { group -> group.exercises.map { it.exercise?.name } }).containsExactly(
             listOf("Lateral raise"), listOf("Bench press", "Cable fly"),
@@ -315,7 +301,7 @@ class TemplateEditorScenarioTest {
 
         Espresso.pressBack()
 
-        compose.waitUntil(TIMEOUT) { exit != null }
+        waitUntil(TIMEOUT) { exit != null }
         assertThat(exit).isEqualTo(TemplateEditorExit.Closed)
         assertThat(save.saved).isEmpty()
     }
@@ -336,7 +322,7 @@ class TemplateEditorScenarioTest {
 
         compose.onNode(hasContentDescription("Close")).performClick()
 
-        compose.waitUntil(TIMEOUT) { exit != null }
+        waitUntil(TIMEOUT) { exit != null }
         assertThat(exit).isEqualTo(TemplateEditorExit.Closed)
         assertThat(save.saved).isEmpty()
     }
@@ -351,7 +337,7 @@ class TemplateEditorScenarioTest {
         compose.onNodeWithText("Save your changes?").assertExists()
         compose.onNode(hasText("Discard") and hasAnyAncestor(isDialog())).performClick()
 
-        compose.waitUntil(TIMEOUT) { exit != null }
+        waitUntil(TIMEOUT) { exit != null }
         assertThat(exit).isEqualTo(TemplateEditorExit.Closed)
         assertThat(save.saved).isEmpty()
     }
@@ -395,7 +381,7 @@ class TemplateEditorScenarioTest {
         compose.onNodeWithText("Try again").assertDoesNotExist()
         compose.onNode(hasContentDescription("Close")).performClick()
 
-        compose.waitUntil(TIMEOUT) { exit != null }
+        waitUntil(TIMEOUT) { exit != null }
         assertThat(exit).isEqualTo(TemplateEditorExit.Closed)
     }
 
@@ -407,12 +393,12 @@ class TemplateEditorScenarioTest {
         save.result = Either.Left(IllegalStateException("No user"))
 
         compose.onNodeWithTag(TemplateEditorTags.Save).performClick()
-        compose.waitUntil(TIMEOUT) { compose.onAllNodes(hasText("Couldn't save the template. Try again.")).fetchSemanticsNodes().isNotEmpty() }
+        waitUntil(TIMEOUT) { compose.onAllNodes(hasText("Couldn't save the template. Try again.")).fetchSemanticsNodes().isNotEmpty() }
         assertThat(exit).isNull()
 
         save.result = Either.Right(Unit)
         compose.onNodeWithTag(TemplateEditorTags.Save).performClick()
-        compose.waitUntil(TIMEOUT) { exit != null }
+        waitUntil(TIMEOUT) { exit != null }
         assertThat(save.saved.single().targets(0)).hasSize(4)
     }
 
