@@ -15,9 +15,12 @@ import com.everlog.android.common.compose.elements.AppButton
 import com.everlog.android.common.compose.elements.AppExpandableCard
 import com.everlog.android.common.compose.elements.AppExpandableCardGroup
 import com.everlog.android.common.compose.elements.AppExpandableCardRow
+import com.everlog.android.common.compose.elements.AppHighlightAction
+import com.everlog.android.common.compose.elements.AppHighlightCard
 import com.everlog.android.common.compose.elements.AppSecondaryButton
 import com.everlog.android.common.compose.elements.AppSurface
 import com.everlog.android.common.compose.elements.AppText
+import com.everlog.android.common.compose.elements.AppThumbnail
 import com.everlog.android.common.compose.theme.Theme
 
 @Composable
@@ -48,6 +51,33 @@ internal fun DesignSystemCards(onButtonClick: () -> Unit) {
                         text = "Full width",
                     )
                 }
+            }
+        }
+        group(key = "highlight", header = { "Highlight card" }) {}
+        item(key = "highlightExamples") {
+            Column(verticalArrangement = Arrangement.spacedBy(Theme.spacing.large)) {
+                AppHighlightCard(
+                    label = "Suggested next",
+                    suggested = true,
+                    title = "Legs",
+                    text = "Something the app worked out for the user, with why, and up to two buttons.",
+                    trailing = { AppThumbnail(imageUrl = SampleImageUrl, size = Theme.sizes.leading) },
+                    primary = AppHighlightAction("Start", onButtonClick),
+                    secondary = AppHighlightAction("Details", onButtonClick),
+                )
+                AppHighlightCard(
+                    title = "A notification",
+                    text = "Tap anywhere on it, or close it.",
+                    leading = { AppThumbnail(imageUrl = SampleImageUrl, corner = Theme.sizes.leading / 2) },
+                    onClick = onButtonClick,
+                    onClose = onButtonClick,
+                )
+                AppHighlightCard(
+                    label = "Get started",
+                    title = "Just a label, a title and text",
+                    text = "Without the mark, for a next step that isn't a suggestion.",
+                    primary = AppHighlightAction("Continue", onButtonClick),
+                )
             }
         }
     }

@@ -73,6 +73,7 @@ import androidx.compose.ui.unit.sp
 import com.everlog.android.common.compose.elements.AppIcon
 import com.everlog.android.common.compose.elements.AppMenuItem
 import com.everlog.android.common.compose.elements.AppOverflowMenu
+import com.everlog.android.common.compose.elements.AppSuggestedMark
 import com.everlog.android.common.compose.elements.AppTertiaryButton
 import com.everlog.android.common.compose.elements.AppText
 import com.everlog.android.common.compose.elements.AppThumbnail
@@ -546,7 +547,7 @@ private fun Cell(
                 if (suggested) {
                     AppText(
                         modifier = Modifier.padding(start = TableSizes.MarkGap),
-                        text = SuggestedMark,
+                        text = AppSuggestedMark,
                         style = Theme.typography.small.copy(fontSize = TableSizes.Mark),
                         color = Theme.contentColors.action,
                     )
@@ -630,8 +631,6 @@ private fun Tick(tag: String, done: Boolean, armed: Boolean, onClick: () -> Unit
         }
     }
 }
-
-const val SuggestedMark = "✦"
 
 /**
  * Rows are tagged by position: the exercise group, the round and the exercise in it.
