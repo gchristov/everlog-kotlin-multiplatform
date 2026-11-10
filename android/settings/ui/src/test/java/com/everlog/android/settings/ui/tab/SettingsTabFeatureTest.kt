@@ -40,36 +40,36 @@ class SettingsTabFeatureTest : FeatureTest() {
         // A two-way choice: a tap picks and closes the sheet
         compose.onNodeWithText("First week day").performClick()
         compose.onNodeWithText("Sunday").performClick()
-        compose.waitUntil(WaitMillis) { exists("Sunday") && !exists("Monday") }
+        waitUntil(WaitMillis) { exists("Sunday") && !exists("Monday") }
         assertThat(settings.firstDayOfWeek()).isEqualTo(DayOfWeek.SUNDAY)
 
         compose.onNodeWithText("Weight unit").performClick()
         compose.onNodeWithText("Pounds (lb)").performClick()
-        compose.waitUntil(WaitMillis) { exists("Pounds (lb)") && !exists("Kilograms (kg)") }
+        waitUntil(WaitMillis) { exists("Pounds (lb)") && !exists("Kilograms (kg)") }
         assertThat(settings.weightUnit()).isEqualTo(WeightUnit.POUND)
 
         // A wheel: picking moves it, Done saves
         compose.onNodeWithText("Weekly workouts goal").performClick()
-        compose.waitUntil(WaitMillis) { exists("5 workouts") }
+        waitUntil(WaitMillis) { exists("5 workouts") }
         compose.onNodeWithText("5 workouts").performClick()
-        compose.waitUntil(WaitMillis) { settingsSheetGoal() == 5 }
+        waitUntil(WaitMillis) { settingsSheetGoal() == 5 }
         compose.onNodeWithText("Done").performClick()
-        compose.waitUntil(WaitMillis) { settings.weeklyWorkoutsGoal() == 5 }
-        compose.waitUntil(WaitMillis) { !exists("Done") }
+        waitUntil(WaitMillis) { settings.weeklyWorkoutsGoal() == 5 }
+        waitUntil(WaitMillis) { !exists("Done") }
 
         // Two wheels: 1 lb to 1.25 lb is one tap on the quarters
         scrollTo("Weight increment")
         compose.onNodeWithText("Weight increment").performClick()
-        compose.waitUntil(WaitMillis) { exists(".25") }
+        waitUntil(WaitMillis) { exists(".25") }
         compose.onNodeWithText(".25").performClick()
-        compose.waitUntil(WaitMillis) { settingsSheetQuarters() == 5 }
+        waitUntil(WaitMillis) { settingsSheetQuarters() == 5 }
         compose.onNodeWithText("Done").performClick()
-        compose.waitUntil(WaitMillis) { settings.weightIncrease() == 1.25f }
-        compose.waitUntil(WaitMillis) { exists("1.25 lb") }
+        waitUntil(WaitMillis) { settings.weightIncrease() == 1.25f }
+        waitUntil(WaitMillis) { exists("1.25 lb") }
 
         scrollTo("Keep screen on during workouts")
         compose.onNodeWithTag(SettingsTabTags.KeepScreenOn).performClick()
-        compose.waitUntil(WaitMillis) { !settings.keepScreenOn() }
+        waitUntil(WaitMillis) { !settings.keepScreenOn() }
 
         // The first day, the unit and the goal tell the other screens
         assertThat(changes).isEqualTo(3)
@@ -80,12 +80,12 @@ class SettingsTabFeatureTest : FeatureTest() {
         show()
 
         compose.onNodeWithText("Weekly workouts goal").performClick()
-        compose.waitUntil(WaitMillis) { exists("5 workouts") }
+        waitUntil(WaitMillis) { exists("5 workouts") }
         compose.onNodeWithText("5 workouts").performClick()
-        compose.waitUntil(WaitMillis) { settingsSheetGoal() == 5 }
+        waitUntil(WaitMillis) { settingsSheetGoal() == 5 }
         Espresso.pressBack()
 
-        compose.waitUntil(WaitMillis) { !exists("Done") }
+        waitUntil(WaitMillis) { !exists("Done") }
         assertThat(settings.weeklyWorkoutsGoal()).isEqualTo(3)
         assertThat(changes).isEqualTo(0)
     }
@@ -97,17 +97,17 @@ class SettingsTabFeatureTest : FeatureTest() {
         compose.onNodeWithText("Alex").assertExists()
         scrollTo("Log out")
         compose.onNodeWithText("Log out").performClick()
-        compose.waitUntil(WaitMillis) { exists("Log out?") }
+        waitUntil(WaitMillis) { exists("Log out?") }
 
         // Staying closes the sheet
         compose.onNodeWithText("Stay logged in").performClick()
-        compose.waitUntil(WaitMillis) { !exists("Log out?") }
+        waitUntil(WaitMillis) { !exists("Log out?") }
         assertThat(opened).isEmpty()
 
         compose.onNodeWithText("Log out").performClick()
-        compose.waitUntil(WaitMillis) { exists("Log out?") }
+        waitUntil(WaitMillis) { exists("Log out?") }
         compose.onNodeWithTag(SettingsTabTags.LogOutConfirm).performClick()
-        compose.waitUntil(WaitMillis) { "log out" in opened }
+        waitUntil(WaitMillis) { "log out" in opened }
     }
 
     @Test
