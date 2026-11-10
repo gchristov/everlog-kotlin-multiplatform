@@ -4,6 +4,7 @@ package com.everlog.android.home.weektab
 object WeekTabTags {
     const val Days = "weekTab.days"
     const val Goal = "weekTab.goal"
+    const val Workouts = "weekTab.workouts"
     const val Loading = "weekTab.loading"
     const val Empty = "weekTab.empty"
     const val Banner = "weekTab.banner"

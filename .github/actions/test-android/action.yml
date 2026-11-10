@@ -15,7 +15,7 @@ runs:
         ndk: 'false'
     - name: Give Gradle more memory
       shell: bash
-      # Building every module's test APK at once ran out of heap now and then (D8, packaging) under the project's 4 GB,
+      # Building the test APKs ran out of heap now and then (D8, packaging) under the project's 4 GB,
       # while the emulator boots alongside it on the same runner. In the user properties, so the build and the tests
       # share one daemon; the Kotlin daemon gets its own cap, as it takes Gradle's otherwise.
       run: |
@@ -29,8 +29,9 @@ runs:
       # In the background, so the build overlaps the emulator's setup and boot; the tests wait for it below. With
       # --stacktrace, as packaging a test APK fails now and then with no cause in the log otherwise
       run: |
-        nohup bash -c './gradlew --stacktrace :android:app:assembleDebug assembleDebugAndroidTest > build.log 2>&1; echo $? > build.status' > /dev/null 2>&1 &
+        nohup bash -c './gradlew --stacktrace :android:app:assembleDebug :android:app:assembleDebugAndroidTest > build.log 2>&1; echo $? > build.status' > /dev/null 2>&1 &
     - name: Android tests
+      # The app's end-to-end tests only: the modules' screens are tested on the JVM with the unit tests
       uses: reactivecircus/android-emulator-runner@v2
       with:
         api-level: 34
@@ -50,7 +51,7 @@ runs:
           test "$(cat build.status)" = 0
           adb shell settings put global hide_error_dialogs 1
           adb shell am broadcast -a android.intent.action.CLOSE_SYSTEM_DIALOGS
-          ./gradlew connectedAndroidTest || (adb logcat -d > logcat.txt; exit 1)
+          ./gradlew :android:app:connectedDebugAndroidTest || (adb logcat -d > logcat.txt; exit 1)
     - name: Artifacts
       uses: actions/upload-artifact@v7
       if: always() # Ensure all artifacts are collected, even after errors
