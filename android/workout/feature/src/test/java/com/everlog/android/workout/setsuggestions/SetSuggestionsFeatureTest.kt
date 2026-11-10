@@ -1,14 +1,13 @@
 package com.everlog.android.workout.setsuggestions
 
 import androidx.compose.ui.test.hasText
-import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollTo
-import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
 import com.everlog.android.common.compose.theme.Theme
+import com.everlog.android.common.composetest.FeatureTest
 import com.everlog.android.common.kotlin.AppContext
 import com.everlog.android.common.kotlin.WeightUnit
 import com.everlog.android.settings.data.MuscleGoal
@@ -19,28 +18,15 @@ import com.everlog.android.workout.setsuggestions.SetSuggestionsSettings
 import com.everlog.android.workout.setsuggestions.SetSuggestionsTags
 import com.everlog.android.workout.setsuggestions.SetSuggestionsViewModel
 import com.google.common.truth.Truth.assertThat
-import java.util.concurrent.TimeUnit
 import kotlinx.coroutines.Dispatchers
 import org.junit.Before
-import org.junit.Rule
 import org.junit.Test
-import org.junit.rules.RuleChain
-import org.junit.rules.Timeout
-import org.junit.runner.RunWith
 
 /**
  * The Set suggestions screen driven as a user would, with the real view-model over fake settings. The view-model's
  * unit tests cover the details.
  */
-@RunWith(AndroidJUnit4::class)
-class SetSuggestionsScenarioTest {
-
-    private val compose = createComposeRule()
-
-    @get:Rule
-    val rules: RuleChain = RuleChain
-        .outerRule(Timeout.builder().withTimeout(2, TimeUnit.MINUTES).withLookingForStuckThread(true).build())
-        .around(compose)
+class SetSuggestionsFeatureTest : FeatureTest() {
 
     @Before
     fun setUp() {

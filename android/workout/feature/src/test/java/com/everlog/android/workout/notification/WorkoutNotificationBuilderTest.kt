@@ -2,10 +2,11 @@ package com.everlog.android.workout.notification
 
 import com.everlog.android.common.kotlin.R as KotlinR
 import android.app.Notification
-import android.os.Build
+import android.content.Context
 import androidx.core.app.NotificationCompat
+import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import androidx.test.platform.app.InstrumentationRegistry
+import com.everlog.android.common.composetest.FeatureTestDevice
 import com.everlog.android.common.data.model.set.ELSet
 import com.everlog.android.common.kotlin.AppContext
 import com.everlog.android.common.kotlin.WeightUnit
@@ -15,27 +16,27 @@ import com.everlog.android.workout.notification.WorkoutNotificationState.NextSet
 import com.everlog.android.workout.notification.WorkoutNotificationState.NoExercises
 import com.everlog.android.workout.notification.WorkoutNotificationState.Rest
 import com.google.common.truth.Truth.assertThat
-import org.junit.Assume.assumeTrue
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
+import org.robolectric.annotation.Config
 
 /**
- * Renders each [WorkoutNotificationState] and checks what the system will be given. Runs on a device
- * because rendering needs real resources. Derivation of the state itself is covered by the JVM
- * WorkoutNotificationStateTest.
+ * Renders each [WorkoutNotificationState] and checks what the system will be given, with the real resources
+ * through Robolectric. Derivation of the state itself is covered by WorkoutNotificationStateTest.
  */
 @RunWith(AndroidJUnit4::class)
+@Config(sdk = [FeatureTestDevice.Sdk])
 class WorkoutNotificationBuilderTest {
 
-    private val context = InstrumentationRegistry.getInstrumentation().targetContext
+    private val context = ApplicationProvider.getApplicationContext<Context>()
     private val builder = WorkoutNotificationBuilder(context, WeightUnit.KILOGRAM)
     private val channelId = "test_channel"
 
     @Before
     fun setUp() {
         // Set by the app at startup, which a library's tests don't run
-        AppContext = InstrumentationRegistry.getInstrumentation().targetContext.applicationContext
+        AppContext = context
     }
 
     // Common
@@ -45,10 +46,7 @@ class WorkoutNotificationBuilderTest {
         listOf(nextSet(), rest(), Done, NoExercises).forEach { state ->
             val notification = build(state)
 
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                // Channels don't exist before API 26
-                assertThat(NotificationCompat.getChannelId(notification)).isEqualTo(channelId)
-            }
+            assertThat(NotificationCompat.getChannelId(notification)).isEqualTo(channelId)
             assertThat(notification.flags and Notification.FLAG_ONGOING_EVENT).isNotEqualTo(0)
             assertThat(notification.flags and Notification.FLAG_ONLY_ALERT_ONCE).isNotEqualTo(0)
             assertThat(notification.flags and Notification.FLAG_AUTO_CANCEL).isEqualTo(0)
@@ -67,9 +65,6 @@ class WorkoutNotificationBuilderTest {
 
     @Test
     fun pending_intents_are_immutable() {
-        // PendingIntent.isImmutable only exists from API 31, so there's nothing to check below it
-        assumeTrue(Build.VERSION.SDK_INT >= Build.VERSION_CODES.S)
-
         val notification = build(rest())
 
         assertThat(notification.contentIntent.isImmutable).isTrue()

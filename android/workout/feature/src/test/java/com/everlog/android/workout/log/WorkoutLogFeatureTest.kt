@@ -11,12 +11,10 @@ import androidx.compose.ui.test.assertContentDescriptionEquals
 import androidx.compose.ui.test.assertTextEquals
 import androidx.compose.ui.test.getUnclippedBoundsInRoot
 import androidx.compose.ui.test.hasAnyAncestor
-import androidx.compose.ui.test.hasContentDescription
 import androidx.compose.ui.test.hasTestTag
 import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.isDialog
 import androidx.compose.ui.test.isPopup
-import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onAllNodesWithText
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithTag
@@ -28,11 +26,10 @@ import androidx.compose.ui.test.performSemanticsAction
 import androidx.compose.ui.test.performTouchInput
 import androidx.compose.ui.test.swipeLeft
 import androidx.test.espresso.Espresso
-import androidx.test.ext.junit.runners.AndroidJUnit4
-import androidx.test.platform.app.InstrumentationRegistry
 import arrow.core.Either
 import arrow.core.right
 import com.everlog.android.common.compose.theme.Theme
+import com.everlog.android.common.composetest.FeatureTest
 import com.everlog.android.common.data.model.ELRoutine
 import com.everlog.android.common.data.model.exercise.ELExercise
 import com.everlog.android.common.data.model.exercise.ELExerciseGroup
@@ -41,13 +38,9 @@ import com.everlog.android.common.data.model.exercise.ELRoutineExercise
 import com.everlog.android.common.data.model.set.ELSet
 import com.everlog.android.common.data.model.set.ELSetType
 import com.everlog.android.common.data.model.workout.ELWorkout
-import com.everlog.android.common.kotlin.AppContext
 import com.everlog.android.common.kotlin.UnitUtils
 import com.everlog.android.common.kotlin.WeightUnit
 import com.everlog.android.common.navigation.ExerciseTab
-import com.everlog.android.workoutbuilder.data.WorkoutBuilderDefaults
-import com.everlog.android.workoutbuilder.data.ValueField
-import com.everlog.android.workoutbuilder.ui.exercisetable.ExerciseTableTags
 import com.everlog.android.exercise.data.model.library.LibraryExercise
 import com.everlog.android.settings.data.MuscleGoal
 import com.everlog.android.settings.testfixtures.FakeUserSettings
@@ -68,40 +61,27 @@ import com.everlog.android.workout.log.WorkoutLogNotificationReceiver
 import com.everlog.android.workout.log.WorkoutLogScreen
 import com.everlog.android.workout.log.WorkoutLogTags
 import com.everlog.android.workout.log.WorkoutLogViewModel
+import com.everlog.android.workoutbuilder.data.ValueField
+import com.everlog.android.workoutbuilder.data.WorkoutBuilderDefaults
+import com.everlog.android.workoutbuilder.ui.exercisetable.ExerciseTableTags
 import com.google.common.truth.Truth.assertThat
-import java.util.concurrent.TimeUnit
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableSharedFlow
 import org.junit.After
 import org.junit.Before
-import org.junit.Rule
 import org.junit.Test
-import org.junit.rules.RuleChain
-import org.junit.rules.Timeout
-import org.junit.runner.RunWith
 
 /**
  * The workout screen driven as a user would, through its table and keypad, with the real view-model. A few high
- * level scenarios rather than a test per detail (the view-model's unit tests cover those), as each one is slow.
+ * level scenarios rather than a test per detail: the view-model's unit tests cover those.
  *
- * The ongoing workout is saved and loaded through the device's real WorkoutManager, so resuming is the real thing.
- * Only Firestore and the plan are left out: the finished workout is kept here instead. It runs in the installed debug
- * app, so it clears that app's ongoing workout: run it on an emulator, not on a phone mid-workout.
+ * The ongoing workout is saved and loaded through the real WorkoutManager, so resuming is the real thing. Only
+ * Firestore and the plan are left out: the finished workout is kept here instead.
  */
-@RunWith(AndroidJUnit4::class)
-class WorkoutLogScenarioTest {
+class WorkoutLogFeatureTest : FeatureTest() {
 
-    val compose = createComposeRule()
-
-    // A scenario that hangs (e.g. the screen never settles) fails with where it was stuck, rather than holding up CI.
-    // The longest takes over 2 minutes on a slow emulator (the API 37 tablet).
-    @get:Rule
-    val rules: RuleChain = RuleChain
-        .outerRule(Timeout.builder().withTimeout(4, TimeUnit.MINUTES).withLookingForStuckThread(true).build())
-        .around(compose)
-
-    private val store = DeviceStore()
+    private val store = AppStore()
     private val analytics = RecordingAnalytics()
     private val notification = RecordingNotification()
     private var exit: WorkoutLogExit? = null
@@ -115,8 +95,6 @@ class WorkoutLogScenarioTest {
 
     @Before
     fun setUp() {
-        // Set by the app at startup, which a library's tests don't run
-        AppContext = InstrumentationRegistry.getInstrumentation().targetContext.applicationContext
         WorkoutManager.manager.clearOngoingWorkout()
     }
 
@@ -419,12 +397,12 @@ class WorkoutLogScenarioTest {
         compose.onNodeWithContentDescription("Workout options").performClick()
         compose.onNodeWithTag(WorkoutLogTags.SendFeedbackOption).assertDoesNotExist()
         compose.onNode(hasTestTag(WorkoutLogTags.SetSuggestionsOption) and hasText("From last time", substring = true)).performClick()
-        // It opens once the sheet has slid away, which can take a while on a slow emulator
+        // It opens once the sheet has slid away
         compose.waitUntil(10_000L) { setSuggestionsOpened == 2 }
 
         // Turned off there, the suggested values go once the workout shows again; the targets stay
         settings.setMuscleGoal(MuscleGoal.NONE)
-        InstrumentationRegistry.getInstrumentation().runOnMainSync { viewModel.onResume() }
+        compose.runOnUiThread { viewModel.onResume() }
         compose.waitUntil(5_000L) { compose.onAllNodes(hasText("✦")).fetchSemanticsNodes().isEmpty() }
         cell(1, 0, 0, "count").assertTextEquals("12")
     }
@@ -449,7 +427,7 @@ class WorkoutLogScenarioTest {
         compose.onNodeWithContentDescription("Workout options").performClick()
         compose.onNodeWithTag(WorkoutLogTags.SendFeedbackOption).performClick()
 
-        // It opens once the sheet has slid away, which can take a while on a slow emulator
+        // It opens once the sheet has slid away
         compose.waitUntil(10_000L) { feedbackSent == 1 }
         assertThat(exit).isNull()
     }
@@ -581,16 +559,16 @@ class WorkoutLogScenarioTest {
     // notification shows
     private fun notificationButton(receiver: WorkoutLogNotificationReceiver, action: String) {
         val intent = Intent(action).putExtra(WorkoutBroadcasts.EXTRA_WORKOUT_STATE, notification.shownSet?.position)
-        compose.runOnUiThread { receiver.onReceive(InstrumentationRegistry.getInstrumentation().targetContext, intent) }
+        compose.runOnUiThread { receiver.onReceive(context, intent) }
         compose.waitForIdle()
     }
 
     private fun keys(digits: String) = digits.forEach { key(it.toString()).performClick() }
 
     /**
-     * The ongoing workout as the app keeps it, on this device. The finished one is kept here instead of Firestore.
+     * The ongoing workout as the app keeps it. The finished one is kept here instead of Firestore.
      */
-    private class DeviceStore : OngoingWorkoutRepository {
+    private class AppStore : OngoingWorkoutRepository {
         var finished: ELWorkout? = null
 
         override fun savedCopyOf(workout: ELWorkout): ELWorkout? = WorkoutManager.manager.savedCopyOf(workout)
@@ -636,7 +614,7 @@ class WorkoutLogScenarioTest {
 
     /**
      * The user's history: bench press last done at 8 × 100 lb for two sets. Sets are filled in from it by the old
-     * screen's prefill, as on the device.
+     * screen's prefill, as in the app.
      */
     private class BenchHistory : LoadPrefillSourcesUseCase {
         // History arrives once this completes, if set
