@@ -41,6 +41,7 @@ import com.everlog.android.common.compose.elements.AppIconButton
 import com.everlog.android.common.compose.elements.AppScreen
 import com.everlog.android.common.compose.elements.AppSecondaryButton
 import com.everlog.android.common.compose.elements.AppSnackbarHost
+import com.everlog.android.common.compose.elements.AppSuggestedMark
 import com.everlog.android.common.compose.elements.AppText
 import com.everlog.android.common.compose.elements.keypad.AppKeypad
 import com.everlog.android.common.compose.elements.keypad.AppKeypadAction
@@ -74,7 +75,6 @@ import com.everlog.android.workoutbuilder.ui.exercisetable.ExampleTable
 import com.everlog.android.workoutbuilder.ui.exercisetable.ExerciseEditList
 import com.everlog.android.workoutbuilder.ui.exercisetable.ExerciseTable
 import com.everlog.android.workoutbuilder.ui.exercisetable.ExerciseTableActions
-import com.everlog.android.workoutbuilder.ui.exercisetable.SuggestedMark
 import com.everlog.android.workoutbuilder.ui.exercisetable.TableView
 import com.everlog.android.workoutbuilder.ui.exercisetable.exerciseName
 import com.everlog.android.workoutbuilder.ui.exercisetable.focusLabel
@@ -362,10 +362,10 @@ private fun KeepScreenOn() {
 
 @Composable
 private fun suggestionNoteText(note: SuggestionNote, unit: WeightUnit): String = when (note) {
-    SuggestionNote.LastTime -> stringResource(R.string.workout_log_suggested, SuggestedMark)
+    SuggestionNote.LastTime -> stringResource(R.string.workout_log_suggested, AppSuggestedMark)
     is SuggestionNote.Goal -> stringResource(
         R.string.workout_log_suggested_goal,
-        SuggestedMark,
+        AppSuggestedMark,
         formatWeight(displayWeight(note.weightKg, unit)),
         unitName(unit),
         SetSuggestion.of(note.goal)?.let { stringResource(it.title) } ?: note.goal.valueName(LocalContext.current),
