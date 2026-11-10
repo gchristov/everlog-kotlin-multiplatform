@@ -5,18 +5,15 @@ import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.hasAnyAncestor
 import androidx.compose.ui.test.hasTestTag
 import androidx.compose.ui.test.hasText
-import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollToIndex
 import androidx.compose.ui.test.performScrollToNode
-import androidx.test.ext.junit.runners.AndroidJUnit4
-import androidx.test.platform.app.InstrumentationRegistry
 import com.everlog.android.common.compose.theme.Theme
+import com.everlog.android.common.composetest.FeatureTest
 import com.everlog.android.common.data.model.ELRoutine
 import com.everlog.android.common.data.model.workout.ELWorkout
-import com.everlog.android.common.kotlin.AppContext
 import com.everlog.android.common.kotlin.Load
 import com.everlog.android.history.data.HistoryPreferences
 import com.everlog.android.history.data.HistoryView
@@ -24,15 +21,9 @@ import com.everlog.android.settings.testfixtures.FakeUserSettings
 import com.everlog.android.workout.data.WorkoutHistory
 import com.everlog.android.workout.testfixtures.FakeWorkoutRepository
 import com.google.common.truth.Truth.assertThat
-import com.jakewharton.threetenabp.AndroidThreeTen
 import java.io.IOException
-import java.util.concurrent.TimeUnit
 import kotlinx.coroutines.Dispatchers
-import org.junit.Rule
 import org.junit.Test
-import org.junit.rules.RuleChain
-import org.junit.rules.Timeout
-import org.junit.runner.RunWith
 import org.threeten.bp.LocalDate
 import org.threeten.bp.ZoneId
 
@@ -41,22 +32,7 @@ import org.threeten.bp.ZoneId
  * on the calendar, scrolling back through the list, and no workouts yet. A few journeys rather than a test per detail:
  * the view-model's unit tests cover those.
  */
-@RunWith(AndroidJUnit4::class)
-class HistoryPageScenarioTest {
-
-    private val compose = createComposeRule()
-
-    @get:Rule
-    val rules: RuleChain = RuleChain
-        .outerRule(Timeout.builder().withTimeout(2, TimeUnit.MINUTES).withLookingForStuckThread(true).build())
-        .around(compose)
-
-    init {
-        // Set by the app at startup, which a library's tests don't run, and needed before the fields below
-        val context = InstrumentationRegistry.getInstrumentation().targetContext.applicationContext
-        AppContext = context
-        AndroidThreeTen.init(context)
-    }
+class HistoryPageFeatureTest : FeatureTest() {
 
     private val today = LocalDate.now()
     private val workouts = FakeWorkoutRepository()
@@ -80,21 +56,21 @@ class HistoryPageScenarioTest {
         compose.onNodeWithTag(HistoryPageTags.Loading).assertExists()
 
         shown(listOf(finished(yesterday, "Legs")))
-        compose.waitUntil(WaitMillis) { exists(hasTestTag(HistoryPageTags.Calendar)) }
+        waitUntil(WaitMillis) { exists(hasTestTag(HistoryPageTags.Calendar)) }
         // On the 1st, yesterday is in the month above
         compose.onNodeWithTag(HistoryPageTags.Calendar).performScrollToNode(hasTestTag(HistoryPageTags.day(yesterday)))
-        compose.waitUntil(WaitMillis) { exists(hasTestTag(HistoryPageTags.WorkoutDot)) }
+        waitUntil(WaitMillis) { exists(hasTestTag(HistoryPageTags.WorkoutDot)) }
 
         // Today has no workouts: it says so and stays on the calendar
         compose.onNodeWithTag(HistoryPageTags.Calendar).performScrollToNode(hasTestTag(HistoryPageTags.day(today)))
         compose.onNodeWithTag(HistoryPageTags.day(today)).performClick()
-        compose.waitUntil(WaitMillis) { exists(hasText("No workouts on this day.")) }
+        waitUntil(WaitMillis) { exists(hasText("No workouts on this day.")) }
         compose.onNodeWithTag(HistoryPageTags.Calendar).assertExists()
 
         // A day with workouts opens the list on it, and its workout opens
         compose.onNodeWithTag(HistoryPageTags.Calendar).performScrollToNode(hasTestTag(HistoryPageTags.day(yesterday)))
         compose.onNodeWithTag(HistoryPageTags.day(yesterday)).performClick()
-        compose.waitUntil(WaitMillis) { exists(hasText("Legs") and hasAnyAncestor(hasTestTag(HistoryPageTags.List))) }
+        waitUntil(WaitMillis) { exists(hasText("Legs") and hasAnyAncestor(hasTestTag(HistoryPageTags.List))) }
         compose.onNodeWithText("Legs").performClick()
         assertThat(opened).containsExactly("Legs")
     }
@@ -107,16 +83,16 @@ class HistoryPageScenarioTest {
 
         // Newest first from the read; the list opens on the newest, at the bottom
         shown(days.map { finished(it, "Workout $it") })
-        compose.waitUntil(WaitMillis) { exists(hasText("Workout ${days.first()}")) }
+        waitUntil(WaitMillis) { exists(hasText("Workout ${days.first()}")) }
         assertThat(workouts.history.loadMoreCalls).isEqualTo(0)
 
         // Reaching the oldest asks for the next page, which goes in above
         compose.onNodeWithTag(HistoryPageTags.List).performScrollToIndex(0)
-        compose.waitUntil(WaitMillis) { workouts.history.loadMoreCalls == 1 }
+        waitUntil(WaitMillis) { workouts.history.loadMoreCalls == 1 }
         val older = today.minusDays(60)
         shown(days.map { finished(it, "Workout $it") } + finished(older, "The first"), complete = true)
         compose.onNodeWithTag(HistoryPageTags.List).performScrollToIndex(0)
-        compose.waitUntil(WaitMillis) { exists(hasText("The first")) }
+        waitUntil(WaitMillis) { exists(hasText("The first")) }
 
         // Another Home tab and back: the newest page shows straight away, on the newest, while it's read again
         compose.runOnIdle {
@@ -124,7 +100,7 @@ class HistoryPageScenarioTest {
             viewModel.refresh()
         }
         compose.onNodeWithTag(HistoryPageTags.Loading).assertDoesNotExist()
-        compose.waitUntil(WaitMillis) { displayed("Workout ${days.first()}") }
+        waitUntil(WaitMillis) { displayed("Workout ${days.first()}") }
         assertThat(workouts.historyReads).isEqualTo(2)
     }
 
@@ -133,11 +109,11 @@ class HistoryPageScenarioTest {
         val earlier = today.minusMonths(2).withDayOfMonth(10)
         show()
         shown(listOf(finished(today, "Today"), finished(earlier, "Earlier")))
-        compose.waitUntil(WaitMillis) { exists(hasTestTag(HistoryPageTags.Calendar)) }
+        waitUntil(WaitMillis) { exists(hasTestTag(HistoryPageTags.Calendar)) }
 
         // The oldest month shown asks for the next page, which adds months above it without moving it
         compose.onNodeWithTag(HistoryPageTags.Calendar).performScrollToNode(hasTestTag(HistoryPageTags.day(earlier)))
-        compose.waitUntil(WaitMillis) { workouts.history.loadMoreCalls >= 1 }
+        waitUntil(WaitMillis) { workouts.history.loadMoreCalls >= 1 }
         val oldest = today.minusMonths(5).withDayOfMonth(10)
         shown(listOf(finished(today, "Today"), finished(earlier, "Earlier"), finished(oldest, "Oldest")), complete = true)
         compose.waitForIdle()
@@ -149,14 +125,14 @@ class HistoryPageScenarioTest {
     fun tryingAgainWhenTheHistoryCantLoad() {
         show()
         workouts.history.loads.value = Load.Unavailable(IOException("timed out"))
-        compose.waitUntil(WaitMillis) { exists(hasText("Couldn't load your history.")) }
+        waitUntil(WaitMillis) { exists(hasText("Couldn't load your history.")) }
 
         workouts.history.loads.value = Load.Loading
         compose.onNodeWithText("Try again").performClick()
-        compose.waitUntil(WaitMillis) { workouts.historyReads == 2 && !exists(hasText("Couldn't load your history.")) }
+        waitUntil(WaitMillis) { workouts.historyReads == 2 && !exists(hasText("Couldn't load your history.")) }
 
         shown(listOf(finished(today, "Legs")))
-        compose.waitUntil(WaitMillis) { exists(hasTestTag(HistoryPageTags.WorkoutDot)) }
+        waitUntil(WaitMillis) { exists(hasTestTag(HistoryPageTags.WorkoutDot)) }
     }
 
     @Test
@@ -165,13 +141,13 @@ class HistoryPageScenarioTest {
         show()
         pickView("List")
         shown(days.map { finished(it, "Workout $it") })
-        compose.waitUntil(WaitMillis) { exists(hasText("Workout ${days.first()}")) }
+        waitUntil(WaitMillis) { exists(hasText("Workout ${days.first()}")) }
 
         // At the newest, workouts saved today come into view, down to the last of them, though the day is taller than
         // the room under the list
         val todays = (1..4).map { finished(today, "Today's $it") }
         shown(days.map { finished(it, "Workout $it") } + todays)
-        compose.waitUntil(WaitMillis) { displayed("Today's 4") }
+        waitUntil(WaitMillis) { displayed("Today's 4") }
 
         // Further back, another stays out of view
         compose.onNodeWithTag(HistoryPageTags.List).performScrollToIndex(0)
@@ -189,7 +165,7 @@ class HistoryPageScenarioTest {
         shown(emptyList(), loadingMore = true)
 
         // The example shows in either view, under its label, faded and out of the semantics tree
-        compose.waitUntil(WaitMillis) { exists(hasTestTag(HistoryPageTags.Example)) }
+        waitUntil(WaitMillis) { exists(hasTestTag(HistoryPageTags.Example)) }
         compose.onNodeWithTag(HistoryPageTags.List).assertDoesNotExist()
         compose.mainClock.advanceTimeBy(1_000)
         compose.onNodeWithTag(HistoryPageTags.LoadingMore).assertDoesNotExist()
@@ -200,7 +176,7 @@ class HistoryPageScenarioTest {
 
         // The first workout replaces it
         shown(listOf(finished(today, "Legs")), complete = true)
-        compose.waitUntil(WaitMillis) { exists(hasTestTag(HistoryPageTags.Calendar)) }
+        waitUntil(WaitMillis) { exists(hasTestTag(HistoryPageTags.Calendar)) }
         compose.onNodeWithTag(HistoryPageTags.Example).assertDoesNotExist()
     }
 
