@@ -1,17 +1,14 @@
 package com.everlog.android.home.weektab
 
 import androidx.compose.ui.test.hasText
-import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollTo
-import androidx.test.ext.junit.runners.AndroidJUnit4
-import androidx.test.platform.app.InstrumentationRegistry
 import com.everlog.android.common.compose.theme.Theme
+import com.everlog.android.common.composetest.FeatureTest
 import com.everlog.android.common.data.model.ELRoutine
 import com.everlog.android.common.data.model.workout.ELWorkout
-import com.everlog.android.common.kotlin.AppContext
 import com.everlog.android.common.kotlin.Load
 import com.everlog.android.home.HomeAnalytics
 import com.everlog.android.home.HomeConfig
@@ -23,14 +20,8 @@ import com.everlog.android.plan.testfixtures.FakePlanProgress
 import com.everlog.android.settings.testfixtures.FakeUserSettings
 import com.everlog.android.workout.testfixtures.FakeWorkoutRepository
 import com.google.common.truth.Truth.assertThat
-import com.jakewharton.threetenabp.AndroidThreeTen
-import java.util.concurrent.TimeUnit
 import kotlinx.coroutines.Dispatchers
-import org.junit.Rule
 import org.junit.Test
-import org.junit.rules.RuleChain
-import org.junit.rules.Timeout
-import org.junit.runner.RunWith
 import org.threeten.bp.LocalDate
 import org.threeten.bp.ZoneId
 
@@ -38,22 +29,7 @@ import org.threeten.bp.ZoneId
  * Home's Week tab driven as a user would, with the real view-model over fakes: the week, an empty week, the banner and
  * a plan. A few journeys rather than a test per detail: the view-model's unit tests cover those.
  */
-@RunWith(AndroidJUnit4::class)
-class WeekTabScenarioTest {
-
-    private val compose = createComposeRule()
-
-    @get:Rule
-    val rules: RuleChain = RuleChain
-        .outerRule(Timeout.builder().withTimeout(2, TimeUnit.MINUTES).withLookingForStuckThread(true).build())
-        .around(compose)
-
-    init {
-        // Set by the app at startup, which a library's tests don't run, and needed before the fields below
-        val context = InstrumentationRegistry.getInstrumentation().targetContext.applicationContext
-        AppContext = context
-        AndroidThreeTen.init(context)
-    }
+class WeekTabFeatureTest : FeatureTest() {
 
     private val today = LocalDate.now()
     private val workouts = FakeWorkoutRepository()
@@ -75,7 +51,7 @@ class WeekTabScenarioTest {
         compose.onNodeWithTag(WeekTabTags.Loading).assertExists()
 
         workouts.recent.value = Load.Ready(listOf(finishedToday(), finishedToday()))
-        compose.waitUntil(WaitMillis) { exists("more to go!") }
+        waitUntil(WaitMillis) { exists("more to go!") }
         compose.onNodeWithTag(WeekTabTags.Empty).assertDoesNotExist()
 
         // The goal opens the settings, the days and the numbers the statistics
@@ -90,7 +66,7 @@ class WeekTabScenarioTest {
 
         workouts.recent.value = Load.Ready(emptyList())
 
-        compose.waitUntil(WaitMillis) { exists("Ready to train?") }
+        waitUntil(WaitMillis) { exists("Ready to train?") }
         compose.onNodeWithTag(WeekTabTags.Empty).performScrollTo()
         compose.onNodeWithText("Start workout").performClick()
         assertThat(opened).containsExactly("start workout")
@@ -104,7 +80,7 @@ class WeekTabScenarioTest {
         compose.onNodeWithText("Tell us").assertExists()
         compose.onNodeWithTag(WeekTabTags.BannerClose).performClick()
 
-        compose.waitUntil(WaitMillis) { !exists("Tell us") }
+        waitUntil(WaitMillis) { !exists("Tell us") }
         assertThat(notifications.dismissedIds).containsExactly("survey")
         assertThat(tapped).isNull()
     }
@@ -117,7 +93,7 @@ class WeekTabScenarioTest {
         compose.onNodeWithTag(WeekTabTags.Banner).performClick()
 
         assertThat(tapped).isEqualTo(HomeNotificationTap.OpenUrl("https://example.com"))
-        compose.waitUntil(WaitMillis) { !exists("Tell us") }
+        waitUntil(WaitMillis) { !exists("Tell us") }
         assertThat(notifications.dismissedIds).containsExactly("survey")
     }
 
@@ -136,17 +112,17 @@ class WeekTabScenarioTest {
         // Skipping asks first, then moves on to the rest day
         compose.onNodeWithTag(WeekTabTags.SkipDay).performClick()
         compose.onNodeWithText("Cancel").performClick()
-        compose.waitUntil(WaitMillis) { !exists("Cancel") }
+        waitUntil(WaitMillis) { !exists("Cancel") }
         assertThat(planProgress.plan!!.getNextDay()!!.complete).isFalse()
         compose.onNodeWithTag(WeekTabTags.SkipDay).performClick()
         compose.onNodeWithTag(WeekTabTags.SkipConfirm).performClick()
-        compose.waitUntil(WaitMillis) { exists("Complete") }
+        waitUntil(WaitMillis) { exists("Complete") }
 
         // A rest day explains itself, and completing it marks it done in place
         compose.onNodeWithText("Day 3").performClick()
-        compose.waitUntil(WaitMillis) { exists("Make sure", substring = true) }
+        waitUntil(WaitMillis) { exists("Make sure", substring = true) }
         compose.onNodeWithText("OK").performClick()
-        compose.waitUntil(WaitMillis) { !exists("Make sure", substring = true) }
+        waitUntil(WaitMillis) { !exists("Make sure", substring = true) }
         compose.onNodeWithTag(WeekTabTags.StartDay).performClick()
         assertThat(planProgress.plan!!.weeks[0].getDays()[1].complete).isTrue()
         assertThat(started).isEqualTo(WeekTabPlanStart.Nothing)
@@ -162,7 +138,7 @@ class WeekTabScenarioTest {
         assertThat(started).isEqualTo(WeekTabPlanStart.Finished)
         assertThat(planProgress.plan).isNull()
         // Back to the week, as the plan is over
-        compose.waitUntil(WaitMillis) { exists("Week") }
+        waitUntil(WaitMillis) { exists("Week") }
     }
 
     private val legs = ELRoutine(uuid = "legs", name = "Legs")
