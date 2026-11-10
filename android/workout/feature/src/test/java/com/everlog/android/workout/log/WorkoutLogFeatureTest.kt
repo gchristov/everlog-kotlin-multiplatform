@@ -307,11 +307,11 @@ class WorkoutLogFeatureTest : FeatureTest() {
         // bench press below the superset by its grip, and Done
         compose.onNodeWithContentDescription("Workout options").performClick()
         compose.onNodeWithText("Rest timer").performClick()
-        compose.waitUntil(5_000L) { compose.onAllNodes(hasText("10 s")).fetchSemanticsNodes().isNotEmpty() }
+        waitUntil(5_000L) { compose.onAllNodes(hasText("10 s")).fetchSemanticsNodes().isNotEmpty() }
         compose.onNodeWithText("10 s").performClick()
-        compose.waitUntil(5_000L) { "rest_changed 70" in analytics.events }
+        waitUntil(5_000L) { "rest_changed 70" in analytics.events }
         compose.onNode(hasText("Done") and hasAnyAncestor(isDialog())).performClick()
-        compose.waitUntil(5_000L) { compose.onAllNodes(hasText("Done") and hasAnyAncestor(isDialog())).fetchSemanticsNodes().isEmpty() }
+        waitUntil(5_000L) { compose.onAllNodes(hasText("Done") and hasAnyAncestor(isDialog())).fetchSemanticsNodes().isEmpty() }
         compose.onNodeWithContentDescription("Workout options").performClick()
         compose.onNodeWithText("Edit workout").performClick()
         compose.onNodeWithTag(ExerciseTableTags.editGrip(0)).performTouchInput {
@@ -398,12 +398,12 @@ class WorkoutLogFeatureTest : FeatureTest() {
         compose.onNodeWithTag(WorkoutLogTags.SendFeedbackOption).assertDoesNotExist()
         compose.onNode(hasTestTag(WorkoutLogTags.SetSuggestionsOption) and hasText("From last time", substring = true)).performClick()
         // It opens once the sheet has slid away
-        compose.waitUntil(10_000L) { setSuggestionsOpened == 2 }
+        waitUntil(10_000L) { setSuggestionsOpened == 2 }
 
         // Turned off there, the suggested values go once the workout shows again; the targets stay
         settings.setMuscleGoal(MuscleGoal.NONE)
         compose.runOnUiThread { viewModel.onResume() }
-        compose.waitUntil(5_000L) { compose.onAllNodes(hasText("✦")).fetchSemanticsNodes().isEmpty() }
+        waitUntil(5_000L) { compose.onAllNodes(hasText("✦")).fetchSemanticsNodes().isEmpty() }
         cell(1, 0, 0, "count").assertTextEquals("12")
     }
 
@@ -428,7 +428,7 @@ class WorkoutLogFeatureTest : FeatureTest() {
         compose.onNodeWithTag(WorkoutLogTags.SendFeedbackOption).performClick()
 
         // It opens once the sheet has slid away
-        compose.waitUntil(10_000L) { feedbackSent == 1 }
+        waitUntil(10_000L) { feedbackSent == 1 }
         assertThat(exit).isNull()
     }
 
@@ -480,7 +480,7 @@ class WorkoutLogFeatureTest : FeatureTest() {
             compose.onAllNodes(hasText("Add set") and hasAnyAncestor(hasTestTag(ExerciseTableTags.Table)))[0]
                 .performSemanticsAction(SemanticsActions.OnClick)
         }
-        compose.waitUntil(5_000L) { compose.onAllNodes(hasText("You cannot add more than $max sets per exercise")).fetchSemanticsNodes().isNotEmpty() }
+        waitUntil(5_000L) { compose.onAllNodes(hasText("You cannot add more than $max sets per exercise")).fetchSemanticsNodes().isNotEmpty() }
 
         Espresso.pressBack()
         compose.onNodeWithText("You've completed 1 set.", substring = true).assertExists()

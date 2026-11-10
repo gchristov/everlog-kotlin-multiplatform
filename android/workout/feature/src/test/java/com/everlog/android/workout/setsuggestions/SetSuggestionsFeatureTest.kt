@@ -56,16 +56,16 @@ class SetSuggestionsFeatureTest : FeatureTest() {
 
         // Off is a tap away
         compose.onNodeWithTag(SetSuggestionsTags.option(SetSuggestion.Off)).performClick()
-        compose.waitUntil(WaitMillis) { settings.goal == MuscleGoal.NONE }
+        waitUntil(WaitMillis) { settings.goal == MuscleGoal.NONE }
 
         // The sheet explains goal weights with the bench press example, in kg
         compose.onNodeWithTag(SetSuggestionsTags.How).performClick()
-        compose.waitUntil(WaitMillis) { exists("80 kg × 5") }
+        waitUntil(WaitMillis) { exists("80 kg × 5") }
         compose.onNodeWithText("90 kg").assertExists()
         compose.onNodeWithText("72 kg").assertExists()
         compose.onNodeWithText("Build muscle, 80%").assertExists()
         compose.onNodeWithTag(SetSuggestionsTags.HowDone).performClick()
-        compose.waitUntil(WaitMillis) { !exists("80 kg × 5") }
+        waitUntil(WaitMillis) { !exists("80 kg × 5") }
     }
 
     @Test
@@ -74,7 +74,7 @@ class SetSuggestionsFeatureTest : FeatureTest() {
 
         compose.onNodeWithTag(SetSuggestionsTags.option(SetSuggestion.GetStronger)).performClick()
 
-        compose.waitUntil(WaitMillis) { settings.goal == MuscleGoal.POWER }
+        waitUntil(WaitMillis) { settings.goal == MuscleGoal.POWER }
     }
 
     @Test
@@ -94,7 +94,7 @@ class SetSuggestionsFeatureTest : FeatureTest() {
 
         compose.onNodeWithTag(SetSuggestionsTags.How).performClick()
 
-        compose.waitUntil(WaitMillis) { exists("180 lb × 5") }
+        waitUntil(WaitMillis) { exists("180 lb × 5") }
         compose.onNodeWithText("202.5 lb").assertExists()
         compose.onNodeWithText("162 lb").assertExists()
     }
