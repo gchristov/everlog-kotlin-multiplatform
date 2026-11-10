@@ -48,6 +48,7 @@ internal enum class DesignSystemPage {
     Footer,
     Keypad,
     Snackbar,
+    BottomBar,
     Progress,
     ScrollBehaviors,
     ScrollAwayList,
@@ -90,6 +91,7 @@ internal fun DesignSystemScreen(viewModel: DesignSystemViewModel) {
         DesignSystemPage.Footer -> DesignSystemFooter(onButtonClick = onButtonClick)
         DesignSystemPage.Keypad -> DesignSystemKeypad(onButtonClick = onButtonClick)
         DesignSystemPage.Snackbar -> DesignSystemSnackbar()
+        DesignSystemPage.BottomBar -> DesignSystemBottomBar()
         DesignSystemPage.Progress -> DesignSystemProgress()
         DesignSystemPage.ScrollBehaviors -> ScrollBehaviors(onOpen = open)
         DesignSystemPage.ScrollAwayList -> ScrollAwayListExample()
@@ -133,6 +135,7 @@ private val HubSections = listOf(
         HubEntry(DesignSystemPage.Footer, "Footer", "Actions in a card pinned to the bottom, blurring what scrolls behind"),
         HubEntry(DesignSystemPage.Keypad, "Keypad", "A number keypad in a card docked at the bottom, with its timer and note strips"),
         HubEntry(DesignSystemPage.Snackbar, "Snackbar", "A short message over the bottom of the screen, with Undo"),
+        HubEntry(DesignSystemPage.BottomBar, "Bottom bar", "A screen's sections along the bottom, and the floating button for its main action"),
         HubEntry(DesignSystemPage.Progress, "Progress", "A circular progress indicator, floating progress and the loading shimmer"),
     ),
     "Behaviours" to listOf(
