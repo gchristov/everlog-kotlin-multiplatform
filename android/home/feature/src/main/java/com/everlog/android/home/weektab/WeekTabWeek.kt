@@ -108,6 +108,7 @@ internal fun WeekStatCards(
             label = stringResource(DesignR.string.home_week_workouts_completed),
             value = StatsFormatUtils.formatNumberStatsLabel(state.stats.workouts),
             onClick = onStatsClick,
+            modifier = Modifier.testTag(WeekTabTags.Workouts),
         )
         StatCard(
             icon = painterResource(DesignR.drawable.ic_weight),
@@ -160,8 +161,15 @@ private fun GoalCard(state: WeekTabState, onClick: () -> Unit) {
 }
 
 @Composable
-private fun StatCard(icon: Painter, label: String, value: String, onClick: () -> Unit, unit: String? = null) {
-    StatSurface(onClick = onClick) {
+private fun StatCard(
+    icon: Painter,
+    label: String,
+    value: String,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+    unit: String? = null,
+) {
+    StatSurface(onClick = onClick, modifier = modifier) {
         Column(modifier = Modifier.fillMaxSize()) {
             Image(
                 painter = icon,
