@@ -12,6 +12,19 @@ interface HomeAnalytics {
     fun notificationDismissed(title: String?)
 
     fun notificationTapped(title: String?)
+
+    // Home's Start workout button, or the empty week's own
+    fun startWorkoutTapped(fromEmptyWeek: Boolean)
+
+    // The workout left going, opened again as Home came back
+    fun workoutResumedOnLaunch(setsCompleted: Int)
+
+    // The prompt to resume or discard the workout left going
+    fun ongoingWorkoutPromptShown(setsCompleted: Int)
+
+    fun ongoingWorkoutPromptCancelled()
+
+    fun ongoingWorkoutDiscarded()
 }
 
 interface HomeConfig {

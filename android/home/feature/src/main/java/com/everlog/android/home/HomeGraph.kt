@@ -3,6 +3,7 @@ package com.everlog.android.home
 import com.everlog.android.auth.data.UserSession
 import com.everlog.android.common.navigation.Navigator
 import com.everlog.android.home.data.HomeNotifications
+import com.everlog.android.home.screen.HomeServices
 import com.everlog.android.plan.data.PlanProgress
 import com.everlog.android.plan.ui.PlanAnalytics
 import com.everlog.android.settings.data.UserSettings
@@ -30,4 +31,6 @@ interface HomeGraph {
     val navigator: Navigator
 
     val workoutRepository: WorkoutRepository
+
+    val homeServices: HomeServices
 }

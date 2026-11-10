@@ -1,5 +1,7 @@
 package com.everlog.ui.activities.home
 
+import com.everlog.android.home.screen.OngoingWorkoutAction
+import com.everlog.android.home.screen.OngoingWorkoutReopen
 import com.everlog.application.ELApplication
 import com.everlog.android.common.design.R as DesignR
 import android.content.BroadcastReceiver

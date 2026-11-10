@@ -379,5 +379,15 @@ class WeekTabViewModelTest {
         override fun notificationTapped(title: String?) {
             tapped += title
         }
+
+        override fun startWorkoutTapped(fromEmptyWeek: Boolean) = Unit
+
+        override fun workoutResumedOnLaunch(setsCompleted: Int) = Unit
+
+        override fun ongoingWorkoutPromptShown(setsCompleted: Int) = Unit
+
+        override fun ongoingWorkoutPromptCancelled() = Unit
+
+        override fun ongoingWorkoutDiscarded() = Unit
     }
 }
