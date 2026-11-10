@@ -1,7 +1,7 @@
 """Reads and changes Firebase Remote Config parameters through its REST API.
 
-Only a parameter's default value and description change: its conditional values and everything else in the
-template are kept. Each change publishes a new template version, so the console's history can roll it back.
+Only a parameter's default value and description change, or a whole parameter goes: everything else in the
+template is kept. Each change publishes a new template version, so the console's history can roll it back.
 """
 import argparse
 import json
@@ -68,6 +68,8 @@ def main():
     change.add_argument('--type', choices=['BOOLEAN', 'STRING', 'NUMBER', 'JSON'],
                         help="The value's type for a new parameter (default STRING); kept for an existing one")
     change.add_argument('--description', help='The description shown in the console')
+    remove = commands.add_parser('delete', help='Remove a parameter, conditional values and all')
+    remove.add_argument('name')
     args = parser.parse_args()
 
     project, headers = session(args.credentials)
@@ -85,6 +87,14 @@ def main():
             sys.exit(f'{project}: no parameter {args.name}')
         print(f'{project}: ' + describe(args.name, parameters[args.name]))
         print(json.dumps(parameters[args.name], indent=2))
+        return
+
+    if args.command == 'delete':
+        if args.name not in parameters:
+            sys.exit(f'{project}: no parameter {args.name}')
+        before = describe(args.name, parameters.pop(args.name))
+        version = publish(project, headers, template, etag)
+        print(f'{project}, version {version}:\n  deleted: {before}')
         return
 
     if args.value is None and args.description is None:

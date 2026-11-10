@@ -17,6 +17,7 @@ dependencies {
     // CommonComposeActivity is a ComponentActivity
     api(libs.androidx.activity.compose)
     implementation(projects.android.common.kotlin)
+    implementation(libs.androidx.localbroadcastmanager)
     implementation(libs.coil.compose)
     implementation(libs.timber)
     debugImplementation(libs.androidx.compose.ui.tooling)

@@ -97,12 +97,6 @@ public class RemoteConfigManager extends PreferencesManager {
         return localConfig != null && localConfig.getHistoryV2();
     }
 
-    // Home's Settings tab in Compose; off until Remote Config says otherwise
-    public boolean settingsTabV2() {
-        RemoteConfig localConfig = loadLocalRemoteConfig();
-        return localConfig != null && localConfig.getSettingsTabV2();
-    }
-
     // The feedback form to open from a source, or null when there's none and the entry point is hidden
     @Nullable
     public String feedbackFormUrl(FeedbackSource source) {
