@@ -15,5 +15,4 @@ dependencies {
     testImplementation(projects.android.exercise.testFixtures)
     testImplementation(projects.android.template.testFixtures)
     testImplementation(projects.android.onboarding.testFixtures)
-    androidTestImplementation(projects.android.onboarding.testFixtures)
 }

@@ -3,15 +3,14 @@ package com.everlog.android.onboarding
 import androidx.compose.ui.test.hasAnyAncestor
 import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.isDialog
-import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.test.espresso.Espresso
-import androidx.test.ext.junit.runners.AndroidJUnit4
 import arrow.core.Either
 import arrow.core.left
 import com.everlog.android.common.compose.theme.Theme
+import com.everlog.android.common.composetest.FeatureTest
 import com.everlog.android.common.data.model.ELRoutine
 import com.everlog.android.common.data.model.exercise.ELExercise
 import com.everlog.android.common.kotlin.WeightUnit
@@ -25,32 +24,20 @@ import com.everlog.android.onboarding.data.SaveStarterRoutinesUseCase
 import com.everlog.android.onboarding.data.StarterRoutineGenerator
 import com.google.common.truth.Truth.assertThat
 import java.io.IOException
-import java.util.concurrent.TimeUnit
 import kotlinx.coroutines.Dispatchers
-import org.junit.Rule
 import org.junit.Test
-import org.junit.rules.RuleChain
-import org.junit.rules.Timeout
-import org.junit.runner.RunWith
 
 /**
  * The onboarding driven as a user would, with the real view-model. The templates are built from the answers as the
  * app builds them, over an exercise library made to fit; saving is kept here. A few journeys rather than a test per
  * detail: the view-model's unit tests cover those.
  */
-@RunWith(AndroidJUnit4::class)
-class OnboardingScenarioTest {
-
-    private val compose = createComposeRule()
-
-    @get:Rule
-    val rules: RuleChain = RuleChain
-        .outerRule(Timeout.builder().withTimeout(2, TimeUnit.MINUTES).withLookingForStuckThread(true).build())
-        .around(compose)
+class OnboardingFeatureTest : FeatureTest() {
 
     private val settings = RecordingSettings()
     private val saved = mutableListOf<List<ELRoutine>>()
     private var buildFailures = 0
+    private var saveFailures = 0
     private var closed = false
     private var builderOpened = false
 
@@ -75,10 +62,10 @@ class OnboardingScenarioTest {
         assertThat(settings.weeklyGoal).isEqualTo(4)
 
         compose.onNodeWithText("Build my templates").performClick()
-        compose.waitUntil(WaitMillis) { exists("Looks good") }
+        waitUntil(WaitMillis) { exists("Looks good") }
         compose.onNodeWithText("Looks good").performClick()
 
-        compose.waitUntil(WaitMillis) { closed }
+        waitUntil(WaitMillis) { closed }
         // Four days a week is an upper / lower split
         assertThat(saved.single().map { it.name }).containsExactly("Upper", "Lower")
     }
@@ -93,17 +80,36 @@ class OnboardingScenarioTest {
         compose.onNodeWithText("Build my templates").performClick()
 
         // Building fails once, and Try again builds them
-        compose.waitUntil(WaitMillis) { exists("Try again") }
+        waitUntil(WaitMillis) { exists("Try again") }
         compose.onNodeWithText("Try again").performClick()
-        compose.waitUntil(WaitMillis) { exists("Build my own template") }
+        waitUntil(WaitMillis) { exists("Build my own template") }
 
         // The routine builder is another screen, whose saved routine is handed straight in
         compose.onNodeWithText("Build my own template").performClick()
-        compose.waitUntil(WaitMillis) { builderOpened }
+        waitUntil(WaitMillis) { builderOpened }
         viewModel.onOwnRoutineSaved()
 
-        compose.waitUntil(WaitMillis) { closed }
+        waitUntil(WaitMillis) { closed }
         assertThat(saved).isEmpty()
+    }
+
+    @Test
+    fun aSaveThatFailsIsTriedAgain() {
+        saveFailures = 1
+        show()
+
+        compose.onNodeWithText("Let's go").performClick()
+        repeat(5) { compose.onNodeWithText("Skip").performClick() }
+        compose.onNodeWithText("Build my templates").performClick()
+        waitUntil(WaitMillis) { exists("Looks good") }
+        compose.onNodeWithText("Looks good").performClick()
+
+        waitUntil(WaitMillis) { exists("Couldn't save your templates") }
+        assertThat(closed).isFalse()
+        compose.onNodeWithText("Try again").performClick()
+
+        waitUntil(WaitMillis) { closed }
+        assertThat(saved.single()).isNotEmpty()
     }
 
     @Test
@@ -117,11 +123,11 @@ class OnboardingScenarioTest {
 
         // On a question, the top bar's Skip setup asks too, and the prompt's closes the screen
         compose.onNodeWithText("Let's go").performClick()
-        compose.waitUntil(WaitMillis) { exists("Skip setup") }
+        waitUntil(WaitMillis) { exists("Skip setup") }
         compose.onNodeWithText("Skip setup").performClick()
         compose.onNode(hasText("Skip setup") and hasAnyAncestor(isDialog())).performClick()
 
-        compose.waitUntil(WaitMillis) { closed }
+        waitUntil(WaitMillis) { closed }
         assertThat(settings.unit).isNull()
     }
 
@@ -138,6 +144,7 @@ class OnboardingScenarioTest {
             },
             saveStarterRoutinesUseCase = object : SaveStarterRoutinesUseCase {
                 override suspend fun invoke(dto: SaveStarterRoutinesUseCase.Dto): Either<Throwable, Unit> {
+                    if (saveFailures-- > 0) return IOException("Offline").left()
                     saved += dto.routines
                     return Either.Right(Unit)
                 }
@@ -188,8 +195,7 @@ class OnboardingScenarioTest {
     }
 
     private companion object {
-        // The building and saving animations play through in test time, one frame at a time, so they take ~35s
-        // where frames are slow to draw (the API 37 tablet emulator)
+        // The building and saving animations play through in test time, one frame at a time
         const val WaitMillis = 60_000L
     }
 }
