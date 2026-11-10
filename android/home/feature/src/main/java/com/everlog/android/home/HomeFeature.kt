@@ -24,6 +24,19 @@ interface HomeAnalytics {
      * @param suggested Whether it was the template the card suggested.
      */
     fun workoutsTabStarted(from: String, card: String?, suggested: Boolean)
+
+    // Home's Start workout button, or the empty week's own
+    fun startWorkoutTapped(fromEmptyWeek: Boolean)
+
+    // The workout left going, opened again as Home came back
+    fun workoutResumedOnLaunch(setsCompleted: Int)
+
+    // The prompt to resume or discard the workout left going
+    fun ongoingWorkoutPromptShown(setsCompleted: Int)
+
+    fun ongoingWorkoutPromptCancelled()
+
+    fun ongoingWorkoutDiscarded()
 }
 
 interface HomeConfig {

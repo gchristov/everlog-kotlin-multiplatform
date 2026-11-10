@@ -1,6 +1,7 @@
 package com.everlog.application.features
 
 import com.everlog.android.home.HomeAnalytics
+import com.everlog.managers.analytics.AnalyticsConstants
 import com.everlog.managers.analytics.AnalyticsManager
 import dev.zacsweers.metro.AppScope
 import dev.zacsweers.metro.ContributesBinding
@@ -24,4 +25,17 @@ class AppHomeAnalytics : HomeAnalytics {
     override fun workoutsCardShown(kind: String) = analytics.workoutsCardShown(kind)
 
     override fun workoutsTabStarted(from: String, card: String?, suggested: Boolean) = analytics.workoutsTabStarted(from, card, suggested)
+
+    override fun startWorkoutTapped(fromEmptyWeek: Boolean) =
+        if (fromEmptyWeek) analytics.homeAddWeekEmptyStateTapped() else analytics.homeAddFabTapped()
+
+    override fun workoutResumedOnLaunch(setsCompleted: Int) =
+        analytics.workoutResumed(AnalyticsConstants.WORKOUT_RESUMED_SOURCE_LAUNCH, setsCompleted)
+
+    override fun ongoingWorkoutPromptShown(setsCompleted: Int) =
+        analytics.workoutDiscardPromptShown(AnalyticsConstants.DISCARD_PROMPT_SOURCE_HOME, setsCompleted)
+
+    override fun ongoingWorkoutPromptCancelled() = analytics.workoutDiscardPromptCancelled(AnalyticsConstants.DISCARD_PROMPT_SOURCE_HOME)
+
+    override fun ongoingWorkoutDiscarded() = analytics.workoutStopped()
 }

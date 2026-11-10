@@ -242,6 +242,16 @@ class WeekTabScenarioTest {
         override fun workoutsCardShown(kind: String) = Unit
 
         override fun workoutsTabStarted(from: String, card: String?, suggested: Boolean) = Unit
+
+        override fun startWorkoutTapped(fromEmptyWeek: Boolean) = Unit
+
+        override fun workoutResumedOnLaunch(setsCompleted: Int) = Unit
+
+        override fun ongoingWorkoutPromptShown(setsCompleted: Int) = Unit
+
+        override fun ongoingWorkoutPromptCancelled() = Unit
+
+        override fun ongoingWorkoutDiscarded() = Unit
     }
 
     private companion object {

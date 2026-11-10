@@ -5,6 +5,7 @@ import com.everlog.android.common.navigation.Navigator
 import com.everlog.android.home.data.HomeNotifications
 import com.everlog.android.home.data.workouts.LoadTemplateHistoryUseCase
 import com.everlog.android.home.data.workouts.LoadWorkoutsTabListsUseCase
+import com.everlog.android.home.screen.HomeServices
 import com.everlog.android.plan.data.PlanProgress
 import com.everlog.android.plan.ui.PlanAnalytics
 import com.everlog.android.settings.data.UserSettings
@@ -36,4 +37,6 @@ interface HomeGraph {
     val loadWorkoutsTabLists: LoadWorkoutsTabListsUseCase
 
     val loadTemplateHistory: LoadTemplateHistoryUseCase
+
+    val homeServices: HomeServices
 }

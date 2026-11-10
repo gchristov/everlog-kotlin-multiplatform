@@ -39,6 +39,16 @@ internal class FakeAnalytics : HomeAnalytics {
 
     override fun notificationTapped(title: String?) = Unit
 
+    override fun startWorkoutTapped(fromEmptyWeek: Boolean) = Unit
+
+    override fun workoutResumedOnLaunch(setsCompleted: Int) = Unit
+
+    override fun ongoingWorkoutPromptShown(setsCompleted: Int) = Unit
+
+    override fun ongoingWorkoutPromptCancelled() = Unit
+
+    override fun ongoingWorkoutDiscarded() = Unit
+
     override fun workoutsCardShown(kind: String) {
         cardsShown += kind
     }
