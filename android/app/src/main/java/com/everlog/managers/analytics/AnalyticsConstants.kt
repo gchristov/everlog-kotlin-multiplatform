@@ -31,6 +31,12 @@ class AnalyticsConstants {
         const val EVENT_NOTIFICATION_HOME_SHOWN = "notification_home_shown"
         const val EVENT_NOTIFICATION_HOME_TAPPED = "notification_home_tapped"
         const val EVENT_NOTIFICATION_HOME_DISMISSED = "notification_home_dismissed"
+        // The Workouts tab's card on top, and workouts started from the tab
+        const val EVENT_WORKOUTS_CARD_SHOWN = "workouts_card_shown"
+        const val EVENT_WORKOUTS_TAB_STARTED = "workouts_tab_started"
+        const val PROPERTY_CARD = "card"
+        const val PROPERTY_FROM = "from"
+        const val PROPERTY_SUGGESTED = "suggested"
         const val EVENT_APP_USAGE_REMINDER_SHOWN = "app_usage_reminder_shown"
         const val EVENT_APP_USAGE_REMINDER_OPENED = "app_usage_reminder_opened"
 

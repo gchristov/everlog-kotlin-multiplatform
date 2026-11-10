@@ -379,5 +379,9 @@ class WeekTabViewModelTest {
         override fun notificationTapped(title: String?) {
             tapped += title
         }
+
+        override fun workoutsCardShown(kind: String) = Unit
+
+        override fun workoutsTabStarted(from: String, card: String?, suggested: Boolean) = Unit
     }
 }

@@ -5,3 +5,6 @@ data class PlanDetails(val planUuid: String) : Destination
 
 // The congratulations screen after finishing a plan
 data object PlanCongratulations : Destination
+
+// The plan editor for a new plan
+data object NewPlan : Destination

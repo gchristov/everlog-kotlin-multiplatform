@@ -29,6 +29,7 @@ import com.everlog.android.settings.ui.tab.SettingsTabFragment
 import com.everlog.android.home.HomeHost
 import com.everlog.android.home.week.WeekHomeFragment
 import com.everlog.android.home.weektab.WeekTabFragment
+import com.everlog.android.home.workoutstab.WorkoutsTabFragment
 import com.everlog.managers.RemoteConfigManager
 import com.everlog.ui.fragments.home.workouts.WorkoutsHomeFragment
 import com.everlog.android.common.mvp.view.tab.ELFragmentPagerAdapter
@@ -273,7 +274,7 @@ class HomeActivity : BaseActivity(), MvpViewHome, HomeHost {
     private fun setupNavigation() {
         val fragments = ArrayList<Fragment>()
         fragments.add(if (RemoteConfigManager.manager.weekTabV2()) WeekTabFragment() else WeekHomeFragment())
-        fragments.add(WorkoutsHomeFragment())
+        fragments.add(if (RemoteConfigManager.manager.workoutsTabV2()) WorkoutsTabFragment() else WorkoutsHomeFragment())
         fragments.add(ActivityHomeFragment())
         fragments.add(if (RemoteConfigManager.manager.settingsTabV2()) SettingsTabFragment() else SettingsHomeFragment())
         // Link pager
