@@ -74,6 +74,22 @@ abstract class BaseAnalytic : Analytic {
         logEvent(AnalyticsConstants.EVENT_NOTIFICATION_HOME_DISMISSED, notificationHomeParams(title))
     }
 
+    override fun workoutsCardShown(kind: String) {
+        logEvent(AnalyticsConstants.EVENT_WORKOUTS_CARD_SHOWN, mapOf(AnalyticsConstants.PROPERTY_CARD to kind))
+    }
+
+    override fun workoutsTabStarted(from: String, card: String?, suggested: Boolean) {
+        logEvent(
+            AnalyticsConstants.EVENT_WORKOUTS_TAB_STARTED,
+            mapOf(
+                AnalyticsConstants.PROPERTY_FROM to from,
+                AnalyticsConstants.PROPERTY_CARD to card,
+                // Firebase has no booleans in event parameters
+                AnalyticsConstants.PROPERTY_SUGGESTED to if (suggested) 1L else 0L,
+            ),
+        )
+    }
+
     private fun notificationHomeParams(title: String?): Map<String, Any?> {
         val map = HashMap<String, Any?>()
         map[AnalyticsConstants.PROPERTY_TITLE] = title

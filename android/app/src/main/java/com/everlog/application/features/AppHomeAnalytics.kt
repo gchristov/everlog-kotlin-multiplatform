@@ -20,4 +20,8 @@ class AppHomeAnalytics : HomeAnalytics {
     override fun notificationDismissed(title: String?) = analytics.notificationHomeDismissed(title)
 
     override fun notificationTapped(title: String?) = analytics.notificationHomeTapped(title)
+
+    override fun workoutsCardShown(kind: String) = analytics.workoutsCardShown(kind)
+
+    override fun workoutsTabStarted(from: String, card: String?, suggested: Boolean) = analytics.workoutsTabStarted(from, card, suggested)
 }

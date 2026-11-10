@@ -238,6 +238,10 @@ class WeekTabScenarioTest {
         override fun notificationDismissed(title: String?) = Unit
 
         override fun notificationTapped(title: String?) = Unit
+
+        override fun workoutsCardShown(kind: String) = Unit
+
+        override fun workoutsTabStarted(from: String, card: String?, suggested: Boolean) = Unit
     }
 
     private companion object {

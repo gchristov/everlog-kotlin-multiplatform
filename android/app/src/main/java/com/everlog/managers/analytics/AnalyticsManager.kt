@@ -54,6 +54,20 @@ class AnalyticsManager : Analytic {
         }
     }
 
+    override fun workoutsCardShown(kind: String) {
+        Timber.tag(TAG).i("Workouts card shown: kind=%s", kind)
+        mAnalytics?.forEach {
+            it.workoutsCardShown(kind)
+        }
+    }
+
+    override fun workoutsTabStarted(from: String, card: String?, suggested: Boolean) {
+        Timber.tag(TAG).i("Workouts tab started: from=%s, card=%s, suggested=%s", from, card, suggested)
+        mAnalytics?.forEach {
+            it.workoutsTabStarted(from, card, suggested)
+        }
+    }
+
     override fun notificationHomeTapped(title: String?) {
         Timber.tag(TAG).i("Notification home tapped: title=%s", title)
         mAnalytics?.forEach {

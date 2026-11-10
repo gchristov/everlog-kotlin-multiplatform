@@ -2,6 +2,7 @@ package com.everlog.android.home.data.workouts
 
 import com.everlog.android.common.kotlin.Load
 import com.everlog.android.common.test.FakeCoroutineDispatcher
+import com.everlog.android.exercise.testfixtures.FakeExerciseRepository
 import com.everlog.android.plan.data.model.ELPlan
 import com.everlog.android.plan.testfixtures.FakePlanRepository
 import com.everlog.android.template.testfixtures.FakeRoutineRepository
@@ -14,7 +15,7 @@ class RealLoadWorkoutsTabListsUseCaseTest {
 
     private val routines = FakeRoutineRepository()
     private val plans = FakePlanRepository()
-    private val useCase = RealLoadWorkoutsTabListsUseCase(FakeCoroutineDispatcher, routines, plans)
+    private val useCase = RealLoadWorkoutsTabListsUseCase(FakeCoroutineDispatcher, routines, plans, FakeExerciseRepository())
 
     private fun plan(name: String, vararg days: String) = ELPlan.newPlan("user").apply {
         this.name = name
