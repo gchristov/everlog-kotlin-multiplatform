@@ -236,6 +236,20 @@ inside it (keys, toggle, pills, strips) is fully rounded, `--radius-button`, lik
   - note: a line of `--font-caption`, in `--content-secondary` on `--background-primary`, or highlighted
     (something the app suggests) in `--content-action` on the inset, with an optional pill at its end (Why?)
 
+## AppBottomBar
+
+A screen's main sections along the bottom (Home's tabs): `--background-primary` with a 1px `--background-separator`
+line above, 64px tall over the navigation bar, one equal-width item per section: a 24px icon over its label in
+`--font-small`, `--space-xs` apart, the selected one in `--content-action`, the others `--content-secondary`. No
+indicator behind the selected item, as on the XML Home.
+
+## AppFloatingButton
+
+The screen's main action floating over its content at the bottom end, `--space-lg` from the edges (Home's Start
+workout): a filled `--content-action` pill (`--radius-button`, at least the button height), a 20px icon and its label
+in `--font-button`, both `--content-on-action`, `--space-sm` apart, padding 16px by 8px, a soft shadow. It pops in with
+a slight overshoot when it appears and fades out when it goes.
+
 ## AppSnackbarHost
 
 A short message over the bottom of the screen, e.g. "Set deleted" with Undo: `--background-surface-raised`,
