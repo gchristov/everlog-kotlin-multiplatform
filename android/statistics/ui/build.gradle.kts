@@ -20,8 +20,6 @@ dependencies {
     testImplementation(projects.android.common.dataTest)
     testImplementation(projects.android.settings.testFixtures)
     testImplementation(projects.android.workout.testFixtures)
-    androidTestImplementation(projects.android.settings.testFixtures)
-    androidTestImplementation(projects.android.workout.testFixtures)
     implementation(libs.rxbinding)
     implementation(libs.rotate.layout)
 }
