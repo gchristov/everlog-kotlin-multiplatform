@@ -84,13 +84,22 @@ internal fun WorkoutsTabContent(
             verticalArrangement = Arrangement.spacedBy(Theme.spacing.large),
         ) {
             val margin = Modifier.padding(horizontal = Theme.spacing.large)
+            // The suggestion first, over everything to browse
+            WorkoutsTabTopCard(
+                card = state.card,
+                onStart = onCardStart,
+                onDetails = actions.showTemplate,
+                onNewTemplate = actions.newTemplate,
+                onStartEmpty = actions.startEmpty,
+                modifier = margin,
+            )
             Section(header = { AppSectionHeader(text = stringResource(R.string.workouts_tab_exercises), modifier = margin) }) {
                 ExercisesRow(count = state.exercises, onClick = actions.showExercises, modifier = margin)
             }
             when {
                 state.loading -> Loading(margin)
                 state.unavailable -> Unavailable(onRetry = onRetry, modifier = margin)
-                else -> Lists(state, actions, onToggle, onCardStart, onTemplateStart, margin)
+                else -> Lists(state, actions, onToggle, onTemplateStart, margin)
             }
         }
     }
@@ -101,18 +110,9 @@ private fun Lists(
     state: WorkoutsTabState,
     actions: WorkoutsTabActions,
     onToggle: (String) -> Unit,
-    onCardStart: () -> Unit,
     onTemplateStart: (ELRoutine) -> Unit,
     margin: Modifier,
 ) {
-    WorkoutsTabTopCard(
-        card = state.card,
-        onStart = onCardStart,
-        onDetails = actions.showTemplate,
-        onNewTemplate = actions.newTemplate,
-        onStartEmpty = actions.startEmpty,
-        modifier = margin,
-    )
     if (state.card == WorkoutsTabCard.GetStarted) {
         WorkoutsTabExample(today = state.today, modifier = margin)
         return
