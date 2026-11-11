@@ -73,10 +73,13 @@ data class WeekTabBanner(
     val updateRequired: Boolean,
 )
 
-// One workout short of the goal, so the ring shows how it fills, each of them about an hour
+// One workout short of the goal, so the ring shows how it fills, each of them about an hour, every other day from
+// the week's start
 internal fun exampleWeekStats(week: WeekStats, weeklyGoal: Int, unit: WeightUnit): WeekStats {
     val workouts = (weeklyGoal - 1).coerceAtLeast(1)
+    val spread = week.days.filterIndexed { index, _ -> index % 2 == 0 } + week.days.filterIndexed { index, _ -> index % 2 == 1 }
     return week.copy(
+        workoutDays = spread.take(workouts).toSet(),
         workouts = workouts,
         weightLifted = workouts * if (unit == WeightUnit.POUND) ExamplePoundsPerWorkout else ExampleKilogramsPerWorkout,
         totalMillis = workouts * ExampleMillisPerWorkout,

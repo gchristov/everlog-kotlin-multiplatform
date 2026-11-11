@@ -30,6 +30,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
@@ -43,6 +44,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
+import com.everlog.android.common.compose.elements.AppExampleAlpha
 import com.everlog.android.common.compose.elements.AppSurface
 import com.everlog.android.common.compose.elements.AppText
 import com.everlog.android.common.compose.elements.rememberShimmerBrush
@@ -53,32 +55,39 @@ import com.everlog.android.common.kotlin.dayOfWeekFormatted
 import com.everlog.android.common.kotlin.format.StatsFormatUtils
 import com.everlog.android.common.kotlin.format.weightUnitAbbreviation
 import com.everlog.android.home.R
+import java.util.Locale
 import org.threeten.bp.DateTimeUtils
 import org.threeten.bp.LocalDate
 import org.threeten.bp.ZoneId
 import org.threeten.bp.format.TextStyle
-import java.util.Locale
 
 @Composable
 internal fun WeekDays(state: WeekTabState, onClick: () -> Unit, modifier: Modifier = Modifier) {
     AppSurface(modifier = modifier.fillMaxWidth().clip(Theme.shapes.surface).clickable(onClick = onClick).testTag(WeekTabTags.Days)) {
         Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
+            // An empty week's example days show as done, faded
+            val exampleDays = state.example?.stats?.workoutDays.orEmpty()
             state.stats.days.forEach { day ->
-                WeekDay(day = day, active = day in state.stats.workoutDays, today = day == state.today)
+                WeekDay(
+                    day = day,
+                    active = day in state.stats.workoutDays || day in exampleDays,
+                    today = day == state.today,
+                    modifier = if (day in exampleDays) Modifier.alpha(AppExampleAlpha) else Modifier,
+                )
             }
         }
     }
 }
 
 @Composable
-private fun WeekDay(day: LocalDate, active: Boolean, today: Boolean) {
+private fun WeekDay(day: LocalDate, active: Boolean, today: Boolean, modifier: Modifier = Modifier) {
     val color = when {
         active -> Theme.contentColors.onAction
         today -> Theme.contentColors.primary
         else -> Theme.contentColors.secondary
     }
     Column(
-        modifier = Modifier
+        modifier = modifier
             .size(WeekTabSizes.DayWidth)
             .then(if (active) Modifier.background(Theme.contentColors.action, DayShape) else Modifier),
         horizontalAlignment = Alignment.CenterHorizontally,

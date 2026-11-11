@@ -29,6 +29,14 @@ class ExampleWeekStatsTest {
     }
 
     @Test
+    fun `its days every other day from the week's start, then the days between`() {
+        assertThat(exampleWeekStats(week, weeklyGoal = 3, unit = WeightUnit.KILOGRAM).workoutDays)
+            .containsExactly(week.days[0], week.days[2])
+        assertThat(exampleWeekStats(week, weeklyGoal = 7, unit = WeightUnit.KILOGRAM).workoutDays)
+            .containsExactly(week.days[0], week.days[2], week.days[4], week.days[6], week.days[1], week.days[3])
+    }
+
+    @Test
     fun `at least one workout, for a goal of one`() {
         assertThat(exampleWeekStats(week, weeklyGoal = 1, unit = WeightUnit.KILOGRAM).workouts).isEqualTo(1)
     }
