@@ -11,6 +11,4 @@ android {
 
 dependencies {
     api(projects.android.common.persistence)
-    implementation(projects.android.auth.data)
-    testImplementation(projects.android.settings.testFixtures)
 }

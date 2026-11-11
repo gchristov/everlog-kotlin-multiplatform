@@ -12,5 +12,4 @@ dependencies {
     api(projects.android.workoutBuilder.data)
     api(projects.android.common.compose)
     api(projects.android.common.navigation)
-    testImplementation(projects.android.common.dataTest)
 }

@@ -17,5 +17,4 @@ dependencies {
     implementation(projects.android.workoutBuilder.ui)
     implementation(libs.rxbinding)
     implementation(libs.collapsingtoolbar.subtitle)
-    testImplementation(projects.android.template.testFixtures)
 }

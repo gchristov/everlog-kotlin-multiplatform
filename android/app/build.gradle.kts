@@ -63,13 +63,11 @@ android {
 }
 
 dependencies {
-    implementation(projects.android.common.compose)
     implementation(projects.android.common.data)
     implementation(projects.android.datasync)
     implementation(projects.android.common.design)
     implementation(projects.android.common.kotlin)
     implementation(projects.android.common.mvp)
-    implementation(projects.android.common.mvvm)
     implementation(projects.android.common.navigation)
     implementation(projects.android.common.persistence)
     implementation(projects.android.workoutBuilder.data)
@@ -102,9 +100,6 @@ dependencies {
 
     testImplementation(projects.android.common.test)
     testImplementation(projects.android.common.dataTest)
-    testImplementation(projects.android.exercise.testFixtures)
-    testImplementation(projects.android.settings.testFixtures)
-    testImplementation(projects.android.template.testFixtures)
 
     androidTestImplementation(libs.androidx.test.runner)
     androidTestImplementation(libs.androidx.test.ext.junit)
