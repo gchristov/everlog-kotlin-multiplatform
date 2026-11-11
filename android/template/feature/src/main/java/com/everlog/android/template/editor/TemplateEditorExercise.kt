@@ -129,7 +129,7 @@ internal fun TemplateExercise(
 }
 
 // The image and name, or a group's type over its exercises, then the grip where the workout has its exercise menu,
-// beside the last exercise. While dragged, a card of the names alone, the grip staying where it was.
+// beside the last exercise. While dragged, a card of the names alone, with the grip centred on it.
 @Composable
 private fun ExerciseHeader(
     block: WorkoutBlock,
@@ -149,7 +149,7 @@ private fun ExerciseHeader(
         Column(
             modifier = Modifier
                 .weight(1f)
-                .alignBy(LastExerciseCenter)
+                .then(if (collapsed) Modifier else Modifier.alignBy(LastExerciseCenter))
                 .then(
                     when {
                         lifted -> Modifier
@@ -206,7 +206,7 @@ private fun ExerciseHeader(
                 }
             }
         }
-        ReorderGrip(modifier = grip.alignBy { it.measuredHeight / 2 })
+        ReorderGrip(modifier = if (collapsed) grip else grip.alignBy { it.measuredHeight / 2 })
     }
 }
 

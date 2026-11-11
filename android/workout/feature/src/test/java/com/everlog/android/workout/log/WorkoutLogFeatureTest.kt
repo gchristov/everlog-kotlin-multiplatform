@@ -9,6 +9,7 @@ import androidx.compose.ui.semantics.SemanticsActions
 import androidx.compose.ui.test.SemanticsNodeInteraction
 import androidx.compose.ui.test.assertContentDescriptionEquals
 import androidx.compose.ui.test.assertTextEquals
+import androidx.compose.ui.test.getBoundsInRoot
 import androidx.compose.ui.test.getUnclippedBoundsInRoot
 import androidx.compose.ui.test.hasAnyAncestor
 import androidx.compose.ui.test.hasTestTag
@@ -304,7 +305,7 @@ class WorkoutLogFeatureTest : FeatureTest() {
         compose.onNodeWithText("Squat").assertDoesNotExist()
 
         // The workout's options: the rest after each set up by 10s on its seconds wheel, then Edit workout to drag
-        // bench press below the superset by its grip, and Done
+        // bench press below the superset by its grip, centred on the superset's card, and Done
         compose.onNodeWithContentDescription("Workout options").performClick()
         compose.onNodeWithText("Rest timer").performClick()
         waitUntil(5_000L) { compose.onAllNodes(hasText("10 s")).fetchSemanticsNodes().isNotEmpty() }
@@ -314,6 +315,9 @@ class WorkoutLogFeatureTest : FeatureTest() {
         waitUntil(5_000L) { compose.onAllNodes(hasText("Done") and hasAnyAncestor(isDialog())).fetchSemanticsNodes().isEmpty() }
         compose.onNodeWithContentDescription("Workout options").performClick()
         compose.onNodeWithText("Edit workout").performClick()
+        val supersetCard = compose.onNodeWithTag(ExerciseTableTags.editCard(1)).getBoundsInRoot()
+        val supersetGrip = compose.onNodeWithTag(ExerciseTableTags.editGrip(1)).getBoundsInRoot()
+        assertThat((supersetGrip.top + supersetGrip.bottom).value / 2).isWithin(1f).of((supersetCard.top + supersetCard.bottom).value / 2)
         compose.onNodeWithTag(ExerciseTableTags.editGrip(0)).performTouchInput {
             down(center)
             moveBy(Offset(0f, height * 4f), delayMillis = 200)

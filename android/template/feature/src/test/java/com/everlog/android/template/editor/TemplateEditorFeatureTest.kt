@@ -10,6 +10,7 @@ import androidx.compose.ui.test.hasContentDescription
 import androidx.compose.ui.test.hasTestTag
 import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.isDialog
+import androidx.compose.ui.test.onAllNodesWithTag
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
@@ -274,12 +275,28 @@ class TemplateEditorFeatureTest : FeatureTest() {
         compose.onNodeWithText("SUPER SET").assertExists()
         cell(0, 0, exercise = 1).assertTextEquals("12")
 
-        // Dragged by its grip below the raise, the superset moves as one
-        inView(TemplateEditorTags.grip(0)).performTouchInput {
+        // Dragged by its grip below the raise, the superset moves as one. While held, every exercise shrinks to a card
+        // of its names, with the grip centred on it. A held drag asks for a frame on every frame (to scroll near the
+        // list's edge), so the clock only moves when told to until it's dropped.
+        val gripToDrag = inView(TemplateEditorTags.grip(0))
+        compose.mainClock.autoAdvance = false
+        gripToDrag.performTouchInput {
             down(center)
-            repeat(30) { moveBy(Offset(0f, 40f)) }
+            repeat(3) { moveBy(Offset(0f, 40f)) }
+        }
+        waitUntil(TIMEOUT) {
+            compose.mainClock.advanceTimeByFrame()
+            compose.onAllNodesWithTag(TemplateEditorTags.set(0, 0, 0)).fetchSemanticsNodes().isEmpty()
+        }
+        val type = compose.onNodeWithText("SUPER SET").getBoundsInRoot()
+        val lastName = compose.onNodeWithText("Cable fly").getBoundsInRoot()
+        val grip = compose.onNodeWithTag(TemplateEditorTags.grip(0)).getBoundsInRoot()
+        assertThat((grip.top + grip.bottom).value / 2).isWithin(1f).of((type.top + lastName.bottom).value / 2)
+        compose.onNodeWithTag(TemplateEditorTags.grip(0)).performTouchInput {
+            repeat(27) { moveBy(Offset(0f, 40f)) }
             up()
         }
+        compose.mainClock.autoAdvance = true
         compose.onNodeWithText("Lateral raise").assertExists()
 
         compose.onNodeWithTag(TemplateEditorTags.Save).performClick()
