@@ -123,7 +123,7 @@ class WorkoutsTabFeatureTest : FeatureTest() {
         val other = plan("cut", push, legs).apply { name = "Summer cut" }
         show(templates = listOf(push), history = history(), plans = listOf(other))
 
-        compose.onNodeWithText("Exercises").performClick()
+        compose.onNodeWithText("View all 229 exercises").performClick()
         compose.onNodeWithText("Summer cut").performScrollTo().performClick()
         compose.onNodeWithText("1 week · 2 days a week").assertExists()
         assertThat(opened).containsExactly("exercises", "plan cut").inOrder()
@@ -187,7 +187,7 @@ class WorkoutsTabFeatureTest : FeatureTest() {
         history: TemplateHistory?,
         plans: List<ELPlan> = emptyList(),
     ) {
-        templates?.let { lists.lists.value = Load.Ready(WorkoutsTabLists(it, plans.map { plan -> PlanWithRoutines(plan, emptyMap()) })) }
+        templates?.let { lists.lists.value = Load.Ready(WorkoutsTabLists(it, plans.map { plan -> PlanWithRoutines(plan, emptyMap()) }, exercises = 229)) }
         history?.let { recent.history.value = Load.Ready(it) }
         viewModel = WorkoutsTabViewModel(Dispatchers.Main, lists, recent, planProgress, analytics) { LocalDate.of(2026, 11, 10) }
         setContent {

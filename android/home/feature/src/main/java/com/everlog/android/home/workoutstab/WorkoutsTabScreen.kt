@@ -17,13 +17,17 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.everlog.android.common.compose.elements.AppBarHeader
+import com.everlog.android.common.compose.elements.AppIcon
 import com.everlog.android.common.compose.elements.AppSecondaryButton
 import com.everlog.android.common.compose.elements.AppSectionHeader
 import com.everlog.android.common.compose.elements.AppText
@@ -32,6 +36,7 @@ import com.everlog.android.common.compose.elements.list.AppListItem
 import com.everlog.android.common.compose.elements.rememberShimmerBrush
 import com.everlog.android.common.compose.theme.Theme
 import com.everlog.android.common.data.model.ELRoutine
+import com.everlog.android.common.design.R as DesignR
 import com.everlog.android.home.R
 import com.everlog.android.home.data.workouts.WorkoutsTabCard
 
@@ -79,7 +84,9 @@ internal fun WorkoutsTabContent(
             verticalArrangement = Arrangement.spacedBy(Theme.spacing.large),
         ) {
             val margin = Modifier.padding(horizontal = Theme.spacing.large)
-            ExercisesRow(onClick = actions.showExercises, modifier = margin)
+            Section(header = { AppSectionHeader(text = stringResource(R.string.workouts_tab_exercises), modifier = margin) }) {
+                ExercisesRow(count = state.exercises, onClick = actions.showExercises, modifier = margin)
+            }
             when {
                 state.loading -> Loading(margin)
                 state.unavailable -> Unavailable(onRetry = onRetry, modifier = margin)
@@ -143,18 +150,13 @@ private fun Section(header: @Composable () -> Unit, content: @Composable () -> U
 }
 
 @Composable
-private fun ExercisesRow(onClick: () -> Unit, modifier: Modifier) {
+private fun ExercisesRow(count: Int?, onClick: () -> Unit, modifier: Modifier) {
     AppListGroup(modifier = modifier.testTag(WorkoutsTabTags.Exercises)) {
         row {
             AppListItem(
-                title = stringResource(R.string.workouts_tab_exercises),
-                trailing = {
-                    AppText(
-                        text = stringResource(R.string.workouts_tab_exercises_detail),
-                        style = Theme.typography.caption,
-                        color = Theme.contentColors.secondary,
-                    )
-                },
+                title = count?.let { pluralStringResource(R.plurals.workouts_tab_exercises_view_all, it, it) }
+                    ?: stringResource(R.string.workouts_tab_exercises_view),
+                leading = { AppIcon(imageVector = ImageVector.vectorResource(DesignR.drawable.ic_barbell), tint = Theme.contentColors.action) },
                 onClick = onClick,
             )
         }

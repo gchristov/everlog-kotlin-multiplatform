@@ -106,6 +106,7 @@ class WorkoutsTabViewModel(
                         activePlan = active,
                         plans = others,
                         lastDone = recent?.lastDone,
+                        exercises = lists.value.exercises,
                     )
                 }
                 logCard()

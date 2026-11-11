@@ -14,6 +14,8 @@ import java.util.concurrent.CopyOnWriteArrayList
 class FakeExerciseRepository(
     var globalExercises: Either<Throwable, List<ELExercise>> = Either.Right(emptyList()),
     var libraryExercise: Load<LibraryExercise?> = Load.Ready(null),
+    var library: Load<List<LibraryExercise>> = Load.Ready(emptyList()),
+    var own: Load<List<LibraryExercise>> = Load.Ready(emptyList()),
 ) : ExerciseRepository {
     var globalExercisesCalls = 0
         private set
@@ -23,7 +25,7 @@ class FakeExerciseRepository(
         return globalExercises
     }
 
-    override fun libraryExercises(): Flow<Load<List<LibraryExercise>>> = flowOf(Load.Ready(emptyList()))
+    override fun libraryExercises(): Flow<Load<List<LibraryExercise>>> = flowOf(library)
 
     // The uuids asked for, in order
     val libraryExerciseReads = mutableListOf<String>()
@@ -33,7 +35,7 @@ class FakeExerciseRepository(
         return flowOf(libraryExercise)
     }
 
-    override fun ownExercises(): Flow<Load<List<LibraryExercise>>> = flowOf(Load.Ready(emptyList()))
+    override fun ownExercises(): Flow<Load<List<LibraryExercise>>> = flowOf(own)
 
     override fun registry(): Flow<Load<ExerciseRegistry?>> = flowOf(Load.Ready(ExerciseRegistry()))
 

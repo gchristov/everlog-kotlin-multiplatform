@@ -15,7 +15,11 @@
     <!-- The Workouts tab -->
     <string name="workouts_tab_title">Workouts</string>
     <string name="workouts_tab_exercises">Exercises</string>
-    <string name="workouts_tab_exercises_detail">The library and your own</string>
+    <string name="workouts_tab_exercises_view">View all exercises</string>
+    <plurals name="workouts_tab_exercises_view_all">
+        <item quantity="one">View %d exercise</item>
+        <item quantity="other">View all %d exercises</item>
+    </plurals>
     <string name="workouts_tab_templates">Your templates</string>
     <string name="workouts_tab_plans">Your plans</string>
     <string name="workouts_tab_details">Details</string>
