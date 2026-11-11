@@ -21,8 +21,6 @@ import androidx.compose.runtime.key
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.layout.HorizontalAlignmentLine
-import androidx.compose.ui.layout.layout
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
@@ -88,8 +86,8 @@ fun ExerciseEditList(
     }
 }
 
-// The grip, outside the card on its right where the table has the exercise menu, beside the last exercise. The card holds a group's type, the names and the
-// bin; it's raised while dragged, the grip staying outside it.
+// The grip, outside the card on its right where the table has the exercise menu, centred on the card like the bin. The card holds a group's type, the
+// names and the bin; it's raised while dragged, the grip staying outside it.
 @Composable
 private fun EditCard(
     block: WorkoutBlock,
@@ -105,7 +103,6 @@ private fun EditCard(
         Row(
             modifier = Modifier
                 .weight(1f)
-                .alignBy(LastExerciseCenter)
                 .clip(shape)
                 .background(if (lifted) Theme.backgrounds.surfaceRaised else Theme.backgrounds.surface)
                 .then(if (lifted) Modifier.border(1.dp, Theme.contentColors.action, shape) else Modifier)
@@ -121,9 +118,8 @@ private fun EditCard(
                 block.setType?.takeIf { group }?.let { setTypeTitle(context, it.name) }?.let { type ->
                     AppText(text = type.uppercase(), style = Theme.typography.small, color = Theme.contentColors.secondary)
                 }
-                block.exercises.forEachIndexed { i, exercise ->
+                block.exercises.forEach { exercise ->
                     AppText(
-                        modifier = if (i == block.exercises.lastIndex) Modifier.providingCenter(LastExerciseCenter) else Modifier,
                         text = exercise.exercise?.name.orEmpty(),
                         style = Theme.typography.bodyBold,
                         maxLines = 1,
@@ -134,14 +130,6 @@ private fun EditCard(
             InsetDeleteButton(onClick = onDelete, contentDescription = stringResource(DesignR.string.workout_log_delete))
         }
         Spacer(modifier = Modifier.width(Theme.spacing.large))
-        ReorderGrip(modifier = gripModifier.alignBy { it.measuredHeight / 2 })
+        ReorderGrip(modifier = gripModifier)
     }
-}
-
-// The middle of the card's last exercise, which the grip lines up with
-private val LastExerciseCenter = HorizontalAlignmentLine(merger = { _, last -> last })
-
-private fun Modifier.providingCenter(line: HorizontalAlignmentLine) = layout { measurable, constraints ->
-    val placeable = measurable.measure(constraints)
-    layout(placeable.width, placeable.height, mapOf(line to placeable.height / 2)) { placeable.place(0, 0) }
 }
