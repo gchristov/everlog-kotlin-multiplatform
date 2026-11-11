@@ -16,10 +16,12 @@ class ExampleWeekStatsTest {
         totalMillis = 0,
         averageMillis = 0,
     )
+    // Today, the week's last day
+    private val sunday = week.days.last()
 
     @Test
     fun `one workout short of the goal, each about an hour`() {
-        val example = exampleWeekStats(week, weeklyGoal = 3, unit = WeightUnit.KILOGRAM)
+        val example = exampleWeekStats(week, weeklyGoal = 3, unit = WeightUnit.KILOGRAM, today = sunday)
 
         assertThat(example.workouts).isEqualTo(2)
         assertThat(example.weightLifted).isEqualTo(6_300f)
@@ -30,19 +32,27 @@ class ExampleWeekStatsTest {
 
     @Test
     fun `its days every other day from the week's start, then the days between`() {
-        assertThat(exampleWeekStats(week, weeklyGoal = 3, unit = WeightUnit.KILOGRAM).workoutDays)
+        assertThat(exampleWeekStats(week, weeklyGoal = 3, unit = WeightUnit.KILOGRAM, today = sunday).workoutDays)
             .containsExactly(week.days[0], week.days[2])
-        assertThat(exampleWeekStats(week, weeklyGoal = 7, unit = WeightUnit.KILOGRAM).workoutDays)
-            .containsExactly(week.days[0], week.days[2], week.days[4], week.days[6], week.days[1], week.days[3])
+        assertThat(exampleWeekStats(week, weeklyGoal = 7, unit = WeightUnit.KILOGRAM, today = sunday).workoutDays)
+            .containsExactly(week.days[0], week.days[2], week.days[4], week.days[1], week.days[3], week.days[5])
+    }
+
+    @Test
+    fun `never today, which the empty week asks to train on`() {
+        // Wednesday, the week's third day
+        val days = exampleWeekStats(week, weeklyGoal = 3, unit = WeightUnit.KILOGRAM, today = week.days[2]).workoutDays
+
+        assertThat(days).containsExactly(week.days[0], week.days[4])
     }
 
     @Test
     fun `at least one workout, for a goal of one`() {
-        assertThat(exampleWeekStats(week, weeklyGoal = 1, unit = WeightUnit.KILOGRAM).workouts).isEqualTo(1)
+        assertThat(exampleWeekStats(week, weeklyGoal = 1, unit = WeightUnit.KILOGRAM, today = sunday).workouts).isEqualTo(1)
     }
 
     @Test
     fun `the weight in pounds for a pounds user`() {
-        assertThat(exampleWeekStats(week, weeklyGoal = 4, unit = WeightUnit.POUND).weightLifted).isEqualTo(3 * 6_945f)
+        assertThat(exampleWeekStats(week, weeklyGoal = 4, unit = WeightUnit.POUND, today = sunday).weightLifted).isEqualTo(3 * 6_945f)
     }
 }

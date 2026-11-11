@@ -20,7 +20,7 @@ data class WeekTabState(
     val empty: Boolean get() = !loading && stats.workouts == 0
 
     // With nothing done this week, made-up numbers that show what the cards will count
-    val example: WeekTabState? get() = if (empty) copy(stats = exampleWeekStats(stats, weeklyGoal, weightUnit)) else null
+    val example: WeekTabState? get() = if (empty) copy(stats = exampleWeekStats(stats, weeklyGoal, weightUnit, today)) else null
 
     val workoutsLeft: Int get() = (weeklyGoal - stats.workouts).coerceAtLeast(0)
 
@@ -74,12 +74,12 @@ data class WeekTabBanner(
 )
 
 // One workout short of the goal, so the ring shows how it fills, each of them about an hour, every other day from
-// the week's start
-internal fun exampleWeekStats(week: WeekStats, weeklyGoal: Int, unit: WeightUnit): WeekStats {
+// the week's start. Never today, which the empty week asks to train on.
+internal fun exampleWeekStats(week: WeekStats, weeklyGoal: Int, unit: WeightUnit, today: LocalDate): WeekStats {
     val workouts = (weeklyGoal - 1).coerceAtLeast(1)
     val spread = week.days.filterIndexed { index, _ -> index % 2 == 0 } + week.days.filterIndexed { index, _ -> index % 2 == 1 }
     return week.copy(
-        workoutDays = spread.take(workouts).toSet(),
+        workoutDays = spread.filter { it != today }.take(workouts).toSet(),
         workouts = workouts,
         weightLifted = workouts * if (unit == WeightUnit.POUND) ExamplePoundsPerWorkout else ExampleKilogramsPerWorkout,
         totalMillis = workouts * ExampleMillisPerWorkout,
