@@ -138,7 +138,6 @@ private fun Lists(
             active = state.activePlan,
             plans = state.plans,
             onPlanClick = actions.showPlan,
-            exampleImages = state.exampleImages,
             modifier = margin,
         )
     }

@@ -41,11 +41,10 @@ internal fun WorkoutsTabPlans(
     active: WorkoutsTabActivePlan?,
     plans: List<WorkoutsTabPlan>,
     onPlanClick: (String) -> Unit,
-    exampleImages: Map<String, String>,
     modifier: Modifier = Modifier,
 ) {
     active?.let { ActivePlanCard(it, onClick = { onPlanClick(it.plan.uuid) }, modifier = modifier) }
-    if (plans.isEmpty() && active == null) PlansExample(exampleImages, modifier)
+    if (plans.isEmpty() && active == null) PlansExample(modifier)
     if (plans.isNotEmpty()) PlanRows(plans, onPlanClick, modifier)
 }
 
@@ -68,10 +67,10 @@ private fun PlanRows(plans: List<WorkoutsTabPlan>, onPlanClick: ((String) -> Uni
 
 // What plans will look like here, faded under its label
 @Composable
-private fun PlansExample(images: Map<String, String>, modifier: Modifier) {
+private fun PlansExample(modifier: Modifier) {
     val examples = listOf(
-        WorkoutsTabPlan(uuid = "example-upper-lower", name = stringResource(R.string.workouts_tab_example_plan_upper_lower), imageUrl = images[WorkoutsTabExamples.UpperLowerCover], weeks = 8, daysPerWeek = 4),
-        WorkoutsTabPlan(uuid = "example-full-body", name = stringResource(R.string.workouts_tab_example_plan_full_body), imageUrl = images[WorkoutsTabExamples.FullBodyCover], weeks = 4, daysPerWeek = 3),
+        WorkoutsTabPlan(uuid = "example-upper-lower", name = stringResource(R.string.workouts_tab_example_plan_upper_lower), imageUrl = WorkoutsTabExamples.UpperLowerCover, weeks = 8, daysPerWeek = 4),
+        WorkoutsTabPlan(uuid = "example-full-body", name = stringResource(R.string.workouts_tab_example_plan_full_body), imageUrl = WorkoutsTabExamples.FullBodyCover, weeks = 4, daysPerWeek = 3),
     )
     Column(modifier = modifier, verticalArrangement = Arrangement.spacedBy(Theme.spacing.medium)) {
         AppExampleLabel()
