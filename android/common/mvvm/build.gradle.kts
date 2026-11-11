@@ -7,6 +7,5 @@ android {
 }
 
 dependencies {
-    api(projects.android.common.kotlin)
     api(libs.androidx.lifecycle.viewmodel.ktx)
 }

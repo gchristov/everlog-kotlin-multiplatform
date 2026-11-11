@@ -16,5 +16,4 @@ dependencies {
     // LocalUserManager is a PreferencesManager
     api(projects.android.common.persistence)
     implementation(libs.gson)
-    testImplementation(projects.android.auth.testFixtures)
 }

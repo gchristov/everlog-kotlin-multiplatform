@@ -17,6 +17,4 @@ dependencies {
     implementation(libs.rxbinding)
     implementation(libs.timber)
     implementation(libs.roundedimageview)
-    testImplementation(projects.android.settings.testFixtures)
-    androidTestImplementation(projects.android.settings.testFixtures)
 }

@@ -15,6 +15,4 @@ dependencies {
     implementation(libs.rxbinding)
     implementation(libs.timber)
     implementation(libs.loading.button)
-    testImplementation(projects.android.auth.testFixtures)
-    androidTestImplementation(projects.android.auth.testFixtures)
 }
