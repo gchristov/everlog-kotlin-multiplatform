@@ -8,6 +8,7 @@ import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollTo
+import androidx.compose.ui.unit.dp
 import com.everlog.android.common.compose.theme.Theme
 import com.everlog.android.common.composetest.FeatureTest
 import com.everlog.android.common.data.model.workout.ELWorkout
@@ -115,7 +116,7 @@ class StatisticsPageFeatureTest : FeatureTest() {
         val viewModel = StatisticsPageViewModel(Dispatchers.Main, workouts, FakeUserSettings(), Analytics(picked), Preferences(), { true }) { today }
         compose.setContent {
             Theme {
-                StatisticsPageScreen(viewModel = viewModel, onFeedback = { feedbackOpened = true })
+                StatisticsPageScreen(viewModel = viewModel, onFeedback = { feedbackOpened = true }, bottomPadding = 120.dp)
             }
         }
     }

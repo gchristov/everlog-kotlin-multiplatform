@@ -3,6 +3,7 @@ package com.everlog.android.statistics.ui.page
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.unit.Dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
@@ -23,7 +24,7 @@ import org.threeten.bp.LocalDate
  * shows ([shown]: its tab and page are the current ones), and when the user's settings or Remote Config change.
  */
 @Composable
-fun StatisticsPageRoute(shown: Boolean) {
+fun StatisticsPageRoute(shown: Boolean, bottomPadding: Dp) {
     val context = LocalContext.current
     val graph = remember(context) { context.appGraph<StatisticsGraph>() }
     val viewModel: StatisticsPageViewModel = viewModel(
@@ -46,7 +47,7 @@ fun StatisticsPageRoute(shown: Boolean) {
         CommonMvp.dependencies.screenViewed(StatisticsScreenNames.STATISTICS_V2)
     })
     LocalBroadcastEffect(MvpBroadcasts.PREFERENCES_CHANGED, MvpBroadcasts.REMOTE_CONFIG_REFRESHED) { viewModel.refresh() }
-    StatisticsPageScreen(viewModel = viewModel, onFeedback = { graph.navigator.open(context, Feedback) })
+    StatisticsPageScreen(viewModel = viewModel, onFeedback = { graph.navigator.open(context, Feedback) }, bottomPadding = bottomPadding)
 }
 
 private val Feedback = FeedbackForm(FeedbackSource.ACTIVITY_STATISTICS)

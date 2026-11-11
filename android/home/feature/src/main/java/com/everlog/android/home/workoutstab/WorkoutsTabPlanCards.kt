@@ -24,6 +24,8 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.everlog.android.common.compose.elements.AppExample
+import com.everlog.android.common.compose.elements.AppExampleLabel
 import com.everlog.android.common.compose.elements.AppImage
 import com.everlog.android.common.compose.elements.AppSurface
 import com.everlog.android.common.compose.elements.AppText
@@ -33,7 +35,7 @@ import com.everlog.android.common.compose.elements.list.AppListItem
 import com.everlog.android.common.compose.theme.Theme
 import com.everlog.android.home.R
 
-// The plan being followed as a cover card, the others as rows with a small cover, or a line saying there are none
+// The plan being followed as a cover card, the others as rows with a small cover, or an example of them when there are none
 @Composable
 internal fun WorkoutsTabPlans(
     active: WorkoutsTabActivePlan?,
@@ -42,30 +44,37 @@ internal fun WorkoutsTabPlans(
     modifier: Modifier = Modifier,
 ) {
     active?.let { ActivePlanCard(it, onClick = { onPlanClick(it.plan.uuid) }, modifier = modifier) }
-    if (plans.isEmpty() && active == null) {
-        AppListGroup(modifier = modifier) {
+    if (plans.isEmpty() && active == null) PlansExample(modifier)
+    if (plans.isNotEmpty()) PlanRows(plans, onPlanClick, modifier)
+}
+
+@Composable
+private fun PlanRows(plans: List<WorkoutsTabPlan>, onPlanClick: ((String) -> Unit)?, modifier: Modifier) {
+    AppListGroup(modifier = modifier) {
+        plans.forEach { plan ->
             row {
                 AppListItem(
-                    title = stringResource(R.string.workouts_tab_no_plans),
-                    subtitle = stringResource(R.string.workouts_tab_no_plans_detail),
+                    modifier = Modifier.testTag(WorkoutsTabTags.plan(plan.uuid)),
+                    title = plan.name,
+                    subtitle = planLength(plan),
+                    leading = { AppThumbnail(imageUrl = plan.imageUrl, size = Theme.sizes.leading) },
+                    onClick = onPlanClick?.let { { it(plan.uuid) } },
                 )
             }
         }
     }
-    if (plans.isNotEmpty()) {
-        AppListGroup(modifier = modifier) {
-            plans.forEach { plan ->
-                row {
-                    AppListItem(
-                        modifier = Modifier.testTag(WorkoutsTabTags.plan(plan.uuid)),
-                        title = plan.name,
-                        subtitle = planLength(plan),
-                        leading = { AppThumbnail(imageUrl = plan.imageUrl, size = Theme.sizes.leading) },
-                        onClick = { onPlanClick(plan.uuid) },
-                    )
-                }
-            }
-        }
+}
+
+// What plans will look like here, faded under its label
+@Composable
+private fun PlansExample(modifier: Modifier) {
+    val examples = listOf(
+        WorkoutsTabPlan(uuid = "example-upper-lower", name = stringResource(R.string.workouts_tab_example_plan_upper_lower), imageUrl = WorkoutsTabExamples.UpperLowerCover, weeks = 8, daysPerWeek = 4),
+        WorkoutsTabPlan(uuid = "example-full-body", name = stringResource(R.string.workouts_tab_example_plan_full_body), imageUrl = WorkoutsTabExamples.FullBodyCover, weeks = 4, daysPerWeek = 3),
+    )
+    Column(modifier = modifier, verticalArrangement = Arrangement.spacedBy(Theme.spacing.medium)) {
+        AppExampleLabel()
+        AppExample { PlanRows(examples, onPlanClick = null, modifier = Modifier) }
     }
 }
 

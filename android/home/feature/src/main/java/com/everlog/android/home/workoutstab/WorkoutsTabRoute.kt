@@ -3,6 +3,7 @@ package com.everlog.android.home.workoutstab
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.unit.Dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
@@ -26,7 +27,7 @@ import org.threeten.bp.LocalDate
  * ([shown]: its tab is the current one), and counts its card as seen only then.
  */
 @Composable
-fun WorkoutsTabRoute(shown: Boolean) {
+fun WorkoutsTabRoute(shown: Boolean, bottomPadding: Dp) {
     val context = LocalContext.current
     val graph = remember(context) { context.appGraph<HomeGraph>() }
     val viewModel: WorkoutsTabViewModel = viewModel(
@@ -54,6 +55,7 @@ fun WorkoutsTabRoute(shown: Boolean) {
     val navigate = { destination: Destination -> graph.navigator.open(context, destination) }
     WorkoutsTabScreen(
         viewModel = viewModel,
+        bottomPadding = bottomPadding,
         actions = WorkoutsTabActions(
             showExercises = { navigate(ExerciseLibrary) },
             showTemplate = { navigate(TemplateDetails(it, viewOnly = false)) },

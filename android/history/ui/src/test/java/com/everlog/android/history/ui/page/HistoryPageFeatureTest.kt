@@ -10,6 +10,7 @@ import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollToIndex
 import androidx.compose.ui.test.performScrollToNode
+import androidx.compose.ui.unit.dp
 import com.everlog.android.common.compose.theme.Theme
 import com.everlog.android.common.composetest.FeatureTest
 import com.everlog.android.common.data.model.ELRoutine
@@ -198,7 +199,7 @@ class HistoryPageFeatureTest : FeatureTest() {
         val viewModel = HistoryPageViewModel(Dispatchers.Main, workouts, FakeUserSettings(), preferences, listOf("Legs", "Push", "Pull")) { today }
         compose.setContent {
             Theme {
-                HistoryPageScreen(viewModel = viewModel, onWorkout = { opened += it.getName().orEmpty() })
+                HistoryPageScreen(viewModel = viewModel, onWorkout = { opened += it.getName().orEmpty() }, bottomPadding = 120.dp)
             }
         }
         return viewModel

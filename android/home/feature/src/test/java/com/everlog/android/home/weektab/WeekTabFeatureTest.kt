@@ -5,6 +5,7 @@ import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollTo
+import androidx.compose.ui.unit.dp
 import com.everlog.android.common.compose.theme.Theme
 import com.everlog.android.common.composetest.FeatureTest
 import com.everlog.android.common.data.model.ELRoutine
@@ -67,9 +68,18 @@ class WeekTabFeatureTest : FeatureTest() {
         workouts.recent.value = Load.Ready(emptyList())
 
         waitUntil(WaitMillis) { exists("Ready to train?") }
+        // The numbers are an example under its label, faded and out of the semantics tree
+        compose.onNodeWithTag(WeekTabTags.Example).assertExists()
+        compose.onNodeWithTag(WeekTabTags.Goal).assertDoesNotExist()
         compose.onNodeWithTag(WeekTabTags.Empty).performScrollTo()
         compose.onNodeWithText("Start workout").performClick()
         assertThat(opened).containsExactly("start workout")
+
+        // A workout done, the week's own numbers take their place
+        workouts.recent.value = Load.Ready(listOf(finishedToday()))
+        waitUntil(WaitMillis) { exists("more to go!") }
+        compose.onNodeWithTag(WeekTabTags.Example).assertDoesNotExist()
+        compose.onNodeWithTag(WeekTabTags.Goal).assertExists()
     }
 
     @Test
@@ -162,6 +172,7 @@ class WeekTabFeatureTest : FeatureTest() {
             Theme {
                 WeekTabScreen(
                     viewModel = viewModel,
+                    bottomPadding = 120.dp,
                     actions = WeekTabActions(
                         showStatistics = { opened += "statistics" },
                         showSettings = { opened += "settings" },

@@ -5,6 +5,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.unit.Dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.lifecycle.viewmodel.initializer
@@ -45,7 +46,7 @@ class WeekTabHomeActions(
  * current one), and when the user's settings or Remote Config change.
  */
 @Composable
-fun WeekTabRoute(shown: Boolean, home: WeekTabHomeActions) {
+fun WeekTabRoute(shown: Boolean, home: WeekTabHomeActions, bottomPadding: Dp) {
     val context = LocalContext.current
     val graph = remember(context) { context.appGraph<HomeGraph>() }
     val viewModel: WeekTabViewModel = viewModel(
@@ -76,6 +77,7 @@ fun WeekTabRoute(shown: Boolean, home: WeekTabHomeActions) {
     val navigate = { destination: Destination -> graph.navigator.open(context, destination) }
     WeekTabScreen(
         viewModel = viewModel,
+        bottomPadding = bottomPadding,
         actions = WeekTabActions(
             showStatistics = home.showStatistics,
             showSettings = home.showSettings,

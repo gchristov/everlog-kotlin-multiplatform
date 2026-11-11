@@ -34,7 +34,7 @@ fun AppExample(modifier: Modifier = Modifier, content: @Composable () -> Unit) {
         modifier = modifier
             .cancellingTaps()
             .graphicsLayer {
-                alpha = ExampleAlpha
+                alpha = AppExampleAlpha
                 compositingStrategy = CompositingStrategy.Offscreen
             }
             .clearAndSetSemantics {},
@@ -87,4 +87,5 @@ private fun Modifier.cancellingTaps(): Modifier = pointerInput(Unit) {
     }
 }
 
-private const val ExampleAlpha = 0.35f
+// How faded an example is, for a part of a screen that can't sit in AppExample, e.g. because it takes taps
+const val AppExampleAlpha = 0.35f

@@ -12,14 +12,18 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.everlog.android.common.compose.elements.AppBarHeader
+import com.everlog.android.common.compose.elements.AppExample
+import com.everlog.android.common.compose.elements.AppExampleLabel
 import com.everlog.android.common.compose.elements.AppSectionHeader
 import com.everlog.android.common.compose.theme.Theme
-import com.everlog.android.common.design.R as DesignR
 import com.everlog.android.common.data.model.ELRoutine
+import com.everlog.android.common.design.R as DesignR
 import com.everlog.android.home.R
 import com.everlog.android.home.data.HomeNotificationTap
 
@@ -35,11 +39,12 @@ class WeekTabActions(
 )
 
 @Composable
-internal fun WeekTabScreen(viewModel: WeekTabViewModel, actions: WeekTabActions) {
+internal fun WeekTabScreen(viewModel: WeekTabViewModel, actions: WeekTabActions, bottomPadding: Dp) {
     val state by viewModel.state.collectAsStateWithLifecycle()
     WeekTabContent(
         state = state,
         actions = actions,
+        bottomPadding = bottomPadding,
         onBannerClose = viewModel::onBannerClosed,
         onBannerTap = { actions.open(viewModel.onBannerTapped()) },
         onDayClick = { day -> viewModel.onDayTapped(day)?.let(actions.showTemplate) },
@@ -57,6 +62,8 @@ internal fun WeekTabScreen(viewModel: WeekTabViewModel, actions: WeekTabActions)
 internal fun WeekTabContent(
     state: WeekTabState,
     actions: WeekTabActions,
+    // Room for the host's button over the end of the list
+    bottomPadding: Dp,
     onBannerClose: () -> Unit,
     onBannerTap: () -> Unit,
     onDayClick: (WeekTabPlanDay) -> Unit,
@@ -68,7 +75,7 @@ internal fun WeekTabContent(
         Column(
             modifier = Modifier
                 .verticalScroll(rememberScrollState())
-                .padding(bottom = WeekTabSizes.BottomPadding),
+                .padding(bottom = bottomPadding),
             verticalArrangement = Arrangement.spacedBy(Theme.spacing.large),
         ) {
             val margin = Modifier.padding(horizontal = Theme.spacing.large)
@@ -99,12 +106,20 @@ private fun WeekContent(state: WeekTabState, actions: WeekTabActions, margin: Mo
         WeekStatsLoading(contentPadding = PaddingValues(horizontal = Theme.spacing.large))
     } else {
         AppSectionHeader(text = stringResource(DesignR.string.statistics_title), modifier = margin)
-        WeekStatCards(
-            state = state,
-            onGoalClick = actions.showSettings,
-            onStatsClick = actions.showStatistics,
-            contentPadding = PaddingValues(horizontal = Theme.spacing.large),
-        )
+        val example = state.example
+        if (example != null) {
+            AppExampleLabel(modifier = margin.testTag(WeekTabTags.Example))
+            AppExample {
+                WeekStatCards(state = example, onGoalClick = {}, onStatsClick = {}, contentPadding = PaddingValues(horizontal = Theme.spacing.large))
+            }
+        } else {
+            WeekStatCards(
+                state = state,
+                onGoalClick = actions.showSettings,
+                onStatsClick = actions.showStatistics,
+                contentPadding = PaddingValues(horizontal = Theme.spacing.large),
+            )
+        }
     }
     if (state.empty) {
         EmptyWeekCard(today = state.today, onStart = actions.showStartWorkout, modifier = margin)
@@ -119,8 +134,6 @@ internal object WeekTabColors {
 }
 
 internal object WeekTabSizes {
-    // Room for Home's start workout button over the end of the list
-    val BottomPadding = 120.dp
     val StatCardWidth = 154.dp
     val StatCardHeight = 170.dp
     val DayWidth = 36.dp

@@ -5,6 +5,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.platform.ViewCompositionStrategy
+import androidx.compose.ui.res.dimensionResource
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
@@ -67,6 +68,8 @@ class HistoryPageFragment : BaseTabFragment() {
                         onWorkout = { workout ->
                             context?.let { graph.navigator.open(it, WorkoutDetails(workout, justFinished = false, fromPlan = false)) }
                         },
+                        // The page runs under Home's tab bar, as the old Home's tabs do
+                        bottomPadding = dimensionResource(DesignR.dimen.footer_bottom_padding_double),
                     )
                 }
             }

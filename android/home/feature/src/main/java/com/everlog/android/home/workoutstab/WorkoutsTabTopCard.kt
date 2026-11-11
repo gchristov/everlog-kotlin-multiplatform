@@ -104,22 +104,25 @@ private fun Peek(routine: ELRoutine) {
 
 // Without templates: two made-up ones, faded, to show what saved templates look like
 @Composable
-internal fun WorkoutsTabExample(today: LocalDate, modifier: Modifier = Modifier) {
-    val placeholders = AppExpandableCardGroup(List(PeekCount) { AppExpandableCardRow(title = "", imageUrl = null, trailing = "") })
+internal fun WorkoutsTabExample(today: LocalDate, images: Map<String, String>, modifier: Modifier = Modifier) {
+    // Each card's peek: the library's images for its exercises, or blank ones until they've loaded
+    fun peek(uuids: List<String>) = AppExpandableCardGroup(uuids.map { AppExpandableCardRow(title = "", imageUrl = images[it], trailing = "") })
     Column(modifier = modifier, verticalArrangement = Arrangement.spacedBy(Theme.spacing.medium)) {
         AppExampleLabel()
         AppExample {
             Column(verticalArrangement = Arrangement.spacedBy(Theme.spacing.large)) {
-                listOf(R.string.workouts_tab_example_push to ExampleDaysAgo, R.string.workouts_tab_example_pull to ExampleDaysAgo * 2)
-                    .forEach { (name, daysAgo) ->
-                        AppExpandableCard(
-                            title = stringResource(name),
-                            subtitle = doneAgoText(DoneAgo.Days(daysAgo)),
-                            groups = listOf(placeholders),
-                            open = false,
-                            onToggle = {},
-                        )
-                    }
+                listOf(
+                    Triple(R.string.workouts_tab_example_push, ExampleDaysAgo, WorkoutsTabExamples.PushDay),
+                    Triple(R.string.workouts_tab_example_pull, ExampleDaysAgo * 2, WorkoutsTabExamples.PullDay),
+                ).forEach { (name, daysAgo, exercises) ->
+                    AppExpandableCard(
+                        title = stringResource(name),
+                        subtitle = doneAgoText(DoneAgo.Days(daysAgo)),
+                        groups = listOf(peek(exercises)),
+                        open = false,
+                        onToggle = {},
+                    )
+                }
             }
         }
     }

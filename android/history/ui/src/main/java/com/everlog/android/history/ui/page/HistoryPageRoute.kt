@@ -7,6 +7,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.unit.Dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
@@ -28,7 +29,7 @@ import org.threeten.bp.LocalDate
  * the Activity tab is the current one: once another tab is, the history's pages can go.
  */
 @Composable
-fun HistoryPageRoute(shown: Boolean, tabShown: Boolean) {
+fun HistoryPageRoute(shown: Boolean, tabShown: Boolean, bottomPadding: Dp) {
     val context = LocalContext.current
     val graph = remember(context) { context.appGraph<HistoryGraph>() }
     val viewModel: HistoryPageViewModel = viewModel(
@@ -59,6 +60,7 @@ fun HistoryPageRoute(shown: Boolean, tabShown: Boolean) {
     HistoryPageScreen(
         viewModel = viewModel,
         onWorkout = { workout -> graph.navigator.open(context, WorkoutDetails(workout, justFinished = false, fromPlan = false)) },
+        bottomPadding = bottomPadding,
     )
 }
 

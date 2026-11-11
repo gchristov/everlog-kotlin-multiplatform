@@ -41,9 +41,9 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.everlog.android.common.compose.elements.AppBlurBox
 import com.everlog.android.common.compose.elements.AppChip
+import com.everlog.android.common.compose.elements.AppChipStyle
 import com.everlog.android.common.compose.elements.AppExample
 import com.everlog.android.common.compose.elements.AppExampleLabel
-import com.everlog.android.common.compose.elements.AppChipStyle
 import com.everlog.android.common.compose.elements.AppFloatingProgress
 import com.everlog.android.common.compose.elements.AppMenu
 import com.everlog.android.common.compose.elements.AppMenuItem
@@ -59,7 +59,7 @@ import kotlinx.coroutines.launch
 import org.threeten.bp.LocalDate
 
 @Composable
-internal fun HistoryPageScreen(viewModel: HistoryPageViewModel, onWorkout: (ELWorkout) -> Unit) {
+internal fun HistoryPageScreen(viewModel: HistoryPageViewModel, onWorkout: (ELWorkout) -> Unit, bottomPadding: Dp) {
     val state by viewModel.state.collectAsStateWithLifecycle()
     HistoryPageContent(
         state = state,
@@ -71,6 +71,7 @@ internal fun HistoryPageScreen(viewModel: HistoryPageViewModel, onWorkout: (ELWo
         onTryAgain = viewModel::onTryAgain,
         onTryOlderAgain = viewModel::onTryOlderAgain,
         onWorkout = onWorkout,
+        bottomPadding = bottomPadding,
     )
 }
 
@@ -85,6 +86,8 @@ internal fun HistoryPageContent(
     onTryAgain: () -> Unit,
     onTryOlderAgain: () -> Unit,
     onWorkout: (ELWorkout) -> Unit,
+    // Room for the host's button below the content
+    bottomPadding: Dp,
 ) {
     val snackbar = remember { SnackbarHostState() }
     val emptyDay = stringResource(R.string.history_empty_day_prompt)
@@ -129,7 +132,7 @@ internal fun HistoryPageContent(
     }
     // Kept while switching between the calendar and the list, and across reads (see HistoryList)
     val listState = remember { LazyListState() }
-    val padding = PaddingValues(start = Theme.spacing.large, top = PageSizes.TopPadding, end = Theme.spacing.large, bottom = PageSizes.BottomPadding)
+    val padding = PaddingValues(start = Theme.spacing.large, top = PageSizes.TopPadding, end = Theme.spacing.large, bottom = bottomPadding)
     // The days scroll behind the picker and the spinner, which blur them
     AppBlurBox(
         modifier = Modifier.fillMaxSize(),
@@ -154,7 +157,7 @@ internal fun HistoryPageContent(
             }
             AppSnackbarHost(
                 hostState = snackbar,
-                modifier = Modifier.align(Alignment.BottomCenter).navigationBarsPadding().padding(bottom = PageSizes.SnackbarBottom)
+                modifier = Modifier.align(Alignment.BottomCenter).navigationBarsPadding().padding(bottom = bottomPadding - PageSizes.SnackbarAboveEnd)
                     .testTag(HistoryPageTags.Snackbar),
             )
         },
@@ -304,9 +307,8 @@ private const val DaysInWeek = 7
 private object PageSizes {
     // Room for the view picker above the content, and a group's spacing below it
     val TopPadding = 52.dp
-    // Room for Home's start-workout button below the content
-    val BottomPadding = 180.dp
-    val SnackbarBottom = 128.dp
+    // From the end of the bottom padding, so the snackbar sits just above the host's button
+    val SnackbarAboveEnd = 52.dp
     // The picker's chip, for the example label beside it
     val PickerHeight = 36.dp
     const val LoadingRows = 4

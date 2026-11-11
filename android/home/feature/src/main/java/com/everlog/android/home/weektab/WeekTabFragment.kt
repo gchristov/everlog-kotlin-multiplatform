@@ -5,6 +5,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.platform.ViewCompositionStrategy
+import androidx.compose.ui.res.dimensionResource
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
@@ -12,6 +13,7 @@ import androidx.lifecycle.repeatOnLifecycle
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import com.everlog.android.common.compose.theme.Theme
+import com.everlog.android.common.design.R as DesignR
 import com.everlog.android.common.kotlin.di.appGraph
 import com.everlog.android.common.mvp.fragment.BaseFragmentMvpView
 import com.everlog.android.common.mvp.fragment.BaseFragmentPresenter
@@ -84,6 +86,8 @@ class WeekTabFragment : BaseTabFragment() {
                 Theme {
                     WeekTabScreen(
                         viewModel = viewModel,
+                        // The page runs under Home's tab bar, as the old Home's tabs do
+                        bottomPadding = dimensionResource(DesignR.dimen.footer_bottom_padding_double),
                         actions = WeekTabActions(
                             showStatistics = { host?.showStatistics() },
                             showSettings = { host?.showSettings() },

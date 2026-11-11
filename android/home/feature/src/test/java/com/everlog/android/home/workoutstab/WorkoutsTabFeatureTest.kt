@@ -1,10 +1,13 @@
 package com.everlog.android.home.workoutstab
 
+import androidx.compose.ui.test.assertCountEquals
 import androidx.compose.ui.test.hasText
+import androidx.compose.ui.test.onAllNodesWithText
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollTo
+import androidx.compose.ui.unit.dp
 import com.everlog.android.common.composetest.FeatureTest
 import com.everlog.android.common.data.model.ELRoutine
 import com.everlog.android.common.data.model.exercise.ELExercise
@@ -101,11 +104,12 @@ class WorkoutsTabFeatureTest : FeatureTest() {
         show(templates = emptyList(), history = history())
 
         compose.onNodeWithText("Save the workouts you repeat").assertExists()
-        compose.onNodeWithText("EXAMPLE · NOT YOUR DATA", ignoreCase = true).assertExists()
+        // One example of templates and one of plans
+        compose.onAllNodesWithText("EXAMPLE · NOT YOUR DATA", ignoreCase = true).assertCountEquals(2)
         compose.onNodeWithText("New template").performClick()
         compose.onNodeWithText("Start empty").performClick()
         assertThat(opened).containsExactly("new template", "start empty").inOrder()
-        compose.onNodeWithText("Your plans").assertDoesNotExist()
+        compose.onNodeWithText("Your plans").assertExists()
     }
 
     @Test
@@ -122,17 +126,19 @@ class WorkoutsTabFeatureTest : FeatureTest() {
         val other = plan("cut", push, legs).apply { name = "Summer cut" }
         show(templates = listOf(push), history = history(), plans = listOf(other))
 
-        compose.onNodeWithText("Exercises").performClick()
+        compose.onNodeWithText("View all 229 exercises").performClick()
         compose.onNodeWithText("Summer cut").performScrollTo().performClick()
         compose.onNodeWithText("1 week · 2 days a week").assertExists()
         assertThat(opened).containsExactly("exercises", "plan cut").inOrder()
     }
 
     @Test
-    fun noPlansSaysSo() {
+    fun noPlansShowsAnExample() {
         show(templates = listOf(push), history = history())
 
-        compose.onNodeWithText("No plans yet").performScrollTo().assertExists()
+        // Faded, and out of the semantics tree, so only the unmerged tree has it
+        compose.onNodeWithText("EXAMPLE · NOT YOUR DATA", ignoreCase = true).performScrollTo().assertExists()
+        compose.onNodeWithText("Upper / lower", useUnmergedTree = true).assertExists()
     }
 
     // Edge cases
@@ -186,12 +192,13 @@ class WorkoutsTabFeatureTest : FeatureTest() {
         history: TemplateHistory?,
         plans: List<ELPlan> = emptyList(),
     ) {
-        templates?.let { lists.lists.value = Load.Ready(WorkoutsTabLists(it, plans.map { plan -> PlanWithRoutines(plan, emptyMap()) })) }
+        templates?.let { lists.lists.value = Load.Ready(WorkoutsTabLists(it, plans.map { plan -> PlanWithRoutines(plan, emptyMap()) }, exercises = 229)) }
         history?.let { recent.history.value = Load.Ready(it) }
         viewModel = WorkoutsTabViewModel(Dispatchers.Main, lists, recent, planProgress, analytics) { LocalDate.of(2026, 11, 10) }
         setContent {
             WorkoutsTabScreen(
                 viewModel = viewModel,
+                bottomPadding = 120.dp,
                 actions = WorkoutsTabActions(
                     showExercises = { opened += "exercises" },
                     showTemplate = { opened += "details ${it.uuid}" },

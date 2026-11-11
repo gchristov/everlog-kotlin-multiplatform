@@ -5,6 +5,7 @@ import android.content.pm.ApplicationInfo
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.unit.Dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
@@ -32,7 +33,7 @@ import kotlinx.coroutines.Dispatchers
  * the weekly goal on its own screen).
  */
 @Composable
-fun SettingsTabRoute(shown: Boolean) {
+fun SettingsTabRoute(shown: Boolean, bottomPadding: Dp) {
     val context = LocalContext.current
     val graph = remember(context) { context.appGraph<SettingsGraph>() }
     val viewModel: SettingsTabViewModel = viewModel(
@@ -62,6 +63,7 @@ fun SettingsTabRoute(shown: Boolean) {
     val navigate = { destination: Destination -> graph.navigator.open(context, destination) }
     SettingsTabScreen(
         viewModel = viewModel,
+        bottomPadding = bottomPadding,
         actions = SettingsTabActions(
             openSetSuggestions = { navigate(SetSuggestions) },
             sendFeedback = { navigate(FeedbackForm(FeedbackSource.SETTINGS)) },
