@@ -13,7 +13,6 @@ class AnalyticsConstants {
         const val SCREEN_EXERCISE_GROUPS_CREATE = "screen_create_exercise_groups"
         const val SCREEN_ROUTINE_CREATE = "screen_create_routine"
         const val SCREEN_WEB_VIEW = "screen_web_view"
-        const val SCREEN_MUSCLE_GOAL = "screen_settings_muscle_goals"
         // The exercise picker, named apart from the old list's screen_exercises and screen_exercise_picker
         const val SCREEN_EXERCISES_V2 = "screen_exercises_v2"
         const val SCREEN_EXERCISE_PICKER_V2 = "screen_exercise_picker_v2"

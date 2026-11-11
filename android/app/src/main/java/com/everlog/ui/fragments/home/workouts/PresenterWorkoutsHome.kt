@@ -7,7 +7,6 @@ import com.everlog.android.plan.data.model.ELPlan
 import com.everlog.data.datastores.ELDatastore
 import com.everlog.android.plan.data.store.ELColStorePlansLoadedEvent
 import com.everlog.android.template.data.store.ELColStoreRoutinesLoadedEvent
-import com.everlog.ui.activities.home.routine.create.CreateRoutineActivity
 import com.everlog.ui.adapters.CreatorAdapter
 import com.everlog.ui.adapters.items.Creator
 import com.everlog.android.plan.adapter.PlanAdapter
@@ -156,8 +155,7 @@ class PresenterWorkoutsHome : BaseFragmentPresenter<MvpViewWorkoutsHome>() {
     }
 
     private fun handleAddRoutine() {
-        navigator.openEditRoutine(CreateRoutineActivity.Companion.Properties()
-                .showDetailsOnSuccess(true))
+        navigator.openNewRoutine()
     }
 
     // Setup

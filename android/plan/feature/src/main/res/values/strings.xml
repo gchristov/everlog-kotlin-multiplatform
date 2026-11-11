@@ -38,8 +38,6 @@
     <string name="plan_details_switch">Switch plan</string>
     <string name="plan_details_switch_prompt">Another plan already started. Are you sure you want to switch to this plan?\n\nYour history will not be affected.</string>
     <string name="plan_details_week">Week %1$s</string>
-    <string name="pro_prompt_muscle_goals_subtitle">Tap to upgrade and unlock weight suggestions based on your One Rep Max</string>
-    <string name="pro_prompt_muscle_goals_title">Training goals are locked</string>
     <string name="pro_prompt_plan_subtitle">Tap to upgrade and unlock unlimited plan schedules</string>
     <string name="pro_prompt_plan_title">Free plans are limited to %1$d day a week</string>
     <string name="stop">Stop</string>

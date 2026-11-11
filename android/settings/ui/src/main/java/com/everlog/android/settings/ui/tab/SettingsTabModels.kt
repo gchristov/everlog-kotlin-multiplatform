@@ -11,8 +11,6 @@ data class SettingsTabState(
     val weightUnit: WeightUnit,
     val weeklyGoal: Int,
     val setSuggestion: MuscleGoal,
-    // Remote Config's set_suggestions_v2: the row says Set suggestions rather than Muscle goal
-    val setSuggestionsV2: Boolean,
     val weightIncrease: Float,
     val keepScreenOn: Boolean,
     val showFeedback: Boolean,

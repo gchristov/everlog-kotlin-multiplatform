@@ -68,17 +68,7 @@ public class RemoteConfigManager extends PreferencesManager {
     }
 
     // The Set suggestions screen in Compose; off until Remote Config says otherwise
-    public boolean setSuggestionsV2() {
-        RemoteConfig localConfig = loadLocalRemoteConfig();
-        return localConfig != null && localConfig.getSetSuggestionsV2();
-    }
-
     // The template editor in Compose; off until Remote Config says otherwise
-    public boolean templateEditorV2() {
-        RemoteConfig localConfig = loadLocalRemoteConfig();
-        return localConfig != null && localConfig.getTemplateEditorV2();
-    }
-
     // Home's Week tab in Compose; off until Remote Config says otherwise
     public boolean weekTabV2() {
         RemoteConfig localConfig = loadLocalRemoteConfig();

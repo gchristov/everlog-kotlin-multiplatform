@@ -172,12 +172,6 @@
             android:windowSoftInputMode="stateHidden"
             android:exported="false" />
         <activity
-            android:name=".ui.activities.home.routine.create.CreateRoutineActivity"
-            android:configChanges="keyboardHidden|orientation|screenSize"
-            android:theme="@style/AppTheme.NoActionBar"
-            android:windowSoftInputMode="stateHidden"
-            android:exported="false" />
-        <activity
             android:name="com.everlog.android.template.editor.TemplateEditorActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:theme="@style/AppTheme.NoActionBar"
@@ -234,12 +228,6 @@
         <activity
             android:name="com.everlog.android.workout.setsuggestions.SetSuggestionsActivity"
             android:theme="@style/AppTheme.NoActionBar"
-            android:exported="false" />
-        <activity
-            android:name="com.everlog.ui.activities.home.musclegoal.MuscleGoalActivity"
-            android:configChanges="keyboardHidden|orientation|screenSize"
-            android:theme="@style/AppTheme.NoActionBar"
-            android:windowSoftInputMode="stateHidden"
             android:exported="false" />
         <activity
             android:name="com.everlog.android.template.settype.SetTypePickerActivity"

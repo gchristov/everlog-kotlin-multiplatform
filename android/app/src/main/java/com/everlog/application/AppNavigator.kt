@@ -15,9 +15,9 @@ import com.everlog.android.common.navigation.FeedbackForm
 import com.everlog.android.common.navigation.Home
 import com.everlog.android.common.navigation.Login
 import com.everlog.android.common.navigation.Navigator
+import com.everlog.android.common.navigation.NewPlan
 import com.everlog.android.common.navigation.Onboarding
 import com.everlog.android.common.navigation.PlanCongratulations
-import com.everlog.android.common.navigation.NewPlan
 import com.everlog.android.common.navigation.PlanDetails
 import com.everlog.android.common.navigation.PlayStoreListing
 import com.everlog.android.common.navigation.PrivacyPolicy
@@ -26,11 +26,11 @@ import com.everlog.android.common.navigation.ProBuyOrManage
 import com.everlog.android.common.navigation.ProCongratulations
 import com.everlog.android.common.navigation.RatePrompt
 import com.everlog.android.common.navigation.ResultDestination
+import com.everlog.android.common.navigation.ResumeWorkout
 import com.everlog.android.common.navigation.SetSuggestions
 import com.everlog.android.common.navigation.SetTypePicker
 import com.everlog.android.common.navigation.ShareApp
 import com.everlog.android.common.navigation.ShareWorkout
-import com.everlog.android.common.navigation.ResumeWorkout
 import com.everlog.android.common.navigation.StartEmptyWorkout
 import com.everlog.android.common.navigation.StartWorkout
 import com.everlog.android.common.navigation.StartWorkoutConfirmation
@@ -44,14 +44,14 @@ import com.everlog.android.exercise.details.ExerciseDetailsActivity
 import com.everlog.android.exercise.picker.ExercisePickerActivity
 import com.everlog.android.plan.congratulate.CongratulateActivity
 import com.everlog.android.plan.details.PlanDetailsActivity
+import com.everlog.android.template.editor.TemplateEditorActivity
 import com.everlog.android.template.picker.RoutinePickerActivity
 import com.everlog.android.template.settype.SetTypePickerActivity
+import com.everlog.android.workout.setsuggestions.SetSuggestionsActivity
 import com.everlog.constants.ELConstants
 import com.everlog.managers.RemoteConfigManager
 import com.everlog.managers.apprate.RatePromptTrigger
 import com.everlog.ui.activities.home.exercisegroup.DefaultCreateExerciseGroupsActivity
-import com.everlog.ui.activities.home.routine.create.CreateRoutineActivity
-import com.everlog.ui.activities.home.routine.create.templateEditorIntent
 import com.everlog.ui.navigator.ELNavigator
 import dev.zacsweers.metro.AppScope
 import dev.zacsweers.metro.ContributesBinding
@@ -78,7 +78,7 @@ class AppNavigator : Navigator {
             is AppSettingsPrompt -> navigator.promptForAppSettings(destination.rationale)
             is RatePrompt -> navigator.requestRatePrompt(RatePromptTrigger.WorkoutCompleted(destination.workout), destination.delayMillis)
             is FeedbackForm -> navigator.openFeedbackForm(destination.source)
-            SetSuggestions -> navigator.openMuscleGoal()
+            SetSuggestions -> context.startActivity(SetSuggestionsActivity.launchIntent(context))
             DesignSystem -> navigator.openDesignSystem()
             ProBuy -> navigator.openProBuy()
             ProBuyOrManage -> navigator.openProBuyOrManage()
@@ -114,10 +114,7 @@ class AppNavigator : Navigator {
         is SetTypePicker -> Intent(context, SetTypePickerActivity::class.java)
             .putExtra(ELConstants.EXTRA_NUMBER_OF_ITEMS, destination.exerciseCount)
         TemplatePicker -> Intent(context, RoutinePickerActivity::class.java)
-        is TemplateEditor -> templateEditorIntent(
-            context,
-            CreateRoutineActivity.Companion.Properties().routine(destination.routine).showDetailsOnSuccess(destination.showDetailsOnSuccess),
-        )
+        is TemplateEditor -> TemplateEditorActivity.launchIntent(context, destination.routine?.uuid, destination.showDetailsOnSuccess)
         is ExerciseGroupsEditor -> DefaultCreateExerciseGroupsActivity.launchIntent(
             context,
             DefaultCreateExerciseGroupsActivity.Companion.Properties().groups(destination.groups),

@@ -139,10 +139,9 @@ class SettingsHomeFragment : BaseTabFragment(), MvpViewSettingsHome {
     }
 
     private fun showMuscleGoal(goal: MuscleGoal?) {
-        val v2 = graph.settingsConfig.setSuggestionsV2()
-        // Goals the new screen doesn't offer, which older versions could set, keep their old names
-        val suggestion = goal?.let { graph.settingsConfig.setSuggestionText(requireContext(), it) }.takeIf { v2 }
-        binding.root.findViewById<TextView>(R.id.muscleGoalTitle).setText(if (v2) DesignR.string.set_suggestions_title else DesignR.string.muscle_goal_title)
+        // Goals Set suggestions doesn't offer, which older versions could set, keep their old names
+        val suggestion = goal?.let { graph.settingsConfig.setSuggestionText(requireContext(), it) }
+        binding.root.findViewById<TextView>(R.id.muscleGoalTitle).setText(DesignR.string.set_suggestions_title)
         binding.root.findViewById<TextView>(R.id.muscleGoalField).text = suggestion?.value ?: goal?.valueName(activity)
         binding.root.findViewById<TextView>(R.id.muscleGoalSubtitle).text = suggestion?.subtitle ?: goal?.valueSettingsSummary(activity, false)
     }

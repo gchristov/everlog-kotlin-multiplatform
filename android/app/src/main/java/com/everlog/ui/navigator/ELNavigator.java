@@ -17,6 +17,7 @@ import android.widget.TextView;
 import com.everlog.BuildConfig;
 import com.everlog.R;
 import com.everlog.android.auth.data.model.ELUser;
+import com.everlog.android.template.editor.TemplateEditorActivity;
 import com.everlog.android.common.data.model.ELRoutine;
 import com.everlog.android.common.data.model.exercise.ELExercise;
 import com.everlog.android.common.data.model.workout.ELWorkout;
@@ -42,12 +43,10 @@ import com.everlog.android.plan.cover.CoverImagePickerActivity;
 import com.everlog.android.exercise.create.CreateExerciseActivity;
 import com.everlog.android.exercise.details.ExerciseDetailsActivity;
 import com.everlog.ui.activities.home.exercisegroup.DefaultCreateExerciseGroupsActivity;
-import com.everlog.ui.activities.home.musclegoal.MuscleGoalActivity;
 import com.everlog.android.plan.create.CreatePlanActivity;
 import com.everlog.android.plan.details.PlanDetailsActivity;
 import com.everlog.android.pro.ProActivity;
 import com.everlog.android.template.picker.RoutinePickerActivity;
-import com.everlog.ui.activities.home.routine.create.CreateRoutineActivity;
 import com.everlog.android.template.details.RoutineDetailsActivity;
 import com.everlog.android.template.perform.PerformRoutineActivity;
 import com.everlog.android.template.settype.SetTypePickerActivity;
@@ -57,8 +56,6 @@ import com.everlog.ui.activities.home.web.WebViewActivity;
 import com.everlog.android.workout.details.WorkoutDetailsActivity;
 import com.everlog.android.auth.login.LoginActivity;
 import com.everlog.android.auth.resetpassword.ResetPasswordActivity;
-import com.everlog.android.workout.setsuggestions.SetSuggestionsActivity;
-import com.everlog.ui.activities.home.routine.create.TemplateEditorRoutingKt;
 import com.everlog.android.workout.log.WorkoutLogActivity;
 import com.everlog.android.common.mvp.dialog.DialogBuilder;
 import com.everlog.android.common.mvp.dialog.ToastBuilder;
@@ -177,8 +174,8 @@ public class ELNavigator implements Navigator {
     }
 
     @Override
-    public void openEditRoutine(CreateRoutineActivity.Companion.@NotNull Properties properties) {
-        startActivityForResult(TemplateEditorRoutingKt.templateEditorIntent(mContext, properties), ELActivityRequestCodes.REQUEST_EDIT_ROUTINE);
+    public void openNewRoutine() {
+        startActivityForResult(TemplateEditorActivity.Companion.launchIntent(mContext, null, true), ELActivityRequestCodes.REQUEST_EDIT_ROUTINE);
     }
 
     @Override
@@ -231,16 +228,6 @@ public class ELNavigator implements Navigator {
     @Override
     public void openEditExerciseGroups(DefaultCreateExerciseGroupsActivity.Companion.@NotNull Properties properties) {
         startActivityForResult(DefaultCreateExerciseGroupsActivity.launchIntent(mContext, properties), ELActivityRequestCodes.REQUEST_EDIT_EXERCISE_GROUPS);
-    }
-
-    @Override
-    public void openMuscleGoal() {
-        if (RemoteConfigManager.manager.setSuggestionsV2()) {
-            startActivity(SetSuggestionsActivity.launchIntent(mContext));
-            return;
-        }
-        Intent i = new Intent(mContext, MuscleGoalActivity.class);
-        startActivity(i);
     }
 
     @Override

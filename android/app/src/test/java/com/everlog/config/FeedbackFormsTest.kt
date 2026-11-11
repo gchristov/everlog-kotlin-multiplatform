@@ -25,7 +25,6 @@ class FeedbackFormsTest {
         assertThat(forms.url(FeedbackSource.ACTIVITY_STATISTICS, "2.21.0")).isEqualTo("https://forms.gle/statistics")
         assertThat(forms.url(FeedbackSource.EXERCISE_STATISTICS, "2.21.0")).isEqualTo("https://forms.gle/statistics")
         assertThat(forms.url(FeedbackSource.SET_TYPES, "2.21.0")).isEqualTo("https://forms.gle/set-types")
-        assertThat(forms.url(FeedbackSource.MUSCLE_GOAL, "2.21.0")).isEqualTo("https://forms.gle/set-suggestions")
         assertThat(forms.url(FeedbackSource.SET_SUGGESTIONS, "2.21.0")).isEqualTo("https://forms.gle/set-suggestions")
         assertThat(forms.url(FeedbackSource.WORKOUT_MENU, "2.21.0")).isEqualTo("https://forms.gle/workout")
         assertThat(forms.url(FeedbackSource.EXERCISE_PICKER_MENU, "2.21.0")).isEqualTo("https://forms.gle/exercise-picker")

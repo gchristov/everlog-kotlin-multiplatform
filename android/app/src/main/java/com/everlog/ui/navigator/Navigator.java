@@ -12,7 +12,6 @@ import com.everlog.android.workout.data.notification.ShownSet;
 import com.everlog.android.plan.congratulate.CongratulateActivity;
 import com.everlog.android.exercise.details.ExerciseDetailsActivity;
 import com.everlog.ui.activities.home.exercisegroup.DefaultCreateExerciseGroupsActivity;
-import com.everlog.ui.activities.home.routine.create.CreateRoutineActivity;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 
 import androidx.annotation.NonNull;
@@ -33,7 +32,7 @@ public interface Navigator {
 
     void openRoutinePicker();
 
-    void openEditRoutine(@NonNull CreateRoutineActivity.Companion.Properties properties);
+    void openNewRoutine();
 
     void openRoutineDetails(ELRoutine routine, boolean viewOnly);
 
@@ -62,7 +61,6 @@ public interface Navigator {
 
     void openEditExerciseGroups(@NonNull DefaultCreateExerciseGroupsActivity.Companion.Properties properties);
 
-    void openMuscleGoal();
 
     void openDesignSystem();
 

@@ -9,7 +9,6 @@ enum class FeedbackSource(val id: String, val form: Form) {
     ACTIVITY_STATISTICS("activity_statistics", Form.STATISTICS),
     EXERCISE_STATISTICS("exercise_statistics", Form.STATISTICS),
     SET_TYPES("set_types", Form.SET_TYPES),
-    MUSCLE_GOAL("muscle_goal", Form.SET_SUGGESTIONS),
     SET_SUGGESTIONS("set_suggestions", Form.SET_SUGGESTIONS),
     WORKOUT_MENU("workout_menu", Form.WORKOUT),
     EXERCISE_PICKER_MENU("exercise_picker_menu", Form.EXERCISE_PICKER),

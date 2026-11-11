@@ -123,9 +123,10 @@ internal fun SettingsTabContent(
                         )
                     },
                     SettingsRow("setSuggestions") {
-                        val described = describeSetSuggestion(state.setSuggestion).takeIf { state.setSuggestionsV2 }
+                        // Goals Set suggestions doesn't offer, which older versions could set, keep their old names
+                        val described = describeSetSuggestion(state.setSuggestion)
                         AppListItem(
-                            title = stringResource(if (state.setSuggestionsV2) DesignR.string.set_suggestions_title else DesignR.string.muscle_goal_title),
+                            title = stringResource(DesignR.string.set_suggestions_title),
                             subtitle = described?.subtitle ?: state.setSuggestion.valueSettingsSummary(context, false),
                             trailing = { SettingsValue(described?.value ?: state.setSuggestion.valueName(context)) },
                             onClick = actions.openSetSuggestions,
@@ -215,7 +216,6 @@ private fun SettingsTabContentPreview() {
                 weightUnit = WeightUnit.KILOGRAM,
                 weeklyGoal = 3,
                 setSuggestion = MuscleGoal.HISTORY,
-                setSuggestionsV2 = true,
                 weightIncrease = 2.5f,
                 keepScreenOn = true,
                 showFeedback = true,
