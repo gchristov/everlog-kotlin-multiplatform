@@ -12,7 +12,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -44,7 +43,8 @@ fun AppTimelineItem(
 ) {
     Row(modifier = modifier.fillMaxWidth().height(IntrinsicSize.Min)) {
         Column(
-            modifier = Modifier.widthIn(min = TimelineSizes.DateWidth).padding(top = TimelineSizes.DateTop, end = Theme.spacing.large),
+            // A fixed width, so the line and the content line up from row to row whatever the month's name
+            modifier = Modifier.padding(top = TimelineSizes.DateTop, end = Theme.spacing.large).width(TimelineSizes.DateWidth),
             horizontalAlignment = Alignment.End,
         ) {
             AppText(text = date.dayOfMonth.toString(), style = Theme.typography.bodyBold, color = Theme.contentColors.secondary)
@@ -82,7 +82,7 @@ private fun TimelineLine(visible: Boolean, modifier: Modifier) {
 }
 
 object TimelineSizes {
-    // The date's column, which a placeholder lines up with
+    // The date's text, which a placeholder lines up with: room for the widest short month name and the year
     val DateWidth = 40.dp
     internal val DateTop = 6.dp
     internal val LineAboveDot = 27.dp
