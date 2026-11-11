@@ -22,8 +22,7 @@ import rx.Observable
 class WarningNotificationView(context: Context, attrs: AttributeSet?) : BaseView(context, attrs), MvpViewWarningNotification {
 
     enum class WarningType {
-        PRO_PLAN_DAYS,
-        PRO_MUSCLE_GOALS
+        PRO_PLAN_DAYS
     }
 
     private var _binding: ViewNotificationWarningBinding? = null
@@ -74,20 +73,14 @@ class WarningNotificationView(context: Context, attrs: AttributeSet?) : BaseView
 
     private fun render() {
         when (mType) {
-            WarningType.PRO_PLAN_DAYS,
-            WarningType.PRO_MUSCLE_GOALS-> {
+            WarningType.PRO_PLAN_DAYS -> {
                 val p = ViewUtils.dpToPx(6)
                 binding.imageView.setPadding(p, p, p, p)
                 binding.imageView.setImageResource(DesignR.drawable.ic_lock)
                 binding.imageView.setBackgroundResource(DesignR.drawable.ic_hexagon)
                 ImageViewCompat.setImageTintList(binding.imageView, ColorStateList.valueOf(ContextCompat.getColor(context, DesignR.color.background_card_lighter)));
-                if (mType == WarningType.PRO_PLAN_DAYS) {
-                    binding.titleLbl.text = context?.getString(R.string.pro_prompt_plan_title, MAX_FREE_WEEK_DAYS)
-                    binding.descriptionLbl.text = context?.getString(R.string.pro_prompt_plan_subtitle)
-                } else if (mType == WarningType.PRO_MUSCLE_GOALS) {
-                    binding.titleLbl.text = context?.getString(R.string.pro_prompt_muscle_goals_title)
-                    binding.descriptionLbl.text = context?.getString(R.string.pro_prompt_muscle_goals_subtitle)
-                }
+                binding.titleLbl.text = context?.getString(R.string.pro_prompt_plan_title, MAX_FREE_WEEK_DAYS)
+                binding.descriptionLbl.text = context?.getString(R.string.pro_prompt_plan_subtitle)
             }
         }
     }

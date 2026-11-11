@@ -12,10 +12,6 @@ data class RemoteConfig (
         var notificationAppUsage: AppUsageNotification? = null,
         // The exercise detail in Compose: for now its Info tab, with the library's instructions and tips
         var exerciseDetailsV2: Boolean = false,
-        // The Set suggestions screen in Compose instead of MuscleGoalActivity, from every entry point
-        var setSuggestionsV2: Boolean = false,
-        // The template editor in Compose instead of CreateRoutineActivity, from every entry point
-        var templateEditorV2: Boolean = false,
         // Home's Week tab in Compose instead of WeekHomeFragment
         var weekTabV2: Boolean = false,
         // The Activity tab's statistics page in Compose instead of StatisticsHomeFragment
@@ -35,8 +31,6 @@ data class RemoteConfig (
     private val NOTIFICATION_HOME = "notification_home"
     private val NOTIFICATION_APP_USAGE = "notification_app_usage"
     private val EXERCISE_DETAILS_V2 = "exercise_details_v2"
-    private val SET_SUGGESTIONS_V2 = "set_suggestions_v2"
-    private val TEMPLATE_EDITOR_V2 = "template_editor_v2"
     private val WEEK_TAB_V2 = "week_tab_v2"
     private val STATISTICS_V2 = "statistics_v2"
     private val HISTORY_V2 = "history_v2"
@@ -50,8 +44,6 @@ data class RemoteConfig (
         notificationHome = getObjectFromRemoteConfig(NOTIFICATION_HOME, HomeNotification::class.java, config)
         notificationAppUsage = getObjectFromRemoteConfig(NOTIFICATION_APP_USAGE, AppUsageNotification::class.java, config)
         exerciseDetailsV2 = config.getBoolean(EXERCISE_DETAILS_V2)
-        setSuggestionsV2 = config.getBoolean(SET_SUGGESTIONS_V2)
-        templateEditorV2 = config.getBoolean(TEMPLATE_EDITOR_V2)
         weekTabV2 = config.getBoolean(WEEK_TAB_V2)
         statisticsV2 = config.getBoolean(STATISTICS_V2)
         historyV2 = config.getBoolean(HISTORY_V2)

@@ -116,7 +116,6 @@ private fun read(
         weightUnit = settings.weightUnit(),
         weeklyGoal = settings.weeklyWorkoutsGoal(),
         setSuggestion = settings.muscleGoal(),
-        setSuggestionsV2 = config.setSuggestionsV2(),
         weightIncrease = settings.weightIncrease(),
         keepScreenOn = settings.keepScreenOn(),
         showFeedback = showFeedback,

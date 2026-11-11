@@ -73,12 +73,10 @@ class SettingsTabViewModelTest {
         feedback = false
 
         settings.setMuscleGoal(MuscleGoal.STRENGTH)
-        config.v2 = false
         viewModel.refresh()
 
         val state = viewModel.state.value
         assertThat(state.setSuggestion).isEqualTo(MuscleGoal.STRENGTH)
-        assertThat(state.setSuggestionsV2).isFalse()
         assertThat(state.showFeedback).isFalse()
     }
 
@@ -253,8 +251,6 @@ class SettingsTabViewModelTest {
 }
 
 private class FakeSettingsConfig : SettingsConfig {
-    var v2 = true
-    override fun setSuggestionsV2() = v2
     override fun setSuggestionText(context: Context, goal: MuscleGoal): SetSuggestionText? = null
     override fun appInfo() = "everlog 2.24.0"
 }

@@ -21,7 +21,7 @@ data object ShareApp : Destination
 // Explains a missing permission, with a way to the app's system settings
 data class AppSettingsPrompt(@param:StringRes val rationale: Int) : Destination
 
-// Set suggestions, or the old muscle goal screen while Remote Config's set_suggestions_v2 is off
+// Where weight suggestions are set
 data object SetSuggestions : Destination
 
 // The old exercise groups editor, for a finished workout's exercises

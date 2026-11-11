@@ -15,8 +15,7 @@ import com.everlog.android.workout.WorkoutGraph
 import kotlinx.coroutines.Dispatchers
 
 /**
- * Where weight suggestions are set, while Remote Config's set_suggestions_v2 is on. The spec is on the Everlog
- * canvas (Set suggestions page).
+ * Where weight suggestions are set. The spec is on the Everlog canvas (Set suggestions page).
  */
 class SetSuggestionsActivity : CommonComposeActivity() {
     private val graph by lazy { appGraph<WorkoutGraph>() }

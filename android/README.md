@@ -108,7 +108,7 @@ Services the app shares, like the user's settings, are an interface with a `Real
 - **The shell**: `ELApplication` with each feature's dependencies (`application/features`), `SplashActivity` (the launcher, which keeps its class name), Home (`HomeActivity`, which its tabs reach through `HomeHost`) with its Workouts tab, the `Navigator`, `AppConfig` and Remote Config, the data migrations, `AppDataSync`, FCM, the alarm receivers and their notifications, and the web view.
 - **Managers on the app's services**: `AuthManager`, `AnalyticsManager`, the rating prompt, in-app updates, `BillingBridge`, `FirestorePathManager`, `ELUserStore` and `ELDatastore`.
 - **Shared XML pieces only the app uses**: `AppDialogs` and the other pickers and inputs in `ui/dialog`, and the views and adapters the screens above use.
-- **The old screens behind v2 flags** (`CreateRoutineActivity`, `CreateExerciseGroupsActivity`, `MuscleGoalActivity` and their adapters), which go when their flags are removed rather than moving into modules.
+- **The old exercise groups screen** (`CreateExerciseGroupsActivity` and its adapters), which workout details still opens to edit a past workout, until that has a replacement.
 
 ## Convention plugins
 

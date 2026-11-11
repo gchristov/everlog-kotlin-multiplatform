@@ -177,7 +177,6 @@ class SettingsTabFeatureTest : FeatureTest() {
     private fun exists(text: String) = compose.onAllNodes(hasText(text)).fetchSemanticsNodes().isNotEmpty()
 
     private object Config : SettingsConfig {
-        override fun setSuggestionsV2() = true
         override fun setSuggestionText(context: Context, goal: MuscleGoal): SetSuggestionText? = null
         override fun appInfo() = "everlog 2.24.0"
     }

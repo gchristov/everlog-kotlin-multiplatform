@@ -40,8 +40,7 @@ class PresenterWarningNotification(
 
     private fun handleShowAction() {
         when (mvpView.getType()) {
-            WarningNotificationView.WarningType.PRO_PLAN_DAYS,
-            WarningNotificationView.WarningType.PRO_MUSCLE_GOALS-> context?.let { navigator.open(it, ProBuy) }
+            WarningNotificationView.WarningType.PRO_PLAN_DAYS -> context?.let { navigator.open(it, ProBuy) }
         }
     }
 }

@@ -44,7 +44,6 @@
 
 
     <string name="create_routine_title">New Template</string>
-    <string name="create_routine_title_edit">Edit Template</string>
     <string name="create_routine_edit_name_title">Edit name</string>
     <string name="create_routine_add_exercises">Add Exercises</string>
     <string name="create_routine_exercise_duration">Exercise Duration</string>

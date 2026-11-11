@@ -16,7 +16,7 @@ place whose link is missing or empty shows no feedback link.
 | `general` | Everlog feedback | Settings › Send feedback (`settings`) |
 | `statistics` | Statistics feedback | Activity › Statistics tab (`activity_statistics`), exercise detail › Statistics tab (`exercise_statistics`) |
 | `setTypes` | Set types feedback | Set type picker (`set_types`) |
-| `setSuggestions` | Set suggestions feedback | Set suggestions screen (`set_suggestions`), old muscle goal screen (`muscle_goal`) |
+| `setSuggestions` | Set suggestions feedback | Set suggestions screen (`set_suggestions`); app versions before 2.25.0 also send the old muscle goal screen (`muscle_goal`) |
 | `workout` | Workout screen feedback | Workout screen ⋮ menu (`workout_menu`) |
 | `exercisePicker` | Missing exercises | Exercise picker ⋮ menu (`exercise_picker_menu`), no results (`exercise_picker_no_results`) |
 
