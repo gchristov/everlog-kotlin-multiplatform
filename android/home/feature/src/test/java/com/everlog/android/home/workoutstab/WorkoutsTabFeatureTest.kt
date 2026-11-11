@@ -1,6 +1,8 @@
 package com.everlog.android.home.workoutstab
 
+import androidx.compose.ui.test.assertCountEquals
 import androidx.compose.ui.test.hasText
+import androidx.compose.ui.test.onAllNodesWithText
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
@@ -102,11 +104,12 @@ class WorkoutsTabFeatureTest : FeatureTest() {
         show(templates = emptyList(), history = history())
 
         compose.onNodeWithText("Save the workouts you repeat").assertExists()
-        compose.onNodeWithText("EXAMPLE · NOT YOUR DATA", ignoreCase = true).assertExists()
+        // One example of templates and one of plans
+        compose.onAllNodesWithText("EXAMPLE · NOT YOUR DATA", ignoreCase = true).assertCountEquals(2)
         compose.onNodeWithText("New template").performClick()
         compose.onNodeWithText("Start empty").performClick()
         assertThat(opened).containsExactly("new template", "start empty").inOrder()
-        compose.onNodeWithText("Your plans").assertDoesNotExist()
+        compose.onNodeWithText("Your plans").assertExists()
     }
 
     @Test
@@ -130,10 +133,12 @@ class WorkoutsTabFeatureTest : FeatureTest() {
     }
 
     @Test
-    fun noPlansSaysSo() {
+    fun noPlansShowsAnExample() {
         show(templates = listOf(push), history = history())
 
-        compose.onNodeWithText("No plans yet").performScrollTo().assertExists()
+        // Faded, and out of the semantics tree, so only the unmerged tree has it
+        compose.onNodeWithText("EXAMPLE · NOT YOUR DATA", ignoreCase = true).performScrollTo().assertExists()
+        compose.onNodeWithText("Upper / lower", useUnmergedTree = true).assertExists()
     }
 
     // Edge cases

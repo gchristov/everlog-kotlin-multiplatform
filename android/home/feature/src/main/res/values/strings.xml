@@ -24,8 +24,6 @@
     <string name="workouts_tab_plans">Your plans</string>
     <string name="workouts_tab_details">Details</string>
     <string name="workouts_tab_start">Start</string>
-    <string name="workouts_tab_no_plans">No plans yet</string>
-    <string name="workouts_tab_no_plans_detail">A plan puts your templates into weeks</string>
     <!-- The card on top -->
     <string name="workouts_tab_plan_next">Next in your plan</string>
     <!-- e.g. Strength block · week 2, day 3 -->
@@ -84,6 +82,8 @@
     <!-- The example under Get started -->
     <string name="workouts_tab_example_push">Push day</string>
     <string name="workouts_tab_example_pull">Pull day</string>
+    <string name="workouts_tab_example_plan_upper_lower">Upper / lower</string>
+    <string name="workouts_tab_example_plan_full_body">Full body</string>
     <!-- Home -->
     <string name="home_start_workout">Start workout</string>
     <string name="home_new">New</string>

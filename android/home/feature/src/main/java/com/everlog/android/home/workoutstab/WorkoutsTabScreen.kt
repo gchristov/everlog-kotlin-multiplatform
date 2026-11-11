@@ -113,13 +113,11 @@ private fun Lists(
     onTemplateStart: (ELRoutine) -> Unit,
     margin: Modifier,
 ) {
-    if (state.card == WorkoutsTabCard.GetStarted) {
-        WorkoutsTabExample(today = state.today, modifier = margin)
-        return
-    }
     Section(
         header = { AppSectionHeader(text = stringResource(R.string.workouts_tab_templates), modifier = margin) },
     ) {
+        // With none saved, an example of what they'll look like here
+        if (state.card == WorkoutsTabCard.GetStarted) WorkoutsTabExample(today = state.today, modifier = margin)
         state.templates.forEach { template ->
             WorkoutsTabTemplateCard(
                 template = template,
