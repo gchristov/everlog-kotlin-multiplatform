@@ -5,6 +5,7 @@ import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollTo
+import androidx.compose.ui.unit.dp
 import com.everlog.android.common.composetest.FeatureTest
 import com.everlog.android.common.data.model.ELRoutine
 import com.everlog.android.common.data.model.exercise.ELExercise
@@ -192,6 +193,7 @@ class WorkoutsTabFeatureTest : FeatureTest() {
         setContent {
             WorkoutsTabScreen(
                 viewModel = viewModel,
+                bottomPadding = 120.dp,
                 actions = WorkoutsTabActions(
                     showExercises = { opened += "exercises" },
                     showTemplate = { opened += "details ${it.uuid}" },

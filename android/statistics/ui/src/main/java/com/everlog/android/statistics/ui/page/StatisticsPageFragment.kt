@@ -5,6 +5,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.platform.ViewCompositionStrategy
+import androidx.compose.ui.res.dimensionResource
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
@@ -58,7 +59,12 @@ class StatisticsPageFragment : BaseTabFragment() {
             setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed)
             setContent {
                 Theme {
-                    StatisticsPageScreen(viewModel = viewModel, onFeedback = { context?.let { graph.navigator.open(it, Feedback) } })
+                    StatisticsPageScreen(
+                        viewModel = viewModel,
+                        onFeedback = { context?.let { graph.navigator.open(it, Feedback) } },
+                        // The page runs under Home's tab bar, as the old Home's tabs do
+                        bottomPadding = dimensionResource(DesignR.dimen.footer_bottom_padding_double),
+                    )
                 }
             }
         }

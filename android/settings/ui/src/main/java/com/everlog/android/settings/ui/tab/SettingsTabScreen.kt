@@ -2,10 +2,10 @@ package com.everlog.android.settings.ui.tab
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.selection.toggleable
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.foundation.selection.toggleable
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
@@ -16,6 +16,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.everlog.android.common.compose.elements.AppBarHeader
@@ -26,6 +27,7 @@ import com.everlog.android.common.compose.elements.list.AppGroupedList
 import com.everlog.android.common.compose.elements.list.AppListItem
 import com.everlog.android.common.compose.elements.list.items
 import com.everlog.android.common.compose.theme.Theme
+import com.everlog.android.common.design.R as DesignR
 import com.everlog.android.common.kotlin.R as KotlinR
 import com.everlog.android.common.kotlin.WeightUnit
 import com.everlog.android.common.kotlin.format.FormatUtils
@@ -36,7 +38,6 @@ import com.everlog.android.settings.ui.SetSuggestionText
 import java.util.Locale
 import org.threeten.bp.DayOfWeek
 import org.threeten.bp.format.TextStyle
-import com.everlog.android.common.design.R as DesignR
 
 /**
  * @param describeSetSuggestion How Set suggestions names a goal, or null for a goal it doesn't offer, which keeps its
@@ -47,12 +48,15 @@ fun SettingsTabScreen(
     viewModel: SettingsTabViewModel,
     actions: SettingsTabActions,
     describeSetSuggestion: (MuscleGoal) -> SetSuggestionText?,
+    // Room for Home's button over the end of the list
+    bottomPadding: Dp,
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
     SettingsTabContent(
         state = state,
         actions = actions,
         describeSetSuggestion = describeSetSuggestion,
+        bottomPadding = bottomPadding,
         onFirstDayOfWeek = viewModel::onFirstDayOfWeekTapped,
         onWeightUnit = viewModel::onWeightUnitTapped,
         onWeeklyGoal = viewModel::onWeeklyGoalTapped,
@@ -72,6 +76,7 @@ internal fun SettingsTabContent(
     state: SettingsTabState,
     actions: SettingsTabActions,
     describeSetSuggestion: (MuscleGoal) -> SetSuggestionText?,
+    bottomPadding: Dp,
     onFirstDayOfWeek: () -> Unit,
     onWeightUnit: () -> Unit,
     onWeeklyGoal: () -> Unit,
@@ -84,7 +89,7 @@ internal fun SettingsTabContent(
         AppBarHeader(title = stringResource(DesignR.string.settings_title))
         AppGroupedList(
             modifier = Modifier.testTag(SettingsTabTags.List),
-            contentPadding = PaddingValues(bottom = SettingsTabSizes.BottomPadding),
+            contentPadding = PaddingValues(bottom = bottomPadding),
         ) {
             state.account?.let { account ->
                 item(key = "account") { SettingsAccountHeader(account, Modifier.padding(bottom = Theme.spacing.large)) }
@@ -199,11 +204,6 @@ internal fun weightUnitName(unit: WeightUnit): String =
 internal fun formatWeightIncrease(value: Float, unit: WeightUnit): String =
     "${FormatUtils.formatSetWeight(value)} ${weightUnitAbbreviation(unit)}"
 
-private object SettingsTabSizes {
-    // Clear of Home's start workout button
-    val BottomPadding = 136.dp
-}
-
 @Preview
 @Composable
 private fun SettingsTabContentPreview() {
@@ -224,6 +224,7 @@ private fun SettingsTabContentPreview() {
             ),
             actions = SettingsTabActions({}, {}, {}, {}, {}, {}),
             describeSetSuggestion = { SetSuggestionText("From last time", "Fill in the reps and weight you did last time") },
+            bottomPadding = 120.dp,
             onFirstDayOfWeek = {},
             onWeightUnit = {},
             onWeeklyGoal = {},

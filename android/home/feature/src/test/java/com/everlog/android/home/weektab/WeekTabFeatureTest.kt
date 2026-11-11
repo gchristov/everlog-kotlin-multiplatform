@@ -5,6 +5,7 @@ import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollTo
+import androidx.compose.ui.unit.dp
 import com.everlog.android.common.compose.theme.Theme
 import com.everlog.android.common.composetest.FeatureTest
 import com.everlog.android.common.data.model.ELRoutine
@@ -162,6 +163,7 @@ class WeekTabFeatureTest : FeatureTest() {
             Theme {
                 WeekTabScreen(
                     viewModel = viewModel,
+                    bottomPadding = 120.dp,
                     actions = WeekTabActions(
                         showStatistics = { opened += "statistics" },
                         showSettings = { opened += "settings" },

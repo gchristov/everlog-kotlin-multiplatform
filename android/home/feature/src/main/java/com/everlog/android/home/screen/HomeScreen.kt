@@ -4,8 +4,11 @@ import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.PagerState
@@ -27,6 +30,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
+import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.everlog.android.common.compose.components.broadcast.LocalBroadcastEffect
 import com.everlog.android.common.compose.elements.AppBottomBar
@@ -34,6 +38,7 @@ import com.everlog.android.common.compose.elements.AppBottomBarItem
 import com.everlog.android.common.compose.elements.AppFloatingButton
 import com.everlog.android.common.compose.elements.AppSnackbarHost
 import com.everlog.android.common.compose.theme.Theme
+import com.everlog.android.common.design.R as DesignR
 import com.everlog.android.home.R
 import com.everlog.android.home.activity.ActivityTabPages
 import com.everlog.android.home.activity.ActivityTabRoute
@@ -43,7 +48,6 @@ import com.everlog.android.home.workoutstab.WorkoutsTabRoute
 import com.everlog.android.plan.data.PlanBroadcasts
 import com.everlog.android.settings.ui.tab.SettingsTabRoute
 import kotlinx.coroutines.launch
-import com.everlog.android.common.design.R as DesignR
 
 /**
  * Home: the four tabs in a pager to swipe through or pick from the bottom bar, each tab's floating button over it,
@@ -96,7 +100,8 @@ internal fun HomeScreen(
         activityPager = activityPager,
     )
     Column(modifier = Modifier.fillMaxSize().background(Theme.backgrounds.primary)) {
-        Box(modifier = Modifier.weight(1f)) {
+        // The bottom bar keeps clear of the navigation bar, so the tabs above it don't
+        Box(modifier = Modifier.weight(1f).consumeWindowInsets(WindowInsets.navigationBars)) {
             // Every tab stays alive, as in the old Home's pager, so going back to one keeps its place
             HorizontalPager(state = pager, modifier = Modifier.fillMaxSize().testTag(HomeTags.Pager), beyondViewportPageCount = HomeTab.entries.size) { page ->
                 // Once the pager settles, so tabs passed on the way to another don't count as shown
@@ -122,10 +127,10 @@ class HomeTabLinks(val week: WeekTabHomeActions, val activityPager: PagerState)
 @Composable
 internal fun HomeTabRoute(tab: HomeTab, shown: Boolean, links: HomeTabLinks) {
     when (tab) {
-        HomeTab.Week -> WeekTabRoute(shown = shown, home = links.week)
-        HomeTab.Workouts -> WorkoutsTabRoute(shown = shown)
-        HomeTab.Activity -> ActivityTabRoute(shown = shown, pager = links.activityPager)
-        HomeTab.Settings -> SettingsTabRoute(shown = shown)
+        HomeTab.Week -> WeekTabRoute(shown = shown, home = links.week, bottomPadding = HomeSizes.TabBottomPadding)
+        HomeTab.Workouts -> WorkoutsTabRoute(shown = shown, bottomPadding = HomeSizes.TabBottomPadding)
+        HomeTab.Activity -> ActivityTabRoute(shown = shown, pager = links.activityPager, bottomPadding = HomeSizes.TabBottomPadding)
+        HomeTab.Settings -> SettingsTabRoute(shown = shown, bottomPadding = HomeSizes.TabBottomPadding)
     }
 }
 
@@ -149,4 +154,10 @@ private fun HomeTab.barItem(): AppBottomBarItem = when (this) {
     HomeTab.Workouts -> AppBottomBarItem(stringResource(R.string.workouts_tab_title), ImageVector.vectorResource(DesignR.drawable.ic_barbell), HomeTags.tab(this))
     HomeTab.Activity -> AppBottomBarItem(stringResource(DesignR.string.home_activity), ImageVector.vectorResource(DesignR.drawable.ic_insights), HomeTags.tab(this))
     HomeTab.Settings -> AppBottomBarItem(stringResource(DesignR.string.settings_title), ImageVector.vectorResource(DesignR.drawable.ic_settings), HomeTags.tab(this))
+}
+
+internal object HomeSizes {
+    // Every tab's room at the end of its list, so its content scrolls clear of the floating button: the button's
+    // margin and height, and about the old Home's gap above it
+    val TabBottomPadding = 120.dp
 }

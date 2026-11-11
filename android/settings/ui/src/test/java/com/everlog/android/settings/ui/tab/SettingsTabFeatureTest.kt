@@ -6,6 +6,7 @@ import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollToNode
+import androidx.compose.ui.unit.dp
 import androidx.test.espresso.Espresso
 import com.everlog.android.auth.data.model.ELUser
 import com.everlog.android.auth.testfixtures.FakeUserSession
@@ -151,6 +152,7 @@ class SettingsTabFeatureTest : FeatureTest() {
         setContent {
             SettingsTabScreen(
                 viewModel = viewModel,
+                bottomPadding = 120.dp,
                 actions = SettingsTabActions(
                     openSetSuggestions = { opened += "set suggestions" },
                     sendFeedback = { opened += "feedback" },

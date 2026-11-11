@@ -20,6 +20,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.everlog.android.common.compose.elements.AppBarHeader
@@ -45,11 +46,12 @@ class WorkoutsTabActions(
 )
 
 @Composable
-internal fun WorkoutsTabScreen(viewModel: WorkoutsTabViewModel, actions: WorkoutsTabActions) {
+internal fun WorkoutsTabScreen(viewModel: WorkoutsTabViewModel, actions: WorkoutsTabActions, bottomPadding: Dp) {
     val state by viewModel.state.collectAsStateWithLifecycle()
     WorkoutsTabContent(
         state = state,
         actions = actions,
+        bottomPadding = bottomPadding,
         onToggle = viewModel::onTemplateToggled,
         onCardStart = { viewModel.onCardStart()?.let(actions.start) },
         onTemplateStart = { actions.start(viewModel.onTemplateStart(it)) },
@@ -61,6 +63,8 @@ internal fun WorkoutsTabScreen(viewModel: WorkoutsTabViewModel, actions: Workout
 internal fun WorkoutsTabContent(
     state: WorkoutsTabState,
     actions: WorkoutsTabActions,
+    // Room for Home's button over the end of the list
+    bottomPadding: Dp,
     onToggle: (String) -> Unit,
     onCardStart: () -> Unit,
     onTemplateStart: (ELRoutine) -> Unit,
@@ -71,7 +75,7 @@ internal fun WorkoutsTabContent(
         Column(
             modifier = Modifier
                 .verticalScroll(rememberScrollState())
-                .padding(bottom = WorkoutsTabSizes.BottomPadding),
+                .padding(bottom = bottomPadding),
             verticalArrangement = Arrangement.spacedBy(Theme.spacing.large),
         ) {
             val margin = Modifier.padding(horizontal = Theme.spacing.large)
@@ -193,8 +197,6 @@ private fun Unavailable(onRetry: () -> Unit, modifier: Modifier) {
 }
 
 internal object WorkoutsTabSizes {
-    // Room for Home's start workout button over the end of the list
-    val BottomPadding = 120.dp
     const val LoadingCards = 4
     val LoadingCardHeight = 72.dp
     val PlanCoverHeight = 150.dp

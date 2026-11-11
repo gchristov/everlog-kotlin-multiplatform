@@ -60,9 +60,15 @@ import com.everlog.android.statistics.data.StatsPeriod
 import com.everlog.android.statistics.ui.R
 
 @Composable
-internal fun StatisticsPageScreen(viewModel: StatisticsPageViewModel, onFeedback: () -> Unit) {
+internal fun StatisticsPageScreen(viewModel: StatisticsPageViewModel, onFeedback: () -> Unit, bottomPadding: Dp) {
     val state by viewModel.state.collectAsStateWithLifecycle()
-    StatisticsPageContent(state = state, onPeriodPicked = viewModel::onPeriodPicked, onTryAgain = viewModel::onTryAgain, onFeedback = onFeedback)
+    StatisticsPageContent(
+        state = state,
+        onPeriodPicked = viewModel::onPeriodPicked,
+        onTryAgain = viewModel::onTryAgain,
+        onFeedback = onFeedback,
+        bottomPadding = bottomPadding,
+    )
 }
 
 @Composable
@@ -71,6 +77,8 @@ internal fun StatisticsPageContent(
     onPeriodPicked: (StatsPeriod) -> Unit,
     onTryAgain: () -> Unit,
     onFeedback: () -> Unit,
+    // Room for the host's button over the end of the page
+    bottomPadding: Dp,
 ) {
     val snackbar = remember { SnackbarHostState() }
     val failedMessage = stringResource(R.string.statistics_year_failed)
@@ -103,22 +111,22 @@ internal fun StatisticsPageContent(
             )
             AppSnackbarHost(
                 hostState = snackbar,
-                modifier = Modifier.align(Alignment.BottomCenter).navigationBarsPadding().padding(bottom = PageSizes.SnackbarBottom).testTag(StatisticsPageTags.Failed),
+                modifier = Modifier.align(Alignment.BottomCenter).navigationBarsPadding().padding(bottom = bottomPadding - PageSizes.SnackbarAboveEnd).testTag(StatisticsPageTags.Failed),
             )
         },
     ) {
-        StatisticsPageBody(state = state, onFeedback = onFeedback)
+        StatisticsPageBody(state = state, onFeedback = onFeedback, bottomPadding = bottomPadding)
     }
 }
 
 @Composable
-private fun StatisticsPageBody(state: StatisticsPageState, onFeedback: () -> Unit) {
+private fun StatisticsPageBody(state: StatisticsPageState, onFeedback: () -> Unit, bottomPadding: Dp) {
     Column(
         modifier = Modifier
             .fillMaxSize()
             .verticalScroll(rememberScrollState())
             .padding(horizontal = Theme.spacing.large)
-            .padding(top = PageSizes.TopPadding, bottom = PageSizes.BottomPadding),
+            .padding(top = PageSizes.TopPadding, bottom = bottomPadding),
         verticalArrangement = Arrangement.spacedBy(Theme.spacing.large),
     ) {
         val example = state.example
@@ -247,10 +255,8 @@ private object PageSizes {
     val TopPadding = 52.dp
     // The picker's chip, for the example label beside it
     val PickerHeight = 36.dp
-    // Room for Home's start workout button over the end of the page
-    val BottomPadding = 180.dp
-    // Above Home's tab bar and its start workout button, which the page runs under
-    val SnackbarBottom = 128.dp
+    // From the end of the bottom padding, so the snackbar sits just above the host's button
+    val SnackbarAboveEnd = 52.dp
     // A chart's title, at the chart card's own padding
     val LoadingTitleHeight = 14.dp
     val LoadingLineCorner = 6.dp
