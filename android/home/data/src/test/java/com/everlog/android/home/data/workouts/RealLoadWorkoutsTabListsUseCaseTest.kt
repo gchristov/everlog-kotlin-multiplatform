@@ -47,6 +47,16 @@ class RealLoadWorkoutsTabListsUseCaseTest {
     }
 
     @Test
+    fun `each exercise's image by uuid, for those that have one`() = runBlocking<Unit> {
+        routines.routines.value = Load.Ready(emptyList())
+        plans.plans.value = Load.Ready(emptyList())
+        exercises.library = Load.Ready(listOf(LibraryExercise(uuid = "bench", name = "Bench", imageUrl = "bench.png"), LibraryExercise(uuid = "plank", name = "Plank")))
+        exercises.own = Load.Ready(listOf(LibraryExercise(uuid = "own", name = "Own", imageUrl = "own.png", own = true)))
+
+        assertThat((useCase().first() as Load.Ready).value.exerciseImages).containsExactly("bench", "bench.png", "own", "own.png")
+    }
+
+    @Test
     fun `no count while either can't be read`() = runBlocking<Unit> {
         routines.routines.value = Load.Ready(emptyList())
         plans.plans.value = Load.Ready(emptyList())

@@ -18,6 +18,8 @@ data class WorkoutsTabState(
     val lastDone: Map<String, Long>? = null,
     // The library's and the user's own; null until both are read
     val exercises: Int? = null,
+    // The images of the exercises the examples show, by uuid, once the library has them
+    val exampleImages: Map<String, String> = emptyMap(),
 )
 
 data class WorkoutsTabTemplate(val routine: ELRoutine, val inPlan: Boolean) {

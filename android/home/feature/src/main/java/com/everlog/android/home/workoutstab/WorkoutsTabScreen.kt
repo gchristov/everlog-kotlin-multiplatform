@@ -117,7 +117,7 @@ private fun Lists(
         header = { AppSectionHeader(text = stringResource(R.string.workouts_tab_templates), modifier = margin) },
     ) {
         // With none saved, an example of what they'll look like here
-        if (state.card == WorkoutsTabCard.GetStarted) WorkoutsTabExample(today = state.today, modifier = margin)
+        if (state.card == WorkoutsTabCard.GetStarted) WorkoutsTabExample(today = state.today, images = state.exampleImages, modifier = margin)
         state.templates.forEach { template ->
             WorkoutsTabTemplateCard(
                 template = template,
@@ -134,7 +134,13 @@ private fun Lists(
     Section(
         header = { AppSectionHeader(text = stringResource(R.string.workouts_tab_plans), modifier = margin) },
     ) {
-        WorkoutsTabPlans(active = state.activePlan, plans = state.plans, onPlanClick = actions.showPlan, modifier = margin)
+        WorkoutsTabPlans(
+            active = state.activePlan,
+            plans = state.plans,
+            onPlanClick = actions.showPlan,
+            exampleImages = state.exampleImages,
+            modifier = margin,
+        )
     }
 }
 

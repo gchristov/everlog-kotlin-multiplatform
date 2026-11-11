@@ -27,6 +27,8 @@ data class WorkoutsTabLists(
     val plans: List<PlanWithRoutines>,
     // The library's and the user's own; null when either can't be read
     val exercises: Int? = null,
+    // Each of those exercises' current image, by uuid
+    val exerciseImages: Map<String, String> = emptyMap(),
 )
 
 /**
@@ -63,6 +65,9 @@ class RealLoadWorkoutsTabListsUseCase(
                     templates = resolved.sortedWith(compareBy(String.CASE_INSENSITIVE_ORDER) { it.name.orEmpty() }),
                     plans = withRoutines(userPlans, resolved).sortedWith(compareBy(String.CASE_INSENSITIVE_ORDER) { it.plan.name.orEmpty() }),
                     exercises = (count as? Load.Ready)?.value,
+                    exerciseImages = (current as? Load.Ready)?.value.orEmpty()
+                        .mapNotNull { exercise -> exercise.imageUrl?.let { exercise.uuid to it } }
+                        .toMap(),
                 )
             }
         }.flowOn(dispatcher)
