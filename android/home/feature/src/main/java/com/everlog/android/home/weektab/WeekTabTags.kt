@@ -7,6 +7,7 @@ object WeekTabTags {
     const val Workouts = "weekTab.workouts"
     const val Loading = "weekTab.loading"
     const val Empty = "weekTab.empty"
+    const val Example = "weekTab.example"
     const val Banner = "weekTab.banner"
     const val BannerClose = "weekTab.bannerClose"
     const val Plan = "weekTab.plan"

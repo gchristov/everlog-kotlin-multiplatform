@@ -68,9 +68,18 @@ class WeekTabFeatureTest : FeatureTest() {
         workouts.recent.value = Load.Ready(emptyList())
 
         waitUntil(WaitMillis) { exists("Ready to train?") }
+        // The numbers are an example under its label, faded and out of the semantics tree
+        compose.onNodeWithTag(WeekTabTags.Example).assertExists()
+        compose.onNodeWithTag(WeekTabTags.Goal).assertDoesNotExist()
         compose.onNodeWithTag(WeekTabTags.Empty).performScrollTo()
         compose.onNodeWithText("Start workout").performClick()
         assertThat(opened).containsExactly("start workout")
+
+        // A workout done, the week's own numbers take their place
+        workouts.recent.value = Load.Ready(listOf(finishedToday()))
+        waitUntil(WaitMillis) { exists("more to go!") }
+        compose.onNodeWithTag(WeekTabTags.Example).assertDoesNotExist()
+        compose.onNodeWithTag(WeekTabTags.Goal).assertExists()
     }
 
     @Test

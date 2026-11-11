@@ -12,11 +12,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.everlog.android.common.compose.elements.AppBarHeader
+import com.everlog.android.common.compose.elements.AppExample
+import com.everlog.android.common.compose.elements.AppExampleLabel
 import com.everlog.android.common.compose.elements.AppSectionHeader
 import com.everlog.android.common.compose.theme.Theme
 import com.everlog.android.common.data.model.ELRoutine
@@ -103,12 +106,20 @@ private fun WeekContent(state: WeekTabState, actions: WeekTabActions, margin: Mo
         WeekStatsLoading(contentPadding = PaddingValues(horizontal = Theme.spacing.large))
     } else {
         AppSectionHeader(text = stringResource(DesignR.string.statistics_title), modifier = margin)
-        WeekStatCards(
-            state = state,
-            onGoalClick = actions.showSettings,
-            onStatsClick = actions.showStatistics,
-            contentPadding = PaddingValues(horizontal = Theme.spacing.large),
-        )
+        val example = state.example
+        if (example != null) {
+            AppExampleLabel(modifier = margin.testTag(WeekTabTags.Example))
+            AppExample {
+                WeekStatCards(state = example, onGoalClick = {}, onStatsClick = {}, contentPadding = PaddingValues(horizontal = Theme.spacing.large))
+            }
+        } else {
+            WeekStatCards(
+                state = state,
+                onGoalClick = actions.showSettings,
+                onStatsClick = actions.showStatistics,
+                contentPadding = PaddingValues(horizontal = Theme.spacing.large),
+            )
+        }
     }
     if (state.empty) {
         EmptyWeekCard(today = state.today, onStart = actions.showStartWorkout, modifier = margin)
