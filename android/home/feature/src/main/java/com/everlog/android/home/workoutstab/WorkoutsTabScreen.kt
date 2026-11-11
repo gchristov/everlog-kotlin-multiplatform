@@ -80,7 +80,7 @@ internal fun WorkoutsTabContent(
         Column(
             modifier = Modifier
                 .verticalScroll(rememberScrollState())
-                .padding(top = Theme.spacing.small, bottom = bottomPadding),
+                .padding(bottom = bottomPadding),
             verticalArrangement = Arrangement.spacedBy(Theme.spacing.large),
         ) {
             val margin = Modifier.padding(horizontal = Theme.spacing.large)
