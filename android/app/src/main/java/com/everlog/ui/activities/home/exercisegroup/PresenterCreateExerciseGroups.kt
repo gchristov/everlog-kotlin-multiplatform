@@ -20,7 +20,7 @@ import com.everlog.android.exercise.data.store.ELExercisesStore.ELColStoreExerci
 import com.everlog.managers.analytics.AnalyticsManager
 // import icepick.State
 import com.everlog.android.common.mvp.activity.BaseActivityPresenter
-import com.everlog.android.exercise.details.ExerciseDetailsActivity
+import com.everlog.android.exercise.page.ExercisePageTab
 import com.everlog.ui.adapters.exercise.group.ExerciseGroupCreateAdapter
 import com.everlog.ui.adapters.exercise.group.ExerciseGroupCreateHeaderAdapter
 import com.everlog.ui.adapters.items.ExerciseGroupCreateHeader
@@ -185,8 +185,7 @@ abstract class PresenterCreateExerciseGroups<T : MvpViewCreateExerciseGroups> : 
                 .compose(applyUISchedulers())
                 .subscribe {
                     if (mSelectedExercises.isNotEmpty()) {
-                        navigator.openExerciseDetails(ExerciseDetailsActivity.Companion.Properties()
-                                .exercise(mSelectedExercises.values.first().exercise.exercise!!))
+                        navigator.openExerciseDetails(mSelectedExercises.values.first().exercise.exercise!!, ExercisePageTab.Info)
                     }
                 })
     }

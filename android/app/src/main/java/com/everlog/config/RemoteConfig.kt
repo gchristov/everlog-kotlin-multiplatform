@@ -10,8 +10,6 @@ data class RemoteConfig (
 
         var notificationHome: HomeNotification? = null,
         var notificationAppUsage: AppUsageNotification? = null,
-        // The exercise detail in Compose: for now its Info tab, with the library's instructions and tips
-        var exerciseDetailsV2: Boolean = false,
         var feedbackForms: FeedbackForms? = null,
         // How old synced data may get before reading it asks the server again (DataSync); null for the default
         var dataSyncMaxAgeMinutes: Long? = null,
@@ -22,7 +20,6 @@ data class RemoteConfig (
 
     private val NOTIFICATION_HOME = "notification_home"
     private val NOTIFICATION_APP_USAGE = "notification_app_usage"
-    private val EXERCISE_DETAILS_V2 = "exercise_details_v2"
     private val FEEDBACK_FORMS = "feedback_forms"
     private val DATA_SYNC_MAX_AGE_MINUTES = "data_sync_max_age_minutes"
     // Named after the full history it used to be for, kept so the console's value still applies
@@ -31,7 +28,6 @@ data class RemoteConfig (
     fun populateFromSource(config: FirebaseRemoteConfig): RemoteConfig {
         notificationHome = getObjectFromRemoteConfig(NOTIFICATION_HOME, HomeNotification::class.java, config)
         notificationAppUsage = getObjectFromRemoteConfig(NOTIFICATION_APP_USAGE, AppUsageNotification::class.java, config)
-        exerciseDetailsV2 = config.getBoolean(EXERCISE_DETAILS_V2)
         feedbackForms = getObjectFromRemoteConfig(FEEDBACK_FORMS, FeedbackForms::class.java, config)
         dataSyncMaxAgeMinutes = config.longOrNull(DATA_SYNC_MAX_AGE_MINUTES)
         dataSyncOlderMaxAgeDays = config.longOrNull(DATA_SYNC_OLDER_MAX_AGE_DAYS)

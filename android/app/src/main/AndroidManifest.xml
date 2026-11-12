@@ -148,12 +148,6 @@
             android:theme="@style/AppTheme.NoActionBar"
             android:exported="false" />
         <activity
-            android:name="com.everlog.android.exercise.details.ExerciseDetailsActivity"
-            android:configChanges="keyboardHidden|orientation|screenSize"
-            android:theme="@style/AppTheme.NoActionBar"
-            android:windowSoftInputMode="stateHidden"
-            android:exported="false" />
-        <activity
             android:name=".ui.activities.home.exercisegroup.DefaultCreateExerciseGroupsActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:theme="@style/AppTheme.NoActionBar"

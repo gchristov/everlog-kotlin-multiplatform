@@ -55,7 +55,7 @@ internal fun DesignSystemSearch(onButtonClick: () -> Unit) {
                 AppChip(text = "Clear all", onClick = onButtonClick, style = AppChipStyle.Action)
             }
         }
-        group(key = "chipTabs", header = { "Selected, e.g. tabs (TabsPage is the XML twin)" }) {}
+        group(key = "chipTabs", header = { "Selected, e.g. tabs" }) {}
         item(key = "chipTabsExample") {
             Row(horizontalArrangement = Arrangement.spacedBy(Theme.spacing.small)) {
                 listOf("Info", "Statistics", "History").forEach {

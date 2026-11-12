@@ -15,7 +15,7 @@ import kotlinx.coroutines.launch
 
 /**
  * Tabs as chips in a row at the screen margin, the one shown picked, e.g. under an [AppBar] (its header) over pages
- * the screen swipes between. The Compose twin of the XML TabsPage.
+ * the screen swipes between.
  *
  * @param contentPadding The screen margin at the sides and a group's spacing below, by default
  * @param tabModifier Per tab, e.g. a test tag

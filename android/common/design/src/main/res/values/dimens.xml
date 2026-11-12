@@ -13,8 +13,6 @@
     <dimen name="card_radius_large">24dp</dimen>
     <dimen name="margin_14">14dp</dimen>
     <dimen name="margin_6">6dp</dimen>
-    <dimen name="timeline_dot_size">8dp</dimen>
-    <dimen name="timeline_width">2dp</dimen>
     <!-- Smaller rounded controls -->
     <dimen name="card_radius_default">10dp</dimen>
     <dimen name="dropdown_text_size">18sp</dimen>
@@ -23,13 +21,9 @@
     <dimen name="margin_22">22dp</dimen>
     <dimen name="margin_26">26dp</dimen>
     <dimen name="options_menu_icon_size">35dp</dimen>
-    <dimen name="statistics_chart_height">350dp</dimen>
-    <dimen name="statistics_section_title_text_size">15sp</dimen>
     <dimen name="statistics_vertical_text_size">12sp</dimen>
     <!-- AppChip -->
-    <dimen name="chip_height">36dp</dimen>
     <!-- Half the height, a pill -->
-    <dimen name="chip_radius">18dp</dimen>
     <dimen name="margin_30">30dp</dimen>
     <dimen name="exercise_group_create_side_spacing">@dimen/activity_margin</dimen>
     <dimen name="footer_bottom_padding_double">180dp</dimen>

@@ -40,7 +40,7 @@ import com.everlog.android.common.navigation.TemplatePicker
 import com.everlog.android.common.navigation.Terms
 import com.everlog.android.common.navigation.WebLink
 import com.everlog.android.common.navigation.WorkoutDetails
-import com.everlog.android.exercise.details.ExerciseDetailsActivity
+import com.everlog.android.exercise.page.ExercisePageTab
 import com.everlog.android.exercise.picker.ExercisePickerActivity
 import com.everlog.android.plan.congratulate.CongratulateActivity
 import com.everlog.android.plan.details.PlanDetailsActivity
@@ -88,12 +88,11 @@ class AppNavigator : Navigator {
             NewPlan -> navigator.openEditPlan(null)
             ExerciseLibrary -> navigator.openExercises()
             is ExerciseDetails -> navigator.openExerciseDetails(
-                ExerciseDetailsActivity.Companion.Properties().exercise(destination.exercise).type(
-                    when (destination.tab) {
-                        ExerciseTab.Info -> ExerciseDetailsActivity.Companion.Type.INFO
-                        ExerciseTab.History -> ExerciseDetailsActivity.Companion.Type.HISTORY
-                    },
-                ),
+                destination.exercise,
+                when (destination.tab) {
+                    ExerciseTab.Info -> ExercisePageTab.Info
+                    ExerciseTab.History -> ExercisePageTab.History
+                },
             )
             is TemplateDetails -> navigator.openRoutineDetails(destination.routine, destination.viewOnly)
             is StartWorkout -> navigator.startWorkout(destination.routine, true, destination.fromPlan)

@@ -40,7 +40,8 @@ import com.everlog.android.onboarding.OnboardingActivity;
 import com.everlog.android.plan.congratulate.CongratulateActivity;
 import com.everlog.android.plan.cover.CoverImagePickerActivity;
 import com.everlog.android.exercise.create.CreateExerciseActivity;
-import com.everlog.android.exercise.details.ExerciseDetailsActivity;
+import com.everlog.android.exercise.page.ExercisePageActivity;
+import com.everlog.android.exercise.page.ExercisePageTab;
 import com.everlog.ui.activities.home.exercisegroup.DefaultCreateExerciseGroupsActivity;
 import com.everlog.android.plan.create.CreatePlanActivity;
 import com.everlog.android.plan.details.PlanDetailsActivity;
@@ -168,8 +169,8 @@ public class ELNavigator implements Navigator {
     }
 
     @Override
-    public void openExerciseDetails(ExerciseDetailsActivity.Companion.@NotNull Properties properties) {
-        startActivity(ExercisePageRoutingKt.exerciseDetailsIntent(mContext, properties));
+    public void openExerciseDetails(@NotNull ELExercise exercise, @NotNull ExercisePageTab tab) {
+        startActivity(ExercisePageActivity.Companion.launchIntent(mContext, exercise, tab));
     }
 
     @Override

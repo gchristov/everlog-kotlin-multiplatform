@@ -33,8 +33,6 @@ import com.everlog.android.common.data.model.exercise.ELExercise
 import com.everlog.android.common.design.R as DesignR
 import com.everlog.android.common.kotlin.format.ArrayResourceTypeUtils
 import com.everlog.android.exercise.R
-import com.everlog.android.exercise.details.info.ExerciseInfoContent
-import com.everlog.android.exercise.details.info.ExerciseInfoViewModel
 import com.everlog.android.statistics.ui.R as StatisticsR
 import com.everlog.android.workout.data.exercisehistory.ExerciseStatsRange
 import kotlinx.coroutines.launch
@@ -141,16 +139,10 @@ internal fun ExercisePageContent(state: ExercisePageState, tab: ExercisePageTab,
         Box(modifier = Modifier.fillMaxSize().padding(bottom = contentPadding.calculateBottomPadding())) {
             HorizontalPager(state = pager, modifier = Modifier.fillMaxSize().testTag(ExercisePageTags.Pager)) { page ->
                 when (ExercisePageTab.entries[page]) {
-                    ExercisePageTab.Info -> ExerciseInfoContent(
-                        state = ExerciseInfoViewModel.State(
-                            exercise = ExerciseInfoViewModel.Exercise(
-                                uuid = state.exercise.uuid.orEmpty(),
-                                name = state.exercise.name.orEmpty(),
-                                imageUrl = state.exercise.imageUrl,
-                                own = state.own,
-                            ),
-                            guide = state.guide,
-                        ),
+                    ExercisePageTab.Info -> ExercisePageInfo(
+                        name = state.exercise.name.orEmpty(),
+                        imageUrl = state.exercise.imageUrl,
+                        guide = state.guide,
                     )
                     ExercisePageTab.Statistics -> ExercisePageStatistics(state, actions)
                     ExercisePageTab.History -> ExercisePageHistory(state, actions)
