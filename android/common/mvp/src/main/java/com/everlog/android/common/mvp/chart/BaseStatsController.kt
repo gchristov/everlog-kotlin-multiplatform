@@ -2,34 +2,14 @@ package com.everlog.android.common.mvp.chart
 
 import com.everlog.android.common.data.model.workout.ELWorkout
 import com.everlog.android.common.data.model.workout.RangeType
-import com.everlog.android.common.mvp.chart.axis.DateAxisFormatter
-import com.everlog.android.common.mvp.chart.axis.MonthAxisFormatter
-import com.everlog.android.common.mvp.chart.axis.YearAxisFormatter
 import com.everlog.android.common.kotlin.format.ArrayResourceTypeUtils
 import com.github.mikephil.charting.data.BarEntry
 import com.github.mikephil.charting.data.Entry
 import com.github.mikephil.charting.data.PieEntry
-import com.github.mikephil.charting.formatter.ValueFormatter
 import java.util.*
 import java.util.concurrent.TimeUnit
-import kotlin.math.max
 
 abstract class BaseStatsController {
-
-    companion object {
-
-        fun chartGranularity(): Float {
-            return 1F // Because we're using days
-        }
-
-        fun chartAxisFormatter(range: RangeType): ValueFormatter {
-            return when (range) {
-                RangeType.YEAR -> MonthAxisFormatter()
-                RangeType.OVERALL -> YearAxisFormatter()
-                else -> DateAxisFormatter()
-            }
-        }
-    }
 
     protected fun calculateCategoryCounts(currentValues: MutableMap<String, PieEntry>, newValues: Map<String, Int>) {
         for (category in newValues.keys) {
@@ -45,20 +25,6 @@ abstract class BaseStatsController {
             currentEntry.y += newValue
             currentValues[category] = currentEntry
         }
-    }
-
-    protected fun calculateMaxValue(workout: ELWorkout,
-                                    currentValues: MutableMap<Long, Entry>,
-                                    newValue: Float,
-                                    range: RangeType) {
-        val keys = getChartXAndDividerKey(workout, range)
-        var currentEntry = currentValues[keys.first]
-        if (currentEntry == null) {
-            currentEntry = Entry(keys.second, 0f)
-        }
-        // Set max weight for that day
-        currentEntry.y = max(newValue, currentEntry.y)
-        currentValues[keys.first] = currentEntry
     }
 
     protected fun calculateAccumulativeValue(workout: ELWorkout,

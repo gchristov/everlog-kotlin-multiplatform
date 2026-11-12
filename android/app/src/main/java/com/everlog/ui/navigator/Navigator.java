@@ -10,7 +10,7 @@ import com.everlog.android.common.data.model.workout.ELWorkout;
 import com.everlog.managers.apprate.RatePromptTrigger;
 import com.everlog.android.workout.data.notification.ShownSet;
 import com.everlog.android.plan.congratulate.CongratulateActivity;
-import com.everlog.android.exercise.details.ExerciseDetailsActivity;
+import com.everlog.android.exercise.page.ExercisePageTab;
 import com.everlog.ui.activities.home.exercisegroup.DefaultCreateExerciseGroupsActivity;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 
@@ -42,7 +42,7 @@ public interface Navigator {
 
     void openExercisePicker();
 
-    void openExerciseDetails(@NonNull ExerciseDetailsActivity.Companion.Properties properties);
+    void openExerciseDetails(@NonNull ELExercise exercise, @NonNull ExercisePageTab tab);
 
     void openEditExercise(ELExercise exercise);
 

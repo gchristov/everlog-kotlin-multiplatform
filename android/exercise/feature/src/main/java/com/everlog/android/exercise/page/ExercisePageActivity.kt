@@ -18,7 +18,7 @@ import com.everlog.android.exercise.create.CreateExerciseActivity
 import kotlinx.coroutines.Dispatchers
 import org.threeten.bp.LocalDate
 
-// An exercise's page in Compose, while Remote Config's exercise_details_v2 is on
+// An exercise's page: its Info, Statistics and History tabs
 class ExercisePageActivity : SignedInComposeActivity() {
     private val graph by lazy { appGraph<ExerciseGraph>() }
 

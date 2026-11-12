@@ -2,7 +2,6 @@ package com.everlog.android.statistics.ui.page
 
 import com.everlog.android.common.data.model.exercise.ELExercise
 import com.everlog.android.common.data.model.workout.ELWorkout
-import com.everlog.android.common.data.model.workout.RangeType
 import com.everlog.android.common.datatest.loggedSet
 import com.everlog.android.common.datatest.workout
 import com.everlog.android.common.kotlin.Load
@@ -257,7 +256,6 @@ class StatisticsPageViewModelTest {
     private class FakeAnalytics : StatisticsAnalytics {
         val picked = mutableListOf<StatsPeriod>()
 
-        override fun statisticsRangeModified(range: RangeType) = Unit
 
         override fun statisticsPeriodPicked(period: StatsPeriod) {
             picked += period

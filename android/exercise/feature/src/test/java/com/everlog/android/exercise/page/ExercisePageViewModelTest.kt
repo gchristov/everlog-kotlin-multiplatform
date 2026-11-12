@@ -19,6 +19,7 @@ import com.everlog.android.workout.data.exercisehistory.ExerciseStatsRange
 import com.everlog.android.workout.testfixtures.FakeExerciseStatsPreferences
 import com.everlog.android.workout.testfixtures.FakeWorkoutRepository
 import com.google.common.truth.Truth.assertThat
+import java.io.IOException
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -146,6 +147,28 @@ class ExercisePageViewModelTest {
 
         assertThat(viewModel.state.value.guide.instructions).containsExactly("Lower the bar")
         assertThat(viewModel.state.value.own).isFalse()
+    }
+
+    @Test
+    fun `a guide changed in the library while the page is open shows the change`() {
+        guides.guide.value = Load.Ready(ExerciseGuide(instructions = listOf("Lower the bar"), tips = emptyList()))
+        val viewModel = viewModel()
+
+        guides.guide.value = Load.Ready(ExerciseGuide(instructions = listOf("Lower the bar slowly"), tips = listOf("Keep your feet down")))
+
+        assertThat(viewModel.state.value.guide.instructions).containsExactly("Lower the bar slowly")
+        assertThat(viewModel.state.value.guide.tips).containsExactly("Keep your feet down")
+    }
+
+    @Test
+    fun `a guide that doesn't load leaves the exercise without steps or tips`() {
+        guides.guide.value = Load.Unavailable(IOException("Offline"))
+
+        val viewModel = viewModel()
+
+        assertThat(viewModel.state.value.guide.instructions).isEmpty()
+        assertThat(viewModel.state.value.guide.tips).isEmpty()
+        assertThat(viewModel.state.value.exercise.name).isEqualTo("Bench press")
     }
 
     @Test

@@ -61,12 +61,6 @@ public class RemoteConfigManager extends PreferencesManager {
         return null;
     }
 
-    // The exercise detail in Compose (for now its Info tab); off until Remote Config says otherwise
-    public boolean exerciseDetailsV2() {
-        RemoteConfig localConfig = loadLocalRemoteConfig();
-        return localConfig != null && localConfig.getExerciseDetailsV2();
-    }
-
     // The feedback form to open from a source, or null when there's none and the entry point is hidden
     @Nullable
     public String feedbackFormUrl(FeedbackSource source) {

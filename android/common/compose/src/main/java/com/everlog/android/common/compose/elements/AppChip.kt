@@ -25,8 +25,6 @@ import com.everlog.android.common.design.R as DesignR
  * chip; [AppChipStyle.Action] is outlined in the accent, like [AppSecondaryButton] at chip height,
  * e.g. Clear all at the end of a row of filters.
  *
- * `ui/views/tab/TabsPage` is its XML twin (`view_tab`, `chip_background`), so change both together.
- *
  * @param selected Tints it in the accent, e.g. the current tab in a row of chips that switch pages.
  * @param dropdown Ends it with a down arrow, when it opens a menu.
  * @param floating Over content that scrolls behind it: blurs it, like [AppFooter], instead of its own background.

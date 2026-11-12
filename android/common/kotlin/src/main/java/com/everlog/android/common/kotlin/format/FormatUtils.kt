@@ -1,14 +1,8 @@
 package com.everlog.android.common.kotlin.format
 
 import com.everlog.android.common.kotlin.NumberUtils
-import com.everlog.android.common.kotlin.isSameYear
 import org.apache.commons.lang3.time.DurationFormatUtils
-import org.threeten.bp.Instant
-import org.threeten.bp.ZoneId
-import org.threeten.bp.ZoneOffset
-import org.threeten.bp.format.DateTimeFormatter
 import java.text.DecimalFormat
-import java.util.*
 
 class FormatUtils {
 
@@ -76,34 +70,6 @@ class FormatUtils {
 
         fun formatDurationShort(durationMillis: Long, format: String, padWithZeros: Boolean): String {
             return DurationFormatUtils.formatDuration(durationMillis, format, padWithZeros)
-        }
-
-        fun formatChartXAxisDayString(timestamp: Long): String {
-            val now = Date()
-            val mFormat = "LLL"
-            val yFormat = if (now.isSameYear(timestamp)) "" else ", yyyy"
-            val formatter = DateTimeFormatter.ofPattern(String.format("d\n%s%s", mFormat, yFormat))
-            return formatter.format(Instant.ofEpochMilli(timestamp).atZone(ZoneId.systemDefault()).toLocalDate())
-        }
-
-        fun formatChartXAxisMonthString(month: Int): String {
-            var then = Instant.ofEpochMilli(Date().time).atZone(ZoneId.systemDefault()).toLocalDate()
-            then = then.withMonth(month)
-            val thenMillis = then.atStartOfDay().toInstant(ZoneOffset.UTC).toEpochMilli()
-            val now = Date()
-            val mFormat = "LLL"
-            val yFormat = if (now.isSameYear(thenMillis)) "" else ", yyyy"
-            val formatter = DateTimeFormatter.ofPattern(String.format("%s%s", mFormat, yFormat))
-            return formatter.format(Instant.ofEpochMilli(thenMillis).atZone(ZoneId.systemDefault()).toLocalDate())
-        }
-
-        fun formatChartXAxisYearString(year: Int): String {
-            var then = Instant.ofEpochMilli(Date().time).atZone(ZoneId.systemDefault()).toLocalDate()
-            then = then.withMonth(1)
-            then = then.withYear(year)
-            val thenMillis = then.atStartOfDay().toInstant(ZoneOffset.UTC).toEpochMilli()
-            val formatter = DateTimeFormatter.ofPattern(String.format("%d", year))
-            return formatter.format(Instant.ofEpochMilli(thenMillis).atZone(ZoneId.systemDefault()).toLocalDate())
         }
     }
 }

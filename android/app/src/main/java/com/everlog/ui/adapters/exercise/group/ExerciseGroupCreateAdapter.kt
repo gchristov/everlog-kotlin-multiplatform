@@ -34,7 +34,7 @@ import com.everlog.databinding.RowExerciseWithinSetCreateBinding
 import com.everlog.databinding.RowSetCreateBinding
 import com.everlog.managers.analytics.AnalyticsConstants
 import com.everlog.managers.analytics.AnalyticsManager
-import com.everlog.android.exercise.details.ExerciseDetailsActivity
+import com.everlog.android.exercise.page.ExercisePageTab
 import com.everlog.ui.dialog.AppDialogs
 import com.everlog.ui.navigator.ELNavigator
 import com.everlog.android.common.mvp.view.showPopupMenu
@@ -519,9 +519,7 @@ class ExerciseGroupCreateAdapter {
         }
 
         fun onClickHistory() {
-            ELNavigator(itemView.context).openExerciseDetails(ExerciseDetailsActivity.Companion.Properties()
-                    .exercise(item.exercise!!)
-                    .type(ExerciseDetailsActivity.Companion.Type.HISTORY))
+            ELNavigator(itemView.context).openExerciseDetails(item.exercise!!, ExercisePageTab.History)
         }
 
         fun onClickWeightPanel(view: View) {

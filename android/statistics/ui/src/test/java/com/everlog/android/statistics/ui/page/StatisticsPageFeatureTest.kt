@@ -12,7 +12,6 @@ import androidx.compose.ui.unit.dp
 import com.everlog.android.common.compose.theme.Theme
 import com.everlog.android.common.composetest.FeatureTest
 import com.everlog.android.common.data.model.workout.ELWorkout
-import com.everlog.android.common.data.model.workout.RangeType
 import com.everlog.android.common.kotlin.Load
 import com.everlog.android.settings.testfixtures.FakeUserSettings
 import com.everlog.android.statistics.data.StatisticsPreferences
@@ -139,7 +138,6 @@ class StatisticsPageFeatureTest : FeatureTest() {
     }
 
     private class Analytics(private val picked: MutableList<StatsPeriod>) : StatisticsAnalytics {
-        override fun statisticsRangeModified(range: RangeType) = Unit
 
         override fun statisticsPeriodPicked(period: StatsPeriod) {
             picked += period
