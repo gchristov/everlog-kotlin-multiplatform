@@ -93,7 +93,9 @@ class OnboardingViewModel(
 
     fun onSkip() {
         val questionId = state.value.activeQuestionId ?: return
-        setState { answer(questionId, OnboardingQuestions.skippedAnswer(questionId), skipped = true) }
+        val skippedAnswer = OnboardingQuestions.skippedAnswer(questionId)
+        setState { answer(questionId, skippedAnswer, skipped = true) }
+        saveSetting(questionId, skippedAnswer)
         analytics.stepSkipped(questionId)
         logNextQuestionViewed()
     }
@@ -131,9 +133,12 @@ class OnboardingViewModel(
         analytics.skipPromptCancelled(state.value.analyticsStep)
     }
 
-    // Skip setup on the prompt: the screen closes with nothing set up beyond the answered settings
+    // Skip setup on the prompt: the screen closes with nothing set up beyond the answered settings and the device's unit
     fun onConfirmSkipSetup() {
         if (!state.value.skipSetupPrompt) return
+        if (OnboardingQuestions.Units !in state.value.answers) {
+            saveSetting(OnboardingQuestions.Units, OnboardingQuestions.skippedAnswer(OnboardingQuestions.Units))
+        }
         setState { copy(skipSetupPrompt = false, finished = true) }
         analytics.finished(OnboardingAnalyticsValues.OUTCOME_SKIPPED, state.value.analyticsStep, routines = 0)
     }
@@ -271,7 +276,7 @@ class OnboardingViewModel(
         }
     }
 
-    // Skipped questions leave the settings as they are
+    // A skipped question saves what skipping it means, e.g. the device's unit, which the settings don't default to
     private fun saveSetting(questionId: String, answer: Answer) {
         when (questionId) {
             OnboardingQuestions.Units -> settings.setWeightUnit(

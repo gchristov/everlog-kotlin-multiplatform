@@ -52,7 +52,8 @@ data class StarterWeek(
         if (missing.isNotEmpty()) {
             return Either.Left(ExerciseNotFoundException(missing))
         }
-        return Either.Right(routines.map { it.toRoutine(byId, createdDate) })
+        // A millisecond apart in the week's order, so "the template saved first" is the week's first
+        return Either.Right(routines.mapIndexed { index, routine -> routine.toRoutine(byId, createdDate + index) })
     }
 
     class ExerciseNotFoundException(missing: List<Pair<String, StarterRoutine.Exercise>>) : IllegalStateException(
