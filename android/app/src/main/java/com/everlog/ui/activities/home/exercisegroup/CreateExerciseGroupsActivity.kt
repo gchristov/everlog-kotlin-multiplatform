@@ -144,8 +144,8 @@ abstract class CreateExerciseGroupsActivity : BaseActivity(), MvpViewCreateExerc
     // Setup
 
     protected open fun setupTopBar() {
-        findViewById<Toolbar>(R.id.toolbar).setNavigationIcon(DesignR.drawable.ic_clear_white)
-        setSupportActionBar(findViewById(R.id.toolbar))
+        findViewById<Toolbar>(MvpR.id.toolbar).setNavigationIcon(DesignR.drawable.ic_clear_white)
+        setSupportActionBar(findViewById(MvpR.id.toolbar))
         supportActionBar?.title = "[YOUR TITLE]"
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         // Selection options

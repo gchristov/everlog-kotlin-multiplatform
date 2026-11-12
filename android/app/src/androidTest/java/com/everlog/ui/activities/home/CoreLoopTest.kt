@@ -34,7 +34,7 @@ import com.everlog.android.common.data.model.workout.ELWorkout
 import com.everlog.android.common.design.R as DesignR
 import com.everlog.android.history.ui.R as HistoryR
 import com.everlog.android.history.ui.page.HistoryPageTags
-import com.everlog.android.home.screen.ComposeHomeActivity
+import com.everlog.android.home.screen.HomeActivity
 import com.everlog.android.home.screen.HomeTab
 import com.everlog.android.home.screen.HomeTags
 import com.everlog.android.home.weektab.WeekTabTags
@@ -114,7 +114,7 @@ class CoreLoopTest {
 
     @Test
     fun aTemplateStartedFromHomeIsLoggedAndShowsInTheWeekAndHistory() {
-        ActivityScenario.launch(ComposeHomeActivity::class.java)
+        ActivityScenario.launch(HomeActivity::class.java)
         compose.waitUntil(LoadMillis) { exists(hasTestTag(WeekTabTags.Workouts)) || exists(hasTestTag(WeekTabTags.Empty)) }
         val workoutsBefore = workoutsThisWeek()
 

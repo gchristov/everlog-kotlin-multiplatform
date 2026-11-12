@@ -137,12 +137,6 @@
                 android:windowSoftInputMode="stateHidden|adjustResize"
                 android:exported="false" />
         <activity
-            android:name=".ui.activities.home.HomeActivity"
-            android:configChanges="keyboardHidden|orientation|screenSize"
-            android:theme="@style/AppTheme.NoActionBar"
-            android:windowSoftInputMode="stateHidden"
-            android:exported="false" />
-        <activity
             android:name="com.everlog.android.exercise.create.CreateExerciseActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:theme="@style/AppTheme.NoActionBar"
@@ -209,7 +203,7 @@
             android:windowSoftInputMode="stateHidden"
             android:exported="false" />
         <activity
-            android:name="com.everlog.android.home.screen.ComposeHomeActivity"
+            android:name="com.everlog.android.home.screen.HomeActivity"
             android:theme="@style/AppTheme.NoActionBar"
             android:exported="false" />
         <activity

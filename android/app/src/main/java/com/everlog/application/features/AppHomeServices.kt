@@ -22,7 +22,6 @@ import dev.zacsweers.metro.AppScope
 import dev.zacsweers.metro.ContributesBinding
 import dev.zacsweers.metro.Inject
 
-// What the Compose Home needs from the app: the same as today's Home does in PresenterHome and HomeActivity
 @ContributesBinding(AppScope::class)
 @Inject
 class AppHomeServices : HomeServices {

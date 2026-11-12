@@ -15,16 +15,13 @@ import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.lifecycle.Lifecycle
 import androidx.test.espresso.Espresso
-import androidx.test.espresso.assertion.ViewAssertions.matches
-import androidx.test.espresso.matcher.RootMatchers
-import androidx.test.espresso.matcher.ViewMatchers.isDisplayed
-import androidx.test.espresso.matcher.ViewMatchers.withText
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.rule.GrantPermissionRule
 import androidx.test.runner.lifecycle.ActivityLifecycleMonitorRegistry
 import androidx.test.runner.lifecycle.Stage
 import com.everlog.android.common.data.model.ELRoutine
+import com.everlog.android.home.screen.HomeActivity
 import com.everlog.android.common.data.model.exercise.ELExercise
 import com.everlog.android.common.data.model.exercise.ELExerciseGroup
 import com.everlog.android.common.data.model.exercise.ELRoutineExercise
@@ -34,7 +31,6 @@ import com.everlog.android.common.data.model.workout.ELWorkout
 import com.everlog.constants.ELConstants
 import com.everlog.android.workout.data.WorkoutManager
 import com.everlog.testutil.E2EAccount
-import com.everlog.testutil.Homes
 import com.everlog.android.workout.log.WorkoutLogActivity
 import com.google.common.truth.Truth.assertThat
 import com.google.gson.Gson
@@ -66,7 +62,7 @@ class OngoingWorkoutLaunchTest {
     private val instrumentation = InstrumentationRegistry.getInstrumentation()
     private val context: Context = instrumentation.targetContext
     private val monitors = mutableListOf<Instrumentation.ActivityMonitor>()
-    private val homes = Homes(instrumentation)
+    private val home = watch(HomeActivity::class.java)
 
     @Before
     fun setUp() {
@@ -79,7 +75,6 @@ class OngoingWorkoutLaunchTest {
         WorkoutManager.manager.clearOngoingWorkout()
         instrumentation.runOnMainSync { resumedActivities().forEach(Activity::finish) }
         monitors.forEach(instrumentation::removeMonitor)
-        homes.release()
     }
 
     @Test
@@ -92,7 +87,7 @@ class OngoingWorkoutLaunchTest {
 
         val opened = awaitOpened(workoutScreen)
         assertThat((opened.intent.getSerializableExtra(ELConstants.EXTRA_WORKOUT) as ELWorkout).uuid).isEqualTo(workout.uuid)
-        assertThat(homes.hits).isEqualTo(1)
+        assertThat(home.hits).isEqualTo(1)
         compose.onNodeWithText("Bench press").assertExists()
         compose.waitUntil(TIMEOUT) { workoutNotificationShows() }
         assertThat(WorkoutManager.manager.ongoingWorkout()?.getCompletedSetsCount()).isEqualTo(1)
@@ -101,7 +96,7 @@ class OngoingWorkoutLaunchTest {
         Espresso.pressBack()
         compose.onNode(hasText("Discard") and hasAnyAncestor(isDialog())).performClick()
         compose.waitUntil(TIMEOUT) { opened.isDestroyed }
-        compose.waitUntil(TIMEOUT) { homes.resumed() != null }
+        compose.waitUntil(TIMEOUT) { homeShows() }
         assertThat(WorkoutManager.manager.ongoingWorkout()).isNull()
         assertThat(workoutScreen.hits).isEqualTo(1)
         compose.waitUntil(TIMEOUT) { !workoutNotificationShows() }
@@ -129,7 +124,7 @@ class OngoingWorkoutLaunchTest {
 
         launchFromLauncher()
 
-        compose.waitUntil(LAUNCH_TIMEOUT) { homes.resumed() != null }
+        compose.waitUntil(LAUNCH_TIMEOUT) { homeShows() }
         assertThat(workoutScreen.hits).isEqualTo(0)
     }
 
@@ -143,12 +138,8 @@ class OngoingWorkoutLaunchTest {
 
         instrumentation.runOnMainSync { opened.finish() }
 
-        compose.waitUntil(TIMEOUT) { homes.resumed() != null }
-        if (homes.isCompose()) {
-            compose.waitUntil(TIMEOUT) { compose.onAllNodes(hasText("Resume Workout") and hasAnyAncestor(isDialog())).fetchSemanticsNodes().isNotEmpty() }
-        } else {
-            Espresso.onView(withText("Resume Workout")).inRoot(RootMatchers.isDialog()).check(matches(isDisplayed()))
-        }
+        compose.waitUntil(TIMEOUT) { homeShows() }
+        compose.waitUntil(TIMEOUT) { compose.onAllNodes(hasText("Resume Workout") and hasAnyAncestor(isDialog())).fetchSemanticsNodes().isNotEmpty() }
         assertThat(workoutScreen.hits).isEqualTo(1)
         assertThat(WorkoutManager.manager.ongoingWorkout()).isNotNull()
     }
@@ -167,6 +158,8 @@ class OngoingWorkoutLaunchTest {
         compose.waitUntil(LAUNCH_TIMEOUT) { monitor.lastActivity?.let(::isResumed) == true }
         return monitor.lastActivity
     }
+
+    private fun homeShows() = home.lastActivity?.let(::isResumed) == true
 
     private fun isResumed(activity: Activity): Boolean {
         var resumed = false

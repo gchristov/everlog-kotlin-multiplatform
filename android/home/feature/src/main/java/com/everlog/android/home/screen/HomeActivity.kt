@@ -22,8 +22,8 @@ import com.everlog.android.home.HomeGraph
 import com.everlog.android.home.HomeScreenNames
 import kotlinx.coroutines.Dispatchers
 
-// Home in Compose (HomeScreen), while Remote Config's home_v2 is on. The navigator opens it for Home.
-class ComposeHomeActivity : SignedInComposeActivity() {
+// Home (HomeScreen), which the navigator opens for Home
+class HomeActivity : SignedInComposeActivity() {
     private val graph by lazy { appGraph<HomeGraph>() }
 
     private val viewModel by viewModels<HomeViewModel> {
