@@ -25,10 +25,6 @@ class ArrayResourceTypeUtils private constructor(context: Context,
             return with(R.array.exercise_categories, R.array.exercise_category_titles)
         }
 
-        fun withWeightUnits(): ArrayResourceTypeUtils {
-            return with(R.array.units_weight, R.array.units_weight_titles)
-        }
-
         @JvmStatic
         fun withWeightAbbreviations(): ArrayResourceTypeUtils {
             return with(R.array.units_weight, R.array.units_weight_abbreviations)

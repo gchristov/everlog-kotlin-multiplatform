@@ -209,10 +209,6 @@ class WeekTabFeatureTest : FeatureTest() {
         override fun notification() = banner
 
         override val appVersionCode = Int.MAX_VALUE
-
-        override fun statisticsV2() = false
-
-        override fun historyV2() = false
     }
 
     private object Analytics : HomeAnalytics {

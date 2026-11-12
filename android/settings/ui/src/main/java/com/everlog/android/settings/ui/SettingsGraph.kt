@@ -19,7 +19,5 @@ interface SettingsGraph {
 
     val settingsConfig: SettingsConfig
 
-    val settingsDialogs: SettingsDialogs
-
     val settingsAccount: SettingsAccount
 }

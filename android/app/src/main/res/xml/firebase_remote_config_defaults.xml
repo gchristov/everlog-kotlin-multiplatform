@@ -13,22 +13,6 @@
         <value>false</value>
     </entry>
     <entry>
-        <key>week_tab_v2</key>
-        <value>false</value>
-    </entry>
-    <entry>
-        <key>statistics_v2</key>
-        <value>false</value>
-    </entry>
-    <entry>
-        <key>history_v2</key>
-        <value>false</value>
-    </entry>
-    <entry>
-        <key>home_v2</key>
-        <value>false</value>
-    </entry>
-    <entry>
         <key>feedback_forms</key>
         <value>{}</value>
     </entry>

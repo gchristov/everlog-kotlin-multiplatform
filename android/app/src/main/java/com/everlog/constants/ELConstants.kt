@@ -36,8 +36,5 @@ object ELConstants {
     const val FIREBASE_TEST_LAB_EMAIL = "hello@cloudtestlabaccounts.com"
     const val FIREBASE_TEST_LAB_PASSWORD = "KTI4We2uSTfl"
 
-
-    const val ACTIVITY_RESULT_DELAY = 1000 // 100 ms
-
     const val ALPHA_PRO_FEATURE_DISABLED = 0.4f
 }

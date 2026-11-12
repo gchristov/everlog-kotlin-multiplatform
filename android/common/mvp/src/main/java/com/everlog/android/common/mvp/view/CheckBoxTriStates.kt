@@ -4,8 +4,6 @@ import com.everlog.android.common.design.R as DesignR
 import android.content.Context
 import android.util.AttributeSet
 import androidx.appcompat.widget.AppCompatCheckBox
-import rx.Observable
-import rx.subjects.PublishSubject
 
 class CheckBoxTriStates : AppCompatCheckBox {
 
@@ -17,34 +15,13 @@ class CheckBoxTriStates : AppCompatCheckBox {
 
     private var state = State.UNKNOWN
 
-    private val mCheckChange = PublishSubject.create<Boolean>()
-
     constructor(context: Context) : this(context, null)
     constructor(context: Context, attrs: AttributeSet?) : super(context, attrs) {
         setupState()
     }
 
-    fun observeCheckChange(): Observable<Boolean> {
-        return mCheckChange
-    }
-
     fun getState(): State {
         return state
-    }
-
-    fun setChecked(boolean: Boolean?) {
-        this.state = when {
-            boolean == null -> {
-                State.UNKNOWN
-            }
-            boolean -> {
-                State.CHECKED
-            }
-            else -> {
-                State.UNCHECKED
-            }
-        }
-        updateBtn()
     }
 
     private fun updateBtn() {
@@ -67,7 +44,6 @@ class CheckBoxTriStates : AppCompatCheckBox {
                 State.UNCHECKED -> State.CHECKED
             }
             updateBtn()
-            mCheckChange.onNext(getState() == State.CHECKED)
         }
     }
 }

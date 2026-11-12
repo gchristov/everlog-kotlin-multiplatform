@@ -7,9 +7,7 @@ class AnalyticsConstants {
         // Screens
 
         const val SCREEN_SPLASH = "screen_splash"
-        const val SCREEN_HOME = "screen_home"
         const val SCREEN_HOME_WEEK = "screen_week"
-        const val SCREEN_HOME_WORKOUTS = "screen_workouts"
         const val SCREEN_EXERCISE_GROUPS_CREATE = "screen_create_exercise_groups"
         const val SCREEN_ROUTINE_CREATE = "screen_create_routine"
         const val SCREEN_WEB_VIEW = "screen_web_view"

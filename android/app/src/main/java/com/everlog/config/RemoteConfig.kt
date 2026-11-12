@@ -12,14 +12,6 @@ data class RemoteConfig (
         var notificationAppUsage: AppUsageNotification? = null,
         // The exercise detail in Compose: for now its Info tab, with the library's instructions and tips
         var exerciseDetailsV2: Boolean = false,
-        // Home's Week tab in Compose instead of WeekHomeFragment
-        var weekTabV2: Boolean = false,
-        // The Activity tab's statistics page in Compose instead of StatisticsHomeFragment
-        var statisticsV2: Boolean = false,
-        // The Activity tab's history page in Compose instead of HistoryHomeFragment
-        var historyV2: Boolean = false,
-        // Home in Compose with all four Compose tabs, instead of HomeActivity and its tabs
-        var homeV2: Boolean = false,
         var feedbackForms: FeedbackForms? = null,
         // How old synced data may get before reading it asks the server again (DataSync); null for the default
         var dataSyncMaxAgeMinutes: Long? = null,
@@ -31,10 +23,6 @@ data class RemoteConfig (
     private val NOTIFICATION_HOME = "notification_home"
     private val NOTIFICATION_APP_USAGE = "notification_app_usage"
     private val EXERCISE_DETAILS_V2 = "exercise_details_v2"
-    private val WEEK_TAB_V2 = "week_tab_v2"
-    private val STATISTICS_V2 = "statistics_v2"
-    private val HISTORY_V2 = "history_v2"
-    private val HOME_V2 = "home_v2"
     private val FEEDBACK_FORMS = "feedback_forms"
     private val DATA_SYNC_MAX_AGE_MINUTES = "data_sync_max_age_minutes"
     // Named after the full history it used to be for, kept so the console's value still applies
@@ -44,10 +32,6 @@ data class RemoteConfig (
         notificationHome = getObjectFromRemoteConfig(NOTIFICATION_HOME, HomeNotification::class.java, config)
         notificationAppUsage = getObjectFromRemoteConfig(NOTIFICATION_APP_USAGE, AppUsageNotification::class.java, config)
         exerciseDetailsV2 = config.getBoolean(EXERCISE_DETAILS_V2)
-        weekTabV2 = config.getBoolean(WEEK_TAB_V2)
-        statisticsV2 = config.getBoolean(STATISTICS_V2)
-        historyV2 = config.getBoolean(HISTORY_V2)
-        homeV2 = config.getBoolean(HOME_V2)
         feedbackForms = getObjectFromRemoteConfig(FEEDBACK_FORMS, FeedbackForms::class.java, config)
         dataSyncMaxAgeMinutes = config.longOrNull(DATA_SYNC_MAX_AGE_MINUTES)
         dataSyncOlderMaxAgeDays = config.longOrNull(DATA_SYNC_OLDER_MAX_AGE_DAYS)

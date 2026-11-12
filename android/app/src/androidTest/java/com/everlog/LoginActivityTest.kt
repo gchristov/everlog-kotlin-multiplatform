@@ -14,8 +14,9 @@ import androidx.test.espresso.matcher.ViewMatchers.withId
 import androidx.test.espresso.matcher.ViewMatchers.withText
 import androidx.test.ext.junit.rules.ActivityScenarioRule
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import androidx.test.platform.app.InstrumentationRegistry
 import com.everlog.android.auth.login.LoginActivity
-import com.everlog.testutil.Homes
+import com.everlog.android.home.screen.HomeActivity
 import com.google.common.truth.Truth.assertThat
 import org.hamcrest.Matchers.allOf
 import org.junit.Rule
@@ -44,14 +45,12 @@ class LoginActivityTest {
         onView(allOf(withHint("Password"), isDisplayed()))
             .perform(typeText(BuildConfig.E2E_TEST_USER_PASSWORD), closeSoftKeyboard())
 
+        val instrumentation = InstrumentationRegistry.getInstrumentation()
+        val home = instrumentation.addMonitor(HomeActivity::class.java.name, null, false)
         onView(allOf(withId(AuthR.id.loginBtn), isAssignableFrom(Button::class.java))).perform(click())
 
-        // Whichever Home Remote Config's home_v2 picks
-        val homes = Homes()
-        val deadline = System.currentTimeMillis() + HomeTimeoutMillis
-        while (homes.resumed() == null && System.currentTimeMillis() < deadline) Thread.sleep(500)
-        assertThat(homes.resumed()).isNotNull()
-        homes.release()
+        assertThat(instrumentation.waitForMonitorWithTimeout(home, HomeTimeoutMillis)).isNotNull()
+        instrumentation.removeMonitor(home)
     }
 
     private companion object {

@@ -21,10 +21,6 @@ abstract class BaseTimelineViewHolder<T : Any>(itemView: View) : ItemViewHolder<
         mListener = listener
     }
 
-    fun getListener(): OnTimelineListener<T>? {
-        return mListener
-    }
-
     open fun render() {
         renderDate()
         renderTimeline()
