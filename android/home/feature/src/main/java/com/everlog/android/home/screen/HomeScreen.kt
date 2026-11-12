@@ -108,7 +108,7 @@ internal fun HomeScreen(
                 tab(HomeTab.entries[page], pager.settledPage == page, links)
             }
             Column(modifier = Modifier.align(Alignment.BottomCenter).fillMaxWidth(), horizontalAlignment = Alignment.End) {
-                FloatingButton(button = state.button, onClick = viewModel::onButtonTapped)
+                FloatingButton(button = state.button, snackbarShown = snackbar.currentSnackbarData != null, onClick = viewModel::onButtonTapped)
                 AppSnackbarHost(hostState = snackbar)
             }
         }
@@ -135,12 +135,19 @@ internal fun HomeTabRoute(tab: HomeTab, shown: Boolean, links: HomeTabLinks) {
 }
 
 @Composable
-private fun FloatingButton(button: HomeButton?, onClick: () -> Unit) {
+private fun FloatingButton(button: HomeButton?, snackbarShown: Boolean, onClick: () -> Unit) {
     // The last button, so its label stays while it fades out
     var shown by remember { mutableStateOf(button ?: HomeButton.StartWorkout) }
     if (button != null) shown = button
     AppFloatingButton(
-        modifier = Modifier.padding(Theme.spacing.large).testTag(HomeTags.Button),
+        modifier = Modifier
+            .padding(
+                start = Theme.spacing.large,
+                top = Theme.spacing.large,
+                end = Theme.spacing.large,
+                bottom = if (snackbarShown) Theme.spacing.large - HomeSizes.SnackbarMargin else Theme.spacing.large,
+            )
+            .testTag(HomeTags.Button),
         text = stringResource(if (shown == HomeButton.New) R.string.home_new else R.string.home_start_workout),
         icon = ImageVector.vectorResource(DesignR.drawable.ic_add),
         onClick = onClick,
@@ -160,4 +167,7 @@ internal object HomeSizes {
     // Every tab's room at the end of its list, so its content scrolls clear of the floating button: the button's
     // margin and height, and about the old Home's gap above it
     val TabBottomPadding = 120.dp
+
+    // Material's margin around a snackbar, which already keeps the button off it
+    val SnackbarMargin = 12.dp
 }
