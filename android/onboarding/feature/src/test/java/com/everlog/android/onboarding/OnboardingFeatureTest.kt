@@ -128,7 +128,9 @@ class OnboardingFeatureTest : FeatureTest() {
         compose.onNode(hasText("Skip setup") and hasAnyAncestor(isDialog())).performClick()
 
         waitUntil(WaitMillis) { closed }
-        assertThat(settings.unit).isNull()
+        // The device's unit, as the units question showed it
+        val deviceUnit = if (OnboardingQuestions.deviceUnit() == OnboardingQuestions.Pounds) WeightUnit.POUND else WeightUnit.KILOGRAM
+        assertThat(settings.unit).isEqualTo(deviceUnit)
     }
 
     private fun show(): OnboardingViewModel {

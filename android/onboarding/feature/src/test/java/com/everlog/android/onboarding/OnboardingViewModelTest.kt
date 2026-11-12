@@ -16,6 +16,7 @@ import com.everlog.android.template.testfixtures.FakeRoutineRepository
 import com.everlog.android.onboarding.testfixtures.exerciseLibrary
 import com.google.common.truth.Truth.assertThat
 import java.io.IOException
+import java.util.Locale
 import org.junit.Test
 
 /**
@@ -38,6 +39,16 @@ class OnboardingViewModelTest {
     )
 
     private val OnboardingViewModel.current get() = state.value
+
+    private fun withLocale(locale: Locale, test: () -> Unit) {
+        val default = Locale.getDefault()
+        Locale.setDefault(locale)
+        try {
+            test()
+        } finally {
+            Locale.setDefault(default)
+        }
+    }
 
     private fun OnboardingViewModel.answerAll() {
         onStart()
@@ -99,11 +110,12 @@ class OnboardingViewModelTest {
     }
 
     @Test
-    fun `a question can't be answered without a choice, and a skipped one leaves Settings alone`() {
+    fun `a question can't be answered without a choice, and a skipped one saves what skipping means`() = withLocale(Locale.US) {
         val viewModel = viewModel()
         viewModel.onStart()
         viewModel.onSkip()
-        assertThat(settings.savedUnit).isNull()
+        // The device's unit, as the question showed it ticked, rather than the settings' kilograms
+        assertThat(settings.savedUnit).isEqualTo(WeightUnit.POUND)
 
         viewModel.onSubmit()
 
@@ -162,12 +174,26 @@ class OnboardingViewModelTest {
     }
 
     @Test
-    fun `confirming skip setup closes the screen`() {
+    fun `confirming skip setup closes the screen with the device's unit`() = withLocale(Locale.US) {
         val viewModel = viewModel()
         viewModel.onSkipSetup()
         viewModel.onConfirmSkipSetup()
 
         assertThat(viewModel.current.finished).isTrue()
+        assertThat(settings.savedUnit).isEqualTo(WeightUnit.POUND)
+    }
+
+    @Test
+    fun `skipping setup after picking a unit keeps the pick`() = withLocale(Locale.US) {
+        val viewModel = viewModel()
+        viewModel.onStart()
+        viewModel.onOptionSelect(OnboardingQuestions.Units, OnboardingQuestions.Kilograms)
+        viewModel.onSubmit()
+
+        viewModel.onSkipSetup()
+        viewModel.onConfirmSkipSetup()
+
+        assertThat(settings.savedUnit).isEqualTo(WeightUnit.KILOGRAM)
     }
 
     @Test

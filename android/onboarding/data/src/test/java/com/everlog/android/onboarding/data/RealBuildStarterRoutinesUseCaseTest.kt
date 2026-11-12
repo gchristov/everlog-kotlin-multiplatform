@@ -35,7 +35,7 @@ class RealBuildStarterRoutinesUseCaseTest {
 
         assertThat(result.week).isEqualTo(week)
         assertThat(routines.map { it.name }).containsExactly("Upper", "Lower").inOrder()
-        assertThat(routines.map { it.createdDate }.distinct()).containsExactly(1_000L)
+        assertThat(routines.map { it.createdDate }).containsExactly(1_000L, 1_001L).inOrder()
         assertThat(routines.flatMap { it.exerciseGroups }.map { it.exercises.single().exercise!!.uuid })
             .containsExactlyElementsIn(week.routines.flatMap { it.exercises }.map { it.exerciseId })
             .inOrder()

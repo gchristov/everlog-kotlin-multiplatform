@@ -328,9 +328,10 @@ class StarterRoutineGeneratorTest {
         val routines = week.toRoutines(library, createdDate = 1_000L).getOrNull()!!
 
         assertThat(routines.map { it.name }).containsExactly("Upper", "Lower").inOrder()
+        // Saved first in the week's order, so the Workouts tab's "Start here" is the week's first routine
+        assertThat(routines.map { it.createdDate }).containsExactly(1_000L, 1_001L).inOrder()
         routines.forEach { routine ->
             assertThat(routine.uuid).isNotNull()
-            assertThat(routine.createdDate).isEqualTo(1_000L)
             assertThat(routine.exerciseGroups.map { it.type }.distinct()).containsExactly(ELSetType.SINGLE.name)
             assertThat(routine.exerciseGroups.map { it.restTimeSeconds }.distinct()).containsExactly(90)
         }
