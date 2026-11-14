@@ -140,6 +140,8 @@ Merging a PR:
 - Always squash merge, without a commit description: `gh pr merge <n> --squash --admin --body "" --delete-branch`. `master` requires a review the solo repo never gets, so the admin override is expected.
 - Afterwards clean up local git: switch to `master`, pull, and delete the merged local branch.
 
+The repository's GitHub settings (merge options, protection of `master`) live in `scripts/github-settings.sh`. Change them there and re-run the script rather than changing them in the web UI.
+
 ## Testing
 
 Coverage is still small, so check the actual classes before assuming conventions:
