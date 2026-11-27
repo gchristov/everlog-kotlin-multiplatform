@@ -32,7 +32,7 @@ Then publish `tools/monitoring/out/dashboard.html` to the URL above. In a Claude
 
 ### Before each read
 
-- **Paid test:** when the campaigns start, set `paid_test.start_date` in `config.json`. At each read, copy each campaign's spend so far (in euros) from Google Ads into its `spend_eur`. BigQuery has no Google Ads data. The Ads ↔ Firebase link only puts the campaign name on each install (`traffic_source.name`), so spend has to be entered by hand. Campaign names must match those in Google Ads exactly.
+- **Paid test:** when the campaigns start, set `paid_test.start_date` in `config.json`. At each read, copy each campaign's spend so far from Google Ads into its `spend_eur`: the Ads cost plus 20% VAT (Google adds it on the invoice, not in the Ads reports), converted to euros, so the cost per week-one lifter is what the test really costs. BigQuery has no Google Ads data. The Ads ↔ Firebase link only puts the campaign name on each install (`traffic_source.name`), so spend has to be entered by hand. Campaign names must match those in Google Ads exactly.
 - **Chart labels:** release markers come from the git tags (minor releases, `x.y.0`). To label a marker, add its date to `events`.
 
 ## Real users only
